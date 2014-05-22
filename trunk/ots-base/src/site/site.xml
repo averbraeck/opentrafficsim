@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="${artifactId} ${version}">
+
+  <publishDate position="left" format="dd-MM-yyyy"/>
+
+  <bannerLeft>
+    <name>${artifactId} ${version}</name>
+  </bannerLeft>
+
+  <body>
+
+	  <menu name="OpenTrafficSim">
+			<item name="Simulation@TU Delft" href="http://simulation.tudelft.nl"/>
+			<item name="DITTLab" href="http://dittlab.tudelft.nl"/>
+			<item name="ots-base" href="http://simulation.tudelft.nl/opentrafficsim/1.0/ots-base/index.html"/>
+	  </menu>
+      
+    ${reports}
+
+  </body>
+</project>
