@@ -5,6 +5,7 @@
 	<groupId>opentrafficsim</groupId>
 	<artifactId>ots-base</artifactId>
 	<version>0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
 	<name>OpenTrafficSim base project</name>
 	<description>Settings and base definitions for the OpenTrafficSim project</description>
@@ -26,7 +27,8 @@
 			</activation>
 			<modules>
 				<!-- generic base packages -->
-				<!-- module>../ots-xxx</module -->
+				<module>ots-core</module>
+				<!-- other modules here -->
 
 				<!-- micro model packages -->
 				<!-- module>../ots-yyy</module -->
@@ -44,16 +46,14 @@
 
 	<!-- Build Settings -->
 
+	<!-- Build Settings -->
+
 	<build>
+		<directory>target</directory>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
 		<outputDirectory>${basedir}/target/classes</outputDirectory>
 		<testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
-		<resources>
-			<resource>
-				<directory>${basedir}/src/conf</directory>
-			</resource>
-		</resources>
 
 		<extensions>
 			<extension>
@@ -61,89 +61,116 @@
 				<artifactId>wagon-ssh</artifactId>
 				<version>2.6</version>
 			</extension>
+
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-beta-6</version>
+			</extension>
+
 		</extensions>
 
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
-				</plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.3</version>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.3</version>
+			</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.1</version>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+			</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.1</version>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>2.2.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9.1</version>
-					<configuration>
-						<links>
-							<link>http://download.oracle.com/javase/7/docs/api/</link>
-							<link>http://download.java.net/media/java3d/javadoc/1.5.0/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/language/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/event/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/logger/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/interpreter/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/jstats/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/jstats-charts/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/naming/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-xml/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-gui/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-examples/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-tutorial/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-devs/apidocs/</link>
-							<link>http://simulation.tudelft.nl/dsol/3.0/dsol-hla/apidocs/</link>
-						</links>
-					</configuration>
-					<executions>
-						<execution>
-							<id>attach-javadocs</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<configuration>
+					<links>
+						<link>http://download.oracle.com/javase/7/docs/api/</link>
+						<link>http://download.java.net/media/java3d/javadoc/1.5.0/</link>
+						<link>http://www.jfree.org/jcommon/api/</link>
+						<link>http://www.jfree.org/jfreechart/api/javadoc/</link>
+						<link>http://junit.sourceforge.net/javadoc/</link>
+						<link>http://xerces.apache.org/xerces2-j/javadocs/api/</link>
+						<link>http://www.jdom.org/docs/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/language/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/event/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/logger/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/interpreter/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/jstats/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/jstats-charts/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/naming/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-xml/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-gui/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-examples/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-tutorial/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-devs/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-hla/apidocs/</link>
+					</links>
+					<additionalJOption>-J-Xmx1024m</additionalJOption>
+					<detectJavaApiLink>true</detectJavaApiLink>
+					<detectLinks>false</detectLinks>
+					<detectOfflineLinks>true</detectOfflineLinks>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-			</plugins>
-		</pluginManagement>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.12.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>dsol</groupId>
+						<artifactId>dsol-build-tools</artifactId>
+						<version>${dsol-version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+
 	</build>
 
 	<reporting>
@@ -163,6 +190,21 @@
 							<report>mailing-list</report>
 							<report>license</report>
 							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<detectLinks>false</detectLinks>
+					<detectOfflineLinks>true</detectOfflineLinks>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>javadoc</report>
 						</reports>
 					</reportSet>
 				</reportSets>
@@ -248,10 +290,37 @@
 
 	<inceptionYear>2002</inceptionYear>
 
+	<repositories>
+		<repository>
+			<name>DSOL Public Repository</name>
+			<id>dsol</id>
+			<url>http://simulation.tudelft.nl/maven</url>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>mvnrepository</id>
+			<name>mvnrepository</name>
+			<url>http://mvnrepository.com/artifact</url>
+		</repository>
+
+	</repositories>
+
 	<licenses>
 		<license>
 			<name>BSD-style license</name>
-			<url>http://simulation.tudelft.nl/dsol/3.0/dsol/dsol-license.html</url>
+			<url>http://www.opentrafficsim.org/license.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -271,7 +340,70 @@
 				<role>maintainance</role>
 			</roles>
 		</developer>
+
+		<developer>
+			<id>hvanlint</id>
+			<name>Hans van Lint</name>
+			<email>a.verbraeck@tudelft.nl</email>
+			<url>http://hansvanlint.weblog.tudelft.nl/</url>
+			<organization>Delft University of Technology, the Netherlands</organization>
+			<organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+			<timezone>1</timezone>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+				<role>maintainance</role>
+			</roles>
+		</developer>
+
+		<developer>
+			<id>pknoppers</id>
+			<name>Peter Knoppers</name>
+			<email>p.knoppers@tudelft.nl</email>
+			<url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/ir-peter-knoppers/</url>
+			<organization>Delft University of Technology, the Netherlands</organization>
+			<organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+			<timezone>1</timezone>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+				<role>maintainance</role>
+			</roles>
+		</developer>
+
+		<developer>
+			<id>gtamminga</id>
+			<name>Guus Tamminga</name>
+			<email>g.f.tamminga@tudelft.nl</email>
+			<url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/drs-guus-tamminga-msc/</url>
+			<organization>Delft University of Technology, the Netherlands</organization>
+			<organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+			<timezone>1</timezone>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+				<role>maintainance</role>
+			</roles>
+		</developer>
+
+
+		<developer>
+			<id>yyuan</id>
+			<name>Yufei Yuan</name>
+			<email>y.yuan@tudelft.nl</email>
+			<url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/dr-yufei-yuan/</url>
+			<organization>Delft University of Technology, the Netherlands</organization>
+			<organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+			<timezone>1</timezone>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+				<role>maintainance</role>
+			</roles>
+		</developer>
+
 	</developers>
+
 
 	<contributors>
 		<contributor>
@@ -280,38 +412,35 @@
 
 	<!-- Environment Settings -->
 
-	<scm>
-		<connection>scm:svn:https://svn.tbm.tudelft.nl/DSOL300/</connection>
-		<url>http://svn.tbm.tudelft.nl/</url>
-		<developerConnection>scm:svn:https://svn.tbm.tudelft.nl/DSOL300/</developerConnection>
-	</scm>
+	<!-- TODO <connection>scm:svn:https://svn.tbm.tudelft.nl/DSOL300/</connection> 
+		<url>http://svn.tbm.tudelft.nl/</url> <developerConnection>scm:svn:https://svn.tbm.tudelft.nl/DSOL300/</developerConnection> 
+		</scm -->
 
 	<!-- In order for distributionManagement to work, include the following 
 		in local settings.xml: <servers> <server> <id>dsol-deployment</id> <username>dsol</username> 
 		<password>(if wanted)</password> </server> </servers> -->
 
 	<distributionManagement>
-		<downloadUrl>http://simulation.tudelft.nl/maven</downloadUrl>
+		<downloadUrl>http://www.opentrafficsim.org/maven</downloadUrl>
 		<repository>
 			<uniqueVersion>false</uniqueVersion>
-			<id>dsol-deployment</id>
-			<name>dsol repository</name>
-			<url>sftp://simulation.tudelft.nl/home/web/simulation.tudelft.nl/html/maven</url>
+			<id>ots-deployment</id>
+			<name>open traffic sim repository</name>
+			<url>ftp://opentrafficsim.org/maven</url>
 			<layout>default</layout>
 		</repository>
 		<snapshotRepository>
-			<uniqueVersion>true</uniqueVersion>
-			<id>dsol-deployment</id>
-			<name>dsol language snapshots</name>
-			<url>sftp://simulation.tudelft.nl/home/web/simulation.tudelft.nl/html/maven</url>
+			<uniqueVersion>false</uniqueVersion>
+			<id>ots-deployment</id>
+			<name>open traffic sim snapshot repository</name>
+			<url>ftp://opentrafficsim.org/maven</url>
 			<layout>default</layout>
 		</snapshotRepository>
 		<site>
-			<id>dsol-deployment</id>
-			<name>dsol language website</name>
-			<url>sftp://simulation.tudelft.nl/home/web/simulation.tudelft.nl/html/dsol/3.0</url>
+			<id>ots-deployment</id>
+			<name>open trafffic sim website</name>
+			<url>ftp://opentrafficsim.org/docs/0.1</url>
 		</site>
 	</distributionManagement>
 
-	<packaging>pom</packaging>
 </project>
