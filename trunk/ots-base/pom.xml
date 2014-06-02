@@ -4,7 +4,7 @@
 
 	<groupId>opentrafficsim</groupId>
 	<artifactId>ots-base</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>pom</packaging>
 
 	<name>OpenTrafficSim base project</name>
@@ -15,6 +15,9 @@
 		<name>Delft University of Technology</name>
 		<url>www.opentrafficsim.org</url>
 	</organization>
+
+	<inceptionYear>2014</inceptionYear>
+
 
 	<profiles>
 		<!-- select profiles with -P option, e.g. "mvn install -P all" -->
@@ -27,7 +30,7 @@
 			</activation>
 			<modules>
 				<!-- generic base packages -->
-				<module>ots-core</module>
+				<module>../ots-core</module>
 				<!-- other modules here -->
 
 				<!-- micro model packages -->
@@ -38,13 +41,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<ots-version>${project.version}</ots-version>
 		<dsol-version>3.0.0-SNAPSHOT</dsol-version>
 		<junit.version>4.11</junit.version>
 		<java3d.version>1.5.1</java3d.version>
 	</properties>
 
-
-	<!-- Build Settings -->
 
 	<!-- Build Settings -->
 
@@ -163,9 +165,9 @@
 				<version>2.12.1</version>
 				<dependencies>
 					<dependency>
-						<groupId>dsol</groupId>
-						<artifactId>dsol-build-tools</artifactId>
-						<version>${dsol-version}</version>
+						<groupId>opentrafficsim</groupId>
+						<artifactId>ots-build-tools</artifactId>
+						<version>${ots-version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -287,8 +289,6 @@
 	</dependencyManagement>
 
 	<!-- More Project Information -->
-
-	<inceptionYear>2002</inceptionYear>
 
 	<repositories>
 		<repository>
@@ -439,7 +439,7 @@
 		<site>
 			<id>ots-deployment</id>
 			<name>open trafffic sim website</name>
-			<url>ftp://opentrafficsim.org/docs/0.1</url>
+			<url>ftp://opentrafficsim.org/docs/${ots-version}</url>
 		</site>
 	</distributionManagement>
 
