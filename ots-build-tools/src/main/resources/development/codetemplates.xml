@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="typecomment_context" deleted="false" description="Comment for created types" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.typecomment" name="typecomment">/**
+ * &lt;p&gt;
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
+ * Delft, the Netherlands. All rights reserved.
+ * 
+ * &lt;p&gt;
+ * See for project information &lt;a href="http://www.simulation.tudelft.nl/"&gt;
+ * www.simulation.tudelft.nl&lt;/a&gt;.
+ * &lt;p&gt;
+ * The DSOL project is distributed under the following BSD-style license:&lt;br&gt;
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * &lt;ul&gt;
+ * &lt;li&gt;Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.&lt;/li&gt;
+ * &lt;li&gt;Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.&lt;/li&gt;
+ * &lt;li&gt;Neither the name of Delft University of Technology, nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * This software is provided by the copyright holders and contributors "as is"
+ * and any express or implied warranties, including, but not limited to, the
+ * implied warranties of merchantability and fitness for a particular purpose
+ * are disclaimed. In no event shall the copyright holder or contributors be
+ * liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of
+ * substitute goods or services; loss of use, data, or profits; or business
+ * interruption) however caused and on any theory of liability, whether in
+ * contract, strict liability, or tort (including negligence or otherwise)
+ * arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
+ * 
+ * @version ${date} &lt;br&gt;
+ * @author &lt;a href="http://www.tbm.tudelft.nl/averbraeck"&gt;Alexander Verbraeck&lt;/a&gt;
+ */</template></templates>
