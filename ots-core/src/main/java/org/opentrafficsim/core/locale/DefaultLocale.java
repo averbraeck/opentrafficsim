@@ -1,4 +1,6 @@
-package org.opentrafficsim.core.unit;
+package org.opentrafficsim.core.locale;
+
+import java.util.Locale;
 
 /**
  * <p>
@@ -24,53 +26,32 @@ package org.opentrafficsim.core.unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version May 15, 2014 <br>
+ * @version Jun 3, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class VelocityUnit1D<S extends DistanceUnit, T extends TimeUnit> extends VelocityUnit<S, T>
+public abstract class DefaultLocale
 {
-    private final T timeUnit;
-
-    private final S spaceUnit;
-
-    public final VelocityUnit1D<DistanceUnit, TimeUnit> KM_PER_HOUR = new VelocityUnit1D<DistanceUnit, TimeUnit>("kmph",
-            DistanceUnit.KILOMETER, TimeUnit.HOUR);
+    /** the default locale to use in OpenTrafficSim */
+    protected static Locale locale;
 
     /**
-     * @param id
-     * @param spaceUnit
-     * @param timeUnit
+     * @return locale
      */
-    public VelocityUnit1D(String id, S spaceUnit, T timeUnit)
+    public static Locale getLocale()
     {
-        super(id);
-        this.spaceUnit = spaceUnit;
-        this.timeUnit = timeUnit;
-    }
-
-    public double getConversionFactorToMetersPerSecond()
-    {
-        return this.spaceUnit.getConversionFactorToMeter() / this.timeUnit.getConvertToSecond();
+        return DefaultLocale.locale;
     }
 
     /**
-     * @return timeUnit
+     * @param locale set locale
      */
-    public T getTimeUnit()
+    public static void setLocale(Locale locale)
     {
-        return this.timeUnit;
-    }
-
-    /**
-     * @return spaceUnit
-     */
-    public S getSpaceUnit()
-    {
-        return this.spaceUnit;
+        DefaultLocale.locale = locale;
     }
 
 }

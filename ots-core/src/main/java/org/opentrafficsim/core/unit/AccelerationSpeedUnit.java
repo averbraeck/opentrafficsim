@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
+ * Standard acceleration units based on speed and time. You can define units like (mile/hour)/second here.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -26,50 +27,56 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
- * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
- * @param <S> the space unit type
- * @param <T> the time unit type 
+ * @param <S> the speed unit type
+ * @param <D> the distance unit type
+ * @param <T> the time unit type
  */
-public class AccelerationUnit1D<S extends DistanceUnit, T extends TimeUnit> extends AccelerationUnit<S, T>
+public class AccelerationSpeedUnit<S extends SpeedUnit<DistanceUnit, TimeUnit>, T extends TimeUnit> extends
+        Unit<AccelerationSpeedUnit<S, T>>
 {
     /** */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 20130604L;
 
-    /** the actual space unit, e.g. KILOMETER */
-    private final S spaceUnit;
+    /** the actual speed unit, e.g. KNOT */
+    private final S speedUnit;
 
-    /** the actual time unit, e.g. HOUR */
+    /** the actual time unit, e.g. SECOND */
     private final T timeUnit;
 
-    /** km/h^2 */
-    public final AccelerationUnit1D<DistanceUnit, TimeUnit> KM_PER_HOUR2 = new AccelerationUnit1D<DistanceUnit, TimeUnit>("km/h^2",
-            DistanceUnit.KILOMETER, TimeUnit.HOUR);
-
-    /** m/s^2 */
-    public final AccelerationUnit1D<DistanceUnit, TimeUnit> METER_PER_SECOND2 = new AccelerationUnit1D<DistanceUnit, TimeUnit>("m/s^2",
-            DistanceUnit.METER, TimeUnit.SECOND);
+    /** kt/s */
+    public static final AccelerationSpeedUnit<SpeedUnit<DistanceUnit, TimeUnit>, TimeUnit> KNOT_PER_SECOND =
+            new AccelerationSpeedUnit<SpeedUnit<DistanceUnit, TimeUnit>, TimeUnit>(SpeedUnit.KNOT, TimeUnit.SECOND,
+                    "AccelerationSpeedUnit.knot_per_second", "AccelerationSpeedUnit.kt/s");
 
     /**
-     * @param id
-     * @param spaceUnit
-     * @param timeUnit
+     * @param speedUnit the unit of speed for the acceleration unit, e.g., knot
+     * @param timeUnit the unit of time for the acceleration unit, e.g., second
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public AccelerationUnit1D(String id, S spaceUnit, T timeUnit)
+    public AccelerationSpeedUnit(final S speedUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(id);
-        this.spaceUnit = spaceUnit;
+        super(nameKey, abbreviationKey, speedUnit.getConversionFactorToStandardUnit()
+                / timeUnit.getConversionFactorToStandardUnit());
+        this.speedUnit = speedUnit;
         this.timeUnit = timeUnit;
     }
 
     /**
-     * @return the conversion factor to m / s^2. 
+     * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
      */
-    public double getMultiplicationFactorToMetersPerSecond2()
+    @Override
+    public double getMultiplicationFactorTo(AccelerationSpeedUnit<S, T> unit)
     {
-        return this.spaceUnit.getConversionFactorToMeter() / (this.timeUnit.getConvertToSecond() * this.timeUnit.getConvertToSecond());
+        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+    }
+
+    /**
+     * @return distanceUnit
+     */
+    public S getSpeedUnit()
+    {
+        return this.speedUnit;
     }
 
     /**
@@ -78,14 +85,6 @@ public class AccelerationUnit1D<S extends DistanceUnit, T extends TimeUnit> exte
     public T getTimeUnit()
     {
         return this.timeUnit;
-    }
-
-    /**
-     * @return spaceUnit
-     */
-    public S getSpaceUnit()
-    {
-        return this.spaceUnit;
     }
 
 }
