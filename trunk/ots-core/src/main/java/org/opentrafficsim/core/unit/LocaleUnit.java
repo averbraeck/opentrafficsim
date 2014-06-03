@@ -1,4 +1,10 @@
-package org.opentrafficsim.core.direction;
+package org.opentrafficsim.core.unit;
+
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
@@ -24,15 +30,47 @@ package org.opentrafficsim.core.direction;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version May 15, 2014 <br>
+ * @version Jun 3, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public enum ABDirection implements Direction {
-    A,
-    B;
+public class LocaleUnit
+{
+    /** filename without .properties, to be found in src/main/resources folder */
+    private static final String BUNDLE_NAME = "localeunit";
+
+    /** get the default bundle */
+    protected static ResourceBundle RESOURCE_BUNDLE;
+
+    /** current locale */
+    protected static Locale currentLocale = null;
+
+    /**
+     * @param key the key for the locale in the properties file
+     * @return localized string
+     */
+    public static String getString(final String key)
+    {
+        if (currentLocale == null || !currentLocale.equals(DefaultLocale.getLocale()))
+        {
+            if (DefaultLocale.getLocale() == null)
+                DefaultLocale.setLocale(new Locale("en"));
+            currentLocale = DefaultLocale.getLocale();
+            Locale.setDefault(currentLocale);
+            RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, currentLocale);
+        }
+
+        try
+        {
+            return RESOURCE_BUNDLE.getString(key);
+        }
+        catch (MissingResourceException e)
+        {
+            return '!' + key.substring(key.indexOf('.') + 1) + '!';
+        }
+    }
 
 }
