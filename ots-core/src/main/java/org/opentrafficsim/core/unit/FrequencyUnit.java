@@ -1,8 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Standard mass units. Several conversion factors have been taken from <a
- * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
+ * Standard frequency units based on time.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -28,41 +27,50 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <T> the time unit
  */
-public class MassUnit extends Unit<MassUnit>
+public class FrequencyUnit<T extends TimeUnit> extends Unit<FrequencyUnit<T>>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** kilogram */
-    public static final MassUnit KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", 1.0);
+    /** the actual time unit, e.g. second */
+    private final T timeUnit;
 
-    /** gram */
-    public static final MassUnit GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", 0.001);
+    /** hertz */
+    public static final FrequencyUnit<TimeUnit> HERTZ = new FrequencyUnit<TimeUnit>(TimeUnit.SECOND,
+            "FrequencyUnit.Hertz", "FrequencyUnit.Hz");
 
-    /** pound */
-    public static final MassUnit POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", 0.45359237);
+    /** kilohertz */
+    public static final FrequencyUnit<TimeUnit> KILOHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.kilohertz",
+            "FrequencyUnit.kHz", HERTZ, 1000.0);
 
-    /** pound */
-    public static final MassUnit OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", POUND, 1.0 / 16.0);
+    /** megahertz */
+    public static final FrequencyUnit<TimeUnit> MEGAHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.megahertz",
+            "FrequencyUnit.MHz", HERTZ, 1.0E6);
 
-    /** long ton = 2240 lb */
-    public static final MassUnit TON_LONG = new MassUnit("MassUnit.long_ton", "MassUnit.long_tn", POUND, 2240.0);
+    /** gigahertz */
+    public static final FrequencyUnit<TimeUnit> GIGAHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.gigahertz",
+            "FrequencyUnit.GHz", HERTZ, 1.0E9);
 
-    /** short ton = 2000 lb */
-    public static final MassUnit TON_SHORT = new MassUnit("MassUnit.short_ton", "MassUnit.sh_tn", POUND, 2000.0);
+    /** terahertz */
+    public static final FrequencyUnit<TimeUnit> TERAHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.terahertz",
+            "FrequencyUnit.THz", HERTZ, 1.0E12);
 
-    /** metric ton = 1000 kg */
-    public static final MassUnit TON_METRIC = new MassUnit("MassUnit.metric_ton", "MassUnit.t", KILOGRAM, 1000.0);
+    /** revolutions per minute = 1/60 Hz */
+    public static final FrequencyUnit<TimeUnit> RPM = new FrequencyUnit<TimeUnit>(
+            "FrequencyUnit.revolutions_per_minute", "FrequencyUnit.rpm", HERTZ, 1.0 / 60.0);
 
     /**
+     * Define frequency units based on length and time. You can define units like "per second" (Hertz) here.
+     * @param timeUnit the unit of time for the frequency unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToMeter multiply by this number to convert to meters
      */
-    public MassUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
+    public FrequencyUnit(final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, convertToMeter);
+        super(nameKey, abbreviationKey, 1.0 / timeUnit.getConversionFactorToStandardUnit());
+        this.timeUnit = timeUnit;
     }
 
     /**
@@ -71,10 +79,19 @@ public class MassUnit extends Unit<MassUnit>
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public MassUnit(String nameKey, String abbreviationKey, MassUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+    public FrequencyUnit(final String nameKey, final String abbreviationKey, final FrequencyUnit<T> referenceUnit,
+            final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        this.timeUnit = referenceUnit.getTimeUnit();
+    }
+
+    /**
+     * @return timeUnit
+     */
+    public T getTimeUnit()
+    {
+        return this.timeUnit;
     }
 
 }

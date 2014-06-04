@@ -33,7 +33,7 @@ package org.opentrafficsim.core.unit;
 public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends Unit<AccelerationUnit<L, T>>
 {
     /** */
-    private static final long serialVersionUID = 20130603L;
+    private static final long serialVersionUID = 20140603L;
 
     /** the actual length unit, e.g. KILOMETER */
     private final L lengthUnit;
@@ -81,6 +81,11 @@ public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends 
             new AccelerationUnit<LengthUnit, TimeUnit>(SpeedUnit.MILE_PER_HOUR, TimeUnit.SECOND,
                     "AccelerationUnit.mile_per_hour_per_second", "AccelerationUnit.mi/h/s");
 
+    /** standard gravity */
+    public static final AccelerationUnit<LengthUnit, TimeUnit> STANDARD_GRAVITY =
+            new AccelerationUnit<LengthUnit, TimeUnit>("AccelerationUnit.standard_gravity", "AccelerationUnit.g",
+                    METER_PER_SECOND_2, 9.80665);
+
     /**
      * Define acceleration units based on length and time. You can define units like meter/second^2 here.
      * @param lengthUnit the unit of length for the acceleration unit, e.g., meter
@@ -118,8 +123,8 @@ public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends 
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public AccelerationUnit(final String nameKey, final String abbreviationKey, final AccelerationUnit<L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public AccelerationUnit(final String nameKey, final String abbreviationKey,
+            final AccelerationUnit<L, T> referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
