@@ -53,11 +53,11 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
             2.0 * Math.PI / 400.0);
 
-    /** arcminute */
+    /** centesimal arcminute */
     public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
             "AnglePlaneUnit.centesimal_arcmin", GRAD, 1.0 / 100.0);
 
-    /** arcsecond */
+    /** centesimal arcsecond */
     public static final AnglePlaneUnit CENTESIMAL_ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond",
             "AnglePlaneUnit.centesimal_arcsec", GRAD, 1.0 / 10000.0);
 

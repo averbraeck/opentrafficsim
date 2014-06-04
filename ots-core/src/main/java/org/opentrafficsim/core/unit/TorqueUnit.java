@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * The units of force.
+ * The units of torque (moment of force).
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -31,52 +31,52 @@ package org.opentrafficsim.core.unit;
  * @param <L> the length unit type
  * @param <T> the time unit type
  */
-public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends Unit<ForceUnit<M, L, T>>
+public class TorqueUnit<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends Unit<TorqueUnit<M, L, T>>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** the unit of mass for the force unit, e.g., kilogram */
+    /** the unit of mass for the torque unit, e.g., kilogram */
     private final M massUnit;
 
-    /** the unit of length for the force unit, e.g., length */
+    /** the unit of length for the torque unit, e.g., length */
     private final L lengthUnit;
 
-    /** the unit of time for the force unit, e.g., second */
+    /** the unit of time for the torque unit, e.g., second */
     private final T timeUnit;
 
-    /** Newton */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> NEWTON = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton", "ForceUnit.N");
+    /** Newton meter */
+    public static final TorqueUnit<MassUnit, LengthUnit, TimeUnit> NEWTON_METER =
+            new TorqueUnit<MassUnit, LengthUnit, TimeUnit>(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
+                    "TorqueUnit.Newton_meter", "TorqueUnit.N.m");
 
-    /** Dyne */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> DYNE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND, "ForceUnit.dyne", "ForceUnit.dyn");
+    /** meter kilogram-force */
+    public static final TorqueUnit<MassUnit, LengthUnit, TimeUnit> METER_KILOGRAM_FORCE =
+            new TorqueUnit<MassUnit, LengthUnit, TimeUnit>(ForceUnit.KILOGRAM_FORCE, LengthUnit.METER,
+                    "TorqueUnit.meter_kilogram-force", "TorqueUnit.m.kgf");
 
-    /** kilogram-force */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> KILOGRAM_FORCE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.kilogram-force", "ForceUnit.kgf");
+    /** foot pound-force */
+    public static final TorqueUnit<MassUnit, LengthUnit, TimeUnit> FOOT_POUND_FORCE =
+            new TorqueUnit<MassUnit, LengthUnit, TimeUnit>(ForceUnit.POUND_FORCE, LengthUnit.FOOT,
+                    "TorqueUnit.foot_pound-force", "TorqueUnit.ft.lbf");
 
-    /** ounce-force */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> OUNCE_FORCE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ounce-force", "ForceUnit.ozf");
+    /** inch pound-force */
+    public static final TorqueUnit<MassUnit, LengthUnit, TimeUnit> INCH_POUND_FORCE =
+            new TorqueUnit<MassUnit, LengthUnit, TimeUnit>(ForceUnit.POUND_FORCE, LengthUnit.INCH,
+                    "TorqueUnit.inch_pound-force", "TorqueUnit.in.lbf");
 
-    /** pound-force */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> POUND_FORCE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.pound-force", "ForceUnit.lbf");
-    
     /**
-     * @param massUnit the unit of mass for the force unit, e.g., kilogram
-     * @param lengthUnit the unit of length for the force unit, e.g., meter
-     * @param timeUnit the unit of time for the force unit, e.g., second
+     * @param massUnit the unit of mass for the torque unit, e.g., kilogram
+     * @param lengthUnit the unit of length for the torque unit, e.g., meter
+     * @param timeUnit the unit of time for the torque unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public ForceUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
+    public TorqueUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
         super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
                 / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
@@ -84,19 +84,19 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     }
 
     /**
-     * @param massUnit the unit of mass for the force unit, e.g., kilogram
-     * @param accelerationUnit the unit of acceleration for the force unit, e.g., m/s^2
+     * @param forceUnit the unit of force for the torque unit, e.g., Newton
+     * @param lengthUnit the unit of length for the torque unit, e.g., m
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public <A extends AccelerationUnit<L, T>> ForceUnit(final M massUnit, final A accelerationUnit,
+    public <F extends ForceUnit<M, L, T>> TorqueUnit(final F forceUnit, final L lengthUnit,
             final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit() *
-                accelerationUnit.getConversionFactorToStandardUnit());
-        this.massUnit = massUnit;
-        this.lengthUnit = accelerationUnit.getLengthUnit();
-        this.timeUnit = accelerationUnit.getTimeUnit();
+        super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit());
+        this.massUnit = forceUnit.getMassUnit();
+        this.lengthUnit = forceUnit.getLengthUnit();
+        this.timeUnit = forceUnit.getTimeUnit();
     }
 
     /**
@@ -105,7 +105,7 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public ForceUnit(final String nameKey, final String abbreviationKey, final ForceUnit<M, L, T> referenceUnit,
+    public TorqueUnit(final String nameKey, final String abbreviationKey, final TorqueUnit<M, L, T> referenceUnit,
             final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
