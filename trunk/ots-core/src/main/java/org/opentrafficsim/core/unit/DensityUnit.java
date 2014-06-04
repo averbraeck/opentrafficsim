@@ -1,8 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Standard mass units. Several conversion factors have been taken from <a
- * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
+ * Standard density units based on mass and length.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -28,41 +27,42 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <M> the mass unit
+ * @param <L> the length unit type
  */
-public class MassUnit extends Unit<MassUnit>
+public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<DensityUnit<M, L>>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140603L;
 
-    /** kilogram */
-    public static final MassUnit KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", 1.0);
+    /** the actual mass unit, e.g. kg */
+    private final M massUnit;
 
-    /** gram */
-    public static final MassUnit GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", 0.001);
+    /** the actual length unit, e.g. meter */
+    private final L lengthUnit;
 
-    /** pound */
-    public static final MassUnit POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", 0.45359237);
+    /** kg/m^3 */
+    public static final DensityUnit<MassUnit, LengthUnit> KG_PER_METER_3 = new DensityUnit<MassUnit, LengthUnit>(
+            MassUnit.KILOGRAM, LengthUnit.METER, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
 
-    /** pound */
-    public static final MassUnit OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", POUND, 1.0 / 16.0);
-
-    /** long ton = 2240 lb */
-    public static final MassUnit TON_LONG = new MassUnit("MassUnit.long_ton", "MassUnit.long_tn", POUND, 2240.0);
-
-    /** short ton = 2000 lb */
-    public static final MassUnit TON_SHORT = new MassUnit("MassUnit.short_ton", "MassUnit.sh_tn", POUND, 2000.0);
-
-    /** metric ton = 1000 kg */
-    public static final MassUnit TON_METRIC = new MassUnit("MassUnit.metric_ton", "MassUnit.t", KILOGRAM, 1000.0);
+    /** g/cm^3 */
+    public static final DensityUnit<MassUnit, LengthUnit> GRAM_PER_CENTIMETER_3 =
+            new DensityUnit<MassUnit, LengthUnit>(MassUnit.GRAM, LengthUnit.CENTIMETER,
+                    "DensityUnit.gram_per_cubic_centimeter", "DensityUnit.g/cm^3");
 
     /**
+     * Define acceleration units based on length and time. You can define units like meter/second^2 here.
+     * @param massUnit the unit of mass for the density unit, e.g., kg
+     * @param lengthUnit the unit of length for the density unit, e.g., meter
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToMeter multiply by this number to convert to meters
      */
-    public MassUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
+    public DensityUnit(final M massUnit, final L lengthUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, convertToMeter);
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+                / Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0));
+        this.massUnit = massUnit;
+        this.lengthUnit = lengthUnit;
     }
 
     /**
@@ -71,10 +71,28 @@ public class MassUnit extends Unit<MassUnit>
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public MassUnit(String nameKey, String abbreviationKey, MassUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+    public DensityUnit(final String nameKey, final String abbreviationKey, final DensityUnit<M, L> referenceUnit,
+            final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        this.massUnit = referenceUnit.getMassUnit();
+        this.lengthUnit = referenceUnit.getLengthUnit();
+    }
+
+    /**
+     * @return massUnit
+     */
+    public M getMassUnit()
+    {
+        return this.massUnit;
+    }
+
+    /**
+     * @return lengthUnit
+     */
+    public L getLengthUnit()
+    {
+        return this.lengthUnit;
     }
 
 }
