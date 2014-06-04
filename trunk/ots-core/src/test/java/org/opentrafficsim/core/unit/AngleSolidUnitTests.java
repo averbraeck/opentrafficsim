@@ -37,7 +37,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
+public class AngleSolidUnitTests extends AbstractUnitTest<AngleSolidUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -55,7 +55,7 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
     @Test
     public void timeKeys()
     {
-        checkKeys(TimeUnit.SECOND, "TimeUnit.second", "TimeUnit.s");
+        checkKeys(AngleSolidUnit.STERADIAN, "AngleSolidUnit.steradian", "AngleSolidUnit.sr");
     }
 
     /**
@@ -64,28 +64,23 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(TimeUnit.SECOND, 1, 0.00000001, "second", "s");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.HOUR, 3600, 0.0005, "hour", "h");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.DAY, 86400, 0.001, "day", "d");
-        // Check two conversions between non-standard units
-        assertEquals("one DAY is 24 HOUR", 24, TimeUnit.DAY.getMultiplicationFactorTo(TimeUnit.HOUR), 0.0001);
-        assertEquals("one HOUR is about 0.0417 DAY", 0.0417, TimeUnit.HOUR.getMultiplicationFactorTo(TimeUnit.DAY),
-                0.0001);
-        // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(TimeUnit.MILLISECOND, 0.001, 0.00000001, "millisecond", "ms");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.MINUTE, 60, 0.000001, "minute", "m");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.WEEK, 7 * 86400, 0.1, "week", "w");
+        checkUnitRatioNameAndAbbreviation(AngleSolidUnit.STERADIAN, 1, 0.0000001, "steradian", "sr");
+        checkUnitRatioNameAndAbbreviation(AngleSolidUnit.SQUARE_DEGREE, 1. / 3283, 0.0001, "square degree", "sq.deg");
+        // Check two conversions between units
+        assertEquals("one STERADIAN is about 3283 SQUARE_DEGREE", 3283,
+                AngleSolidUnit.STERADIAN.getMultiplicationFactorTo(AngleSolidUnit.SQUARE_DEGREE), 0.5);
+        assertEquals("one SQUARE_DEGREE is about 0.00003046 STERADIAN", 0.0003046,
+                AngleSolidUnit.SQUARE_DEGREE.getMultiplicationFactorTo(AngleSolidUnit.STERADIAN), 0.000001);
     }
 
     /**
-     * Verify that we can create our own length unit
+     * Verify that we can create our own angle unit
      */
     @Test
-    public void createLengthUnit()
+    public void createAngleUnit()
     {
-        TimeUnit myTU = new TimeUnit("TimeUnit.Fortnight", "TimeUnit.fn", 14 * 86400);
-        assertTrue("Can create a new TimeUnit", null != myTU);
-        checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
+        AngleSolidUnit myAPU = new AngleSolidUnit("AngleUnit.point", "AngleUnit.pt", 0.19634954085);
+        assertTrue("Can create a new TimeUnit", null != myAPU);
+        checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }
-
 }

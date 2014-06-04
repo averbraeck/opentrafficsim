@@ -34,7 +34,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 4, 2014 <br>
- * @author Peter Knoppers
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <L> Length unit underlying acceleration
  * @param <T> Time unit underlying acceleration
  */
@@ -87,5 +87,14 @@ public class AccelerationUnitTest<L extends LengthUnit, T extends TimeUnit> exte
                 "kt/s");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_PER_SECOND, 0.44704, 0.00000001,
                 "mile per hour per second", "mi/h/s");
+    }
+
+    /**
+     * Check that g is about 9.8 m/s/s
+     */
+    @Test
+    public void gravityConstant()
+    {
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.STANDARD_GRAVITY, 9.8, 0.02, "standard gravity", "g");
     }
 }

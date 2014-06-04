@@ -37,7 +37,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
+public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -55,7 +55,7 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
     @Test
     public void timeKeys()
     {
-        checkKeys(TimeUnit.SECOND, "TimeUnit.second", "TimeUnit.s");
+        checkKeys(AnglePlaneUnit.RADIAN, "AnglePlaneUnit.radian", "AnglePlaneUnit.rad");
     }
 
     /**
@@ -64,28 +64,30 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(TimeUnit.SECOND, 1, 0.00000001, "second", "s");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.HOUR, 3600, 0.0005, "hour", "h");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.DAY, 86400, 0.001, "day", "d");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.DEGREE, 1 / 57.2957795, 0.000001, "degree", "\u00b0");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.ARCMINUTE, 2 * Math.PI / 360 / 60, 0.0001, "arcminute", "\'");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.GRAD, 2 * Math.PI / 400, 0.001, "gradian", "grad");
         // Check two conversions between non-standard units
-        assertEquals("one DAY is 24 HOUR", 24, TimeUnit.DAY.getMultiplicationFactorTo(TimeUnit.HOUR), 0.0001);
-        assertEquals("one HOUR is about 0.0417 DAY", 0.0417, TimeUnit.HOUR.getMultiplicationFactorTo(TimeUnit.DAY),
-                0.0001);
+        assertEquals("one GRAD is about 54 ARCMINUTE", 54,
+                AnglePlaneUnit.GRAD.getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE), 0.0001);
+        assertEquals("one ARCMINUTE is about 0.04185 GRAD", 0.0185,
+                AnglePlaneUnit.ARCMINUTE.getMultiplicationFactorTo(AnglePlaneUnit.GRAD), 0.0001);
         // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(TimeUnit.MILLISECOND, 0.001, 0.00000001, "millisecond", "ms");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.MINUTE, 60, 0.000001, "minute", "m");
-        checkUnitRatioNameAndAbbreviation(TimeUnit.WEEK, 7 * 86400, 0.1, "week", "w");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 2 * Math.PI / 400 / 100, 0.00000001,
+                "centesimal arcminute", "\'");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 2 * Math.PI / 400 / 10000, 0.0000000001,
+                "centesimal arcsecond", "\"");
     }
 
     /**
-     * Verify that we can create our own length unit
+     * Verify that we can create our own angle unit
      */
     @Test
-    public void createLengthUnit()
+    public void createAngleUnit()
     {
-        TimeUnit myTU = new TimeUnit("TimeUnit.Fortnight", "TimeUnit.fn", 14 * 86400);
-        assertTrue("Can create a new TimeUnit", null != myTU);
-        checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
+        AnglePlaneUnit myAPU = new AnglePlaneUnit("AngleUnit.point", "AngleUnit.pt", 0.19634954085);
+        assertTrue("Can create a new TimeUnit", null != myAPU);
+        checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }
 
 }
