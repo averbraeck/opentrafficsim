@@ -40,16 +40,16 @@ public class TimeUnit extends Unit<TimeUnit>
     public static final TimeUnit SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", 1.0);
 
     /** minute */
-    public static final TimeUnit MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", 60.0);
+    public static final TimeUnit MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SECOND, 60.0);
 
     /** hour */
-    public static final TimeUnit HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", 3600.0);
+    public static final TimeUnit HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", MINUTE, 60.0);
 
     /** day */
-    public static final TimeUnit DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", 86400.0);
+    public static final TimeUnit DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", HOUR, 24.0);
 
     /** week */
-    public static final TimeUnit WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", 7.0 * 86400.0);
+    public static final TimeUnit WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", DAY, 7.0);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
@@ -62,11 +62,15 @@ public class TimeUnit extends Unit<TimeUnit>
     }
 
     /**
-     * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param referenceUnit the unit to convert from
+     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    @Override
-    public double getMultiplicationFactorTo(TimeUnit unit)
+    public TimeUnit(String nameKey, String abbreviationKey, TimeUnit referenceUnit,
+            double conversionFactorToReferenceUnit)
     {
-        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
     }
+
 }

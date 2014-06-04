@@ -113,18 +113,23 @@ public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends 
     }
 
     /**
-     * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param referenceUnit the unit to convert from
+     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    @Override
-    public double getMultiplicationFactorTo(AccelerationUnit<L, T> unit)
+    public AccelerationUnit(final String nameKey, final String abbreviationKey, final AccelerationUnit<L, T> referenceUnit,
+            final double conversionFactorToReferenceUnit)
     {
-        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        this.lengthUnit = referenceUnit.getLengthUnit();
+        this.timeUnit = referenceUnit.getTimeUnit();
     }
 
     /**
-     * @return distanceUnit
+     * @return lengthUnit
      */
-    public L getDistanceUnit()
+    public L getLengthUnit()
     {
         return this.lengthUnit;
     }

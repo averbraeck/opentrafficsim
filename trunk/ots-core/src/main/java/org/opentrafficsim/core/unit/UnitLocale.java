@@ -36,7 +36,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
  */
-public class LocaleUnit
+public class UnitLocale
 {
     /** filename without .properties, to be found in src/main/resources folder */
     private static final String BUNDLE_NAME = "localeunit";

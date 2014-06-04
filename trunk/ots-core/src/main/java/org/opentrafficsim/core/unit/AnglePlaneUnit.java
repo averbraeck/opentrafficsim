@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * According to <a href="http://en.wikipedia.org/wiki/Velocity">Wikipedia</a>: Speed describes only how fast an object
- * is moving, whereas velocity gives both how fast and in what direction the object is moving.
+ * Standard length units. Several conversion factors have been taken from <a
+ * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -28,52 +28,47 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <L> the length unit type
- * @param <T> the time unit type
  */
-public class SpeedUnit<L extends LengthUnit, T extends TimeUnit> extends Unit<SpeedUnit<L, T>>
+public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140603L;
+    private static final long serialVersionUID = 20140604L;
 
-    /** the unit of length for the speed unit, e.g., meter */
-    private final L lengthUnit;
+    /** radian */
+    public static final AnglePlaneUnit RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", 1.0);
 
-    /** the unit of time for the speed unit, e.g., second */
-    private final T timeUnit;
+    /** degree */
+    public static final AnglePlaneUnit DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg",
+            Math.PI / 180.0);
 
-    /** m/s */
-    public static final SpeedUnit<LengthUnit, TimeUnit> METER_PER_SECOND = new SpeedUnit<LengthUnit, TimeUnit>(
-            LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s");
+    /** arcminute */
+    public static final AnglePlaneUnit ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute",
+            "AnglePlaneUnit.arcmin", DEGREE, 1.0 / 60.0);
 
-    /** km/h */
-    public static final SpeedUnit<LengthUnit, TimeUnit> KM_PER_HOUR = new SpeedUnit<LengthUnit, TimeUnit>(
-            LengthUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h");
+    /** arcsecond */
+    public static final AnglePlaneUnit ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.arcsecond",
+            "AnglePlaneUnit.arcsec", DEGREE, 1.0 / 3600.0);
 
-    /** mile/h */
-    public static final SpeedUnit<LengthUnit, TimeUnit> MILE_PER_HOUR = new SpeedUnit<LengthUnit, TimeUnit>(
-            LengthUnit.MILE, TimeUnit.HOUR, "SpeedUnit.mile_per_hour", "SpeedUnit.mph");
+    /** grad */
+    public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
+            2.0 * Math.PI / 400.0);
 
-    /** ft/s */
-    public static final SpeedUnit<LengthUnit, TimeUnit> FOOT_PER_SECOND = new SpeedUnit<LengthUnit, TimeUnit>(
-            LengthUnit.FOOT, TimeUnit.SECOND, "SpeedUnit.foot_per_second", "SpeedUnit.fps");
+    /** arcminute */
+    public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
+            "AnglePlaneUnit.centesimal_arcmin", GRAD, 1.0 / 100.0);
 
-    /** knot */
-    public static final SpeedUnit<LengthUnit, TimeUnit> KNOT = new SpeedUnit<LengthUnit, TimeUnit>(
-            LengthUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot", "SpeedUnit.kt");
+    /** arcsecond */
+    public static final AnglePlaneUnit CENTESIMAL_ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond",
+            "AnglePlaneUnit.centesimal_arcsec", GRAD, 1.0 / 10000.0);
 
     /**
-     * @param lengthUnit the unit of length for the speed unit, e.g., meter
-     * @param timeUnit the unit of time for the speed unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param convertToRadian multiply by this number to convert to meters
      */
-    public SpeedUnit(final L lengthUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
+    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final double convertToRadian)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
-        this.lengthUnit = lengthUnit;
-        this.timeUnit = timeUnit;
+        super(nameKey, abbreviationKey, convertToRadian);
     }
 
     /**
@@ -82,28 +77,10 @@ public class SpeedUnit<L extends LengthUnit, T extends TimeUnit> extends Unit<Sp
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public SpeedUnit(final String nameKey, final String abbreviationKey, final SpeedUnit<L, T> referenceUnit,
+    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final AnglePlaneUnit referenceUnit,
             final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
-        this.lengthUnit = referenceUnit.getLengthUnit();
-        this.timeUnit = referenceUnit.getTimeUnit();
-    }
-
-    /**
-     * @return lengthUnit
-     */
-    public L getLengthUnit()
-    {
-        return this.lengthUnit;
-    }
-
-    /**
-     * @return timeUnit
-     */
-    public T getTimeUnit()
-    {
-        return this.timeUnit;
     }
 
 }

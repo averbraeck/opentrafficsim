@@ -45,6 +45,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     protected final double conversionFactorToStandardUnit;
 
     /**
+     * Build a unit with a conversion factor to the standard (preferably SI) unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
@@ -57,11 +58,25 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     }
 
     /**
+     * Build a unit with a conversion factor to another unit.
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param referenceUnit the unit to convert from
+     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     */
+    public Unit(final String nameKey, final String abbreviationKey, final U referenceUnit,
+            final double conversionFactorToReferenceUnit)
+    {
+        this(nameKey, abbreviationKey, referenceUnit.getConversionFactorToStandardUnit()
+                * conversionFactorToReferenceUnit);
+    }
+
+    /**
      * @return name, e.g. meters per second
      */
     public String getName()
     {
-        return LocaleUnit.getString(this.nameKey);
+        return UnitLocale.getString(this.nameKey);
     }
 
     /**
@@ -77,7 +92,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     public String getAbbreviation()
     {
-        return LocaleUnit.getString(this.abbreviationKey);
+        return UnitLocale.getString(this.abbreviationKey);
     }
 
     /**
@@ -100,7 +115,10 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param unit the unit to convert to
      * @return multiplication factor to convert value to other unit
      */
-    public abstract double getMultiplicationFactorTo(U unit);
+    public double getMultiplicationFactorTo(U unit)
+    {
+        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+    }
 
     /**
      * @see java.lang.Object#toString()
