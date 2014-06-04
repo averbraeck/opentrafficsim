@@ -28,51 +28,51 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <D> the distance unit type
+ * @param <L> the length unit type
  * @param <T> the time unit type
  */
-public class SpeedUnit<D extends DistanceUnit, T extends TimeUnit> extends Unit<SpeedUnit<D, T>>
+public class SpeedUnit<L extends LengthUnit, T extends TimeUnit> extends Unit<SpeedUnit<L, T>>
 {
     /** */
     private static final long serialVersionUID = 20140603L;
 
-    /** the unit of distance for the speed unit, e.g., meter */
-    private final D distanceUnit;
+    /** the unit of length for the speed unit, e.g., meter */
+    private final L lengthUnit;
 
     /** the unit of time for the speed unit, e.g., second */
     private final T timeUnit;
 
     /** m/s */
-    public static final SpeedUnit<DistanceUnit, TimeUnit> METERS_PER_SECOND = new SpeedUnit<DistanceUnit, TimeUnit>(
-            DistanceUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s");
+    public static final SpeedUnit<LengthUnit, TimeUnit> METER_PER_SECOND = new SpeedUnit<LengthUnit, TimeUnit>(
+            LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s");
 
     /** km/h */
-    public static final SpeedUnit<DistanceUnit, TimeUnit> KM_PER_HOUR = new SpeedUnit<DistanceUnit, TimeUnit>(
-            DistanceUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h");
+    public static final SpeedUnit<LengthUnit, TimeUnit> KM_PER_HOUR = new SpeedUnit<LengthUnit, TimeUnit>(
+            LengthUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h");
 
     /** mile/h */
-    public static final SpeedUnit<DistanceUnit, TimeUnit> MILES_PER_HOUR = new SpeedUnit<DistanceUnit, TimeUnit>(
-            DistanceUnit.MILE, TimeUnit.HOUR, "SpeedUnit.mile_per_hour", "SpeedUnit.mph");
+    public static final SpeedUnit<LengthUnit, TimeUnit> MILE_PER_HOUR = new SpeedUnit<LengthUnit, TimeUnit>(
+            LengthUnit.MILE, TimeUnit.HOUR, "SpeedUnit.mile_per_hour", "SpeedUnit.mph");
 
     /** ft/s */
-    public static final SpeedUnit<DistanceUnit, TimeUnit> FOOT_PER_SECOND = new SpeedUnit<DistanceUnit, TimeUnit>(
-            DistanceUnit.FOOT, TimeUnit.SECOND, "SpeedUnit.foot_per_second", "SpeedUnit.fps");
+    public static final SpeedUnit<LengthUnit, TimeUnit> FOOT_PER_SECOND = new SpeedUnit<LengthUnit, TimeUnit>(
+            LengthUnit.FOOT, TimeUnit.SECOND, "SpeedUnit.foot_per_second", "SpeedUnit.fps");
 
     /** knot */
-    public static final SpeedUnit<DistanceUnit, TimeUnit> KNOT = new SpeedUnit<DistanceUnit, TimeUnit>(
-            DistanceUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot", "SpeedUnit.kt");
+    public static final SpeedUnit<LengthUnit, TimeUnit> KNOT = new SpeedUnit<LengthUnit, TimeUnit>(
+            LengthUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot", "SpeedUnit.kt");
 
     /**
-     * @param distanceUnit the unit of distance for the speed unit, e.g., meter
+     * @param lengthUnit the unit of length for the speed unit, e.g., meter
      * @param timeUnit the unit of time for the speed unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public SpeedUnit(final D distanceUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
+    public SpeedUnit(final L lengthUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, distanceUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
                 / timeUnit.getConversionFactorToStandardUnit());
-        this.distanceUnit = distanceUnit;
+        this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
 
@@ -80,17 +80,17 @@ public class SpeedUnit<D extends DistanceUnit, T extends TimeUnit> extends Unit<
      * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public double getMultiplicationFactorTo(SpeedUnit<D, T> unit)
+    public double getMultiplicationFactorTo(SpeedUnit<L, T> unit)
     {
         return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
     }
 
     /**
-     * @return distanceUnit
+     * @return lengthUnit
      */
-    public D getDistanceUnit()
+    public L getLengthUnit()
     {
-        return this.distanceUnit;
+        return this.lengthUnit;
     }
 
     /**

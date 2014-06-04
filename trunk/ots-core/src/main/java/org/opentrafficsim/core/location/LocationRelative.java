@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.location;
 
-import org.opentrafficsim.core.unit.DistanceUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
 
 /**
  * <p>
@@ -39,5 +39,5 @@ public interface LocationRelative<E extends Edge> extends Location
 
     double getFractionalPosition();
 
-    DistanceUnit getPosition();
+    LengthUnit getPosition();
 }
