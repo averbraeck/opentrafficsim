@@ -11,4 +11,11 @@
   <name>Open Traffic Sim core classes</name>
   <description>Open Traffic Sim core classes</description>
   
+  <dependencies>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<scope>test</scope>
+  	</dependency>
+  </dependencies>
 </project>
