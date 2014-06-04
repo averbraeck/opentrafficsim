@@ -27,56 +27,88 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <D> the distance unit type
+ * @param <L> the length unit type
  * @param <T> the time unit type
  */
-public class AccelerationUnit<D extends DistanceUnit, T extends TimeUnit> extends Unit<AccelerationUnit<D, T>>
+public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends Unit<AccelerationUnit<L, T>>
 {
     /** */
     private static final long serialVersionUID = 20130603L;
 
-    /** the actual space unit, e.g. KILOMETER */
-    private final D distanceUnit;
+    /** the actual length unit, e.g. KILOMETER */
+    private final L lengthUnit;
 
     /** the actual time unit, e.g. HOUR */
     private final T timeUnit;
 
     /** km/h^2 */
-    public static final AccelerationUnit<DistanceUnit, TimeUnit> KM_PER_HOUR_2 =
-            new AccelerationUnit<DistanceUnit, TimeUnit>(DistanceUnit.KILOMETER, TimeUnit.HOUR,
+    public static final AccelerationUnit<LengthUnit, TimeUnit> KM_PER_HOUR_2 =
+            new AccelerationUnit<LengthUnit, TimeUnit>(LengthUnit.KILOMETER, TimeUnit.HOUR,
                     "AccelerationUnit.km_per_hour_squared", "AccelerationUnit.km/h^2");
 
     /** m/s^2 */
-    public static final AccelerationUnit<DistanceUnit, TimeUnit> METER_PER_SECOND_2 =
-            new AccelerationUnit<DistanceUnit, TimeUnit>(DistanceUnit.METER, TimeUnit.SECOND,
+    public static final AccelerationUnit<LengthUnit, TimeUnit> METER_PER_SECOND_2 =
+            new AccelerationUnit<LengthUnit, TimeUnit>(LengthUnit.METER, TimeUnit.SECOND,
                     "AccelerationUnit.meter_per_second_squared", "AccelerationUnit.m/s^2");
 
     /** ft/s^2 */
-    public static final AccelerationUnit<DistanceUnit, TimeUnit> FOOT_PER_SECOND_2 =
-            new AccelerationUnit<DistanceUnit, TimeUnit>(DistanceUnit.FOOT, TimeUnit.SECOND,
+    public static final AccelerationUnit<LengthUnit, TimeUnit> FOOT_PER_SECOND_2 =
+            new AccelerationUnit<LengthUnit, TimeUnit>(LengthUnit.FOOT, TimeUnit.SECOND,
                     "AccelerationUnit.foot_per_second_squared", "AccelerationUnit.ft/s^2");
 
     /** in/s^2 */
-    public static final AccelerationUnit<DistanceUnit, TimeUnit> INCH_PER_SECOND_2 =
-            new AccelerationUnit<DistanceUnit, TimeUnit>(DistanceUnit.INCH, TimeUnit.SECOND,
+    public static final AccelerationUnit<LengthUnit, TimeUnit> INCH_PER_SECOND_2 =
+            new AccelerationUnit<LengthUnit, TimeUnit>(LengthUnit.INCH, TimeUnit.SECOND,
                     "AccelerationUnit.inch_per_second_squared", "AccelerationUnit.in/s^2");
 
+    /** mi/h^2 */
+    public static final AccelerationUnit<LengthUnit, TimeUnit> MILE_PER_HOUR_2 =
+            new AccelerationUnit<LengthUnit, TimeUnit>(LengthUnit.MILE, TimeUnit.HOUR,
+                    "AccelerationUnit.mile_per_hour_squared", "AccelerationUnit.mi/h^2");
+
     /** mi/s^2 */
-    public static final AccelerationUnit<DistanceUnit, TimeUnit> MILE_PER_SECOND_2 =
-            new AccelerationUnit<DistanceUnit, TimeUnit>(DistanceUnit.MILE, TimeUnit.SECOND,
+    public static final AccelerationUnit<LengthUnit, TimeUnit> MILE_PER_SECOND_2 =
+            new AccelerationUnit<LengthUnit, TimeUnit>(LengthUnit.MILE, TimeUnit.SECOND,
                     "AccelerationUnit.mile_per_second_squared", "AccelerationUnit.mi/s^2");
 
+    /** kt/s */
+    public static final AccelerationUnit<LengthUnit, TimeUnit> KNOT_PER_SECOND =
+            new AccelerationUnit<LengthUnit, TimeUnit>(SpeedUnit.KNOT, TimeUnit.SECOND,
+                    "AccelerationUnit.knot_per_second", "AccelerationUnit.kt/s");
+
+    /** mi/h/s */
+    public static final AccelerationUnit<LengthUnit, TimeUnit> MILE_PER_HOUR_PER_SECOND =
+            new AccelerationUnit<LengthUnit, TimeUnit>(SpeedUnit.MILE_PER_HOUR, TimeUnit.SECOND,
+                    "AccelerationUnit.mile_per_hour_per_second", "AccelerationUnit.mi/h/s");
+
     /**
-     * @param distanceUnit the unit of distance for the acceleration unit, e.g., meters
-     * @param timeUnit the unit of time for the acceleration unit, e.g., seconds
+     * Define acceleration units based on length and time. You can define units like meter/second^2 here.
+     * @param lengthUnit the unit of length for the acceleration unit, e.g., meter
+     * @param timeUnit the unit of time for the acceleration unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public AccelerationUnit(final D distanceUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
+    public AccelerationUnit(final L lengthUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, distanceUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
                 / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
-        this.distanceUnit = distanceUnit;
+        this.lengthUnit = lengthUnit;
+        this.timeUnit = timeUnit;
+    }
+
+    /**
+     * Define acceleration units based on speed and time. You can define units like (mile/hour)/second here.
+     * @param speedUnit the unit of speed for the acceleration unit, e.g., knot
+     * @param timeUnit the unit of time for the acceleration unit, e.g., second
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     */
+    public <S extends SpeedUnit<L, T>> AccelerationUnit(final S speedUnit, final T timeUnit, final String nameKey,
+            final String abbreviationKey)
+    {
+        super(nameKey, abbreviationKey, speedUnit.getConversionFactorToStandardUnit()
+                / timeUnit.getConversionFactorToStandardUnit());
+        this.lengthUnit = speedUnit.getLengthUnit();
         this.timeUnit = timeUnit;
     }
 
@@ -84,18 +116,17 @@ public class AccelerationUnit<D extends DistanceUnit, T extends TimeUnit> extend
      * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public double getMultiplicationFactorTo(AccelerationUnit<D, T> unit)
+    public double getMultiplicationFactorTo(AccelerationUnit<L, T> unit)
     {
-        return this.conversionFactorToStandardUnit
-                / (unit.getConversionFactorToStandardUnit() * unit.getConversionFactorToStandardUnit());
+        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
     }
 
     /**
      * @return distanceUnit
      */
-    public D getDistanceUnit()
+    public L getDistanceUnit()
     {
-        return this.distanceUnit;
+        return this.lengthUnit;
     }
 
     /**
