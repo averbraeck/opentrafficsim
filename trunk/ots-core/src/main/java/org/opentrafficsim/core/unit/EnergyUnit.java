@@ -45,10 +45,46 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     /** the unit of time for the energy unit, e.g., second */
     private final T timeUnit;
 
-    /** Newton meter */
+    /** Joule */
     public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> JOULE =
             new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
                     "EnergyUnit.Joule", "EnergyUnit.J");
+
+    /** foot-pound force */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> FOOT_POUND_FORCE =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
+                    "EnergyUnit.foot_pound-force", "EnergyUnit.ft.lbf");
+
+    /** inch-pound force */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> INCH_POUND_FORCE =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.INCH, ForceUnit.POUND_FORCE,
+                    "EnergyUnit.inch_pound-force", "EnergyUnit.in.lbf");
+
+    /** British thermal unit (ISO) */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> BTU_ISO =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.British_thermal_unit_(ISO)",
+                    "EnergyUnit.BTU(ISO)", JOULE, 1.0545E3);
+
+    /** British thermal unit (International Table) */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> BTU_IT =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.British_thermal_unit_(International_Table)",
+                    "EnergyUnit.BTU(IT)", JOULE, 1.05505585262E3);
+
+    /** calorie (International Table) */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> CALORIE_IT =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.calorie_(International_Table)",
+                    "EnergyUnit.cal(IT)", JOULE, 4.1868);
+
+    /** kilocalorie */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> KILOCALORIE =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.kilocalorie",
+                    "EnergyUnit.kcal", CALORIE_IT, 1000.0);
+
+    /** kilowatt-hour */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> KILOWATT_HOUR =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.kilowatt-hour",
+                    "EnergyUnit.kW.h", JOULE, 3.6E6);
+
 
     /**
      * @param massUnit the unit of mass for the energy unit, e.g., kilogram
@@ -69,13 +105,13 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     }
 
     /**
-     * @param forceUnit the unit of force for the energy unit, e.g., Newton
      * @param lengthUnit the unit of length for the energy unit, e.g., m
+     * @param forceUnit the unit of force for the energy unit, e.g., Newton
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public <F extends ForceUnit<M, L, T>> EnergyUnit(final F forceUnit, final L lengthUnit,
-            final String nameKey, final String abbreviationKey)
+    public <F extends ForceUnit<M, L, T>> EnergyUnit(final L lengthUnit, final F forceUnit, final String nameKey,
+            final String abbreviationKey)
     {
         super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit());
