@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * AreaUnit defines a number of common units for areas.
+ * The units of energy.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -27,84 +27,84 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <M> the mass unit type
  * @param <L> the length unit type
+ * @param <T> the time unit type
  */
-public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
+public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends Unit<EnergyUnit<M, L, T>>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** the unit of length for the area unit, e.g., meter */
+    /** the unit of mass for the energy unit, e.g., kilogram */
+    private final M massUnit;
+
+    /** the unit of length for the energy unit, e.g., length */
     private final L lengthUnit;
 
-    /** m^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_METER = new AreaUnit<LengthUnit>(LengthUnit.METER,
-            "AreaUnit.square_meter", "AreaUnit.m^2");
+    /** the unit of time for the energy unit, e.g., second */
+    private final T timeUnit;
 
-    /** km^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_KM = new AreaUnit<LengthUnit>(LengthUnit.KILOMETER,
-            "AreaUnit.square_kilometer", "AreaUnit.km^2");
-
-    /** cm^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_CENTIMETER = new AreaUnit<LengthUnit>(LengthUnit.CENTIMETER,
-            "AreaUnit.square_centimeter", "AreaUnit.cm^2");
-
-    /** cm^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_MILLIMETER = new AreaUnit<LengthUnit>(LengthUnit.MILLIMETER,
-            "AreaUnit.square_millimeter", "AreaUnit.mm^2");
-
-    /** are */
-    public static final AreaUnit<LengthUnit> ARE = new AreaUnit<LengthUnit>("AreaUnit.are", "AreaUnit.a", SQUARE_METER,
-            100.0);
-
-    /** hectare */
-    public static final AreaUnit<LengthUnit> HECTARE = new AreaUnit<LengthUnit>("AreaUnit.hectare", "AreaUnit.ha", ARE,
-            100.0);
-
-    /** mile^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_MILE = new AreaUnit<LengthUnit>(LengthUnit.MILE,
-            "AreaUnit.square_mile", "AreaUnit.mi^2");
-
-    /** ft^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_FOOT = new AreaUnit<LengthUnit>(LengthUnit.FOOT,
-            "AreaUnit.square_foot", "AreaUnit.ft^2");
-
-    /** in^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_INCH = new AreaUnit<LengthUnit>(LengthUnit.INCH,
-            "AreaUnit.square_inch", "AreaUnit.in^2");
-
-    /** yd^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_YARD = new AreaUnit<LengthUnit>(LengthUnit.YARD,
-            "AreaUnit.square_yard", "AreaUnit.yd^2");
-
-    /** acre (international) */
-    public static final AreaUnit<LengthUnit> ACRE = new AreaUnit<LengthUnit>("AreaUnit.acre", "AreaUnit.ac", SQUARE_YARD,
-            4840.0);
+    /** Newton meter */
+    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> JOULE =
+            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
+                    "EnergyUnit.Joule", "EnergyUnit.J");
 
     /**
-     * @param lengthUnit the unit of length for the speed unit, e.g., meter
+     * @param massUnit the unit of mass for the energy unit, e.g., kilogram
+     * @param lengthUnit the unit of length for the energy unit, e.g., meter
+     * @param timeUnit the unit of time for the energy unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public AreaUnit(final L lengthUnit, final String nameKey, final String abbreviationKey)
+    public EnergyUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
+            final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
+                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
+        this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
+        this.timeUnit = timeUnit;
     }
 
     /**
-     * This constructor constructs a unit out of another defined unit, e.g. an are is 100 m^2.
+     * @param forceUnit the unit of force for the energy unit, e.g., Newton
+     * @param lengthUnit the unit of length for the energy unit, e.g., m
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     */
+    public <F extends ForceUnit<M, L, T>> EnergyUnit(final F forceUnit, final L lengthUnit,
+            final String nameKey, final String abbreviationKey)
+    {
+        super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit());
+        this.massUnit = forceUnit.getMassUnit();
+        this.lengthUnit = forceUnit.getLengthUnit();
+        this.timeUnit = forceUnit.getTimeUnit();
+    }
+
+    /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> referenceUnit,
+    public EnergyUnit(final String nameKey, final String abbreviationKey, final EnergyUnit<M, L, T> referenceUnit,
             final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
+        this.timeUnit = referenceUnit.getTimeUnit();
+    }
+
+    /**
+     * @return massUnit
+     */
+    public M getMassUnit()
+    {
+        return this.massUnit;
     }
 
     /**
@@ -113,6 +113,14 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
     public L getLengthUnit()
     {
         return this.lengthUnit;
+    }
+
+    /**
+     * @return timeUnit
+     */
+    public T getTimeUnit()
+    {
+        return this.timeUnit;
     }
 
 }
