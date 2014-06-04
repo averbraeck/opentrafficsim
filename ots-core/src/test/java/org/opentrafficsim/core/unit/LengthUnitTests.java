@@ -34,7 +34,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 4, 2014 <br>
- * @author Peter Knoppers
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
 {
@@ -43,29 +43,34 @@ public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup() {
+    public void setup()
+    {
         DefaultLocale.setLocale(new Locale("en"));
     }
-    
+
     /**
      * Verify the result of some get*Key methods
      */
     @Test
-    public void lengthKeys() {
+    public void lengthKeys()
+    {
         checkKeys(LengthUnit.METER, "LengthUnit.meter", "LengthUnit.m");
     }
-    
+
     /**
      * Verify conversion factors, English names and abbreviations
      */
     @Test
-    public void conversions () {
+    public void conversions()
+    {
         checkUnitRatioNameAndAbbreviation(LengthUnit.METER, 1, 0.00000001, "meter", "m");
         checkUnitRatioNameAndAbbreviation(LengthUnit.MILE, 1609, 0.5, "mile", "mi");
         checkUnitRatioNameAndAbbreviation(LengthUnit.CENTIMETER, 0.01, 0.000000001, "centimeter", "cm");
         // Check two conversions between non-standard units
-        assertEquals("one MILE is about 160900 CENTIMETER", 160900, LengthUnit.MILE.getMultiplicationFactorTo(LengthUnit.CENTIMETER), 50);
-        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215, LengthUnit.CENTIMETER.getMultiplicationFactorTo(LengthUnit.MILE), 0.000000002);
+        assertEquals("one MILE is about 160900 CENTIMETER", 160900,
+                LengthUnit.MILE.getMultiplicationFactorTo(LengthUnit.CENTIMETER), 50);
+        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215,
+                LengthUnit.CENTIMETER.getMultiplicationFactorTo(LengthUnit.MILE), 0.000000002);
         // Check conversion factor to standard unit for all remaining distance units
         checkUnitRatioNameAndAbbreviation(LengthUnit.DECIMETER, 0.1, 0.000000001, "decimeter", "dm");
         checkUnitRatioNameAndAbbreviation(LengthUnit.DEKAMETER, 10, 0.0000001, "dekameter", "dam");
@@ -76,12 +81,13 @@ public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
         checkUnitRatioNameAndAbbreviation(LengthUnit.NAUTICAL_MILE, 1852, 0.5, "nautical mile", "NM");
         checkUnitRatioNameAndAbbreviation(LengthUnit.YARD, 0.9144, 0.00005, "yard", "yd");
     }
-    
+
     /**
      * Verify that we can create our own length unit
      */
     @Test
-    public void createLengthUnit() {
+    public void createLengthUnit()
+    {
         LengthUnit myLU = new LengthUnit("LengthUnit.Furlong", "LengthUnit.fl", 201.16800);
         assertTrue("Can create a new LengthUnit", null != myLU);
         checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");

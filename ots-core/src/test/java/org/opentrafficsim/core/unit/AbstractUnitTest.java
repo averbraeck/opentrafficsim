@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
  * possibility of such damage.
  * 
  * @version Jun 4, 2014 <br>
- * @author Peter Knoppers
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Make the test specific for this sub class of Unit
  */
 public abstract class AbstractUnitTest<U extends Unit<U>>
@@ -51,7 +51,8 @@ public abstract class AbstractUnitTest<U extends Unit<U>>
      * @param expectedAbbreviation String; expected abbreviation in the resources
      */
     protected void checkUnitRatioNameAndAbbreviation(U u, double expectedRatio, double precision, String expectedName, String expectedAbbreviation) {
-        assertEquals(String.format("one %s is about %f s", u.getNameKey(), expectedRatio), expectedRatio, u.getConversionFactorToStandardUnit(), precision);
+        assertEquals(String.format("one %s is about %f s", u.getNameKey(), expectedRatio), expectedRatio,
+                u.getConversionFactorToStandardUnit(), precision);
         assertEquals(String.format("Name of %s is %s", u.getNameKey(), expectedName), expectedName, u.getName());
         assertEquals(String.format("Abbreviation of %s is %s", u.getNameKey(), expectedAbbreviation), expectedAbbreviation, u.getAbbreviation());
     }
