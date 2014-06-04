@@ -1,5 +1,9 @@
 package org.opentrafficsim.core.unit;
 
+import java.util.Locale;
+
+import org.opentrafficsim.core.locale.DefaultLocale;
+
 /**
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX
@@ -84,5 +88,8 @@ public class Test
         System.out.println(AccelerationUnit.MILE_PER_HOUR_2.getMultiplicationFactorTo(AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(AccelerationUnit.KNOT_PER_SECOND.getMultiplicationFactorTo(AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(AccelerationUnit.MILE_PER_HOUR_PER_SECOND.getMultiplicationFactorTo(AccelerationUnit.METER_PER_SECOND_2));
+        System.out.println();
+        DefaultLocale.setLocale(new Locale("fr"));
+        System.out.println(LengthUnit.METER.getName());
     }
 }
