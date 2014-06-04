@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Standard plane angle unit. Several conversion factors have been taken from <a
+ * Standard mass units. Several conversion factors have been taken from <a
  * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
@@ -29,46 +29,31 @@ package org.opentrafficsim.core.unit;
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
+public class MassUnit extends Unit<MassUnit>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** radian */
-    public static final AnglePlaneUnit RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", 1.0);
+    /** kilogram */
+    public static final MassUnit KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", 1.0);
 
-    /** degree */
-    public static final AnglePlaneUnit DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg",
-            Math.PI / 180.0);
+    /** gram */
+    public static final MassUnit GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", 0.001);
 
-    /** arcminute */
-    public static final AnglePlaneUnit ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute",
-            "AnglePlaneUnit.arcmin", DEGREE, 1.0 / 60.0);
+    /** pound */
+    public static final MassUnit POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", 0.45359237);
 
-    /** arcsecond */
-    public static final AnglePlaneUnit ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.arcsecond",
-            "AnglePlaneUnit.arcsec", DEGREE, 1.0 / 3600.0);
-
-    /** grad */
-    public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
-            2.0 * Math.PI / 400.0);
-
-    /** arcminute */
-    public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
-            "AnglePlaneUnit.centesimal_arcmin", GRAD, 1.0 / 100.0);
-
-    /** arcsecond */
-    public static final AnglePlaneUnit CENTESIMAL_ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond",
-            "AnglePlaneUnit.centesimal_arcsec", GRAD, 1.0 / 10000.0);
+    /** long ton = 2240 lb */
+    // public static final MassUnit LONG_TON = new MassUnit("MassUnit.yard", "MassUnit.yd", FOOT, 3.0);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToRadian multiply by this number to convert to meters
+     * @param convertToMeter multiply by this number to convert to meters
      */
-    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final double convertToRadian)
+    public MassUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
     {
-        super(nameKey, abbreviationKey, convertToRadian);
+        super(nameKey, abbreviationKey, convertToMeter);
     }
 
     /**
@@ -77,8 +62,8 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final AnglePlaneUnit referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public MassUnit(String nameKey, String abbreviationKey, MassUnit referenceUnit,
+            double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
     }
