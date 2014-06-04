@@ -89,23 +89,14 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
      * This constructor constructs a unit out of another defined unit, e.g. an are is 100 m^2.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param standardUnit the snatdard unit from which this unit is derived with a conversion factor
-     * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
+     * @param referenceUnit the unit to convert from
+     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> standardUnit,
-            final double conversionFactorToStandardUnit)
+    public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> referenceUnit,
+            final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, conversionFactorToStandardUnit);
-        this.lengthUnit = standardUnit.getLengthUnit();
-    }
-
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
-     */
-    @Override
-    public double getMultiplicationFactorTo(AreaUnit<L> unit)
-    {
-        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        this.lengthUnit = referenceUnit.getLengthUnit();
     }
 
     /**

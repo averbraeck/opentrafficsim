@@ -83,7 +83,7 @@ public class VolumeUnit<L extends LengthUnit> extends Unit<VolumeUnit<L>>
 
     /** ounce (fluid US) */
     public static final VolumeUnit<LengthUnit> OUNCE_US_FLUID = new VolumeUnit<LengthUnit>("VolumeUnit.US_fl_oz",
-            "VolumeUnit.ounce_(fluid_US)", CUBIC_INCH, 231.0);
+            "VolumeUnit.ounce_(fluid_US)", GALLON_US_FLUID, 1.0 / 128.0);
 
     /** ounce (fluid imperial) */
     public static final VolumeUnit<LengthUnit> OUNCE_IMP_FLUID = new VolumeUnit<LengthUnit>("VolumeUnit.fl_oz_(imp)",
@@ -117,26 +117,17 @@ public class VolumeUnit<L extends LengthUnit> extends Unit<VolumeUnit<L>>
     }
 
     /**
-     * This constructor constructs a unit out of another defined unit, e.g. an are is 100 m^3.
+     * This constructor constructs a unit out of another defined unit, e.g. quart is 0.25 gallon.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param standardUnit the snatdard unit from which this unit is derived with a conversion factor
-     * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
+     * @param referenceUnit the unit to convert from
+     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public VolumeUnit(final String nameKey, final String abbreviationKey, final VolumeUnit<L> standardUnit,
-            final double conversionFactorToStandardUnit)
+    public VolumeUnit(final String nameKey, final String abbreviationKey, final VolumeUnit<L> referenceUnit,
+            final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, conversionFactorToStandardUnit);
-        this.lengthUnit = standardUnit.getLengthUnit();
-    }
-
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
-     */
-    @Override
-    public double getMultiplicationFactorTo(VolumeUnit<L> unit)
-    {
-        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+        super(nameKey, abbreviationKey, conversionFactorToReferenceUnit);
+        this.lengthUnit = referenceUnit.getLengthUnit();
     }
 
     /**

@@ -32,7 +32,7 @@ package org.opentrafficsim.core.unit;
 public class LengthUnit extends Unit<LengthUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140603L;
+    private static final long serialVersionUID = 20140604L;
 
     /** meter */
     public static final LengthUnit METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", 1.0);
@@ -47,10 +47,10 @@ public class LengthUnit extends Unit<LengthUnit>
     public static final LengthUnit DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", 0.1);
 
     /** decameter */
-    public static final LengthUnit DEKAMETER = new LengthUnit("LengthUnit.dekameter", "LengthUnit.dam", 0.1);
+    public static final LengthUnit DEKAMETER = new LengthUnit("LengthUnit.dekameter", "LengthUnit.dam", 10.0);
 
     /** hectometer */
-    public static final LengthUnit HECTOMETER = new LengthUnit("LengthUnit.hectometer", "LengthUnit.hm", 0.1);
+    public static final LengthUnit HECTOMETER = new LengthUnit("LengthUnit.hectometer", "LengthUnit.hm", 100.0);
 
     /** kilometer */
     public static final LengthUnit KILOMETER = new LengthUnit("LengthUnit.kilometer", "LengthUnit.km", 1000.0);
@@ -59,16 +59,16 @@ public class LengthUnit extends Unit<LengthUnit>
     public static final LengthUnit FOOT = new LengthUnit("LengthUnit.foot", "LengthUnit.ft", 0.3048);
 
     /** inch (international) = 2.54 cm = 1/36 yd = 1/12 ft */
-    public static final LengthUnit INCH = new LengthUnit("LengthUnit.inch", "LengthUnit.in", 0.0254);
+    public static final LengthUnit INCH = new LengthUnit("LengthUnit.inch", "LengthUnit.in", FOOT, 1.0 / 12.0);
 
     /** mile International) = 5280 ft = 1760 yd */
-    public static final LengthUnit MILE = new LengthUnit("LengthUnit.mile", "LengthUnit.mi", 1609.344);
+    public static final LengthUnit MILE = new LengthUnit("LengthUnit.mile", "LengthUnit.mi", FOOT, 5280.0);
 
     /** nautical mile (international) = 1852 m */
     public static final LengthUnit NAUTICAL_MILE = new LengthUnit("LengthUnit.nauticalMile", "LengthUnit.NM", 1852.0);
 
     /** yard (international) = 0.9144 m = 3 ft = 36 in */
-    public static final LengthUnit YARD = new LengthUnit("LengthUnit.yard", "LengthUnit.yd", 0.9144);
+    public static final LengthUnit YARD = new LengthUnit("LengthUnit.yard", "LengthUnit.yd", FOOT, 3.0);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
@@ -81,11 +81,15 @@ public class LengthUnit extends Unit<LengthUnit>
     }
 
     /**
-     * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param referenceUnit the unit to convert from
+     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    @Override
-    public double getMultiplicationFactorTo(LengthUnit unit)
+    public LengthUnit(String nameKey, String abbreviationKey, LengthUnit referenceUnit,
+            double conversionFactorToReferenceUnit)
     {
-        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
     }
+
 }
