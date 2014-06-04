@@ -27,15 +27,15 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <D> the distance unit type
+ * @param <L> the length unit type
  */
-public class AreaUnit<D extends LengthUnit> extends Unit<AreaUnit<D>>
+public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
 {
     /** */
     private static final long serialVersionUID = 20140603L;
 
-    /** the unit of distance for the area unit, e.g., meter */
-    private final D distanceUnit;
+    /** the unit of length for the area unit, e.g., meter */
+    private final L lengthUnit;
 
     /** m^2 */
     public static final AreaUnit<LengthUnit> SQUARE_METER = new AreaUnit<LengthUnit>(LengthUnit.METER,
@@ -47,11 +47,11 @@ public class AreaUnit<D extends LengthUnit> extends Unit<AreaUnit<D>>
 
     /** are */
     public static final AreaUnit<LengthUnit> ARE = new AreaUnit<LengthUnit>("AreaUnit.are", "AreaUnit.a", SQUARE_METER,
-            100);
+            100.0);
 
     /** hectare */
     public static final AreaUnit<LengthUnit> HECTARE = new AreaUnit<LengthUnit>("AreaUnit.hectare", "AreaUnit.ha", ARE,
-            100);
+            100.0);
 
     /** mile^2 */
     public static final AreaUnit<LengthUnit> SQUARE_MILE = new AreaUnit<LengthUnit>(LengthUnit.MILE,
@@ -69,16 +69,20 @@ public class AreaUnit<D extends LengthUnit> extends Unit<AreaUnit<D>>
     public static final AreaUnit<LengthUnit> SQUARE_YARD = new AreaUnit<LengthUnit>(LengthUnit.YARD,
             "AreaUnit.square_yard", "AreaUnit.yd^2");
 
+    /** acre (international) */
+    public static final AreaUnit<LengthUnit> ACRE = new AreaUnit<LengthUnit>("AreaUnit.acre", "AreaUnit.ac", SQUARE_YARD,
+            4840.0);
+
     /**
-     * @param distanceUnit the unit of distance for the speed unit, e.g., meter
+     * @param lengthUnit the unit of length for the speed unit, e.g., meter
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public AreaUnit(final D distanceUnit, final String nameKey, final String abbreviationKey)
+    public AreaUnit(final L lengthUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, distanceUnit.getConversionFactorToStandardUnit()
-                * distanceUnit.getConversionFactorToStandardUnit());
-        this.distanceUnit = distanceUnit;
+        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit());
+        this.lengthUnit = lengthUnit;
     }
 
     /**
@@ -88,28 +92,28 @@ public class AreaUnit<D extends LengthUnit> extends Unit<AreaUnit<D>>
      * @param standardUnit the snatdard unit from which this unit is derived with a conversion factor
      * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
      */
-    public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<D> standardUnit,
+    public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> standardUnit,
             final double conversionFactorToStandardUnit)
     {
         super(nameKey, abbreviationKey, conversionFactorToStandardUnit);
-        this.distanceUnit = standardUnit.getDistanceUnit();
+        this.lengthUnit = standardUnit.getLengthUnit();
     }
 
     /**
      * @see org.opentrafficsim.core.unit.Unit#getMultiplicationFactorTo(org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public double getMultiplicationFactorTo(AreaUnit<D> unit)
+    public double getMultiplicationFactorTo(AreaUnit<L> unit)
     {
         return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
     }
 
     /**
-     * @return distanceUnit
+     * @return lengthUnit
      */
-    public D getDistanceUnit()
+    public L getLengthUnit()
     {
-        return this.distanceUnit;
+        return this.lengthUnit;
     }
 
 }
