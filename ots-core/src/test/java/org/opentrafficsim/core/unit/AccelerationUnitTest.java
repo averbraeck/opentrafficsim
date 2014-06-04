@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Locale;
 
@@ -35,55 +35,57 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 4, 2014 <br>
  * @author Peter Knoppers
+ * @param <L> Length unit underlying acceleration
+ * @param <T> Time unit underlying acceleration
  */
-public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
+public class AccelerationUnitTest<L extends LengthUnit, T extends TimeUnit> extends
+        AbstractUnitTest<AccelerationUnit<?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup() {
+    public void setup()
+    {
         DefaultLocale.setLocale(new Locale("en"));
     }
-    
+
     /**
      * Verify the result of some get*Key methods
      */
     @Test
-    public void lengthKeys() {
-        checkKeys(LengthUnit.METER, "LengthUnit.meter", "LengthUnit.m");
+    public void timeKeys()
+    {
+        checkKeys(AccelerationUnit.INCH_PER_SECOND_2, "AccelerationUnit.inch_per_second_squared",
+                "AccelerationUnit.in/s^2");
     }
-    
+
     /**
      * Verify conversion factors, English names and abbreviations
      */
     @Test
-    public void conversions () {
-        checkUnitRatioNameAndAbbreviation(LengthUnit.METER, 1, 0.00000001, "meter", "m");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.MILE, 1609, 0.5, "mile", "mi");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.CENTIMETER, 0.01, 0.000000001, "centimeter", "cm");
+    public void conversions()
+    {
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.METER_PER_SECOND_2, 1, 0.00000001,
+                "meter per second squared", "m/s^2");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.KM_PER_HOUR_2, 1 / 3.6 / 3600, 0.0005,
+                "km per hour squared", "km/h^2");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.FOOT_PER_SECOND_2, 0.3048, 0.00001,
+                "foot per second squared", "ft/s^2");
         // Check two conversions between non-standard units
-        assertEquals("one MILE is about 160900 CENTIMETER", 160900, LengthUnit.MILE.getMultiplicationFactorTo(LengthUnit.CENTIMETER), 50);
-        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215, LengthUnit.CENTIMETER.getMultiplicationFactorTo(LengthUnit.MILE), 0.000000002);
-        // Check conversion factor to standard unit for all remaining distance units
-        checkUnitRatioNameAndAbbreviation(LengthUnit.DECIMETER, 0.1, 0.000000001, "decimeter", "dm");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.DEKAMETER, 10, 0.0000001, "dekameter", "dam");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.HECTOMETER, 100, 0.000001, "hectometer", "hm");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.KILOMETER, 1000, 0.00001, "kilometer", "km");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.FOOT, 0.3048, 0.000001, "foot", "ft");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.INCH, 0.0254, 0.0000001, "inch", "in");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.NAUTICAL_MILE, 1852, 0.5, "nautical mile", "NM");
-        checkUnitRatioNameAndAbbreviation(LengthUnit.YARD, 0.9144, 0.00005, "yard", "yd");
-    }
-    
-    /**
-     * Verify that we can create our own length unit
-     */
-    @Test
-    public void createLengthUnit() {
-        LengthUnit myLU = new LengthUnit("LengthUnit.Furlong", "LengthUnit.fl", 201.16800);
-        assertTrue("Can create a new LengthUnit", null != myLU);
-        checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
+        assertEquals("one FOOT PER SECOND PER SECOND is ??? KM PER HOUR PER HOUR", 3950.208,
+                AccelerationUnit.FOOT_PER_SECOND_2.getMultiplicationFactorTo(AccelerationUnit.KM_PER_HOUR_2), 0.01);
+        // Check conversion factor to standard unit for all remaining acceleration units
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.INCH_PER_SECOND_2, 0.0254, 0.0000000001,
+                "inch per second squared", "in/s^2");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_2, 0.000124177778, 0.0000000001,
+                "mile per hour squared", "mi/h^2");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_SECOND_2, 1609.344, 0.000001,
+                "mile per second squared", "mi/s^2");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.KNOT_PER_SECOND, 0.514444444, 0.000001, "knot per second",
+                "kt/s");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_PER_SECOND, 0.44704, 0.00000001,
+                "mile per hour per second", "mi/h/s");
     }
 }
