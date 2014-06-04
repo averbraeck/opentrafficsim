@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
+ * This class retrieves the names for the unit keys for different languages (locales or resource bundles). The locale
+ * definitions can be found in the src/main/resources folder.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -32,10 +34,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 3, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public class LocaleUnit
 {
