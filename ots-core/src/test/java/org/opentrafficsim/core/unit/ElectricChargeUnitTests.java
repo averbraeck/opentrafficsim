@@ -33,13 +33,13 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 4, 2014 <br>
- * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Length unit underlying acceleration
- * @param <T> Time unit underlying acceleration
+ * @version Jun 5, 2014 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <EC> Electrical Current unit underlying this Electrical Charge unit
+ * @param <T> Time unit underlying this Electrical Charge unit
  */
-public class AccelerationUnitTest<L extends LengthUnit, T extends TimeUnit> extends
-        AbstractUnitTest<AccelerationUnit<?, ?>>
+public class ElectricChargeUnitTests<EC extends ElectricCurrentUnit, T extends TimeUnit> extends
+        AbstractUnitTest<ElectricChargeUnit<?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -57,8 +57,7 @@ public class AccelerationUnitTest<L extends LengthUnit, T extends TimeUnit> exte
     @Test
     public void accelerationKeys()
     {
-        checkKeys(AccelerationUnit.INCH_PER_SECOND_2, "AccelerationUnit.inch_per_second_squared",
-                "AccelerationUnit.in/s^2");
+        checkKeys(ElectricChargeUnit.COULOMB, "ElectricChargeUnit.coulomb", "ElectricChargeUnit.C");
     }
 
     /**
@@ -67,34 +66,13 @@ public class AccelerationUnitTest<L extends LengthUnit, T extends TimeUnit> exte
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.METER_PER_SECOND_2, 1, 0.00000001,
-                "meter per second squared", "m/s^2");
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.KM_PER_HOUR_2, 1 / 3.6 / 3600, 0.0005,
-                "km per hour squared", "km/h^2");
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.FOOT_PER_SECOND_2, 0.3048, 0.00001,
-                "foot per second squared", "ft/s^2");
+        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.COULOMB, 1, 0.00000001, "coulomb", "C");
+        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.MILLIAMPERE_HOUR, 3.6, 0.000000005, "milliampere hour",
+                "mAh");
+        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
         // Check two conversions between non-standard units
-        assertEquals("one FOOT PER SECOND PER SECOND is ??? KM PER HOUR PER HOUR", 3950.208,
-                AccelerationUnit.FOOT_PER_SECOND_2.getMultiplicationFactorTo(AccelerationUnit.KM_PER_HOUR_2), 0.01);
-        // Check conversion factor to standard unit for all remaining acceleration units
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.INCH_PER_SECOND_2, 0.0254, 0.0000000001,
-                "inch per second squared", "in/s^2");
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_2, 0.000124177778, 0.0000000001,
-                "mile per hour squared", "mi/h^2");
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_SECOND_2, 1609.344, 0.000001,
-                "mile per second squared", "mi/s^2");
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.KNOT_PER_SECOND, 0.514444444, 0.000001, "knot per second",
-                "kt/s");
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_PER_SECOND, 0.44704, 0.00000001,
-                "mile per hour per second", "mi/h/s");
+        assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
+                ElectricChargeUnit.MILLIAMPERE_HOUR.getMultiplicationFactorTo(ElectricChargeUnit.FARADAY), 0.000000001);
     }
 
-    /**
-     * Check that g is about 9.8 m/s/s
-     */
-    @Test
-    public void gravityConstant()
-    {
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.STANDARD_GRAVITY, 9.8, 0.02, "standard gravity", "g");
-    }
 }
