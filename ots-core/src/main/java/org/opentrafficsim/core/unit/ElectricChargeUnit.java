@@ -56,6 +56,12 @@ public class ElectricChargeUnit<EC extends ElectricCurrentUnit, T extends TimeUn
     public static final ElectricChargeUnit<ElectricCurrentUnit, TimeUnit> FARADAY =
             new ElectricChargeUnit<ElectricCurrentUnit, TimeUnit>("ElectricChargeUnit.faraday", "ElectricChargeUnit.F",
                     COULOMB, 96485.3383);
+    
+    /** atomic unit of charge */
+    public static final ElectricChargeUnit<ElectricCurrentUnit, TimeUnit> ATOMIC_UNIT =
+            new ElectricChargeUnit<ElectricCurrentUnit, TimeUnit>("ElectricChargeUnit.atomic_unit_of_charge",
+                    "ElectricChargeUnit.au",
+                    COULOMB, 1.602176462E-19);
 
     /**
      * @param electricCurrentUnit the unit of electric current for the electric charge unit, e.g., meter
