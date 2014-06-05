@@ -39,7 +39,7 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
 
     /** square degree */
     public static final AngleSolidUnit SQUARE_DEGREE = new AngleSolidUnit("AngleSolidUnit.square_degree",
-            "AngleSolidUnit.sq_deg", (180.0 / Math.PI) * (180.0 / Math.PI));
+            "AngleSolidUnit.sq_deg", (Math.PI / 180.0) * (Math.PI / 180.0));
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
