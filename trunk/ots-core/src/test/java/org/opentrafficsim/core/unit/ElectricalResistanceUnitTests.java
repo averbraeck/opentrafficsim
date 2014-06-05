@@ -35,11 +35,13 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <EC> Electrical Current unit underlying this Electrical Charge unit
- * @param <T> Time unit underlying this Electrical Charge unit
+ * @param <M> Mass unit underlying this Electrical Potential unit
+ * @param <L> Length unit underlying this Electrical Potential unit
+ * @param <EC> Electrical Current unit underlying this Electrical Potential unit
+ * @param <T> Time unit underlying this Electrical Potential unit
  */
-public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T extends TimeUnit> extends
-        AbstractUnitTest<ElectricalChargeUnit<?, ?>>
+public class ElectricalResistanceUnitTests<M extends MassUnit, L extends LengthUnit, EC extends ElectricalCurrentUnit, T extends TimeUnit>
+        extends AbstractUnitTest<ElectricalResistanceUnit<?, ?, ?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -55,9 +57,9 @@ public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T exten
      * Verify the result of some get*Key methods
      */
     @Test
-    public void accelerationKeys()
+    public void electricalResistanceKeys()
     {
-        checkKeys(ElectricalChargeUnit.COULOMB, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C");
+        checkKeys(ElectricalResistanceUnit.OHM, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm");
     }
 
     /**
@@ -66,16 +68,13 @@ public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T exten
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.COULOMB, 1, 0.00000001, "coulomb", "C");
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.MILLIAMPERE_HOUR, 3.6, 0.000000005, "milliampere hour",
-                "mAh");
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
+        checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.OHM, 1, 0.00000001, "ohm", "\u03A9");
+        checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.MILLIOHM, 0.001, 0.00000000001, "milliohm",
+                "m\u03A9");
+        checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.KILOOHM, 1000, 0.005, "kilo-ohm", "k\u03A9");
         // Check two conversions between non-standard units
-        assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
-                ElectricalChargeUnit.MILLIAMPERE_HOUR.getMultiplicationFactorTo(ElectricalChargeUnit.FARADAY), 0.000000001);
-        // Test the other units
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25, "atomic unit of charge",
-                "au");
+        assertEquals("one KILOOHM is 1000000 MILLIOHM", 1000000,
+                ElectricalResistanceUnit.KILOOHM.getMultiplicationFactorTo(ElectricalResistanceUnit.MILLIOHM), 0.0001);
     }
 
 }
