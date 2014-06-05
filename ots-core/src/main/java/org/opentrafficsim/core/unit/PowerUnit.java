@@ -110,7 +110,7 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
             final String nameKey, final String abbreviationKey)
     {
         super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
-                * forceUnit.getConversionFactorToStandardUnit() / timeUnit.conversionFactorToStandardUnit);
+                * forceUnit.getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit());
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
