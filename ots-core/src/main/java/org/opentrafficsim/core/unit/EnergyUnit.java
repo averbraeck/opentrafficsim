@@ -96,9 +96,9 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     public EnergyUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorFromStandardUnit()
-                * lengthUnit.getConversionFactorFromStandardUnit() * lengthUnit.getConversionFactorFromStandardUnit()
-                / (timeUnit.getConversionFactorFromStandardUnit() * timeUnit.getConversionFactorFromStandardUnit()));
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
+                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -113,8 +113,8 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     public <F extends ForceUnit<M, L, T>> EnergyUnit(final L lengthUnit, final F forceUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, forceUnit.getConversionFactorFromStandardUnit()
-                * lengthUnit.getConversionFactorFromStandardUnit());
+        super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit());
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -123,13 +123,14 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public EnergyUnit(final String nameKey, final String abbreviationKey, final EnergyUnit<M, L, T> referenceUnit,
-            final double conversionFactorFromReferenceUnit)
+            final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

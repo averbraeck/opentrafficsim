@@ -3,10 +3,9 @@ package org.opentrafficsim.core.unit;
 import java.io.Serializable;
 
 /**
- * All units are internally <u>stored</u> as a standard unit with conversion factor. This means that e.g., meter is
- * stored with offset 0.0 and conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This
- * means that if we have a length or distance, it is internally stored in meters, and if we want to display it in
- * kilometers, we have to <u>multiply<u> by the conversion factor.
+ * All units are internally <u>stored</u> relative to a standard unit with conversion factor. This means that e.g., a
+ * meter is stored with conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This means
+ * that if we want to display a meter as kilometers, we have to <u>divide<u> by the conversion factor.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -46,17 +45,17 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private final String abbreviationKey;
 
     /** multiply by this number to convert to the standard (e.g., SI) unit */
-    private final double conversionFactorFromStandardUnit;
+    private final double conversionFactorToStandardUnit;
 
     /**
      * Build a unit with a conversion factor to the standard (preferably SI) unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param conversionFactorFromStandardUnit multiply by this number to convert from the standard (e.g., SI) unit
+     * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
      */
-    public Unit(final String nameKey, final String abbreviationKey, final double conversionFactorFromStandardUnit)
+    public Unit(final String nameKey, final String abbreviationKey, final double conversionFactorToStandardUnit)
     {
-        this.conversionFactorFromStandardUnit = conversionFactorFromStandardUnit;
+        this.conversionFactorToStandardUnit = conversionFactorToStandardUnit;
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
     }
@@ -65,14 +64,15 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * Build a unit with a conversion factor to another unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public Unit(final String nameKey, final String abbreviationKey, final U referenceUnit,
-            final double conversionFactorFromReferenceUnit)
+            final double conversionFactorToReferenceUnit)
     {
-        this(nameKey, abbreviationKey, referenceUnit.getConversionFactorFromStandardUnit()
-                * conversionFactorFromReferenceUnit);
+        this(nameKey, abbreviationKey, referenceUnit.getConversionFactorToStandardUnit()
+                * conversionFactorToReferenceUnit);
     }
 
     /**
@@ -108,20 +108,11 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     }
 
     /**
-     * @return conversionFactorFromStandardUnit. Multiply by this number to convert from the standard (e.g., SI) unit
+     * @return conversionFactorToStandardUnit. Multiply by this number to convert to the standard (e.g., SI) unit
      */
-    public double getConversionFactorFromStandardUnit()
+    public double getConversionFactorToStandardUnit()
     {
-        return this.conversionFactorFromStandardUnit;
-    }
-
-    /**
-     * @param unit the unit to convert to
-     * @return multiplication factor to convert value to other unit
-     */
-    public double getMultiplicationFactorTo(U unit)
-    {
-        return this.conversionFactorFromStandardUnit / unit.getConversionFactorFromStandardUnit();
+        return this.conversionFactorToStandardUnit;
     }
 
     /**

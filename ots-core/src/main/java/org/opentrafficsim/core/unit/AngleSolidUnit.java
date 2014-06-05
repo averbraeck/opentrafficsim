@@ -44,23 +44,24 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertFromSteradian multiply by this number to convert from steradians
+     * @param convertToSteradian multiply by this number to convert to steradians
      */
-    public AngleSolidUnit(final String nameKey, final String abbreviationKey, final double convertFromSteradian)
+    public AngleSolidUnit(final String nameKey, final String abbreviationKey, final double convertToSteradian)
     {
-        super(nameKey, abbreviationKey, convertFromSteradian);
+        super(nameKey, abbreviationKey, convertToSteradian);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param referenceUnit the unit to convert to
+      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public AngleSolidUnit(final String nameKey, final String abbreviationKey, final AngleSolidUnit referenceUnit,
-            final double conversionFactorFromReferenceUnit)
+            final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
     }
 
 }

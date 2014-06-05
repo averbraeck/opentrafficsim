@@ -73,7 +73,7 @@ public class LengthUnit extends Unit<LengthUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToMeter multiply by this number to convert to meters
+     * @param convertToMeter multiply a value in this unit by the conversion factor to convert to meters
      */
     public LengthUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
     {
@@ -83,13 +83,14 @@ public class LengthUnit extends Unit<LengthUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public LengthUnit(String nameKey, String abbreviationKey, LengthUnit referenceUnit,
-            double conversionFactorFromReferenceUnit)
+            double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
     }
 
 }

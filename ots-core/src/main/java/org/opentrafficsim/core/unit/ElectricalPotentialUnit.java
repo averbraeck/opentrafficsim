@@ -78,11 +78,11 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     public ElectricalPotentialUnit(final M massUnit, final L lengthUnit, final EC electricalCurrentUnit,
             final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorFromStandardUnit()
-                * lengthUnit.getConversionFactorFromStandardUnit()
-                * lengthUnit.getConversionFactorFromStandardUnit()
-                / (electricalCurrentUnit.getConversionFactorFromStandardUnit() * Math.pow(
-                        timeUnit.getConversionFactorFromStandardUnit(), 3.0)));
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit()
+                / (electricalCurrentUnit.getConversionFactorToStandardUnit() * Math.pow(
+                        timeUnit.getConversionFactorToStandardUnit(), 3.0)));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.electricalCurrentUnit = electricalCurrentUnit;
@@ -99,8 +99,8 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     public <P extends PowerUnit<M, L, T>> ElectricalPotentialUnit(final P powerUnit, final EC electricalCurrentUnit,
             final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, powerUnit.getConversionFactorFromStandardUnit()
-                / electricalCurrentUnit.getConversionFactorFromStandardUnit());
+        super(nameKey, abbreviationKey, powerUnit.getConversionFactorToStandardUnit()
+                / electricalCurrentUnit.getConversionFactorToStandardUnit());
         this.massUnit = powerUnit.getMassUnit();
         this.lengthUnit = powerUnit.getLengthUnit();
         this.electricalCurrentUnit = electricalCurrentUnit;
@@ -110,13 +110,14 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public ElectricalPotentialUnit(final String nameKey, final String abbreviationKey,
-            final ElectricalPotentialUnit<M, L, EC, T> referenceUnit, final double conversionFactorFromReferenceUnit)
+            final ElectricalPotentialUnit<M, L, EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
