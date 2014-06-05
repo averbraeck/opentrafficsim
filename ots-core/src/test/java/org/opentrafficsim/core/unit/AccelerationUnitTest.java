@@ -75,7 +75,7 @@ public class AccelerationUnitTest<L extends LengthUnit, T extends TimeUnit> exte
                 "foot per second squared", "ft/s^2");
         // Check two conversions between non-standard units
         assertEquals("one FOOT PER SECOND PER SECOND is ??? KM PER HOUR PER HOUR", 3950.208,
-                AccelerationUnit.FOOT_PER_SECOND_2.getMultiplicationFactorTo(AccelerationUnit.KM_PER_HOUR_2), 0.01);
+                getMultiplicationFactorTo(AccelerationUnit.FOOT_PER_SECOND_2, AccelerationUnit.KM_PER_HOUR_2), 0.01);
         // Check conversion factor to standard unit for all remaining acceleration units
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.INCH_PER_SECOND_2, 0.0254, 0.0000000001,
                 "inch per second squared", "in/s^2");

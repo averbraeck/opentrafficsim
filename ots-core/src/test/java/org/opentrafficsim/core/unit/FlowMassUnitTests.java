@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
@@ -34,11 +35,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> Mass unit underlying this density unit
- * @param <L> Length unit underlying this density unit
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <M> Mass unit underlying this Flow Mass unit
+ * @param <T> Time unit underlying this Flow Mass unit
  */
-public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends AbstractUnitTest<DensityUnit<?, ?>>
+public class FlowMassUnitTests<M extends MassUnit, T extends TimeUnit> extends AbstractUnitTest<FlowMassUnit<?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,9 +55,9 @@ public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends 
      * Verify the result of some get*Key methods
      */
     @Test
-    public void densityKeys()
+    public void flowMassKeys()
     {
-        checkKeys(DensityUnit.KG_PER_METER_3, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
+        checkKeys(FlowMassUnit.KILOGRAM_PER_SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s");
     }
 
     /**
@@ -65,13 +66,26 @@ public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends 
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001,
-                "kilogram per cubic meter", "kg/m^3");
-        checkUnitRatioNameAndAbbreviation(DensityUnit.GRAM_PER_CENTIMETER_3, 1000, 0.0001, "gram per cubic centimeter",
-                "g/cm^3");
-        // Check two conversions between two units
-        assertEquals("one KG PER CUBIC METER is 0.0001 GRAM PER CUBIC CENTIMETER", 0.001,
-                getMultiplicationFactorTo(DensityUnit.KG_PER_METER_3, DensityUnit.GRAM_PER_CENTIMETER_3), 0.000000001);
+        checkUnitRatioNameAndAbbreviation(FlowMassUnit.KILOGRAM_PER_SECOND, 1, 0.000001, "kilogram per second", "kg/s");
+        checkUnitRatioNameAndAbbreviation(FlowMassUnit.POUND_PER_SECOND, 0.453592, 0.0001, "pound per second", "lb/s");
+        // Check two conversions between non-standard units
+        assertEquals("one KILOGRAM PER SECOND is about 2.205 POUND PER SECOND", 2.205,
+                getMultiplicationFactorTo(FlowMassUnit.KILOGRAM_PER_SECOND, FlowMassUnit.POUND_PER_SECOND), 0.0005);
+        assertEquals("one POUND PER SECOND is about CCCXXXX KILOGRAM PER SECOND", 0.453592,
+                getMultiplicationFactorTo(FlowMassUnit.POUND_PER_SECOND, FlowMassUnit.KILOGRAM_PER_SECOND), 0.0001);
+    }
+
+    /**
+     * Verify that we can create our own angle unit
+     */
+    @Test
+    public void createAngleUnit()
+    {
+        FlowMassUnit<MassUnit, TimeUnit> myFMU =
+                new FlowMassUnit<MassUnit, TimeUnit>("FlowMassUnit.WaterDropsPerHour", "FlowMassUnit.wdpu",
+                        FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
+        assertTrue("Can create a new FlowMassUnit", null != myFMU);
+        checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");
     }
 
 }

@@ -68,9 +68,9 @@ public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
         checkUnitRatioNameAndAbbreviation(LengthUnit.CENTIMETER, 0.01, 0.000000001, "centimeter", "cm");
         // Check two conversions between non-standard units
         assertEquals("one MILE is about 160900 CENTIMETER", 160900,
-                LengthUnit.MILE.getMultiplicationFactorTo(LengthUnit.CENTIMETER), 50);
+                getMultiplicationFactorTo(LengthUnit.MILE, LengthUnit.CENTIMETER), 50);
         assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215,
-                LengthUnit.CENTIMETER.getMultiplicationFactorTo(LengthUnit.MILE), 0.000000002);
+                getMultiplicationFactorTo(LengthUnit.CENTIMETER, LengthUnit.MILE), 0.000000002);
         // Check conversion factor to standard unit for all remaining distance units
         checkUnitRatioNameAndAbbreviation(LengthUnit.DECIMETER, 0.1, 0.000000001, "decimeter", "dm");
         checkUnitRatioNameAndAbbreviation(LengthUnit.DEKAMETER, 10, 0.0000001, "dekameter", "dam");

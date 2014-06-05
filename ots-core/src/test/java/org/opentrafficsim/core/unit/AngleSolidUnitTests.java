@@ -65,12 +65,12 @@ public class AngleSolidUnitTests extends AbstractUnitTest<AngleSolidUnit>
     public void conversions()
     {
         checkUnitRatioNameAndAbbreviation(AngleSolidUnit.STERADIAN, 1, 0.0000001, "steradian", "sr");
-        checkUnitRatioNameAndAbbreviation(AngleSolidUnit.SQUARE_DEGREE, 1. / 3283, 0.0001, "square degree", "sq.deg");
+        checkUnitRatioNameAndAbbreviation(AngleSolidUnit.SQUARE_DEGREE, 3283, 0.5, "square degree", "sq.deg");
         // Check two conversions between units
-        assertEquals("one STERADIAN is about 3283 SQUARE_DEGREE", 3283,
-                AngleSolidUnit.STERADIAN.getMultiplicationFactorTo(AngleSolidUnit.SQUARE_DEGREE), 0.5);
-        assertEquals("one SQUARE_DEGREE is about 0.00003046 STERADIAN", 0.0003046,
-                AngleSolidUnit.SQUARE_DEGREE.getMultiplicationFactorTo(AngleSolidUnit.STERADIAN), 0.000001);
+        assertEquals("one STERADIAN is about 0.00003046 SQUARE_DEGREE", 1. / 3283,
+                getMultiplicationFactorTo(AngleSolidUnit.STERADIAN, AngleSolidUnit.SQUARE_DEGREE), 0.0001);
+        assertEquals("one SQUARE_DEGREE is about 3283 STERADIAN", 3283,
+                getMultiplicationFactorTo(AngleSolidUnit.SQUARE_DEGREE, AngleSolidUnit.STERADIAN), 0.5);
     }
 
     /**
