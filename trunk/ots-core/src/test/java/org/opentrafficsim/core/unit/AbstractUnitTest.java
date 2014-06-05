@@ -67,5 +67,16 @@ public abstract class AbstractUnitTest<U extends Unit<U>>
         assertEquals("unit key", expectedNameKey, u.getNameKey());
         assertEquals("abbreviation key", expectedAbbreviationKey, u.getAbbreviationKey());
     }
+    
+    /**
+     * @param fromUnit U; the unit to convert from
+     * @param toUnit U; the unit to convert to
+     * @return multiplication factor to convert a value from fromUnit to toUnit
+     */
+    public double getMultiplicationFactorTo(U fromUnit, U toUnit)
+    {
+        return fromUnit.getConversionFactorToStandardUnit() / toUnit.getConversionFactorToStandardUnit();
+    }
+
 
 }

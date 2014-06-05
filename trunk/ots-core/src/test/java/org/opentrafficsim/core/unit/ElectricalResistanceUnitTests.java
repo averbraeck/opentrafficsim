@@ -74,7 +74,7 @@ public class ElectricalResistanceUnitTests<M extends MassUnit, L extends LengthU
         checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.KILOOHM, 1000, 0.005, "kilo-ohm", "k\u03A9");
         // Check two conversions between non-standard units
         assertEquals("one KILOOHM is 1000000 MILLIOHM", 1000000,
-                ElectricalResistanceUnit.KILOOHM.getMultiplicationFactorTo(ElectricalResistanceUnit.MILLIOHM), 0.0001);
+                getMultiplicationFactorTo(ElectricalResistanceUnit.KILOOHM, ElectricalResistanceUnit.MILLIOHM), 0.0001);
     }
 
 }

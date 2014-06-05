@@ -34,11 +34,13 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> Mass unit underlying this density unit
- * @param <L> Length unit underlying this density unit
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <M> Mass unit underlying this Energy unit
+ * @param <L> Length unit underlying this Energy unit
+ * @param <T> Time unit underlying this Energy unit
  */
-public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends AbstractUnitTest<DensityUnit<?, ?>>
+public class EnergyUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends
+        AbstractUnitTest<EnergyUnit<?, ?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,9 +56,9 @@ public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends 
      * Verify the result of some get*Key methods
      */
     @Test
-    public void densityKeys()
+    public void energyKeys()
     {
-        checkKeys(DensityUnit.KG_PER_METER_3, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
+        checkKeys(EnergyUnit.JOULE, "EnergyUnit.Joule", "EnergyUnit.J");
     }
 
     /**
@@ -65,13 +67,23 @@ public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends 
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001,
-                "kilogram per cubic meter", "kg/m^3");
-        checkUnitRatioNameAndAbbreviation(DensityUnit.GRAM_PER_CENTIMETER_3, 1000, 0.0001, "gram per cubic centimeter",
-                "g/cm^3");
-        // Check two conversions between two units
-        assertEquals("one KG PER CUBIC METER is 0.0001 GRAM PER CUBIC CENTIMETER", 0.001,
-                getMultiplicationFactorTo(DensityUnit.KG_PER_METER_3, DensityUnit.GRAM_PER_CENTIMETER_3), 0.000000001);
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.JOULE, 1, 0.00000001, "Joule", "J");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.FOOT_POUND_FORCE, 1.35581794833, 0.0000005, "foot pound-force",
+                "ft.lbf");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.BTU_ISO, 1054.5, 0.001, "British thermal unit (ISO)", "BTU(ISO)");
+        // Check two conversions between non-standard units
+        assertEquals("one FOOT POUND FORCE is about 0.0013 BTU ISO", 0.0013,
+                getMultiplicationFactorTo(EnergyUnit.FOOT_POUND_FORCE, EnergyUnit.BTU_ISO), 0.0001);
+        // Check conversion factor to standard unit for all remaining acceleration units
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.INCH_POUND_FORCE, 0.112984829, 0.000000001, "inch pound-force",
+                "in.lbf");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.BTU_IT, 1055.05585262, 0.000001,
+                "British thermal unit (International Table)", "BTU(IT)");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.CALORIE_IT, 4.1868, 0.00005, "calorie (International Table)",
+                "cal(IT)");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.KILOCALORIE, 4186.8, 0.05, "kilocalorie", "kcal");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.KILOWATT_HOUR, 3600000, 0.1, "kilowatt-hour",
+                "kW.h");
     }
 
 }

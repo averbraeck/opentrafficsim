@@ -74,7 +74,7 @@ public class ElectricalPotentialUnitTests<M extends MassUnit, L extends LengthUn
         checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.KILOVOLT, 1000, 0.005, "kilovolt", "kV");
         // Check two conversions between non-standard units
         assertEquals("one KILOVOLT is 1000000 MILLIVOLT", 1000000,
-                ElectricalPotentialUnit.KILOVOLT.getMultiplicationFactorTo(ElectricalPotentialUnit.MILLIVOLT), 0.0001);
+                getMultiplicationFactorTo(ElectricalPotentialUnit.KILOVOLT, ElectricalPotentialUnit.MILLIVOLT), 0.0001);
     }
 
 }

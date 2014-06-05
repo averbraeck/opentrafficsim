@@ -64,18 +64,18 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.DEGREE, 1 / 57.2957795, 0.000001, "degree", "\u00b0");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.DEGREE, 2 * Math.PI / 360, 0.000001, "degree", "\u00b0");
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.ARCMINUTE, 2 * Math.PI / 360 / 60, 0.0001, "arcminute", "\'");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.GRAD, 2 * Math.PI / 400, 0.001, "gradian", "grad");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.GRAD, 2 * Math.PI / 400, 0.00001, "gradian", "grad");
         // Check two conversions between non-standard units
         assertEquals("one GRAD is about 54 ARCMINUTE", 54,
-                AnglePlaneUnit.GRAD.getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE), 0.0001);
-        assertEquals("one ARCMINUTE is about 0.04185 GRAD", 0.0185,
-                AnglePlaneUnit.ARCMINUTE.getMultiplicationFactorTo(AnglePlaneUnit.GRAD), 0.0001);
+                getMultiplicationFactorTo(AnglePlaneUnit.GRAD, AnglePlaneUnit.ARCMINUTE), 0.5);
+        assertEquals("one ARCMINUTE is about 0.0185 GRAD", 0.0185,
+                getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE, AnglePlaneUnit.GRAD), 0.0001);
         // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 2 * Math.PI / 400 / 100, 0.00000001,
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 0.00015708, 0.0000001,
                 "centesimal arcminute", "\'");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 2 * Math.PI / 400 / 10000, 0.0000000001,
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1,
                 "centesimal arcsecond", "\"");
     }
 
@@ -86,7 +86,7 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
     public void createAngleUnit()
     {
         AnglePlaneUnit myAPU = new AnglePlaneUnit("AngleUnit.point", "AngleUnit.pt", 0.19634954085);
-        assertTrue("Can create a new TimeUnit", null != myAPU);
+        assertTrue("Can create a new AngleUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }
 

@@ -68,8 +68,8 @@ public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUn
         checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_KM, 1000000, 0.05, "square kilometer", "km^2");
         checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_MILE, 2589990, 2, "square mile", "mi^2");
         // Check two conversions between non-standard units
-        assertEquals("one SQUARE MILE is 640 ACRE", 640, AreaUnit.SQUARE_MILE.getMultiplicationFactorTo(AreaUnit.ACRE),
-                0.1);
+        assertEquals("one SQUARE MILE is 640 ACRE", 640,
+                getMultiplicationFactorTo(AreaUnit.SQUARE_MILE, AreaUnit.ACRE), 0.1);
         // Check conversion factor to standard unit for all remaining area units
         checkUnitRatioNameAndAbbreviation(AreaUnit.ARE, 100, 0.001, "are", "a");
         checkUnitRatioNameAndAbbreviation(AreaUnit.HECTARE, 10000, 0.01, "hectare", "ha");
