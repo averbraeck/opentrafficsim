@@ -88,8 +88,8 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
      */
     public AreaUnit(final L lengthUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorFromStandardUnit()
+                * lengthUnit.getConversionFactorFromStandardUnit());
         this.lengthUnit = lengthUnit;
     }
 
@@ -98,12 +98,12 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
     }
 

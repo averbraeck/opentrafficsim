@@ -57,8 +57,8 @@ public class FlowMassUnit<M extends MassUnit, T extends TimeUnit> extends Unit<F
      */
     public FlowMassUnit(final M massUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorFromStandardUnit()
+                / timeUnit.getConversionFactorFromStandardUnit());
         this.massUnit = massUnit;
         this.timeUnit = timeUnit;
     }
@@ -67,12 +67,12 @@ public class FlowMassUnit<M extends MassUnit, T extends TimeUnit> extends Unit<F
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public FlowMassUnit(final String nameKey, final String abbreviationKey, final FlowMassUnit<M, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

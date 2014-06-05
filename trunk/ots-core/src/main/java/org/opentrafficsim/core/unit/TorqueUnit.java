@@ -75,9 +75,9 @@ public class TorqueUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     public TorqueUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
-                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorFromStandardUnit()
+                * lengthUnit.getConversionFactorFromStandardUnit() * lengthUnit.getConversionFactorFromStandardUnit()
+                / (timeUnit.getConversionFactorFromStandardUnit() * timeUnit.getConversionFactorFromStandardUnit()));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -92,8 +92,8 @@ public class TorqueUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     public <F extends ForceUnit<M, L, T>> TorqueUnit(final F forceUnit, final L lengthUnit,
             final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, forceUnit.getConversionFactorFromStandardUnit()
+                * lengthUnit.getConversionFactorFromStandardUnit());
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -103,12 +103,12 @@ public class TorqueUnit<M extends MassUnit, L extends LengthUnit, T extends Time
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public TorqueUnit(final String nameKey, final String abbreviationKey, final TorqueUnit<M, L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

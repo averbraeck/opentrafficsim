@@ -37,9 +37,21 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
     public static final ElectricalCurrentUnit AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere",
             "ElectricalCurrentUnit.A", 1.0);
 
+    /** nanoampere */
+    public static final ElectricalCurrentUnit NANOAMPERE = new ElectricalCurrentUnit(
+            "ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", 1.0E-6);
+
+    /** microampere */
+    public static final ElectricalCurrentUnit MICROAMPERE = new ElectricalCurrentUnit(
+            "ElectricalCurrentUnit.microampere", "ElectricalCurrentUnit.muA", 1.0E-6);
+
     /** milliampere */
     public static final ElectricalCurrentUnit MILLIAMPERE = new ElectricalCurrentUnit(
             "ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", 0.001);
+
+    /** kiloampere */
+    public static final ElectricalCurrentUnit KILOAMPERE = new ElectricalCurrentUnit(
+            "ElectricalCurrentUnit.kiloampere", "ElectricalCurrentUnit.kA", 1000.0);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
@@ -55,12 +67,12 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public ElectricalCurrentUnit(String nameKey, String abbreviationKey, ElectricalCurrentUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+            double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
     }
 
 }

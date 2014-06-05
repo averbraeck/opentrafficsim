@@ -127,10 +127,10 @@ public class PressureUnit<M extends MassUnit, L extends LengthUnit, T extends Ti
             final String abbreviationKey)
     {
         super(nameKey, abbreviationKey,
-                massUnit.getConversionFactorToStandardUnit()
-                        / (lengthUnit.getConversionFactorToStandardUnit()
-                                * timeUnit.getConversionFactorToStandardUnit() * timeUnit
-                                    .getConversionFactorToStandardUnit()));
+                massUnit.getConversionFactorFromStandardUnit()
+                        / (lengthUnit.getConversionFactorFromStandardUnit()
+                                * timeUnit.getConversionFactorFromStandardUnit() * timeUnit
+                                    .getConversionFactorFromStandardUnit()));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -145,8 +145,8 @@ public class PressureUnit<M extends MassUnit, L extends LengthUnit, T extends Ti
     public <F extends ForceUnit<M, L, T>, A extends AreaUnit<L>> PressureUnit(final F forceUnit, final A areaUnit,
             final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
-                / areaUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, forceUnit.getConversionFactorFromStandardUnit()
+                / areaUnit.getConversionFactorFromStandardUnit());
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -156,12 +156,12 @@ public class PressureUnit<M extends MassUnit, L extends LengthUnit, T extends Ti
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public PressureUnit(final String nameKey, final String abbreviationKey, final PressureUnit<M, L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
