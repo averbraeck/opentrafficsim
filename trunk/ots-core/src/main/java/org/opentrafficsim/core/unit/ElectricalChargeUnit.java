@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Units for electric charge.
+ * Units for electrical charge.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -27,54 +27,54 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <EC> the electric current unit type
+ * @param <EC> the electrical current unit type
  * @param <T> the time unit type
  */
-public class ElectricChargeUnit<EC extends ElectricCurrentUnit, T extends TimeUnit> extends
-        Unit<ElectricChargeUnit<EC, T>>
+public class ElectricalChargeUnit<EC extends ElectricalCurrentUnit, T extends TimeUnit> extends
+        Unit<ElectricalChargeUnit<EC, T>>
 {
     /** */
     private static final long serialVersionUID = 20140603L;
 
-    /** the unit of electric current, e.g., Ampere */
-    private final EC electricCurrentUnit;
+    /** the unit of electrical current, e.g., Ampere */
+    private final EC electricalCurrentUnit;
 
     /** the unit of time, e.g., second */
     private final T timeUnit;
 
     /** Coulomb = A.s */
-    public static final ElectricChargeUnit<ElectricCurrentUnit, TimeUnit> COULOMB =
-            new ElectricChargeUnit<ElectricCurrentUnit, TimeUnit>(ElectricCurrentUnit.AMPERE, TimeUnit.SECOND,
-                    "ElectricChargeUnit.coulomb", "ElectricChargeUnit.C");
+    public static final ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit> COULOMB =
+            new ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit>(ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND,
+                    "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C");
 
     /** milliampere hour */
-    public static final ElectricChargeUnit<ElectricCurrentUnit, TimeUnit> MILLIAMPERE_HOUR =
-            new ElectricChargeUnit<ElectricCurrentUnit, TimeUnit>(ElectricCurrentUnit.MILLIAMPERE, TimeUnit.HOUR,
-                    "ElectricChargeUnit.milliampere_hour", "ElectricChargeUnit.mAh");
+    public static final ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit> MILLIAMPERE_HOUR =
+            new ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit>(ElectricalCurrentUnit.MILLIAMPERE, TimeUnit.HOUR,
+                    "ElectricalChargeUnit.milliampere_hour", "ElectricalChargeUnit.mAh");
 
     /** Faraday */
-    public static final ElectricChargeUnit<ElectricCurrentUnit, TimeUnit> FARADAY =
-            new ElectricChargeUnit<ElectricCurrentUnit, TimeUnit>("ElectricChargeUnit.faraday", "ElectricChargeUnit.F",
+    public static final ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit> FARADAY =
+            new ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit>("ElectricalChargeUnit.faraday", "ElectricalChargeUnit.F",
                     COULOMB, 96485.3383);
     
     /** atomic unit of charge */
-    public static final ElectricChargeUnit<ElectricCurrentUnit, TimeUnit> ATOMIC_UNIT =
-            new ElectricChargeUnit<ElectricCurrentUnit, TimeUnit>("ElectricChargeUnit.atomic_unit_of_charge",
-                    "ElectricChargeUnit.au",
+    public static final ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit> ATOMIC_UNIT =
+            new ElectricalChargeUnit<ElectricalCurrentUnit, TimeUnit>("ElectricalChargeUnit.atomic_unit_of_charge",
+                    "ElectricalChargeUnit.au",
                     COULOMB, 1.602176462E-19);
 
     /**
-     * @param electricCurrentUnit the unit of electric current for the electric charge unit, e.g., meter
-     * @param timeUnit the unit of time for the electric charge unit, e.g., second
+     * @param electricalCurrentUnit the unit of electrical current for the electrical charge unit, e.g., meter
+     * @param timeUnit the unit of time for the electrical charge unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public ElectricChargeUnit(final EC electricCurrentUnit, final T timeUnit, final String nameKey,
+    public ElectricalChargeUnit(final EC electricalCurrentUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, electricCurrentUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, electricalCurrentUnit.getConversionFactorToStandardUnit()
                 * timeUnit.getConversionFactorToStandardUnit());
-        this.electricCurrentUnit = electricCurrentUnit;
+        this.electricalCurrentUnit = electricalCurrentUnit;
         this.timeUnit = timeUnit;
     }
 
@@ -84,20 +84,20 @@ public class ElectricChargeUnit<EC extends ElectricCurrentUnit, T extends TimeUn
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public ElectricChargeUnit(final String nameKey, final String abbreviationKey,
-            final ElectricChargeUnit<EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
+    public ElectricalChargeUnit(final String nameKey, final String abbreviationKey,
+            final ElectricalChargeUnit<EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
-        this.electricCurrentUnit = referenceUnit.getElectricCurrentUnit();
+        this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }
 
     /**
-     * @return electricCurrentUnit
+     * @return electricalCurrentUnit
      */
-    public EC getElectricCurrentUnit()
+    public EC getElectricalCurrentUnit()
     {
-        return this.electricCurrentUnit;
+        return this.electricalCurrentUnit;
     }
 
     /**

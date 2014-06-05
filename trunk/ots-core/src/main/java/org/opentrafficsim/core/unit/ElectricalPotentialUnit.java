@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * The units of electric potential (voltage).
+ * The units of electrical potential (voltage).
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -29,81 +29,81 @@ package org.opentrafficsim.core.unit;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <M> the mass unit type (e.g, kg)
  * @param <L> the length unit type (e.g., m)
- * @param <EC> the electric current unit type (e.g., A)
+ * @param <EC> the electrical current unit type (e.g., A)
  * @param <T> the time unit type (e.g., s)
  */
-public class ElectricPotentialUnit<M extends MassUnit, L extends LengthUnit, EC extends ElectricCurrentUnit, T extends TimeUnit>
-        extends Unit<ElectricPotentialUnit<M, L, EC, T>>
+public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, EC extends ElectricalCurrentUnit, T extends TimeUnit>
+        extends Unit<ElectricalPotentialUnit<M, L, EC, T>>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** the unit of mass for the electric potential difference (voltage) unit, e.g., kilogram */
+    /** the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram */
     private final M massUnit;
 
-    /** the unit of length for the electric potential difference (voltage) unit, e.g., meters */
+    /** the unit of length for the electrical potential difference (voltage) unit, e.g., meters */
     private final L lengthUnit;
 
-    /** the unit of electric current for the electric potential difference (voltage) unit, e.g., Ampere */
-    private final EC electricCurrentUnit;
+    /** the unit of electrical current for the electrical potential difference (voltage) unit, e.g., Ampere */
+    private final EC electricalCurrentUnit;
 
-    /** the unit of time for the electric potential difference (voltage) unit, e.g., second */
+    /** the unit of time for the electrical potential difference (voltage) unit, e.g., second */
     private final T timeUnit;
 
     /** Volt */
-    public static final ElectricPotentialUnit<MassUnit, LengthUnit, ElectricCurrentUnit, TimeUnit> VOLT =
-            new ElectricPotentialUnit<MassUnit, LengthUnit, ElectricCurrentUnit, TimeUnit>(MassUnit.KILOGRAM,
-                    LengthUnit.METER, ElectricCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricPotentialUnit.volt",
-                    "ElectricPotentialUnit.V");
+    public static final ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> VOLT =
+            new ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(MassUnit.KILOGRAM,
+                    LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalPotentialUnit.volt",
+                    "ElectricalPotentialUnit.V");
 
     /** millivolt */
-    public static final ElectricPotentialUnit<MassUnit, LengthUnit, ElectricCurrentUnit, TimeUnit> MILLIVOLT =
-            new ElectricPotentialUnit<MassUnit, LengthUnit, ElectricCurrentUnit, TimeUnit>("ElectricPotentialUnit.millivolt",
-                    "ElectricPotentialUnit.mV", VOLT, 0.001);
+    public static final ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> MILLIVOLT =
+            new ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
+                    "ElectricalPotentialUnit.millivolt", "ElectricalPotentialUnit.mV", VOLT, 0.001);
 
     /** kilovolt */
-    public static final ElectricPotentialUnit<MassUnit, LengthUnit, ElectricCurrentUnit, TimeUnit> KILOVOLT =
-            new ElectricPotentialUnit<MassUnit, LengthUnit, ElectricCurrentUnit, TimeUnit>("ElectricPotentialUnit.kilovolt",
-                    "ElectricPotentialUnit.kV", VOLT, 1000.0);
+    public static final ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> KILOVOLT =
+            new ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
+                    "ElectricalPotentialUnit.kilovolt", "ElectricalPotentialUnit.kV", VOLT, 1000.0);
 
     /**
-     * @param massUnit the unit of mass for the electric potential difference (voltage) unit, e.g., kilogram
-     * @param lengthUnit the unit of length for the electric potential difference (voltage) unit, e.g., meter
-     * @param electricCurrentUnit the unit of electric current for the electric potential difference (voltage) unit,
-     *            e.g., Ampere
-     * @param timeUnit the unit of time for the electric potential difference (voltage) unit, e.g., second
+     * @param massUnit the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram
+     * @param lengthUnit the unit of length for the electrical potential difference (voltage) unit, e.g., meter
+     * @param electricalCurrentUnit the unit of electrical current for the electrical potential difference (voltage)
+     *            unit, e.g., Ampere
+     * @param timeUnit the unit of time for the electrical potential difference (voltage) unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public ElectricPotentialUnit(final M massUnit, final L lengthUnit, final EC electricCurrentUnit, final T timeUnit,
-            final String nameKey, final String abbreviationKey)
+    public ElectricalPotentialUnit(final M massUnit, final L lengthUnit, final EC electricalCurrentUnit,
+            final T timeUnit, final String nameKey, final String abbreviationKey)
     {
         super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
-                / (electricCurrentUnit.getConversionFactorToStandardUnit() * Math.pow(
+                / (electricalCurrentUnit.getConversionFactorToStandardUnit() * Math.pow(
                         timeUnit.getConversionFactorToStandardUnit(), 3.0)));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
-        this.electricCurrentUnit = electricCurrentUnit;
+        this.electricalCurrentUnit = electricalCurrentUnit;
         this.timeUnit = timeUnit;
     }
 
     /**
-     * @param powerUnit the unit of power for the electric potential difference (voltage) unit, e.g., Watt
-     * @param electricCurrentUnit the unit of electric current for the electric potential difference (voltage) unit,
-     *            e.g., Ampere
+     * @param powerUnit the unit of power for the electrical potential difference (voltage) unit, e.g., Watt
+     * @param electricalCurrentUnit the unit of electrical current for the electrical potential difference (voltage)
+     *            unit, e.g., Ampere
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      */
-    public <P extends PowerUnit<M, L, T>> ElectricPotentialUnit(final P powerUnit, final EC electricCurrentUnit,
+    public <P extends PowerUnit<M, L, T>> ElectricalPotentialUnit(final P powerUnit, final EC electricalCurrentUnit,
             final String nameKey, final String abbreviationKey)
     {
         super(nameKey, abbreviationKey, powerUnit.getConversionFactorToStandardUnit()
-                / electricCurrentUnit.getConversionFactorToStandardUnit());
+                / electricalCurrentUnit.getConversionFactorToStandardUnit());
         this.massUnit = powerUnit.getMassUnit();
         this.lengthUnit = powerUnit.getLengthUnit();
-        this.electricCurrentUnit = electricCurrentUnit;
+        this.electricalCurrentUnit = electricalCurrentUnit;
         this.timeUnit = powerUnit.getTimeUnit();
     }
 
@@ -113,13 +113,13 @@ public class ElectricPotentialUnit<M extends MassUnit, L extends LengthUnit, EC 
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public ElectricPotentialUnit(final String nameKey, final String abbreviationKey,
-            final ElectricPotentialUnit<M, L, EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
+    public ElectricalPotentialUnit(final String nameKey, final String abbreviationKey,
+            final ElectricalPotentialUnit<M, L, EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
-        this.electricCurrentUnit = referenceUnit.getElectricCurrentUnit();
+        this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }
 
@@ -140,11 +140,11 @@ public class ElectricPotentialUnit<M extends MassUnit, L extends LengthUnit, EC 
     }
 
     /**
-     * @return electricCurrentUnit
+     * @return electricalCurrentUnit
      */
-    public EC getElectricCurrentUnit()
+    public EC getElectricalCurrentUnit()
     {
-        return this.electricCurrentUnit;
+        return this.electricalCurrentUnit;
     }
 
     /**

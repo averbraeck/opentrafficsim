@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Standard units for electric current.
+ * Standard units for electrical current.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -28,25 +28,25 @@ package org.opentrafficsim.core.unit;
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ElectricCurrentUnit extends Unit<ElectricCurrentUnit>
+public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
     /** Ampere */
-    public static final ElectricCurrentUnit AMPERE = new ElectricCurrentUnit("ElectricCurrentUnit.ampere",
-            "ElectricCurrentUnit.A", 1.0);
+    public static final ElectricalCurrentUnit AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere",
+            "ElectricalCurrentUnit.A", 1.0);
 
     /** milliampere */
-    public static final ElectricCurrentUnit MILLIAMPERE = new ElectricCurrentUnit("ElectricCurrentUnit.milliampere",
-            "ElectricCurrentUnit.mA", 0.001);
+    public static final ElectricalCurrentUnit MILLIAMPERE = new ElectricalCurrentUnit(
+            "ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", 0.001);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param convertToAmpere multiply by this number to convert to ampere
      */
-    public ElectricCurrentUnit(final String nameKey, final String abbreviationKey, final double convertToAmpere)
+    public ElectricalCurrentUnit(final String nameKey, final String abbreviationKey, final double convertToAmpere)
     {
         super(nameKey, abbreviationKey, convertToAmpere);
     }
@@ -57,7 +57,7 @@ public class ElectricCurrentUnit extends Unit<ElectricCurrentUnit>
      * @param referenceUnit the unit to convert from
      * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
      */
-    public ElectricCurrentUnit(String nameKey, String abbreviationKey, ElectricCurrentUnit referenceUnit,
+    public ElectricalCurrentUnit(String nameKey, String abbreviationKey, ElectricalCurrentUnit referenceUnit,
             double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
