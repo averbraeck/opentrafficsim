@@ -39,7 +39,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 
     /** degree */
     public static final AnglePlaneUnit DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg",
-            180.0 / Math.PI);
+            Math.PI / 180.0);
 
     /** arcminute */
     public static final AnglePlaneUnit ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute",
@@ -51,7 +51,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 
     /** grad */
     public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
-            400.0 / (2.0 * Math.PI));
+            2.0 * Math.PI / 400.0);
 
     /** centesimal arcminute */
     public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
