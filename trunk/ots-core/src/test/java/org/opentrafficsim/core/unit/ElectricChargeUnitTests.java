@@ -73,6 +73,9 @@ public class ElectricChargeUnitTests<EC extends ElectricCurrentUnit, T extends T
         // Check two conversions between non-standard units
         assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
                 ElectricChargeUnit.MILLIAMPERE_HOUR.getMultiplicationFactorTo(ElectricChargeUnit.FARADAY), 0.000000001);
+        // Test the other units
+        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25, "atomic unit of charge",
+                "au");
     }
 
 }
