@@ -72,8 +72,8 @@ public class ElectricalChargeUnit<EC extends ElectricalCurrentUnit, T extends Ti
     public ElectricalChargeUnit(final EC electricalCurrentUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, electricalCurrentUnit.getConversionFactorToStandardUnit()
-                * timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, electricalCurrentUnit.getConversionFactorFromStandardUnit()
+                * timeUnit.getConversionFactorFromStandardUnit());
         this.electricalCurrentUnit = electricalCurrentUnit;
         this.timeUnit = timeUnit;
     }
@@ -82,12 +82,12 @@ public class ElectricalChargeUnit<EC extends ElectricalCurrentUnit, T extends Ti
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public ElectricalChargeUnit(final String nameKey, final String abbreviationKey,
-            final ElectricalChargeUnit<EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
+            final ElectricalChargeUnit<EC, T> referenceUnit, final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

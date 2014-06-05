@@ -59,8 +59,8 @@ public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<
      */
     public DensityUnit(final M massUnit, final L lengthUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
-                / Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0));
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorFromStandardUnit()
+                / Math.pow(lengthUnit.getConversionFactorFromStandardUnit(), 3.0));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
     }
@@ -69,12 +69,12 @@ public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public DensityUnit(final String nameKey, final String abbreviationKey, final DensityUnit<M, L> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
     }

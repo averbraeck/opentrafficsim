@@ -58,23 +58,23 @@ public class MassUnit extends Unit<MassUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToMeter multiply by this number to convert to meters
+     * @param convertFromKilogram multiply by this number to convert from kilograms
      */
-    public MassUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
+    public MassUnit(final String nameKey, final String abbreviationKey, final double convertFromKilogram)
     {
-        super(nameKey, abbreviationKey, convertToMeter);
+        super(nameKey, abbreviationKey, convertFromKilogram);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public MassUnit(String nameKey, String abbreviationKey, MassUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+            double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
     }
 
 }

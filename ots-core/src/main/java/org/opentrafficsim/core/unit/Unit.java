@@ -3,6 +3,10 @@ package org.opentrafficsim.core.unit;
 import java.io.Serializable;
 
 /**
+ * All units are internally <u>stored</u> as a standard unit with conversion factor. This means that e.g., meter is
+ * stored with offset 0.0 and conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This
+ * means that if we have a length or distance, it is internally stored in meters, and if we want to display it in
+ * kilometers, we have to <u>multiply<u> by the conversion factor.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -42,17 +46,17 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private final String abbreviationKey;
 
     /** multiply by this number to convert to the standard (e.g., SI) unit */
-    private final double conversionFactorToStandardUnit;
+    private final double conversionFactorFromStandardUnit;
 
     /**
      * Build a unit with a conversion factor to the standard (preferably SI) unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
+     * @param conversionFactorFromStandardUnit multiply by this number to convert from the standard (e.g., SI) unit
      */
-    public Unit(final String nameKey, final String abbreviationKey, final double conversionFactorToStandardUnit)
+    public Unit(final String nameKey, final String abbreviationKey, final double conversionFactorFromStandardUnit)
     {
-        this.conversionFactorToStandardUnit = conversionFactorToStandardUnit;
+        this.conversionFactorFromStandardUnit = conversionFactorFromStandardUnit;
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
     }
@@ -62,13 +66,13 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public Unit(final String nameKey, final String abbreviationKey, final U referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        this(nameKey, abbreviationKey, referenceUnit.getConversionFactorToStandardUnit()
-                * conversionFactorToReferenceUnit);
+        this(nameKey, abbreviationKey, referenceUnit.getConversionFactorFromStandardUnit()
+                * conversionFactorFromReferenceUnit);
     }
 
     /**
@@ -104,11 +108,11 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     }
 
     /**
-     * @return conversionFactorToStandardUnit. Multiply by this number to convert to the standard (e.g., SI) unit
+     * @return conversionFactorFromStandardUnit. Multiply by this number to convert from the standard (e.g., SI) unit
      */
-    public double getConversionFactorToStandardUnit()
+    public double getConversionFactorFromStandardUnit()
     {
-        return this.conversionFactorToStandardUnit;
+        return this.conversionFactorFromStandardUnit;
     }
 
     /**
@@ -117,7 +121,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     public double getMultiplicationFactorTo(U unit)
     {
-        return this.conversionFactorToStandardUnit / unit.getConversionFactorToStandardUnit();
+        return this.conversionFactorFromStandardUnit / unit.getConversionFactorFromStandardUnit();
     }
 
     /**

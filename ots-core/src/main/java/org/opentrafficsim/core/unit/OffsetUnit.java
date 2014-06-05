@@ -1,8 +1,16 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Standard length units. Several conversion factors have been taken from <a
- * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
+ * The OffsetUnit provides a unit where scales can have an offset, such as the temperature scale. When converting a
+ * value of such a unit into another unit: first bring back the unit to the base unit by subtracting the offset, then
+ * scale back to the base unit by dividing by the conversion factor, then multiply by the conversion factor of the
+ * target unit, and add the offset of the target unit.
+ * <p>
+ * By the way, all units are internally <u>stored</u> as a standard unit with an offset and a conversion factor. This
+ * means that e.g., Kelvin is stored with offset 0.0 and conversion factor 1.0, whereas degree Celcius is stored with
+ * offset -273.15 and conversion factor 1.0. This means that if we have a Temperature, it is stored in Kelvins, and if
+ * we want to display it in degree Celcius, we have to <u>multiply<u> by the conversion factor and <u>add</u> the
+ * offset.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -26,58 +34,30 @@ package org.opentrafficsim.core.unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version May 15, 2014 <br>
+ * @version Jun 5, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <U> the unit type
  */
-public class LengthUnit extends Unit<LengthUnit>
+public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140605L;
 
-    /** meter */
-    public static final LengthUnit METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", 1.0);
-
-    /** millimeter */
-    public static final LengthUnit MILLIMETER = new LengthUnit("LengthUnit.millimeter", "LengthUnit.mm", 0.001);
-
-    /** centimeter */
-    public static final LengthUnit CENTIMETER = new LengthUnit("LengthUnit.centimeter", "LengthUnit.cm", 0.01);
-
-    /** decimeter */
-    public static final LengthUnit DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", 0.1);
-
-    /** decameter */
-    public static final LengthUnit DEKAMETER = new LengthUnit("LengthUnit.dekameter", "LengthUnit.dam", 10.0);
-
-    /** hectometer */
-    public static final LengthUnit HECTOMETER = new LengthUnit("LengthUnit.hectometer", "LengthUnit.hm", 100.0);
-
-    /** kilometer */
-    public static final LengthUnit KILOMETER = new LengthUnit("LengthUnit.kilometer", "LengthUnit.km", 1000.0);
-
-    /** foot (international) = 0.3048 m = 1/3 yd = 12 inches */
-    public static final LengthUnit FOOT = new LengthUnit("LengthUnit.foot", "LengthUnit.ft", 0.3048);
-
-    /** inch (international) = 2.54 cm = 1/36 yd = 1/12 ft */
-    public static final LengthUnit INCH = new LengthUnit("LengthUnit.inch", "LengthUnit.in", FOOT, 1.0 / 12.0);
-
-    /** mile International) = 5280 ft = 1760 yd */
-    public static final LengthUnit MILE = new LengthUnit("LengthUnit.mile", "LengthUnit.mi", FOOT, 5280.0);
-
-    /** nautical mile (international) = 1852 m */
-    public static final LengthUnit NAUTICAL_MILE = new LengthUnit("LengthUnit.nauticalMile", "LengthUnit.NM", 1852.0);
-
-    /** yard (international) = 0.9144 m = 3 ft = 36 in */
-    public static final LengthUnit YARD = new LengthUnit("LengthUnit.yard", "LengthUnit.yd", FOOT, 3.0);
+    /** the offset that has to be taken into account for conversions */
+    private final double offsetFromStandardUnit;
 
     /**
+     * Build a unit with a conversion factor and an offset to the standard (preferably SI) unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToMeter multiply by this number to convert to meters
+     * @param conversionFactorFromStandardUnit multiply by this number to convert from the standard (e.g., SI) unit
+     * @param offsetFromStandardUnit the offset to add to convert from the standard (e.g., SI) unit
      */
-    public LengthUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
+    public OffsetUnit(final String nameKey, final String abbreviationKey,
+            final double conversionFactorFromStandardUnit, final double offsetFromStandardUnit)
     {
-        super(nameKey, abbreviationKey, convertToMeter);
+        super(nameKey, abbreviationKey, conversionFactorFromStandardUnit);
+        this.offsetFromStandardUnit = offsetFromStandardUnit;
     }
 
     /**
@@ -85,11 +65,21 @@ public class LengthUnit extends Unit<LengthUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
      * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param offsetFromStandardUnit the offset to add to convert from the standard (e.g., SI) unit
      */
-    public LengthUnit(String nameKey, String abbreviationKey, LengthUnit referenceUnit,
-            double conversionFactorFromReferenceUnit)
+    public OffsetUnit(final String nameKey, final String abbreviationKey, final U referenceUnit,
+            final double conversionFactorFromReferenceUnit, final double offsetFromStandardUnit)
     {
         super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        this.offsetFromStandardUnit = offsetFromStandardUnit;
+    }
+
+    /**
+     * @return offset
+     */
+    public double getOffset()
+    {
+        return this.offsetFromStandardUnit;
     }
 
 }

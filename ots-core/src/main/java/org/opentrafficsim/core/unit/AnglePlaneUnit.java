@@ -39,7 +39,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 
     /** degree */
     public static final AnglePlaneUnit DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg",
-            Math.PI / 180.0);
+            180.0 / Math.PI);
 
     /** arcminute */
     public static final AnglePlaneUnit ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute",
@@ -51,7 +51,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 
     /** grad */
     public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
-            2.0 * Math.PI / 400.0);
+            400.0 / (2.0 * Math.PI));
 
     /** centesimal arcminute */
     public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
@@ -64,23 +64,23 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToRadian multiply by this number to convert to meters
+     * @param convertFromRadian multiply by this number to convert from radians
      */
-    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final double convertToRadian)
+    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final double convertFromRadian)
     {
-        super(nameKey, abbreviationKey, convertToRadian);
+        super(nameKey, abbreviationKey, convertFromRadian);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final AnglePlaneUnit referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
     }
 
 }

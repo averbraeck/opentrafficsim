@@ -129,8 +129,8 @@ public class FlowVolumeUnit<L extends LengthUnit, T extends TimeUnit> extends Un
      */
     public FlowVolumeUnit(final L lengthUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0)
-                / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, Math.pow(lengthUnit.getConversionFactorFromStandardUnit(), 3.0)
+                / timeUnit.getConversionFactorFromStandardUnit());
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
@@ -144,8 +144,8 @@ public class FlowVolumeUnit<L extends LengthUnit, T extends TimeUnit> extends Un
     public <V extends VolumeUnit<L>> FlowVolumeUnit(final V volumeUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, volumeUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, volumeUnit.getConversionFactorFromStandardUnit()
+                / timeUnit.getConversionFactorFromStandardUnit());
         this.lengthUnit = volumeUnit.getLengthUnit();
         this.timeUnit = timeUnit;
     }
@@ -154,12 +154,12 @@ public class FlowVolumeUnit<L extends LengthUnit, T extends TimeUnit> extends Un
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public FlowVolumeUnit(final String nameKey, final String abbreviationKey, final FlowVolumeUnit<L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

@@ -66,6 +66,11 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
             new ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
                     "ElectricalResistanceUnit.kilo_ohm", "ElectricalResistanceUnit.k_ohm", OHM, 1000.0);
 
+    /** mega-ohm */
+    public static final ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> MEGAOHM =
+            new ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
+                    "ElectricalResistanceUnit.mega_ohm", "ElectricalResistanceUnit.M_ohm", OHM, 1.06);
+
     /**
      * @param massUnit the unit of mass for the electrical resistance unit, e.g., kilogram
      * @param lengthUnit the unit of length for the electrical resistance unit, e.g., meter
@@ -77,12 +82,12 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     public ElectricalResistanceUnit(final M massUnit, final L lengthUnit, final EC electricalCurrentUnit,
             final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit()
-                / (electricalCurrentUnit.getConversionFactorToStandardUnit()
-                        * electricalCurrentUnit.getConversionFactorToStandardUnit() * Math.pow(
-                        timeUnit.getConversionFactorToStandardUnit(), 3.0)));
+        super(nameKey, abbreviationKey, massUnit.getConversionFactorFromStandardUnit()
+                * lengthUnit.getConversionFactorFromStandardUnit()
+                * lengthUnit.getConversionFactorFromStandardUnit()
+                / (electricalCurrentUnit.getConversionFactorFromStandardUnit()
+                        * electricalCurrentUnit.getConversionFactorFromStandardUnit() * Math.pow(
+                        timeUnit.getConversionFactorFromStandardUnit(), 3.0)));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.electricalCurrentUnit = electricalCurrentUnit;
@@ -99,8 +104,8 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     public <EP extends ElectricalPotentialUnit<M, L, EC, T>> ElectricalResistanceUnit(final EP electricalPotentialUnit,
             final EC electricalCurrentUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, electricalPotentialUnit.getConversionFactorToStandardUnit()
-                / electricalCurrentUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, electricalPotentialUnit.getConversionFactorFromStandardUnit()
+                / electricalCurrentUnit.getConversionFactorFromStandardUnit());
         this.massUnit = electricalPotentialUnit.getMassUnit();
         this.lengthUnit = electricalPotentialUnit.getLengthUnit();
         this.electricalCurrentUnit = electricalCurrentUnit;
@@ -111,12 +116,12 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public ElectricalResistanceUnit(final String nameKey, final String abbreviationKey,
-            final ElectricalResistanceUnit<M, L, EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
+            final ElectricalResistanceUnit<M, L, EC, T> referenceUnit, final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();

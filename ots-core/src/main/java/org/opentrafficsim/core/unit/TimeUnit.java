@@ -54,23 +54,23 @@ public class TimeUnit extends Unit<TimeUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToSecond multiply by this number to convert to seconds
+     * @param convertFromSecond multiply by this number to convert from seconds
      */
-    public TimeUnit(final String nameKey, final String abbreviationKey, final double convertToSecond)
+    public TimeUnit(final String nameKey, final String abbreviationKey, final double convertFromSecond)
     {
-        super(nameKey, abbreviationKey, convertToSecond);
+        super(nameKey, abbreviationKey, convertFromSecond);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public TimeUnit(String nameKey, String abbreviationKey, TimeUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+            double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
     }
 
 }

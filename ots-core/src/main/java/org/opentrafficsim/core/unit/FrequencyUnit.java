@@ -69,7 +69,7 @@ public class FrequencyUnit<T extends TimeUnit> extends Unit<FrequencyUnit<T>>
      */
     public FrequencyUnit(final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, 1.0 / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, 1.0 / timeUnit.getConversionFactorFromStandardUnit());
         this.timeUnit = timeUnit;
     }
 
@@ -77,12 +77,12 @@ public class FrequencyUnit<T extends TimeUnit> extends Unit<FrequencyUnit<T>>
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public FrequencyUnit(final String nameKey, final String abbreviationKey, final FrequencyUnit<T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.timeUnit = referenceUnit.getTimeUnit();
     }
 

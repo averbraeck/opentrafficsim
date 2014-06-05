@@ -48,26 +48,26 @@ public class Test
      */
     public static void main(String[] args)
     {
-        System.out.println(TimeUnit.MINUTE.getConversionFactorToStandardUnit());
-        System.out.println(TimeUnit.WEEK.getConversionFactorToStandardUnit());
-        System.out.println(TimeUnit.MILLISECOND.getConversionFactorToStandardUnit());
+        System.out.println(TimeUnit.MINUTE.getConversionFactorFromStandardUnit());
+        System.out.println(TimeUnit.WEEK.getConversionFactorFromStandardUnit());
+        System.out.println(TimeUnit.MILLISECOND.getConversionFactorFromStandardUnit());
         System.out.println();
-        System.out.println(LengthUnit.KILOMETER.getConversionFactorToStandardUnit());
-        System.out.println(LengthUnit.MILE.getConversionFactorToStandardUnit());
-        System.out.println(LengthUnit.FOOT.getConversionFactorToStandardUnit());
-        System.out.println(LengthUnit.INCH.getConversionFactorToStandardUnit());
+        System.out.println(LengthUnit.KILOMETER.getConversionFactorFromStandardUnit());
+        System.out.println(LengthUnit.MILE.getConversionFactorFromStandardUnit());
+        System.out.println(LengthUnit.FOOT.getConversionFactorFromStandardUnit());
+        System.out.println(LengthUnit.INCH.getConversionFactorFromStandardUnit());
         System.out.println();
-        System.out.println(SpeedUnit.KM_PER_HOUR.getConversionFactorToStandardUnit());
-        System.out.println(SpeedUnit.MILE_PER_HOUR.getConversionFactorToStandardUnit());
+        System.out.println(SpeedUnit.KM_PER_HOUR.getConversionFactorFromStandardUnit());
+        System.out.println(SpeedUnit.MILE_PER_HOUR.getConversionFactorFromStandardUnit());
         System.out.println();
-        System.out.println(AreaUnit.HECTARE.getConversionFactorToStandardUnit());
-        System.out.println(AreaUnit.SQUARE_FOOT.getConversionFactorToStandardUnit());
+        System.out.println(AreaUnit.HECTARE.getConversionFactorFromStandardUnit());
+        System.out.println(AreaUnit.SQUARE_FOOT.getConversionFactorFromStandardUnit());
         System.out.println();
-        System.out.println(AccelerationUnit.KM_PER_HOUR_2.getConversionFactorToStandardUnit());
-        System.out.println(AccelerationUnit.MILE_PER_SECOND_2.getConversionFactorToStandardUnit());
-        System.out.println(AccelerationUnit.KNOT_PER_SECOND.getConversionFactorToStandardUnit());
-        System.out.println(AccelerationUnit.MILE_PER_HOUR_2.getConversionFactorToStandardUnit());
-        System.out.println(AccelerationUnit.MILE_PER_HOUR_PER_SECOND.getConversionFactorToStandardUnit());
+        System.out.println(AccelerationUnit.KM_PER_HOUR_2.getConversionFactorFromStandardUnit());
+        System.out.println(AccelerationUnit.MILE_PER_SECOND_2.getConversionFactorFromStandardUnit());
+        System.out.println(AccelerationUnit.KNOT_PER_SECOND.getConversionFactorFromStandardUnit());
+        System.out.println(AccelerationUnit.MILE_PER_HOUR_2.getConversionFactorFromStandardUnit());
+        System.out.println(AccelerationUnit.MILE_PER_HOUR_PER_SECOND.getConversionFactorFromStandardUnit());
         System.out.println("\n");
         System.out.println(TimeUnit.WEEK.getMultiplicationFactorTo(TimeUnit.DAY));
         System.out.println();

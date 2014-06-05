@@ -95,8 +95,8 @@ public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends 
      */
     public AccelerationUnit(final L lengthUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
-                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
+        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorFromStandardUnit()
+                / (timeUnit.getConversionFactorFromStandardUnit() * timeUnit.getConversionFactorFromStandardUnit()));
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
@@ -111,8 +111,8 @@ public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends 
     public <S extends SpeedUnit<L, T>> AccelerationUnit(final S speedUnit, final T timeUnit, final String nameKey,
             final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, speedUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, speedUnit.getConversionFactorFromStandardUnit()
+                / timeUnit.getConversionFactorFromStandardUnit());
         this.lengthUnit = speedUnit.getLengthUnit();
         this.timeUnit = timeUnit;
     }
@@ -121,12 +121,12 @@ public class AccelerationUnit<L extends LengthUnit, T extends TimeUnit> extends 
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public AccelerationUnit(final String nameKey, final String abbreviationKey,
-            final AccelerationUnit<L, T> referenceUnit, final double conversionFactorToReferenceUnit)
+            final AccelerationUnit<L, T> referenceUnit, final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

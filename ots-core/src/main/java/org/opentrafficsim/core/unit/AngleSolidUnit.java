@@ -39,28 +39,28 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
 
     /** square degree */
     public static final AngleSolidUnit SQUARE_DEGREE = new AngleSolidUnit("AngleSolidUnit.square_degree",
-            "AngleSolidUnit.sq_deg", (Math.PI / 180.0) * (Math.PI / 180.0));
+            "AngleSolidUnit.sq_deg", (180.0 / Math.PI) * (180.0 / Math.PI));
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToSteradian multiply by this number to convert to meters
+     * @param convertFromSteradian multiply by this number to convert from steradians
      */
-    public AngleSolidUnit(final String nameKey, final String abbreviationKey, final double convertToSteradian)
+    public AngleSolidUnit(final String nameKey, final String abbreviationKey, final double convertFromSteradian)
     {
-        super(nameKey, abbreviationKey, convertToSteradian);
+        super(nameKey, abbreviationKey, convertFromSteradian);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
-     * @param conversionFactorToReferenceUnit multiply by this number to convert from the reference unit
+     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
      */
     public AngleSolidUnit(final String nameKey, final String abbreviationKey, final AngleSolidUnit referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorFromReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
     }
 
 }

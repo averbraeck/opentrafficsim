@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.unit;
 
 /**
- * Standard length units. Several conversion factors have been taken from <a
- * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -26,58 +24,48 @@ package org.opentrafficsim.core.unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version May 15, 2014 <br>
+ * @version Jun 5, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
+ * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
+ * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class LengthUnit extends Unit<LengthUnit>
+public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140605L;
 
-    /** meter */
-    public static final LengthUnit METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", 1.0);
+    /** Kelvin */
+    public static final TemperatureUnit KELVIN = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K",
+            1.0, 0.0);
 
-    /** millimeter */
-    public static final LengthUnit MILLIMETER = new LengthUnit("LengthUnit.millimeter", "LengthUnit.mm", 0.001);
+    /** Degree Celcius */
+    public static final TemperatureUnit DEGREE_CELCIUS = new TemperatureUnit("TemperatureUnit.degree_Celcius",
+            "TemperatureUnit.dgC", 1.0, -273.15);
 
-    /** centimeter */
-    public static final LengthUnit CENTIMETER = new LengthUnit("LengthUnit.centimeter", "LengthUnit.cm", 0.01);
+    /** Degree Fahrenheit */
+    public static final TemperatureUnit DEGREE_FAHRENHEIT = new TemperatureUnit("TemperatureUnit.degree_Fahrenheit",
+            "TemperatureUnit.dgF", 9.0 / 5.0, -459.67);
 
-    /** decimeter */
-    public static final LengthUnit DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", 0.1);
+    /** Degree Rankine */
+    public static final TemperatureUnit DEGREE_RANKINE = new TemperatureUnit("TemperatureUnit.degree_Rankine",
+            "TemperatureUnit.dgR", 9.0 / 5.0, 0.0);
 
-    /** decameter */
-    public static final LengthUnit DEKAMETER = new LengthUnit("LengthUnit.dekameter", "LengthUnit.dam", 10.0);
-
-    /** hectometer */
-    public static final LengthUnit HECTOMETER = new LengthUnit("LengthUnit.hectometer", "LengthUnit.hm", 100.0);
-
-    /** kilometer */
-    public static final LengthUnit KILOMETER = new LengthUnit("LengthUnit.kilometer", "LengthUnit.km", 1000.0);
-
-    /** foot (international) = 0.3048 m = 1/3 yd = 12 inches */
-    public static final LengthUnit FOOT = new LengthUnit("LengthUnit.foot", "LengthUnit.ft", 0.3048);
-
-    /** inch (international) = 2.54 cm = 1/36 yd = 1/12 ft */
-    public static final LengthUnit INCH = new LengthUnit("LengthUnit.inch", "LengthUnit.in", FOOT, 1.0 / 12.0);
-
-    /** mile International) = 5280 ft = 1760 yd */
-    public static final LengthUnit MILE = new LengthUnit("LengthUnit.mile", "LengthUnit.mi", FOOT, 5280.0);
-
-    /** nautical mile (international) = 1852 m */
-    public static final LengthUnit NAUTICAL_MILE = new LengthUnit("LengthUnit.nauticalMile", "LengthUnit.NM", 1852.0);
-
-    /** yard (international) = 0.9144 m = 3 ft = 36 in */
-    public static final LengthUnit YARD = new LengthUnit("LengthUnit.yard", "LengthUnit.yd", FOOT, 3.0);
+    /** Degree Reaumur */
+    public static final TemperatureUnit DEGREE_REAUMUR = new TemperatureUnit("TemperatureUnit.degree_Reaumur",
+            "TemperatureUnit.dgRe", 4.0 / 5.0, -273.15);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToMeter multiply by this number to convert to meters
+     * @param conversionFactorFromStandardUnit multiply by this number to convert from the standard unit
+     * @param offset the offset to add to convert from the standard (e.g., SI) unit
      */
-    public LengthUnit(final String nameKey, final String abbreviationKey, final double convertToMeter)
+    public TemperatureUnit(final String nameKey, final String abbreviationKey,
+            final double conversionFactorFromStandardUnit, final double offset)
     {
-        super(nameKey, abbreviationKey, convertToMeter);
+        super(nameKey, abbreviationKey, conversionFactorFromStandardUnit, offset);
     }
 
     /**
@@ -85,11 +73,12 @@ public class LengthUnit extends Unit<LengthUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param referenceUnit the unit to convert from
      * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param offset the offset to add to convert from the standard (e.g., SI) unit
      */
-    public LengthUnit(String nameKey, String abbreviationKey, LengthUnit referenceUnit,
-            double conversionFactorFromReferenceUnit)
+    public TemperatureUnit(final String nameKey, final String abbreviationKey, final TemperatureUnit referenceUnit,
+            final double conversionFactorFromReferenceUnit, final double offset)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit, offset);
     }
 
 }
