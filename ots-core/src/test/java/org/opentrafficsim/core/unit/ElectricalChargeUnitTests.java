@@ -38,8 +38,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @param <EC> Electrical Current unit underlying this Electrical Charge unit
  * @param <T> Time unit underlying this Electrical Charge unit
  */
-public class ElectricChargeUnitTests<EC extends ElectricCurrentUnit, T extends TimeUnit> extends
-        AbstractUnitTest<ElectricChargeUnit<?, ?>>
+public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T extends TimeUnit> extends
+        AbstractUnitTest<ElectricalChargeUnit<?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -57,7 +57,7 @@ public class ElectricChargeUnitTests<EC extends ElectricCurrentUnit, T extends T
     @Test
     public void accelerationKeys()
     {
-        checkKeys(ElectricChargeUnit.COULOMB, "ElectricChargeUnit.coulomb", "ElectricChargeUnit.C");
+        checkKeys(ElectricalChargeUnit.COULOMB, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C");
     }
 
     /**
@@ -66,15 +66,15 @@ public class ElectricChargeUnitTests<EC extends ElectricCurrentUnit, T extends T
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.COULOMB, 1, 0.00000001, "coulomb", "C");
-        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.MILLIAMPERE_HOUR, 3.6, 0.000000005, "milliampere hour",
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.COULOMB, 1, 0.00000001, "coulomb", "C");
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.MILLIAMPERE_HOUR, 3.6, 0.000000005, "milliampere hour",
                 "mAh");
-        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
         // Check two conversions between non-standard units
         assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
-                ElectricChargeUnit.MILLIAMPERE_HOUR.getMultiplicationFactorTo(ElectricChargeUnit.FARADAY), 0.000000001);
+                ElectricalChargeUnit.MILLIAMPERE_HOUR.getMultiplicationFactorTo(ElectricalChargeUnit.FARADAY), 0.000000001);
         // Test the other units
-        checkUnitRatioNameAndAbbreviation(ElectricChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25, "atomic unit of charge",
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25, "atomic unit of charge",
                 "au");
     }
 
