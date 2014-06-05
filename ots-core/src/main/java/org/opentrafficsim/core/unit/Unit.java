@@ -42,7 +42,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private final String abbreviationKey;
 
     /** multiply by this number to convert to the standard (e.g., SI) unit */
-    protected final double conversionFactorToStandardUnit;
+    private final double conversionFactorToStandardUnit;
 
     /**
      * Build a unit with a conversion factor to the standard (preferably SI) unit.
