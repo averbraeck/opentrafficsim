@@ -59,26 +59,27 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param conversionFactorFromStandardUnit multiply by this number to convert from the standard unit
-     * @param offset the offset to add to convert from the standard (e.g., SI) unit
+     * @param conversionFactorToStandardUnit multiply by this number to convert to the standard unit
+     * @param offsetToKelvin the offsetToKelvin to add to convert to the standard (e.g., SI) unit
      */
     public TemperatureUnit(final String nameKey, final String abbreviationKey,
-            final double conversionFactorFromStandardUnit, final double offset)
+            final double conversionFactorToStandardUnit, final double offsetToKelvin)
     {
-        super(nameKey, abbreviationKey, conversionFactorFromStandardUnit, offset);
+        super(nameKey, abbreviationKey, conversionFactorToStandardUnit, offsetToKelvin);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
-     * @param offset the offset to add to convert from the standard (e.g., SI) unit
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
+     * @param offsetToKelvin the offsetToKelvin to add to convert to the standard (e.g., SI) unit
      */
     public TemperatureUnit(final String nameKey, final String abbreviationKey, final TemperatureUnit referenceUnit,
-            final double conversionFactorFromReferenceUnit, final double offset)
+            final double conversionFactorToReferenceUnit, final double offsetToKelvin)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit, offset);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit, offsetToKelvin);
     }
 
 }

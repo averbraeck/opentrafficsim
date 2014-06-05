@@ -52,7 +52,7 @@ public abstract class AbstractUnitTest<U extends Unit<U>>
      */
     protected void checkUnitRatioNameAndAbbreviation(U u, double expectedRatio, double precision, String expectedName, String expectedAbbreviation) {
         assertEquals(String.format("one %s is about %f s", u.getNameKey(), expectedRatio), expectedRatio,
-                u.getConversionFactorFromStandardUnit(), precision);
+                u.getConversionFactorToStandardUnit(), precision);
         assertEquals(String.format("Name of %s is %s", u.getNameKey(), expectedName), expectedName, u.getName());
         assertEquals(String.format("Abbreviation of %s is %s", u.getNameKey(), expectedAbbreviation), expectedAbbreviation, u.getAbbreviation());
     }

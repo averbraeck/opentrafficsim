@@ -88,8 +88,8 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
      */
     public AreaUnit(final L lengthUnit, final String nameKey, final String abbreviationKey)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorFromStandardUnit()
-                * lengthUnit.getConversionFactorFromStandardUnit());
+        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
+                * lengthUnit.getConversionFactorToStandardUnit());
         this.lengthUnit = lengthUnit;
     }
 
@@ -97,13 +97,14 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
      * This constructor constructs a unit out of another defined unit, e.g. an are is 100 m^2.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param referenceUnit the unit to convert from
-     * @param conversionFactorFromReferenceUnit multiply by this number to convert from the reference unit
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> referenceUnit,
-            final double conversionFactorFromReferenceUnit)
+            final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorFromReferenceUnit);
+        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
     }
 
