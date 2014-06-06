@@ -73,9 +73,9 @@ public class PressureUnitTests<M extends MassUnit, L extends LengthUnit, T exten
         checkUnitRatioNameAndAbbreviation(PressureUnit.ATMOSPHERE_TECHNICAL, 98066.5, 0.1, "atmosphere (technical)",
                 "at");
         // Check two conversions between non-standard units
-        assertEquals("one ATMOSPHERE_STANDARD is about 1.03327 ATMOSPHERE_TECHNICAL", 1 / 0.9678,
+        assertEquals("one ATMOSPHERE STANDARD is about 1.03327 ATMOSPHERE TECHNICAL", 1 / 0.9678,
                 getMultiplicationFactorTo(PressureUnit.ATMOSPHERE_STANDARD, PressureUnit.ATMOSPHERE_TECHNICAL), 0.0001);
-        assertEquals("one ATMOSPHERE_TECHNICAL is 0.9678 ATMOSPHERE_STANDARD", 0.9678,
+        assertEquals("one ATMOSPHERE TECHNICAL is 0.9678 ATMOSPHERE STANDARD", 0.9678,
                 getMultiplicationFactorTo(PressureUnit.ATMOSPHERE_TECHNICAL, PressureUnit.ATMOSPHERE_STANDARD), 0.0001);
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(PressureUnit.HECTOPASCAL, 100, 0.0001, "hectopascal", "hPa");
@@ -103,11 +103,11 @@ public class PressureUnitTests<M extends MassUnit, L extends LengthUnit, T exten
     @Test
     public void createPressureUnit()
     {
-        PressureUnit<MassUnit, LengthUnit, TimeUnit> myMU =
+        PressureUnit<MassUnit, LengthUnit, TimeUnit> myPU =
                 new PressureUnit<MassUnit, LengthUnit, TimeUnit>("PressureUnit.HealthyHumanHeart", "PressureUnit.hhhp",
                         PressureUnit.MILLIMETER_MERCURY, 106);
-        assertTrue("Can create a new PowerUnit", null != myMU);
-        checkUnitRatioNameAndAbbreviation(myMU, 14132.1711, 0.01, "!HealthyHumanHeart!", "!hhhp!");
+        assertTrue("Can create a new PowerUnit", null != myPU);
+        checkUnitRatioNameAndAbbreviation(myPU, 14132.1711, 0.01, "!HealthyHumanHeart!", "!hhhp!");
     }
 
 }
