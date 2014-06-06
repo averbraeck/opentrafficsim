@@ -27,11 +27,11 @@ import static org.junit.Assert.assertEquals;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 4, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Make the test specific for this sub class of Unit
+ * @param <OU> Make the test specific for this sub class of OffsetUnit
  */
-public abstract class AbstractUnitTest<U extends Unit<U>>
+public class AbstractOffsetUnitTest<OU extends OffsetUnit<OU>> extends AbstractUnitTest<OU>
 {
     /**
      * Verify one length conversion factor to standard unit and the localization of the name and abbreviation
@@ -41,36 +41,26 @@ public abstract class AbstractUnitTest<U extends Unit<U>>
      * @param expectedName String; expected name in the resources
      * @param expectedAbbreviation String; expected abbreviation in the resources
      */
-    protected void checkUnitRatioNameAndAbbreviation(U u, double expectedRatio, double precision, String expectedName,
-            String expectedAbbreviation)
+    protected void checkUnitRatioOffsetNameAndAbbreviation(OU ou, double expectedRatio, double expectedOffset,
+            double precision, String expectedName, String expectedAbbreviation)
     {
-        assertEquals(String.format("one %s is about %f reference unit", u.getNameKey(), expectedRatio), expectedRatio,
-                u.getConversionFactorToStandardUnit(), precision);
-        assertEquals(String.format("Name of %s is %s", u.getNameKey(), expectedName), expectedName, u.getName());
-        assertEquals(String.format("Abbreviation of %s is %s", u.getNameKey(), expectedAbbreviation),
-                expectedAbbreviation, u.getAbbreviation());
-    }
-
-    /**
-     * Check the nameKey and abbreviationKey of a Unit
-     * @param u Unit to check
-     * @param expectedNameKey String; expected name key
-     * @param expectedAbbreviationKey String; expected abbreviation key
-     */
-    protected void checkKeys(U u, String expectedNameKey, String expectedAbbreviationKey)
-    {
-        assertEquals("unit key", expectedNameKey, u.getNameKey());
-        assertEquals("abbreviation key", expectedAbbreviationKey, u.getAbbreviationKey());
+        assertEquals(String.format("zero %s is about %f reference unit", ou.getNameKey(), expectedOffset),
+                expectedOffset, ou.getOffsetToStandardUnit(), precision);
+        assertEquals(String.format("one %s is about %f reference unit", ou.getNameKey(), expectedRatio), expectedRatio,
+                ou.getConversionFactorToStandardUnit(), precision);
+        assertEquals(String.format("Name of %s is %s", ou.getNameKey(), expectedName), expectedName, ou.getName());
+        assertEquals(String.format("Abbreviation of %s is %s", ou.getNameKey(), expectedAbbreviation),
+                expectedAbbreviation, ou.getAbbreviation());
     }
 
     /**
      * @param fromUnit U; the unit to convert from
      * @param toUnit U; the unit to convert to
-     * @return multiplication factor to convert a value from fromUnit to toUnit
+     * @return offset to convert a value from fromUnit to toUnit
      */
-    public double getMultiplicationFactorTo(U fromUnit, U toUnit)
+    public double getOffsetTo(OU fromUnit, OU toUnit)
     {
-        return fromUnit.getConversionFactorToStandardUnit() / toUnit.getConversionFactorToStandardUnit();
+        return fromUnit.getOffsetToStandardUnit() - toUnit.getOffsetToStandardUnit();
     }
 
 }
