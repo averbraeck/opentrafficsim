@@ -1,6 +1,13 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Locale;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
@@ -27,50 +34,57 @@ import static org.junit.Assert.assertEquals;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 4, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Make the test specific for this sub class of Unit
  */
-public abstract class AbstractUnitTest<U extends Unit<U>>
+public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit>
 {
     /**
-     * Verify one length conversion factor to standard unit and the localization of the name and abbreviation
-     * @param u Unit to check
-     * @param expectedRatio Double; expected ratio
-     * @param precision Double; precision of verification
-     * @param expectedName String; expected name in the resources
-     * @param expectedAbbreviation String; expected abbreviation in the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources
      */
-    protected void checkUnitRatioNameAndAbbreviation(U u, double expectedRatio, double precision, String expectedName,
-            String expectedAbbreviation)
+    @SuppressWarnings("static-method")
+    @Before
+    public void setup()
     {
-        assertEquals(String.format("one %s is about %f reference unit", u.getNameKey(), expectedRatio), expectedRatio,
-                u.getConversionFactorToStandardUnit(), precision);
-        assertEquals(String.format("Name of %s is %s", u.getNameKey(), expectedName), expectedName, u.getName());
-        assertEquals(String.format("Abbreviation of %s is %s", u.getNameKey(), expectedAbbreviation),
-                expectedAbbreviation, u.getAbbreviation());
+        DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Check the nameKey and abbreviationKey of a Unit
-     * @param u Unit to check
-     * @param expectedNameKey String; expected name key
-     * @param expectedAbbreviationKey String; expected abbreviation key
+     * Verify the result of some get*Key methods
      */
-    protected void checkKeys(U u, String expectedNameKey, String expectedAbbreviationKey)
+    @Test
+    public void temperatureKeys()
     {
-        assertEquals("unit key", expectedNameKey, u.getNameKey());
-        assertEquals("abbreviation key", expectedAbbreviationKey, u.getAbbreviationKey());
+        checkKeys(TemperatureUnit.KELVIN, "TemperatureUnit.kelvin", "TemperatureUnit.K");
     }
 
     /**
-     * @param fromUnit U; the unit to convert from
-     * @param toUnit U; the unit to convert to
-     * @return multiplication factor to convert a value from fromUnit to toUnit
+     * Verify conversion factors, English names and abbreviations
      */
-    public double getMultiplicationFactorTo(U fromUnit, U toUnit)
+    @Test
+    public void conversions()
     {
-        return fromUnit.getConversionFactorToStandardUnit() / toUnit.getConversionFactorToStandardUnit();
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.KELVIN, 1, 0, 0.00000001, "kelvin", "K");
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_CELCIUS, 1, -273.15, 0.000001, "degree Celcius",
+                "\u00B0C");
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_FAHRENHEIT, 9. / 5., -459.67, 0.00001,
+                "degree Fahrenheit", "\u00B0F");
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_RANKINE, 9. / 5, 0, 0.0001, "degree Rankine",
+                "\u00B0R");
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_REAUMUR, 0.8, -273.15, 0.000001,
+                "degree Reaumur", "\u00B0R\u00E9");
+        // TODO: The Fahrenheit <-> Celcius conversions are not properly checked
+    }
+
+    /**
+     * Verify that we can create our own temperature unit; i.c. Newton
+     */
+    @Test
+    public void createTemperatureUnit()
+    {
+        TemperatureUnit mySU = new TemperatureUnit("TemperatureUnit.Newton", "TemperatureUnit.N", 3.0, -273.15);
+        assertTrue("Can create a new TemperatureUnit", null != mySU);
+        checkUnitRatioOffsetNameAndAbbreviation(mySU, 3, -273.15, 0.0001, "!Newton!", "!N!");
     }
 
 }
