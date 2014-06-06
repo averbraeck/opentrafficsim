@@ -82,9 +82,9 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
     @Test
     public void createTemperatureUnit()
     {
-        TemperatureUnit mySU = new TemperatureUnit("TemperatureUnit.Newton", "TemperatureUnit.N", 3.0, -273.15);
-        assertTrue("Can create a new TemperatureUnit", null != mySU);
-        checkUnitRatioOffsetNameAndAbbreviation(mySU, 3, -273.15, 0.0001, "!Newton!", "!N!");
+        TemperatureUnit myTU = new TemperatureUnit("TemperatureUnit.Newton", "TemperatureUnit.N", 3.0, -273.15);
+        assertTrue("Can create a new TemperatureUnit", null != myTU);
+        checkUnitRatioOffsetNameAndAbbreviation(myTU, 3, -273.15, 0.0001, "!Newton!", "!N!");
     }
 
 }
