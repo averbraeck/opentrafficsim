@@ -34,12 +34,12 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Flow Mass unit
- * @param <T> Time unit underlying this Flow Mass unit
+ * @param <L> Length unit underlying this Flow Volume unit
+ * @param <T> Time unit underlying this Flow Volume unit
  */
-public class FlowMassUnitTests<M extends MassUnit, T extends TimeUnit> extends AbstractUnitTest<FlowMassUnit<?, ?>>
+public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> extends AbstractUnitTest<FlowVolumeUnit<?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -57,7 +57,7 @@ public class FlowMassUnitTests<M extends MassUnit, T extends TimeUnit> extends A
     @Test
     public void flowMassKeys()
     {
-        checkKeys(FlowMassUnit.KILOGRAM_PER_SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s");
+        checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second", "FlowVolumeUnit.m^3/s");
     }
 
     /**
@@ -66,26 +66,26 @@ public class FlowMassUnitTests<M extends MassUnit, T extends TimeUnit> extends A
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(FlowMassUnit.KILOGRAM_PER_SECOND, 1, 0.000001, "kilogram per second", "kg/s");
-        checkUnitRatioNameAndAbbreviation(FlowMassUnit.POUND_PER_SECOND, 0.453592, 0.0001, "pound per second", "lb/s");
+        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_SECOND, 1, 0.000001, "cubic meter per second", "m^3/s");
+        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, 0.0166667, 0.000001, "cubic meter per minute", "m^3/min");
         // Check two conversions between non-standard units
-        assertEquals("one KILOGRAM PER SECOND is about 2.205 POUND PER SECOND", 2.205,
-                getMultiplicationFactorTo(FlowMassUnit.KILOGRAM_PER_SECOND, FlowMassUnit.POUND_PER_SECOND), 0.0005);
-        assertEquals("one POUND PER SECOND is about 0.453592 KILOGRAM PER SECOND", 0.453592,
-                getMultiplicationFactorTo(FlowMassUnit.POUND_PER_SECOND, FlowMassUnit.KILOGRAM_PER_SECOND), 0.0001);
+        assertEquals("one CUBIC METER PER HOUR is about 2.205 CUBIC_METER_PER_MINUTED", 0.01666667,
+                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_HOUR, FlowVolumeUnit.CUBIC_METER_PER_MINUTE), 0.00001);
+        assertEquals("one CUBIC METER PER MINUTE is about CCCXXXX CUBIC_METER_PER_HOUR", 60,
+                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, FlowVolumeUnit.CUBIC_METER_PER_HOUR), 0.0001);
     }
 
     /**
-     * Verify that we can create our own FlowMass unit
+     * Verify that we can create our own FlowVolume unit
      */
     @Test
-    public void createFlowMassUnit()
+    public void createFLowVolumeUnit()
     {
-        FlowMassUnit<MassUnit, TimeUnit> myFMU =
-                new FlowMassUnit<MassUnit, TimeUnit>("FlowMassUnit.WaterDropsPerHour", "FlowMassUnit.wdpu",
-                        FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
+        FlowVolumeUnit<LengthUnit, TimeUnit> myFMU =
+                new FlowVolumeUnit<LengthUnit, TimeUnit>("FlowVolumeUnit.TrucksPerHour", "FlowVolumeUnit.tph",
+                        FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
         assertTrue("Can create a new FlowMassUnit", null != myFMU);
-        checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");
+        checkUnitRatioNameAndAbbreviation(myFMU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");
     }
 
 }
