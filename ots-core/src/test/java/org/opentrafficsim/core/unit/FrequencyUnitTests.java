@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
@@ -33,11 +34,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 4, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Lenght unit underlying the area unit
+ * @param <T> Time unit underlying this Frequency unit
  */
-public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUnit<?>>
+public class FrequencyUnitTests<T extends TimeUnit> extends AbstractUnitTest<FrequencyUnit<?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -53,9 +54,9 @@ public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUn
      * Verify the result of some get*Key methods
      */
     @Test
-    public void areaKeys()
+    public void FrequencyKeys()
     {
-        checkKeys(AreaUnit.SQUARE_METER, "AreaUnit.square_meter", "AreaUnit.m^2");
+        checkKeys(FrequencyUnit.HERTZ, "FrequencyUnit.Hertz", "FrequencyUnit.Hz");
     }
 
     /**
@@ -64,19 +65,28 @@ public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUn
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_METER, 1, 0.00000001, "square meter", "m^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_KM, 1000000, 0.05, "square kilometer", "km^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_MILE, 2589990, 2, "square mile", "mi^2");
+        checkUnitRatioNameAndAbbreviation(FrequencyUnit.HERTZ, 1, 0.000001, "Hertz", "Hz");
+        checkUnitRatioNameAndAbbreviation(FrequencyUnit.KILOHERTZ, 1000, 0.0001, "kilohertz", "kHz");
         // Check two conversions between non-standard units
-        assertEquals("one SQUARE MILE is 640 ACRE", 640,
-                getMultiplicationFactorTo(AreaUnit.SQUARE_MILE, AreaUnit.ACRE), 0.1);
-        // Check conversion factor to standard unit for all remaining area units
-        checkUnitRatioNameAndAbbreviation(AreaUnit.ARE, 100, 0.001, "are", "a");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.HECTARE, 10000, 0.01, "hectare", "ha");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_FOOT, 0.092903, 0.000001, "square foot", "ft^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_INCH, 0.00064516, 0.00000001, "square inch", "in^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_YARD, 0.836127, 0.000001, "square yard", "yd^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.ACRE, 4046.9, 0.05, "acre", "ac");
+        assertEquals("one KILOHERTZ is 0.001 MEGAHERTZ", 0.001,
+                getMultiplicationFactorTo(FrequencyUnit.KILOHERTZ, FrequencyUnit.MEGAHERTZ), 0.00000000001);
+        assertEquals("one MEGAHERTZ is 1000 KILOHERTZ", 1000,
+                getMultiplicationFactorTo(FrequencyUnit.MEGAHERTZ, FrequencyUnit.KILOHERTZ), 0.0005);
+        checkUnitRatioNameAndAbbreviation(FrequencyUnit.GIGAHERTZ, 1e9, 1e3, "gigahertz", "GHz");
+        checkUnitRatioNameAndAbbreviation(FrequencyUnit.TERAHERTZ, 1e12, 1e6, "terahertz", "THz");
+    }
+
+    /**
+     * Verify that we can create our own Frequency unit
+     */
+    @Test
+    public void createFrequencyUnitt()
+    {
+        FrequencyUnit<TimeUnit> myFU =
+                new FrequencyUnit<TimeUnit>("FrequencyUnit.MiddleA", "FrequencyUnit.MA",
+                        FrequencyUnit.KILOHERTZ, 0.440);
+        assertTrue("Can create a new ForceUnit", null != myFU);
+        checkUnitRatioNameAndAbbreviation(myFU, 440, 0.0001, "!MiddleA!", "!MA!");
     }
 
 }

@@ -53,7 +53,7 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void timeKeys()
+    public void angelPlaneKeys()
     {
         checkKeys(AnglePlaneUnit.RADIAN, "AnglePlaneUnit.radian", "AnglePlaneUnit.rad");
     }

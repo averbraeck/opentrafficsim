@@ -55,7 +55,7 @@ public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T exten
      * Verify the result of some get*Key methods
      */
     @Test
-    public void accelerationKeys()
+    public void electricalChargeKeys()
     {
         checkKeys(ElectricalChargeUnit.COULOMB, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C");
     }

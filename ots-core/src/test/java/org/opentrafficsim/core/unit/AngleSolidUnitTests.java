@@ -53,7 +53,7 @@ public class AngleSolidUnitTests extends AbstractUnitTest<AngleSolidUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void timeKeys()
+    public void angleSolidKeys()
     {
         checkKeys(AngleSolidUnit.STERADIAN, "AngleSolidUnit.steradian", "AngleSolidUnit.sr");
     }
