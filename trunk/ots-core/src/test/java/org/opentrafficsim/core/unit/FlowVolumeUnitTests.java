@@ -55,7 +55,7 @@ public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> exten
      * Verify the result of some get*Key methods
      */
     @Test
-    public void flowMassKeys()
+    public void flowVolumeKeys()
     {
         checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second", "FlowVolumeUnit.m^3/s");
     }
@@ -71,7 +71,7 @@ public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> exten
         // Check two conversions between non-standard units
         assertEquals("one CUBIC METER PER HOUR is about 2.205 CUBIC_METER_PER_MINUTED", 0.01666667,
                 getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_HOUR, FlowVolumeUnit.CUBIC_METER_PER_MINUTE), 0.00001);
-        assertEquals("one CUBIC METER PER MINUTE is about CCCXXXX CUBIC_METER_PER_HOUR", 60,
+        assertEquals("one CUBIC METER PER MINUTE is 60 CUBIC_METER_PER_HOUR", 60,
                 getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, FlowVolumeUnit.CUBIC_METER_PER_HOUR), 0.0001);
     }
 

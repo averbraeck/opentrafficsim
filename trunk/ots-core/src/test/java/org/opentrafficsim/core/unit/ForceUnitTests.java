@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
@@ -33,11 +34,13 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 4, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Lenght unit underlying the area unit
+ * @param <M> Mass unit underlying this Force unit
+ * @param <L> Length unit underlying this Force unit
+ * @param <T> Time unit underlying this Force unit
  */
-public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUnit<?>>
+public class ForceUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends AbstractUnitTest<ForceUnit<?, ?, ?>>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -53,9 +56,9 @@ public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUn
      * Verify the result of some get*Key methods
      */
     @Test
-    public void areaKeys()
+    public void ForceKeys()
     {
-        checkKeys(AreaUnit.SQUARE_METER, "AreaUnit.square_meter", "AreaUnit.m^2");
+        checkKeys(ForceUnit.NEWTON, "ForceUnit.newton", "ForceUnit.N");
     }
 
     /**
@@ -64,19 +67,26 @@ public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUn
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_METER, 1, 0.00000001, "square meter", "m^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_KM, 1000000, 0.05, "square kilometer", "km^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_MILE, 2589990, 2, "square mile", "mi^2");
+        checkUnitRatioNameAndAbbreviation(ForceUnit.NEWTON, 1, 0.000001, "newton", "N");
+        checkUnitRatioNameAndAbbreviation(ForceUnit.DYNE, 0.00001, 0.000000001, "dyne", "dyn");
         // Check two conversions between non-standard units
-        assertEquals("one SQUARE MILE is 640 ACRE", 640,
-                getMultiplicationFactorTo(AreaUnit.SQUARE_MILE, AreaUnit.ACRE), 0.1);
-        // Check conversion factor to standard unit for all remaining area units
-        checkUnitRatioNameAndAbbreviation(AreaUnit.ARE, 100, 0.001, "are", "a");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.HECTARE, 10000, 0.01, "hectare", "ha");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_FOOT, 0.092903, 0.000001, "square foot", "ft^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_INCH, 0.00064516, 0.00000001, "square inch", "in^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_YARD, 0.836127, 0.000001, "square yard", "yd^2");
-        checkUnitRatioNameAndAbbreviation(AreaUnit.ACRE, 4046.9, 0.05, "acre", "ac");
+        assertEquals("one DYNE is about 1.019716e-6 KILOGRAM FORCE", 1.01971621e-6,
+                getMultiplicationFactorTo(ForceUnit.DYNE, ForceUnit.KILOGRAM_FORCE), 0.00000000001);
+        assertEquals("one KILOGRAM FORCE is about 980665 DYNE", 980665,
+                getMultiplicationFactorTo(ForceUnit.KILOGRAM_FORCE, ForceUnit.DYNE), 0.5);
+    }
+
+    /**
+     * Verify that we can create our own Force unit
+     */
+    @Test
+    public void createForceUnit()
+    {
+        ForceUnit<MassUnit, LengthUnit, TimeUnit> myFU =
+                new ForceUnit<MassUnit, LengthUnit, TimeUnit>("ForceUnit.AntForce", "ForceUnit.af",
+                        ForceUnit.KILOGRAM_FORCE, 0.002);
+        assertTrue("Can create a new ForceUnit", null != myFU);
+        checkUnitRatioNameAndAbbreviation(myFU, 0.002 * 9.8, 0.0001, "!AntForce!", "!af!");
     }
 
 }
