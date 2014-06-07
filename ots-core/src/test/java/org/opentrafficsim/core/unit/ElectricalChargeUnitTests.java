@@ -72,8 +72,8 @@ public class ElectricalChargeUnitTests extends AbstractUnitTest<ElectricalCharge
                 getMultiplicationFactorTo(ElectricalChargeUnit.MILLIAMPERE_HOUR, ElectricalChargeUnit.FARADAY),
                 0.000000001);
         // Test the other units
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25,
-                "atomic unit of charge", "au");
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217653e-19, 1e-25,
+                "elementary unit of charge", "e");
     }
 
 }
