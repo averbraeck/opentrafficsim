@@ -1,5 +1,11 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_BASE;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * Standard time units.
  * <p>
@@ -31,47 +37,59 @@ package org.opentrafficsim.core.unit;
 public class TimeUnit extends Unit<TimeUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140603L;
-
-    /** millisecond */
-    public static final TimeUnit MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", 0.001);
+    private static final long serialVersionUID = 20140607L;
 
     /** second */
-    public static final TimeUnit SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", 1.0);
+    public static final TimeUnit SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
+
+    /** millisecond */
+    public static final TimeUnit MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND, 0.001);
 
     /** minute */
-    public static final TimeUnit MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SECOND, 60.0);
+    public static final TimeUnit MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SI_ACCEPTED, SECOND, 60.0);
 
     /** hour */
-    public static final TimeUnit HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", MINUTE, 60.0);
+    public static final TimeUnit HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", SI_ACCEPTED, MINUTE, 60.0);
 
     /** day */
-    public static final TimeUnit DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", HOUR, 24.0);
+    public static final TimeUnit DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", SI_ACCEPTED, HOUR, 24.0);
 
     /** week */
-    public static final TimeUnit WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", DAY, 7.0);
+    public static final TimeUnit WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", OTHER, DAY, 7.0);
 
     /**
+     * Build a standard unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToSecond multiply by this number to convert to seconds
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public TimeUnit(final String nameKey, final String abbreviationKey, final double convertToSecond)
+    public TimeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, convertToSecond);
+        super(nameKey, abbreviationKey, unitSystem);
     }
 
     /**
+     * Build a unit with a conversion factor to another unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public TimeUnit(String nameKey, String abbreviationKey, TimeUnit referenceUnit,
+    public TimeUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, TimeUnit referenceUnit,
             double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public TimeUnit getStandardUnit()
+    {
+        return SECOND;
     }
 
 }

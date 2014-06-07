@@ -35,11 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <EC> Electrical Current unit underlying this Electrical Charge unit
- * @param <T> Time unit underlying this Electrical Charge unit
  */
-public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T extends TimeUnit> extends
-        AbstractUnitTest<ElectricalChargeUnit<?, ?>>
+public class ElectricalChargeUnitTests extends AbstractUnitTest<ElectricalChargeUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -72,10 +69,11 @@ public class ElectricalChargeUnitTests<EC extends ElectricalCurrentUnit, T exten
         checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
         // Check two conversions between non-standard units
         assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
-                getMultiplicationFactorTo(ElectricalChargeUnit.MILLIAMPERE_HOUR, ElectricalChargeUnit.FARADAY), 0.000000001);
+                getMultiplicationFactorTo(ElectricalChargeUnit.MILLIAMPERE_HOUR, ElectricalChargeUnit.FARADAY),
+                0.000000001);
         // Test the other units
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25, "atomic unit of charge",
-                "au");
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217657e-19, 1e-25,
+                "atomic unit of charge", "au");
     }
 
 }

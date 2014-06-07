@@ -2,6 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 import java.util.Locale;
 
@@ -75,8 +76,8 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 0.00015708, 0.0000001,
                 "centesimal arcminute", "\'");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1,
-                "centesimal arcsecond", "\"");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1, "centesimal arcsecond",
+                "\"");
     }
 
     /**
@@ -85,7 +86,8 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
     @Test
     public void createAngleUnit()
     {
-        AnglePlaneUnit myAPU = new AnglePlaneUnit("AngleUnit.point", "AngleUnit.pt", 0.19634954085);
+        AnglePlaneUnit myAPU =
+                new AnglePlaneUnit("AngleUnit.point", "AngleUnit.pt", OTHER, AnglePlaneUnit.RADIAN, 0.19634954085);
         assertTrue("Can create a new AngleUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }

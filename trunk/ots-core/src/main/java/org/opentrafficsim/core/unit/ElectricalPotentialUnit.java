@@ -1,5 +1,11 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS_EMU;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS_ESU;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * The units of electrical potential (voltage).
  * <p>
@@ -27,44 +33,52 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> the mass unit type (e.g, kg)
- * @param <L> the length unit type (e.g., m)
- * @param <EC> the electrical current unit type (e.g., A)
- * @param <T> the time unit type (e.g., s)
  */
-public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, EC extends ElectricalCurrentUnit, T extends TimeUnit>
-        extends Unit<ElectricalPotentialUnit<M, L, EC, T>>
+public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram */
-    private final M massUnit;
+    private final MassUnit massUnit;
 
     /** the unit of length for the electrical potential difference (voltage) unit, e.g., meters */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** the unit of electrical current for the electrical potential difference (voltage) unit, e.g., Ampere */
-    private final EC electricalCurrentUnit;
+    private final ElectricalCurrentUnit electricalCurrentUnit;
 
     /** the unit of time for the electrical potential difference (voltage) unit, e.g., second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** Volt */
-    public static final ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> VOLT =
-            new ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(MassUnit.KILOGRAM,
-                    LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalPotentialUnit.volt",
-                    "ElectricalPotentialUnit.V");
+    public static final ElectricalPotentialUnit VOLT = new ElectricalPotentialUnit(MassUnit.KILOGRAM, LengthUnit.METER,
+            ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V",
+            SI_DERIVED);
+
+    /** microvolt */
+    public static final ElectricalPotentialUnit MICROVOLT = new ElectricalPotentialUnit(
+            "ElectricalPotentialUnit.microvolt", "ElectricalPotentialUnit.muV", SI_DERIVED, VOLT, 1.0E-6);
 
     /** millivolt */
-    public static final ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> MILLIVOLT =
-            new ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
-                    "ElectricalPotentialUnit.millivolt", "ElectricalPotentialUnit.mV", VOLT, 0.001);
+    public static final ElectricalPotentialUnit MILLIVOLT = new ElectricalPotentialUnit(
+            "ElectricalPotentialUnit.millivolt", "ElectricalPotentialUnit.mV", SI_DERIVED, VOLT, 0.001);
 
     /** kilovolt */
-    public static final ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> KILOVOLT =
-            new ElectricalPotentialUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
-                    "ElectricalPotentialUnit.kilovolt", "ElectricalPotentialUnit.kV", VOLT, 1000.0);
+    public static final ElectricalPotentialUnit KILOVOLT = new ElectricalPotentialUnit(
+            "ElectricalPotentialUnit.kilovolt", "ElectricalPotentialUnit.kV", SI_DERIVED, VOLT, 1000.0);
+
+    /** megavolt */
+    public static final ElectricalPotentialUnit MEGAVOLT = new ElectricalPotentialUnit(
+            "ElectricalPotentialUnit.megavolt", "ElectricalPotentialUnit.MV", SI_DERIVED, VOLT, 1.0E6);
+
+    /** statvolt */
+    public static final ElectricalPotentialUnit STATVOLT = new ElectricalPotentialUnit(
+            "ElectricalPotentialUnit.statvolt", "ElectricalPotentialUnit.statV", CGS_ESU, VOLT, 299.792458);
+
+    /** abvolt */
+    public static final ElectricalPotentialUnit ABVOLT = new ElectricalPotentialUnit("ElectricalPotentialUnit.abvolt",
+            "ElectricalPotentialUnit.abV", CGS_EMU, VOLT, 1.0E-8);
 
     /**
      * @param massUnit the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram
@@ -74,11 +88,13 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
      * @param timeUnit the unit of time for the electrical potential difference (voltage) unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public ElectricalPotentialUnit(final M massUnit, final L lengthUnit, final EC electricalCurrentUnit,
-            final T timeUnit, final String nameKey, final String abbreviationKey)
+    public ElectricalPotentialUnit(final MassUnit massUnit, final LengthUnit lengthUnit,
+            final ElectricalCurrentUnit electricalCurrentUnit, final TimeUnit timeUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, VOLT, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 / (electricalCurrentUnit.getConversionFactorToStandardUnit() * Math.pow(
@@ -95,11 +111,12 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
      *            unit, e.g., Ampere
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public <P extends PowerUnit<M, L, T>> ElectricalPotentialUnit(final P powerUnit, final EC electricalCurrentUnit,
-            final String nameKey, final String abbreviationKey)
+    public ElectricalPotentialUnit(final PowerUnit powerUnit, final ElectricalCurrentUnit electricalCurrentUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, powerUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, VOLT, powerUnit.getConversionFactorToStandardUnit()
                 / electricalCurrentUnit.getConversionFactorToStandardUnit());
         this.massUnit = powerUnit.getMassUnit();
         this.lengthUnit = powerUnit.getLengthUnit();
@@ -110,14 +127,15 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public ElectricalPotentialUnit(final String nameKey, final String abbreviationKey,
-            final ElectricalPotentialUnit<M, L, EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
+    public ElectricalPotentialUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final ElectricalPotentialUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
@@ -127,7 +145,7 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     /**
      * @return massUnit
      */
-    public M getMassUnit()
+    public MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -135,7 +153,7 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -143,7 +161,7 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     /**
      * @return electricalCurrentUnit
      */
-    public EC getElectricalCurrentUnit()
+    public ElectricalCurrentUnit getElectricalCurrentUnit()
     {
         return this.electricalCurrentUnit;
     }
@@ -151,9 +169,18 @@ public class ElectricalPotentialUnit<M extends MassUnit, L extends LengthUnit, E
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public ElectricalPotentialUnit getStandardUnit()
+    {
+        return VOLT;
     }
 
 }

@@ -1,6 +1,12 @@
 package org.opentrafficsim.core.unit;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * All units are internally <u>stored</u> relative to a standard unit with conversion factor. This means that e.g., a
@@ -36,7 +42,7 @@ import java.io.Serializable;
 public abstract class Unit<U extends Unit<U>> implements Serializable
 {
     /** */
-    private static final long serialVersionUID = 20140603;
+    private static final long serialVersionUID = 20140607;
 
     /** the key to the locale file for the long name of the unit */
     private final String nameKey;
@@ -44,35 +50,100 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /** the key to the locale file for the abbreviation of the unit */
     private final String abbreviationKey;
 
+    /** the unit system, e.g. SI or Imperial */
+    private final UnitSystem unitSystem;
+
     /** multiply by this number to convert to the standard (e.g., SI) unit */
     private final double conversionFactorToStandardUnit;
 
+    /** a static map of all defined units */
+    private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
+
     /**
-     * Build a unit with a conversion factor to the standard (preferably SI) unit.
+     * Build a standard unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param conversionFactorToStandardUnit multiply by this number to convert to the standard (e.g., SI) unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public Unit(final String nameKey, final String abbreviationKey, final double conversionFactorToStandardUnit)
+    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        this.conversionFactorToStandardUnit = conversionFactorToStandardUnit;
+        this.conversionFactorToStandardUnit = 1.0;
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
+        this.unitSystem = unitSystem;
+        addUnit(this);
     }
 
     /**
      * Build a unit with a conversion factor to another unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public Unit(final String nameKey, final String abbreviationKey, final U referenceUnit,
+    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
             final double conversionFactorToReferenceUnit)
     {
-        this(nameKey, abbreviationKey, referenceUnit.getConversionFactorToStandardUnit()
-                * conversionFactorToReferenceUnit);
+        // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
+        // the null pointer for the reference unit here.
+        if (referenceUnit == null)
+            this.conversionFactorToStandardUnit = 1.0;
+        else
+            this.conversionFactorToStandardUnit =
+                    referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
+        this.nameKey = nameKey;
+        this.abbreviationKey = abbreviationKey;
+        this.unitSystem = unitSystem;
+        addUnit(this);
+    }
+
+    /**
+     * Add a unit to the overview collection of existing units.
+     * @param unit the unit to add. It will be stored in a set belonging to the simple class name String, e.g.
+     *            "ForceUnit".
+     */
+    private void addUnit(final Unit<U> unit)
+    {
+        if (!UNITS.containsKey(unit.getClass().getSimpleName()))
+            UNITS.put(unit.getClass().getSimpleName(), new HashSet<Unit<?>>());
+        UNITS.get(unit.getClass().getSimpleName()).add(unit);
+    }
+
+    /**
+     * Return a set of defined units for a given unit type.
+     * @param unitClass the class for which the units are requested, e.g. ForceUnit.class
+     * @return the set of defined units belonging to the provided class. The empty set will be returned in case the unit
+     *         type does not have any units.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends Unit<V>> Set<V> getUnits(final Class<V> unitClass)
+    {
+        Set<V> returnSet = new HashSet<V>();
+        if (UNITS.containsKey(unitClass.getSimpleName()))
+        {
+            for (Unit<?> unit : UNITS.get(unitClass.getSimpleName()))
+                returnSet.add((V) unit);
+        }
+        return returnSet;
+    }
+
+    /**
+     * Return a copy of the set of all defined units for this unit type.
+     * @return the set of defined units belonging to this Unit class. The empty set will be returned in case the unit
+     *         type does not have any units.
+     */
+    @SuppressWarnings("unchecked")
+    public Set<Unit<U>> getAllUnitsOfThisType()
+    {
+        Set<Unit<U>> returnSet = new HashSet<Unit<U>>();
+        if (UNITS.containsKey(this.getClass().getSimpleName()))
+        {
+            for (Unit<?> unit : UNITS.get(this.getClass().getSimpleName()))
+                returnSet.add((Unit<U>) unit);
+        }
+        return returnSet;
     }
 
     /**
@@ -114,6 +185,19 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     {
         return this.conversionFactorToStandardUnit;
     }
+
+    /**
+     * @return unitSystem, e.g. SI or Imperial
+     */
+    public UnitSystem getUnitSystem()
+    {
+        return this.unitSystem;
+    }
+
+    /**
+     * @return the SI standard unit for this unit, or the de facto standard unit if SI is not available
+     */
+    public abstract U getStandardUnit();
 
     /**
      * @see java.lang.Object#toString()

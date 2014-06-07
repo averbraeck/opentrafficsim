@@ -1,5 +1,10 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * Standard frequency units based on time.
  * <p>
@@ -27,72 +32,85 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <T> the time unit
  */
-public class FrequencyUnit<T extends TimeUnit> extends Unit<FrequencyUnit<T>>
+public class FrequencyUnit extends Unit<FrequencyUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the actual time unit, e.g. second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** hertz */
-    public static final FrequencyUnit<TimeUnit> HERTZ = new FrequencyUnit<TimeUnit>(TimeUnit.SECOND,
-            "FrequencyUnit.Hertz", "FrequencyUnit.Hz");
+    public static final FrequencyUnit HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz",
+            "FrequencyUnit.Hz", SI_DERIVED);
 
     /** kilohertz */
-    public static final FrequencyUnit<TimeUnit> KILOHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.kilohertz",
-            "FrequencyUnit.kHz", HERTZ, 1000.0);
+    public static final FrequencyUnit KILOHERTZ = new FrequencyUnit("FrequencyUnit.kilohertz", "FrequencyUnit.kHz",
+            SI_DERIVED, HERTZ, 1000.0);
 
     /** megahertz */
-    public static final FrequencyUnit<TimeUnit> MEGAHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.megahertz",
-            "FrequencyUnit.MHz", HERTZ, 1.0E6);
+    public static final FrequencyUnit MEGAHERTZ = new FrequencyUnit("FrequencyUnit.megahertz", "FrequencyUnit.MHz",
+            SI_DERIVED, HERTZ, 1.0E6);
 
     /** gigahertz */
-    public static final FrequencyUnit<TimeUnit> GIGAHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.gigahertz",
-            "FrequencyUnit.GHz", HERTZ, 1.0E9);
+    public static final FrequencyUnit GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz",
+            SI_DERIVED, HERTZ, 1.0E9);
 
     /** terahertz */
-    public static final FrequencyUnit<TimeUnit> TERAHERTZ = new FrequencyUnit<TimeUnit>("FrequencyUnit.terahertz",
-            "FrequencyUnit.THz", HERTZ, 1.0E12);
+    public static final FrequencyUnit TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz",
+            SI_DERIVED, HERTZ, 1.0E12);
 
     /** revolutions per minute = 1/60 Hz */
-    public static final FrequencyUnit<TimeUnit> RPM = new FrequencyUnit<TimeUnit>(
-            "FrequencyUnit.revolutions_per_minute", "FrequencyUnit.rpm", HERTZ, 1.0 / 60.0);
+    public static final FrequencyUnit RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute",
+            "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
 
     /**
-     * Define frequency units based on length and time. You can define units like "per second" (Hertz) here.
+     * Define frequency unit based on time. You can define unit like "per second" (Hertz) here.
      * @param timeUnit the unit of time for the frequency unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
+     * @param baseUnit the base unit of this unit
      */
-    public FrequencyUnit(final T timeUnit, final String nameKey, final String abbreviationKey)
+    public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
+            final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, 1.0 / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit());
         this.timeUnit = timeUnit;
     }
 
     /**
+     * Build a unit with a conversion factor to another unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public FrequencyUnit(final String nameKey, final String abbreviationKey, final FrequencyUnit<T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public FrequencyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.timeUnit = referenceUnit.getTimeUnit();
     }
 
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public FrequencyUnit getStandardUnit()
+    {
+        return HERTZ;
     }
 
 }

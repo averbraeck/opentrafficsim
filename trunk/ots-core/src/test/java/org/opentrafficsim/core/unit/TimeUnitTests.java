@@ -2,6 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 import java.util.Locale;
 
@@ -83,7 +84,7 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
     @Test
     public void createLengthUnit()
     {
-        TimeUnit myTU = new TimeUnit("TimeUnit.Fortnight", "TimeUnit.fn", 14 * 86400);
+        TimeUnit myTU = new TimeUnit("TimeUnit.Fortnight", "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
         assertTrue("Can create a new TimeUnit", null != myTU);
         checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
     }

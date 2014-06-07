@@ -33,9 +33,6 @@ public class Imperial extends UnitSystem
     /** */
     private static final long serialVersionUID = 20140606L;
 
-    /** constant to use */
-    public static final Imperial IMPERIAL = new Imperial("Imperial", "Imperial_system");
-    
     /**
      * protected constructor to avoid creating other (false) unit systems.
      * @param abbreviationKey the abbreviation of the unit system, such as SI

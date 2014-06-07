@@ -35,13 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Electrical Potential unit
- * @param <L> Length unit underlying this Electrical Potential unit
- * @param <EC> Electrical Current unit underlying this Electrical Potential unit
- * @param <T> Time unit underlying this Electrical Potential unit
  */
-public class ElectricalPotentialUnitTests<M extends MassUnit, L extends LengthUnit, EC extends ElectricalCurrentUnit, T extends TimeUnit>
-        extends AbstractUnitTest<ElectricalPotentialUnit<?, ?, ?, ?>>
+public class ElectricalPotentialUnitTests extends AbstractUnitTest<ElectricalPotentialUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -69,8 +64,7 @@ public class ElectricalPotentialUnitTests<M extends MassUnit, L extends LengthUn
     public void conversions()
     {
         checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.VOLT, 1, 0.00000001, "volt", "V");
-        checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.MILLIVOLT, 0.001, 0.00000000001, "millivolt",
-                "mV");
+        checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.MILLIVOLT, 0.001, 0.00000000001, "millivolt", "mV");
         checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.KILOVOLT, 1000, 0.005, "kilovolt", "kV");
         // Check two conversions between non-standard units
         assertEquals("one KILOVOLT is 1000000 MILLIVOLT", 1000000,

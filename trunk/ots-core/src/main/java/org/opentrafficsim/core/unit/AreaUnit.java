@@ -1,5 +1,11 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.IMPERIAL;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * AreaUnit defines a number of common units for areas.
  * <p>
@@ -27,68 +33,67 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <L> the length unit type
  */
-public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
+public class AreaUnit extends Unit<AreaUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the unit of length for the area unit, e.g., meter */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** m^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_METER = new AreaUnit<LengthUnit>(LengthUnit.METER,
-            "AreaUnit.square_meter", "AreaUnit.m^2");
+    public static final AreaUnit SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2",
+            SI_DERIVED);
 
     /** km^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_KM = new AreaUnit<LengthUnit>(LengthUnit.KILOMETER,
-            "AreaUnit.square_kilometer", "AreaUnit.km^2");
+    public static final AreaUnit SQUARE_KM = new AreaUnit(LengthUnit.KILOMETER, "AreaUnit.square_kilometer",
+            "AreaUnit.km^2", SI_DERIVED);
 
     /** cm^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_CENTIMETER = new AreaUnit<LengthUnit>(LengthUnit.CENTIMETER,
-            "AreaUnit.square_centimeter", "AreaUnit.cm^2");
+    public static final AreaUnit SQUARE_CENTIMETER = new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter",
+            "AreaUnit.cm^2", SI_DERIVED);
 
     /** cm^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_MILLIMETER = new AreaUnit<LengthUnit>(LengthUnit.MILLIMETER,
-            "AreaUnit.square_millimeter", "AreaUnit.mm^2");
+    public static final AreaUnit SQUARE_MILLIMETER = new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter",
+            "AreaUnit.mm^2", SI_DERIVED);
 
     /** are */
-    public static final AreaUnit<LengthUnit> ARE = new AreaUnit<LengthUnit>("AreaUnit.are", "AreaUnit.a", SQUARE_METER,
-            100.0);
+    public static final AreaUnit ARE = new AreaUnit("AreaUnit.are", "AreaUnit.a", OTHER, SQUARE_METER, 100.0);
 
     /** hectare */
-    public static final AreaUnit<LengthUnit> HECTARE = new AreaUnit<LengthUnit>("AreaUnit.hectare", "AreaUnit.ha", ARE,
-            100.0);
+    public static final AreaUnit HECTARE = new AreaUnit("AreaUnit.hectare", "AreaUnit.ha", OTHER, ARE, 100.0);
 
     /** mile^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_MILE = new AreaUnit<LengthUnit>(LengthUnit.MILE,
-            "AreaUnit.square_mile", "AreaUnit.mi^2");
+    public static final AreaUnit SQUARE_MILE = new AreaUnit(LengthUnit.MILE, "AreaUnit.square_mile", "AreaUnit.mi^2",
+            IMPERIAL);
 
     /** ft^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_FOOT = new AreaUnit<LengthUnit>(LengthUnit.FOOT,
-            "AreaUnit.square_foot", "AreaUnit.ft^2");
+    public static final AreaUnit SQUARE_FOOT = new AreaUnit(LengthUnit.FOOT, "AreaUnit.square_foot", "AreaUnit.ft^2",
+            IMPERIAL);
 
     /** in^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_INCH = new AreaUnit<LengthUnit>(LengthUnit.INCH,
-            "AreaUnit.square_inch", "AreaUnit.in^2");
+    public static final AreaUnit SQUARE_INCH = new AreaUnit(LengthUnit.INCH, "AreaUnit.square_inch", "AreaUnit.in^2",
+            IMPERIAL);
 
     /** yd^2 */
-    public static final AreaUnit<LengthUnit> SQUARE_YARD = new AreaUnit<LengthUnit>(LengthUnit.YARD,
-            "AreaUnit.square_yard", "AreaUnit.yd^2");
+    public static final AreaUnit SQUARE_YARD = new AreaUnit(LengthUnit.YARD, "AreaUnit.square_yard", "AreaUnit.yd^2",
+            IMPERIAL);
 
     /** acre (international) */
-    public static final AreaUnit<LengthUnit> ACRE = new AreaUnit<LengthUnit>("AreaUnit.acre", "AreaUnit.ac", SQUARE_YARD,
-            4840.0);
+    public static final AreaUnit ACRE = new AreaUnit("AreaUnit.acre", "AreaUnit.ac", IMPERIAL, SQUARE_YARD, 4840.0);
 
     /**
-     * @param lengthUnit the unit of length for the speed unit, e.g., meter
+     * Define area unit based on length.
+     * @param lengthUnit the unit of length for the area unit, e.g., meter
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public AreaUnit(final L lengthUnit, final String nameKey, final String abbreviationKey)
+    public AreaUnit(final LengthUnit lengthUnit, final String nameKey, final String abbreviationKey,
+            final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, SQUARE_METER, lengthUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit());
         this.lengthUnit = lengthUnit;
     }
@@ -97,23 +102,33 @@ public class AreaUnit<L extends LengthUnit> extends Unit<AreaUnit<L>>
      * This constructor constructs a unit out of another defined unit, e.g. an are is 100 m^2.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public AreaUnit(final String nameKey, final String abbreviationKey, final AreaUnit<L> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public AreaUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, final AreaUnit referenceUnit,
+            double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
     }
 
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public AreaUnit getStandardUnit()
+    {
+        return SQUARE_METER;
     }
 
 }

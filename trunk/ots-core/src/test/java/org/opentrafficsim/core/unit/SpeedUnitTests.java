@@ -2,6 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.SIDerived.SI_DERIVED;
 
 import java.util.Locale;
 
@@ -36,10 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Length unit underlying this Speed unit
- * @param <T> Time unit underlying this Speed unit
  */
-public class SpeedUnitTests<L extends LengthUnit, T extends TimeUnit> extends AbstractUnitTest<SpeedUnit<?, ?>>
+public class SpeedUnitTests extends AbstractUnitTest<SpeedUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -80,14 +79,12 @@ public class SpeedUnitTests<L extends LengthUnit, T extends TimeUnit> extends Ab
     }
 
     /**
-     * Verify that we can create our own pressure unit
+     * Verify that we can create our own speed unit
      */
     @Test
     public void createSpeedUnit()
     {
-        SpeedUnit<LengthUnit, TimeUnit> mySU =
-                new SpeedUnit<LengthUnit, TimeUnit>("SpeedUnit.Sprinter", "SpeedUnit.sprtr",
-                        SpeedUnit.KM_PER_HOUR, 48);
+        SpeedUnit mySU = new SpeedUnit("SpeedUnit.Sprinter", "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
         assertTrue("Can create a new PowerUnit", null != mySU);
         checkUnitRatioNameAndAbbreviation(mySU, 13.3333, 0.0001, "!Sprinter!", "!sprtr!");
     }

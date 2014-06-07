@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -36,10 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Flow Mass unit
- * @param <T> Time unit underlying this Flow Mass unit
  */
-public class FlowMassUnitTests<M extends MassUnit, T extends TimeUnit> extends AbstractUnitTest<FlowMassUnit<?, ?>>
+public class FlowMassUnitTests extends AbstractUnitTest<FlowMassUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -81,8 +80,8 @@ public class FlowMassUnitTests<M extends MassUnit, T extends TimeUnit> extends A
     @Test
     public void createFlowMassUnit()
     {
-        FlowMassUnit<MassUnit, TimeUnit> myFMU =
-                new FlowMassUnit<MassUnit, TimeUnit>("FlowMassUnit.WaterDropsPerHour", "FlowMassUnit.wdpu",
+        FlowMassUnit myFMU =
+                new FlowMassUnit("FlowMassUnit.WaterDropsPerHour", "FlowMassUnit.wdpu", UnitSystem.OTHER,
                         FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
         assertTrue("Can create a new FlowMassUnit", null != myFMU);
         checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");

@@ -1,5 +1,9 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * The units of electrical resistance.
  * <p>
@@ -27,49 +31,40 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> the mass unit type (e.g, kg)
- * @param <L> the length unit type (e.g., m)
- * @param <EC> the electrical current unit type (e.g., A)
- * @param <T> the time unit type (e.g., s)
  */
-public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, EC extends ElectricalCurrentUnit, T extends TimeUnit>
-        extends Unit<ElectricalResistanceUnit<M, L, EC, T>>
+public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the unit of mass for the electrical resistance unit, e.g., kilogram */
-    private final M massUnit;
+    private final MassUnit massUnit;
 
     /** the unit of length for the electrical resistance unit, e.g., meters */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** the unit of electrical current for the electrical resistance unit, e.g., Ampere */
-    private final EC electricalCurrentUnit;
+    private final ElectricalCurrentUnit electricalCurrentUnit;
 
     /** the unit of time for the electrical resistance unit, e.g., second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** Ohm */
-    public static final ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> OHM =
-            new ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(MassUnit.KILOGRAM,
-                    LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND,
-                    "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm");
+    public static final ElectricalResistanceUnit OHM = new ElectricalResistanceUnit(MassUnit.KILOGRAM,
+            LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalResistanceUnit.ohm_(name)",
+            "ElectricalResistanceUnit.ohm", SI_DERIVED);
 
     /** milli-ohm */
-    public static final ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> MILLIOHM =
-            new ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
-                    "ElectricalResistanceUnit.milli_ohm", "ElectricalResistanceUnit.m_ohm", OHM, 0.001);
+    public static final ElectricalResistanceUnit MILLIOHM = new ElectricalResistanceUnit(
+            "ElectricalResistanceUnit.milli_ohm", "ElectricalResistanceUnit.m_ohm", SI_DERIVED, OHM, 0.001);
 
     /** kilo-ohm */
-    public static final ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> KILOOHM =
-            new ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
-                    "ElectricalResistanceUnit.kilo_ohm", "ElectricalResistanceUnit.k_ohm", OHM, 1000.0);
+    public static final ElectricalResistanceUnit KILOOHM = new ElectricalResistanceUnit(
+            "ElectricalResistanceUnit.kilo_ohm", "ElectricalResistanceUnit.k_ohm", SI_DERIVED, OHM, 1000.0);
 
     /** mega-ohm */
-    public static final ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit> MEGAOHM =
-            new ElectricalResistanceUnit<MassUnit, LengthUnit, ElectricalCurrentUnit, TimeUnit>(
-                    "ElectricalResistanceUnit.mega_ohm", "ElectricalResistanceUnit.M_ohm", OHM, 1.06);
+    public static final ElectricalResistanceUnit MEGAOHM = new ElectricalResistanceUnit(
+            "ElectricalResistanceUnit.mega_ohm", "ElectricalResistanceUnit.M_ohm", SI_DERIVED, OHM, 1.06);
 
     /**
      * @param massUnit the unit of mass for the electrical resistance unit, e.g., kilogram
@@ -78,11 +73,13 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
      * @param timeUnit the unit of time for the electrical resistance unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public ElectricalResistanceUnit(final M massUnit, final L lengthUnit, final EC electricalCurrentUnit,
-            final T timeUnit, final String nameKey, final String abbreviationKey)
+    public ElectricalResistanceUnit(final MassUnit massUnit, final LengthUnit lengthUnit,
+            final ElectricalCurrentUnit electricalCurrentUnit, final TimeUnit timeUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, OHM, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 / (electricalCurrentUnit.getConversionFactorToStandardUnit()
@@ -100,11 +97,13 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
      * @param electricalCurrentUnit the unit of electrical current for the electrical resistance unit, e.g., Ampere
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public <EP extends ElectricalPotentialUnit<M, L, EC, T>> ElectricalResistanceUnit(final EP electricalPotentialUnit,
-            final EC electricalCurrentUnit, final String nameKey, final String abbreviationKey)
+    public ElectricalResistanceUnit(final ElectricalPotentialUnit electricalPotentialUnit,
+            final ElectricalCurrentUnit electricalCurrentUnit, final String nameKey, final String abbreviationKey,
+            final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, electricalPotentialUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, OHM, electricalPotentialUnit.getConversionFactorToStandardUnit()
                 / electricalCurrentUnit.getConversionFactorToStandardUnit());
         this.massUnit = electricalPotentialUnit.getMassUnit();
         this.lengthUnit = electricalPotentialUnit.getLengthUnit();
@@ -115,14 +114,15 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public ElectricalResistanceUnit(final String nameKey, final String abbreviationKey,
-            final ElectricalResistanceUnit<M, L, EC, T> referenceUnit, final double conversionFactorToReferenceUnit)
+    public ElectricalResistanceUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final ElectricalResistanceUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
@@ -132,7 +132,7 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     /**
      * @return massUnit
      */
-    public M getMassUnit()
+    public MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -140,7 +140,7 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -148,7 +148,7 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     /**
      * @return electricalCurrentUnit
      */
-    public EC getElectricalCurrentUnit()
+    public ElectricalCurrentUnit getElectricalCurrentUnit()
     {
         return this.electricalCurrentUnit;
     }
@@ -156,9 +156,18 @@ public class ElectricalResistanceUnit<M extends MassUnit, L extends LengthUnit, 
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public ElectricalResistanceUnit getStandardUnit()
+    {
+        return OHM;
     }
 
 }

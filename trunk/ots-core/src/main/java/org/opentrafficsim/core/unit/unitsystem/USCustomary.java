@@ -33,9 +33,6 @@ public class USCustomary extends Imperial
     /** */
     private static final long serialVersionUID = 20140606L;
 
-    /** constant to use */
-    public static final USCustomary US_CUSTOMARY = new USCustomary("US_customary", "US_customary_system");
-    
     /**
      * protected constructor to avoid creating other (false) unit systems.
      * @param abbreviationKey the abbreviation of the unit system, such as SI

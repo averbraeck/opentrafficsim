@@ -35,12 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Energy unit
- * @param <L> Length unit underlying this Energy unit
- * @param <T> Time unit underlying this Energy unit
  */
-public class EnergyUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends
-        AbstractUnitTest<EnergyUnit<?, ?, ?>>
+public class EnergyUnitTests extends AbstractUnitTest<EnergyUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -82,8 +78,7 @@ public class EnergyUnitTests<M extends MassUnit, L extends LengthUnit, T extends
         checkUnitRatioNameAndAbbreviation(EnergyUnit.CALORIE_IT, 4.1868, 0.00005, "calorie (International Table)",
                 "cal(IT)");
         checkUnitRatioNameAndAbbreviation(EnergyUnit.KILOCALORIE, 4186.8, 0.05, "kilocalorie", "kcal");
-        checkUnitRatioNameAndAbbreviation(EnergyUnit.KILOWATT_HOUR, 3600000, 0.1, "kilowatt-hour",
-                "kW.h");
+        checkUnitRatioNameAndAbbreviation(EnergyUnit.KILOWATT_HOUR, 3600000, 0.1, "kilowatt-hour", "kW.h");
     }
 
 }

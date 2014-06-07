@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.unit.unitsystem;
 
 /**
- * The international System of Units (SI). Base units m, kg, s, A, K, mol, cd.
+ * The atomic unit system.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -28,17 +28,17 @@ package org.opentrafficsim.core.unit.unitsystem;
  * @version Jun 6, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class SIDerived extends SI
+public class AU extends UnitSystem
 {
     /** */
-    private static final long serialVersionUID = 20140606L;
+    private static final long serialVersionUID = 20140607L;
 
     /**
-     * protected constructor to avoid creating other (false) SI unit systems.
+     * protected constructor to avoid creating other (false) unit systems.
      * @param abbreviationKey the abbreviation of the unit system, such as SI
      * @param nameKey the name of the unit system, such as SI Base
      */
-    protected SIDerived(final String abbreviationKey, final String nameKey)
+    protected AU(final String abbreviationKey, final String nameKey)
     {
         super(abbreviationKey, nameKey);
     }

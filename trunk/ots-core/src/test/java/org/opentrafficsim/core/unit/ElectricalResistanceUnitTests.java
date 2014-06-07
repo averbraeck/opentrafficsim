@@ -35,13 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Electrical Potential unit
- * @param <L> Length unit underlying this Electrical Potential unit
- * @param <EC> Electrical Current unit underlying this Electrical Potential unit
- * @param <T> Time unit underlying this Electrical Potential unit
  */
-public class ElectricalResistanceUnitTests<M extends MassUnit, L extends LengthUnit, EC extends ElectricalCurrentUnit, T extends TimeUnit>
-        extends AbstractUnitTest<ElectricalResistanceUnit<?, ?, ?, ?>>
+public class ElectricalResistanceUnitTests extends AbstractUnitTest<ElectricalResistanceUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources

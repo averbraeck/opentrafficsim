@@ -35,12 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Torque unit
- * @param <L> Length unit underlying this Torque unit
- * @param <T> Time unit underlying this Torque unit
  */
-public class TorqueUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends
-        AbstractUnitTest<TorqueUnit<?, ?, ?>>
+public class TorqueUnitTests extends AbstractUnitTest<TorqueUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources

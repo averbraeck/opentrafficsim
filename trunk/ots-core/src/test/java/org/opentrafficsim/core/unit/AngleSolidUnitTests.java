@@ -2,6 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 import java.util.Locale;
 
@@ -79,7 +80,8 @@ public class AngleSolidUnitTests extends AbstractUnitTest<AngleSolidUnit>
     @Test
     public void createAngleUnit()
     {
-        AngleSolidUnit myAPU = new AngleSolidUnit("AngleUnit.point", "AngleUnit.pt", 0.19634954085);
+        AngleSolidUnit myAPU =
+                new AngleSolidUnit("AngleUnit.point", "AngleUnit.pt", OTHER, AngleSolidUnit.STERADIAN, 0.19634954085);
         assertTrue("Can create a new TimeUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }

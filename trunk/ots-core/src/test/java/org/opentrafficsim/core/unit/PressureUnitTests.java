@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -36,12 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Pressure unit
- * @param <L> Length unit underlying this Pressure unit
- * @param <T> Time unit underlying this Pressure unit
  */
-public class PressureUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends
-        AbstractUnitTest<PressureUnit<?, ?, ?>>
+public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -80,9 +77,11 @@ public class PressureUnitTests<M extends MassUnit, L extends LengthUnit, T exten
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(PressureUnit.HECTOPASCAL, 100, 0.0001, "hectopascal", "hPa");
         checkUnitRatioNameAndAbbreviation(PressureUnit.KILOPASCAL, 1000, 0.001, "kilopascal", "kPa");
-        // TODO This one does not check out checkUnitRatioNameAndAbbreviation(PressureUnit.BAR, 100000, 0.01, "Bar", "bar");
-        // TODO idem checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIBAR, 1.3558179, 0.000001, "foot pound-force per second",
-        //        "ft.lbf/s");
+        // TODO This one does not check out checkUnitRatioNameAndAbbreviation(PressureUnit.BAR, 100000, 0.01, "Bar",
+        // "bar");
+        // TODO idem checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIBAR, 1.3558179, 0.000001,
+        // "foot pound-force per second",
+        // "ft.lbf/s");
         checkUnitRatioNameAndAbbreviation(PressureUnit.CENTIMETER_MERCURY, 1333.22368, 0.001, "centimeter mercury",
                 "cmHg");
         checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIMETER_MERCURY, 133.322368, 0.001, "millimeter mercury",
@@ -103,8 +102,8 @@ public class PressureUnitTests<M extends MassUnit, L extends LengthUnit, T exten
     @Test
     public void createPressureUnit()
     {
-        PressureUnit<MassUnit, LengthUnit, TimeUnit> myPU =
-                new PressureUnit<MassUnit, LengthUnit, TimeUnit>("PressureUnit.HealthyHumanHeart", "PressureUnit.hhhp",
+        PressureUnit myPU =
+                new PressureUnit("PressureUnit.HealthyHumanHeart", "PressureUnit.hhhp", UnitSystem.OTHER,
                         PressureUnit.MILLIMETER_MERCURY, 106);
         assertTrue("Can create a new PowerUnit", null != myPU);
         checkUnitRatioNameAndAbbreviation(myPU, 14132.1711, 0.01, "!HealthyHumanHeart!", "!hhhp!");
