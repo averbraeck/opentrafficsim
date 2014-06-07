@@ -104,7 +104,8 @@ public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
     {
         VolumeUnit myVU = new VolumeUnit("VolumeUnit.Barrel", "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
         assertTrue("Can create a new VolumeUnit", null != myVU);
-        checkUnitRatioNameAndAbbreviation(myVU, 119.240471, 0.000001, "!Barrel!", "!brl!");
+        // XXX: this one failed with 119.242471. But a LITER is a dm^3, which is 1E-3 m^3... So should be 0.119? (Alexander)
+        checkUnitRatioNameAndAbbreviation(myVU, 0.119240471, 0.000001, "!Barrel!", "!brl!");
     }
 
 }
