@@ -33,9 +33,6 @@ public class SIAccepted extends SI
     /** */
     private static final long serialVersionUID = 20140606L;
 
-    /** constant to use */
-    public static final SIAccepted SI_ACCEPTED = new SIAccepted("SI_accepted", "International_System_of_Units_(Accepted_Unit)");
-    
     /**
      * protected constructor to avoid creating other (false) SI unit systems.
      * @param abbreviationKey the abbreviation of the unit system, such as SI

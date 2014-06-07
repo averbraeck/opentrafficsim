@@ -1,5 +1,11 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * Standard plane angle unit. Several conversion factors have been taken from <a
  * href="http://en.wikipedia.org/wiki/Conversion_of_units">http://en.wikipedia.org/wiki/Conversion_of_units</a>.
@@ -32,56 +38,69 @@ package org.opentrafficsim.core.unit;
 public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** radian */
-    public static final AnglePlaneUnit RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", 1.0);
+    public static final AnglePlaneUnit RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad",
+            SI_DERIVED);
 
     /** degree */
     public static final AnglePlaneUnit DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg",
-            Math.PI / 180.0);
+            SI_ACCEPTED, RADIAN, Math.PI / 180.0);
 
     /** arcminute */
     public static final AnglePlaneUnit ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute",
-            "AnglePlaneUnit.arcmin", DEGREE, 1.0 / 60.0);
+            "AnglePlaneUnit.arcmin", SI_ACCEPTED, DEGREE, 1.0 / 60.0);
 
     /** arcsecond */
     public static final AnglePlaneUnit ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.arcsecond",
-            "AnglePlaneUnit.arcsec", DEGREE, 1.0 / 3600.0);
+            "AnglePlaneUnit.arcsec", SI_ACCEPTED, DEGREE, 1.0 / 3600.0);
 
     /** grad */
     public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
-            2.0 * Math.PI / 400.0);
+            OTHER, RADIAN, 2.0 * Math.PI / 400.0);
 
     /** centesimal arcminute */
     public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
-            "AnglePlaneUnit.centesimal_arcmin", GRAD, 1.0 / 100.0);
+            "AnglePlaneUnit.centesimal_arcmin", OTHER, GRAD, 1.0 / 100.0);
 
     /** centesimal arcsecond */
     public static final AnglePlaneUnit CENTESIMAL_ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond",
-            "AnglePlaneUnit.centesimal_arcsec", GRAD, 1.0 / 10000.0);
+            "AnglePlaneUnit.centesimal_arcsec", OTHER, GRAD, 1.0 / 10000.0);
 
     /**
+     * @Build a standard unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToRadian multiply by this number to convert to radians
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final double convertToRadian)
+    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, convertToRadian);
+        super(nameKey, abbreviationKey, unitSystem);
     }
 
     /**
+     * Build a unit by converting it from another unit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final AnglePlaneUnit referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final AnglePlaneUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public AnglePlaneUnit getStandardUnit()
+    {
+        return RADIAN;
     }
 
 }

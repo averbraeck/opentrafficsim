@@ -1,5 +1,14 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.IMPERIAL;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.MTS;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * The units of energy.
  * <p>
@@ -27,64 +36,116 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> the mass unit type
- * @param <L> the length unit type
- * @param <T> the time unit type
  */
-public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends Unit<EnergyUnit<M, L, T>>
+public class EnergyUnit extends Unit<EnergyUnit>
 {
     /** */
     private static final long serialVersionUID = 20140604L;
 
     /** the unit of mass for the energy unit, e.g., kilogram */
-    private final M massUnit;
+    private final MassUnit massUnit;
 
     /** the unit of length for the energy unit, e.g., length */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** the unit of time for the energy unit, e.g., second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** Joule */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> JOULE =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
-                    "EnergyUnit.Joule", "EnergyUnit.J");
+    public static final EnergyUnit JOULE = new EnergyUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
+            "EnergyUnit.Joule", "EnergyUnit.J", SI_DERIVED);
 
     /** foot-pound force */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> FOOT_POUND_FORCE =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
-                    "EnergyUnit.foot_pound-force", "EnergyUnit.ft.lbf");
+    public static final EnergyUnit FOOT_POUND_FORCE = new EnergyUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
+            "EnergyUnit.foot_pound-force", "EnergyUnit.ft.lbf", IMPERIAL);
 
     /** inch-pound force */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> INCH_POUND_FORCE =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.INCH, ForceUnit.POUND_FORCE,
-                    "EnergyUnit.inch_pound-force", "EnergyUnit.in.lbf");
+    public static final EnergyUnit INCH_POUND_FORCE = new EnergyUnit(LengthUnit.INCH, ForceUnit.POUND_FORCE,
+            "EnergyUnit.inch_pound-force", "EnergyUnit.in.lbf", IMPERIAL);
 
     /** British thermal unit (ISO) */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> BTU_ISO =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.British_thermal_unit_(ISO)",
-                    "EnergyUnit.BTU(ISO)", JOULE, 1.0545E3);
+    public static final EnergyUnit BTU_ISO = new EnergyUnit("EnergyUnit.British_thermal_unit_(ISO)",
+            "EnergyUnit.BTU(ISO)", IMPERIAL, JOULE, 1.0545E3);
 
     /** British thermal unit (International Table) */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> BTU_IT =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.British_thermal_unit_(International_Table)",
-                    "EnergyUnit.BTU(IT)", JOULE, 1.05505585262E3);
+    public static final EnergyUnit BTU_IT = new EnergyUnit("EnergyUnit.British_thermal_unit_(International_Table)",
+            "EnergyUnit.BTU(IT)", IMPERIAL, JOULE, 1.05505585262E3);
 
     /** calorie (International Table) */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> CALORIE_IT =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.calorie_(International_Table)",
-                    "EnergyUnit.cal(IT)", JOULE, 4.1868);
+    public static final EnergyUnit CALORIE_IT = new EnergyUnit("EnergyUnit.calorie_(International_Table)",
+            "EnergyUnit.cal(IT)", OTHER, JOULE, 4.1868);
 
     /** kilocalorie */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> KILOCALORIE =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.kilocalorie",
-                    "EnergyUnit.kcal", CALORIE_IT, 1000.0);
+    public static final EnergyUnit KILOCALORIE = new EnergyUnit("EnergyUnit.kilocalorie", "EnergyUnit.kcal", OTHER,
+            CALORIE_IT, 1000.0);
+
+    /** watt-hour */
+    public static final EnergyUnit WATT_HOUR = new EnergyUnit("EnergyUnit.watt-hour", "EnergyUnit.Wh", SI_DERIVED,
+            JOULE, 3600.0);
 
     /** kilowatt-hour */
-    public static final EnergyUnit<MassUnit, LengthUnit, TimeUnit> KILOWATT_HOUR =
-            new EnergyUnit<MassUnit, LengthUnit, TimeUnit>("EnergyUnit.kilowatt-hour",
-                    "EnergyUnit.kW.h", JOULE, 3.6E6);
+    public static final EnergyUnit KILOWATT_HOUR = new EnergyUnit("EnergyUnit.kilowatt-hour", "EnergyUnit.kWh",
+            SI_DERIVED, WATT_HOUR, 1000.0);
 
+    /** megawatt-hour */
+    public static final EnergyUnit MEGAWATT_HOUR = new EnergyUnit("EnergyUnit.megawatt-hour", "EnergyUnit.MWh",
+            SI_DERIVED, WATT_HOUR, 1.0E6);
+
+    /** gigawatt-hour */
+    public static final EnergyUnit GIGAWATT_HOUR = new EnergyUnit("EnergyUnit.gigawatt-hour", "EnergyUnit.GWh",
+            SI_DERIVED, WATT_HOUR, 1.0E9);
+
+    /** terawatt-hour */
+    public static final EnergyUnit TERAWATT_HOUR = new EnergyUnit("EnergyUnit.terawatt-hour", "EnergyUnit.TWh",
+            SI_DERIVED, WATT_HOUR, 1.0E12);
+
+    /** milliwatt-hour */
+    public static final EnergyUnit MILLIWATT_HOUR = new EnergyUnit("EnergyUnit.milliwatt-hour", "EnergyUnit.mWh",
+            SI_DERIVED, WATT_HOUR, 1.0E-3);
+
+    /** microwatt-hour */
+    public static final EnergyUnit MICROWATT_HOUR = new EnergyUnit("EnergyUnit.microwatt-hour", "EnergyUnit.muWh",
+            SI_DERIVED, WATT_HOUR, 1.0E-6);
+
+    /** electronvolt */
+    public static final EnergyUnit ELECTRONVOLT = new EnergyUnit("EnergyUnit.electronvolt", "EnergyUnit.eV",
+            SI_ACCEPTED, JOULE, 1.602176565314E-19);
+
+    /** milli-electronvolt */
+    public static final EnergyUnit MILLI_ELECTRONVOLT = new EnergyUnit("EnergyUnit.milli-electronvolt",
+            "EnergyUnit.meV", SI_ACCEPTED, ELECTRONVOLT, 1.0E-3);
+
+    /** kilo-electronvolt */
+    public static final EnergyUnit KILO_ELECTRONVOLT = new EnergyUnit("EnergyUnit.kilo-electronvolt", "EnergyUnit.keV",
+            SI_ACCEPTED, ELECTRONVOLT, 1.0E3);
+
+    /** mega-electronvolt */
+    public static final EnergyUnit MEGA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.mega-electronvolt", "EnergyUnit.MeV",
+            SI_ACCEPTED, ELECTRONVOLT, 1.0E6);
+
+    /** giga-electronvolt */
+    public static final EnergyUnit GIGA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.giga-electronvolt", "EnergyUnit.GeV",
+            SI_ACCEPTED, ELECTRONVOLT, 1.0E9);
+
+    /** tera-electronvolt */
+    public static final EnergyUnit TERA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.tera-electronvolt", "EnergyUnit.TeV",
+            SI_ACCEPTED, ELECTRONVOLT, 1.0E12);
+
+    /** peta-electronvolt */
+    public static final EnergyUnit PETA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.peta-electronvolt", "EnergyUnit.PeV",
+            SI_ACCEPTED, ELECTRONVOLT, 1.0E15);
+
+    /** exa-electronvolt */
+    public static final EnergyUnit EXA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.exa-electronvolt", "EnergyUnit.EeV",
+            SI_ACCEPTED, ELECTRONVOLT, 1.0E18);
+
+    /** sthene-meter (mts) */
+    public static final EnergyUnit STHENE_METER = new EnergyUnit("EnergyUnit.sthene_meter", "EnergyUnit.sn.m", MTS,
+            JOULE, 1000.0);
+
+    /** erg (cgs) */
+    public static final EnergyUnit ERG = new EnergyUnit("EnergyUnit.erg_(full)", "EnergyUnit.erg", CGS,
+            JOULE, 1.0E-7);
 
     /**
      * @param massUnit the unit of mass for the energy unit, e.g., kilogram
@@ -92,11 +153,12 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
      * @param timeUnit the unit of time for the energy unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public EnergyUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
-            final String abbreviationKey)
+    public EnergyUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, JOULE, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
                 / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
         this.massUnit = massUnit;
@@ -109,11 +171,12 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
      * @param forceUnit the unit of force for the energy unit, e.g., Newton
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public <F extends ForceUnit<M, L, T>> EnergyUnit(final L lengthUnit, final F forceUnit, final String nameKey,
-            final String abbreviationKey)
+    public EnergyUnit(final LengthUnit lengthUnit, final ForceUnit forceUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, forceUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, JOULE, forceUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit());
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
@@ -123,14 +186,15 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public EnergyUnit(final String nameKey, final String abbreviationKey, final EnergyUnit<M, L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public EnergyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final EnergyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
@@ -139,7 +203,7 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     /**
      * @return massUnit
      */
-    public M getMassUnit()
+    public MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -147,7 +211,7 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -155,9 +219,18 @@ public class EnergyUnit<M extends MassUnit, L extends LengthUnit, T extends Time
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public EnergyUnit getStandardUnit()
+    {
+        return JOULE;
     }
 
 }

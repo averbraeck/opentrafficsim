@@ -2,6 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 import java.util.Locale;
 
@@ -84,7 +85,7 @@ public class MassUnitTests extends AbstractUnitTest<MassUnit>
     @Test
     public void createMassUnit()
     {
-        MassUnit myMU = new MassUnit("MassUnit.Person", "MassUnit.pn", 80);
+        MassUnit myMU = new MassUnit("MassUnit.Person", "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
         assertTrue("Can create a new MassUnit", null != myMU);
         checkUnitRatioNameAndAbbreviation(myMU, 80, 1, "!Person!", "!pn!");
     }

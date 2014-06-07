@@ -1,5 +1,9 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * Standard density units based on mass and length.
  * <p>
@@ -27,39 +31,38 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> the mass unit
- * @param <L> the length unit type
  */
-public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<DensityUnit<M, L>>
+public class DensityUnit extends Unit<DensityUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140603L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the actual mass unit, e.g. kg */
-    private final M massUnit;
+    private final MassUnit massUnit;
 
     /** the actual length unit, e.g. meter */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** kg/m^3 */
-    public static final DensityUnit<MassUnit, LengthUnit> KG_PER_METER_3 = new DensityUnit<MassUnit, LengthUnit>(
-            MassUnit.KILOGRAM, LengthUnit.METER, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
+    public static final DensityUnit KG_PER_METER_3 = new DensityUnit(MassUnit.KILOGRAM, LengthUnit.METER,
+            "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3", SI_DERIVED);
 
     /** g/cm^3 */
-    public static final DensityUnit<MassUnit, LengthUnit> GRAM_PER_CENTIMETER_3 =
-            new DensityUnit<MassUnit, LengthUnit>(MassUnit.GRAM, LengthUnit.CENTIMETER,
-                    "DensityUnit.gram_per_cubic_centimeter", "DensityUnit.g/cm^3");
+    public static final DensityUnit GRAM_PER_CENTIMETER_3 = new DensityUnit(MassUnit.GRAM, LengthUnit.CENTIMETER,
+            "DensityUnit.gram_per_cubic_centimeter", "DensityUnit.g/cm^3", SI_DERIVED);
 
     /**
-     * Define acceleration units based on length and time. You can define units like meter/second^2 here.
+     * Define density units based on mass and length. You can define units like kg/m^3 here.
      * @param massUnit the unit of mass for the density unit, e.g., kg
      * @param lengthUnit the unit of length for the density unit, e.g., meter
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public DensityUnit(final M massUnit, final L lengthUnit, final String nameKey, final String abbreviationKey)
+    public DensityUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, KG_PER_METER_3, massUnit.getConversionFactorToStandardUnit()
                 / Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0));
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
@@ -68,14 +71,15 @@ public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public DensityUnit(final String nameKey, final String abbreviationKey, final DensityUnit<M, L> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public DensityUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final DensityUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
     }
@@ -83,7 +87,7 @@ public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<
     /**
      * @return massUnit
      */
-    public M getMassUnit()
+    public MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -91,9 +95,18 @@ public class DensityUnit<M extends MassUnit, L extends LengthUnit> extends Unit<
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public DensityUnit getStandardUnit()
+    {
+        return KG_PER_METER_3;
     }
 
 }

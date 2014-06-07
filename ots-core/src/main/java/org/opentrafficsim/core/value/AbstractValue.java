@@ -1,7 +1,8 @@
-package org.opentrafficsim.core.unit.unitsystem;
+package org.opentrafficsim.core.value;
+
+import org.opentrafficsim.core.unit.Unit;
 
 /**
- * The international System of Units (SI). Base units m, kg, s, A, K, mol, cd.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -25,22 +26,27 @@ package org.opentrafficsim.core.unit.unitsystem;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 6, 2014 <br>
+ * @version Jun 5, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <E> The element of the value, e.g. Double, Complex, Vector2D
+ * @param <U> The unit of the element, e.g. MassUnit, TimeUnit
  */
-public class SIDerived extends SI
+public abstract class AbstractValue<E, U extends Unit<U>>
 {
-    /** */
-    private static final long serialVersionUID = 20140606L;
-
     /**
-     * protected constructor to avoid creating other (false) SI unit systems.
-     * @param abbreviationKey the abbreviation of the unit system, such as SI
-     * @param nameKey the name of the unit system, such as SI Base
+     * 
      */
-    protected SIDerived(final String abbreviationKey, final String nameKey)
+    public AbstractValue()
     {
-        super(abbreviationKey, nameKey);
     }
 
+    public class Vector 
+    {
+        
+    }
+    
+    public class Matrix
+    {
+        
+    }
 }

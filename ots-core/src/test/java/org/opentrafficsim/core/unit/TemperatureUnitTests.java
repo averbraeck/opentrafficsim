@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.unit;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
@@ -8,6 +7,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -82,7 +82,8 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
     @Test
     public void createTemperatureUnit()
     {
-        TemperatureUnit myTU = new TemperatureUnit("TemperatureUnit.Newton", "TemperatureUnit.N", 3.0, -273.15);
+        TemperatureUnit myTU =
+                new TemperatureUnit("TemperatureUnit.Newton", "TemperatureUnit.N", UnitSystem.OTHER, 3.0, -273.15);
         assertTrue("Can create a new TemperatureUnit", null != myTU);
         checkUnitRatioOffsetNameAndAbbreviation(myTU, 3, -273.15, 0.0001, "!Newton!", "!N!");
     }

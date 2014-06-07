@@ -1,5 +1,9 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.*;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * Standard units for electrical current.
  * <p>
@@ -31,49 +35,67 @@ package org.opentrafficsim.core.unit;
 public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** Ampere */
     public static final ElectricalCurrentUnit AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere",
-            "ElectricalCurrentUnit.A", 1.0);
+            "ElectricalCurrentUnit.A", SI_BASE);
 
     /** nanoampere */
     public static final ElectricalCurrentUnit NANOAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", 1.0E-6);
+            "ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", SI_BASE, AMPERE, 1.0E-9);
 
     /** microampere */
     public static final ElectricalCurrentUnit MICROAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.microampere", "ElectricalCurrentUnit.muA", 1.0E-6);
+            "ElectricalCurrentUnit.microampere", "ElectricalCurrentUnit.muA", SI_BASE, AMPERE, 1.0E-6);
 
     /** milliampere */
     public static final ElectricalCurrentUnit MILLIAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", 0.001);
+            "ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", SI_BASE, AMPERE, 0.001);
 
     /** kiloampere */
     public static final ElectricalCurrentUnit KILOAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.kiloampere", "ElectricalCurrentUnit.kA", 1000.0);
+            "ElectricalCurrentUnit.kiloampere", "ElectricalCurrentUnit.kA", SI_BASE, AMPERE, 1000.0);
 
+    /** statampere (GCS ESU) */
+    public static final ElectricalCurrentUnit STATAMPERE = new ElectricalCurrentUnit(
+            "ElectricalCurrentUnit.statampere", "ElectricalCurrentUnit.statA", CGS_ESU, AMPERE, 3.335641E-10);
+    
+    /** abampere (GCS EMU) */
+    public static final ElectricalCurrentUnit ABAMPERE = new ElectricalCurrentUnit(
+            "ElectricalCurrentUnit.abampere", "ElectricalCurrentUnit.abA", CGS_EMU, AMPERE, 10.0);
+    
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
-     * @param convertToAmpere multiply by this number to convert to ampere
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public ElectricalCurrentUnit(final String nameKey, final String abbreviationKey, final double convertToAmpere)
+    public ElectricalCurrentUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, convertToAmpere);
+        super(nameKey, abbreviationKey, unitSystem);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public ElectricalCurrentUnit(String nameKey, String abbreviationKey, ElectricalCurrentUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+    public ElectricalCurrentUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem,
+            ElectricalCurrentUnit referenceUnit, double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public ElectricalCurrentUnit getStandardUnit()
+    {
+        return AMPERE;
     }
 
 }

@@ -35,10 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> Mass unit underlying this density unit
- * @param <L> Length unit underlying this density unit
  */
-public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends AbstractUnitTest<DensityUnit<?, ?>>
+public class DensityUnitTests extends AbstractUnitTest<DensityUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -65,8 +63,8 @@ public class DensityUnitTests<M extends MassUnit, L extends LengthUnit> extends 
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001,
-                "kilogram per cubic meter", "kg/m^3");
+        checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001, "kilogram per cubic meter",
+                "kg/m^3");
         checkUnitRatioNameAndAbbreviation(DensityUnit.GRAM_PER_CENTIMETER_3, 1000, 0.0001, "gram per cubic centimeter",
                 "g/cm^3");
         // Check two conversions between two units

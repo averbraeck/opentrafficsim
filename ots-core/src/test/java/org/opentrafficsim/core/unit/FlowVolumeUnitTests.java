@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -36,10 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Length unit underlying this Flow Volume unit
- * @param <T> Time unit underlying this Flow Volume unit
  */
-public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> extends AbstractUnitTest<FlowVolumeUnit<?, ?>>
+public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -57,7 +56,8 @@ public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> exten
     @Test
     public void flowVolumeKeys()
     {
-        checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second", "FlowVolumeUnit.m^3/s");
+        checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second",
+                "FlowVolumeUnit.m^3/s");
     }
 
     /**
@@ -66,13 +66,17 @@ public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> exten
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_SECOND, 1, 0.000001, "cubic meter per second", "m^3/s");
-        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, 0.0166667, 0.000001, "cubic meter per minute", "m^3/min");
+        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_SECOND, 1, 0.000001, "cubic meter per second",
+                "m^3/s");
+        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, 0.0166667, 0.000001,
+                "cubic meter per minute", "m^3/min");
         // Check two conversions between non-standard units
         assertEquals("one CUBIC METER PER HOUR is about 2.205 CUBIC_METER_PER_MINUTED", 0.01666667,
-                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_HOUR, FlowVolumeUnit.CUBIC_METER_PER_MINUTE), 0.00001);
+                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_HOUR, FlowVolumeUnit.CUBIC_METER_PER_MINUTE),
+                0.00001);
         assertEquals("one CUBIC METER PER MINUTE is 60 CUBIC_METER_PER_HOUR", 60,
-                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, FlowVolumeUnit.CUBIC_METER_PER_HOUR), 0.0001);
+                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, FlowVolumeUnit.CUBIC_METER_PER_HOUR),
+                0.0001);
     }
 
     /**
@@ -81,8 +85,8 @@ public class FlowVolumeUnitTests<L extends LengthUnit, T extends TimeUnit> exten
     @Test
     public void createFLowVolumeUnit()
     {
-        FlowVolumeUnit<LengthUnit, TimeUnit> myFMU =
-                new FlowVolumeUnit<LengthUnit, TimeUnit>("FlowVolumeUnit.TrucksPerHour", "FlowVolumeUnit.tph",
+        FlowVolumeUnit myFMU =
+                new FlowVolumeUnit("FlowVolumeUnit.TrucksPerHour", "FlowVolumeUnit.tph", UnitSystem.OTHER,
                         FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
         assertTrue("Can create a new FlowMassUnit", null != myFMU);
         checkUnitRatioNameAndAbbreviation(myFMU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");

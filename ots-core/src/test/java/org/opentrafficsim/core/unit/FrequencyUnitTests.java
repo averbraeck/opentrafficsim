@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 /**
  * <p>
@@ -36,9 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <T> Time unit underlying this Frequency unit
  */
-public class FrequencyUnitTests<T extends TimeUnit> extends AbstractUnitTest<FrequencyUnit<?>>
+public class FrequencyUnitTests extends AbstractUnitTest<FrequencyUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -82,9 +82,8 @@ public class FrequencyUnitTests<T extends TimeUnit> extends AbstractUnitTest<Fre
     @Test
     public void createFrequencyUnitt()
     {
-        FrequencyUnit<TimeUnit> myFU =
-                new FrequencyUnit<TimeUnit>("FrequencyUnit.MiddleA", "FrequencyUnit.MA",
-                        FrequencyUnit.KILOHERTZ, 0.440);
+        FrequencyUnit myFU =
+                new FrequencyUnit("FrequencyUnit.MiddleA", "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 440, 0.0001, "!MiddleA!", "!MA!");
     }

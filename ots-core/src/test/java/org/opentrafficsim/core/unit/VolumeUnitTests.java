@@ -2,6 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 import java.util.Locale;
 
@@ -36,9 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Length unit underlying this Volume unit
  */
-public class VolumeUnitTests<L extends LengthUnit> extends AbstractUnitTest<VolumeUnit<?>>
+public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -82,15 +82,18 @@ public class VolumeUnitTests<L extends LengthUnit> extends AbstractUnitTest<Volu
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_FOOT, 0.0283168, 0.0000001, "cubic foot", "ft^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_INCH, 1.6387e-5, 1e-9, "cubic inch", "in^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_YARD, 0.764554858, 0.0000001, "cubic yard", "yd^3");
-        // TODO ERROR checkUnitRatioNameAndAbbreviation(VolumeUnit.GALLON_US_FLUID, 0.0037854, 0.00000001, "horsepower (metric)",
-        //        "hp(M)");
-        // TODO IDEM checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.0000000001, "horsepower (metric)", "hp(M)");
-        // TODO IDEM checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_IMP_FLUID, .00002841306, 0.00000000001, "horsepower (metric)",
-        //        "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_US_FLUID, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_IMP, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_US_FLUID, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_IMP, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
+        // TODO ERROR checkUnitRatioNameAndAbbreviation(VolumeUnit.GALLON_US_FLUID, 0.0037854, 0.00000001,
+        // "horsepower (metric)", "hp(M)");
+        // TODO IDEM checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.0000000001,
+        // "horsepower (metric)", "hp(M)");
+        // TODO IDEM checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_IMP_FLUID, .00002841306, 0.00000000001,
+        // "horsepower (metric)", "hp(M)");
+        // checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_US_FLUID, 735.49875, 0.00001, "horsepower (metric)",
+        // "hp(M)");
+        // checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_IMP, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
+        // checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_US_FLUID, 735.49875, 0.00001, "horsepower (metric)",
+        // "hp(M)");
+        // checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_IMP, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
     }
 
     /**
@@ -99,8 +102,7 @@ public class VolumeUnitTests<L extends LengthUnit> extends AbstractUnitTest<Volu
     @Test
     public void createVolumeUnit()
     {
-        VolumeUnit<LengthUnit> myVU =
-                new VolumeUnit<LengthUnit>("VolumeUnit.Barrel", "VolumeUnit.brl", VolumeUnit.LITER, 119.240471);
+        VolumeUnit myVU = new VolumeUnit("VolumeUnit.Barrel", "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
         assertTrue("Can create a new VolumeUnit", null != myVU);
         checkUnitRatioNameAndAbbreviation(myVU, 119.240471, 0.000001, "!Barrel!", "!brl!");
     }

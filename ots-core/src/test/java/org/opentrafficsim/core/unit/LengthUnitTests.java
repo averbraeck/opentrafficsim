@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
 
 /**
  * <p>
@@ -88,7 +89,7 @@ public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
     @Test
     public void createLengthUnit()
     {
-        LengthUnit myLU = new LengthUnit("LengthUnit.Furlong", "LengthUnit.fl", 201.16800);
+        LengthUnit myLU = new LengthUnit("LengthUnit.Furlong", "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
         assertTrue("Can create a new LengthUnit", null != myLU);
         checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
     }

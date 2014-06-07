@@ -35,9 +35,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <L> Lenght unit underlying the area unit
  */
-public class AreaUnitTests<L extends LengthUnit> extends AbstractUnitTest<AreaUnit<?>>
+public class AreaUnitTests extends AbstractUnitTest<AreaUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources

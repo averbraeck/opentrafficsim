@@ -36,5 +36,5 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 public interface Velocity
 {
     /** @return the velocity unit of this velocity, e.g., m/s */
-    SpeedUnit<?, ?> getUnit();
+    SpeedUnit getUnit();
 }

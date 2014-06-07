@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -36,12 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Power unit
- * @param <L> Length unit underlying this Power unit
- * @param <T> Time unit underlying this Power unit
  */
-public class PowerUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends
-        AbstractUnitTest<PowerUnit<?, ?, ?>>
+public class PowerUnitTests extends AbstractUnitTest<PowerUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -84,8 +81,10 @@ public class PowerUnitTests<M extends MassUnit, L extends LengthUnit, T extends 
         checkUnitRatioNameAndAbbreviation(PowerUnit.KILOWATT, 1000, 0.001, "kilowatt", "kW");
         checkUnitRatioNameAndAbbreviation(PowerUnit.MEGAWATT, 1000000, 1, "megawatt", "MW");
         checkUnitRatioNameAndAbbreviation(PowerUnit.GIGAWATT, 1e9, 1e3, "gigawatt", "GW");
-        checkUnitRatioNameAndAbbreviation(PowerUnit.FOOT_POUND_FORCE_PER_SECOND, 1.3558179, 0.000001, "foot pound-force per second", "ft.lbf/s");
-        checkUnitRatioNameAndAbbreviation(PowerUnit.HORSEPOWER_METRIC, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.FOOT_POUND_FORCE_PER_SECOND, 1.3558179, 0.000001,
+                "foot pound-force per second", "ft.lbf/s");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.HORSEPOWER_METRIC, 735.49875, 0.00001, "horsepower (metric)",
+                "hp(M)");
     }
 
     /**
@@ -94,8 +93,7 @@ public class PowerUnitTests<M extends MassUnit, L extends LengthUnit, T extends 
     @Test
     public void createPowerUnitUnit()
     {
-        PowerUnit<MassUnit, LengthUnit, TimeUnit> myMU =
-                new PowerUnit<MassUnit, LengthUnit, TimeUnit>("PowerUnit.Person", "PowerUnit.pnp", PowerUnit.WATT, 250);
+        PowerUnit myMU = new PowerUnit("PowerUnit.Person", "PowerUnit.pnp", UnitSystem.OTHER, PowerUnit.WATT, 250);
         assertTrue("Can create a new PowerUnit", null != myMU);
         checkUnitRatioNameAndAbbreviation(myMU, 250, 1, "!Person!", "!pnp!");
     }

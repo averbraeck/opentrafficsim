@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -36,11 +37,8 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <M> Mass unit underlying this Force unit
- * @param <L> Length unit underlying this Force unit
- * @param <T> Time unit underlying this Force unit
  */
-public class ForceUnitTests<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends AbstractUnitTest<ForceUnit<?, ?, ?>>
+public class ForceUnitTests extends AbstractUnitTest<ForceUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -82,9 +80,8 @@ public class ForceUnitTests<M extends MassUnit, L extends LengthUnit, T extends 
     @Test
     public void createForceUnit()
     {
-        ForceUnit<MassUnit, LengthUnit, TimeUnit> myFU =
-                new ForceUnit<MassUnit, LengthUnit, TimeUnit>("ForceUnit.AntForce", "ForceUnit.af",
-                        ForceUnit.KILOGRAM_FORCE, 0.002);
+        ForceUnit myFU =
+                new ForceUnit("ForceUnit.AntForce", "ForceUnit.af", UnitSystem.OTHER, ForceUnit.KILOGRAM_FORCE, 0.002);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 0.002 * 9.8, 0.0001, "!AntForce!", "!af!");
     }

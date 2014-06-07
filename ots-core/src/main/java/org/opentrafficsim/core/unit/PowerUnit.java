@@ -1,5 +1,13 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.IMPERIAL;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.MTS;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * The units of power.
  * <p>
@@ -27,59 +35,62 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> the mass unit type
- * @param <L> the length unit type
- * @param <T> the time unit type
  */
-public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends Unit<PowerUnit<M, L, T>>
+public class PowerUnit extends Unit<PowerUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the unit of mass for the power unit, e.g., kilogram */
-    private final M massUnit;
+    private final MassUnit massUnit;
 
     /** the unit of length for the power unit, e.g., length */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** the unit of time for the power unit, e.g., second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** watt */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> WATT = new PowerUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PowerUnit.watt", "PowerUnit.W");
+    public static final PowerUnit WATT = new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
+            "PowerUnit.watt", "PowerUnit.W", SI_DERIVED);
 
     /** kilowatt */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> KILOWATT =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>("PowerUnit.kilowatt", "PowerUnit.kW", WATT, 1000.0);
+    public static final PowerUnit KILOWATT = new PowerUnit("PowerUnit.kilowatt", "PowerUnit.kW", SI_DERIVED, WATT,
+            1000.0);
 
     /** megawatt */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> MEGAWATT =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>("PowerUnit.megawatt", "PowerUnit.MW", WATT, 1.0E6);
+    public static final PowerUnit MEGAWATT = new PowerUnit("PowerUnit.megawatt", "PowerUnit.MW", SI_DERIVED, WATT,
+            1.0E6);
 
     /** gigawatt */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> GIGAWATT =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>("PowerUnit.gigawatt", "PowerUnit.GW", WATT, 1.0E9);
+    public static final PowerUnit GIGAWATT = new PowerUnit("PowerUnit.gigawatt", "PowerUnit.GW", SI_DERIVED, WATT,
+            1.0E9);
 
     /** foot-pound-force per hour */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> FOOT_POUND_FORCE_PER_HOUR =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.HOUR,
-                    "PowerUnit.foot_pound-force_per_hour", "PowerUnit.ft.lbf/h");
+    public static final PowerUnit FOOT_POUND_FORCE_PER_HOUR = new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
+            TimeUnit.HOUR, "PowerUnit.foot_pound-force_per_hour", "PowerUnit.ft.lbf/h", IMPERIAL);
 
     /** foot-pound-force per minute */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> FOOT_POUND_FORCE_PER_MINUTE =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.MINUTE,
-                    "PowerUnit.foot_pound-force_per_minute", "PowerUnit.ft.lbf/min");
+    public static final PowerUnit FOOT_POUND_FORCE_PER_MINUTE = new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
+            TimeUnit.MINUTE, "PowerUnit.foot_pound-force_per_minute", "PowerUnit.ft.lbf/min", IMPERIAL);
 
     /** foot-pound-force per second */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> FOOT_POUND_FORCE_PER_SECOND =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.SECOND,
-                    "PowerUnit.foot_pound-force_per_second", "PowerUnit.ft.lbf/s");
+    public static final PowerUnit FOOT_POUND_FORCE_PER_SECOND = new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
+            TimeUnit.SECOND, "PowerUnit.foot_pound-force_per_second", "PowerUnit.ft.lbf/s", IMPERIAL);
 
     /** horsepower (metric) */
-    public static final PowerUnit<MassUnit, LengthUnit, TimeUnit> HORSEPOWER_METRIC =
-            new PowerUnit<MassUnit, LengthUnit, TimeUnit>("PowerUnit.horsepower_(metric)", "PowerUnit.hp", WATT,
-                    735.49875);
+    public static final PowerUnit HORSEPOWER_METRIC = new PowerUnit("PowerUnit.horsepower_(metric)", "PowerUnit.hp",
+            OTHER, WATT, 735.49875);
+    
+    /** sthene-meter per second */
+    public static final PowerUnit STHENE_METER_PER_SECOND = new PowerUnit(LengthUnit.METER, ForceUnit.STHENE,
+            TimeUnit.SECOND, "PowerUnit.sthene-meter_per_second", "PowerUnit.sn.m/s", MTS);
+
+    /** erg per second */
+    public static final PowerUnit ERG_PER_SECOND = new PowerUnit(LengthUnit.CENTIMETER, ForceUnit.DYNE,
+            TimeUnit.SECOND, "PowerUnit.erg_per_second", "PowerUnit.erg/s", CGS);
+    
+    
 
     /**
      * @param massUnit the unit of mass for the power unit, e.g., kilogram
@@ -87,11 +98,12 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
      * @param timeUnit the unit of time for the power unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public PowerUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
-            final String abbreviationKey)
+    public PowerUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, WATT, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
                 / Math.pow(timeUnit.getConversionFactorToStandardUnit(), 3.0));
         this.massUnit = massUnit;
@@ -105,11 +117,12 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
      * @param timeUnit the unit of time for the power unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public <F extends ForceUnit<M, L, T>> PowerUnit(final L lengthUnit, final F forceUnit, final T timeUnit,
-            final String nameKey, final String abbreviationKey)
+    public PowerUnit(final LengthUnit lengthUnit, final ForceUnit forceUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, lengthUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, WATT, lengthUnit.getConversionFactorToStandardUnit()
                 * forceUnit.getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit());
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
@@ -119,14 +132,15 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public PowerUnit(final String nameKey, final String abbreviationKey, final PowerUnit<M, L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public PowerUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final PowerUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
@@ -135,7 +149,7 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @return massUnit
      */
-    public M getMassUnit()
+    public MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -143,7 +157,7 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -151,9 +165,18 @@ public class PowerUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public PowerUnit getStandardUnit()
+    {
+        return WATT;
     }
 
 }

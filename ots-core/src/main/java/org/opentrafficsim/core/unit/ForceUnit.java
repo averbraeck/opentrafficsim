@@ -1,5 +1,13 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.IMPERIAL;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.MTS;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * The units of force.
  * <p>
@@ -27,55 +35,62 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <M> the mass unit type
- * @param <L> the length unit type
- * @param <T> the time unit type
  */
-public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeUnit> extends Unit<ForceUnit<M, L, T>>
+public class ForceUnit extends Unit<ForceUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the unit of mass for the force unit, e.g., kilogram */
-    private final M massUnit;
+    private final MassUnit massUnit;
 
     /** the unit of length for the force unit, e.g., length */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** the unit of time for the force unit, e.g., second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** Newton */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> NEWTON = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton", "ForceUnit.N");
+    public static final ForceUnit NEWTON = new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
+            "ForceUnit.newton", "ForceUnit.N", SI_DERIVED);
 
     /** Dyne */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> DYNE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND, "ForceUnit.dyne", "ForceUnit.dyn");
+    public static final ForceUnit DYNE = new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND,
+            "ForceUnit.dyne", "ForceUnit.dyn", CGS);
 
     /** kilogram-force */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> KILOGRAM_FORCE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.kilogram-force", "ForceUnit.kgf");
+    public static final ForceUnit KILOGRAM_FORCE = new ForceUnit(MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY,
+            "ForceUnit.kilogram-force", "ForceUnit.kgf", OTHER);
 
     /** ounce-force */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> OUNCE_FORCE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ounce-force", "ForceUnit.ozf");
+    public static final ForceUnit OUNCE_FORCE = new ForceUnit(MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY,
+            "ForceUnit.ounce-force", "ForceUnit.ozf", IMPERIAL);
 
     /** pound-force */
-    public static final ForceUnit<MassUnit, LengthUnit, TimeUnit> POUND_FORCE = new ForceUnit<MassUnit, LengthUnit, TimeUnit>(
-            MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.pound-force", "ForceUnit.lbf");
-    
+    public static final ForceUnit POUND_FORCE = new ForceUnit(MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY,
+            "ForceUnit.pound-force", "ForceUnit.lbf", IMPERIAL);
+
+    /** ton-force */
+    public static final ForceUnit TON_FORCE = new ForceUnit(MassUnit.TON_SHORT, AccelerationUnit.STANDARD_GRAVITY,
+            "ForceUnit.ton-force", "ForceUnit.tnf", IMPERIAL);
+
+    /** sthene */
+    public static final ForceUnit STHENE = new ForceUnit(MassUnit.TON_METRIC, AccelerationUnit.METER_PER_SECOND_2,
+            "ForceUnit.sthene", "ForceUnit.sn", MTS);
+
     /**
+     * Build a standard unit.
      * @param massUnit the unit of mass for the force unit, e.g., kilogram
      * @param lengthUnit the unit of length for the force unit, e.g., meter
      * @param timeUnit the unit of time for the force unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public ForceUnit(final M massUnit, final L lengthUnit, final T timeUnit, final String nameKey,
-            final String abbreviationKey)
+    public ForceUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit()
+        super(nameKey, abbreviationKey, unitSystem, NEWTON, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
         this.massUnit = massUnit;
@@ -84,16 +99,18 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     }
 
     /**
+     * Build a unit with a conversion factor to another unit.
      * @param massUnit the unit of mass for the force unit, e.g., kilogram
      * @param accelerationUnit the unit of acceleration for the force unit, e.g., m/s^2
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public <A extends AccelerationUnit<L, T>> ForceUnit(final M massUnit, final A accelerationUnit,
-            final String nameKey, final String abbreviationKey)
+    public ForceUnit(final MassUnit massUnit, final AccelerationUnit accelerationUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, massUnit.getConversionFactorToStandardUnit() *
-                accelerationUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, unitSystem, NEWTON, massUnit.getConversionFactorToStandardUnit()
+                * accelerationUnit.getConversionFactorToStandardUnit());
         this.massUnit = massUnit;
         this.lengthUnit = accelerationUnit.getLengthUnit();
         this.timeUnit = accelerationUnit.getTimeUnit();
@@ -102,14 +119,15 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public ForceUnit(final String nameKey, final String abbreviationKey, final ForceUnit<M, L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public ForceUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final ForceUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
@@ -118,7 +136,7 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @return massUnit
      */
-    public M getMassUnit()
+    public MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -126,7 +144,7 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -134,9 +152,18 @@ public class ForceUnit<M extends MassUnit, L extends LengthUnit, T extends TimeU
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public ForceUnit getStandardUnit()
+    {
+        return NEWTON;
     }
 
 }

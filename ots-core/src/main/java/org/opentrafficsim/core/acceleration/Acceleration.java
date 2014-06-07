@@ -38,5 +38,5 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 public interface Acceleration extends Serializable
 {
     /** @return the acceleration unit of this acceleration */
-    AccelerationUnit<?, ?> getUnit();
+    AccelerationUnit getUnit();
 }

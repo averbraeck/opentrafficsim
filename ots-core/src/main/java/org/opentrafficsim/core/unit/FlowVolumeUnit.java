@@ -1,5 +1,12 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.IMPERIAL;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.US_CUSTOMARY;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
  * The volume flow rate is the volume of fluid which passes through a given surface per unit of time (wikipedia).
  * <p>
@@ -27,140 +34,130 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <L> the length unit type
- * @param <T> the time unit type
  */
-public class FlowVolumeUnit<L extends LengthUnit, T extends TimeUnit> extends Unit<FlowVolumeUnit<L, T>>
+public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
 {
     /** */
-    private static final long serialVersionUID = 20140604L;
+    private static final long serialVersionUID = 20140607L;
 
     /** the unit of length for the flow unit, e.g., meter */
-    private final L lengthUnit;
+    private final LengthUnit lengthUnit;
 
     /** the unit of time for the flow unit, e.g., second */
-    private final T timeUnit;
+    private final TimeUnit timeUnit;
 
     /** m^3/s */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_METER_PER_SECOND =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.METER, TimeUnit.SECOND,
-                    "FlowVolumeUnit.cubic_meter_per_second", "FlowVolumeUnit.m^3/s");
+    public static final FlowVolumeUnit CUBIC_METER_PER_SECOND = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.SECOND,
+            "FlowVolumeUnit.cubic_meter_per_second", "FlowVolumeUnit.m^3/s", SI_DERIVED);
 
     /** m^3/min */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_METER_PER_MINUTE =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.METER, TimeUnit.MINUTE,
-                    "FlowVolumeUnit.cubic_meter_per_minute", "FlowVolumeUnit.m^3/min");
+    public static final FlowVolumeUnit CUBIC_METER_PER_MINUTE = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.MINUTE,
+            "FlowVolumeUnit.cubic_meter_per_minute", "FlowVolumeUnit.m^3/min", SI_ACCEPTED);
 
     /** m^3/hour */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_METER_PER_HOUR =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.METER, TimeUnit.HOUR,
-                    "FlowVolumeUnit.cubic_meter_per_hour", "FlowVolumeUnit.m^3/h");
+    public static final FlowVolumeUnit CUBIC_METER_PER_HOUR = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.HOUR,
+            "FlowVolumeUnit.cubic_meter_per_hour", "FlowVolumeUnit.m^3/h", SI_ACCEPTED);
 
     /** m^3/day */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_METER_PER_DAY =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.METER, TimeUnit.DAY,
-                    "FlowVolumeUnit.cubic_meter_per_day", "FlowVolumeUnit.m^3/d");
+    public static final FlowVolumeUnit CUBIC_METER_PER_DAY = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.DAY,
+            "FlowVolumeUnit.cubic_meter_per_day", "FlowVolumeUnit.m^3/d", SI_ACCEPTED);
 
     /** L/s */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> LITER_PER_SECOND =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.LITER, TimeUnit.SECOND,
-                    "FlowVolumeUnit.liter_per_second", "FlowVolumeUnit.L/s");
+    public static final FlowVolumeUnit LITER_PER_SECOND = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.SECOND,
+            "FlowVolumeUnit.liter_per_second", "FlowVolumeUnit.L/s", SI_ACCEPTED);
 
     /** L/min */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> LITER_PER_MINUTE =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.LITER, TimeUnit.MINUTE,
-                    "FlowVolumeUnit.liter_per_minute", "FlowVolumeUnit.L/min");
+    public static final FlowVolumeUnit LITER_PER_MINUTE = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.MINUTE,
+            "FlowVolumeUnit.liter_per_minute", "FlowVolumeUnit.L/min", SI_ACCEPTED);
 
     /** L/hour */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> LITER_PER_HOUR =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.LITER, TimeUnit.HOUR,
-                    "FlowVolumeUnit.liter_per_hour", "FlowVolumeUnit.L/h");
+    public static final FlowVolumeUnit LITER_PER_HOUR = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.HOUR,
+            "FlowVolumeUnit.liter_per_hour", "FlowVolumeUnit.L/h", SI_ACCEPTED);
 
     /** L/day */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> LITER_PER_DAY =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.LITER, TimeUnit.DAY,
-                    "FlowVolumeUnit.liter_per_day", "FlowVolumeUnit.L/d");
+    public static final FlowVolumeUnit LITER_PER_DAY = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.DAY,
+            "FlowVolumeUnit.liter_per_day", "FlowVolumeUnit.L/d", SI_ACCEPTED);
 
     /** ft^3/s */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_FEET_PER_SECOND =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.FOOT, TimeUnit.SECOND,
-                    "FlowVolumeUnit.cubic_feet_per_second", "FlowVolumeUnit.ft^3/s");
+    public static final FlowVolumeUnit CUBIC_FEET_PER_SECOND = new FlowVolumeUnit(LengthUnit.FOOT, TimeUnit.SECOND,
+            "FlowVolumeUnit.cubic_feet_per_second", "FlowVolumeUnit.ft^3/s", IMPERIAL);
 
     /** ft^3/min */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_FEET_PER_MINUTE =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.FOOT, TimeUnit.MINUTE,
-                    "FlowVolumeUnit.cubic_feet_per_minute", "FlowVolumeUnit.ft^3/min");
+    public static final FlowVolumeUnit CUBIC_FEET_PER_MINUTE = new FlowVolumeUnit(LengthUnit.FOOT, TimeUnit.MINUTE,
+            "FlowVolumeUnit.cubic_feet_per_minute", "FlowVolumeUnit.ft^3/min", IMPERIAL);
 
     /** in^3/s */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_INCH_PER_SECOND =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.INCH, TimeUnit.SECOND,
-                    "FlowVolumeUnit.cubic_inch_per_second", "FlowVolumeUnit.in^3/s");
+    public static final FlowVolumeUnit CUBIC_INCH_PER_SECOND = new FlowVolumeUnit(LengthUnit.INCH, TimeUnit.SECOND,
+            "FlowVolumeUnit.cubic_inch_per_second", "FlowVolumeUnit.in^3/s", IMPERIAL);
 
     /** in^3/min */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> CUBIC_INCH_PER_MINUTE =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(LengthUnit.INCH, TimeUnit.MINUTE,
-                    "FlowVolumeUnit.cubic_inch_per_minute", "FlowVolumeUnit.in^3/min");
+    public static final FlowVolumeUnit CUBIC_INCH_PER_MINUTE = new FlowVolumeUnit(LengthUnit.INCH, TimeUnit.MINUTE,
+            "FlowVolumeUnit.cubic_inch_per_minute", "FlowVolumeUnit.in^3/min", IMPERIAL);
 
     /** gallon/s (US) */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> GALLON_PER_SECOND =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.GALLON_US_FLUID, TimeUnit.SECOND,
-                    "FlowVolumeUnit.gallon_(US)_per_second", "FlowVolumeUnit.gal/s");
+    public static final FlowVolumeUnit GALLON_PER_SECOND = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID,
+            TimeUnit.SECOND, "FlowVolumeUnit.gallon_(US)_per_second", "FlowVolumeUnit.gal/s", US_CUSTOMARY);
 
     /** gallon/min (US) */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> GALLON_PER_MINUTE =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.GALLON_US_FLUID, TimeUnit.MINUTE,
-                    "FlowVolumeUnit.gallon_(US)_per_minute", "FlowVolumeUnit.gal/min");
+    public static final FlowVolumeUnit GALLON_PER_MINUTE = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID,
+            TimeUnit.MINUTE, "FlowVolumeUnit.gallon_(US)_per_minute", "FlowVolumeUnit.gal/min", US_CUSTOMARY);
 
     /** gallon/hour (US) */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> GALLON_PER_HOUR =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.GALLON_US_FLUID, TimeUnit.HOUR,
-                    "FlowVolumeUnit.gallon_(US)_per_hour", "FlowVolumeUnit.gal/h");
+    public static final FlowVolumeUnit GALLON_PER_HOUR = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID, TimeUnit.HOUR,
+            "FlowVolumeUnit.gallon_(US)_per_hour", "FlowVolumeUnit.gal/h", US_CUSTOMARY);
 
     /** gallon/day (US) */
-    public static final FlowVolumeUnit<LengthUnit, TimeUnit> GALLON_PER_DAY =
-            new FlowVolumeUnit<LengthUnit, TimeUnit>(VolumeUnit.GALLON_US_FLUID, TimeUnit.DAY,
-                    "FlowVolumeUnit.gallon_(US)_per_day", "FlowVolumeUnit.gal/d");
+    public static final FlowVolumeUnit GALLON_PER_DAY = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID, TimeUnit.DAY,
+            "FlowVolumeUnit.gallon_(US)_per_day", "FlowVolumeUnit.gal/d", US_CUSTOMARY);
 
     /**
+     * Create a flow-volumeunit based on length (cubed) per time unit.
      * @param lengthUnit the unit of length for the flow unit, e.g., meter
      * @param timeUnit the unit of time for the flow unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public FlowVolumeUnit(final L lengthUnit, final T timeUnit, final String nameKey, final String abbreviationKey)
+    public FlowVolumeUnit(final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0)
+        super(nameKey, abbreviationKey, unitSystem, CUBIC_METER_PER_SECOND, Math.pow(
+                lengthUnit.getConversionFactorToStandardUnit(), 3.0)
                 / timeUnit.getConversionFactorToStandardUnit());
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
 
     /**
+     * Create a flow-volumeunit based as a volume unit per time unit.
      * @param volumeUnit the unit of volume for the flow unit, e.g., cubic meter
      * @param timeUnit the unit of time for the flow unit, e.g., second
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public <V extends VolumeUnit<L>> FlowVolumeUnit(final V volumeUnit, final T timeUnit, final String nameKey,
-            final String abbreviationKey)
+    public FlowVolumeUnit(final VolumeUnit volumeUnit, final TimeUnit timeUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, volumeUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, unitSystem, CUBIC_METER_PER_SECOND, volumeUnit
+                .getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit());
         this.lengthUnit = volumeUnit.getLengthUnit();
         this.timeUnit = timeUnit;
     }
 
     /**
+     * Create a flow-volumeunit based on another flow-volumeunit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public FlowVolumeUnit(final String nameKey, final String abbreviationKey, final FlowVolumeUnit<L, T> referenceUnit,
-            final double conversionFactorToReferenceUnit)
+    public FlowVolumeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final FlowVolumeUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }
@@ -168,7 +165,7 @@ public class FlowVolumeUnit<L extends LengthUnit, T extends TimeUnit> extends Un
     /**
      * @return lengthUnit
      */
-    public L getLengthUnit()
+    public LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -176,9 +173,18 @@ public class FlowVolumeUnit<L extends LengthUnit, T extends TimeUnit> extends Un
     /**
      * @return timeUnit
      */
-    public T getTimeUnit()
+    public TimeUnit getTimeUnit()
     {
         return this.timeUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public FlowVolumeUnit getStandardUnit()
+    {
+        return CUBIC_METER_PER_SECOND;
     }
 
 }

@@ -1,6 +1,14 @@
 package org.opentrafficsim.core.unit;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.IMPERIAL;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_BASE;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+
 /**
+ * Temperature units.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -26,10 +34,6 @@ package org.opentrafficsim.core.unit;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 5, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
- * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
 {
@@ -38,48 +42,60 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
 
     /** Kelvin */
     public static final TemperatureUnit KELVIN = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K",
-            1.0, 0.0);
+            SI_BASE, 1.0, 0.0);
 
     /** Degree Celcius */
     public static final TemperatureUnit DEGREE_CELCIUS = new TemperatureUnit("TemperatureUnit.degree_Celcius",
-            "TemperatureUnit.dgC", 1.0, -273.15);
+            "TemperatureUnit.dgC", SI_DERIVED, 1.0, -273.15);
 
     /** Degree Fahrenheit */
     public static final TemperatureUnit DEGREE_FAHRENHEIT = new TemperatureUnit("TemperatureUnit.degree_Fahrenheit",
-            "TemperatureUnit.dgF", 9.0 / 5.0, -459.67);
+            "TemperatureUnit.dgF", IMPERIAL, 9.0 / 5.0, -459.67);
 
     /** Degree Rankine */
     public static final TemperatureUnit DEGREE_RANKINE = new TemperatureUnit("TemperatureUnit.degree_Rankine",
-            "TemperatureUnit.dgR", 9.0 / 5.0, 0.0);
+            "TemperatureUnit.dgR", OTHER, 9.0 / 5.0, 0.0);
 
     /** Degree Reaumur */
     public static final TemperatureUnit DEGREE_REAUMUR = new TemperatureUnit("TemperatureUnit.degree_Reaumur",
-            "TemperatureUnit.dgRe", 4.0 / 5.0, -273.15);
+            "TemperatureUnit.dgRe", OTHER, 4.0 / 5.0, -273.15);
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param conversionFactorToStandardUnit multiply by this number to convert to the standard unit
      * @param offsetToKelvin the offsetToKelvin to add to convert to the standard (e.g., SI) unit
      */
-    public TemperatureUnit(final String nameKey, final String abbreviationKey,
+    public TemperatureUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final double conversionFactorToStandardUnit, final double offsetToKelvin)
     {
-        super(nameKey, abbreviationKey, conversionFactorToStandardUnit, offsetToKelvin);
+        super(nameKey, abbreviationKey, unitSystem, KELVIN, conversionFactorToStandardUnit, offsetToKelvin);
     }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      * @param offsetToKelvin the offsetToKelvin to add to convert to the standard (e.g., SI) unit
      */
-    public TemperatureUnit(final String nameKey, final String abbreviationKey, final TemperatureUnit referenceUnit,
-            final double conversionFactorToReferenceUnit, final double offsetToKelvin)
+    public TemperatureUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final TemperatureUnit referenceUnit, final double conversionFactorToReferenceUnit,
+            final double offsetToKelvin)
     {
-        super(nameKey, abbreviationKey, referenceUnit, conversionFactorToReferenceUnit, offsetToKelvin);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, offsetToKelvin);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public TemperatureUnit getStandardUnit()
+    {
+        return KELVIN;
     }
 
 }
