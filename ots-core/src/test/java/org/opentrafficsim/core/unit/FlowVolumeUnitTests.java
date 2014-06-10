@@ -85,11 +85,12 @@ public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
     @Test
     public void createFLowVolumeUnit()
     {
-        FlowVolumeUnit myFMU =
+        FlowVolumeUnit myFVU =
                 new FlowVolumeUnit("FlowVolumeUnit.TrucksPerHour", "FlowVolumeUnit.tph", UnitSystem.OTHER,
                         FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
-        assertTrue("Can create a new FlowMassUnit", null != myFMU);
-        checkUnitRatioNameAndAbbreviation(myFMU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");
+        assertTrue("Can create a new FlowMassUnit", null != myFVU);
+        checkUnitRatioNameAndAbbreviation(myFVU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");
+        Unit.getUnits(FlowVolumeUnit.class).remove(myFVU);
     }
 
 }

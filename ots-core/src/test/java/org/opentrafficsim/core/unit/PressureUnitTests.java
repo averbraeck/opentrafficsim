@@ -77,11 +77,8 @@ public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(PressureUnit.HECTOPASCAL, 100, 0.0001, "hectopascal", "hPa");
         checkUnitRatioNameAndAbbreviation(PressureUnit.KILOPASCAL, 1000, 0.001, "kilopascal", "kPa");
-        // TODO This one does not check out checkUnitRatioNameAndAbbreviation(PressureUnit.BAR, 100000, 0.01, "Bar",
-        // "bar");
-        // TODO idem checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIBAR, 1.3558179, 0.000001,
-        // "foot pound-force per second",
-        // "ft.lbf/s");
+        checkUnitRatioNameAndAbbreviation(PressureUnit.BAR, 100000, 0.01, "bar", "bar");
+        checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIBAR, 100, 0.000001, "millibar", "mbar");
         checkUnitRatioNameAndAbbreviation(PressureUnit.CENTIMETER_MERCURY, 1333.22368, 0.001, "centimeter mercury",
                 "cmHg");
         checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIMETER_MERCURY, 133.322368, 0.001, "millimeter mercury",
