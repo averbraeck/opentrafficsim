@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.unit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
@@ -67,13 +68,20 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.KELVIN, 1, 0, 0.00000001, "kelvin", "K");
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_CELCIUS, 1, -273.15, 0.000001, "degree Celcius",
                 "\u00B0C");
-        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_FAHRENHEIT, 9. / 5., -459.67, 0.00001,
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_FAHRENHEIT, 5. / 9., -459.67, 0.00001,
                 "degree Fahrenheit", "\u00B0F");
+        // Check two conversions between non-standard units
+        assertEquals("one DEGREE CELCIUS is 9/5 DEGREE FAHRENHEIT", 9. / 5.,
+                getMultiplicationFactorTo(TemperatureUnit.DEGREE_CELCIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
+        // TODO: The Fahrenheit <-> Celcius checks don't work
+        assertEquals("zero DEGREE CELCIUS is 32 DEGREE FAHRENHEIT", 32,
+                getOffsetTo(TemperatureUnit.DEGREE_CELCIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
+        assertEquals("zero DEGREE FAHRENHEIT is about -17.7778 DEGREE CELCIUS", -17.7778,
+                getOffsetTo(TemperatureUnit.DEGREE_FAHRENHEIT, TemperatureUnit.DEGREE_CELCIUS), 0.0001);
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_RANKINE, 9. / 5, 0, 0.0001, "degree Rankine",
                 "\u00B0R");
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_REAUMUR, 0.8, -273.15, 0.000001,
                 "degree Reaumur", "\u00B0R\u00E9");
-        // TODO: The Fahrenheit <-> Celcius conversions are not properly checked
     }
 
     /**
