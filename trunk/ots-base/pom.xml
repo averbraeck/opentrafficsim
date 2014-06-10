@@ -45,6 +45,9 @@
 		<dsol-version>3.0.0-SNAPSHOT</dsol-version>
 		<junit.version>4.11</junit.version>
 		<java3d.version>1.5.1</java3d.version>
+		<parallelcolt.version>0.10.1</parallelcolt.version>
+		<geotools-version>11.1</geotools-version>
+		<osmosis.version>0.43.1</osmosis.version>
 	</properties>
 
 
@@ -56,16 +59,19 @@
 		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
 		<outputDirectory>${basedir}/target/classes</outputDirectory>
 		<testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
-      <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory> 
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>${basedir}/src/main/resources</directory>
-            </testResource>
-        </testResources>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>${basedir}/src/main/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>${basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
 
 		<extensions>
 			<extension>
@@ -153,6 +159,7 @@
 						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-tutorial/apidocs/</link>
 						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-devs/apidocs/</link>
 						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-hla/apidocs/</link>
+						<link>http://simulation.tudelft.nl/parallelcolt/apidocs/</link>
 					</links>
 					<additionalJOption>-J-Xmx1024m</additionalJOption>
 					<detectJavaApiLink>true</detectJavaApiLink>
@@ -295,6 +302,13 @@
 				<artifactId>j3d-core</artifactId>
 				<version>${java3d.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>net.sourceforge.parallelcolt</groupId>
+				<artifactId>parallelcolt</artifactId>
+				<version>${parallelcolt.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -325,6 +339,32 @@
 			<url>http://mvnrepository.com/artifact</url>
 		</repository>
 
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>apache</id>
+			<name>apache</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>opengeo</id>
+			<name>opengeo</name>
+			<url>http://repo.opengeo.org</url>
+		</repository>
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>osgeo</id>
+			<name>osgeo</name>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+		</repository>
 	</repositories>
 
 	<licenses>
@@ -395,7 +435,6 @@
 				<role>maintainance</role>
 			</roles>
 		</developer>
-
 
 		<developer>
 			<id>yyuan</id>
