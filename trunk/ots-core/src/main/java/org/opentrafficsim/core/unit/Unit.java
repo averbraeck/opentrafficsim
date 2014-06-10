@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+import org.reflections.Reflections;
 
 /**
  * All units are internally <u>stored</u> relative to a standard unit with conversion factor. This means that e.g., a
@@ -58,6 +59,28 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
 
     /** a static map of all defined units */
     private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
+
+    /** force all units to be loaded */
+    static
+    {
+        Reflections reflections = new Reflections("org.opentrafficsim.core.unit");
+        @SuppressWarnings("rawtypes")
+        Set<Class<? extends Unit>> classes = reflections.getSubTypesOf(Unit.class);
+
+        for (@SuppressWarnings("rawtypes")
+        Class<? extends Unit> clazz : classes)
+        {
+            try
+            {
+                Class.forName(clazz.getCanonicalName());
+            }
+            catch (Exception exception)
+            {
+                // TODO: professional logging of errors
+                exception.printStackTrace();
+            }
+        }
+    }
 
     /**
      * Build a standard unit.

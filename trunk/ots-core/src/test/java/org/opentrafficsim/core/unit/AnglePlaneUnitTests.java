@@ -2,7 +2,7 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.core.unit.unitsystem.Other.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
 
 import java.util.Locale;
 

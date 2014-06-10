@@ -88,27 +88,27 @@ public class VolumeUnit extends Unit<VolumeUnit>
             IMPERIAL, LITER, 4.5409);
 
     /** ounce (fluid US) */
-    public static final VolumeUnit OUNCE_US_FLUID = new VolumeUnit("VolumeUnit.US_fl_oz",
-            "VolumeUnit.ounce_(fluid_US)", US_CUSTOMARY, GALLON_US_FLUID, 1.0 / 128.0);
+    public static final VolumeUnit OUNCE_US_FLUID = new VolumeUnit("VolumeUnit.ounce_(fluid_US)",
+            "VolumeUnit.US_fl_oz", US_CUSTOMARY, GALLON_US_FLUID, 1.0 / 128.0);
 
     /** ounce (fluid imperial) */
-    public static final VolumeUnit OUNCE_IMP_FLUID = new VolumeUnit("VolumeUnit.fl_oz_(imp)",
-            "VolumeUnit.ounce_(fluid_imperial)", IMPERIAL, GALLON_IMP, 1.0 / 160.0);
+    public static final VolumeUnit OUNCE_IMP_FLUID = new VolumeUnit("VolumeUnit.ounce_(fluid_imperial)",
+            "VolumeUnit.fl_oz_(imp)", IMPERIAL, GALLON_IMP, 1.0 / 160.0);
 
     /** pint (fluid US) */
-    public static final VolumeUnit PINT_US_FLUID = new VolumeUnit("VolumeUnit.pt(US_fl)", "VolumeUnit.pint_(US_fluid)",
+    public static final VolumeUnit PINT_US_FLUID = new VolumeUnit("VolumeUnit.pint_(US_fluid)", "VolumeUnit.pt(US_fl)",
             US_CUSTOMARY, GALLON_US_FLUID, 1.0 / 8.0);
 
     /** pint (imperial) */
-    public static final VolumeUnit PINT_IMP = new VolumeUnit("VolumeUnit.pt_(imp)", "VolumeUnit.pint_(imperial)",
+    public static final VolumeUnit PINT_IMP = new VolumeUnit("VolumeUnit.pint_(imperial)", "VolumeUnit.pt_(imp)",
             IMPERIAL, GALLON_IMP, 1.0 / 8.0);
 
     /** quart (fluid US) */
-    public static final VolumeUnit QUART_US_FLUID = new VolumeUnit("VolumeUnit.qt(US_fl)",
-            "VolumeUnit.quart_(US_fluid)", US_CUSTOMARY, GALLON_US_FLUID, 1.0 / 4.0);
+    public static final VolumeUnit QUART_US_FLUID = new VolumeUnit("VolumeUnit.quart_(US_fluid)",
+            "VolumeUnit.qt(US_fl)", US_CUSTOMARY, GALLON_US_FLUID, 1.0 / 4.0);
 
     /** quart (imperial) */
-    public static final VolumeUnit QUART_IMP = new VolumeUnit("VolumeUnit.qt_(imp)", "VolumeUnit.quart_(imperial)",
+    public static final VolumeUnit QUART_IMP = new VolumeUnit("VolumeUnit.quart_(imperial)", "VolumeUnit.qt_(imp)",
             IMPERIAL, GALLON_IMP, 1.0 / 4.0);
 
     /**
