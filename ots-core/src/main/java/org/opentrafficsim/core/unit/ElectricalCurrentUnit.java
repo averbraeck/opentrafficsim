@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.unit;
 
-import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.*;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS_EMU;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.CGS_ESU;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_BASE;
 
 import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 

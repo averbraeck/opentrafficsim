@@ -50,11 +50,11 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
 
     /** Degree Fahrenheit */
     public static final TemperatureUnit DEGREE_FAHRENHEIT = new TemperatureUnit("TemperatureUnit.degree_Fahrenheit",
-            "TemperatureUnit.dgF", IMPERIAL, 9.0 / 5.0, -459.67);
+            "TemperatureUnit.dgF", IMPERIAL, 5.0 / 9.0, -459.67);
 
     /** Degree Rankine */
     public static final TemperatureUnit DEGREE_RANKINE = new TemperatureUnit("TemperatureUnit.degree_Rankine",
-            "TemperatureUnit.dgR", OTHER, 9.0 / 5.0, 0.0);
+            "TemperatureUnit.dgR", OTHER, 5.0 / 9.0, 0.0);
 
     /** Degree Reaumur */
     public static final TemperatureUnit DEGREE_REAUMUR = new TemperatureUnit("TemperatureUnit.degree_Reaumur",
