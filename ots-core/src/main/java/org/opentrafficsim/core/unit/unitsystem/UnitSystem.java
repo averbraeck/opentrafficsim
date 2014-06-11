@@ -84,25 +84,6 @@ public abstract class UnitSystem implements Serializable
     /** the name of the unit system, such as centimeter-gram-second */
     private final String nameKey;
 
-    /** force loading of all UnitSystems */
-    static
-    {
-        Reflections reflections = new Reflections("org.opentrafficsim.core.unit.unitsystem");
-        Set<Class<? extends UnitSystem>> classes = reflections.getSubTypesOf(UnitSystem.class);
-
-        for (Class<? extends UnitSystem> clazz : classes)
-        {
-            try
-            {
-                Class.forName(clazz.getCanonicalName());
-            }
-            catch (Exception exception)
-            {
-                // TODO: professional logging of errors
-                exception.printStackTrace();
-            }
-        }
-    }
     /**
      * @param abbreviationKey the abbreviation of the unit system, such as cgs
      * @param nameKey the name of the unit system, such as centimeter-gram-second
@@ -118,7 +99,7 @@ public abstract class UnitSystem implements Serializable
      */
     public String getName()
     {
-        return UnitLocale.getString(this.nameKey);
+        return UnitSystemLocale.getString(this.nameKey);
     }
 
     /**
@@ -134,7 +115,7 @@ public abstract class UnitSystem implements Serializable
      */
     public String getAbbreviation()
     {
-        return UnitLocale.getString(this.abbreviationKey);
+        return UnitSystemLocale.getString(this.abbreviationKey);
     }
 
     /**
