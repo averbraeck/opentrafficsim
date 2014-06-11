@@ -5,12 +5,9 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 import org.opentrafficsim.core.AvailableLocalizations;
-import org.opentrafficsim.core.unit.Unit;
-import org.reflections.Reflections;
 
 /**
  * <p>
