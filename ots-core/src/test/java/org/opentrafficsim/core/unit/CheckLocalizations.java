@@ -2,9 +2,20 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
+
+import javax.swing.ImageIcon;
 
 import org.junit.Test;
 import org.opentrafficsim.core.AvailableLocalizations;
@@ -52,8 +63,11 @@ public class CheckLocalizations
     public void checkDefinedUnits()
     {
         final String head = "localeunit";
+        Set<String> usedKeys = new HashSet<String>();
         ArrayList<String> errors = new ArrayList<String>();
-        for (String localeName : AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath() + "../../../../"))
+        List<String> localeNames = AvailableLocalizations.availableLocalizations(head, 
+                this.getClass().getResource("").getPath() + "../../../../");
+        for (String localeName : localeNames)
         {
             // System.out.println("Checking internationalization to " + localeName);
             DefaultLocale.setLocale(new Locale(localeName));
@@ -77,6 +91,8 @@ public class CheckLocalizations
                         continue;
                     if (abbreviationKey.startsWith(doNotCheckPrefix))
                         continue;
+                    usedKeys.add(nameKey);
+                    usedKeys.add(abbreviationKey);
                     String name = u.getName();
                     // assertFalse("Name may not begin AND end with an exclamation mark",
                     // name.startsWith("!") && name.endsWith("!"));
@@ -91,8 +107,39 @@ public class CheckLocalizations
                 }
             }
         }
+        for (String localeName : localeNames)
+        {
+            Properties properties = new Properties();
+            String middlePart = "";
+            if (! localeName.equals("en"))
+                middlePart = "_" + localeName;
+                
+            String path = this.getClass().getResource("").getPath() + "../../../../" + head + middlePart + ".properties";
+            try
+            {
+                FileInputStream fileInput = new FileInputStream(path);
+                properties.load(fileInput);
+                fileInput.close();
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+            ResourceBundle.clearCache();
+            Set<String> unusedKeys = new HashSet<String>();
+            for (Object key : properties.keySet()) {
+                String keyString = (String) key;
+                if (usedKeys.contains(keyString))
+                    continue;
+                unusedKeys.add(keyString);
+            }
+            for (String unusedKey : unusedKeys) {
+                errors.add(String.format("Unused key %s for locale %s", unusedKey, localeName));
+            }
+        }
         for (String s : errors)
             System.out.println(s);
-        assertTrue("There should be no missing translations", errors.isEmpty());
+        assertTrue("There should be no errors reported by CheckLocalizations", errors.isEmpty());
     }
+    
 }
