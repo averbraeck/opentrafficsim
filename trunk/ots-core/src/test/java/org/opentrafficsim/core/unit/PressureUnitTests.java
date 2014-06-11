@@ -54,7 +54,7 @@ public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void pressureKeys()
+    public void keys()
     {
         checkKeys(PressureUnit.PASCAL, "PressureUnit.pascal", "PressureUnit.Pa");
     }
@@ -100,7 +100,8 @@ public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
     public void createPressureUnit()
     {
         PressureUnit myPU =
-                new PressureUnit("PressureUnit.HealthyHumanHeart", "PressureUnit.hhhp", UnitSystem.OTHER,
+                new PressureUnit(CheckLocalizations.doNotCheckPrefix + "PressureUnit.HealthyHumanHeart",
+                        CheckLocalizations.doNotCheckPrefix + "PressureUnit.hhhp", UnitSystem.OTHER,
                         PressureUnit.MILLIMETER_MERCURY, 106);
         assertTrue("Can create a new PowerUnit", null != myPU);
         checkUnitRatioNameAndAbbreviation(myPU, 14132.1711, 0.01, "!HealthyHumanHeart!", "!hhhp!");

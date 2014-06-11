@@ -52,7 +52,7 @@ public class ElectricalResistanceUnitTests extends AbstractUnitTest<ElectricalRe
      * Verify the result of some get*Key methods
      */
     @Test
-    public void electricalResistanceKeys()
+    public void keys()
     {
         checkKeys(ElectricalResistanceUnit.OHM, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm");
     }

@@ -54,7 +54,7 @@ public class FlowMassUnitTests extends AbstractUnitTest<FlowMassUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void flowMassKeys()
+    public void keys()
     {
         checkKeys(FlowMassUnit.KILOGRAM_PER_SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s");
     }

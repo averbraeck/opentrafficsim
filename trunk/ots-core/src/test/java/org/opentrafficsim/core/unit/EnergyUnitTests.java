@@ -52,7 +52,7 @@ public class EnergyUnitTests extends AbstractUnitTest<EnergyUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void energyKeys()
+    public void keys()
     {
         checkKeys(EnergyUnit.JOULE, "EnergyUnit.Joule", "EnergyUnit.J");
     }

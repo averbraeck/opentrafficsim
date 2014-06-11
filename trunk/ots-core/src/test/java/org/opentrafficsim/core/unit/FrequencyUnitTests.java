@@ -54,7 +54,7 @@ public class FrequencyUnitTests extends AbstractUnitTest<FrequencyUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void FrequencyKeys()
+    public void keys()
     {
         checkKeys(FrequencyUnit.HERTZ, "FrequencyUnit.Hertz", "FrequencyUnit.Hz");
     }
@@ -83,7 +83,8 @@ public class FrequencyUnitTests extends AbstractUnitTest<FrequencyUnit>
     public void createFrequencyUnitt()
     {
         FrequencyUnit myFU =
-                new FrequencyUnit("FrequencyUnit.MiddleA", "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
+                new FrequencyUnit(CheckLocalizations.doNotCheckPrefix + "FrequencyUnit.MiddleA",
+                        CheckLocalizations.doNotCheckPrefix + "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 440, 0.0001, "!MiddleA!", "!MA!");
     }

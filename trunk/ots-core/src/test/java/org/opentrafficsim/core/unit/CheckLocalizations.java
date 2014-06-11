@@ -43,6 +43,8 @@ import org.reflections.Reflections;
  */
 public class CheckLocalizations
 {
+    /** Prefix keys of units made during testing with this string */
+    public final static String doNotCheckPrefix = "~~~~DONOTCHECK";
     /**
      * Check that all defined units have all localizations
      */
@@ -97,6 +99,10 @@ public class CheckLocalizations
                     String abbreviationKey = u.getAbbreviationKey();
                     assertTrue("Abbreviation key must be non-null", null != abbreviationKey);
                     assertTrue("Abbreviation key must be non-empty", abbreviationKey.length() > 0);
+                    if (nameKey.startsWith(doNotCheckPrefix))
+                        continue;
+                    if (abbreviationKey.startsWith(doNotCheckPrefix))
+                        continue;
                     String name = u.getName();
                     //assertFalse("Name may not begin AND end with an exclamation mark",
                     //        name.startsWith("!") && name.endsWith("!"));

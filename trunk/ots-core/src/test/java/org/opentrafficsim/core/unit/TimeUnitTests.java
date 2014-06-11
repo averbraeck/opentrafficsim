@@ -54,7 +54,7 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void timeKeys()
+    public void keys()
     {
         checkKeys(TimeUnit.SECOND, "TimeUnit.second", "TimeUnit.s");
     }
@@ -84,7 +84,9 @@ public class TimeUnitTests extends AbstractUnitTest<TimeUnit>
     @Test
     public void createLengthUnit()
     {
-        TimeUnit myTU = new TimeUnit("TimeUnit.Fortnight", "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
+        TimeUnit myTU =
+                new TimeUnit(CheckLocalizations.doNotCheckPrefix + "TimeUnit.Fortnight",
+                        CheckLocalizations.doNotCheckPrefix + "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
         assertTrue("Can create a new TimeUnit", null != myTU);
         checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
     }

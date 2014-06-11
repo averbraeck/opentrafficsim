@@ -60,7 +60,13 @@ public class AbstractOffsetUnitTest<OU extends OffsetUnit<OU>> extends AbstractU
      */
     public double getOffsetTo(OU fromUnit, OU toUnit)
     {
-        return fromUnit.getOffsetToStandardUnit() - toUnit.getOffsetToStandardUnit();
+        double fromOffset = fromUnit.getOffsetToStandardUnit();
+        double fromFactor = fromUnit.getConversionFactorToStandardUnit();
+        double inStandard = (0d - fromOffset) * fromFactor;
+        double toOffset = toUnit.getOffsetToStandardUnit();
+        double toFactor = toUnit.getConversionFactorToStandardUnit();
+        double inToUnit = inStandard / toFactor + toOffset;
+        return inToUnit;
     }
 
 }

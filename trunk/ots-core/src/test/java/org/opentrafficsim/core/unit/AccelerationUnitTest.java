@@ -52,7 +52,7 @@ public class AccelerationUnitTest extends AbstractUnitTest<AccelerationUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void accelerationKeys()
+    public void keys()
     {
         checkKeys(AccelerationUnit.INCH_PER_SECOND_2, "AccelerationUnit.inch_per_second_squared",
                 "AccelerationUnit.in/s^2");

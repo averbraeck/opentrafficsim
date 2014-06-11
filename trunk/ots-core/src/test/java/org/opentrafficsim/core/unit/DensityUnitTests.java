@@ -52,7 +52,7 @@ public class DensityUnitTests extends AbstractUnitTest<DensityUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void densityKeys()
+    public void keys()
     {
         checkKeys(DensityUnit.KG_PER_METER_3, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
     }

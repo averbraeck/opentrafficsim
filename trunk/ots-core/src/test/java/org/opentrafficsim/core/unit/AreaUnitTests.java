@@ -52,7 +52,7 @@ public class AreaUnitTests extends AbstractUnitTest<AreaUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void areaKeys()
+    public void keys()
     {
         checkKeys(AreaUnit.SQUARE_METER, "AreaUnit.square_meter", "AreaUnit.m^2");
     }

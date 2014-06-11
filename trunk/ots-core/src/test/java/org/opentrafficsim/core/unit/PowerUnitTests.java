@@ -54,7 +54,7 @@ public class PowerUnitTests extends AbstractUnitTest<PowerUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void powerKeys()
+    public void keys()
     {
         checkKeys(PowerUnit.WATT, "PowerUnit.watt", "PowerUnit.W");
     }
