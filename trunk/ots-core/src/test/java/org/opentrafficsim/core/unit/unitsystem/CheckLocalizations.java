@@ -42,6 +42,10 @@ import org.reflections.Reflections;
  */
 public class CheckLocalizations
 {
+    /**
+     * Check that all UnitSystems have valid a nameKey and a valid abbreviationKey and test those keys in all available
+     * localizations.
+     */
     @Test
     public void checkDefinedUnitSystems()
     {
@@ -49,7 +53,7 @@ public class CheckLocalizations
         Field[] fields = UnitSystem.class.getDeclaredFields();
         for (int i = 0; i < fields.length; i++)
         {
-            //System.out.println("Field[" + i + "]: " + fields[i]);
+            // System.out.println("Field[" + i + "]: " + fields[i]);
             try
             {
                 UnitSystem us = (UnitSystem) fields[i].get(null);
@@ -63,17 +67,17 @@ public class CheckLocalizations
             }
         }
         ArrayList<String> errors = new ArrayList<String>();
-        for (String localeName : AvailableLocalizations.availableLocalizations("", this.getClass().getResource("")
+        for (String localeName : AvailableLocalizations.availableLocalizations("localeunitsystem", this.getClass().getResource("")
                 .getPath()
                 + "../../../../../"))
         {
             for (UnitSystem us : unitSystems)
             {
                 String nameKey = us.getNameKey();
-                assertTrue ("nameKey is non null", null != nameKey);
+                assertTrue("nameKey is non null", null != nameKey);
                 assertTrue("Name key must be non-empty", nameKey.length() > 0);
                 String abbreviationKey = us.getAbbreviationKey();
-                assertTrue ("abbreviationKey is non null", null != abbreviationKey);
+                assertTrue("abbreviationKey is non null", null != abbreviationKey);
                 assertTrue("Abbreviation key must be non-empty", abbreviationKey.length() > 0);
                 String name = us.getName();
                 String abbreviation = us.getAbbreviation();
@@ -81,7 +85,7 @@ public class CheckLocalizations
                     errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
                             localeName));
                 if (name.startsWith("!") && name.endsWith("!"))
-                    errors.add(String.format("Missing translation for name %s to %s", nameKey, localeName));            
+                    errors.add(String.format("Missing translation for name %s to %s", nameKey, localeName));
             }
         }
         for (String s : errors)
