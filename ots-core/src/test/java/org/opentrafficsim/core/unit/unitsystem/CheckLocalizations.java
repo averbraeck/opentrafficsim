@@ -1,5 +1,17 @@
 package org.opentrafficsim.core.unit.unitsystem;
 
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Test;
+import org.opentrafficsim.core.AvailableLocalizations;
+import org.opentrafficsim.core.unit.Unit;
+import org.reflections.Reflections;
+
 /**
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
@@ -30,5 +42,50 @@ package org.opentrafficsim.core.unit.unitsystem;
  */
 public class CheckLocalizations
 {
-
+    @Test
+    public void checkDefinedUnitSystems()
+    {
+        List<UnitSystem> unitSystems = new ArrayList<UnitSystem>();
+        Field[] fields = UnitSystem.class.getDeclaredFields();
+        for (int i = 0; i < fields.length; i++)
+        {
+            //System.out.println("Field[" + i + "]: " + fields[i]);
+            try
+            {
+                UnitSystem us = (UnitSystem) fields[i].get(null);
+                // System.out.println("Prints like " + us);
+                // System.out.println("nameKey: " + us.getNameKey());
+                unitSystems.add(us);
+            }
+            catch (Exception e)
+            {
+                // That was not a UnitSystem
+            }
+        }
+        ArrayList<String> errors = new ArrayList<String>();
+        for (String localeName : AvailableLocalizations.availableLocalizations("", this.getClass().getResource("")
+                .getPath()
+                + "../../../../../"))
+        {
+            for (UnitSystem us : unitSystems)
+            {
+                String nameKey = us.getNameKey();
+                assertTrue ("nameKey is non null", null != nameKey);
+                assertTrue("Name key must be non-empty", nameKey.length() > 0);
+                String abbreviationKey = us.getAbbreviationKey();
+                assertTrue ("abbreviationKey is non null", null != abbreviationKey);
+                assertTrue("Abbreviation key must be non-empty", abbreviationKey.length() > 0);
+                String name = us.getName();
+                String abbreviation = us.getAbbreviation();
+                if (abbreviation.startsWith("!") && abbreviation.endsWith("!"))
+                    errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
+                            localeName));
+                if (name.startsWith("!") && name.endsWith("!"))
+                    errors.add(String.format("Missing translation for name %s to %s", nameKey, localeName));            
+            }
+        }
+        for (String s : errors)
+            System.out.println(s);
+        assertTrue("There should be no missing translations", errors.isEmpty());
+    }
 }
