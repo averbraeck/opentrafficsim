@@ -52,7 +52,7 @@ public class ElectricalCurrentUnitTests extends AbstractUnitTest<ElectricalCurre
      * Verify the result of some get*Key methods
      */
     @Test
-    public void electricalCurrentKeys()
+    public void keys()
     {
         checkKeys(ElectricalCurrentUnit.AMPERE, "ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A");
     }

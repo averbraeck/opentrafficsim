@@ -52,7 +52,7 @@ public class ElectricalPotentialUnitTests extends AbstractUnitTest<ElectricalPot
      * Verify the result of some get*Key methods
      */
     @Test
-    public void electricalPotentialKeys()
+    public void keys()
     {
         checkKeys(ElectricalPotentialUnit.VOLT, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V");
     }

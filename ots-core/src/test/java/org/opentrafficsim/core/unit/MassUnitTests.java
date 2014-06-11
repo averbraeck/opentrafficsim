@@ -54,7 +54,7 @@ public class MassUnitTests extends AbstractUnitTest<MassUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void massKeys()
+    public void keys()
     {
         checkKeys(MassUnit.KILOGRAM, "MassUnit.kilogram", "MassUnit.kg");
     }

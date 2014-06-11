@@ -54,7 +54,7 @@ public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void flowVolumeKeys()
+    public void keys()
     {
         checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second",
                 "FlowVolumeUnit.m^3/s");
@@ -86,11 +86,11 @@ public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
     public void createFLowVolumeUnit()
     {
         FlowVolumeUnit myFVU =
-                new FlowVolumeUnit("FlowVolumeUnit.TrucksPerHour", "FlowVolumeUnit.tph", UnitSystem.OTHER,
+                new FlowVolumeUnit(CheckLocalizations.doNotCheckPrefix + "FlowVolumeUnit.TrucksPerHour",
+                        CheckLocalizations.doNotCheckPrefix + "FlowVolumeUnit.tph", UnitSystem.OTHER,
                         FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
         assertTrue("Can create a new FlowMassUnit", null != myFVU);
         checkUnitRatioNameAndAbbreviation(myFVU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");
-        Unit.getUnits(FlowVolumeUnit.class).remove(myFVU);
     }
 
 }

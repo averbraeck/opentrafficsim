@@ -54,7 +54,7 @@ public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void volumeKeys()
+    public void keys()
     {
         checkKeys(VolumeUnit.CUBIC_METER, "VolumeUnit.cubic_meter", "VolumeUnit.m^3");
     }
@@ -82,9 +82,8 @@ public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_INCH, 1.6387e-5, 1e-9, "cubic inch", "in^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_YARD, 0.764554858, 0.0000001, "cubic yard", "yd^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.GALLON_US_FLUID, 0.0037854, 0.0000001, "gallon (US)", "gal(US)");
-        // TODO the rest have internationalization errors
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.000000001, "ounce (fluid US)",
-        //        "US fl oz");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.000000001, "ounce (fluid US)",
+                "US fl oz");
         //checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_IMP_FLUID, .00002841306, 0.00000000001,
         //        "horsepower (metric)", "hp(M)");
         //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_US_FLUID, 0.000473176473, 0.0000000000001, "pt(US fl)", "hp(M)");
@@ -99,7 +98,9 @@ public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
     @Test
     public void createVolumeUnit()
     {
-        VolumeUnit myVU = new VolumeUnit("VolumeUnit.Barrel", "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
+        VolumeUnit myVU =
+                new VolumeUnit(CheckLocalizations.doNotCheckPrefix + "VolumeUnit.Barrel",
+                        CheckLocalizations.doNotCheckPrefix + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
         assertTrue("Can create a new VolumeUnit", null != myVU);
         checkUnitRatioNameAndAbbreviation(myVU, 0.119240471, 0.000001, "!Barrel!", "!brl!");
     }

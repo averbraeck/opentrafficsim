@@ -54,7 +54,7 @@ public class ForceUnitTests extends AbstractUnitTest<ForceUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void ForceKeys()
+    public void keys()
     {
         checkKeys(ForceUnit.NEWTON, "ForceUnit.newton", "ForceUnit.N");
     }
@@ -81,7 +81,9 @@ public class ForceUnitTests extends AbstractUnitTest<ForceUnit>
     public void createForceUnit()
     {
         ForceUnit myFU =
-                new ForceUnit("ForceUnit.AntForce", "ForceUnit.af", UnitSystem.OTHER, ForceUnit.KILOGRAM_FORCE, 0.002);
+                new ForceUnit(CheckLocalizations.doNotCheckPrefix + "ForceUnit.AntForce",
+                        CheckLocalizations.doNotCheckPrefix + "ForceUnit.af", UnitSystem.OTHER,
+                        ForceUnit.KILOGRAM_FORCE, 0.002);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 0.002 * 9.8, 0.0001, "!AntForce!", "!af!");
     }

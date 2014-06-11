@@ -54,7 +54,7 @@ public class SpeedUnitTests extends AbstractUnitTest<SpeedUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void speedKeys()
+    public void keys()
     {
         checkKeys(SpeedUnit.METER_PER_SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s");
     }
@@ -84,7 +84,9 @@ public class SpeedUnitTests extends AbstractUnitTest<SpeedUnit>
     @Test
     public void createSpeedUnit()
     {
-        SpeedUnit mySU = new SpeedUnit("SpeedUnit.Sprinter", "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
+        SpeedUnit mySU =
+                new SpeedUnit(CheckLocalizations.doNotCheckPrefix + "SpeedUnit.Sprinter",
+                        CheckLocalizations.doNotCheckPrefix + "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
         assertTrue("Can create a new PowerUnit", null != mySU);
         checkUnitRatioNameAndAbbreviation(mySU, 13.3333, 0.0001, "!Sprinter!", "!sprtr!");
     }

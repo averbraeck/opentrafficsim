@@ -54,7 +54,7 @@ public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void lengthKeys()
+    public void keys()
     {
         checkKeys(LengthUnit.METER, "LengthUnit.meter", "LengthUnit.m");
     }
@@ -91,7 +91,9 @@ public class LengthUnitTests extends AbstractUnitTest<LengthUnit>
     @Test
     public void createLengthUnit()
     {
-        LengthUnit myLU = new LengthUnit("LengthUnit.Furlong", "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
+        LengthUnit myLU =
+                new LengthUnit(CheckLocalizations.doNotCheckPrefix + "LengthUnit.Furlong",
+                        CheckLocalizations.doNotCheckPrefix + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
         assertTrue("Can create a new LengthUnit", null != myLU);
         checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
     }

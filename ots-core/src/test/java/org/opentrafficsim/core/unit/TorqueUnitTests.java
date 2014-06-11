@@ -52,7 +52,7 @@ public class TorqueUnitTests extends AbstractUnitTest<TorqueUnit>
      * Verify the result of some get*Key methods
      */
     @Test
-    public void torqueKeys()
+    public void keys()
     {
         checkKeys(TorqueUnit.NEWTON_METER, "TorqueUnit.Newton_meter", "TorqueUnit.N.m");
     }

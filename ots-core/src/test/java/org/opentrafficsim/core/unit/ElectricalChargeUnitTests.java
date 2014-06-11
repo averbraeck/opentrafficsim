@@ -52,7 +52,7 @@ public class ElectricalChargeUnitTests extends AbstractUnitTest<ElectricalCharge
      * Verify the result of some get*Key methods
      */
     @Test
-    public void electricalChargeKeys()
+    public void keys()
     {
         checkKeys(ElectricalChargeUnit.COULOMB, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C");
     }

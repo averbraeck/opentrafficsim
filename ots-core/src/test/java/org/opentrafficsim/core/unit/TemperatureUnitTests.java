@@ -54,7 +54,7 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
      * Verify the result of some get*Key methods
      */
     @Test
-    public void temperatureKeys()
+    public void keys()
     {
         checkKeys(TemperatureUnit.KELVIN, "TemperatureUnit.kelvin", "TemperatureUnit.K");
     }
@@ -73,12 +73,11 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
         // Check two conversions between non-standard units
         assertEquals("one DEGREE CELCIUS is 9/5 DEGREE FAHRENHEIT", 9. / 5.,
                 getMultiplicationFactorTo(TemperatureUnit.DEGREE_CELCIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
-        // TODO: The Fahrenheit <-> Celcius checks don't work
         assertEquals("zero DEGREE CELCIUS is 32 DEGREE FAHRENHEIT", 32,
                 getOffsetTo(TemperatureUnit.DEGREE_CELCIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
         assertEquals("zero DEGREE FAHRENHEIT is about -17.7778 DEGREE CELCIUS", -17.7778,
                 getOffsetTo(TemperatureUnit.DEGREE_FAHRENHEIT, TemperatureUnit.DEGREE_CELCIUS), 0.0001);
-        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_RANKINE, 9. / 5, 0, 0.0001, "degree Rankine",
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_RANKINE, 5. / 9., 0, 0.0001, "degree Rankine",
                 "\u00B0R");
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_REAUMUR, 0.8, -273.15, 0.000001,
                 "degree Reaumur", "\u00B0R\u00E9");
@@ -91,7 +90,8 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
     public void createTemperatureUnit()
     {
         TemperatureUnit myTU =
-                new TemperatureUnit("TemperatureUnit.Newton", "TemperatureUnit.N", UnitSystem.OTHER, 3.0, -273.15);
+                new TemperatureUnit(CheckLocalizations.doNotCheckPrefix + "TemperatureUnit.Newton",
+                        CheckLocalizations.doNotCheckPrefix + "TemperatureUnit.N", UnitSystem.OTHER, 3.0, -273.15);
         assertTrue("Can create a new TemperatureUnit", null != myTU);
         checkUnitRatioOffsetNameAndAbbreviation(myTU, 3, -273.15, 0.0001, "!Newton!", "!N!");
     }
