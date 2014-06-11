@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.junit.Test;
+import org.opentrafficsim.core.AvailableLocalizations;
 import org.opentrafficsim.core.locale.DefaultLocale;
 import org.reflections.Reflections;
 
@@ -45,6 +46,7 @@ public class CheckLocalizations
 {
     /** Prefix keys of units made during testing with this string */
     public final static String doNotCheckPrefix = "~~~~DONOTCHECK";
+
     /**
      * Check that all defined units have all localizations
      */
@@ -53,35 +55,10 @@ public class CheckLocalizations
     public void checkDefinedUnits()
     {
         final String head = "localeunit";
-        final String tail = ".properties";
-        String path = this.getClass().getResource("").getPath() + "../../../../";
-        File[] propertiesFiles = new File(path).listFiles(new FileFilter()
-        {
-            @SuppressWarnings("unused")
-            public boolean accept(File dir, String name)
-            {
-                return false;
-            }
-
-            @Override
-            public boolean accept(File pathname)
-            {
-                String name = pathname.getName();
-                return name.endsWith(tail) && name.startsWith(head + "_");
-            }
-        });
-        List<String> locales = new ArrayList<String>();
-        locales.add("en");
-        for (File f : propertiesFiles)
-        {
-            String localeName = f.getName().substring(head.length() + 1);
-            localeName = localeName.substring(0, 2);
-            locales.add(localeName);
-        }
         ArrayList<String> errors = new ArrayList<String>();
-        for (String localeName : locales)
+        for (String localeName : AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath() + "../../../../"))
         {
-            //System.out.println("Checking internationalization to " + localeName);
+            // System.out.println("Checking internationalization to " + localeName);
             DefaultLocale.setLocale(new Locale(localeName));
 
             Reflections reflections = new Reflections("org.opentrafficsim.core.unit");
@@ -104,13 +81,14 @@ public class CheckLocalizations
                     if (abbreviationKey.startsWith(doNotCheckPrefix))
                         continue;
                     String name = u.getName();
-                    //assertFalse("Name may not begin AND end with an exclamation mark",
-                    //        name.startsWith("!") && name.endsWith("!"));
+                    // assertFalse("Name may not begin AND end with an exclamation mark",
+                    // name.startsWith("!") && name.endsWith("!"));
                     String abbreviation = u.getAbbreviation();
-                    //System.out.println("nameKey " + nameKey + "->" + name + " abbreviationKey " + abbreviationKey
-                    //        + "->" + abbreviation);
+                    // System.out.println("nameKey " + nameKey + "->" + name + " abbreviationKey " + abbreviationKey
+                    // + "->" + abbreviation);
                     if (abbreviation.startsWith("!") && abbreviation.endsWith("!"))
-                        errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey, localeName));
+                        errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
+                                localeName));
                     if (name.startsWith("!") && name.endsWith("!"))
                         errors.add(String.format("Missing translation for name %s to %s", nameKey, localeName));
                 }
