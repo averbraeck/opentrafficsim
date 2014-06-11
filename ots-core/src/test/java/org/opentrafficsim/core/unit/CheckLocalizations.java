@@ -39,7 +39,7 @@ import org.reflections.Reflections;
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 10, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class CheckLocalizations
 {
