@@ -3,7 +3,6 @@ package org.opentrafficsim.core.unit.unitsystem;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitLocale;
 import org.reflections.Reflections;
 
