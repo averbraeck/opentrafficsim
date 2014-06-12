@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentrafficsim.core.locale.Localization;
 import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 import org.reflections.Reflections;
 
@@ -59,6 +60,9 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
 
     /** a static map of all defined units */
     private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
+    
+    /** localization information */
+    private Localization localization = new Localization("localeunit");
 
     /** force all units to be loaded */
     static
@@ -174,7 +178,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     public String getName()
     {
-        return UnitLocale.getString(this.nameKey);
+        return this.localization.getString(this.nameKey);
     }
 
     /**
@@ -190,7 +194,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     public String getAbbreviation()
     {
-        return UnitLocale.getString(this.abbreviationKey);
+        return this.localization.getString(this.abbreviationKey);
     }
 
     /**
