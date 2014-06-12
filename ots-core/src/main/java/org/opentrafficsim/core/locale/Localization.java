@@ -36,10 +36,10 @@ import java.util.ResourceBundle;
 public class Localization
 {
     /** filename without .properties, to be found in src/main/resources folder */
-    private final String BUNDLE_NAME;
+    private final String bundleNamePrefix;
 
-    /** get the default bundle */
-    protected ResourceBundle RESOURCE_BUNDLE;
+    /** the resource bundle */
+    protected ResourceBundle resourceBundle;
 
     /** current locale */
     protected Locale currentLocale = null;
@@ -50,12 +50,12 @@ public class Localization
      */
     public Localization(final String prefix)
     {
-        this.BUNDLE_NAME = prefix;
+        this.bundleNamePrefix = prefix;
     }
 
     /**
      * @param key the key for the locale in the properties file
-     * @return localized string
+     * @return localized string, or, if a translation could not be found return the key surrounded by exclamation marks
      */
     public String getString(final String key)
     {
@@ -65,12 +65,12 @@ public class Localization
                 DefaultLocale.setLocale(new Locale("en"));
             this.currentLocale = DefaultLocale.getLocale();
             Locale.setDefault(this.currentLocale);
-            this.RESOURCE_BUNDLE = ResourceBundle.getBundle(this.BUNDLE_NAME, this.currentLocale);
+            this.resourceBundle = ResourceBundle.getBundle(this.bundleNamePrefix, this.currentLocale);
         }
 
         try
         {
-            return this.RESOURCE_BUNDLE.getString(key);
+            return this.resourceBundle.getString(key);
         }
         catch (MissingResourceException e)
         {
