@@ -47,12 +47,6 @@ public class AvailableLocalizations
         final String tail = ".properties";
         File[] propertiesFiles = new File(path).listFiles(new FileFilter()
         {
-            @SuppressWarnings("unused")
-            public boolean accept(File dir, String name)
-            {
-                return false;
-            }
-
             @Override
             public boolean accept(File pathname)
             {
