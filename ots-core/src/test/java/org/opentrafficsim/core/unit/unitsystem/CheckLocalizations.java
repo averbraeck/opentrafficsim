@@ -87,6 +87,6 @@ public class CheckLocalizations
         }
         for (String s : errors)
             System.out.println(s);
-        assertTrue("There should be no missing translations", errors.isEmpty());
+        assertTrue("There should be no errors", errors.isEmpty());
     }
 }
