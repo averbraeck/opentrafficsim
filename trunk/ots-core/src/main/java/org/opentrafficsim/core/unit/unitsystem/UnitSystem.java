@@ -2,6 +2,8 @@ package org.opentrafficsim.core.unit.unitsystem;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.core.locale.Localization;
+
 /**
  * Systems of Units such as SI, including SI-derived; cgs (centimeter-gram-second).
  * <p>
@@ -80,6 +82,9 @@ public abstract class UnitSystem implements Serializable
     /** the name of the unit system, such as centimeter-gram-second */
     private final String nameKey;
 
+    /** localization information */
+    private Localization localization = new Localization("localeunitsystem");
+
     /**
      * @param abbreviationKey the abbreviation of the unit system, such as cgs
      * @param nameKey the name of the unit system, such as centimeter-gram-second
@@ -95,7 +100,7 @@ public abstract class UnitSystem implements Serializable
      */
     public String getName()
     {
-        return UnitSystemLocale.getString(this.nameKey);
+        return this.localization.getString(this.nameKey);
     }
 
     /**
@@ -111,7 +116,7 @@ public abstract class UnitSystem implements Serializable
      */
     public String getAbbreviation()
     {
-        return UnitSystemLocale.getString(this.abbreviationKey);
+        return this.localization.getString(this.abbreviationKey);
     }
 
     /**

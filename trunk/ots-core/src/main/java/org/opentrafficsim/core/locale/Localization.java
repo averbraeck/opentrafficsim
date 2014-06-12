@@ -1,20 +1,17 @@
-package org.opentrafficsim.core.unit;
+package org.opentrafficsim.core.locale;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.opentrafficsim.core.locale.DefaultLocale;
-
 /**
- * This class retrieves the names for the unit keys for different languages (locales or resource bundles). The locale
- * definitions can be found in the src/main/resources folder.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
- * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
+ * The DSOL project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
  * following conditions are met:
  * <ul>
@@ -32,39 +29,48 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 3, 2014 <br>
+ * @version Jun 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class UnitLocale
+public class Localization
 {
     /** filename without .properties, to be found in src/main/resources folder */
-    private static final String BUNDLE_NAME = "localeunit";
+    private final String BUNDLE_NAME;
 
     /** get the default bundle */
-    protected static ResourceBundle RESOURCE_BUNDLE;
+    protected ResourceBundle RESOURCE_BUNDLE;
 
     /** current locale */
-    protected static Locale currentLocale = null;
+    protected Locale currentLocale = null;
+
+    /**
+     * Create a Localization object.
+     * @param prefix String; the prefix of the properties files to use.
+     */
+    public Localization(final String prefix)
+    {
+        this.BUNDLE_NAME = prefix;
+    }
 
     /**
      * @param key the key for the locale in the properties file
      * @return localized string
      */
-    public static String getString(final String key)
+    public String getString(final String key)
     {
-        if (currentLocale == null || !currentLocale.equals(DefaultLocale.getLocale()))
+        if (this.currentLocale == null || !this.currentLocale.equals(DefaultLocale.getLocale()))
         {
             if (DefaultLocale.getLocale() == null)
                 DefaultLocale.setLocale(new Locale("en"));
-            currentLocale = DefaultLocale.getLocale();
-            Locale.setDefault(currentLocale);
-            RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, currentLocale);
+            this.currentLocale = DefaultLocale.getLocale();
+            Locale.setDefault(this.currentLocale);
+            this.RESOURCE_BUNDLE = ResourceBundle.getBundle(this.BUNDLE_NAME, this.currentLocale);
         }
 
         try
         {
-            return RESOURCE_BUNDLE.getString(key);
+            return this.RESOURCE_BUNDLE.getString(key);
         }
         catch (MissingResourceException e)
         {
