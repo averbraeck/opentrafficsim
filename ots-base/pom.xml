@@ -226,6 +226,12 @@
 							<report>javadoc</report>
 						</reports>
 					</reportSet>
+					<reportSet>
+						<id>test-html</id>
+						<reports>
+							<report>test-javadoc</report>
+						</reports>
+					</reportSet>
 				</reportSets>
 			</plugin>
 
