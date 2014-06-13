@@ -133,7 +133,7 @@ public class UnitLocalizationsTest
         }
         for (String s : errors)
             System.out.println(s);
-        assertTrue("There should be no errors reported by CheckLocalizations", errors.isEmpty());
+        assertTrue("There should be no errors", errors.isEmpty());
     }
     
 }
