@@ -1,12 +1,14 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -36,7 +38,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ElectricalCurrentUnitTests extends AbstractUnitTest<ElectricalCurrentUnit>
+public class FlowMassUnitTest extends AbstractUnitTest<FlowMassUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,7 +56,7 @@ public class ElectricalCurrentUnitTests extends AbstractUnitTest<ElectricalCurre
     @Test
     public void keys()
     {
-        checkKeys(ElectricalCurrentUnit.AMPERE, "ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A");
+        checkKeys(FlowMassUnit.KILOGRAM_PER_SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s");
     }
 
     /**
@@ -63,13 +65,27 @@ public class ElectricalCurrentUnitTests extends AbstractUnitTest<ElectricalCurre
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.AMPERE, 1, 0.00000001, "ampere", "A");
-        checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.MILLIAMPERE, 0.001, 0.000000001, "milliampere", "mA");
-        // Check two conversions between two units
-        assertEquals("one AMPERE is 1000 MILLI AMPERE", 1000,
-                getMultiplicationFactorTo(ElectricalCurrentUnit.AMPERE, ElectricalCurrentUnit.MILLIAMPERE), 0.01);
-        assertEquals("one MILLI AMPERE is 0.001 AMPERE", 0.001,
-                getMultiplicationFactorTo(ElectricalCurrentUnit.MILLIAMPERE, ElectricalCurrentUnit.AMPERE), 0.0001);
+        checkUnitRatioNameAndAbbreviation(FlowMassUnit.KILOGRAM_PER_SECOND, 1, 0.000001, "kilogram per second", "kg/s");
+        checkUnitRatioNameAndAbbreviation(FlowMassUnit.POUND_PER_SECOND, 0.453592, 0.0001, "pound per second", "lb/s");
+        // Check two conversions between non-standard units
+        assertEquals("one KILOGRAM PER SECOND is about 2.205 POUND PER SECOND", 2.205,
+                getMultiplicationFactorTo(FlowMassUnit.KILOGRAM_PER_SECOND, FlowMassUnit.POUND_PER_SECOND), 0.0005);
+        assertEquals("one POUND PER SECOND is about 0.453592 KILOGRAM PER SECOND", 0.453592,
+                getMultiplicationFactorTo(FlowMassUnit.POUND_PER_SECOND, FlowMassUnit.KILOGRAM_PER_SECOND), 0.0001);
+    }
+
+    /**
+     * Verify that we can create our own FlowMass unit
+     */
+    @Test
+    public void createFlowMassUnit()
+    {
+        FlowMassUnit myFMU =
+                new FlowMassUnit(UnitLocalizationsTest.doNotCheckPrefix + "FlowMassUnit.WaterDropsPerHour",
+                        UnitLocalizationsTest.doNotCheckPrefix + "FlowMassUnit.wdpu", UnitSystem.OTHER,
+                        FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
+        assertTrue("Can create a new FlowMassUnit", null != myFMU);
+        checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");
     }
 
 }

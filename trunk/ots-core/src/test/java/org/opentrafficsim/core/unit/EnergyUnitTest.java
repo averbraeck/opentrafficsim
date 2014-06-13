@@ -36,7 +36,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class EnergyUnitTests extends AbstractUnitTest<EnergyUnit>
+public class EnergyUnitTest extends AbstractUnitTest<EnergyUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources

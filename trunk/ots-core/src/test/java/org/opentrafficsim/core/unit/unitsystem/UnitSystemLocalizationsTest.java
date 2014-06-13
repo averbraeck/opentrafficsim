@@ -37,7 +37,7 @@ import org.opentrafficsim.core.AvailableLocalizations;
  * @version Jun 11, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CheckLocalizations
+public class UnitSystemLocalizationsTest
 {
     /**
      * Check that all UnitSystems have valid a nameKey and a valid abbreviationKey and test those keys in all available

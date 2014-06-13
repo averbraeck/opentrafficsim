@@ -2,13 +2,13 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
-import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
+public class MassUnitTest extends AbstractUnitTest<MassUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -56,7 +56,7 @@ public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
     @Test
     public void keys()
     {
-        checkKeys(PressureUnit.PASCAL, "PressureUnit.pascal", "PressureUnit.Pa");
+        checkKeys(MassUnit.KILOGRAM, "MassUnit.kilogram", "MassUnit.kg");
     }
 
     /**
@@ -65,46 +65,31 @@ public class PressureUnitTests extends AbstractUnitTest<PressureUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(PressureUnit.PASCAL, 1, 0.00000001, "pascal", "Pa");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.ATMOSPHERE_STANDARD, 101325, 0.5, "atmosphere (standard)", "atm");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.ATMOSPHERE_TECHNICAL, 98066.5, 0.1, "atmosphere (technical)",
-                "at");
+        checkUnitRatioNameAndAbbreviation(MassUnit.KILOGRAM, 1, 0.00000001, "kilogram", "kg");
+        checkUnitRatioNameAndAbbreviation(MassUnit.GRAM, 0.001, 0.000000001, "gram", "g");
+        checkUnitRatioNameAndAbbreviation(MassUnit.POUND, 0.453592, 0.000001, "pound", "lb");
         // Check two conversions between non-standard units
-        assertEquals("one ATMOSPHERE STANDARD is about 1.03327 ATMOSPHERE TECHNICAL", 1 / 0.9678,
-                getMultiplicationFactorTo(PressureUnit.ATMOSPHERE_STANDARD, PressureUnit.ATMOSPHERE_TECHNICAL), 0.0001);
-        assertEquals("one ATMOSPHERE TECHNICAL is 0.9678 ATMOSPHERE STANDARD", 0.9678,
-                getMultiplicationFactorTo(PressureUnit.ATMOSPHERE_TECHNICAL, PressureUnit.ATMOSPHERE_STANDARD), 0.0001);
+        assertEquals("one POUND is 16 OUNCE", 16, getMultiplicationFactorTo(MassUnit.POUND, MassUnit.OUNCE), 0.00001);
+        assertEquals("one OUNCE is 0.0625 POUND", 0.0625, getMultiplicationFactorTo(MassUnit.OUNCE, MassUnit.POUND),
+                0.000001);
         // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(PressureUnit.HECTOPASCAL, 100, 0.0001, "hectopascal", "hPa");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.KILOPASCAL, 1000, 0.001, "kilopascal", "kPa");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.BAR, 100000, 0.01, "bar", "bar");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIBAR, 100, 0.000001, "millibar", "mbar");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.CENTIMETER_MERCURY, 1333.22368, 0.001, "centimeter mercury",
-                "cmHg");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.MILLIMETER_MERCURY, 133.322368, 0.001, "millimeter mercury",
-                "mmHg");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.FOOT_MERCURY, 40636.66, 0.01, "foot mercury", "ftHg");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.INCH_MERCURY, 3386, 0.5, "inch mercury", "inHg");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.KGF_PER_SQUARE_MM, 9806650, 0.5,
-                "kilogram-force per square millimeter", "kgf/mm^2");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.POUND_PER_SQUARE_FOOT, 47.880259, 0.000001,
-                "pound per square foot", "lbf/ft^2");
-        checkUnitRatioNameAndAbbreviation(PressureUnit.POUND_PER_SQUARE_INCH, 6894.75729, 0.00001,
-                "pound per square inch", "lbf/in^2");
+        checkUnitRatioNameAndAbbreviation(MassUnit.OUNCE, 0.0283495, 0.0000001, "ounce", "oz");
+        checkUnitRatioNameAndAbbreviation(MassUnit.TON_LONG, 1016.046906, 0.00001, "long ton", "long tn");
+        checkUnitRatioNameAndAbbreviation(MassUnit.TON_SHORT, 907.18474, 0.00001, "short ton", "sh tn");
+        checkUnitRatioNameAndAbbreviation(MassUnit.TON_METRIC, 1000, 0.001, "metric tonne", "t");
     }
 
     /**
-     * Verify that we can create our own pressure unit
+     * Verify that we can create our own mass unit
      */
     @Test
-    public void createPressureUnit()
+    public void createMassUnit()
     {
-        PressureUnit myPU =
-                new PressureUnit(CheckLocalizations.doNotCheckPrefix + "PressureUnit.HealthyHumanHeart",
-                        CheckLocalizations.doNotCheckPrefix + "PressureUnit.hhhp", UnitSystem.OTHER,
-                        PressureUnit.MILLIMETER_MERCURY, 106);
-        assertTrue("Can create a new PowerUnit", null != myPU);
-        checkUnitRatioNameAndAbbreviation(myPU, 14132.1711, 0.01, "!HealthyHumanHeart!", "!hhhp!");
+        MassUnit myMU =
+                new MassUnit(UnitLocalizationsTest.doNotCheckPrefix + "MassUnit.Person",
+                        UnitLocalizationsTest.doNotCheckPrefix + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
+        assertTrue("Can create a new MassUnit", null != myMU);
+        checkUnitRatioNameAndAbbreviation(myMU, 80, 1, "!Person!", "!pn!");
     }
 
 }

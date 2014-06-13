@@ -50,7 +50,7 @@ import org.reflections.Reflections;
  * @version Jun 10, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CheckLocalizations
+public class UnitLocalizationsTest
 {
     /** Prefix keys of units made during testing with this string */
     public final static String doNotCheckPrefix = "~~~~DONOTCHECK";

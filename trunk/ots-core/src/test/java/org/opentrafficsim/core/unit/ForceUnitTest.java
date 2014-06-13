@@ -2,13 +2,13 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -35,10 +35,10 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 4, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
+public class ForceUnitTest extends AbstractUnitTest<ForceUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -56,7 +56,7 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
     @Test
     public void keys()
     {
-        checkKeys(AnglePlaneUnit.RADIAN, "AnglePlaneUnit.radian", "AnglePlaneUnit.rad");
+        checkKeys(ForceUnit.NEWTON, "ForceUnit.newton", "ForceUnit.N");
     }
 
     /**
@@ -65,31 +65,27 @@ public class AnglePlaneUnitTests extends AbstractUnitTest<AnglePlaneUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.DEGREE, 2 * Math.PI / 360, 0.000001, "degree", "\u00b0");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.ARCMINUTE, 2 * Math.PI / 360 / 60, 0.0001, "arcminute", "\'");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.GRAD, 2 * Math.PI / 400, 0.00001, "gradian", "grad");
+        checkUnitRatioNameAndAbbreviation(ForceUnit.NEWTON, 1, 0.000001, "newton", "N");
+        checkUnitRatioNameAndAbbreviation(ForceUnit.DYNE, 0.00001, 0.000000001, "dyne", "dyn");
         // Check two conversions between non-standard units
-        assertEquals("one GRAD is about 54 ARCMINUTE", 54,
-                getMultiplicationFactorTo(AnglePlaneUnit.GRAD, AnglePlaneUnit.ARCMINUTE), 0.5);
-        assertEquals("one ARCMINUTE is about 0.0185 GRAD", 0.0185,
-                getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE, AnglePlaneUnit.GRAD), 0.0001);
-        // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 0.00015708, 0.0000001,
-                "centesimal arcminute", "\'");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1, "centesimal arcsecond",
-                "\"");
+        assertEquals("one DYNE is about 1.019716e-6 KILOGRAM FORCE", 1.01971621e-6,
+                getMultiplicationFactorTo(ForceUnit.DYNE, ForceUnit.KILOGRAM_FORCE), 0.00000000001);
+        assertEquals("one KILOGRAM FORCE is about 980665 DYNE", 980665,
+                getMultiplicationFactorTo(ForceUnit.KILOGRAM_FORCE, ForceUnit.DYNE), 0.5);
     }
 
     /**
-     * Verify that we can create our own angle unit
+     * Verify that we can create our own Force unit
      */
     @Test
-    public void createAngleUnit()
+    public void createForceUnit()
     {
-        AnglePlaneUnit myAPU =
-                new AnglePlaneUnit("AngleUnit.point", "AngleUnit.pt", OTHER, AnglePlaneUnit.RADIAN, 0.19634954085);
-        assertTrue("Can create a new AngleUnit", null != myAPU);
-        checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
+        ForceUnit myFU =
+                new ForceUnit(UnitLocalizationsTest.doNotCheckPrefix + "ForceUnit.AntForce",
+                        UnitLocalizationsTest.doNotCheckPrefix + "ForceUnit.af", UnitSystem.OTHER,
+                        ForceUnit.KILOGRAM_FORCE, 0.002);
+        assertTrue("Can create a new ForceUnit", null != myFU);
+        checkUnitRatioNameAndAbbreviation(myFU, 0.002 * 9.8, 0.0001, "!AntForce!", "!af!");
     }
 
 }

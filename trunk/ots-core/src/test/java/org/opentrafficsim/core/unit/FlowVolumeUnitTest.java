@@ -1,12 +1,14 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -33,10 +35,10 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ElectricalChargeUnitTests extends AbstractUnitTest<ElectricalChargeUnit>
+public class FlowVolumeUnitTest extends AbstractUnitTest<FlowVolumeUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,7 +56,8 @@ public class ElectricalChargeUnitTests extends AbstractUnitTest<ElectricalCharge
     @Test
     public void keys()
     {
-        checkKeys(ElectricalChargeUnit.COULOMB, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C");
+        checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second",
+                "FlowVolumeUnit.m^3/s");
     }
 
     /**
@@ -63,17 +66,31 @@ public class ElectricalChargeUnitTests extends AbstractUnitTest<ElectricalCharge
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.COULOMB, 1, 0.00000001, "coulomb", "C");
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.MILLIAMPERE_HOUR, 3.6, 0.000000005, "milliampere hour",
-                "mAh");
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
+        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_SECOND, 1, 0.000001, "cubic meter per second",
+                "m^3/s");
+        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, 0.0166667, 0.000001,
+                "cubic meter per minute", "m^3/min");
         // Check two conversions between non-standard units
-        assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
-                getMultiplicationFactorTo(ElectricalChargeUnit.MILLIAMPERE_HOUR, ElectricalChargeUnit.FARADAY),
-                0.000000001);
-        // Test the other units
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217653e-19, 1e-25,
-                "elementary unit of charge", "e");
+        assertEquals("one CUBIC METER PER HOUR is about 2.205 CUBIC_METER_PER_MINUTED", 0.01666667,
+                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_HOUR, FlowVolumeUnit.CUBIC_METER_PER_MINUTE),
+                0.00001);
+        assertEquals("one CUBIC METER PER MINUTE is 60 CUBIC_METER_PER_HOUR", 60,
+                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, FlowVolumeUnit.CUBIC_METER_PER_HOUR),
+                0.0001);
+    }
+
+    /**
+     * Verify that we can create our own FlowVolume unit
+     */
+    @Test
+    public void createFLowVolumeUnit()
+    {
+        FlowVolumeUnit myFVU =
+                new FlowVolumeUnit(UnitLocalizationsTest.doNotCheckPrefix + "FlowVolumeUnit.TrucksPerHour",
+                        UnitLocalizationsTest.doNotCheckPrefix + "FlowVolumeUnit.tph", UnitSystem.OTHER,
+                        FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
+        assertTrue("Can create a new FlowMassUnit", null != myFVU);
+        checkUnitRatioNameAndAbbreviation(myFVU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");
     }
 
 }

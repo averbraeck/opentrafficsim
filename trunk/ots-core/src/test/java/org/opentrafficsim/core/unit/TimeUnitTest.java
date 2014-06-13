@@ -35,10 +35,10 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 6, 2014 <br>
+ * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
+public class TimeUnitTest extends AbstractUnitTest<TimeUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -56,7 +56,7 @@ public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
     @Test
     public void keys()
     {
-        checkKeys(VolumeUnit.CUBIC_METER, "VolumeUnit.cubic_meter", "VolumeUnit.m^3");
+        checkKeys(TimeUnit.SECOND, "TimeUnit.second", "TimeUnit.s");
     }
 
     /**
@@ -65,44 +65,30 @@ public class VolumeUnitTests extends AbstractUnitTest<VolumeUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_METER, 1, 0.00000001, "cubic meter", "m^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_DECIMETER, 0.001, 0.0000000001, "cubic decimeter", "dm^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.LITER, 0.001, 0.0000000001, "liter", "L");
+        checkUnitRatioNameAndAbbreviation(TimeUnit.SECOND, 1, 0.00000001, "second", "s");
+        checkUnitRatioNameAndAbbreviation(TimeUnit.HOUR, 3600, 0.0005, "hour", "h");
+        checkUnitRatioNameAndAbbreviation(TimeUnit.DAY, 86400, 0.001, "day", "d");
         // Check two conversions between non-standard units
-        assertEquals("one CUBIC MILE is about 5451776000 CUBIC YARD", 5451776000.,
-                getMultiplicationFactorTo(VolumeUnit.CUBIC_MILE, VolumeUnit.CUBIC_YARD), 0.5);
-        assertEquals("one CUBIC YARD is 1.83426465e-10 CUBIC MILE", 1.83426465e-10,
-                getMultiplicationFactorTo(VolumeUnit.CUBIC_YARD, VolumeUnit.CUBIC_MILE), 0.0000000001);
+        assertEquals("one DAY is 24 HOUR", 24, getMultiplicationFactorTo(TimeUnit.DAY, TimeUnit.HOUR), 0.0001);
+        assertEquals("one HOUR is about 0.0417 DAY", 0.0417, getMultiplicationFactorTo(TimeUnit.HOUR, TimeUnit.DAY),
+                0.0001);
         // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_CENTIMETER, 0.000001, 0.000000000001, "cubic centimeter",
-                "cm^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_KM, 1e9, 1, "cubic kilometer", "km^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_MILE, 4.16818183e9, 1000, "cubic mile", "mi^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_FOOT, 0.0283168, 0.0000001, "cubic foot", "ft^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_INCH, 1.6387e-5, 1e-9, "cubic inch", "in^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_YARD, 0.764554858, 0.0000001, "cubic yard", "yd^3");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.GALLON_US_FLUID, 0.0037854, 0.0000001, "gallon (US)", "gal(US)");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.000000001, "ounce (fluid US)",
-                "US fl oz");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_IMP_FLUID, .00002841306, 0.00000000001,
-        //        "horsepower (metric)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_US_FLUID, 0.000473176473, 0.0000000000001, "pt(US fl)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_IMP, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_US_FLUID, 0.000946353, 0.0000000001, "qt(US fl)", "hp(M)");
-        //checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_IMP, 0.00113652, 0.000005, "quart (imperial)", "qt (imp)");
+        checkUnitRatioNameAndAbbreviation(TimeUnit.MILLISECOND, 0.001, 0.00000001, "millisecond", "ms");
+        checkUnitRatioNameAndAbbreviation(TimeUnit.MINUTE, 60, 0.000001, "minute", "m");
+        checkUnitRatioNameAndAbbreviation(TimeUnit.WEEK, 7 * 86400, 0.1, "week", "w");
     }
 
     /**
-     * Verify that we can create our own power unit
+     * Verify that we can create our own length unit
      */
     @Test
-    public void createVolumeUnit()
+    public void createLengthUnit()
     {
-        VolumeUnit myVU =
-                new VolumeUnit(CheckLocalizations.doNotCheckPrefix + "VolumeUnit.Barrel",
-                        CheckLocalizations.doNotCheckPrefix + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
-        assertTrue("Can create a new VolumeUnit", null != myVU);
-        checkUnitRatioNameAndAbbreviation(myVU, 0.119240471, 0.000001, "!Barrel!", "!brl!");
+        TimeUnit myTU =
+                new TimeUnit(UnitLocalizationsTest.doNotCheckPrefix + "TimeUnit.Fortnight",
+                        UnitLocalizationsTest.doNotCheckPrefix + "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
+        assertTrue("Can create a new TimeUnit", null != myTU);
+        checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
     }
 
 }
