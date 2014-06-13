@@ -12,7 +12,8 @@
 	  <menu name="OpenTrafficSim">
 			<item name="Simulation@TU Delft" href="http://simulation.tudelft.nl"/>
 			<item name="DITTLab" href="http://dittlab.tudelft.nl"/>
-			<item name="ots-base" href="http://simulation.tudelft.nl/opentrafficsim/1.0/ots-base/index.html"/>
+			<item name="ots-base" href="http://opentrafficsim.org/docs/${version}/ots-base/index.html"/>
+			<item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html"/>
 	  </menu>
       
     ${reports}
