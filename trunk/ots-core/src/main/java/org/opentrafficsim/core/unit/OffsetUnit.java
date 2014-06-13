@@ -5,9 +5,9 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 /**
  * The OffsetUnit provides a unit where scales can have an offset, such as the temperature scale. Internally, all units
  * are internally <u>stored</u> as a standard unit with an offset and a conversion factor. This means that e.g., Kelvin
- * is stored with offset 0.0 and conversion factor 1.0, whereas degree Celcius is stored with offset -273.15 and
+ * is stored with offset 0.0 and conversion factor 1.0, whereas degree Celsius is stored with offset -273.15 and
  * conversion factor 1.0. This means that if we have a Temperature, it is stored in Kelvins, and if we want to display
- * it in degree Celcius, we have to <u>divide<u> by the conversion factor and <u>subtract</u> the offset.
+ * it in degree Celsius, we have to <u>divide<u> by the conversion factor and <u>subtract</u> the offset.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -74,7 +74,7 @@ public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
     }
 
     /**
-     * @return offset to the standard unit. E.g., -273.15 to go from degrees Celcius to Kelvin
+     * @return offset to the standard unit. E.g., -273.15 to go from degrees Celsius to Kelvin
      */
     public double getOffsetToStandardUnit()
     {
