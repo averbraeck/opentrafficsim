@@ -26,21 +26,13 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 10, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> The unit of the element, e.g. MassUnit, TimeUnit
  */
-public abstract class AbstractValue<U extends Unit<U>> implements StandardMath<U, ValueDouble<U>>
+public interface StandardMath<U extends Unit<U>, V extends AbstractValue<U>>
 {
-    private final U unit;
-    
-    public AbstractValue(final U unit)
-    {
-        this.unit = unit;
-    }
-    
-    public U getUnit()
-    {
-        return this.unit;
-    }
+    void add(final V value);
+
+    void subtract(final V value);
+
 }

@@ -13,15 +13,23 @@
 	<description>Open Traffic Sim core classes</description>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>0.9.9-RC1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.parallelcolt</groupId>
+			<artifactId>parallelcolt</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>
