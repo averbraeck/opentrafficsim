@@ -64,6 +64,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /** localization information */
     private Localization localization = new Localization("localeunit");
     
+    /** has this class been initialized? */
     private static boolean initialized = false;
 
     /** force all units to be loaded */
