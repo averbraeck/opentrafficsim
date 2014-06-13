@@ -66,17 +66,17 @@ public class TemperatureUnitTests extends AbstractOffsetUnitTest<TemperatureUnit
     public void conversions()
     {
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.KELVIN, 1, 0, 0.00000001, "kelvin", "K");
-        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_CELCIUS, 1, -273.15, 0.000001, "degree Celcius",
+        checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_CELSIUS, 1, -273.15, 0.000001, "degree Celsius",
                 "\u00B0C");
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_FAHRENHEIT, 5. / 9., -459.67, 0.00001,
                 "degree Fahrenheit", "\u00B0F");
         // Check two conversions between non-standard units
-        assertEquals("one DEGREE CELCIUS is 9/5 DEGREE FAHRENHEIT", 9. / 5.,
-                getMultiplicationFactorTo(TemperatureUnit.DEGREE_CELCIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
-        assertEquals("zero DEGREE CELCIUS is 32 DEGREE FAHRENHEIT", 32,
-                getOffsetTo(TemperatureUnit.DEGREE_CELCIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
-        assertEquals("zero DEGREE FAHRENHEIT is about -17.7778 DEGREE CELCIUS", -17.7778,
-                getOffsetTo(TemperatureUnit.DEGREE_FAHRENHEIT, TemperatureUnit.DEGREE_CELCIUS), 0.0001);
+        assertEquals("one DEGREE CELSIUS is 9/5 DEGREE FAHRENHEIT", 9. / 5.,
+                getMultiplicationFactorTo(TemperatureUnit.DEGREE_CELSIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
+        assertEquals("zero DEGREE CELSIUS is 32 DEGREE FAHRENHEIT", 32,
+                getOffsetTo(TemperatureUnit.DEGREE_CELSIUS, TemperatureUnit.DEGREE_FAHRENHEIT), 0.0001);
+        assertEquals("zero DEGREE FAHRENHEIT is about -17.7778 DEGREE CELSIUS", -17.7778,
+                getOffsetTo(TemperatureUnit.DEGREE_FAHRENHEIT, TemperatureUnit.DEGREE_CELSIUS), 0.0001);
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_RANKINE, 5. / 9., 0, 0.0001, "degree Rankine",
                 "\u00B0R");
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_REAUMUR, 0.8, -273.15, 0.000001,
