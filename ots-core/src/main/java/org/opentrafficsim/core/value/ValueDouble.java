@@ -2,6 +2,10 @@ package org.opentrafficsim.core.value;
 
 import org.opentrafficsim.core.unit.Unit;
 
+import cern.colt.matrix.AbstractMatrix1D;
+import cern.colt.matrix.AbstractMatrix2D;
+import cern.colt.matrix.AbstractMatrix3D;
+
 /**
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
@@ -26,21 +30,45 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 10, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> The unit of the element, e.g. MassUnit, TimeUnit
  */
-public abstract class AbstractValue<U extends Unit<U>> implements StandardMath<U, ValueDouble<U>>
+public class ValueDouble<U extends Unit<U>> extends AbstractValue<U>
 {
-    private final U unit;
+    private double value;
     
-    public AbstractValue(final U unit)
+    /**
+     * @param unit
+     */
+    public ValueDouble(final U unit)
     {
-        this.unit = unit;
+        super(unit);
+    }
+
+    public ValueDouble(final U unit, final double value)
+    {
+        super(unit);
+        this.value = value;
     }
     
-    public U getUnit()
+    public double get()
     {
-        return this.unit;
+        return this.value;
     }
+
+    public void set(final double value)
+    {
+        this.value = value;
+    }
+
+    public void add(final ValueDouble d)
+    {
+        this.value += d.get();
+    }
+
+    public void subtract(final ValueDouble d)
+    {
+        this.value -= d.get();
+    }
+
 }
