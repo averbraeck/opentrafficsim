@@ -63,9 +63,11 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     
     /** localization information */
     private Localization localization = new Localization("localeunit");
+    
+    private static boolean initialized = false;
 
     /** force all units to be loaded */
-    static
+    private static void initialize()
     {
         Reflections reflections = new Reflections("org.opentrafficsim.core.unit");
         @SuppressWarnings("rawtypes")
@@ -81,7 +83,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             catch (Exception exception)
             {
                 // TODO: professional logging of errors
-                exception.printStackTrace();
+                // exception.printStackTrace();
+                System.err.println("Could not load class " + clazz.getCanonicalName());
             }
         }
     }
@@ -147,6 +150,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     @SuppressWarnings("unchecked")
     public static <V extends Unit<V>> Set<V> getUnits(final Class<V> unitClass)
     {
+        if (!initialized)
+            initialize();
         Set<V> returnSet = new HashSet<V>();
         if (UNITS.containsKey(unitClass.getSimpleName()))
         {
@@ -164,6 +169,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     @SuppressWarnings("unchecked")
     public Set<Unit<U>> getAllUnitsOfThisType()
     {
+        if (!initialized)
+            initialize();
         Set<Unit<U>> returnSet = new HashSet<Unit<U>>();
         if (UNITS.containsKey(this.getClass().getSimpleName()))
         {
