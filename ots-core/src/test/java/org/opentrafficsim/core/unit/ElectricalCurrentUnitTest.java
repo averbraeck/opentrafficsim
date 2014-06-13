@@ -36,7 +36,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ElectricalResistanceUnitTests extends AbstractUnitTest<ElectricalResistanceUnit>
+public class ElectricalCurrentUnitTest extends AbstractUnitTest<ElectricalCurrentUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,7 +54,7 @@ public class ElectricalResistanceUnitTests extends AbstractUnitTest<ElectricalRe
     @Test
     public void keys()
     {
-        checkKeys(ElectricalResistanceUnit.OHM, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm");
+        checkKeys(ElectricalCurrentUnit.AMPERE, "ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A");
     }
 
     /**
@@ -63,13 +63,13 @@ public class ElectricalResistanceUnitTests extends AbstractUnitTest<ElectricalRe
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.OHM, 1, 0.00000001, "ohm", "\u03A9");
-        checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.MILLIOHM, 0.001, 0.00000000001, "milliohm",
-                "m\u03A9");
-        checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.KILOOHM, 1000, 0.005, "kilo-ohm", "k\u03A9");
-        // Check two conversions between non-standard units
-        assertEquals("one KILOOHM is 1000000 MILLIOHM", 1000000,
-                getMultiplicationFactorTo(ElectricalResistanceUnit.KILOOHM, ElectricalResistanceUnit.MILLIOHM), 0.0001);
+        checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.AMPERE, 1, 0.00000001, "ampere", "A");
+        checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.MILLIAMPERE, 0.001, 0.000000001, "milliampere", "mA");
+        // Check two conversions between two units
+        assertEquals("one AMPERE is 1000 MILLI AMPERE", 1000,
+                getMultiplicationFactorTo(ElectricalCurrentUnit.AMPERE, ElectricalCurrentUnit.MILLIAMPERE), 0.01);
+        assertEquals("one MILLI AMPERE is 0.001 AMPERE", 0.001,
+                getMultiplicationFactorTo(ElectricalCurrentUnit.MILLIAMPERE, ElectricalCurrentUnit.AMPERE), 0.0001);
     }
 
 }

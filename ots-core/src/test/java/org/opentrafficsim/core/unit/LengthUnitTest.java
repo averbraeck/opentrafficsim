@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
 
 import java.util.Locale;
 
@@ -33,10 +35,10 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 6, 2014 <br>
+ * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TorqueUnitTests extends AbstractUnitTest<TorqueUnit>
+public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,7 +56,7 @@ public class TorqueUnitTests extends AbstractUnitTest<TorqueUnit>
     @Test
     public void keys()
     {
-        checkKeys(TorqueUnit.NEWTON_METER, "TorqueUnit.Newton_meter", "TorqueUnit.N.m");
+        checkKeys(LengthUnit.METER, "LengthUnit.meter", "LengthUnit.m");
     }
 
     /**
@@ -63,17 +65,36 @@ public class TorqueUnitTests extends AbstractUnitTest<TorqueUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(TorqueUnit.NEWTON_METER, 1, 0.00000001, "Newton meter", "N.m");
-        checkUnitRatioNameAndAbbreviation(TorqueUnit.METER_KILOGRAM_FORCE, 9.80665, 0.000005, "meter kilogram-force",
-                "m.kgf");
-        checkUnitRatioNameAndAbbreviation(TorqueUnit.FOOT_POUND_FORCE, 1.35581794833, 0.0000001, "foot pound-force",
-                "ft.lbf");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.METER, 1, 0.00000001, "meter", "m");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.MILE, 1609, 0.5, "mile", "mi");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.CENTIMETER, 0.01, 0.000000001, "centimeter", "cm");
         // Check two conversions between non-standard units
-        assertEquals("one FOOT POUND FORCE is 12 INCH_POUND_FORCE", 12,
-                getMultiplicationFactorTo(TorqueUnit.FOOT_POUND_FORCE, TorqueUnit.INCH_POUND_FORCE), 0.0001);
-        // Check conversion factor to standard unit for all remaining acceleration units
-        checkUnitRatioNameAndAbbreviation(TorqueUnit.INCH_POUND_FORCE, 0.112984829, 0.000000001, "inch pound-force",
-                "in.lbf");
+        assertEquals("one MILE is about 160900 CENTIMETER", 160900,
+                getMultiplicationFactorTo(LengthUnit.MILE, LengthUnit.CENTIMETER), 50);
+        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215,
+                getMultiplicationFactorTo(LengthUnit.CENTIMETER, LengthUnit.MILE), 0.000000002);
+        // Check conversion factor to standard unit for all remaining distance units
+        checkUnitRatioNameAndAbbreviation(LengthUnit.MILLIMETER, 0.001, 0.000000001, "millimeter", "mm");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.DECIMETER, 0.1, 0.000000001, "decimeter", "dm");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.DEKAMETER, 10, 0.0000001, "dekameter", "dam");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.HECTOMETER, 100, 0.000001, "hectometer", "hm");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.KILOMETER, 1000, 0.00001, "kilometer", "km");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.FOOT, 0.3048, 0.000001, "foot", "ft");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.INCH, 0.0254, 0.0000001, "inch", "in");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.NAUTICAL_MILE, 1852, 0.5, "nautical mile", "NM");
+        checkUnitRatioNameAndAbbreviation(LengthUnit.YARD, 0.9144, 0.00005, "yard", "yd");
     }
 
+    /**
+     * Verify that we can create our own length unit
+     */
+    @Test
+    public void createLengthUnit()
+    {
+        LengthUnit myLU =
+                new LengthUnit(UnitLocalizationsTest.doNotCheckPrefix + "LengthUnit.Furlong",
+                        UnitLocalizationsTest.doNotCheckPrefix + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
+        assertTrue("Can create a new LengthUnit", null != myLU);
+        checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
+    }
 }

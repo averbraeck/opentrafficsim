@@ -2,13 +2,13 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
-import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -35,10 +35,10 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FlowMassUnitTests extends AbstractUnitTest<FlowMassUnit>
+public class SpeedUnitTest extends AbstractUnitTest<SpeedUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -56,7 +56,7 @@ public class FlowMassUnitTests extends AbstractUnitTest<FlowMassUnit>
     @Test
     public void keys()
     {
-        checkKeys(FlowMassUnit.KILOGRAM_PER_SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s");
+        checkKeys(SpeedUnit.METER_PER_SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s");
     }
 
     /**
@@ -65,26 +65,30 @@ public class FlowMassUnitTests extends AbstractUnitTest<FlowMassUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(FlowMassUnit.KILOGRAM_PER_SECOND, 1, 0.000001, "kilogram per second", "kg/s");
-        checkUnitRatioNameAndAbbreviation(FlowMassUnit.POUND_PER_SECOND, 0.453592, 0.0001, "pound per second", "lb/s");
+        checkUnitRatioNameAndAbbreviation(SpeedUnit.METER_PER_SECOND, 1, 0.00000001, "meter per second", "m/s");
+        checkUnitRatioNameAndAbbreviation(SpeedUnit.KM_PER_HOUR, 0.277778, 0.000001, "kilometer per hour", "km/h");
+        checkUnitRatioNameAndAbbreviation(SpeedUnit.MILE_PER_HOUR, 0.44704, 0.00001, "mile per hour", "mi/h");
         // Check two conversions between non-standard units
-        assertEquals("one KILOGRAM PER SECOND is about 2.205 POUND PER SECOND", 2.205,
-                getMultiplicationFactorTo(FlowMassUnit.KILOGRAM_PER_SECOND, FlowMassUnit.POUND_PER_SECOND), 0.0005);
-        assertEquals("one POUND PER SECOND is about 0.453592 KILOGRAM PER SECOND", 0.453592,
-                getMultiplicationFactorTo(FlowMassUnit.POUND_PER_SECOND, FlowMassUnit.KILOGRAM_PER_SECOND), 0.0001);
+        assertEquals("one KM PER HOUR is about 0.621371 MILE PER HOUR", 0.621371,
+                getMultiplicationFactorTo(SpeedUnit.KM_PER_HOUR, SpeedUnit.MILE_PER_HOUR), 0.0001);
+        assertEquals("one MILE PER HOUR is about 1.60934 KM PER HOUR", 1.60934,
+                getMultiplicationFactorTo(SpeedUnit.MILE_PER_HOUR, SpeedUnit.KM_PER_HOUR), 0.0001);
+        // Check conversion factor to standard unit for all remaining time units
+        checkUnitRatioNameAndAbbreviation(SpeedUnit.FOOT_PER_SECOND, 0.3048, 0.0001, "foot per second", "ft/s");
+        checkUnitRatioNameAndAbbreviation(SpeedUnit.KNOT, 0.514444, 0.000001, "knot", "kt");
     }
 
     /**
-     * Verify that we can create our own FlowMass unit
+     * Verify that we can create our own speed unit
      */
     @Test
-    public void createFlowMassUnit()
+    public void createSpeedUnit()
     {
-        FlowMassUnit myFMU =
-                new FlowMassUnit("FlowMassUnit.WaterDropsPerHour", "FlowMassUnit.wdpu", UnitSystem.OTHER,
-                        FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
-        assertTrue("Can create a new FlowMassUnit", null != myFMU);
-        checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");
+        SpeedUnit mySU =
+                new SpeedUnit(UnitLocalizationsTest.doNotCheckPrefix + "SpeedUnit.Sprinter",
+                        UnitLocalizationsTest.doNotCheckPrefix + "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
+        assertTrue("Can create a new PowerUnit", null != mySU);
+        checkUnitRatioNameAndAbbreviation(mySU, 13.3333, 0.0001, "!Sprinter!", "!sprtr!");
     }
 
 }

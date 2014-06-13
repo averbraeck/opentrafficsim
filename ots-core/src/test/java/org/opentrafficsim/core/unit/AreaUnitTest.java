@@ -33,10 +33,10 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ElectricalPotentialUnitTests extends AbstractUnitTest<ElectricalPotentialUnit>
+public class AreaUnitTest extends AbstractUnitTest<AreaUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,7 +54,7 @@ public class ElectricalPotentialUnitTests extends AbstractUnitTest<ElectricalPot
     @Test
     public void keys()
     {
-        checkKeys(ElectricalPotentialUnit.VOLT, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V");
+        checkKeys(AreaUnit.SQUARE_METER, "AreaUnit.square_meter", "AreaUnit.m^2");
     }
 
     /**
@@ -63,12 +63,19 @@ public class ElectricalPotentialUnitTests extends AbstractUnitTest<ElectricalPot
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.VOLT, 1, 0.00000001, "volt", "V");
-        checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.MILLIVOLT, 0.001, 0.00000000001, "millivolt", "mV");
-        checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.KILOVOLT, 1000, 0.005, "kilovolt", "kV");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_METER, 1, 0.00000001, "square meter", "m^2");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_KM, 1000000, 0.05, "square kilometer", "km^2");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_MILE, 2589990, 2, "square mile", "mi^2");
         // Check two conversions between non-standard units
-        assertEquals("one KILOVOLT is 1000000 MILLIVOLT", 1000000,
-                getMultiplicationFactorTo(ElectricalPotentialUnit.KILOVOLT, ElectricalPotentialUnit.MILLIVOLT), 0.0001);
+        assertEquals("one SQUARE MILE is 640 ACRE", 640,
+                getMultiplicationFactorTo(AreaUnit.SQUARE_MILE, AreaUnit.ACRE), 0.1);
+        // Check conversion factor to standard unit for all remaining area units
+        checkUnitRatioNameAndAbbreviation(AreaUnit.ARE, 100, 0.001, "are", "a");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.HECTARE, 10000, 0.01, "hectare", "ha");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_FOOT, 0.092903, 0.000001, "square foot", "ft^2");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_INCH, 0.00064516, 0.00000001, "square inch", "in^2");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.SQUARE_YARD, 0.836127, 0.000001, "square yard", "yd^2");
+        checkUnitRatioNameAndAbbreviation(AreaUnit.ACRE, 4046.9, 0.05, "acre", "ac");
     }
 
 }

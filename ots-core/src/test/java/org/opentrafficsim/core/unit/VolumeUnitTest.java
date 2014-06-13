@@ -38,7 +38,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class MassUnitTests extends AbstractUnitTest<MassUnit>
+public class VolumeUnitTest extends AbstractUnitTest<VolumeUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -56,7 +56,7 @@ public class MassUnitTests extends AbstractUnitTest<MassUnit>
     @Test
     public void keys()
     {
-        checkKeys(MassUnit.KILOGRAM, "MassUnit.kilogram", "MassUnit.kg");
+        checkKeys(VolumeUnit.CUBIC_METER, "VolumeUnit.cubic_meter", "VolumeUnit.m^3");
     }
 
     /**
@@ -65,29 +65,44 @@ public class MassUnitTests extends AbstractUnitTest<MassUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(MassUnit.KILOGRAM, 1, 0.00000001, "kilogram", "kg");
-        checkUnitRatioNameAndAbbreviation(MassUnit.GRAM, 0.001, 0.000000001, "gram", "g");
-        checkUnitRatioNameAndAbbreviation(MassUnit.POUND, 0.453592, 0.000001, "pound", "lb");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_METER, 1, 0.00000001, "cubic meter", "m^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_DECIMETER, 0.001, 0.0000000001, "cubic decimeter", "dm^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.LITER, 0.001, 0.0000000001, "liter", "L");
         // Check two conversions between non-standard units
-        assertEquals("one POUND is 16 OUNCE", 16, getMultiplicationFactorTo(MassUnit.POUND, MassUnit.OUNCE), 0.00001);
-        assertEquals("one OUNCE is 0.0625 POUND", 0.0625, getMultiplicationFactorTo(MassUnit.OUNCE, MassUnit.POUND),
-                0.000001);
+        assertEquals("one CUBIC MILE is about 5451776000 CUBIC YARD", 5451776000.,
+                getMultiplicationFactorTo(VolumeUnit.CUBIC_MILE, VolumeUnit.CUBIC_YARD), 0.5);
+        assertEquals("one CUBIC YARD is 1.83426465e-10 CUBIC MILE", 1.83426465e-10,
+                getMultiplicationFactorTo(VolumeUnit.CUBIC_YARD, VolumeUnit.CUBIC_MILE), 0.0000000001);
         // Check conversion factor to standard unit for all remaining time units
-        checkUnitRatioNameAndAbbreviation(MassUnit.OUNCE, 0.0283495, 0.0000001, "ounce", "oz");
-        checkUnitRatioNameAndAbbreviation(MassUnit.TON_LONG, 1016.046906, 0.00001, "long ton", "long tn");
-        checkUnitRatioNameAndAbbreviation(MassUnit.TON_SHORT, 907.18474, 0.00001, "short ton", "sh tn");
-        checkUnitRatioNameAndAbbreviation(MassUnit.TON_METRIC, 1000, 0.001, "metric tonne", "t");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_CENTIMETER, 0.000001, 0.000000000001, "cubic centimeter",
+                "cm^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_KM, 1e9, 1, "cubic kilometer", "km^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_MILE, 4.16818183e9, 1000, "cubic mile", "mi^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_FOOT, 0.0283168, 0.0000001, "cubic foot", "ft^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_INCH, 1.6387e-5, 1e-9, "cubic inch", "in^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_YARD, 0.764554858, 0.0000001, "cubic yard", "yd^3");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.GALLON_US_FLUID, 0.0037854, 0.0000001, "gallon (US)", "gal(US)");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.000000001, "ounce (fluid US)",
+                "US fl oz");
+        //checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_IMP_FLUID, .00002841306, 0.00000000001,
+        //        "horsepower (metric)", "hp(M)");
+        //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_US_FLUID, 0.000473176473, 0.0000000000001, "pt(US fl)", "hp(M)");
+        //checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_IMP, 735.49875, 0.00001, "horsepower (metric)", "hp(M)");
+        //checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_US_FLUID, 0.000946353, 0.0000000001, "qt(US fl)", "hp(M)");
+        //checkUnitRatioNameAndAbbreviation(VolumeUnit.QUART_IMP, 0.00113652, 0.000005, "quart (imperial)", "qt (imp)");
     }
 
     /**
-     * Verify that we can create our own mass unit
+     * Verify that we can create our own power unit
      */
     @Test
-    public void createMassUnit()
+    public void createVolumeUnit()
     {
-        MassUnit myMU = new MassUnit("MassUnit.Person", "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
-        assertTrue("Can create a new MassUnit", null != myMU);
-        checkUnitRatioNameAndAbbreviation(myMU, 80, 1, "!Person!", "!pn!");
+        VolumeUnit myVU =
+                new VolumeUnit(UnitLocalizationsTest.doNotCheckPrefix + "VolumeUnit.Barrel",
+                        UnitLocalizationsTest.doNotCheckPrefix + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
+        assertTrue("Can create a new VolumeUnit", null != myVU);
+        checkUnitRatioNameAndAbbreviation(myVU, 0.119240471, 0.000001, "!Barrel!", "!brl!");
     }
 
 }

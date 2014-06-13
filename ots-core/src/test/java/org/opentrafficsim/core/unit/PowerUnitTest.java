@@ -1,12 +1,14 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -33,10 +35,10 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @version Jun 6, 2014 <br>
+ * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DensityUnitTests extends AbstractUnitTest<DensityUnit>
+public class PowerUnitTest extends AbstractUnitTest<PowerUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -54,7 +56,7 @@ public class DensityUnitTests extends AbstractUnitTest<DensityUnit>
     @Test
     public void keys()
     {
-        checkKeys(DensityUnit.KG_PER_METER_3, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
+        checkKeys(PowerUnit.WATT, "PowerUnit.watt", "PowerUnit.W");
     }
 
     /**
@@ -63,13 +65,39 @@ public class DensityUnitTests extends AbstractUnitTest<DensityUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001, "kilogram per cubic meter",
-                "kg/m^3");
-        checkUnitRatioNameAndAbbreviation(DensityUnit.GRAM_PER_CENTIMETER_3, 1000, 0.0001, "gram per cubic centimeter",
-                "g/cm^3");
-        // Check two conversions between two units
-        assertEquals("one KG PER CUBIC METER is 0.0001 GRAM PER CUBIC CENTIMETER", 0.001,
-                getMultiplicationFactorTo(DensityUnit.KG_PER_METER_3, DensityUnit.GRAM_PER_CENTIMETER_3), 0.000000001);
+        checkUnitRatioNameAndAbbreviation(PowerUnit.WATT, 1, 0.00000001, "watt", "W");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.FOOT_POUND_FORCE_PER_HOUR, 0.00037661608333, 0.0000000001,
+                "foot pound-force per hour", "ft.lbf/h");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.FOOT_POUND_FORCE_PER_MINUTE, 0.022596965, 0.000001,
+                "foot pound-force per minute", "ft.lbf/min");
+        // Check two conversions between non-standard units
+        assertEquals("one FOOT POUND FORCE PER HOUR is about 0.0166667 FOOT POUND FORCE PER MINUTE", 0.01666667,
+                getMultiplicationFactorTo(PowerUnit.FOOT_POUND_FORCE_PER_HOUR, PowerUnit.FOOT_POUND_FORCE_PER_MINUTE),
+                0.0000001);
+        assertEquals("one FOOT POUND FORCE PER MINUTE is 60 FOOT POUND FORCE PER HOUR", 60,
+                getMultiplicationFactorTo(PowerUnit.FOOT_POUND_FORCE_PER_MINUTE, PowerUnit.FOOT_POUND_FORCE_PER_HOUR),
+                0.000001);
+        // Check conversion factor to standard unit for all remaining time units
+        checkUnitRatioNameAndAbbreviation(PowerUnit.KILOWATT, 1000, 0.001, "kilowatt", "kW");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.MEGAWATT, 1000000, 1, "megawatt", "MW");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.GIGAWATT, 1e9, 1e3, "gigawatt", "GW");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.FOOT_POUND_FORCE_PER_SECOND, 1.3558179, 0.000001,
+                "foot pound-force per second", "ft.lbf/s");
+        checkUnitRatioNameAndAbbreviation(PowerUnit.HORSEPOWER_METRIC, 735.49875, 0.00001, "horsepower (metric)",
+                "hp(M)");
+    }
+
+    /**
+     * Verify that we can create our own power unit
+     */
+    @Test
+    public void createPowerUnitUnit()
+    {
+        PowerUnit myMU =
+                new PowerUnit(UnitLocalizationsTest.doNotCheckPrefix + "PowerUnit.Person",
+                        UnitLocalizationsTest.doNotCheckPrefix + "PowerUnit.pnp", UnitSystem.OTHER, PowerUnit.WATT, 250);
+        assertTrue("Can create a new PowerUnit", null != myMU);
+        checkUnitRatioNameAndAbbreviation(myMU, 250, 1, "!Person!", "!pnp!");
     }
 
 }

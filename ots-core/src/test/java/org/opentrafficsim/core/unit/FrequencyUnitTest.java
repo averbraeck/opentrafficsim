@@ -38,7 +38,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * @version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FrequencyUnitTests extends AbstractUnitTest<FrequencyUnit>
+public class FrequencyUnitTest extends AbstractUnitTest<FrequencyUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -83,8 +83,8 @@ public class FrequencyUnitTests extends AbstractUnitTest<FrequencyUnit>
     public void createFrequencyUnitt()
     {
         FrequencyUnit myFU =
-                new FrequencyUnit(CheckLocalizations.doNotCheckPrefix + "FrequencyUnit.MiddleA",
-                        CheckLocalizations.doNotCheckPrefix + "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
+                new FrequencyUnit(UnitLocalizationsTest.doNotCheckPrefix + "FrequencyUnit.MiddleA",
+                        UnitLocalizationsTest.doNotCheckPrefix + "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 440, 0.0001, "!MiddleA!", "!MA!");
     }

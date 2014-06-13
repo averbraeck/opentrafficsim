@@ -2,13 +2,13 @@ package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opentrafficsim.core.locale.DefaultLocale;
-import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -35,10 +35,10 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 6, 2014 <br>
+ * @version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
+public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
 {
     /**
      * Set the locale to "en" so we know what texts should be retrieved from the resources
@@ -56,8 +56,7 @@ public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
     @Test
     public void keys()
     {
-        checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second",
-                "FlowVolumeUnit.m^3/s");
+        checkKeys(AnglePlaneUnit.RADIAN, "AnglePlaneUnit.radian", "AnglePlaneUnit.rad");
     }
 
     /**
@@ -66,31 +65,33 @@ public class FlowVolumeUnitTests extends AbstractUnitTest<FlowVolumeUnit>
     @Test
     public void conversions()
     {
-        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_SECOND, 1, 0.000001, "cubic meter per second",
-                "m^3/s");
-        checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, 0.0166667, 0.000001,
-                "cubic meter per minute", "m^3/min");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.DEGREE, 2 * Math.PI / 360, 0.000001, "degree", "\u00b0");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.ARCMINUTE, 2 * Math.PI / 360 / 60, 0.0001, "arcminute", "\'");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.GRAD, 2 * Math.PI / 400, 0.00001, "gradian", "grad");
         // Check two conversions between non-standard units
-        assertEquals("one CUBIC METER PER HOUR is about 2.205 CUBIC_METER_PER_MINUTED", 0.01666667,
-                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_HOUR, FlowVolumeUnit.CUBIC_METER_PER_MINUTE),
-                0.00001);
-        assertEquals("one CUBIC METER PER MINUTE is 60 CUBIC_METER_PER_HOUR", 60,
-                getMultiplicationFactorTo(FlowVolumeUnit.CUBIC_METER_PER_MINUTE, FlowVolumeUnit.CUBIC_METER_PER_HOUR),
-                0.0001);
+        assertEquals("one GRAD is about 54 ARCMINUTE", 54,
+                getMultiplicationFactorTo(AnglePlaneUnit.GRAD, AnglePlaneUnit.ARCMINUTE), 0.5);
+        assertEquals("one ARCMINUTE is about 0.0185 GRAD", 0.0185,
+                getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE, AnglePlaneUnit.GRAD), 0.0001);
+        // Check conversion factor to standard unit for all remaining time units
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 0.00015708, 0.0000001,
+                "centesimal arcminute", "\'");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1, "centesimal arcsecond",
+                "\"");
     }
 
     /**
-     * Verify that we can create our own FlowVolume unit
+     * Verify that we can create our own angle unit
      */
     @Test
-    public void createFLowVolumeUnit()
+    public void createAngleUnit()
     {
-        FlowVolumeUnit myFVU =
-                new FlowVolumeUnit(CheckLocalizations.doNotCheckPrefix + "FlowVolumeUnit.TrucksPerHour",
-                        CheckLocalizations.doNotCheckPrefix + "FlowVolumeUnit.tph", UnitSystem.OTHER,
-                        FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
-        assertTrue("Can create a new FlowMassUnit", null != myFVU);
-        checkUnitRatioNameAndAbbreviation(myFVU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");
+        AnglePlaneUnit myAPU =
+                new AnglePlaneUnit(UnitLocalizationsTest.doNotCheckPrefix + "AnglePlaneUnit.point",
+                        UnitLocalizationsTest.doNotCheckPrefix + "AnglePlaneUnit.pt", OTHER, AnglePlaneUnit.RADIAN,
+                        0.19634954085);
+        assertTrue("Can create a new AngleUnit", null != myAPU);
+        checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }
 
 }
