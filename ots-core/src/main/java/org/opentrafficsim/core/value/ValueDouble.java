@@ -2,10 +2,6 @@ package org.opentrafficsim.core.value;
 
 import org.opentrafficsim.core.unit.Unit;
 
-import cern.colt.matrix.AbstractMatrix1D;
-import cern.colt.matrix.AbstractMatrix2D;
-import cern.colt.matrix.AbstractMatrix3D;
-
 /**
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
