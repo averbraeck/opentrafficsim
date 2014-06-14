@@ -62,7 +62,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
     
     /** localization information */
-    private Localization localization = new Localization("localeunit");
+    private static Localization localization = new Localization("localeunit");
     
     /** has this class been initialized? */
     private static boolean initialized = false;
@@ -186,7 +186,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     public String getName()
     {
-        return this.localization.getString(this.nameKey);
+        return localization.getString(this.nameKey);
     }
 
     /**
@@ -202,7 +202,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     public String getAbbreviation()
     {
-        return this.localization.getString(this.abbreviationKey);
+        return localization.getString(this.abbreviationKey);
     }
 
     /**

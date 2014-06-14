@@ -83,7 +83,7 @@ public abstract class UnitSystem implements Serializable
     private final String nameKey;
 
     /** localization information */
-    private Localization localization = new Localization("localeunitsystem");
+    private static Localization localization = new Localization("localeunitsystem");
 
     /**
      * @param abbreviationKey the abbreviation of the unit system, such as cgs
@@ -100,7 +100,7 @@ public abstract class UnitSystem implements Serializable
      */
     public String getName()
     {
-        return this.localization.getString(this.nameKey);
+        return localization.getString(this.nameKey);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class UnitSystem implements Serializable
      */
     public String getAbbreviation()
     {
-        return this.localization.getString(this.abbreviationKey);
+        return localization.getString(this.abbreviationKey);
     }
 
     /**
