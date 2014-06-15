@@ -111,4 +111,13 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
         return KILOGRAM_PER_SECOND;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kg/s";
+    }
+
 }

@@ -118,4 +118,13 @@ public class LengthUnit extends Unit<LengthUnit>
         return METER;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "m";
+    }
+
 }

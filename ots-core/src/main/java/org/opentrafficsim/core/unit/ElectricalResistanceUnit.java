@@ -170,4 +170,13 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
         return OHM;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kg.m2.s-3.A-2";
+    }
+
 }

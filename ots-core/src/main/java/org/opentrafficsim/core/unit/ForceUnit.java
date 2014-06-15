@@ -166,4 +166,13 @@ public class ForceUnit extends Unit<ForceUnit>
         return NEWTON;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kgm/s2";
+    }
+
 }

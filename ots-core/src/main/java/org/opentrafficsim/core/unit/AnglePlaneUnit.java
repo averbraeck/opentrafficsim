@@ -103,4 +103,13 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
         return RADIAN;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "";
+    }
+
 }

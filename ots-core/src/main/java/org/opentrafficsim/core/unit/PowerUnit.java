@@ -179,4 +179,13 @@ public class PowerUnit extends Unit<PowerUnit>
         return WATT;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kgm2/s3";
+    }
+
 }

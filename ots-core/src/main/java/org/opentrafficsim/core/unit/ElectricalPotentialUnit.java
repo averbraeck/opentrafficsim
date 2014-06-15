@@ -183,4 +183,13 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
         return VOLT;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kg.m2.s-3.A-1";
+    }
+
 }

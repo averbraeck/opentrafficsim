@@ -80,4 +80,13 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
         return STERADIAN;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "";
+    }
+
 }

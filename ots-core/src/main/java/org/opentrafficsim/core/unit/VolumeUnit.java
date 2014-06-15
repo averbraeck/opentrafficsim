@@ -159,4 +159,13 @@ public class VolumeUnit extends Unit<VolumeUnit>
         return CUBIC_METER;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "m3";
+    }
+
 }

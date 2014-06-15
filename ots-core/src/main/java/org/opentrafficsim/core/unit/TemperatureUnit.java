@@ -98,4 +98,13 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
         return KELVIN;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "K";
+    }
+
 }

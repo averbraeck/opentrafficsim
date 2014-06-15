@@ -1,8 +1,9 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.unit;
 
-import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
+ * Helper class to create arbitrary SI units.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -26,45 +27,39 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 10, 2014 <br>
+ * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ValueDouble<U extends Unit<U>> extends AbstractValue<U>
+public class SIUnit extends Unit<SIUnit>
 {
-    private double value;
-    
+    /** */
+    private static final long serialVersionUID = 20140615L;
+
     /**
-     * @param unit
+     * Create an arbitrary SI unit based on a coefficient string, such as m3/cd2
+     * @param siCoefficientString
      */
-    public ValueDouble(final U unit)
+    public SIUnit(final String siCoefficientString)
     {
-        super(unit);
+        super(siCoefficientString, siCoefficientString, UnitSystem.SI_DERIVED);
     }
 
-    public ValueDouble(final U unit, final double value)
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     */
+    @Override
+    public SIUnit getStandardUnit()
     {
-        super(unit);
-        this.value = value;
-    }
-    
-    public double get()
-    {
-        return this.value;
+        return this;
     }
 
-    public void set(final double value)
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
     {
-        this.value = value;
-    }
-
-    public void add(final ValueDouble d)
-    {
-        this.value += d.get();
-    }
-
-    public void subtract(final ValueDouble d)
-    {
-        this.value -= d.get();
+        return this.getAbbreviationKey();
     }
 
 }

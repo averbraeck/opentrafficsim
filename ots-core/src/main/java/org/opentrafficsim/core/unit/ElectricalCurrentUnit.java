@@ -100,4 +100,13 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
         return AMPERE;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "A";
+    }
+
 }

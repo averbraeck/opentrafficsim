@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.value;
 
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 
 /**
  * <p>
@@ -28,36 +30,39 @@ import org.opentrafficsim.core.unit.SpeedUnit;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Test
+public class TestValue
 {
 
     /**
      * 
      */
-    public Test()
+    public TestValue()
     {
+        FloatScalarAbs<LengthUnit> l = new FloatScalarAbs<LengthUnit>(1.0f, LengthUnit.KILOMETER);
+        FloatScalarAbs<TimeUnit> t = new FloatScalarAbs<TimeUnit>(1.0f, TimeUnit.HOUR);
+        FloatScalarAbs<?> div = FloatScalar.divide(l, t);
+        System.out.println(div);
+        
+        System.out.println();
         float[] f = new float[]{1.0f, 2.0f, 3.0f, 4.0f};
-        FloatDenseVector<SpeedUnit, FloatScalarAbs> v = new FloatDenseVector<SpeedUnit, FloatScalarAbs>(f, SpeedUnit.KM_PER_HOUR);
+        FloatVectorDense<SpeedUnit, Absolute> v = new FloatVectorDense<SpeedUnit, Absolute>(f, SpeedUnit.KM_PER_HOUR);
         float[] g = new float[]{5.0f, 6.0f, 7.0f, 8.0f};
-        FloatDenseVector<SpeedUnit, FloatScalarRel> w =
-                new FloatDenseVector<SpeedUnit, FloatScalarRel>(g, SpeedUnit.METER_PER_SECOND);
+        FloatVectorDense<SpeedUnit, Relative> w =
+                new FloatVectorDense<SpeedUnit, Relative>(g, SpeedUnit.METER_PER_SECOND);
         System.out.println(v);
         System.out.println(w);
-        System.out.println(FloatDenseVector.addAR(v, w, SpeedUnit.METER_PER_SECOND));
-        System.out.println(FloatDenseVector.addRR(w, w, SpeedUnit.METER_PER_SECOND));
-        System.out.println(FloatDenseVector.addRA(w, v, SpeedUnit.KM_PER_HOUR));
-        System.out.println(FloatDenseVector.addRA(w, v, SpeedUnit.MILE_PER_HOUR));
-        
+        System.out.println(FloatVectorDense.addAR(v, w, SpeedUnit.METER_PER_SECOND));
+        System.out.println(FloatVectorDense.addRR(w, w, SpeedUnit.METER_PER_SECOND));
+        System.out.println(FloatVectorDense.addRA(w, v, SpeedUnit.KM_PER_HOUR));
+        System.out.println(FloatVectorDense.addRA(w, v, SpeedUnit.MILE_PER_HOUR));
+
         // TODO: All in SI
     }
 
     public static void main(String[] args)
     {
-        new Test();
+        new TestValue();
     }
 }

@@ -109,4 +109,13 @@ public class DensityUnit extends Unit<DensityUnit>
         return KG_PER_METER_3;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kg/m3";
+    }
+
 }
