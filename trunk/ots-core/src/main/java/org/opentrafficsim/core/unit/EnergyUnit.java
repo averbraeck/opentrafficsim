@@ -233,4 +233,13 @@ public class EnergyUnit extends Unit<EnergyUnit>
         return JOULE;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kgm2/s2";
+    }
+
 }

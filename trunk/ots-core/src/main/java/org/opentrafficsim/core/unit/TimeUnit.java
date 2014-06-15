@@ -92,4 +92,13 @@ public class TimeUnit extends Unit<TimeUnit>
         return SECOND;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "s";
+    }
+
 }

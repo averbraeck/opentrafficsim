@@ -26,37 +26,33 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 13, 2014 <br>
+ * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
+ * @param <U> the unit of the values in the constructor and for display
  */
-public class FloatScalarAbs<U extends Unit<U>> extends Scalar
+public class FloatScalarAbs<U extends Unit<U>> extends FloatScalar<U> implements Absolute
 {
-    private final float value; 
-    private final U unit;
+    /** */
+    private static final long serialVersionUID = 20140615L;
 
-    public FloatScalarAbs(float value, U unit)
+    /**
+     * Construct a value in and store it in SI units for calculation.
+     * @param value the value in the given units
+     * @param unit the unit of the value
+     */
+    public FloatScalarAbs(final float value, final U unit)
     {
-        this.value = value;
-        this.unit = unit;
+        super(value, unit);
     }
 
     /**
-     * @return value
+     * Construct a value from another value. The value is already in SI units.
+     * @param value the value to duplicate
      */
-    public float getValue()
+    public FloatScalarAbs(final FloatScalarAbs<U> value)
     {
-        return this.value;
+        super(value);
     }
 
-    /**
-     * @return unit
-     */
-    public U getUnit()
-    {
-        return this.unit;
-    }
 }

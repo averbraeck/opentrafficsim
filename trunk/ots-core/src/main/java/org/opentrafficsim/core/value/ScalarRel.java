@@ -26,13 +26,22 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 10, 2014 <br>
+ * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
+ * @param <U> the unit of the values in the constructor and for display
  */
-public interface StandardMath<U extends Unit<U>, V extends AbstractValue<U>>
+public class ScalarRel<U extends Unit<U>> extends Scalar<U> implements Relative
 {
-    void add(final V value);
+    /** */
+    private static final long serialVersionUID = 20140615L;
 
-    void subtract(final V value);
+    /**
+     * @param unit the unit of the value
+     */
+    public ScalarRel(final U unit)
+    {
+        super(unit);
+    }
 
 }

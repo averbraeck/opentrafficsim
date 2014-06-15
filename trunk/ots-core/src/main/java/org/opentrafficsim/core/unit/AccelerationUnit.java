@@ -160,4 +160,13 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
         return METER_PER_SECOND_2;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "m/s2";
+    }
+
 }

@@ -187,4 +187,13 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
         return CUBIC_METER_PER_SECOND;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "m3/s";
+    }
+
 }

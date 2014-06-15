@@ -1,6 +1,4 @@
-package org.opentrafficsim.core.value;
-
-import org.opentrafficsim.core.unit.Unit;
+package org.opentrafficsim.core.unit;
 
 /**
  * <p>
@@ -26,21 +24,28 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 5, 2014 <br>
+ * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> The unit of the element, e.g. MassUnit, TimeUnit
  */
-public abstract class AbstractValue<U extends Unit<U>> implements StandardMath<U, ValueDouble<U>>
-{
-    private final U unit;
-    
-    public AbstractValue(final U unit)
-    {
-        this.unit = unit;
-    }
-    
-    public U getUnit()
-    {
-        return this.unit;
-    }
+public enum SI {
+    /** kilogram */
+    kg,
+
+    /** meter; note that the m is also in "mol" */
+    m,
+
+    /** second */
+    s,
+
+    /** Ampere */
+    A,
+
+    /** Kelvin */
+    K,
+
+    /** candela */
+    cd,
+
+    /** mol */
+    mol;
 }

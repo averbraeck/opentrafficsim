@@ -31,28 +31,17 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public class FloatScalarRel<U extends Unit<U>> extends FloatScalar<U> implements Relative
+public abstract class ScalarAbs<U extends Unit<U>> extends Scalar<U> implements Absolute
 {
     /** */
     private static final long serialVersionUID = 20140615L;
 
     /**
-     * Construct a value in and store it in SI units for calculation.
-     * @param value the value in the given units
      * @param unit the unit of the value
      */
-    public FloatScalarRel(final float value, final U unit)
+    public ScalarAbs(final U unit)
     {
-        super(value, unit);
+        super(unit);
     }
-
-    /**
-     * Construct a value from another value. The value is already in SI units.
-     * @param value the value to duplicate
-     */
-    public FloatScalarRel(final FloatScalarRel<U> value)
-    {
-        super(value);
-    }
-
+    
 }

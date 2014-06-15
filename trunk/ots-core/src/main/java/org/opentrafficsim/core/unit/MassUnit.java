@@ -113,4 +113,13 @@ public class MassUnit extends Unit<MassUnit>
         return KILOGRAM;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kg";
+    }
+
 }

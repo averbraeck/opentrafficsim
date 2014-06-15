@@ -124,4 +124,13 @@ public class SpeedUnit extends Unit<SpeedUnit>
         return METER_PER_SECOND;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "m/s";
+    }
+
 }

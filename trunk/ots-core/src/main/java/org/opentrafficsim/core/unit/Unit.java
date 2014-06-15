@@ -58,12 +58,21 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /** multiply by this number to convert to the standard (e.g., SI) unit */
     private final double conversionFactorToStandardUnit;
 
+    /** SI unit information */
+    private SICoefficients siCoefficients;
+
+    /** static map of all defined coefficient strings, to avoid double creation and allow lookup */
+    private static Map<String, SICoefficients> SI_COEFFICIENTS = new HashMap<String, SICoefficients>();
+
+    /** static map of all defined coefficient strings, mapped to the existing units */
+    private static Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS = new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
+
     /** a static map of all defined units */
     private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
-    
+
     /** localization information */
     private static Localization localization = new Localization("localeunit");
-    
+
     /** has this class been initialized? */
     private static boolean initialized = false;
 
@@ -131,7 +140,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     }
 
     /**
-     * Add a unit to the overview collection of existing units.
+     * Add a unit to the overview collection of existing units, and resolve the coefficients.
      * @param unit the unit to add. It will be stored in a set belonging to the simple class name String, e.g.
      *            "ForceUnit".
      */
@@ -140,6 +149,35 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         if (!UNITS.containsKey(unit.getClass().getSimpleName()))
             UNITS.put(unit.getClass().getSimpleName(), new HashSet<Unit<?>>());
         UNITS.get(unit.getClass().getSimpleName()).add(unit);
+
+        // resolve the SI coefficients, and normalize string
+        String siCoefficientsString = SICoefficients.create(getSICoefficientsString()).toString();
+        if (SI_COEFFICIENTS.containsKey(siCoefficientsString))
+        {
+            this.siCoefficients = SI_COEFFICIENTS.get(siCoefficientsString);
+        }
+        else
+        {
+            this.siCoefficients = SICoefficients.create(siCoefficientsString);
+            SI_COEFFICIENTS.put(siCoefficientsString, this.siCoefficients);
+        }
+        
+        // add the standard unit
+        Map<Class<Unit<?>>, Unit<?>> unitMap = SI_UNITS.get(siCoefficientsString);
+        if (unitMap == null)
+        {
+            unitMap = new HashMap<Class<Unit<?>>, Unit<?>>();
+            SI_UNITS.put(siCoefficientsString, unitMap);
+        }
+        if (!unitMap.containsKey(unit.getClass()))
+        {
+            @SuppressWarnings("unchecked")
+            Class<Unit<?>> clazz = (Class<Unit<?>>) unit.getClass();
+            if (this.getStandardUnit() == null)
+                unitMap.put(clazz, this);
+            else
+                unitMap.put(clazz, this.getStandardUnit());
+        }
     }
 
     /**
@@ -233,6 +271,69 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @return the SI standard unit for this unit, or the de facto standard unit if SI is not available
      */
     public abstract U getStandardUnit();
+
+    /**
+     * @return the SI standard coefficients for this unit, e.g., kgm/s2 or m-2s2A or m^-2.s^2.A or m^-2s^2A (not
+     *         necessarily normalized)
+     */
+    public abstract String getSICoefficientsString();
+
+    /**
+     * @return the SI coefficients
+     */
+    public SICoefficients getSICoefficients()
+    {
+        return this.siCoefficients;
+    }
+
+    /**
+     * @param normalizedSICoefficientsString the normalized string (e.g., kg.m/s2) to look up
+     * @return a set with the Units belonging to this string, or an empty set when it does not exist
+     */
+    public static Set<Unit<?>> lookupUnitWithSICoefficients(final String normalizedSICoefficientsString)
+    {
+        if (!initialized)
+            initialize();
+        if (SI_UNITS.containsKey(normalizedSICoefficientsString))
+        {
+            return new HashSet<Unit<?>>(SI_UNITS.get(normalizedSICoefficientsString).values());
+        }
+        return new HashSet<Unit<?>>();
+    }
+
+    /**
+     * @param normalizedSICoefficientsString the normalized string (e.g., kg.m/s2) to look up
+     * @return a set of Units belonging to this string, or a set with a new unit when it does not yet exist
+     */
+    public static Set<Unit<?>> lookupOrCreateUnitWithSICoefficients(final String normalizedSICoefficientsString)
+    {
+        if (!initialized)
+            initialize();
+        if (SI_UNITS.containsKey(normalizedSICoefficientsString))
+        {
+            return new HashSet<Unit<?>>(SI_UNITS.get(normalizedSICoefficientsString).values());
+        }
+        SIUnit unit = new SIUnit(normalizedSICoefficientsString);
+        Set<Unit<?>> unitSet = new HashSet<Unit<?>>();
+        unitSet.add(unit);
+        return unitSet;
+    }
+
+    /**
+     * @param normalizedSICoefficientsString the normalized string (e.g., kg.m/s2) to look up
+     * @return the Unit belonging to this string, or a new unit when it does not yet exist
+     */
+    public static SIUnit lookupOrCreateSIUnitWithSICoefficients(final String normalizedSICoefficientsString)
+    {
+        if (!initialized)
+            initialize();
+        if (SI_UNITS.containsKey(normalizedSICoefficientsString) && SI_UNITS.get(normalizedSICoefficientsString).containsKey(SIUnit.class))
+        {
+            return (SIUnit) SI_UNITS.get(normalizedSICoefficientsString).get(SIUnit.class);
+        }
+        SIUnit unit = new SIUnit(normalizedSICoefficientsString);
+        return unit;
+    }
 
     /**
      * @see java.lang.Object#toString()

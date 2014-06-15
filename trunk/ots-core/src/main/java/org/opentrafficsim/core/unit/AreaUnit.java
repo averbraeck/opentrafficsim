@@ -131,4 +131,13 @@ public class AreaUnit extends Unit<AreaUnit>
         return SQUARE_METER;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "m2";
+    }
+
 }

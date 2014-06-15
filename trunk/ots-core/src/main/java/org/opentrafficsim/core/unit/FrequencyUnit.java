@@ -113,4 +113,13 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
         return HERTZ;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "s-1";
+    }
+
 }

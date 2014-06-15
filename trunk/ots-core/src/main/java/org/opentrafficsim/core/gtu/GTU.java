@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
 import org.opentrafficsim.core.location.Location;
-import org.opentrafficsim.core.velocity.Velocity;
 
 /**
  * <p>
@@ -37,7 +36,7 @@ import org.opentrafficsim.core.velocity.Velocity;
  * @param <L> The type of Location, e.g., Location1D
  * @param <V> The type of Velocity, could be in 1D (relative), 2D or 3D
  */
-public interface GTU<ID, L extends Location, V extends Velocity>
+public interface GTU<ID, L extends Location, V /* extends Velocity */>
 {
     /** @return the id of the GTU, could be String or Integer */
     ID getID();

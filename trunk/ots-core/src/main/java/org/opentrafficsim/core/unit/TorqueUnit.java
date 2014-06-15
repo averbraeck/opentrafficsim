@@ -153,4 +153,13 @@ public class TorqueUnit extends Unit<TorqueUnit>
         return NEWTON_METER;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kgm2/s2";
+    }
+
 }

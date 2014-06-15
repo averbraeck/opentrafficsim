@@ -210,4 +210,13 @@ public class PressureUnit extends Unit<PressureUnit>
         return PASCAL;
     }
 
+    /**
+     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     */
+    @Override
+    public String getSICoefficientsString()
+    {
+        return "kg/ms2";
+    }
+
 }

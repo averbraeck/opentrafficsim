@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.value;
 
-import org.opentrafficsim.core.unit.Unit;
-
 /**
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
@@ -29,30 +27,19 @@ import org.opentrafficsim.core.unit.Unit;
  * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
- * @param <U> the unit of the values in the constructor and for display
  */
-public class FloatScalarRel<U extends Unit<U>> extends FloatScalar<U> implements Relative
+public interface FloatFunctions extends Functions
 {
-    /** */
-    private static final long serialVersionUID = 20140615L;
+    /**
+     * Multiply the value(s) with a constant
+     * @param constant the multiplier
+     */
+    void multiply(float constant);
 
     /**
-     * Construct a value in and store it in SI units for calculation.
-     * @param value the value in the given units
-     * @param unit the unit of the value
+     * Divide the value(s) by a constant
+     * @param constant the divisor
      */
-    public FloatScalarRel(final float value, final U unit)
-    {
-        super(value, unit);
-    }
-
-    /**
-     * Construct a value from another value. The value is already in SI units.
-     * @param value the value to duplicate
-     */
-    public FloatScalarRel(final FloatScalarRel<U> value)
-    {
-        super(value);
-    }
-
+    void divide(float constant);
+    
 }
