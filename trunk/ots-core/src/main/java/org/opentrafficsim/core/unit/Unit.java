@@ -97,6 +97,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
                 System.err.println("Could not load class " + clazz.getCanonicalName());
             }
         }
+        initialized = true;
     }
 
     /**
