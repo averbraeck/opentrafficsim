@@ -65,7 +65,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private static Map<String, SICoefficients> SI_COEFFICIENTS = new HashMap<String, SICoefficients>();
 
     /** static map of all defined coefficient strings, mapped to the existing units */
-    private static Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS = new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
+    private static Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS =
+            new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
 
     /** a static map of all defined units */
     private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
@@ -152,7 +153,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         UNITS.get(unit.getClass().getSimpleName()).add(unit);
 
         // resolve the SI coefficients, and normalize string
-        String siCoefficientsString = SICoefficients.create(getSICoefficientsString()).toString();
+        String siCoefficientsString = SICoefficients.create(getSICoefficientsString()).toString(); // TODO: call
+                                                                                                   // normalize?
         if (SI_COEFFICIENTS.containsKey(siCoefficientsString))
         {
             this.siCoefficients = SI_COEFFICIENTS.get(siCoefficientsString);
@@ -162,7 +164,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             this.siCoefficients = SICoefficients.create(siCoefficientsString);
             SI_COEFFICIENTS.put(siCoefficientsString, this.siCoefficients);
         }
-        
+
         // add the standard unit
         Map<Class<Unit<?>>, Unit<?>> unitMap = SI_UNITS.get(siCoefficientsString);
         if (unitMap == null)
@@ -206,6 +208,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @return the set of defined units belonging to this Unit class. The empty set will be returned in case the unit
      *         type does not have any units.
      */
+    // TODO: call static method from the instance method? The two are now too similar.
     @SuppressWarnings("unchecked")
     public Set<Unit<U>> getAllUnitsOfThisType()
     {
@@ -306,6 +309,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param normalizedSICoefficientsString the normalized string (e.g., kg.m/s2) to look up
      * @return a set of Units belonging to this string, or a set with a new unit when it does not yet exist
      */
+    // TODO: call other static method? The two are now too similar.
     public static Set<Unit<?>> lookupOrCreateUnitWithSICoefficients(final String normalizedSICoefficientsString)
     {
         if (!initialized)
@@ -328,7 +332,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     {
         if (!initialized)
             initialize();
-        if (SI_UNITS.containsKey(normalizedSICoefficientsString) && SI_UNITS.get(normalizedSICoefficientsString).containsKey(SIUnit.class))
+        if (SI_UNITS.containsKey(normalizedSICoefficientsString)
+                && SI_UNITS.get(normalizedSICoefficientsString).containsKey(SIUnit.class))
         {
             return (SIUnit) SI_UNITS.get(normalizedSICoefficientsString).get(SIUnit.class);
         }
