@@ -1,10 +1,15 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat.scalar;
 
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Scalar;
+import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 
 /**
+ * All calculations are according to IEEE 754. This means that division by zero results in Float.INFINITY, and some
+ * calculations could result in NaN. No changes have been made to avoid this, as it is the standard behavior of Java for
+ * floating point numbers.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -33,10 +38,10 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implements FloatFunctions
+public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implements FloatMathFunctions
 {
     /** */
-    private static final long serialVersionUID = 20140615L;
+    private static final long serialVersionUID = 20140618L;
 
     /** the value, stored in SI units */
     protected float valueSI;
@@ -49,8 +54,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     public FloatScalar(final float value, final U unit)
     {
         super(unit);
-        // TODO: method convert to standard, e.g. degree C to K does not work correct this way.
-        this.valueSI = (float) (value * unit.getConversionFactorToStandardUnit());
+        this.valueSI = (float) convertToSIUnit(value);
     }
 
     /**
@@ -76,8 +80,16 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     public float getValueInUnit()
     {
-        // TODO: method convert to specific unit, e.g. K to degree C does not work correct this way.
-        return (float) (this.valueSI / this.unit.getConversionFactorToStandardUnit());
+        return (float) convertToSpecifiedUnit(this.valueSI);
+    }
+
+    /**
+     * @param targetUnit the unit to convert the value to
+     * @return value in specific target unit
+     */
+    public float getValueInUnit(final U targetUnit)
+    {
+        return (float) convertToUnit(this.valueSI, targetUnit);
     }
 
     /**
@@ -86,6 +98,253 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     public U getUnit()
     {
         return this.unit;
+    }
+
+    /**********************************************************************************/
+    /********************************** MATH METHODS **********************************/
+    /**********************************************************************************/
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#abs()
+     */
+    @Override
+    public void abs()
+    {
+        this.valueSI = Math.abs(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#acos()
+     */
+    @Override
+    public void acos()
+    {
+        this.valueSI = (float) Math.acos(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#asin()
+     */
+    @Override
+    public void asin()
+    {
+        this.valueSI = (float) Math.asin(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#atan()
+     */
+    @Override
+    public void atan()
+    {
+        this.valueSI = (float) Math.atan(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
+     */
+    @Override
+    public void cbrt()
+    {
+        this.valueSI = (float) Math.cbrt(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#ceil()
+     */
+    @Override
+    public void ceil()
+    {
+        this.valueSI = (float) Math.ceil(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#cos()
+     */
+    @Override
+    public void cos()
+    {
+        this.valueSI = (float) Math.cos(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#cosh()
+     */
+    @Override
+    public void cosh()
+    {
+        this.valueSI = (float) Math.cosh(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#exp()
+     */
+    @Override
+    public void exp()
+    {
+        this.valueSI = (float) Math.exp(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#expm1()
+     */
+    @Override
+    public void expm1()
+    {
+        this.valueSI = (float) Math.expm1(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#floor()
+     */
+    @Override
+    public void floor()
+    {
+        this.valueSI = (float) Math.floor(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#log()
+     */
+    @Override
+    public void log()
+    {
+        this.valueSI = (float) Math.log(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#log10()
+     */
+    @Override
+    public void log10()
+    {
+        this.valueSI = (float) Math.log10(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#log1p()
+     */
+    @Override
+    public void log1p()
+    {
+        this.valueSI = (float) Math.log1p(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
+     */
+    @Override
+    public void pow(double x)
+    {
+        this.valueSI = (float) Math.pow(this.valueSI, x);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#rint()
+     */
+    @Override
+    public void rint()
+    {
+        this.valueSI = (float) Math.rint(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#round()
+     */
+    @Override
+    public void round()
+    {
+        this.valueSI = Math.round(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#signum()
+     */
+    @Override
+    public void signum()
+    {
+        this.valueSI = Math.signum(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#sin()
+     */
+    @Override
+    public void sin()
+    {
+        this.valueSI = (float) Math.sin(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#sinh()
+     */
+    @Override
+    public void sinh()
+    {
+        this.valueSI = (float) Math.sinh(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
+     */
+    @Override
+    public void sqrt()
+    {
+        this.valueSI = (float) Math.sqrt(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#tan()
+     */
+    @Override
+    public void tan()
+    {
+        this.valueSI = (float) Math.tan(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#tanh()
+     */
+    @Override
+    public void tanh()
+    {
+        this.valueSI = (float) Math.tanh(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
+     */
+    @Override
+    public void toDegrees()
+    {
+        this.valueSI = (float) Math.toDegrees(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
+     */
+    @Override
+    public void toRadians()
+    {
+        this.valueSI = (float) Math.toRadians(this.valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
+     */
+    @Override
+    public void multiply(float constant)
+    {
+        this.valueSI *= constant;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
+     */
+    @Override
+    public void divide(float constant)
+    {
+        this.valueSI /= constant;
     }
 
     /**
@@ -97,17 +356,14 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
         return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
     }
 
-
     /**********************************************************************************/
     /******************************* NON-STATIC METHODS *******************************/
     /**********************************************************************************/
 
-    // TODO: for all functions: argument is NaN, INFINITY, etc. Handle or specify in javadoc.
-
     /**
      * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
      * is not allowed. Adding an absolute value to an existing relative value would require the result to become
-     * absolute, which is a type change that is impossible. For this operation, use a static method.
+     * absolute, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to add
      */
     public void add(final FloatScalarRel<U> value)
@@ -118,255 +374,12 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /**
      * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
      * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
-     * result to become relative, which is a type change that is impossible. For this operation, use a static method.
+     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to subtract
      */
     public void subtract(FloatScalarRel<U> value)
     {
         this.valueSI -= value.getValueSI();
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#abs()
-     */
-    @Override
-    public void abs()
-    {
-        this.valueSI = Math.abs(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#acos()
-     */
-    @Override
-    public void acos()
-    {
-        this.valueSI = (float) Math.acos(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#asin()
-     */
-    @Override
-    public void asin()
-    {
-        this.valueSI = (float) Math.asin(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#atan()
-     */
-    @Override
-    public void atan()
-    {
-        this.valueSI = (float) Math.atan(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#cbrt()
-     */
-    @Override
-    public void cbrt()
-    {
-        this.valueSI = (float) Math.cbrt(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#ceil()
-     */
-    @Override
-    public void ceil()
-    {
-        this.valueSI = (float) Math.ceil(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#cos()
-     */
-    @Override
-    public void cos()
-    {
-        this.valueSI = (float) Math.cos(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#cosh()
-     */
-    @Override
-    public void cosh()
-    {
-        this.valueSI = (float) Math.cosh(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#exp()
-     */
-    @Override
-    public void exp()
-    {
-        this.valueSI = (float) Math.exp(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#expm1()
-     */
-    @Override
-    public void expm1()
-    {
-        this.valueSI = (float) Math.expm1(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#floor()
-     */
-    @Override
-    public void floor()
-    {
-        this.valueSI = (float) Math.floor(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#log()
-     */
-    @Override
-    public void log()
-    {
-        this.valueSI = (float) Math.log(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#log10()
-     */
-    @Override
-    public void log10()
-    {
-        this.valueSI = (float) Math.log10(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#log1p()
-     */
-    @Override
-    public void log1p()
-    {
-        this.valueSI = (float) Math.log1p(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#pow(double)
-     */
-    @Override
-    public void pow(double x)
-    {
-        this.valueSI = (float) Math.pow(this.valueSI, x);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#rint()
-     */
-    @Override
-    public void rint()
-    {
-        this.valueSI = (float) Math.rint(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#round()
-     */
-    @Override
-    public void round()
-    {
-        this.valueSI = Math.round(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#signum()
-     */
-    @Override
-    public void signum()
-    {
-        this.valueSI = Math.signum(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#sin()
-     */
-    @Override
-    public void sin()
-    {
-        this.valueSI = (float) Math.sin(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#sinh()
-     */
-    @Override
-    public void sinh()
-    {
-        this.valueSI = (float) Math.sinh(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#sqrt()
-     */
-    @Override
-    public void sqrt()
-    {
-        this.valueSI = (float) Math.sqrt(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#tan()
-     */
-    @Override
-    public void tan()
-    {
-        this.valueSI = (float) Math.tan(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#tanh()
-     */
-    @Override
-    public void tanh()
-    {
-        this.valueSI = (float) Math.tanh(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#toDegrees()
-     */
-    @Override
-    public void toDegrees()
-    {
-        this.valueSI = (float) Math.toDegrees(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Functions#toRadians()
-     */
-    @Override
-    public void toRadians()
-    {
-        this.valueSI = (float) Math.toRadians(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.FloatFunctions#multiply(float)
-     */
-    @Override
-    public void multiply(float constant)
-    {
-        this.valueSI *= constant;
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.FloatFunctions#divide(float)
-     */
-    @Override
-    public void divide(float constant)
-    {
-        this.valueSI /= constant;
     }
 
     /**********************************************************************************/
@@ -375,8 +388,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the first argument.
-     * TODO: value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
+     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
+     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to add to the absolute value
      * @return the sum of the values as an absolute value
@@ -394,8 +407,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     }
 
     /**
-     * Add a number of relative values. Return a new instance of the value.
-     * TODO: add comment about heap pollution with varargs arrays of a generic type
+     * Add a number of relative values. Return a new instance of the value. Because of type erasure of generics, the
+     * method cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param targetUnit the unit of the sum
      * @param valuesRel zero or more values to add
      * @return the sum of the values as a relative value
@@ -413,8 +426,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
-     * return value will be the unit of the first argument.
-     * TODO: value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
+     * return value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
+     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to subtract from the absolute value
      * @return the resulting value as an absolute value
@@ -433,7 +446,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the
-     * value will be the unit of the first argument.
+     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
+     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param valueRel the relative base value
      * @param valuesRel zero or more values to subtract from the first value
      * @return the resulting value as a relative value
@@ -465,7 +479,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * TODO: value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @return the product of the two absolute values as an absolute value
@@ -494,7 +507,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * TODO: divide by zero, value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @return the division of the two absolute values as an absolute value

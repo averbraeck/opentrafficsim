@@ -1,6 +1,11 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat.vector;
 
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
+
+import cern.colt.matrix.tfloat.FloatMatrix1D;
+import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
 
 /**
  * <p>
@@ -26,33 +31,58 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 15, 2014 <br>
+ * @version Jun 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> the unit of the values in the constructor and for display
+ * @param <U> the unit
  */
-public class FloatScalarRel<U extends Unit<U>> extends FloatScalar<U> implements Relative
+public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
 {
     /** */
-    private static final long serialVersionUID = 20140615L;
+    private static final long serialVersionUID = 20140618L;
 
     /**
-     * Construct a value in and store it in SI units for calculation.
-     * @param value the value in the given units
-     * @param unit the unit of the value
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @param unit the unit of the values
      */
-    public FloatScalarRel(final float value, final U unit)
+    public FloatVectorAbsDense(float[] values, final U unit)
     {
-        super(value, unit);
+        super(values, unit);
     }
 
     /**
-     * Construct a value from another value. The value is already in SI units.
-     * @param value the value to duplicate
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatScalarRel(final FloatScalarRel<U> value)
+    public FloatVectorAbsDense(FloatScalarAbs<U>[] values) throws ValueException
     {
-        super(value);
+        super(values);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
+     */
+    protected FloatMatrix1D createMatrix1D(int size)
+    {
+        return new DenseFloatMatrix1D(size);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
+     */
+    @Override
+    public FloatVector<U> copy()
+    {
+        return new FloatVectorAbsDense<U>(this.vectorSI.toArray(), this.unit);
+    }
+
+    /**
+     * @return the internally stored vector from the Colt library, converted to SI units.
+     */
+    public FloatMatrix1D getColtDenseFloatMatrix1D()
+    {
+        return this.vectorSI;
     }
 
 }

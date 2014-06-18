@@ -1,9 +1,11 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat.vector;
 
-import java.io.Serializable;
-
-import org.opentrafficsim.core.unit.OffsetUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+
+import cern.colt.matrix.tfloat.FloatMatrix1D;
+import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
 
 /**
  * <p>
@@ -29,67 +31,58 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 13, 2014 <br>
+ * @version Jun 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> the unit of the values in the constructor and for display
+ * @param <U> the unit
  */
-public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFunctions
+public class FloatVectorRelDense<U extends Unit<U>> extends FloatVectorRel<U>
 {
     /** */
-    private static final long serialVersionUID = 20140615L;
-
-    /** the unit of the value */
-    protected U unit;
+    private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param unit the unit of the value
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @param unit the unit of the values
      */
-    public Scalar(final U unit)
+    public FloatVectorRelDense(float[] values, final U unit)
     {
-        this.unit = unit;
+        super(values, unit);
     }
 
     /**
-     * @param value the value to convert in the specified unit for this scalar
-     * @return the value in SI units
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
      */
-    protected double convertToSIUnit(final double value)
+    public FloatVectorRelDense(FloatScalarRel<U>[] values) throws ValueException
     {
-        if (this.unit instanceof OffsetUnit<?>)
-            return value + ((OffsetUnit<?>) this.unit).getOffsetToStandardUnit()
-                    * this.unit.getConversionFactorToStandardUnit();
-        return value * this.unit.getConversionFactorToStandardUnit();
+        super(values);
     }
 
     /**
-     * @param value the value to convert in SI units
-     * @return the value in the unit as specified for this scalar
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
      */
-    protected double convertToSpecifiedUnit(final double value)
+    protected FloatMatrix1D createMatrix1D(int size)
     {
-        return convertToUnit(value, this.unit);
+        return new DenseFloatMatrix1D(size);
     }
 
     /**
-     * @param value the value to convert in SI units
-     * @param targetUnit the unit to convert the value to
-     * @return the value in the target unit
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
-    protected double convertToUnit(final double value, final Unit<U> targetUnit)
+    @Override
+    public FloatVector<U> copy()
     {
-        if (targetUnit instanceof OffsetUnit<?>)
-            return (value - ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit())
-                    / targetUnit.getConversionFactorToStandardUnit();
-        return value / targetUnit.getConversionFactorToStandardUnit();
+        return new FloatVectorRelDense<U>(this.vectorSI.toArray(), this.unit);
     }
-    
+
     /**
-     * Set a new unit for displaying the results.
-     * @param newUnit the new unit of the right unit type
+     * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public void setDisplayUnit(U newUnit)
+    public FloatMatrix1D getColtDenseFloatMatrix1D()
     {
-        this.unit = newUnit;
+        return this.vectorSI;
     }
+
 }

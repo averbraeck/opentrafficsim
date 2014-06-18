@@ -1,15 +1,8 @@
 package org.opentrafficsim.core.value;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelSparse;
+import java.io.Serializable;
+
+import org.opentrafficsim.core.unit.Unit;
 
 /**
  * <p>
@@ -38,47 +31,19 @@ import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelSparse;
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> the unit of the values in the constructor and for display
  */
-public class TestValue
+public abstract class Vector<U extends Unit<U>> extends Scalar<U> implements Serializable, MathFunctions
 {
+    /** */
+    private static final long serialVersionUID = 20140615L;
 
     /**
-     * 
+     * @param unit the unit of the value
      */
-    public TestValue()
+    public Vector(final U unit)
     {
-        FloatScalarAbs<LengthUnit> l = new FloatScalarAbs<LengthUnit>(1.0f, LengthUnit.KILOMETER);
-        FloatScalarAbs<TimeUnit> t = new FloatScalarAbs<TimeUnit>(1.0f, TimeUnit.HOUR);
-        FloatScalarAbs<?> div = FloatScalar.divide(l, t);
-        System.out.println(div);
-
-        System.out.println();
-        float[] f = new float[]{1.0f, 2.0f, 3.0f, 4.0f};
-        FloatVectorAbs<SpeedUnit> v = new FloatVectorAbsDense<SpeedUnit>(f, SpeedUnit.KM_PER_HOUR);
-        float[] g = new float[]{5.0f, 6.0f, 7.0f, 8.0f};
-        FloatVectorRel<SpeedUnit> w = new FloatVectorRelSparse<SpeedUnit>(g, SpeedUnit.METER_PER_SECOND);
-        System.out.println(v);
-        System.out.println(w);
-        try
-        {
-            System.out.println(FloatVector.plus(v, w).toString(SpeedUnit.METER_PER_SECOND));
-            System.out.println(FloatVector.plus(w, w).toString(SpeedUnit.METER_PER_SECOND));
-            System.out.println(FloatVector.plus(w, v).toString(SpeedUnit.KM_PER_HOUR));
-            System.out.println(FloatVector.plus(w, v).toString(SpeedUnit.MILE_PER_HOUR));
-        }
-        catch (ValueException ve)
-        {
-            ve.printStackTrace();
-        }
-
-        // TODO: All in SI
+        super(unit);
     }
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args)
-    {
-        new TestValue();
-    }
 }

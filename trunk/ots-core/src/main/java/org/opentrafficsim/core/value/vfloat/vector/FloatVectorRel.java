@@ -1,9 +1,9 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat.vector;
 
-import java.io.Serializable;
-
-import org.opentrafficsim.core.unit.OffsetUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 /**
  * <p>
@@ -29,67 +29,31 @@ import org.opentrafficsim.core.unit.Unit;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 13, 2014 <br>
+ * @version Jun 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> the unit of the values in the constructor and for display
+ * @param <U> the unit
  */
-public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFunctions
+public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
 {
     /** */
-    private static final long serialVersionUID = 20140615L;
-
-    /** the unit of the value */
-    protected U unit;
+    private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param unit the unit of the value
+     * @param values
+     * @param unit
      */
-    public Scalar(final U unit)
+    public FloatVectorRel(float[] values, U unit)
     {
-        this.unit = unit;
+        super(values, unit);
     }
 
     /**
-     * @param value the value to convert in the specified unit for this scalar
-     * @return the value in SI units
+     * @param values
+     * @throws ValueException
      */
-    protected double convertToSIUnit(final double value)
+    public FloatVectorRel(FloatScalarRel<U>[] values) throws ValueException
     {
-        if (this.unit instanceof OffsetUnit<?>)
-            return value + ((OffsetUnit<?>) this.unit).getOffsetToStandardUnit()
-                    * this.unit.getConversionFactorToStandardUnit();
-        return value * this.unit.getConversionFactorToStandardUnit();
+        super(values);
     }
 
-    /**
-     * @param value the value to convert in SI units
-     * @return the value in the unit as specified for this scalar
-     */
-    protected double convertToSpecifiedUnit(final double value)
-    {
-        return convertToUnit(value, this.unit);
-    }
-
-    /**
-     * @param value the value to convert in SI units
-     * @param targetUnit the unit to convert the value to
-     * @return the value in the target unit
-     */
-    protected double convertToUnit(final double value, final Unit<U> targetUnit)
-    {
-        if (targetUnit instanceof OffsetUnit<?>)
-            return (value - ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit())
-                    / targetUnit.getConversionFactorToStandardUnit();
-        return value / targetUnit.getConversionFactorToStandardUnit();
-    }
-    
-    /**
-     * Set a new unit for displaying the results.
-     * @param newUnit the new unit of the right unit type
-     */
-    public void setDisplayUnit(U newUnit)
-    {
-        this.unit = newUnit;
-    }
 }
