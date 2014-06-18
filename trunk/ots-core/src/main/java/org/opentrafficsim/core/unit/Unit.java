@@ -219,8 +219,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         UNITS.get(unit.getClass().getSimpleName()).add(unit);
 
         // resolve the SI coefficients, and normalize string
-        String siCoefficientsString = SICoefficients.normalize(getSICoefficientsString()).toString(); // TODO: call
-                                                                                                   // normalize?
+        String siCoefficientsString = SICoefficients.normalize(getSICoefficientsString()).toString();
         if (SI_COEFFICIENTS.containsKey(siCoefficientsString))
         {
             this.siCoefficients = SI_COEFFICIENTS.get(siCoefficientsString);
