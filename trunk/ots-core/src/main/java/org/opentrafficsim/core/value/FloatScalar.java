@@ -49,6 +49,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     public FloatScalar(final float value, final U unit)
     {
         super(unit);
+        // TODO: method convert to standard, e.g. degree C to K does not work correct this way.
         this.valueSI = (float) (value * unit.getConversionFactorToStandardUnit());
     }
 
@@ -75,6 +76,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     public float getValueInUnit()
     {
+        // TODO: method convert to specific unit, e.g. K to degree C does not work correct this way.
         return (float) (this.valueSI / this.unit.getConversionFactorToStandardUnit());
     }
 
@@ -99,6 +101,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /**********************************************************************************/
     /******************************* NON-STATIC METHODS *******************************/
     /**********************************************************************************/
+
+    // TODO: for all functions: argument is NaN, INFINITY, etc. Handle or specify in javadoc.
 
     /**
      * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
@@ -372,6 +376,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /**
      * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
      * value will be the unit of the first argument.
+     * TODO: value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to add to the absolute value
      * @return the sum of the values as an absolute value
@@ -390,6 +395,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Add a number of relative values. Return a new instance of the value.
+     * TODO: add comment about heap pollution with varargs arrays of a generic type
      * @param targetUnit the unit of the sum
      * @param valuesRel zero or more values to add
      * @return the sum of the values as a relative value
@@ -408,6 +414,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /**
      * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
      * return value will be the unit of the first argument.
+     * TODO: value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to subtract from the absolute value
      * @return the resulting value as an absolute value
@@ -458,6 +465,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
+     * TODO: value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @return the product of the two absolute values as an absolute value
@@ -486,6 +494,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
+     * TODO: divide by zero, value 1 is NaN, value2 is NaN, value1 is INFINITY, etc. Handle or specify in javadoc.
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @return the division of the two absolute values as an absolute value
