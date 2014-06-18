@@ -26,7 +26,7 @@ package org.opentrafficsim.core.value;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.citg.tudelft.nl">Peter Knoppers</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public interface Absolute extends AbsoluteRelative
 {
