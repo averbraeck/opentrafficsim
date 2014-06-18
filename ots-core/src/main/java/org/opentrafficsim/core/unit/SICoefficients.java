@@ -49,38 +49,55 @@ public class SICoefficients
     @Override
     public String toString()
     {
-        String s = "";
+        return enumMapToString(this.coefficientsMap);
+    }
+
+    /**
+     * Convert an enumMap of coefficient to the normalized string representation
+     * @param map EnumMap&lt;{@link SI}, Integer&gt;; the EnumMap
+     * @return String
+     */
+    protected static String enumMapToString(EnumMap<SI, Integer> map)
+    {
+        String result = "";
         boolean first = true;
-        for (SI si : this.coefficientsMap.keySet())
+        for (SI si : map.keySet())
         {
-            if (this.coefficientsMap.get(si) > 0)
+            if (map.get(si) > 0)
             {
                 if (first)
+                {
                     first = false;
+                }
                 else
-                    s += ".";
-                s += si.name();
-                if (this.coefficientsMap.get(si) != 1)
-                    s += this.coefficientsMap.get(si);
+                {
+                    result += ".";
+                }
+                result += si.name();
+                if (map.get(si) != 1)
+                {
+                    result += map.get(si);
+                }
             }
         }
-
-        if (s.length() == 0)
-            s += "1";
-
-        first = true;
-        for (SI si : this.coefficientsMap.keySet())
+        
+        if (result.length() == 0)
         {
-            if (this.coefficientsMap.get(si) < 0)
+            result = "1";
+        }
+        
+        for (SI si : map.keySet())
+        {
+            if (map.get(si) < 0)
             {
-                s += "/";
-                first = false;
-                s += si.name();
-                if (this.coefficientsMap.get(si) != -1)
-                    s += (-this.coefficientsMap.get(si));
+                result += "/" + si.name();
+                if (map.get(si) != -1)
+                {
+                    result += (-map.get(si));
+                }
             }
         }
-        return s;
+        return result;
     }
 
     /**
@@ -89,6 +106,17 @@ public class SICoefficients
     public EnumMap<SI, Integer> getCoefficientsMap()
     {
         return this.coefficientsMap;
+    }
+
+    /**
+     * Convert a coefficient string to <i>standard format</i>.
+     * @param coefficientString String; the string to convert
+     * @return String; the normalized coefficient string
+     * @throws UnitException when the coefficientString could not be parsed
+     */
+    public static String normalize(final String coefficientString) throws UnitException
+    {
+        return enumMapToString(parse(coefficientString));
     }
 
     /**
@@ -120,9 +148,9 @@ public class SICoefficients
      *            White space can appear anywhere in a coefficientString. <br />
      *            If "integer" does not fit in an Integer, the resulting coefficient will be very wrong.
      * @return an instance of SICoefficients
-     * @throws UnitException 
+     * @throws UnitException
      */
-    public static SICoefficients create(final String coefficientString) throws UnitException
+    public static EnumMap<SI, Integer> parse(String coefficientString) throws UnitException
     {
         // System.out.println("coefficientString is \"" + coefficientString + "\"");
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
@@ -130,7 +158,7 @@ public class SICoefficients
         cs = cs.replace("^", "").replace(".", "").replace(" ", "");
         if (cs.equals("1")) // This is a special case...
         {
-            return new SICoefficients(coefficients);
+            return coefficients;
         }
         if (cs.startsWith("1/"))
         {
@@ -192,7 +220,7 @@ public class SICoefficients
             if (!parsedPowerString)
                 throw new UnitException("Not an SI unit name in \"" + coefficientString + "\" at \"" + cs + "\"");
         }
-        return new SICoefficients(coefficients);
+        return coefficients;
     }
 
     /**
