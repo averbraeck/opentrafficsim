@@ -1,4 +1,11 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat.vector;
+
+import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+
+import cern.colt.matrix.tfloat.FloatMatrix1D;
+import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
 
 /**
  * <p>
@@ -24,22 +31,58 @@ package org.opentrafficsim.core.value;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 15, 2014 <br>
+ * @version Jun 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> the unit
  */
-public interface FloatFunctions extends Functions
+public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
 {
-    /**
-     * Multiply the value(s) with a constant
-     * @param constant the multiplier
-     */
-    void multiply(float constant);
+    /** */
+    private static final long serialVersionUID = 20140618L;
 
     /**
-     * Divide the value(s) by a constant
-     * @param constant the divisor
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @param unit the unit of the values
      */
-    void divide(float constant);
-    
+    public FloatVectorRelSparse(float[] values, final U unit)
+    {
+        super(values, unit);
+    }
+
+    /**
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
+     */
+    public FloatVectorRelSparse(FloatScalarRel<U>[] values) throws ValueException
+    {
+        super(values);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
+     */
+    protected FloatMatrix1D createMatrix1D(int size)
+    {
+        return new SparseFloatMatrix1D(size);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
+     */
+    @Override
+    public FloatVector<U> copy()
+    {
+        return new FloatVectorRelSparse<U>(this.vectorSI.toArray(), this.unit);
+    }
+
+    /**
+     * @return the internally stored vector from the Colt library, converted to SI units.
+     */
+    public FloatMatrix1D getColtSparseFloatMatrix1D()
+    {
+        return this.vectorSI;
+    }
+
 }

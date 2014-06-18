@@ -1,6 +1,6 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat;
 
-import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.MathFunctions;
 
 /**
  * <p>
@@ -29,30 +29,19 @@ import org.opentrafficsim.core.unit.Unit;
  * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> the unit of the values in the constructor and for display
  */
-public class FloatScalarAbs<U extends Unit<U>> extends FloatScalar<U> implements Absolute
+public interface FloatMathFunctions extends MathFunctions
 {
-    /** */
-    private static final long serialVersionUID = 20140615L;
+    /**
+     * Multiply the value(s) with a constant
+     * @param constant the multiplier
+     */
+    void multiply(float constant);
 
     /**
-     * Construct a value in and store it in SI units for calculation.
-     * @param value the value in the given units
-     * @param unit the unit of the value
+     * Divide the value(s) by a constant
+     * @param constant the divisor
      */
-    public FloatScalarAbs(final float value, final U unit)
-    {
-        super(value, unit);
-    }
-
-    /**
-     * Construct a value from another value. The value is already in SI units.
-     * @param value the value to duplicate
-     */
-    public FloatScalarAbs(final FloatScalarAbs<U> value)
-    {
-        super(value);
-    }
-
+    void divide(float constant);
+    
 }

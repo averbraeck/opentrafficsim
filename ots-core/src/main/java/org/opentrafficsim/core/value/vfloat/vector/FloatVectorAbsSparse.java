@@ -1,15 +1,11 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.value.vfloat.vector;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
+import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelSparse;
+
+import cern.colt.matrix.tfloat.FloatMatrix1D;
+import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
 
 /**
  * <p>
@@ -35,50 +31,58 @@ import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelSparse;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 13, 2014 <br>
+ * @version Jun 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> the unit
  */
-public class TestValue
+public class FloatVectorAbsSparse<U extends Unit<U>> extends FloatVectorAbs<U>
 {
+    /** */
+    private static final long serialVersionUID = 20140618L;
 
     /**
-     * 
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @param unit the unit of the values
      */
-    public TestValue()
+    public FloatVectorAbsSparse(float[] values, final U unit)
     {
-        FloatScalarAbs<LengthUnit> l = new FloatScalarAbs<LengthUnit>(1.0f, LengthUnit.KILOMETER);
-        FloatScalarAbs<TimeUnit> t = new FloatScalarAbs<TimeUnit>(1.0f, TimeUnit.HOUR);
-        FloatScalarAbs<?> div = FloatScalar.divide(l, t);
-        System.out.println(div);
-
-        System.out.println();
-        float[] f = new float[]{1.0f, 2.0f, 3.0f, 4.0f};
-        FloatVectorAbs<SpeedUnit> v = new FloatVectorAbsDense<SpeedUnit>(f, SpeedUnit.KM_PER_HOUR);
-        float[] g = new float[]{5.0f, 6.0f, 7.0f, 8.0f};
-        FloatVectorRel<SpeedUnit> w = new FloatVectorRelSparse<SpeedUnit>(g, SpeedUnit.METER_PER_SECOND);
-        System.out.println(v);
-        System.out.println(w);
-        try
-        {
-            System.out.println(FloatVector.plus(v, w).toString(SpeedUnit.METER_PER_SECOND));
-            System.out.println(FloatVector.plus(w, w).toString(SpeedUnit.METER_PER_SECOND));
-            System.out.println(FloatVector.plus(w, v).toString(SpeedUnit.KM_PER_HOUR));
-            System.out.println(FloatVector.plus(w, v).toString(SpeedUnit.MILE_PER_HOUR));
-        }
-        catch (ValueException ve)
-        {
-            ve.printStackTrace();
-        }
-
-        // TODO: All in SI
+        super(values, unit);
     }
 
     /**
-     * @param args
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public static void main(String[] args)
+    public FloatVectorAbsSparse(FloatScalarAbs<U>[] values) throws ValueException
     {
-        new TestValue();
+        super(values);
     }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
+     */
+    protected FloatMatrix1D createMatrix1D(int size)
+    {
+        return new SparseFloatMatrix1D(size);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
+     */
+    @Override
+    public FloatVector<U> copy()
+    {
+        return new FloatVectorAbsSparse<U>(this.vectorSI.toArray(), this.unit);
+    }
+
+    /**
+     * @return the internally stored vector from the Colt library, converted to SI units.
+     */
+    public FloatMatrix1D getColtSparseFloatMatrix1D()
+    {
+        return this.vectorSI;
+    }
+
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.value;
 
+import java.io.Serializable;
+
 /**
  * Interface to force all functions of Math to be implemented.
  * <p>
@@ -29,7 +31,7 @@ package org.opentrafficsim.core.value;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Functions
+public interface MathFunctions extends Serializable
 {
     /**
      * Set the value(s) to their absolute value.
