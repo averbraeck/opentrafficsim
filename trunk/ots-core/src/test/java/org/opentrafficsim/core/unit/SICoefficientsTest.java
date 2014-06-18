@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -48,13 +47,14 @@ public class SICoefficientsTest
         {
             result = SICoefficients.create(inputString);
         }
-        catch (Error e)
+        catch (UnitException e)
         {
             assertTrue("input \"" + inputString + "\" should have been parseable", null == expectedResult);
             return;
         }
         assertTrue("input \"" + inputString + "\" should not have been parseable", null != expectedResult);
-        assertEquals("input \"" + inputString + "\" did not yield the expected result", expectedResult, result.toString());
+        assertEquals("input \"" + inputString + "\" did not yield the expected result", expectedResult,
+                result.toString());
     }
 
     /**
@@ -87,20 +87,29 @@ public class SICoefficientsTest
         parseString("/s^4", "1/s4");
         parseString("/s^-5", "s5");
     }
-    
+
     /**
      * Execute one multiplication test
      * @param leftString String; coefficientString of first operand
      * @param rightString String; coefficientString of second operand
      * @param expectedResult String; coefficientString of the expected result
      */
-    private static void multiplyTest(String leftString, String rightString, String expectedResult) {
-        SICoefficients left = SICoefficients.create(leftString);
-        SICoefficients right = SICoefficients.create(rightString);
-        SICoefficients product = SICoefficients.multiply(left, right);
-        assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result", expectedResult, product.toString());        
+    private static void multiplyTest(String leftString, String rightString, String expectedResult)
+    {
+        try
+        {
+            SICoefficients left = SICoefficients.create(leftString);
+            SICoefficients right = SICoefficients.create(rightString);
+            SICoefficients product = SICoefficients.multiply(left, right);
+            assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result",
+                    expectedResult, product.toString());
+        }
+        catch (UnitException exception)
+        {
+            fail("Caught unexpected UnitException");
+        }
     }
-    
+
     /**
      * Test the multiply method
      */
@@ -121,15 +130,24 @@ public class SICoefficientsTest
      * Execute one division test
      * @param leftString String; coefficientString of dividend
      * @param rightString String; coefficientString of divisor
-     * @param expectedResult String; coefficientString of the expected result 
+     * @param expectedResult String; coefficientString of the expected result
      */
-    private static void divideTest(String leftString, String rightString, String expectedResult) {
-        SICoefficients left = SICoefficients.create(leftString);
-        SICoefficients right = SICoefficients.create(rightString);
-        SICoefficients quotient = SICoefficients.divide(left, right);
-        assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result", expectedResult, quotient.toString());        
+    private static void divideTest(String leftString, String rightString, String expectedResult)
+    {
+        try
+        {
+            SICoefficients left = SICoefficients.create(leftString);
+            SICoefficients right = SICoefficients.create(rightString);
+            SICoefficients quotient = SICoefficients.divide(left, right);
+            assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result",
+                    expectedResult, quotient.toString());
+        }
+        catch (UnitException exception)
+        {
+            fail("Caught unexpected UnitException");
+        }
     }
-    
+
     /**
      * Test the divide method
      */

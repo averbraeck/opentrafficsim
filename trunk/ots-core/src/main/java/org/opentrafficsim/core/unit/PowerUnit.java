@@ -81,7 +81,7 @@ public class PowerUnit extends Unit<PowerUnit>
     /** horsepower (metric) */
     public static final PowerUnit HORSEPOWER_METRIC = new PowerUnit("PowerUnit.horsepower_(metric)", "PowerUnit.hp",
             OTHER, WATT, 735.49875);
-    
+
     /** sthene-meter per second */
     public static final PowerUnit STHENE_METER_PER_SECOND = new PowerUnit(LengthUnit.METER, ForceUnit.STHENE,
             TimeUnit.SECOND, "PowerUnit.sthene-meter_per_second", "PowerUnit.sn.m/s", MTS);
@@ -89,8 +89,6 @@ public class PowerUnit extends Unit<PowerUnit>
     /** erg per second */
     public static final PowerUnit ERG_PER_SECOND = new PowerUnit(LengthUnit.CENTIMETER, ForceUnit.DYNE,
             TimeUnit.SECOND, "PowerUnit.erg_per_second", "PowerUnit.erg/s", CGS);
-    
-    
 
     /**
      * @param massUnit the unit of mass for the power unit, e.g., kilogram
@@ -105,7 +103,7 @@ public class PowerUnit extends Unit<PowerUnit>
     {
         super(nameKey, abbreviationKey, unitSystem, WATT, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
-                / Math.pow(timeUnit.getConversionFactorToStandardUnit(), 3.0));
+                / Math.pow(timeUnit.getConversionFactorToStandardUnit(), 3.0), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -123,7 +121,7 @@ public class PowerUnit extends Unit<PowerUnit>
             final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, WATT, lengthUnit.getConversionFactorToStandardUnit()
-                * forceUnit.getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit());
+                * forceUnit.getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -140,7 +138,7 @@ public class PowerUnit extends Unit<PowerUnit>
     public PowerUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final PowerUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

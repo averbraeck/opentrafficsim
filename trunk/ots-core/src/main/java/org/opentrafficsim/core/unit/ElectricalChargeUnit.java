@@ -96,7 +96,7 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
             final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, COULOMB, electricalCurrentUnit.getConversionFactorToStandardUnit()
-                * timeUnit.getConversionFactorToStandardUnit());
+                * timeUnit.getConversionFactorToStandardUnit(), true);
         this.electricalCurrentUnit = electricalCurrentUnit;
         this.timeUnit = timeUnit;
     }
@@ -112,7 +112,7 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
     public ElectricalChargeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final ElectricalChargeUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

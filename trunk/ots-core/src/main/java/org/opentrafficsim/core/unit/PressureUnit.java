@@ -135,7 +135,7 @@ public class PressureUnit extends Unit<PressureUnit>
                 massUnit.getConversionFactorToStandardUnit()
                         / (lengthUnit.getConversionFactorToStandardUnit()
                                 * timeUnit.getConversionFactorToStandardUnit() * timeUnit
-                                    .getConversionFactorToStandardUnit()));
+                                    .getConversionFactorToStandardUnit()), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -153,7 +153,7 @@ public class PressureUnit extends Unit<PressureUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, PASCAL, forceUnit.getConversionFactorToStandardUnit()
-                / areaUnit.getConversionFactorToStandardUnit());
+                / areaUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -171,7 +171,7 @@ public class PressureUnit extends Unit<PressureUnit>
     public PressureUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final PressureUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

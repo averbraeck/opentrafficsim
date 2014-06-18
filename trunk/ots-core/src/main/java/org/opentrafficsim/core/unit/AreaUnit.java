@@ -94,7 +94,7 @@ public class AreaUnit extends Unit<AreaUnit>
             final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, SQUARE_METER, lengthUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit());
+                * lengthUnit.getConversionFactorToStandardUnit(), true);
         this.lengthUnit = lengthUnit;
     }
 
@@ -110,7 +110,7 @@ public class AreaUnit extends Unit<AreaUnit>
     public AreaUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, final AreaUnit referenceUnit,
             double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();
     }
 

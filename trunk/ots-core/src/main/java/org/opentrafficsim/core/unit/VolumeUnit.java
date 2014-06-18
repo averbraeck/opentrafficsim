@@ -122,7 +122,7 @@ public class VolumeUnit extends Unit<VolumeUnit>
             final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, CUBIC_METER, Math.pow(
-                lengthUnit.getConversionFactorToStandardUnit(), 3));
+                lengthUnit.getConversionFactorToStandardUnit(), 3), true);
         this.lengthUnit = lengthUnit;
     }
 
@@ -138,7 +138,7 @@ public class VolumeUnit extends Unit<VolumeUnit>
     public VolumeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final VolumeUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();
     }
 

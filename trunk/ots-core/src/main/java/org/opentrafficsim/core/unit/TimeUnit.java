@@ -65,7 +65,7 @@ public class TimeUnit extends Unit<TimeUnit>
      */
     public TimeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
     }
 
     /**
@@ -80,7 +80,7 @@ public class TimeUnit extends Unit<TimeUnit>
     public TimeUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, TimeUnit referenceUnit,
             double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
     /**

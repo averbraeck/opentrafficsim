@@ -123,7 +123,7 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
     {
         super(nameKey, abbreviationKey, unitSystem, CUBIC_METER_PER_SECOND, Math.pow(
                 lengthUnit.getConversionFactorToStandardUnit(), 3.0)
-                / timeUnit.getConversionFactorToStandardUnit());
+                / timeUnit.getConversionFactorToStandardUnit(), true);
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
@@ -140,7 +140,7 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, CUBIC_METER_PER_SECOND, volumeUnit
-                .getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit());
+                .getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit(), true);
         this.lengthUnit = volumeUnit.getLengthUnit();
         this.timeUnit = timeUnit;
     }
@@ -157,7 +157,7 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
     public FlowVolumeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final FlowVolumeUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

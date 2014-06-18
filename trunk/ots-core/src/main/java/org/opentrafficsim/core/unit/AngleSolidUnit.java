@@ -53,7 +53,7 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
      */
     public AngleSolidUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
     }
 
     /**
@@ -68,7 +68,7 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
     public AngleSolidUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final AngleSolidUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
     /**

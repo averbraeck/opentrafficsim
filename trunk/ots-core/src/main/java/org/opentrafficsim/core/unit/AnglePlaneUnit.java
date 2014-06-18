@@ -76,7 +76,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
      */
     public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
     }
 
     /**
@@ -91,7 +91,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final AnglePlaneUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
     /**
