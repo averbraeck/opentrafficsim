@@ -16,7 +16,7 @@ import org.opentrafficsim.core.AvailableLocalizations;
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
- * The DSOL project is distributed under the following BSD-style license:<br>
+ * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
  * following conditions are met:
  * <ul>
