@@ -194,18 +194,6 @@ public class SICoefficients
         return new SICoefficients(coefficients);
     }
 
-    /*
-     * old version public static SICoefficients create(final String coefficientString) { EnumMap<SI, Integer>
-     * coefficients = new EnumMap<SI, Integer>(SI.class); String cs = coefficientString; cs = cs.replace("^",
-     * "").replace(".", "").replace(" ", ""); int slash = cs.indexOf('/') >= 0 ? cs.indexOf('/') : cs.length(); for (SI
-     * si : SI.values()) { String name = si.name(); int i = cs.indexOf(name); if (i >= 0) { char m = ' '; char n = ' ';
-     * if (i + name.length() < cs.length()) m = cs.charAt(i + name.length()); if (m != 'o') // catch the 'mol' versus
-     * the 'meter' { if (i + name.length() + 1 < cs.length()) n = cs.charAt(i + name.length() + 1); int coefficient = 1;
-     * if (m >= '0' && m <= '9') { coefficient = m - '0'; } else { if (m == '-' && n >= '0' && n <= '9') coefficient =
-     * -(n - '0'); } if (i > slash) coefficient = -coefficient; coefficients.put(si, coefficient); } } } return new
-     * SICoefficients(coefficients); }
-     */
-
     /**
      * @param a the first set of coefficients
      * @param b the second set of coefficients

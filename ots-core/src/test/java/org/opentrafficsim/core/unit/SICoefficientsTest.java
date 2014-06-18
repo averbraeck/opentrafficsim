@@ -39,22 +39,22 @@ public class SICoefficientsTest
      * Currently the parser throws an Error if something is not right. This behavior may be changed in the future. To
      * prevent the need to rewrite all parser tests, this wrapper will catch those error and assume null when they
      * occur.
-     * @param s String; the coefficientsString
+     * @param inputString String; the coefficientString to parse
      */
-    private static void parseString(String s, final String expectedResult)
+    private static void parseString(String inputString, final String expectedResult)
     {
         SICoefficients result = null;
         try
         {
-            result = SICoefficients.create(s);
+            result = SICoefficients.create(inputString);
         }
         catch (Error e)
         {
-            assertTrue("input \"" + s + "\" should have been parseable", null == expectedResult);
+            assertTrue("input \"" + inputString + "\" should have been parseable", null == expectedResult);
             return;
         }
-        assertTrue("input \"" + s + "\" should not have been parseable", null != expectedResult);
-        assertEquals("input \"" + s + "\" did not yield the expected result", expectedResult, result.toString());
+        assertTrue("input \"" + inputString + "\" should not have been parseable", null != expectedResult);
+        assertEquals("input \"" + inputString + "\" did not yield the expected result", expectedResult, result.toString());
     }
 
     /**
@@ -87,4 +87,62 @@ public class SICoefficientsTest
         parseString("/s^4", "1/s4");
         parseString("/s^-5", "s5");
     }
+    
+    /**
+     * Execute one multiplication test
+     * @param leftString String; coefficientString of first operand
+     * @param rightString String; coefficientString of second operand
+     * @param expectedResult String; coefficientString of the expected result
+     */
+    private static void multiplyTest(String leftString, String rightString, String expectedResult) {
+        SICoefficients left = SICoefficients.create(leftString);
+        SICoefficients right = SICoefficients.create(rightString);
+        SICoefficients product = SICoefficients.multiply(left, right);
+        assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result", expectedResult, product.toString());        
+    }
+    
+    /**
+     * Test the multiply method
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void multiply()
+    {
+        multiplyTest("1", "1", "1");
+        multiplyTest("A", "K", "A.K");
+        multiplyTest("A-1", "A", "1");
+        multiplyTest("A-2", "/A^2", "1/A4");
+        multiplyTest("Kmmol3/AsKcd4", "1", "m.s.K2.cd4.mol3/A");
+        multiplyTest("1", "Kmmol3/AsKcd4", "m.s.K2.cd4.mol3/A");
+        multiplyTest("Kmmol3", "/AsKcd4", "m.s.K2.cd4.mol3/A");
+    }
+
+    /**
+     * Execute one division test
+     * @param leftString String; coefficientString of dividend
+     * @param rightString String; coefficientString of divisor
+     * @param expectedResult String; coefficientString of the expected result 
+     */
+    private static void divideTest(String leftString, String rightString, String expectedResult) {
+        SICoefficients left = SICoefficients.create(leftString);
+        SICoefficients right = SICoefficients.create(rightString);
+        SICoefficients quotient = SICoefficients.divide(left, right);
+        assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result", expectedResult, quotient.toString());        
+    }
+    
+    /**
+     * Test the divide method
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void divide()
+    {
+        divideTest("1", "1", "1");
+        divideTest("A", "1", "A");
+        divideTest("1", "A", "1/A");
+        divideTest("A-1K2", "As2", "K2/s2/A2");
+        divideTest("s10", "/s10", "s20");
+        divideTest("s-10", "/s10", "1");
+    }
+
 }
