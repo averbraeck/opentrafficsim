@@ -32,32 +32,10 @@ public class TestSICoefficients
 {
 
     /**
-     * TODO: create unit tests that implement behavior like this.
      * @param args
      */
     public static void main(String[] args)
     {
-        System.out.println(SICoefficients.create("kgm/s2"));
-        System.out.println(SICoefficients.create("kg-2m^3/s2A"));
-        System.out.println(SICoefficients.create("s-2"));
-        System.out.println(SICoefficients.create("cd/mol^2"));
-        System.out.println(SICoefficients.create("Kmmol3/Askcd4"));
-        System.out.println(SICoefficients.create("m"));
-        System.out.println(SICoefficients.create("mol"));
-        System.out.println(SICoefficients.create("OIhFUSAIFAHsufasfs"));
-        System.out.println(SICoefficients.create(""));
-        System.out.println(SICoefficients.create("/s"));
-        System.out.println();
-        System.out.println(SICoefficients.multiply(SICoefficients.create("kgm/s2"), SICoefficients.create("kgm/s2")));
-        System.out.println(SICoefficients.multiply(SICoefficients.create("kgm/s2"), SICoefficients.create("kgs2/m")));
-        System.out.println(SICoefficients.multiply(SICoefficients.create("kgm/s2"), SICoefficients.create("kg-1s2/m")));
-        System.out.println(SICoefficients.multiply(SICoefficients.create(""), SICoefficients.create("cd")));
-        System.out.println();
-        System.out.println(SICoefficients.divide(SICoefficients.create("kgm/s2"), SICoefficients.create("kgm/s2")));
-        System.out.println(SICoefficients.divide(SICoefficients.create("kgm/s2"), SICoefficients.create("kgs2/m")));
-        System.out.println(SICoefficients.divide(SICoefficients.create("kgm/s2"), SICoefficients.create("kg-1s2/m")));
-        System.out.println(SICoefficients.divide(SICoefficients.create(""), SICoefficients.create("cd")));
-        System.out.println();
         System.out.println(Unit.lookupUnitWithSICoefficients(ElectricalPotentialUnit.ABVOLT.getSICoefficients()
                 .toString()));
         System.out.println(Unit.lookupUnitWithSICoefficients(SICoefficients.divide(

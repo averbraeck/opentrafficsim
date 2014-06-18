@@ -73,13 +73,8 @@ public class SICoefficients
         {
             if (this.coefficientsMap.get(si) < 0)
             {
-                if (first)
-                {
-                    s += "/";
-                    first = false;
-                }
-                else
-                    s += ".";
+                s += "/";
+                first = false;
                 s += si.name();
                 if (this.coefficientsMap.get(si) != -1)
                     s += (-this.coefficientsMap.get(si));
@@ -97,47 +92,119 @@ public class SICoefficients
     }
 
     /**
-     * @param coefficientString such as kgm/s2 or kg-2m^3/s2A or Kmmol3/Askcd4 or mol.
+     * @param coefficientString such as kgm/s2 or kg-2m^3/s2A or Kmmol3/Askcd4 or mol. <br />
+     *            The grammar of a coefficientString is:<br />
+     *            <table>
+     *            <tr>
+     *            <td>coefficientString</td>
+     *            <td>::=</td>
+     *            <td>&lt;empty&gt; | [ 1 | powerString ] | [ '1 /' powerString ]</td>
+     *            </tr>
+     *            <tr>
+     *            <td>powerString</td>
+     *            <td>::=</td>
+     *            <td>unitName [ [ ^ ] integer ] [ [ dotOrSlash ] powerString ]</td>
+     *            </tr>
+     *            <tr>
+     *            <td>dotOrSlash</td>
+     *            <td>::=</td>
+     *            <td>. | /</td>
+     *            </tr>
+     *            <tr>
+     *            <td>unitName</td>
+     *            <td>::=</td>
+     *            <td>kg | m | s | A | K | cd | mol</td>
+     *            </tr>
+     *            </table>
+     * <br />
+     *            White space can appear anywhere in a coefficientString. <br />
+     *            If "integer" does not fit in an Integer, the resulting coefficient will be very wrong.
      * @return an instance of SICoefficients
      */
     public static SICoefficients create(final String coefficientString)
     {
+        // System.out.println("coefficientString is \"" + coefficientString + "\"");
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
         String cs = coefficientString;
         cs = cs.replace("^", "").replace(".", "").replace(" ", "");
-        int slash = cs.indexOf('/') >= 0 ? cs.indexOf('/') : cs.length();
-        for (SI si : SI.values())
+        if (cs.equals("1")) // This is a special case...
         {
-            String name = si.name();
-            int i = cs.indexOf(name);
-            if (i >= 0)
+            return new SICoefficients(coefficients);
+        }
+        if (cs.startsWith("1/"))
+        {
+            cs = cs.substring(1); // remove the leading "1"
+        }
+        while (cs.length() > 0)
+        {
+            int factor = 1;
+            if (cs.startsWith("/"))
             {
-                char m = ' ';
-                char n = ' ';
-                if (i + name.length() < cs.length())
-                    m = cs.charAt(i + name.length());
-                if (m != 'o') // catch the 'mol' versus the 'meter'
+                cs = cs.substring(1);
+                if (cs.length() < 1)
+                    throw new Error("No SI name after slash");
+                factor = -1;
+            }
+            boolean parsedPowerString = false;
+            for (SI si : SI.values())
+            {
+                String name = si.name();
+                if (!cs.startsWith(name))
+                    continue;
+                int endPos = name.length();
+                if (cs.substring(endPos).startsWith("ol"))
+                    continue; // Don't confuse "m" (for meter) and "mol"
+                // Found the unit name
+                if (cs.substring(endPos).startsWith("^"))
+                    endPos++;
+                int value = 1;
+                int digitsSeen = 0;
+                if (cs.substring(endPos).startsWith("-"))
                 {
-                    if (i + name.length() + 1 < cs.length())
-                        n = cs.charAt(i + name.length() + 1);
-                    int coefficient = 1;
-                    if (m >= '0' && m <= '9')
+                    factor *= -1;
+                    endPos++;
+                }
+                while (cs.length() > endPos)
+                {
+                    char digit = cs.charAt(endPos);
+                    if (digit >= '0' && (digit <= '9'))
                     {
-                        coefficient = m - '0';
+                        if (0 == digitsSeen)
+                            value = 0;
+                        value = value * 10 + (digit - '0');
+                        endPos++;
+                        digitsSeen++;
                     }
                     else
-                    {
-                        if (m == '-' && n >= '0' && n <= '9')
-                            coefficient = -(n - '0');
-                    }
-                    if (i > slash)
-                        coefficient = -coefficient;
-                    coefficients.put(si, coefficient);
+                        break;
                 }
+                Integer oldValue = coefficients.get(si);
+                if (null == oldValue)
+                {
+                    oldValue = 0;
+                }
+                coefficients.put(si, oldValue + value * factor);
+                parsedPowerString = true;
+                cs = cs.substring(endPos);
+                break;
             }
+            if (!parsedPowerString)
+                throw new Error("Not an SI unit name in \"" + coefficientString + "\" at \"" + cs + "\"");
         }
         return new SICoefficients(coefficients);
     }
+
+    /*
+     * old version public static SICoefficients create(final String coefficientString) { EnumMap<SI, Integer>
+     * coefficients = new EnumMap<SI, Integer>(SI.class); String cs = coefficientString; cs = cs.replace("^",
+     * "").replace(".", "").replace(" ", ""); int slash = cs.indexOf('/') >= 0 ? cs.indexOf('/') : cs.length(); for (SI
+     * si : SI.values()) { String name = si.name(); int i = cs.indexOf(name); if (i >= 0) { char m = ' '; char n = ' ';
+     * if (i + name.length() < cs.length()) m = cs.charAt(i + name.length()); if (m != 'o') // catch the 'mol' versus
+     * the 'meter' { if (i + name.length() + 1 < cs.length()) n = cs.charAt(i + name.length() + 1); int coefficient = 1;
+     * if (m >= '0' && m <= '9') { coefficient = m - '0'; } else { if (m == '-' && n >= '0' && n <= '9') coefficient =
+     * -(n - '0'); } if (i > slash) coefficient = -coefficient; coefficients.put(si, coefficient); } } } return new
+     * SICoefficients(coefficients); }
+     */
 
     /**
      * @param a the first set of coefficients
