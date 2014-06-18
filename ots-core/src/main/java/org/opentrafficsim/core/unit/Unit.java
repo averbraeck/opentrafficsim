@@ -106,8 +106,9 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
+     * @throws UnitException 
      */
-    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
+    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem) throws UnitException
     {
         this.conversionFactorToStandardUnit = 1.0;
         this.nameKey = nameKey;
@@ -124,9 +125,10 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
+     * @throws UnitException 
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
-            final double conversionFactorToReferenceUnit)
+            final double conversionFactorToReferenceUnit) throws UnitException
     {
         // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
         // the null pointer for the reference unit here.
@@ -142,11 +144,75 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     }
 
     /**
+     * Build a standard unit.
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
+     * @param safe Boolean; if true, a UnitException is silently ignored; if false a UnitException is an Error
+     */
+    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, boolean safe)
+    {
+        this.conversionFactorToStandardUnit = 1.0;
+        this.nameKey = nameKey;
+        this.abbreviationKey = abbreviationKey;
+        this.unitSystem = unitSystem;
+        try
+        {
+            addUnit(this);            
+        }
+        catch (UnitException ue)
+        {
+            if (!safe)
+            {
+                throw new Error(ue);
+            }
+            // TODO complain wherever we can
+        }
+    }
+
+    /**
+     * Build a unit with a conversion factor to another unit.
+     * @param nameKey the key to the locale file for the long name of the unit
+     * @param abbreviationKey the key to the locale file for the abbreviation of the unit
+     * @param unitSystem the unit system, e.g. SI or Imperial
+     * @param referenceUnit the unit to convert to
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
+     * @param safe Boolean; if true, a UnitException is silently ignored; if false a UnitException is an Error
+     */
+    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
+            final double conversionFactorToReferenceUnit, boolean safe)
+    {
+        // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
+        // the null pointer for the reference unit here.
+        if (referenceUnit == null)
+            this.conversionFactorToStandardUnit = 1.0;
+        else
+            this.conversionFactorToStandardUnit =
+                    referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
+        this.nameKey = nameKey;
+        this.abbreviationKey = abbreviationKey;
+        this.unitSystem = unitSystem;
+        try
+        {
+            addUnit(this);            
+        }
+        catch (UnitException ue)
+        {
+            if (!safe)
+            {
+                throw new Error(ue);
+            }
+            // TODO complain wherever we can
+        }
+    }
+
+    /**
      * Add a unit to the overview collection of existing units, and resolve the coefficients.
      * @param unit the unit to add. It will be stored in a set belonging to the simple class name String, e.g.
      *            "ForceUnit".
      */
-    private void addUnit(final Unit<U> unit)
+    private void addUnit(final Unit<U> unit) throws UnitException
     {
         if (!UNITS.containsKey(unit.getClass().getSimpleName()))
             UNITS.put(unit.getClass().getSimpleName(), new HashSet<Unit<?>>());

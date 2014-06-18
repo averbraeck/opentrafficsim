@@ -160,7 +160,7 @@ public class EnergyUnit extends Unit<EnergyUnit>
     {
         super(nameKey, abbreviationKey, unitSystem, JOULE, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
-                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
+                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -177,7 +177,7 @@ public class EnergyUnit extends Unit<EnergyUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, JOULE, forceUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit());
+                * lengthUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -194,7 +194,7 @@ public class EnergyUnit extends Unit<EnergyUnit>
     public EnergyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final EnergyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

@@ -120,8 +120,9 @@ public class SICoefficients
      *            White space can appear anywhere in a coefficientString. <br />
      *            If "integer" does not fit in an Integer, the resulting coefficient will be very wrong.
      * @return an instance of SICoefficients
+     * @throws UnitException 
      */
-    public static SICoefficients create(final String coefficientString)
+    public static SICoefficients create(final String coefficientString) throws UnitException
     {
         // System.out.println("coefficientString is \"" + coefficientString + "\"");
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
@@ -142,7 +143,7 @@ public class SICoefficients
             {
                 cs = cs.substring(1);
                 if (cs.length() < 1)
-                    throw new Error("No SI name after slash");
+                    throw new UnitException("No SI name after slash in " + coefficientString);
                 factor = -1;
             }
             boolean parsedPowerString = false;
@@ -189,7 +190,7 @@ public class SICoefficients
                 break;
             }
             if (!parsedPowerString)
-                throw new Error("Not an SI unit name in \"" + coefficientString + "\" at \"" + cs + "\"");
+                throw new UnitException("Not an SI unit name in \"" + coefficientString + "\" at \"" + cs + "\"");
         }
         return new SICoefficients(coefficients);
     }

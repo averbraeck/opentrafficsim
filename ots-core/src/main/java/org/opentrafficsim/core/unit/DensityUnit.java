@@ -63,7 +63,7 @@ public class DensityUnit extends Unit<DensityUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, KG_PER_METER_3, massUnit.getConversionFactorToStandardUnit()
-                / Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0));
+                / Math.pow(lengthUnit.getConversionFactorToStandardUnit(), 3.0), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
     }
@@ -79,7 +79,7 @@ public class DensityUnit extends Unit<DensityUnit>
     public DensityUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final DensityUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
     }

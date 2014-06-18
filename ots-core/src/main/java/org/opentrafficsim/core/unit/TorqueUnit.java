@@ -78,7 +78,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON_METER, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
-                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
+                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -96,7 +96,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON_METER, forceUnit.getConversionFactorToStandardUnit()
-                * lengthUnit.getConversionFactorToStandardUnit());
+                * lengthUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -114,7 +114,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
     public TorqueUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final TorqueUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

@@ -92,7 +92,7 @@ public class ForceUnit extends Unit<ForceUnit>
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
-                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()));
+                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -110,7 +110,7 @@ public class ForceUnit extends Unit<ForceUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON, massUnit.getConversionFactorToStandardUnit()
-                * accelerationUnit.getConversionFactorToStandardUnit());
+                * accelerationUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = massUnit;
         this.lengthUnit = accelerationUnit.getLengthUnit();
         this.timeUnit = accelerationUnit.getTimeUnit();
@@ -127,7 +127,7 @@ public class ForceUnit extends Unit<ForceUnit>
     public ForceUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final ForceUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();

@@ -76,7 +76,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
             final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit());
+        super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit(), true);
         this.timeUnit = timeUnit;
     }
 
@@ -92,7 +92,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     public FrequencyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.timeUnit = referenceUnit.getTimeUnit();
     }
 

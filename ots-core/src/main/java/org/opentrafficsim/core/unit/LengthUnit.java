@@ -91,7 +91,7 @@ public class LengthUnit extends Unit<LengthUnit>
      */
     public LengthUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
     }
 
     /**
@@ -106,7 +106,7 @@ public class LengthUnit extends Unit<LengthUnit>
     public LengthUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, LengthUnit referenceUnit,
             double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
     /**

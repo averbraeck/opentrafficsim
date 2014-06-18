@@ -98,7 +98,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
                 * lengthUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit()
                 / (electricalCurrentUnit.getConversionFactorToStandardUnit() * Math.pow(
-                        timeUnit.getConversionFactorToStandardUnit(), 3.0)));
+                        timeUnit.getConversionFactorToStandardUnit(), 3.0)), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.electricalCurrentUnit = electricalCurrentUnit;
@@ -117,7 +117,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
             final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, VOLT, powerUnit.getConversionFactorToStandardUnit()
-                / electricalCurrentUnit.getConversionFactorToStandardUnit());
+                / electricalCurrentUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = powerUnit.getMassUnit();
         this.lengthUnit = powerUnit.getLengthUnit();
         this.electricalCurrentUnit = electricalCurrentUnit;
@@ -135,7 +135,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     public ElectricalPotentialUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final ElectricalPotentialUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.electricalCurrentUnit = referenceUnit.getElectricalCurrentUnit();

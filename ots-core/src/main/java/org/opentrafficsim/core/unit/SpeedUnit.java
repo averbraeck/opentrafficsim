@@ -77,7 +77,7 @@ public class SpeedUnit extends Unit<SpeedUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, METER_PER_SECOND, lengthUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
+                / timeUnit.getConversionFactorToStandardUnit(), true);
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
@@ -94,7 +94,7 @@ public class SpeedUnit extends Unit<SpeedUnit>
     public SpeedUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final SpeedUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }

@@ -51,7 +51,7 @@ public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
      */
     public OffsetUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
         this.offsetToStandardUnit = 0.0;
     }
 
@@ -69,7 +69,7 @@ public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
     public OffsetUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final U referenceUnit, final double conversionFactorToReferenceUnit, final double offsetToStandardUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.offsetToStandardUnit = offsetToStandardUnit;
     }
 

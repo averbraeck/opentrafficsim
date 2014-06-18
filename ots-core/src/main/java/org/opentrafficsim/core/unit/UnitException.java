@@ -1,13 +1,12 @@
 package org.opentrafficsim.core.unit;
 
-import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
-
 /**
- * Helper class to create arbitrary SI units.
+ * Exceptions in Unit package.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -27,39 +26,57 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 15, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @version Jun 18, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SIUnit extends Unit<SIUnit>
+public class UnitException extends Exception
 {
+
     /** */
-    private static final long serialVersionUID = 20140615L;
+    private static final long serialVersionUID = 20140618L;
 
     /**
-     * Create an arbitrary SI unit based on a coefficient string, such as m3/cd2
-     * @param siCoefficientString
+     * 
      */
-    public SIUnit(final String siCoefficientString)
+    public UnitException()
     {
-        super(siCoefficientString, siCoefficientString, UnitSystem.SI_DERIVED, true);
+        super();
     }
 
     /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
+     * @param message
+     * @param cause
+     * @param enableSuppression
+     * @param writableStackTrace
      */
-    @Override
-    public SIUnit getStandardUnit()
+    public UnitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
     {
-        return this;
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 
     /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
+     * @param message
+     * @param cause
      */
-    @Override
-    public String getSICoefficientsString()
+    public UnitException(String message, Throwable cause)
     {
-        return this.getAbbreviationKey();
+        super(message, cause);
+    }
+
+    /**
+     * @param message
+     */
+    public UnitException(String message)
+    {
+        super(message);
+    }
+
+    /**
+     * @param cause
+     */
+    public UnitException(Throwable cause)
+    {
+        super(cause);
     }
 
 }

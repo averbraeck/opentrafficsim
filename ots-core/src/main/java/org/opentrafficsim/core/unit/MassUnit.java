@@ -86,7 +86,7 @@ public class MassUnit extends Unit<MassUnit>
      */
     public MassUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
     }
 
     /**
@@ -101,7 +101,7 @@ public class MassUnit extends Unit<MassUnit>
     public MassUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, MassUnit referenceUnit,
             double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
     /**

@@ -74,7 +74,7 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
      */
     public ElectricalCurrentUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem);
+        super(nameKey, abbreviationKey, unitSystem, true);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
     public ElectricalCurrentUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem,
             ElectricalCurrentUnit referenceUnit, double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
     /**

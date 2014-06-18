@@ -64,7 +64,7 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
             final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, KILOGRAM_PER_SECOND, massUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit());
+                / timeUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = massUnit;
         this.timeUnit = timeUnit;
     }
@@ -81,7 +81,7 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     public FlowMassUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final FlowMassUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
-        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit);
+        super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();
         this.timeUnit = referenceUnit.getTimeUnit();
     }
