@@ -45,7 +45,7 @@ public class SICoefficientsTest
         SICoefficients result = null;
         try
         {
-            result = SICoefficients.create(inputString);
+            result = new SICoefficients(SICoefficients.parse(inputString));
         }
         catch (UnitException e)
         {
@@ -98,8 +98,8 @@ public class SICoefficientsTest
     {
         try
         {
-            SICoefficients left = SICoefficients.create(leftString);
-            SICoefficients right = SICoefficients.create(rightString);
+            SICoefficients left = new SICoefficients(SICoefficients.parse(leftString));
+            SICoefficients right = new SICoefficients(SICoefficients.parse(rightString));
             SICoefficients product = SICoefficients.multiply(left, right);
             assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result",
                     expectedResult, product.toString());
@@ -136,8 +136,8 @@ public class SICoefficientsTest
     {
         try
         {
-            SICoefficients left = SICoefficients.create(leftString);
-            SICoefficients right = SICoefficients.create(rightString);
+            SICoefficients left = new SICoefficients(SICoefficients.parse(leftString));
+            SICoefficients right = new SICoefficients(SICoefficients.parse(rightString));
             SICoefficients quotient = SICoefficients.divide(left, right);
             assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result",
                     expectedResult, quotient.toString());
