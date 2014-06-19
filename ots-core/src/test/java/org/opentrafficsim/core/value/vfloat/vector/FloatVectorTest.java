@@ -60,12 +60,32 @@ public abstract class FloatVectorTest
             assertEquals("Values in floatVector in unit should be equal to input values", in[i], out[i], 0.0001);
             try
             {
+                assertEquals("Values in floatVector in unit should be equal to input values", in[i], fv.getInUnit(i), 0.0001);
                 assertEquals("Values in floatVector in unit should be equal to input values", in[i], fv.getSI(i) / (12 * 0.0254), 0.0001);
+                assertEquals("Values in floatVector in unit should be equal to input values", in[i], fv.getInUnit(i, LengthUnit.MILE) * 1609  / (12 * 0.0254), 0.001);
             }
             catch (ValueException exception)
             {
                 fail("Get should not throw exceptions for legal values of the index");
             }
+        }
+        try
+        {
+            fv.getInUnit(-1);
+            fail("Using a negative index should throw a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            fv.getInUnit(in.length);
+            fail("Using a index that is too hig should throw a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
         }
         try
         {
@@ -79,6 +99,24 @@ public abstract class FloatVectorTest
         try
         {
             fv.getSI(in.length);
+            fail("Using a index that is too hig should throw a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            fv.getInUnit(-1, LengthUnit.MILE);
+            fail("Using a negative index should throw a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            fv.getInUnit(in.length, LengthUnit.MILE);
             fail("Using a index that is too hig should throw a ValueException");
         }
         catch (ValueException exception)
