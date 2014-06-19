@@ -74,7 +74,9 @@ public class FloatVectorRelDense<U extends Unit<U>> extends FloatVectorRel<U>
     @Override
     public FloatVector<U> copy()
     {
-        return new FloatVectorRelDense<U>(this.vectorSI.toArray(), this.unit);
+        FloatVectorRelDense<U> v = new FloatVectorRelDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
+        v.unit = this.unit;
+        return v;
     }
 
     /**

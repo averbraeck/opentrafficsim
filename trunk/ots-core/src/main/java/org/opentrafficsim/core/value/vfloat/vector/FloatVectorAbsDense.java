@@ -74,7 +74,9 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
     @Override
     public FloatVector<U> copy()
     {
-        return new FloatVectorAbsDense<U>(this.vectorSI.toArray(), this.unit);
+        FloatVectorAbsDense<U> v = new FloatVectorAbsDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
+        v.unit = this.unit;
+        return v;
     }
 
     /**

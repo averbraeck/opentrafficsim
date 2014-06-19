@@ -72,17 +72,19 @@ public class FloatVectorAbsSparse<U extends Unit<U>> extends FloatVectorAbs<U>
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
     @Override
-    public FloatVector<U> copy()
+    public FloatVectorAbsSparse<U> copy()
     {
-        return new FloatVectorAbsSparse<U>(this.vectorSI.toArray(), this.unit);
+        FloatVectorAbsSparse<U> v = new FloatVectorAbsSparse<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
+        v.unit = this.unit;
+        return v;
     }
 
     /**
      * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public FloatMatrix1D getColtSparseFloatMatrix1D()
+    public SparseFloatMatrix1D getColtSparseFloatMatrix1D()
     {
-        return this.vectorSI;
+        return (SparseFloatMatrix1D) this.vectorSI;
     }
 
 }
