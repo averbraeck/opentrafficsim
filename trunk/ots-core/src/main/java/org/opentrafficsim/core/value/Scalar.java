@@ -51,6 +51,14 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     }
 
     /**
+     * @return unit
+     */
+    public U getUnit()
+    {
+        return this.unit;
+    }
+
+    /**
      * @param value the value to convert in the specified unit for this scalar
      * @return the value in SI units
      */
@@ -92,4 +100,21 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     {
         this.unit = newUnit;
     }
+    
+    /**
+     * @return whether the value is absolute.
+     */
+    public boolean isAbsolute()
+    {
+        return this instanceof Absolute;
+    }
+
+    /**
+     * @return whether the value is relative.
+     */
+    public boolean isRelative()
+    {
+        return this instanceof Relative;
+    }
+
 }
