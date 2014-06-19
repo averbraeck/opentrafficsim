@@ -1,13 +1,13 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.Vector;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
-import cern.colt.matrix.tfloat.FloatMatrix1D;
+import cern.colt.matrix.tfloat.FloatMatrix2D;
 import cern.jet.math.tfloat.FloatFunctions;
 
 /**
@@ -36,83 +36,91 @@ import cern.jet.math.tfloat.FloatFunctions;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> The unit for this value type
  */
-public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implements FloatMathFunctions
+public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implements FloatMathFunctions
 {
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse */
-    protected FloatMatrix1D vectorSI;
+    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse */
+    protected FloatMatrix2D matrixSI;
 
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
+     * Construct the matrix and store the values in SI units.
+     * @param values a 2D array of values for the constructor
      * @param unit the unit of the values
      */
-    public FloatVector(float[] values, final U unit)
+    public FloatMatrix(float[][] values, final U unit)
     {
         super(unit);
         if (unit.equals(unit.getStandardUnit()))
         {
-            this.vectorSI = createMatrix1D(values.length);
-            this.vectorSI.assign(values);
+            this.matrixSI = createMatrix2D(values.length, values[0].length);
+            this.matrixSI.assign(values);
         }
         else
         {
-            this.vectorSI = createMatrix1D(values.length);
-            for (int index = 0; index < values.length; index++)
+            this.matrixSI = createMatrix2D(values.length, values[0].length);
+            for (int row = 0; row < values.length; row++)
             {
-                this.vectorSI.set(index, (float) convertToSIUnit(values[index]));
+                for (int column = 0; column < values[0].length; column++)
+                {
+                    this.matrixSI.set(row, column, (float) convertToSIUnit(values[row][column]));
+                }
             }
         }
     }
 
     /**
-     * Construct the vector and store the values in SI units.
+     * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatVector(FloatScalar<U>[] values) throws ValueException
+    public FloatMatrix(FloatScalar<U>[][] values) throws ValueException
     {
-        super(values.length > 0 ? values[0].getUnit() : null);
-        if (values.length == 0)
+        super(values.length > 0 && values[0].length > 0 ? values[0][0].getUnit() : null);
+        if (values.length == 0 || values[0].length == 0)
         {
-            throw new ValueException("FloatVector constructor called with an empty array of FloatScalar elements");
+            throw new ValueException(
+                    "FloatMatrix constructor called with an empty row or column of FloatScalar elements");
         }
 
-        this.vectorSI = createMatrix1D(values.length);
-        for (int index = 0; index < values.length; index++)
+        this.matrixSI = createMatrix2D(values.length, values[0].length);
+        for (int row = 0; row < values.length; row++)
         {
-            this.vectorSI.set(index, values[index].getValueSI());
+            for (int column = 0; column < values[0].length; column++)
+            {
+                this.matrixSI.set(row, column, values[row][column].getValueSI());
+            }
         }
     }
 
     /**
      * This method has to be implemented by each leaf class.
-     * @param size the number of cells in the vector
+     * @param rows the number of rows in the matrix
+     * @param columns the number of columns in the matrix
      * @return an instance of the right type of matrix (absolute /relative, dense / sparse, etc.).
      */
-    protected abstract FloatMatrix1D createMatrix1D(int size);
+    protected abstract FloatMatrix2D createMatrix2D(int rows, int columns);
 
     /**
      * @return values in SI units
      */
-    public float[] getValuesSI()
+    public float[][] getValuesSI()
     {
-        return this.vectorSI.toArray();
+        return this.matrixSI.toArray();
     }
 
     /**
      * @return values in original units
      */
-    public float[] getValuesInUnit()
+    public float[][] getValuesInUnit()
     {
-        float[] values = this.vectorSI.toArray();
+        float[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) convertToSpecifiedUnit(values[i]);
+            for (int j = 0; j < values[0].length; j++)
+                values[i][j] = (float) convertToSpecifiedUnit(values[i][j]);
         return values;
     }
 
@@ -120,11 +128,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public float[] getValuesInUnit(final U targetUnit)
+    public float[][] getValuesInUnit(final U targetUnit)
     {
-        float[] values = this.vectorSI.toArray();
+        float[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) convertToUnit(values[i], targetUnit);
+            for (int j = 0; j < values[0].length; j++)
+                values[i][j] = (float) convertToUnit(values[i][j], targetUnit);
         return values;
     }
 
@@ -137,18 +146,26 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @return the size of the vector as an int
+     * @return the number of rows of the matrix as an int
      */
-    public int size()
+    public int rows()
     {
-        return (int) this.vectorSI.size();
+        return this.matrixSI.rows();
     }
 
     /**
-     * Create a deep copy of the vector, independent of the original vector.
-     * @return a deep copy of the absolute / relative, dense / sparse vector
+     * @return the number of columns of the matrix as an int
      */
-    public abstract FloatVector<U> copy();
+    public int columns()
+    {
+        return this.matrixSI.columns();
+    }
+
+    /**
+     * Create a deep copy of the matrix, independent of the original matrix.
+     * @return a deep copy of the absolute / relative, dense / sparse matrix
+     */
+    public abstract FloatMatrix<U> copy();
 
     /**********************************************************************************/
     /********************************** MATH METHODS **********************************/
@@ -160,7 +177,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void abs()
     {
-        this.vectorSI.assign(FloatFunctions.abs);
+        this.matrixSI.assign(FloatFunctions.abs);
     }
 
     /**
@@ -169,7 +186,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void acos()
     {
-        this.vectorSI.assign(FloatFunctions.acos);
+        this.matrixSI.assign(FloatFunctions.acos);
     }
 
     /**
@@ -178,7 +195,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void asin()
     {
-        this.vectorSI.assign(FloatFunctions.asin);
+        this.matrixSI.assign(FloatFunctions.asin);
     }
 
     /**
@@ -187,7 +204,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void atan()
     {
-        this.vectorSI.assign(FloatFunctions.atan);
+        this.matrixSI.assign(FloatFunctions.atan);
     }
 
     /**
@@ -196,7 +213,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void cbrt()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.cbrt);
+        this.matrixSI.assign(FloatMathFunctionsImpl.cbrt);
     }
 
     /**
@@ -205,7 +222,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void ceil()
     {
-        this.vectorSI.assign(FloatFunctions.ceil);
+        this.matrixSI.assign(FloatFunctions.ceil);
     }
 
     /**
@@ -214,7 +231,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void cos()
     {
-        this.vectorSI.assign(FloatFunctions.cos);
+        this.matrixSI.assign(FloatFunctions.cos);
     }
 
     /**
@@ -223,7 +240,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void cosh()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.cosh);
+        this.matrixSI.assign(FloatMathFunctionsImpl.cosh);
     }
 
     /**
@@ -232,7 +249,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void exp()
     {
-        this.vectorSI.assign(FloatFunctions.exp);
+        this.matrixSI.assign(FloatFunctions.exp);
     }
 
     /**
@@ -241,7 +258,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void expm1()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.expm1);
+        this.matrixSI.assign(FloatMathFunctionsImpl.expm1);
     }
 
     /**
@@ -250,7 +267,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void floor()
     {
-        this.vectorSI.assign(FloatFunctions.floor);
+        this.matrixSI.assign(FloatFunctions.floor);
     }
 
     /**
@@ -259,7 +276,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void log()
     {
-        this.vectorSI.assign(FloatFunctions.log);
+        this.matrixSI.assign(FloatFunctions.log);
     }
 
     /**
@@ -268,7 +285,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void log10()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.log10);
+        this.matrixSI.assign(FloatMathFunctionsImpl.log10);
     }
 
     /**
@@ -277,7 +294,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void log1p()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.log1p);
+        this.matrixSI.assign(FloatMathFunctionsImpl.log1p);
     }
 
     /**
@@ -286,7 +303,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void pow(double x)
     {
-        this.vectorSI.assign(FloatFunctions.pow((float) x));
+        this.matrixSI.assign(FloatFunctions.pow((float) x));
     }
 
     /**
@@ -295,7 +312,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void rint()
     {
-        this.vectorSI.assign(FloatFunctions.rint);
+        this.matrixSI.assign(FloatFunctions.rint);
     }
 
     /**
@@ -304,7 +321,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void round()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.round);
+        this.matrixSI.assign(FloatMathFunctionsImpl.round);
     }
 
     /**
@@ -313,7 +330,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void signum()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.signum);
+        this.matrixSI.assign(FloatMathFunctionsImpl.signum);
     }
 
     /**
@@ -322,7 +339,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void sin()
     {
-        this.vectorSI.assign(FloatFunctions.sin);
+        this.matrixSI.assign(FloatFunctions.sin);
     }
 
     /**
@@ -331,7 +348,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void sinh()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.sinh);
+        this.matrixSI.assign(FloatMathFunctionsImpl.sinh);
     }
 
     /**
@@ -340,7 +357,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void sqrt()
     {
-        this.vectorSI.assign(FloatFunctions.sqrt);
+        this.matrixSI.assign(FloatFunctions.sqrt);
     }
 
     /**
@@ -349,7 +366,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void tan()
     {
-        this.vectorSI.assign(FloatFunctions.tan);
+        this.matrixSI.assign(FloatFunctions.tan);
     }
 
     /**
@@ -358,7 +375,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void tanh()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.tanh);
+        this.matrixSI.assign(FloatMathFunctionsImpl.tanh);
     }
 
     /**
@@ -367,7 +384,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void toDegrees()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.toDegrees);
+        this.matrixSI.assign(FloatMathFunctionsImpl.toDegrees);
     }
 
     /**
@@ -376,7 +393,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void toRadians()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.toRadians);
+        this.matrixSI.assign(FloatMathFunctionsImpl.toRadians);
     }
 
     /**
@@ -385,7 +402,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void multiply(float constant)
     {
-        this.vectorSI.assign(FloatFunctions.mult(constant));
+        this.matrixSI.assign(FloatFunctions.mult(constant));
     }
 
     /**
@@ -394,7 +411,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void divide(float constant)
     {
-        this.vectorSI.assign(FloatFunctions.div(constant));
+        this.matrixSI.assign(FloatFunctions.div(constant));
     }
 
     /**
@@ -407,20 +424,24 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @param displayUnit the unit to display the vector in.
-     * @return a printable String with the vector contents
+     * @param displayUnit the unit to display the matrix in.
+     * @return a printable String with the matrix contents
      */
     public String toString(final U displayUnit)
     {
         // TODO: check how to always format numbers corresponding to the Locale used.
         String s = "[" + displayUnit.getAbbreviation() + "]";
-        for (int i = 0; i < this.vectorSI.size(); i++)
+        for (int i = 0; i < this.matrixSI.rows(); i++)
         {
-            float f = (float) convertToUnit(this.vectorSI.get(i), displayUnit);
-            if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
-                s += " " + String.format("%8.3f", f);
-            else
-                s += " " + String.format("%8.3e", f);
+            s += "\n";
+            for (int j = 0; j < this.matrixSI.columns(); j++)
+            {
+                float f = (float) convertToUnit(this.matrixSI.get(i, j), displayUnit);
+                if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
+                    s += " " + String.format("%8.3f", f);
+                else
+                    s += " " + String.format("%8.3e", f);
+            }
         }
         return s;
     }
@@ -433,30 +454,30 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
      * is not allowed. Adding an absolute value to an existing relative value would require the result to become
      * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param vector the vector to add
-     * @throws ValueException when vectors have unequal size
+     * @param matrix the matrix to add
+     * @throws ValueException when matrices have unequal size
      */
-    public void add(final FloatVectorRel<U> vector) throws ValueException
+    public void add(final FloatMatrixRel<U> matrix) throws ValueException
     {
-        if (size() != vector.size())
-            throw new ValueException("FloatVector.add - two vectors have unequal size: " + size() + " != "
-                    + vector.size());
-        this.vectorSI.assign(vector.vectorSI, FloatFunctions.plus);
+        if (rows() != matrix.rows() || columns() != matrix.columns())
+            throw new ValueException("FloatMatrix.add - two matrices have unequal size: rows " + rows() + " != "
+                    + matrix.rows() + " or columns " + columns() + " != " + matrix.columns());
+        this.matrixSI.assign(matrix.matrixSI, FloatFunctions.plus);
     }
 
     /**
      * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
      * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param vector the value to subtract
-     * @throws ValueException when vectors have unequal size
+     * @param matrix the value to subtract
+     * @throws ValueException when matrices have unequal size
      */
-    public void subtract(FloatVectorRel<U> vector) throws ValueException
+    public void subtract(FloatMatrixRel<U> matrix) throws ValueException
     {
-        if (size() != vector.size())
-            throw new ValueException("FloatVector.subtract - two vectors have unequal size: " + size() + " != "
-                    + vector.size());
-        this.vectorSI.assign(vector.vectorSI, FloatFunctions.minus);
+        if (rows() != matrix.rows() || columns() != matrix.columns())
+            throw new ValueException("FloatMatrix.add - two matrices have unequal size: rows " + rows() + " != "
+                    + matrix.rows() + " or columns " + columns() + " != " + matrix.columns());
+        this.matrixSI.assign(matrix.matrixSI, FloatFunctions.minus);
     }
 
     /**********************************************************************************/
@@ -464,56 +485,56 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     /**********************************************************************************/
 
     /**
-     * Add a vector with absolute values x and a vector with relative values y. The target unit will be the unit of
+     * Add a matrix with absolute values x and a matrix with relative values y. The target unit will be the unit of
      * absolute value x.
-     * @param x absolute vector 1
-     * @param y relative vector 2
+     * @param x absolute matrix 1
+     * @param y relative matrix 2
      * @return new Vector with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when vectors have unequal size
+     * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> plus(FloatVectorAbs<U> x, FloatVectorRel<U> y)
+    public static <U extends Unit<U>> FloatMatrixAbs<U> plus(FloatMatrixAbs<U> x, FloatMatrixRel<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
+        if (x.rows() != y.rows() || x.columns() != y.columns())
+            throw new ValueException("FloatMatrix.add - two matrices have unequal size: rows " + x.rows() + " != "
+                    + y.rows() + " or columns " + x.columns() + " != " + y.columns());
 
-        FloatVectorAbs<U> c = (FloatVectorAbs<U>) x.copy();
+        FloatMatrixAbs<U> c = (FloatMatrixAbs<U>) x.copy();
         c.add(y);
         return c;
     }
 
     /**
-     * Add a vector with relative values x and a vector with absolute values y. The target unit will be the unit of
+     * Add a matrix with relative values x and a matrix with absolute values y. The target unit will be the unit of
      * absolute value y.
-     * @param x relative vector 1
-     * @param y absolute vector 2
+     * @param x relative matrix 1
+     * @param y absolute matrix 2
      * @param targetUnit unit in which the results will be displayed
      * @return new Vector with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when vectors have unequal size
+     * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> plus(FloatVectorRel<U> x, FloatVectorAbs<U> y)
+    public static <U extends Unit<U>> FloatMatrixAbs<U> plus(FloatMatrixRel<U> x, FloatMatrixAbs<U> y)
             throws ValueException
     {
         return plus(y, x);
     }
 
     /**
-     * Add a vector with relative values x and a vector with relative values y. The target unit will be the unit of
+     * Add a matrix with relative values x and a matrix with relative values y. The target unit will be the unit of
      * relative value x.
-     * @param x relative vector 1
-     * @param y relative vector 2
+     * @param x relative matrix 1
+     * @param y relative matrix 2
      * @return new Vector with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when vectors have unequal size
+     * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorRel<U> plus(FloatVectorRel<U> x, FloatVectorRel<U> y)
+    public static <U extends Unit<U>> FloatMatrixRel<U> plus(FloatMatrixRel<U> x, FloatMatrixRel<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
+        if (x.rows() != y.rows() || x.columns() != y.columns())
+            throw new ValueException("FloatMatrix.add - two matrices have unequal size: rows " + x.rows() + " != "
+                    + y.rows() + " or columns " + x.columns() + " != " + y.columns());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
         c.add(y);
         return c;
     }
