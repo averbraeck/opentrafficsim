@@ -1,9 +1,8 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.VectorFunctions;
 
 /**
  * <p>
@@ -29,31 +28,37 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public interface DoubleVectorFunctions<U extends Unit<U>> extends VectorFunctions
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
+    /**
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    double getSI(int index) throws ValueException;
 
     /**
-     * @param values
-     * @param unit
+     * @param index position to get the value for in the original unit of creation.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public FloatVectorRel(final float[] values, final U unit)
-    {
-        super(values, unit);
-    }
+    double getInUnit(int index) throws ValueException;
 
     /**
-     * @param values
-     * @throws ValueException
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param targetUnit the unit for the result.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
-    {
-        super(values);
-    }
+    double getInUnit(int index, U targetUnit) throws ValueException;
+
+    /**
+     * @return sum of all values of the vector.
+     */
+    double zSum();
 
 }

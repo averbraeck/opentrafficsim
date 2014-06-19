@@ -1,9 +1,9 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 
 /**
  * <p>
@@ -33,7 +33,7 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public abstract class DoubleVectorAbs<U extends Unit<U>> extends DoubleVector<U> implements Absolute
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -42,7 +42,7 @@ public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> i
      * @param values
      * @param unit
      */
-    public FloatVectorRel(final float[] values, final U unit)
+    public DoubleVectorAbs(final double[] values, final U unit)
     {
         super(values, unit);
     }
@@ -51,7 +51,7 @@ public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> i
      * @param values
      * @throws ValueException
      */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
+    public DoubleVectorAbs(final DoubleScalarAbs<U>[] values) throws ValueException
     {
         super(values);
     }

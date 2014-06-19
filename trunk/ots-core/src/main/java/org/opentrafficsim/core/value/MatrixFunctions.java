@@ -1,9 +1,4 @@
-package org.opentrafficsim.core.value.vfloat.vector;
-
-import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+package org.opentrafficsim.core.value;
 
 /**
  * <p>
@@ -29,31 +24,29 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public interface MatrixFunctions
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
-
-    /**
-     * @param values
-     * @param unit
+    /** 
+     * normalize the matrix, i.e. make the sum of all elements equal to 1.
+     * @throws ValueException if the sum of the values is zero, and normalization is not possible
      */
-    public FloatVectorRel(final float[] values, final U unit)
-    {
-        super(values, unit);
-    }
-
+    void normalize() throws ValueException;
+    
     /**
-     * @param values
-     * @throws ValueException
+     * @return the number of rows of the matrix as an int.
      */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
-    {
-        super(values);
-    }
-
+    int rows();
+    
+    /**
+     * @return the number of columns of the matrix as an int.
+     */
+    int columns();
+    
+    /**
+     * @return the number of cells having non-zero values; ignores tolerance.
+     */
+    int cardinality();
 }

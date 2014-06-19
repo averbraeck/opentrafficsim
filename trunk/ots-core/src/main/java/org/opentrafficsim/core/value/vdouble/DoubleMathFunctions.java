@@ -1,9 +1,6 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble;
 
-import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.MathFunctions;
 
 /**
  * <p>
@@ -29,31 +26,21 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public interface DoubleMathFunctions extends MathFunctions
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
+    /**
+     * Multiply the value(s) with a constant
+     * @param constant the multiplier
+     */
+    void multiply(double constant);
 
     /**
-     * @param values
-     * @param unit
+     * Divide the value(s) by a constant
+     * @param constant the divisor
      */
-    public FloatVectorRel(final float[] values, final U unit)
-    {
-        super(values, unit);
-    }
-
-    /**
-     * @param values
-     * @throws ValueException
-     */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
-    {
-        super(values);
-    }
-
+    void divide(double constant);
+    
 }

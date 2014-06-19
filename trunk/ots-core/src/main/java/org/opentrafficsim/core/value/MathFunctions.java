@@ -162,4 +162,8 @@ public interface MathFunctions extends Serializable
      */
     void toRadians();
 
+    /**
+     * Set the value(s) to the complement (1.0/x) of the value(s).
+     */
+    void inv();
 }

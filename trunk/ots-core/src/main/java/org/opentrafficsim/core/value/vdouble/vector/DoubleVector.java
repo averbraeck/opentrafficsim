@@ -1,17 +1,17 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.Vector;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
+import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
+import org.opentrafficsim.core.value.vdouble.DoubleMathFunctionsImpl;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
-import cern.colt.matrix.tfloat.FloatMatrix1D;
-import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
-import cern.jet.math.tfloat.FloatFunctions;
+import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
+import cern.jet.math.tdouble.DoubleFunctions;
 
 /**
  * <p>
@@ -42,21 +42,21 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> The unit for this value type
  */
-public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implements FloatMathFunctions,
-        FloatVectorFunctions<U>
+public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implements DoubleMathFunctions,
+        DoubleVectorFunctions<U>
 {
     /** */
     private static final long serialVersionUID = 20140618L;
 
     /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse */
-    protected FloatMatrix1D vectorSI;
+    protected DoubleMatrix1D vectorSI;
 
     /**
      * Construct the vector and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
      */
-    public FloatVector(final float[] values, final U unit)
+    public DoubleVector(final double[] values, final U unit)
     {
         super(unit);
         if (unit.equals(unit.getStandardUnit()))
@@ -69,7 +69,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             this.vectorSI = createMatrix1D(values.length);
             for (int index = 0; index < values.length; index++)
             {
-                this.vectorSI.set(index, (float) convertToSIUnit(values[index]));
+                this.vectorSI.set(index, convertToSIUnit(values[index]));
             }
         }
     }
@@ -79,12 +79,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatVector(final FloatScalar<U>[] values) throws ValueException
+    public DoubleVector(final DoubleScalar<U>[] values) throws ValueException
     {
         super(values.length > 0 ? values[0].getUnit() : null);
         if (values.length == 0)
         {
-            throw new ValueException("FloatVector constructor called with an empty array of FloatScalar elements");
+            throw new ValueException("DoubleVector constructor called with an empty array of DoubleScalar elements");
         }
 
         this.vectorSI = createMatrix1D(values.length);
@@ -99,20 +99,20 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param size the number of cells in the vector
      * @return an instance of the right type of matrix (absolute /relative, dense / sparse, etc.).
      */
-    protected abstract FloatMatrix1D createMatrix1D(final int size);
+    protected abstract DoubleMatrix1D createMatrix1D(final int size);
 
     /**
      * @return the Colt vector.
      */
-    public FloatMatrix1D getVectorSI()
+    public DoubleMatrix1D getVectorSI()
     {
-         return this.vectorSI;
+        return this.vectorSI;
     }
 
     /**
      * @return values in SI units
      */
-    public float[] getValuesSI()
+    public double[] getValuesSI()
     {
         return this.vectorSI.toArray();
     }
@@ -120,11 +120,11 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     /**
      * @return values in original units
      */
-    public float[] getValuesInUnit()
+    public double[] getValuesInUnit()
     {
-        float[] values = this.vectorSI.toArray();
+        double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) convertToSpecifiedUnit(values[i]);
+            values[i] = convertToSpecifiedUnit(values[i]);
         return values;
     }
 
@@ -132,11 +132,11 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public float[] getValuesInUnit(final U targetUnit)
+    public double[] getValuesInUnit(final U targetUnit)
     {
-        float[] values = this.vectorSI.toArray();
+        double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) convertToUnit(values[i], targetUnit);
+            values[i] = convertToUnit(values[i], targetUnit);
         return values;
     }
 
@@ -149,21 +149,21 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getSI(int)
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#getSI(int)
      */
-    public float getSI(final int index) throws ValueException
+    public double getSI(final int index) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
-            throw new ValueException("FloatVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
+            throw new ValueException("DoubleVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
         return this.vectorSI.get(index);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int)
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#getInUnit(int)
      */
-    public float getInUnit(final int index) throws ValueException
+    public double getInUnit(final int index) throws ValueException
     {
-        return (float) convertToSpecifiedUnit(getSI(index));
+        return convertToSpecifiedUnit(getSI(index));
     }
 
     /**
@@ -172,15 +172,15 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return value at position i.
      * @throws ValueException if i < 0 or i >= vector.size().
      */
-    public float getInUnit(final int index, final U targetUnit) throws ValueException
+    public double getInUnit(final int index, final U targetUnit) throws ValueException
     {
-        return (float) convertToUnit(getSI(index), targetUnit);
+        return convertToUnit(getSI(index), targetUnit);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#zSum()
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#zSum()
      */
-    public float zSum()
+    public double zSum()
     {
         return this.vectorSI.zSum();
     }
@@ -190,9 +190,9 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public void normalize() throws ValueException
     {
-        float sum = this.zSum();
+        double sum = this.zSum();
         if (sum == 0)
-            throw new ValueException("FloatVector.normalize: zSum of the vector values == 0, cannot normalize");
+            throw new ValueException("DoubleVector.normalize: zSum of the vector values == 0, cannot normalize");
         this.divide(sum);
     }
 
@@ -209,7 +209,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * Create a deep copy of the vector, independent of the original vector.
      * @return a deep copy of the absolute / relative, dense / sparse vector
      */
-    public abstract FloatVector<U> copy();
+    public abstract DoubleVector<U> copy();
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -218,9 +218,9 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public boolean equals(final Object obj)
     {
         // unequal if object is of a different type.
-        if (!(obj instanceof FloatVector<?>))
+        if (!(obj instanceof DoubleVector<?>))
             return false;
-        FloatVector<?> fv = (FloatVector<?>) obj;
+        DoubleVector<?> fv = (DoubleVector<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
@@ -244,7 +244,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void abs()
     {
-        this.vectorSI.assign(FloatFunctions.abs);
+        this.vectorSI.assign(DoubleFunctions.abs);
     }
 
     /**
@@ -253,7 +253,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void acos()
     {
-        this.vectorSI.assign(FloatFunctions.acos);
+        this.vectorSI.assign(DoubleFunctions.acos);
     }
 
     /**
@@ -262,7 +262,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void asin()
     {
-        this.vectorSI.assign(FloatFunctions.asin);
+        this.vectorSI.assign(DoubleFunctions.asin);
     }
 
     /**
@@ -271,7 +271,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void atan()
     {
-        this.vectorSI.assign(FloatFunctions.atan);
+        this.vectorSI.assign(DoubleFunctions.atan);
     }
 
     /**
@@ -280,7 +280,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void cbrt()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.cbrt);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.cbrt);
     }
 
     /**
@@ -289,7 +289,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void ceil()
     {
-        this.vectorSI.assign(FloatFunctions.ceil);
+        this.vectorSI.assign(DoubleFunctions.ceil);
     }
 
     /**
@@ -298,7 +298,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void cos()
     {
-        this.vectorSI.assign(FloatFunctions.cos);
+        this.vectorSI.assign(DoubleFunctions.cos);
     }
 
     /**
@@ -307,7 +307,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void cosh()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.cosh);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.cosh);
     }
 
     /**
@@ -316,7 +316,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void exp()
     {
-        this.vectorSI.assign(FloatFunctions.exp);
+        this.vectorSI.assign(DoubleFunctions.exp);
     }
 
     /**
@@ -325,7 +325,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void expm1()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.expm1);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.expm1);
     }
 
     /**
@@ -334,7 +334,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void floor()
     {
-        this.vectorSI.assign(FloatFunctions.floor);
+        this.vectorSI.assign(DoubleFunctions.floor);
     }
 
     /**
@@ -343,7 +343,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void log()
     {
-        this.vectorSI.assign(FloatFunctions.log);
+        this.vectorSI.assign(DoubleFunctions.log);
     }
 
     /**
@@ -352,7 +352,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void log10()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.log10);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.log10);
     }
 
     /**
@@ -361,7 +361,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void log1p()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.log1p);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.log1p);
     }
 
     /**
@@ -370,7 +370,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void pow(double x)
     {
-        this.vectorSI.assign(FloatFunctions.pow((float) x));
+        this.vectorSI.assign(DoubleFunctions.pow(x));
     }
 
     /**
@@ -379,7 +379,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void rint()
     {
-        this.vectorSI.assign(FloatFunctions.rint);
+        this.vectorSI.assign(DoubleFunctions.rint);
     }
 
     /**
@@ -388,7 +388,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void round()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.round);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.round);
     }
 
     /**
@@ -397,7 +397,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void signum()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.signum);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.signum);
     }
 
     /**
@@ -406,7 +406,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void sin()
     {
-        this.vectorSI.assign(FloatFunctions.sin);
+        this.vectorSI.assign(DoubleFunctions.sin);
     }
 
     /**
@@ -415,7 +415,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void sinh()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.sinh);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.sinh);
     }
 
     /**
@@ -424,7 +424,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void sqrt()
     {
-        this.vectorSI.assign(FloatFunctions.sqrt);
+        this.vectorSI.assign(DoubleFunctions.sqrt);
     }
 
     /**
@@ -433,7 +433,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void tan()
     {
-        this.vectorSI.assign(FloatFunctions.tan);
+        this.vectorSI.assign(DoubleFunctions.tan);
     }
 
     /**
@@ -442,7 +442,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void tanh()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.tanh);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.tanh);
     }
 
     /**
@@ -451,7 +451,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void toDegrees()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.toDegrees);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.toDegrees);
     }
 
     /**
@@ -460,7 +460,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void toRadians()
     {
-        this.vectorSI.assign(FloatMathFunctionsImpl.toRadians);
+        this.vectorSI.assign(DoubleMathFunctionsImpl.toRadians);
     }
 
     /**
@@ -469,25 +469,25 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void inv()
     {
-        this.vectorSI.assign(FloatFunctions.inv);
-    }
-    
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
-     */
-    @Override
-    public void multiply(final float constant)
-    {
-        this.vectorSI.assign(FloatFunctions.mult(constant));
+        this.vectorSI.assign(DoubleFunctions.inv);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
+     * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
     @Override
-    public void divide(final float constant)
+    public void multiply(final double constant)
     {
-        this.vectorSI.assign(FloatFunctions.div(constant));
+        this.vectorSI.assign(DoubleFunctions.mult(constant));
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
+     */
+    @Override
+    public void divide(final double constant)
+    {
+        this.vectorSI.assign(DoubleFunctions.div(constant));
     }
 
     /**
@@ -509,7 +509,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         String s = "[" + displayUnit.getAbbreviation() + "]";
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
-            float f = (float) convertToUnit(this.vectorSI.get(i), displayUnit);
+            double f = convertToUnit(this.vectorSI.get(i), displayUnit);
             if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
                 s += " " + String.format("%8.3f", f);
             else
@@ -529,12 +529,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param vector the vector to add
      * @throws ValueException when vectors have unequal size
      */
-    public void add(final FloatVectorRel<U> vector) throws ValueException
+    public void add(final DoubleVectorRel<U> vector) throws ValueException
     {
         if (size() != vector.size())
-            throw new ValueException("FloatVector.add - two vectors have unequal size: " + size() + " != "
+            throw new ValueException("DoubleVector.add - two vectors have unequal size: " + size() + " != "
                     + vector.size());
-        this.vectorSI.assign(vector.vectorSI, FloatFunctions.plus);
+        this.vectorSI.assign(vector.vectorSI, DoubleFunctions.plus);
     }
 
     /**
@@ -544,12 +544,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param vector the value to subtract
      * @throws ValueException when vectors have unequal size
      */
-    public void subtract(final FloatVectorRel<U> vector) throws ValueException
+    public void subtract(final DoubleVectorRel<U> vector) throws ValueException
     {
         if (size() != vector.size())
-            throw new ValueException("FloatVector.subtract - two vectors have unequal size: " + size() + " != "
+            throw new ValueException("DoubleVector.subtract - two vectors have unequal size: " + size() + " != "
                     + vector.size());
-        this.vectorSI.assign(vector.vectorSI, FloatFunctions.minus);
+        this.vectorSI.assign(vector.vectorSI, DoubleFunctions.minus);
     }
 
     /**********************************************************************************/
@@ -564,14 +564,14 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return new Vector with absolute elements sum of x[i] and y[i]
      * @throws ValueException when vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> plus(final FloatVectorAbs<U> x, final FloatVectorRel<U> y)
+    public static <U extends Unit<U>> DoubleVectorAbs<U> plus(final DoubleVectorAbs<U> x, final DoubleVectorRel<U> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.plus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorAbs<U> c = (FloatVectorAbs<U>) x.copy();
+        DoubleVectorAbs<U> c = (DoubleVectorAbs<U>) x.copy();
         c.add(y);
         return c;
     }
@@ -585,7 +585,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return new Vector with absolute elements sum of x[i] and y[i]
      * @throws ValueException when vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> plus(final FloatVectorRel<U> x, final FloatVectorAbs<U> y)
+    public static <U extends Unit<U>> DoubleVectorAbs<U> plus(final DoubleVectorRel<U> x, final DoubleVectorAbs<U> y)
             throws ValueException
     {
         return plus(y, x);
@@ -599,14 +599,14 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return new Vector with absolute elements sum of x[i] and y[i]
      * @throws ValueException when vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorRel<U> plus(final FloatVectorRel<U> x, final FloatVectorRel<U> y)
+    public static <U extends Unit<U>> DoubleVectorRel<U> plus(final DoubleVectorRel<U> x, final DoubleVectorRel<U> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.plus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        DoubleVectorRel<U> c = (DoubleVectorRel<U>) x.copy();
         c.add(y);
         return c;
     }
@@ -619,14 +619,14 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return new Vector with absolute elements values x[i] minus y[i]
      * @throws ValueException when vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorRel<U> minus(final FloatVectorRel<U> x, final FloatVectorRel<U> y)
+    public static <U extends Unit<U>> DoubleVectorRel<U> minus(final DoubleVectorRel<U> x, final DoubleVectorRel<U> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        DoubleVectorRel<U> c = (DoubleVectorRel<U>) x.copy();
         c.subtract(y);
         return c;
     }
@@ -639,14 +639,14 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return new Vector with absolute elements: values x[i] minus y[i]
      * @throws ValueException when vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> minus(final FloatVectorAbs<U> x, final FloatVectorRel<U> y)
+    public static <U extends Unit<U>> DoubleVectorAbs<U> minus(final DoubleVectorAbs<U> x, final DoubleVectorRel<U> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorAbs<U> c = (FloatVectorAbs<U>) x.copy();
+        DoubleVectorAbs<U> c = (DoubleVectorAbs<U>) x.copy();
         c.subtract(y);
         return c;
     }
@@ -659,15 +659,15 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return new Vector with relative elements: values x[i] minus y[i]
      * @throws ValueException when vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorRel<U> minus(final FloatVectorAbs<U> x, final FloatVectorAbs<U> y)
+    public static <U extends Unit<U>> DoubleVectorRel<U> minus(final DoubleVectorAbs<U> x, final DoubleVectorAbs<U> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
-        c.vectorSI.assign(y.vectorSI, FloatFunctions.minus);
+        DoubleVectorRel<U> c = (DoubleVectorRel<U>) x.copy();
+        c.vectorSI.assign(y.vectorSI, DoubleFunctions.minus);
         return c;
     }
 
@@ -678,11 +678,11 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static FloatVectorAbs<SIUnit> zDotProduct(final FloatVectorAbs<?> x, final FloatVectorAbs<?> y)
+    public static DoubleVectorAbs<SIUnit> zDotProduct(final DoubleVectorAbs<?> x, final DoubleVectorAbs<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.zProduct - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
         SIUnit targetUnit =
@@ -690,8 +690,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
                         y.getUnit().getSICoefficients()).toString());
 
         @SuppressWarnings("unchecked")
-        FloatVectorAbs<SIUnit> c = (FloatVectorAbs<SIUnit>) x.copy();
-        c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
+        DoubleVectorAbs<SIUnit> c = (DoubleVectorAbs<SIUnit>) x.copy();
+        c.vectorSI.assign(y.vectorSI, DoubleFunctions.mult);
         c.unit = targetUnit;
         return c;
     }
@@ -703,11 +703,11 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static FloatVectorRel<SIUnit> zDotProduct(final FloatVectorRel<?> x, final FloatVectorRel<?> y)
+    public static DoubleVectorRel<SIUnit> zDotProduct(final DoubleVectorRel<?> x, final DoubleVectorRel<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
-            throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
+            throw new ValueException("DoubleVector.zProduct - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
         SIUnit targetUnit =
@@ -715,8 +715,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
                         y.getUnit().getSICoefficients()).toString());
 
         @SuppressWarnings("unchecked")
-        FloatVectorRel<SIUnit> c = (FloatVectorRel<SIUnit>) x.copy();
-        c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
+        DoubleVectorRel<SIUnit> c = (DoubleVectorRel<SIUnit>) x.copy();
+        c.vectorSI.assign(y.vectorSI, DoubleFunctions.mult);
         c.unit = targetUnit;
         return c;
     }
@@ -729,17 +729,18 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> zDotProduct(final FloatVectorAbs<U> x, final float[] c)
+    public static <U extends Unit<U>> DoubleVectorAbs<U> zDotProduct(final DoubleVectorAbs<U> x, final double[] c)
             throws ValueException
     {
         if (x.size() != c.length)
-            throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
-                    + x.size() + " != " + c.length);
+            throw new ValueException(
+                    "DoubleVector.zProduct with dimensionless vector - two vectors have unequal size: " + x.size()
+                            + " != " + c.length);
 
         // TODO: more elegant implementation that does not copy the entire vector?
-        FloatVectorAbs<U> result = (FloatVectorAbs<U>) x.copy();
-        DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
-        result.vectorSI.assign(cMatrix, FloatFunctions.mult);
+        DoubleVectorAbs<U> result = (DoubleVectorAbs<U>) x.copy();
+        DenseDoubleMatrix1D cMatrix = new DenseDoubleMatrix1D(c);
+        result.vectorSI.assign(cMatrix, DoubleFunctions.mult);
         return result;
     }
 
@@ -751,17 +752,18 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorRel<U> zDotProduct(final FloatVectorRel<U> x, final float[] c)
+    public static <U extends Unit<U>> DoubleVectorRel<U> zDotProduct(final DoubleVectorRel<U> x, final double[] c)
             throws ValueException
     {
         if (x.size() != c.length)
-            throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
-                    + x.size() + " != " + c.length);
+            throw new ValueException(
+                    "DoubleVector.zProduct with dimensionless vector - two vectors have unequal size: " + x.size()
+                            + " != " + c.length);
 
         // TODO: more elegant implementation that does not copy the entire vector?
-        FloatVectorRel<U> result = (FloatVectorRel<U>) x.copy();
-        DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
-        result.vectorSI.assign(cMatrix, FloatFunctions.mult);
+        DoubleVectorRel<U> result = (DoubleVectorRel<U>) x.copy();
+        DenseDoubleMatrix1D cMatrix = new DenseDoubleMatrix1D(c);
+        result.vectorSI.assign(cMatrix, DoubleFunctions.mult);
         return result;
     }
 
@@ -770,45 +772,45 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @param x the vector to convert
      * @return the converted vector
      */
-    public static <U extends Unit<U>> FloatVectorAbsDense<U> sparseToDense(final FloatVectorAbsSparse<U> x)
+    public static <U extends Unit<U>> DoubleVectorAbsDense<U> sparseToDense(final DoubleVectorAbsSparse<U> x)
     {
-        FloatVectorAbsDense<U> v = new FloatVectorAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleVectorAbsDense<U> v = new DoubleVectorAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
-    
+
     /**
      * Convert sparse vector to dense vector.
      * @param x the vector to convert
      * @return the converted vector
      */
-    public static <U extends Unit<U>> FloatVectorRelDense<U> sparseToDense(final FloatVectorRelSparse<U> x)
+    public static <U extends Unit<U>> DoubleVectorRelDense<U> sparseToDense(final DoubleVectorRelSparse<U> x)
     {
-        FloatVectorRelDense<U> v = new FloatVectorRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleVectorRelDense<U> v = new DoubleVectorRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
-    
+
     /**
      * Convert dense vector to sparse vector.
      * @param x the vector to convert
      * @return the converted vector
      */
-    public static <U extends Unit<U>> FloatVectorAbsSparse<U> denseToSparse(final FloatVectorAbsDense<U> x)
+    public static <U extends Unit<U>> DoubleVectorAbsSparse<U> denseToSparse(final DoubleVectorAbsDense<U> x)
     {
-        FloatVectorAbsSparse<U> v = new FloatVectorAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleVectorAbsSparse<U> v = new DoubleVectorAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
-    
+
     /**
      * Convert dense vector to sparse vector.
      * @param x the vector to convert
      * @return the converted vector
      */
-    public static <U extends Unit<U>> FloatVectorRelSparse<U> denseToSparse(final FloatVectorRelDense<U> x)
+    public static <U extends Unit<U>> DoubleVectorRelSparse<U> denseToSparse(final DoubleVectorRelDense<U> x)
     {
-        FloatVectorRelSparse<U> v = new FloatVectorRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleVectorRelSparse<U> v = new DoubleVectorRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }

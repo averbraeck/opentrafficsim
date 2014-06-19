@@ -1,9 +1,12 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.Dense;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+
+import cern.colt.matrix.tdouble.DoubleMatrix2D;
+import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D;
 
 /**
  * <p>
@@ -33,27 +36,56 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public class DoubleMatrixRelDense<U extends Unit<U>> extends DoubleMatrixRel<U> implements Dense
 {
     /** */
     private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param values
-     * @param unit
+     * Construct the matrix and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @param unit the unit of the values
      */
-    public FloatVectorRel(final float[] values, final U unit)
+    public DoubleMatrixRelDense(final double[][] values, final U unit)
     {
         super(values, unit);
     }
 
     /**
-     * @param values
-     * @throws ValueException
+     * Construct the matrix and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
+    public DoubleMatrixRelDense(final DoubleScalarRel<U>[][] values) throws ValueException
     {
         super(values);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#createMatrix2D(int, int)
+     */
+    protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
+    {
+        return new DenseDoubleMatrix2D(rows, columns);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#copy()
+     */
+    @Override
+    public final DoubleMatrix<U> copy()
+    {
+        DoubleMatrixRelDense<U> m = new DoubleMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        m.unit = this.unit;
+        return m;
+    }
+
+    /**
+     * @return the internally stored vector from the Colt library, converted to SI units.
+     */
+    public final DenseDoubleMatrix2D getColtDenseDoubleMatrix2D()
+    {
+        return (DenseDoubleMatrix2D) this.matrixSI;
     }
 
 }

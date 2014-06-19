@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
@@ -35,7 +36,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
+public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U> implements Sparse
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -45,7 +46,7 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
      * @param values an array of values for the constructor
      * @param unit the unit of the values
      */
-    public FloatVectorRelSparse(float[] values, final U unit)
+    public FloatVectorRelSparse(final float[] values, final U unit)
     {
         super(values, unit);
     }
@@ -55,7 +56,7 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatVectorRelSparse(FloatScalarRel<U>[] values) throws ValueException
+    public FloatVectorRelSparse(final FloatScalarRel<U>[] values) throws ValueException
     {
         super(values);
     }
@@ -63,7 +64,7 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
      */
-    protected FloatMatrix1D createMatrix1D(int size)
+    protected final FloatMatrix1D createMatrix1D(final int size)
     {
         return new SparseFloatMatrix1D(size);
     }
@@ -72,7 +73,7 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
     @Override
-    public FloatVector<U> copy()
+    public final FloatVector<U> copy()
     {
         FloatVectorRelSparse<U> v = new FloatVectorRelSparse<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;
@@ -82,9 +83,9 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
     /**
      * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public FloatMatrix1D getColtSparseFloatMatrix1D()
+    public final SparseFloatMatrix1D getColtSparseFloatMatrix1D()
     {
-        return this.vectorSI;
+        return (SparseFloatMatrix1D) this.vectorSI;
     }
 
 }

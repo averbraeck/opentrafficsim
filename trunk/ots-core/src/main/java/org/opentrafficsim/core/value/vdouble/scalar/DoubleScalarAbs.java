@@ -1,9 +1,7 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble.scalar;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.Absolute;
 
 /**
  * <p>
@@ -29,31 +27,32 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
+ * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public class DoubleScalarAbs<U extends Unit<U>> extends DoubleScalar<U> implements Absolute
 {
     /** */
-    private static final long serialVersionUID = 20140618L;
+    private static final long serialVersionUID = 20140615L;
 
     /**
-     * @param values
-     * @param unit
+     * Construct a value in and store it in SI units for calculation.
+     * @param value the value in the given units
+     * @param unit the unit of the value
      */
-    public FloatVectorRel(final float[] values, final U unit)
+    public DoubleScalarAbs(final double value, final U unit)
     {
-        super(values, unit);
+        super(value, unit);
     }
 
     /**
-     * @param values
-     * @throws ValueException
+     * Construct a value from another value. The value is already in SI units.
+     * @param value the value to duplicate
      */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
+    public DoubleScalarAbs(final DoubleScalarAbs<U> value)
     {
-        super(values);
+        super(value);
     }
 
 }

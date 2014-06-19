@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.value.vfloat.matrix;
+package org.opentrafficsim.core.value.vdouble.matrix;
 
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
@@ -7,22 +7,22 @@ import org.opentrafficsim.core.value.Dense;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsSparse;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelSparse;
+import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
+import org.opentrafficsim.core.value.vdouble.DoubleMathFunctionsImpl;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsDense;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorRel;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorRelDense;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorRelSparse;
 
-import cern.colt.matrix.tfloat.FloatMatrix1D;
-import cern.colt.matrix.tfloat.FloatMatrix2D;
-import cern.colt.matrix.tfloat.algo.DenseFloatAlgebra;
-import cern.colt.matrix.tfloat.algo.SparseFloatAlgebra;
-import cern.colt.matrix.tfloat.impl.DenseFloatMatrix2D;
-import cern.jet.math.tfloat.FloatFunctions;
+import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.DoubleMatrix2D;
+import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra;
+import cern.colt.matrix.tdouble.algo.SparseDoubleAlgebra;
+import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D;
+import cern.jet.math.tdouble.DoubleFunctions;
 
 /**
  * <p>
@@ -52,21 +52,21 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> The unit for this value type
  */
-public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implements FloatMathFunctions,
-        FloatMatrixFunctions<U>
+public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implements DoubleMathFunctions,
+        DoubleMatrixFunctions<U>
 {
     /** */
     private static final long serialVersionUID = 20140618L;
 
     /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse */
-    protected FloatMatrix2D matrixSI;
+    protected DoubleMatrix2D matrixSI;
 
     /**
      * Construct the matrix and store the values in SI units.
      * @param values a 2D array of values for the constructor
      * @param unit the unit of the values
      */
-    public FloatMatrix(final float[][] values, final U unit)
+    public DoubleMatrix(final double[][] values, final U unit)
     {
         super(unit);
         if (unit.equals(unit.getStandardUnit()))
@@ -81,7 +81,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             {
                 for (int column = 0; column < (values.length > 0 ? values[0].length : 0); column++)
                 {
-                    this.matrixSI.set(row, column, (float) convertToSIUnit(values[row][column]));
+                    this.matrixSI.set(row, column, convertToSIUnit(values[row][column]));
                 }
             }
         }
@@ -92,13 +92,13 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatMatrix(final FloatScalar<U>[][] values) throws ValueException
+    public DoubleMatrix(final DoubleScalar<U>[][] values) throws ValueException
     {
         super(values.length > 0 && (values.length > 0 ? values[0].length : 0) > 0 ? values[0][0].getUnit() : null);
         if (values.length == 0 || (values.length > 0 ? values[0].length : 0) == 0)
         {
             throw new ValueException(
-                    "FloatMatrix constructor called with an empty row or column of FloatScalar elements");
+                    "DoubleMatrix constructor called with an empty row or column of DoubleScalar elements");
         }
 
         this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
@@ -117,12 +117,12 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param columns the number of columns in the matrix
      * @return an instance of the right type of matrix (absolute /relative, dense / sparse, etc.).
      */
-    protected abstract FloatMatrix2D createMatrix2D(final int rows, final int columns);
+    protected abstract DoubleMatrix2D createMatrix2D(final int rows, final int columns);
 
     /**
      * @return the Colt matrix.
      */
-    public FloatMatrix2D getMatrixSI()
+    public DoubleMatrix2D getMatrixSI()
     {
         return this.matrixSI;
     }
@@ -130,7 +130,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     /**
      * @return values in SI units
      */
-    public float[][] getValuesSI()
+    public double[][] getValuesSI()
     {
         return this.matrixSI.toArray();
     }
@@ -138,12 +138,12 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     /**
      * @return values in original units
      */
-    public float[][] getValuesInUnit()
+    public double[][] getValuesInUnit()
     {
-        float[][] values = this.matrixSI.toArray();
+        double[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
             for (int j = 0; j < (values.length > 0 ? values[0].length : 0); j++)
-                values[i][j] = (float) convertToSpecifiedUnit(values[i][j]);
+                values[i][j] = convertToSpecifiedUnit(values[i][j]);
         return values;
     }
 
@@ -151,12 +151,12 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public float[][] getValuesInUnit(final U targetUnit)
+    public double[][] getValuesInUnit(final U targetUnit)
     {
-        float[][] values = this.matrixSI.toArray();
+        double[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
             for (int j = 0; j < (values.length > 0 ? values[0].length : 0); j++)
-                values[i][j] = (float) convertToUnit(values[i][j], targetUnit);
+                values[i][j] = convertToUnit(values[i][j], targetUnit);
         return values;
     }
 
@@ -179,38 +179,38 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#getSI(int, int)
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#getSI(int, int)
      */
-    public float getSI(final int row, final int column) throws ValueException
+    public double getSI(final int row, final int column) throws ValueException
     {
         if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
-            throw new ValueException("FloatMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
+            throw new ValueException("DoubleMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
                     + ", size=" + rows() + ", column=" + column + ", size=" + columns());
         return this.matrixSI.get(row, column);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#getInUnit(int, int)
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#getInUnit(int, int)
      */
-    public float getInUnit(final int row, final int column) throws ValueException
+    public double getInUnit(final int row, final int column) throws ValueException
     {
-        return (float) convertToSpecifiedUnit(getSI(row, column));
+        return convertToSpecifiedUnit(getSI(row, column));
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#getInUnit(int, int,
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#getInUnit(int, int,
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public float getInUnit(final int row, final int column, final U targetUnit) throws ValueException
+    public double getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
-        return (float) convertToUnit(getSI(row, column), targetUnit);
+        return convertToUnit(getSI(row, column), targetUnit);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#zSum()
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#zSum()
      */
-    public float zSum()
+    public double zSum()
     {
         return this.matrixSI.zSum();
     }
@@ -220,9 +220,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public void normalize() throws ValueException
     {
-        float sum = this.zSum();
+        double sum = this.zSum();
         if (sum == 0)
-            throw new ValueException("FloatMatrix.normalize: zSum of the vector values == 0, cannot normalize");
+            throw new ValueException("DoubleMatrix.normalize: zSum of the vector values == 0, cannot normalize");
         this.divide(sum);
     }
 
@@ -236,23 +236,23 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#det()
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#det()
      */
     @Override
-    public float det() throws ValueException
+    public double det() throws ValueException
     {
         if (this instanceof Sparse)
-            return new SparseFloatAlgebra().det(this.matrixSI);
+            return new SparseDoubleAlgebra().det(this.matrixSI);
         if (this instanceof Dense)
-            return new DenseFloatAlgebra().det(this.matrixSI);
-        throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+            return new DenseDoubleAlgebra().det(this.matrixSI);
+        throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
     /**
      * Create a deep copy of the matrix, independent of the original matrix.
      * @return a deep copy of the absolute / relative, dense / sparse matrix
      */
-    public abstract FloatMatrix<U> copy();
+    public abstract DoubleMatrix<U> copy();
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -261,9 +261,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public boolean equals(Object obj)
     {
         // unequal if object is of a different type.
-        if (!(obj instanceof FloatMatrix<?>))
+        if (!(obj instanceof DoubleMatrix<?>))
             return false;
-        FloatMatrix<?> fm = (FloatMatrix<?>) obj;
+        DoubleMatrix<?> fm = (DoubleMatrix<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fm.getUnit().getStandardUnit()))
@@ -287,7 +287,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void abs()
     {
-        this.matrixSI.assign(FloatFunctions.abs);
+        this.matrixSI.assign(DoubleFunctions.abs);
     }
 
     /**
@@ -296,7 +296,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void acos()
     {
-        this.matrixSI.assign(FloatFunctions.acos);
+        this.matrixSI.assign(DoubleFunctions.acos);
     }
 
     /**
@@ -305,7 +305,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void asin()
     {
-        this.matrixSI.assign(FloatFunctions.asin);
+        this.matrixSI.assign(DoubleFunctions.asin);
     }
 
     /**
@@ -314,7 +314,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void atan()
     {
-        this.matrixSI.assign(FloatFunctions.atan);
+        this.matrixSI.assign(DoubleFunctions.atan);
     }
 
     /**
@@ -323,7 +323,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void cbrt()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.cbrt);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.cbrt);
     }
 
     /**
@@ -332,7 +332,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void ceil()
     {
-        this.matrixSI.assign(FloatFunctions.ceil);
+        this.matrixSI.assign(DoubleFunctions.ceil);
     }
 
     /**
@@ -341,7 +341,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void cos()
     {
-        this.matrixSI.assign(FloatFunctions.cos);
+        this.matrixSI.assign(DoubleFunctions.cos);
     }
 
     /**
@@ -350,7 +350,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void cosh()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.cosh);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.cosh);
     }
 
     /**
@@ -359,7 +359,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void exp()
     {
-        this.matrixSI.assign(FloatFunctions.exp);
+        this.matrixSI.assign(DoubleFunctions.exp);
     }
 
     /**
@@ -368,7 +368,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void expm1()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.expm1);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.expm1);
     }
 
     /**
@@ -377,7 +377,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void floor()
     {
-        this.matrixSI.assign(FloatFunctions.floor);
+        this.matrixSI.assign(DoubleFunctions.floor);
     }
 
     /**
@@ -386,7 +386,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void log()
     {
-        this.matrixSI.assign(FloatFunctions.log);
+        this.matrixSI.assign(DoubleFunctions.log);
     }
 
     /**
@@ -395,7 +395,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void log10()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.log10);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.log10);
     }
 
     /**
@@ -404,7 +404,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void log1p()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.log1p);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.log1p);
     }
 
     /**
@@ -413,7 +413,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void pow(double x)
     {
-        this.matrixSI.assign(FloatFunctions.pow((float) x));
+        this.matrixSI.assign(DoubleFunctions.pow(x));
     }
 
     /**
@@ -422,7 +422,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void rint()
     {
-        this.matrixSI.assign(FloatFunctions.rint);
+        this.matrixSI.assign(DoubleFunctions.rint);
     }
 
     /**
@@ -431,7 +431,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void round()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.round);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.round);
     }
 
     /**
@@ -440,7 +440,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void signum()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.signum);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.signum);
     }
 
     /**
@@ -449,7 +449,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void sin()
     {
-        this.matrixSI.assign(FloatFunctions.sin);
+        this.matrixSI.assign(DoubleFunctions.sin);
     }
 
     /**
@@ -458,7 +458,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void sinh()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.sinh);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.sinh);
     }
 
     /**
@@ -467,7 +467,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void sqrt()
     {
-        this.matrixSI.assign(FloatFunctions.sqrt);
+        this.matrixSI.assign(DoubleFunctions.sqrt);
     }
 
     /**
@@ -476,7 +476,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void tan()
     {
-        this.matrixSI.assign(FloatFunctions.tan);
+        this.matrixSI.assign(DoubleFunctions.tan);
     }
 
     /**
@@ -485,7 +485,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void tanh()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.tanh);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.tanh);
     }
 
     /**
@@ -494,7 +494,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void toDegrees()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.toDegrees);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.toDegrees);
     }
 
     /**
@@ -503,7 +503,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void toRadians()
     {
-        this.matrixSI.assign(FloatMathFunctionsImpl.toRadians);
+        this.matrixSI.assign(DoubleMathFunctionsImpl.toRadians);
     }
 
     /**
@@ -512,25 +512,25 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void inv()
     {
-        this.matrixSI.assign(FloatFunctions.inv);
+        this.matrixSI.assign(DoubleFunctions.inv);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
+     * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
     @Override
-    public void multiply(float constant)
+    public void multiply(double constant)
     {
-        this.matrixSI.assign(FloatFunctions.mult(constant));
+        this.matrixSI.assign(DoubleFunctions.mult(constant));
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
+     * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
      */
     @Override
-    public void divide(float constant)
+    public void divide(double constant)
     {
-        this.matrixSI.assign(FloatFunctions.div(constant));
+        this.matrixSI.assign(DoubleFunctions.div(constant));
     }
 
     /**
@@ -555,7 +555,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             s += "\n";
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
-                float f = (float) convertToUnit(this.matrixSI.get(i, j), displayUnit);
+                double f = convertToUnit(this.matrixSI.get(i, j), displayUnit);
                 if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
                     s += " " + String.format("%8.3f", f);
                 else
@@ -576,12 +576,12 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param matrix the matrix to add
      * @throws ValueException when matrices have unequal size
      */
-    public void add(final FloatMatrixRel<U> matrix) throws ValueException
+    public void add(final DoubleMatrixRel<U> matrix) throws ValueException
     {
         if (rows() != matrix.rows() || columns() != matrix.columns())
-            throw new ValueException("FloatMatrix.add - two matrices have unequal size: " + rows() + "x" + columns()
+            throw new ValueException("DoubleMatrix.add - two matrices have unequal size: " + rows() + "x" + columns()
                     + " != " + matrix.rows() + "x" + matrix.columns());
-        this.matrixSI.assign(matrix.matrixSI, FloatFunctions.plus);
+        this.matrixSI.assign(matrix.matrixSI, DoubleFunctions.plus);
     }
 
     /**
@@ -591,12 +591,12 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param matrix the value to subtract
      * @throws ValueException when matrices have unequal size
      */
-    public void subtract(final FloatMatrixRel<U> matrix) throws ValueException
+    public void subtract(final DoubleMatrixRel<U> matrix) throws ValueException
     {
         if (rows() != matrix.rows() || columns() != matrix.columns())
-            throw new ValueException("FloatMatrix.subtract - two matrices have unequal size: " + rows() + "x"
+            throw new ValueException("DoubleMatrix.subtract - two matrices have unequal size: " + rows() + "x"
                     + columns() + " != " + matrix.rows() + "x" + matrix.columns());
-        this.matrixSI.assign(matrix.matrixSI, FloatFunctions.minus);
+        this.matrixSI.assign(matrix.matrixSI, DoubleFunctions.minus);
     }
 
     /**********************************************************************************/
@@ -611,14 +611,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return new Matrix with absolute elements sum of x[i] and y[i]
      * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> plus(final FloatMatrixAbs<U> x, final FloatMatrixRel<U> y)
+    public static <U extends Unit<U>> DoubleMatrixAbs<U> plus(final DoubleMatrixAbs<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixAbs<U> c = (FloatMatrixAbs<U>) x.copy();
+        DoubleMatrixAbs<U> c = (DoubleMatrixAbs<U>) x.copy();
         c.add(y);
         return c;
     }
@@ -632,7 +632,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return new Matrix with absolute elements sum of x[i] and y[i]
      * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> plus(final FloatMatrixRel<U> x, final FloatMatrixAbs<U> y)
+    public static <U extends Unit<U>> DoubleMatrixAbs<U> plus(final DoubleMatrixRel<U> x, final DoubleMatrixAbs<U> y)
             throws ValueException
     {
         return plus(y, x);
@@ -646,14 +646,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return new Matrix with absolute elements sum of x[i] and y[i]
      * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixRel<U> plus(final FloatMatrixRel<U> x, final FloatMatrixRel<U> y)
+    public static <U extends Unit<U>> DoubleMatrixRel<U> plus(final DoubleMatrixRel<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
+        DoubleMatrixRel<U> c = (DoubleMatrixRel<U>) x.copy();
         c.add(y);
         return c;
     }
@@ -666,14 +666,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return new Matrix with absolute elements values x[i,j] minus y[i,j]
      * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixRel<U> minus(final FloatMatrixRel<U> x, final FloatMatrixRel<U> y)
+    public static <U extends Unit<U>> DoubleMatrixRel<U> minus(final DoubleMatrixRel<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
+        DoubleMatrixRel<U> c = (DoubleMatrixRel<U>) x.copy();
         c.subtract(y);
         return c;
     }
@@ -686,14 +686,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return new Matrix with absolute elements: values x[i,j] minus y[i,j]
      * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> minus(final FloatMatrixAbs<U> x, final FloatMatrixRel<U> y)
+    public static <U extends Unit<U>> DoubleMatrixAbs<U> minus(final DoubleMatrixAbs<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixAbs<U> c = (FloatMatrixAbs<U>) x.copy();
+        DoubleMatrixAbs<U> c = (DoubleMatrixAbs<U>) x.copy();
         c.subtract(y);
         return c;
     }
@@ -706,15 +706,15 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return new Matrix with relative elements: values x[i,j] minus y[i,j]
      * @throws ValueException when matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixRel<U> minus(final FloatMatrixAbs<U> x, final FloatMatrixAbs<U> y)
+    public static <U extends Unit<U>> DoubleMatrixRel<U> minus(final DoubleMatrixAbs<U> x, final DoubleMatrixAbs<U> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
-        c.matrixSI.assign(y.matrixSI, FloatFunctions.minus);
+        DoubleMatrixRel<U> c = (DoubleMatrixRel<U>) x.copy();
+        c.matrixSI.assign(y.matrixSI, DoubleFunctions.minus);
         return c;
     }
 
@@ -725,11 +725,11 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return the zDotProduct of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static FloatMatrixAbs<SIUnit> zDotProduct(final FloatMatrixAbs<?> x, final FloatMatrixAbs<?> y)
+    public static DoubleMatrixAbs<SIUnit> zDotProduct(final DoubleMatrixAbs<?> x, final DoubleMatrixAbs<?> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
         SIUnit targetUnit =
@@ -737,8 +737,8 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
                         y.getUnit().getSICoefficients()).toString());
 
         @SuppressWarnings("unchecked")
-        FloatMatrixAbs<SIUnit> c = (FloatMatrixAbs<SIUnit>) x.copy();
-        c.matrixSI.assign(y.matrixSI, FloatFunctions.mult);
+        DoubleMatrixAbs<SIUnit> c = (DoubleMatrixAbs<SIUnit>) x.copy();
+        c.matrixSI.assign(y.matrixSI, DoubleFunctions.mult);
         c.unit = targetUnit;
         return c;
     }
@@ -750,11 +750,11 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return the zDotProduct of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static FloatMatrixRel<SIUnit> zDotProduct(final FloatMatrixRel<?> x, final FloatMatrixRel<?> y)
+    public static DoubleMatrixRel<SIUnit> zDotProduct(final DoubleMatrixRel<?> x, final DoubleMatrixRel<?> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
         SIUnit targetUnit =
@@ -762,8 +762,8 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
                         y.getUnit().getSICoefficients()).toString());
 
         @SuppressWarnings("unchecked")
-        FloatMatrixRel<SIUnit> c = (FloatMatrixRel<SIUnit>) x.copy();
-        c.matrixSI.assign(y.matrixSI, FloatFunctions.mult);
+        DoubleMatrixRel<SIUnit> c = (DoubleMatrixRel<SIUnit>) x.copy();
+        c.matrixSI.assign(y.matrixSI, DoubleFunctions.mult);
         c.unit = targetUnit;
         return c;
     }
@@ -776,18 +776,18 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return the zDotProduct of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> zDotProduct(final FloatMatrixAbs<U> x, final float[][] c)
+    public static <U extends Unit<U>> DoubleMatrixAbs<U> zDotProduct(final DoubleMatrixAbs<U> x, final double[][] c)
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException(
-                    "FloatMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
+                    "DoubleMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
                             + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
-        FloatMatrixAbs<U> result = (FloatMatrixAbs<U>) x.copy();
-        DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
-        result.matrixSI.assign(cMatrix, FloatFunctions.mult);
+        DoubleMatrixAbs<U> result = (DoubleMatrixAbs<U>) x.copy();
+        DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
+        result.matrixSI.assign(cMatrix, DoubleFunctions.mult);
         return result;
     }
 
@@ -799,18 +799,18 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return the zDotProduct of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixRel<U> zDotProduct(final FloatMatrixRel<U> x, final float[][] c)
+    public static <U extends Unit<U>> DoubleMatrixRel<U> zDotProduct(final DoubleMatrixRel<U> x, final double[][] c)
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException(
-                    "FloatMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
+                    "DoubleMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
                             + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
-        FloatMatrixRel<U> result = (FloatMatrixRel<U>) x.copy();
-        DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
-        result.matrixSI.assign(cMatrix, FloatFunctions.mult);
+        DoubleMatrixRel<U> result = (DoubleMatrixRel<U>) x.copy();
+        DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
+        result.matrixSI.assign(cMatrix, DoubleFunctions.mult);
         return result;
     }
 
@@ -819,9 +819,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param x the matrix to convert
      * @return the converted matrix
      */
-    public static <U extends Unit<U>> FloatMatrixAbsDense<U> sparseToDense(final FloatMatrixAbsSparse<U> x)
+    public static <U extends Unit<U>> DoubleMatrixAbsDense<U> sparseToDense(final DoubleMatrixAbsSparse<U> x)
     {
-        FloatMatrixAbsDense<U> v = new FloatMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixAbsDense<U> v = new DoubleMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
@@ -831,9 +831,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param x the matrix to convert
      * @return the converted matrix
      */
-    public static <U extends Unit<U>> FloatMatrixRelDense<U> sparseToDense(final FloatMatrixRelSparse<U> x)
+    public static <U extends Unit<U>> DoubleMatrixRelDense<U> sparseToDense(final DoubleMatrixRelSparse<U> x)
     {
-        FloatMatrixRelDense<U> v = new FloatMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixRelDense<U> v = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
@@ -843,9 +843,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param x the matrix to convert
      * @return the converted matrix
      */
-    public static <U extends Unit<U>> FloatMatrixAbsSparse<U> denseToSparse(final FloatMatrixAbsDense<U> x)
+    public static <U extends Unit<U>> DoubleMatrixAbsSparse<U> denseToSparse(final DoubleMatrixAbsDense<U> x)
     {
-        FloatMatrixAbsSparse<U> v = new FloatMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixAbsSparse<U> v = new DoubleMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
@@ -855,9 +855,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @param x the matrix to convert
      * @return the converted matrix
      */
-    public static <U extends Unit<U>> FloatMatrixRelSparse<U> denseToSparse(final FloatMatrixRelDense<U> x)
+    public static <U extends Unit<U>> DoubleMatrixRelSparse<U> denseToSparse(final DoubleMatrixRelDense<U> x)
     {
-        FloatMatrixRelSparse<U> v = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixRelSparse<U> v = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
         v.unit = x.unit;
         return v;
     }
@@ -870,7 +870,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return vector x in A*x = b
      * @throws ValueException when Matrix A is neither Sparse nor Dense.
      */
-    public static FloatVectorAbs<SIUnit> solve(final FloatMatrixAbs<?> A, final FloatVectorAbs<?> b)
+    public static DoubleVectorAbs<SIUnit> solve(final DoubleMatrixAbs<?> A, final DoubleVectorAbs<?> b)
             throws ValueException
     {
         // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
@@ -879,21 +879,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
                         A.getUnit().getSICoefficients()).toString());
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        FloatMatrix2D A2D = A.getMatrixSI();
-        FloatMatrix1D b1D = b.getVectorSI();
+        DoubleMatrix2D A2D = A.getMatrixSI();
+        DoubleMatrix1D b1D = b.getVectorSI();
         if (A instanceof Sparse)
         {
-            FloatMatrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorAbsSparse<SIUnit> x = new FloatVectorAbsSparse<SIUnit>(x1D.toArray(), targetUnit);
+            DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
+            DoubleVectorAbsSparse<SIUnit> x = new DoubleVectorAbsSparse<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         if (A instanceof Dense)
         {
-            FloatMatrix1D x1D = new DenseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorAbsDense<SIUnit> x = new FloatVectorAbsDense<SIUnit>(x1D.toArray(), targetUnit);
+            DoubleMatrix1D x1D = new DenseDoubleAlgebra().solve(A2D, b1D);
+            DoubleVectorAbsDense<SIUnit> x = new DoubleVectorAbsDense<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
-        throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+        throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
     /**
@@ -904,7 +904,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return vector x in A*x = b
      * @throws ValueException when Matrix A is neither Sparse nor Dense.
      */
-    public static FloatVectorRel<SIUnit> solve(final FloatMatrixRel<?> A, final FloatVectorRel<?> b)
+    public static DoubleVectorRel<SIUnit> solve(final DoubleMatrixRel<?> A, final DoubleVectorRel<?> b)
             throws ValueException
     {
         // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
@@ -913,21 +913,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
                         A.getUnit().getSICoefficients()).toString());
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        FloatMatrix2D A2D = A.getMatrixSI();
-        FloatMatrix1D b1D = b.getVectorSI();
+        DoubleMatrix2D A2D = A.getMatrixSI();
+        DoubleMatrix1D b1D = b.getVectorSI();
         if (A instanceof Sparse)
         {
-            FloatMatrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorRelSparse<SIUnit> x = new FloatVectorRelSparse<SIUnit>(x1D.toArray(), targetUnit);
+            DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
+            DoubleVectorRelSparse<SIUnit> x = new DoubleVectorRelSparse<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         if (A instanceof Dense)
         {
-            FloatMatrix1D x1D = new DenseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorRelDense<SIUnit> x = new FloatVectorRelDense<SIUnit>(x1D.toArray(), targetUnit);
+            DoubleMatrix1D x1D = new DenseDoubleAlgebra().solve(A2D, b1D);
+            DoubleVectorRelDense<SIUnit> x = new DoubleVectorRelDense<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
-        throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+        throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
 }

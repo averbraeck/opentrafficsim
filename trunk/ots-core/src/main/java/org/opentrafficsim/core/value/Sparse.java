@@ -1,9 +1,4 @@
-package org.opentrafficsim.core.value.vfloat.vector;
-
-import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+package org.opentrafficsim.core.value;
 
 /**
  * <p>
@@ -29,31 +24,14 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 20, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
+ * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.tudelft.nl/gftamminga">Guus Tamminga</a>
+ * @author <a href="http://www.tudelft.nl/yufeiyuan">Yufei Yuan</a>
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public interface Sparse
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
-
-    /**
-     * @param values
-     * @param unit
-     */
-    public FloatVectorRel(final float[] values, final U unit)
-    {
-        super(values, unit);
-    }
-
-    /**
-     * @param values
-     * @throws ValueException
-     */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
-    {
-        super(values);
-    }
-
+    //
 }
