@@ -74,7 +74,9 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U>
     @Override
     public FloatVector<U> copy()
     {
-        return new FloatVectorRelSparse<U>(this.vectorSI.toArray(), this.unit);
+        FloatVectorRelSparse<U> v = new FloatVectorRelSparse<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
+        v.unit = this.unit;
+        return v;
     }
 
     /**
