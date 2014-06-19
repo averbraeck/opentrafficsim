@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
+import org.opentrafficsim.core.unit.SICoefficients;
+import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.Vector;
@@ -142,7 +144,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public float get(final int index) throws ValueException
     {
-        if (index < 0 || index > this.vectorSI.size())
+        if (index < 0 || index >= this.vectorSI.size())
             throw new ValueException("FloatVector.get: index<0 || index>size. index=" + index + ", size=" + size());
         return this.vectorSI.get(index);
     }
@@ -625,26 +627,42 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
 
     /**
      * Multiply two absolute vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zproduct with
-     * @param y the second vector to do the zproduct with
-     * @return the zproduct of this vector and another vector of the same size.
+     * @param x the first vector to do the zProduct with
+     * @param y the second vector to do the zProduct with
+     * @return the zProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
+    public static FloatVectorAbs<SIUnit> zProduct(FloatVectorAbs<?> x, FloatVectorAbs<?> y)
+            throws ValueException
+    {
+        if (x.size() != y.size())
+            throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
+                    + y.size());
+        
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
+                        x.getUnit().getSICoefficients(), y.getUnit().getSICoefficients()).toString());
+
+        FloatVectorAbs<SIUnit> c = (FloatVectorAbs<SIUnit>) x.copy();
+        c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
+        c.unit = targetUnit;
+        return c;
+    }
 
     /**
      * Multiply two relative vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zproduct with
-     * @param y the second vector to do the zproduct with
-     * @return the zproduct of this vector and another vector of the same size.
+     * @param x the first vector to do the zProduct with
+     * @param y the second vector to do the zProduct with
+     * @return the zProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
 
     /**
      * Multiply a vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The result
      * will have the same unit as vector x. Vector x can be relative or absolute. The result will be the same.
-     * @param x the first vector to do the zproduct with
-     * @param c the dimensionless vector with constants to do the zproduct with
-     * @return the zproduct of this vector and another vector of the same size.
+     * @param x the first vector to do the zProduct with
+     * @param c the dimensionless vector with constants to do the zProduct with
+     * @return the zProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
 
