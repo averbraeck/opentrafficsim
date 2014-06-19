@@ -35,7 +35,7 @@ public interface FloatVectorFunctions extends VectorFunctions
     /**
      * @param index position to get the value for.
      * @return value at position i.
-     * @throws ValueException if i < 0 or i > vector.size().
+     * @throws ValueException if i < 0 or i >= vector.size().
      */
     float get(int index) throws ValueException;
     
