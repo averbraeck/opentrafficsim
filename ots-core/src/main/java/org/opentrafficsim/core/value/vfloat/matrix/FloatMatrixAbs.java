@@ -42,7 +42,7 @@ public abstract class FloatMatrixAbs<U extends Unit<U>> extends FloatMatrix<U> i
      * @param values
      * @param unit
      */
-    public FloatMatrixAbs(float[][] values, U unit)
+    public FloatMatrixAbs(final float[][] values, final U unit)
     {
         super(values, unit);
     }
@@ -51,7 +51,7 @@ public abstract class FloatMatrixAbs<U extends Unit<U>> extends FloatMatrix<U> i
      * @param values
      * @throws ValueException
      */
-    public FloatMatrixAbs(FloatScalarAbs<U>[][] values) throws ValueException
+    public FloatMatrixAbs(final FloatScalarAbs<U>[][] values) throws ValueException
     {
         super(values);
     }

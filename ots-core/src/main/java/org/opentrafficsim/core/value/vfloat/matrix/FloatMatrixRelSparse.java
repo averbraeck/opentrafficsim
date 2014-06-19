@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
@@ -36,17 +37,17 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U>
+public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> implements Sparse
 {
     /** */
-    private static final long serialVersionUID = 20140618L;
+    private static final long serialVersionUID = 20140619L;
 
     /**
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
      */
-    public FloatMatrixRelSparse(float[][] values, final U unit)
+    public FloatMatrixRelSparse(final float[][] values, final U unit)
     {
         super(values, unit);
     }
@@ -56,24 +57,24 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U>
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatMatrixRelSparse(FloatScalarRel<U>[][] values) throws ValueException
+    public FloatMatrixRelSparse(final FloatScalarRel<U>[][] values) throws ValueException
     {
         super(values);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
+     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
      */
-    protected FloatMatrix2D createMatrix2D(int rows, int columns)
+    protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
     {
         return new SparseFloatMatrix2D(rows, columns);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatVector#copy()
+     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#copy()
      */
     @Override
-    public FloatMatrix<U> copy()
+    public final FloatMatrix<U> copy()
     {
         FloatMatrixRelSparse<U> m = new FloatMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;
@@ -83,7 +84,7 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U>
     /**
      * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public DenseFloatMatrix2D getColtDenseFloatMatrix2D()
+    public final DenseFloatMatrix2D getColtDenseFloatMatrix2D()
     {
         return (DenseFloatMatrix2D) this.matrixSI;
     }

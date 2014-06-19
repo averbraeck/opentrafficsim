@@ -1,9 +1,12 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+
+import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 
 /**
  * <p>
@@ -33,27 +36,56 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> implements Relative
+public class DoubleVectorRelSparse<U extends Unit<U>> extends DoubleVectorRel<U> implements Sparse
 {
     /** */
     private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param values
-     * @param unit
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @param unit the unit of the values
      */
-    public FloatVectorRel(final float[] values, final U unit)
+    public DoubleVectorRelSparse(final double[] values, final U unit)
     {
         super(values, unit);
     }
 
     /**
-     * @param values
-     * @throws ValueException
+     * Construct the vector and store the values in SI units.
+     * @param values an array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatVectorRel(final FloatScalarRel<U>[] values) throws ValueException
+    public DoubleVectorRelSparse(final DoubleScalarRel<U>[] values) throws ValueException
     {
         super(values);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
+     */
+    protected final DoubleMatrix1D createMatrix1D(final int size)
+    {
+        return new SparseDoubleMatrix1D(size);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#copy()
+     */
+    @Override
+    public final DoubleVector<U> copy()
+    {
+        DoubleVectorRelSparse<U> v = new DoubleVectorRelSparse<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
+        v.unit = this.unit;
+        return v;
+    }
+
+    /**
+     * @return the internally stored vector from the Colt library, converted to SI units.
+     */
+    public final SparseDoubleMatrix1D getColtSparseDoubleMatrix1D()
+    {
+        return (SparseDoubleMatrix1D) this.vectorSI;
     }
 
 }

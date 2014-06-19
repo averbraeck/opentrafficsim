@@ -42,7 +42,7 @@ public abstract class FloatVectorAbs<U extends Unit<U>> extends FloatVector<U> i
      * @param values
      * @param unit
      */
-    public FloatVectorAbs(float[] values, U unit)
+    public FloatVectorAbs(final float[] values, final U unit)
     {
         super(values, unit);
     }
@@ -51,7 +51,7 @@ public abstract class FloatVectorAbs<U extends Unit<U>> extends FloatVector<U> i
      * @param values
      * @throws ValueException
      */
-    public FloatVectorAbs(FloatScalarAbs<U>[] values) throws ValueException
+    public FloatVectorAbs(final FloatScalarAbs<U>[] values) throws ValueException
     {
         super(values);
     }

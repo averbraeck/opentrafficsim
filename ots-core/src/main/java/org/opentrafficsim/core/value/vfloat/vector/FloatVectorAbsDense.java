@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Dense;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 
@@ -35,7 +36,7 @@ import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
+public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U> implements Dense
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -45,7 +46,7 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
      * @param values an array of values for the constructor
      * @param unit the unit of the values
      */
-    public FloatVectorAbsDense(float[] values, final U unit)
+    public FloatVectorAbsDense(final float[] values, final U unit)
     {
         super(values, unit);
     }
@@ -55,7 +56,7 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatVectorAbsDense(FloatScalarAbs<U>[] values) throws ValueException
+    public FloatVectorAbsDense(final FloatScalarAbs<U>[] values) throws ValueException
     {
         super(values);
     }
@@ -63,7 +64,7 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
      */
-    protected FloatMatrix1D createMatrix1D(int size)
+    protected final FloatMatrix1D createMatrix1D(int size)
     {
         return new DenseFloatMatrix1D(size);
     }
@@ -72,7 +73,7 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
     @Override
-    public FloatVector<U> copy()
+    public final FloatVector<U> copy()
     {
         FloatVectorAbsDense<U> v = new FloatVectorAbsDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;
@@ -82,9 +83,9 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U>
     /**
      * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public FloatMatrix1D getColtDenseFloatMatrix1D()
+    public final DenseFloatMatrix1D getColtDenseFloatMatrix1D()
     {
-        return this.vectorSI;
+        return (DenseFloatMatrix1D) this.vectorSI;
     }
 
 }

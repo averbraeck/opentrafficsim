@@ -40,4 +40,9 @@ public interface VectorFunctions
      */
     int size();
     
+    /**
+     * @return the number of cells having non-zero values; ignores tolerance.
+     */
+    int cardinality();
+
 }
