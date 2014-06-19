@@ -40,7 +40,7 @@ public class VolumeUnit extends Unit<VolumeUnit>
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** the unit of length for the area unit, e.g., meter */
+    /** the unit of length for the volume unit, e.g., meter */
     private final LengthUnit lengthUnit;
 
     /** m^3 */
