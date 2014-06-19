@@ -10,6 +10,7 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 import cern.colt.matrix.tfloat.FloatMatrix1D;
+import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
 import cern.jet.math.tfloat.FloatFunctions;
 
 /**
@@ -694,7 +695,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
 
     /**
      * Multiply an absolute vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
-     * result will have the same unit as vector x. Vector x can be relative or absolute. The result will be the same.
+     * result will have the same unit as vector x. 
      * @param x the first vector to do the zDotProduct with
      * @param c the dimensionless vector with constants to do the zDotProduct with
      * @return the zDotProduct of this vector and another vector of the same size.
@@ -706,9 +707,37 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
                     + x.size() + " != " + c.length);
 
+        // TODO: more elegant implementation that does not copy the entire vector?
         FloatVectorAbs<U> result = (FloatVectorAbs<U>) x.copy();
-        // result.vectorSI.assign(y, FloatFunctions.mult);
+        DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
+        result.vectorSI.assign(cMatrix, FloatFunctions.mult);
         return result;
     }
 
+    /**
+     * Multiply a relative vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
+     * result will have the same unit as vector x. 
+     * @param x the first vector to do the zDotProduct with
+     * @param c the dimensionless vector with constants to do the zDotProduct with
+     * @return the zDotProduct of this vector and another vector of the same size.
+     * @throws ValueException if the two vectors have unequal size
+     */
+    public static <U extends Unit<U>> FloatVectorRel<U> zDotProduct(FloatVectorRel<U> x, float[] c) throws ValueException
+    {
+        if (x.size() != c.length)
+            throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
+                    + x.size() + " != " + c.length);
+
+        // TODO: more elegant implementation that does not copy the entire vector?
+        FloatVectorRel<U> result = (FloatVectorRel<U>) x.copy();
+        DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
+        result.vectorSI.assign(cMatrix, FloatFunctions.mult);
+        return result;
+    }
+
+    // TODO: invert values in the matrix, e.g. each value 1.0 / x[i]
+    
+    // TODO: dense -> sparse
+    
+    // TODO: sparse -> dense
 }
