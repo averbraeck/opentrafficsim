@@ -60,7 +60,7 @@ public abstract class FloatVectorTest
             assertEquals("Values in floatVector in unit should be equal to input values", in[i], out[i], 0.0001);
             try
             {
-                assertEquals("Values in floatVector in unit should be equal to input values", in[i], fv.get(i) / (12 * 0.0254), 0.0001);
+                assertEquals("Values in floatVector in unit should be equal to input values", in[i], fv.getSI(i) / (12 * 0.0254), 0.0001);
             }
             catch (ValueException exception)
             {
@@ -69,7 +69,7 @@ public abstract class FloatVectorTest
         }
         try
         {
-            fv.get(-1);
+            fv.getSI(-1);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -78,7 +78,7 @@ public abstract class FloatVectorTest
         }
         try
         {
-            fv.get(in.length);
+            fv.getSI(in.length);
             fail("Using a index that is too hig should throw a ValueException");
         }
         catch (ValueException exception)

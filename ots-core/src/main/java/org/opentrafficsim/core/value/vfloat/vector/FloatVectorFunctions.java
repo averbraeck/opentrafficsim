@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
+import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.VectorFunctions;
 
@@ -29,15 +30,31 @@ import org.opentrafficsim.core.value.VectorFunctions;
  * of this software, even if advised of the possibility of such damage.
  * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <U> the unit
  */
-public interface FloatVectorFunctions extends VectorFunctions
+public interface FloatVectorFunctions<U extends Unit<U>> extends VectorFunctions
 {
     /**
-     * @param index position to get the value for.
-     * @return value at position i.
-     * @throws ValueException if i < 0 or i >= vector.size().
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    float get(int index) throws ValueException;
+    float getSI(int index) throws ValueException;
+    
+    /**
+     * @param index position to get the value for in the original unit of creation.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    float getInUnit(int index) throws ValueException;
+    
+    /**
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param targetUnit the unit for the result.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    float getInUnit(int index, U targetUnit) throws ValueException;
     
     /**
      * @return sum of all values of the vector.

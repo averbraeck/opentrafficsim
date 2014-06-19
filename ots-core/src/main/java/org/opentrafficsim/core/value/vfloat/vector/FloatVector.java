@@ -42,7 +42,7 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @param <U> The unit for this value type
  */
 public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implements FloatMathFunctions,
-        FloatVectorFunctions
+        FloatVectorFunctions<U>
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -140,13 +140,32 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#get(int)
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getSI(int)
      */
-    public float get(final int index) throws ValueException
+    public float getSI(final int index) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
             throw new ValueException("FloatVector.get: index<0 || index>size. index=" + index + ", size=" + size());
         return this.vectorSI.get(index);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int)
+     */
+    public float getInUnit(int index) throws ValueException
+    {
+        return (float) convertToSpecifiedUnit(getSI(index));
+    }
+    
+    /**
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param targetUnit the unit for the result.
+     * @return value at position i.
+     * @throws ValueException if i < 0 or i >= vector.size().
+     */
+    public float getInUnit(int index, U targetUnit) throws ValueException
+    {
+        return (float) convertToUnit(getSI(index), targetUnit);
     }
 
     /**
@@ -627,22 +646,22 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
 
     /**
      * Multiply two absolute vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zProduct with
-     * @param y the second vector to do the zProduct with
-     * @return the zProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the zDotProduct with
+     * @param y the second vector to do the zDotProduct with
+     * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static FloatVectorAbs<SIUnit> zProduct(FloatVectorAbs<?> x, FloatVectorAbs<?> y)
-            throws ValueException
+    public static FloatVectorAbs<SIUnit> zDotProduct(FloatVectorAbs<?> x, FloatVectorAbs<?> y) throws ValueException
     {
         if (x.size() != y.size())
             throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
-        
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        x.getUnit().getSICoefficients(), y.getUnit().getSICoefficients()).toString());
 
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
+                        y.getUnit().getSICoefficients()).toString());
+
+        @SuppressWarnings("unchecked")
         FloatVectorAbs<SIUnit> c = (FloatVectorAbs<SIUnit>) x.copy();
         c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
         c.unit = targetUnit;
@@ -651,19 +670,45 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
 
     /**
      * Multiply two relative vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zProduct with
-     * @param y the second vector to do the zProduct with
-     * @return the zProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the zDotProduct with
+     * @param y the second vector to do the zDotProduct with
+     * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
+    public static FloatVectorRel<SIUnit> zDotProduct(FloatVectorRel<?> x, FloatVectorRel<?> y) throws ValueException
+    {
+        if (x.size() != y.size())
+            throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
+                    + y.size());
+
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
+                        y.getUnit().getSICoefficients()).toString());
+
+        @SuppressWarnings("unchecked")
+        FloatVectorRel<SIUnit> c = (FloatVectorRel<SIUnit>) x.copy();
+        c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
+        c.unit = targetUnit;
+        return c;
+    }
 
     /**
-     * Multiply a vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The result
-     * will have the same unit as vector x. Vector x can be relative or absolute. The result will be the same.
-     * @param x the first vector to do the zProduct with
-     * @param c the dimensionless vector with constants to do the zProduct with
-     * @return the zProduct of this vector and another vector of the same size.
+     * Multiply an absolute vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
+     * result will have the same unit as vector x. Vector x can be relative or absolute. The result will be the same.
+     * @param x the first vector to do the zDotProduct with
+     * @param c the dimensionless vector with constants to do the zDotProduct with
+     * @return the zDotProduct of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
+    public static <U extends Unit<U>> FloatVectorAbs<U> zDotProduct(FloatVectorAbs<U> x, float[] c) throws ValueException
+    {
+        if (x.size() != c.length)
+            throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
+                    + x.size() + " != " + c.length);
+
+        FloatVectorAbs<U> result = (FloatVectorAbs<U>) x.copy();
+        // result.vectorSI.assign(y, FloatFunctions.mult);
+        return result;
+    }
 
 }
