@@ -39,7 +39,8 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> The unit for this value type
  */
-public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implements FloatMathFunctions
+public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implements FloatMathFunctions,
+        FloatVectorFunctions
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -129,15 +130,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @return the unit
-     */
-    public U getUnit()
-    {
-        return this.unit;
-    }
-
-    /**
-     * @return the size of the vector as an int
+     * @see org.opentrafficsim.core.value.VectorFunctions#size()
      */
     public int size()
     {
@@ -145,10 +138,62 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#get(int)
+     */
+    public float get(final int index) throws ValueException
+    {
+        if (index < 0 || index > this.vectorSI.size())
+            throw new ValueException("FloatVector.get: index<0 || index>size. index=" + index + ", size=" + size());
+        return this.vectorSI.get(index);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#zSum()
+     */
+    public float zSum()
+    {
+        return this.vectorSI.zSum();
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.VectorFunctions#normalize()
+     */
+    public void normalize() throws ValueException
+    {
+        float sum = this.zSum();
+        if (sum == 0)
+            throw new ValueException("FloatVector.normalize: zSum of the vector values == 0, cannot normalize");
+        this.divide(sum);
+    }
+
+    /**
      * Create a deep copy of the vector, independent of the original vector.
      * @return a deep copy of the absolute / relative, dense / sparse vector
      */
     public abstract FloatVector<U> copy();
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        // unequal if object is of a different type.
+        if (!(obj instanceof FloatVector<?>))
+            return false;
+        FloatVector<?> fv = (FloatVector<?>) obj;
+
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
+            return false;
+
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
+            return false;
+
+        // Colt's equals also tests the size of the vector
+        return this.vectorSI.equals(fv.vectorSI);
+    }
 
     /**********************************************************************************/
     /********************************** MATH METHODS **********************************/
@@ -518,12 +563,89 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         return c;
     }
 
-    // TODO: subtract
+    /**
+     * Subtract a vector with relative values y from a vector with relative values x. The result is a vector with
+     * relative values. The target unit will be the unit of relative value x.
+     * @param x relative vector 1
+     * @param y relative vector 2
+     * @return new Vector with absolute elements values x[i] minus y[i]
+     * @throws ValueException when vectors have unequal size
+     */
+    public static <U extends Unit<U>> FloatVectorRel<U> minus(FloatVectorRel<U> x, FloatVectorRel<U> y)
+            throws ValueException
+    {
+        if (x.size() != y.size())
+            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
+                    + y.size());
 
-    // TODO: normalize
+        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        c.subtract(y);
+        return c;
+    }
 
-    // TODO: zdotproduct
+    /**
+     * Subtract a vector with relative values y from a vector with absolute values x. The result is a vector with
+     * absolute values. The target unit will be the unit of vector x.
+     * @param x absolute vector 1
+     * @param y relative vector 2
+     * @return new Vector with absolute elements: values x[i] minus y[i]
+     * @throws ValueException when vectors have unequal size
+     */
+    public static <U extends Unit<U>> FloatVectorAbs<U> minus(FloatVectorAbs<U> x, FloatVectorRel<U> y)
+            throws ValueException
+    {
+        if (x.size() != y.size())
+            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
+                    + y.size());
 
-    // TODO: zsum
+        FloatVectorAbs<U> c = (FloatVectorAbs<U>) x.copy();
+        c.subtract(y);
+        return c;
+    }
+
+    /**
+     * Subtract a vector with absolute values y from a vector with absolute values x. The result is a vector with
+     * relative values. The target unit will be the unit of vector x.
+     * @param x absolute vector 1
+     * @param y absolute vector 2
+     * @return new Vector with relative elements: values x[i] minus y[i]
+     * @throws ValueException when vectors have unequal size
+     */
+    public static <U extends Unit<U>> FloatVectorRel<U> minus(FloatVectorAbs<U> x, FloatVectorAbs<U> y)
+            throws ValueException
+    {
+        if (x.size() != y.size())
+            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
+                    + y.size());
+
+        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        c.vectorSI.assign(y.vectorSI, FloatFunctions.minus);
+        return c;
+    }
+
+    /**
+     * Multiply two absolute vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
+     * @param x the first vector to do the zproduct with
+     * @param y the second vector to do the zproduct with
+     * @return the zproduct of this vector and another vector of the same size.
+     * @throws ValueException if the two vectors have unequal size
+     */
+
+    /**
+     * Multiply two relative vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
+     * @param x the first vector to do the zproduct with
+     * @param y the second vector to do the zproduct with
+     * @return the zproduct of this vector and another vector of the same size.
+     * @throws ValueException if the two vectors have unequal size
+     */
+
+    /**
+     * Multiply a vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The result
+     * will have the same unit as vector x. Vector x can be relative or absolute. The result will be the same.
+     * @param x the first vector to do the zproduct with
+     * @param c the dimensionless vector with constants to do the zproduct with
+     * @return the zproduct of this vector and another vector of the same size.
+     * @throws ValueException if the two vectors have unequal size
+     */
 
 }

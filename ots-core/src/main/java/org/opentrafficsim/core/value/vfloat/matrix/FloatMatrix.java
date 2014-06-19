@@ -138,14 +138,6 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @return the unit
-     */
-    public U getUnit()
-    {
-        return this.unit;
-    }
-
-    /**
      * @return the number of rows of the matrix as an int
      */
     public int rows()
@@ -166,6 +158,29 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return a deep copy of the absolute / relative, dense / sparse matrix
      */
     public abstract FloatMatrix<U> copy();
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        // unequal if object is of a different type.
+        if (!(obj instanceof FloatMatrix<?>))
+            return false;
+        FloatMatrix<?> fm = (FloatMatrix<?>) obj;
+
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(fm.getUnit().getStandardUnit()))
+            return false;
+
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != fm.isAbsolute() || this.isRelative() != fm.isRelative())
+            return false;
+
+        // Colt's equals also tests the number of rows and columns
+        return this.matrixSI.equals(fm.matrixSI);
+    }
 
     /**********************************************************************************/
     /********************************** MATH METHODS **********************************/
