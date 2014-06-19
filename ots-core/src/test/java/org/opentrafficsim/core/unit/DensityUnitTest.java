@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 
 import java.util.Locale;
 
@@ -70,6 +72,19 @@ public class DensityUnitTest extends AbstractUnitTest<DensityUnit>
         // Check two conversions between two units
         assertEquals("one KG PER CUBIC METER is 0.0001 GRAM PER CUBIC CENTIMETER", 0.001,
                 getMultiplicationFactorTo(DensityUnit.KG_PER_METER_3, DensityUnit.GRAM_PER_CENTIMETER_3), 0.000000001);
+    }
+    
+    /**
+     * Verify that we can create our own density unit
+     */
+    @Test
+    public void createDensityUnit()
+    {
+        DensityUnit myDU =
+                new DensityUnit(UnitLocalizationsTest.doNotCheckPrefix + "DensityUnit.DensityUnit",
+                        UnitLocalizationsTest.doNotCheckPrefix + "DensityUnit.SPCF", SI_DERIVED, DensityUnit.KG_PER_METER_3, 515.317882);
+        assertTrue("Can create a new DensityUnit", null != myDU);
+        checkUnitRatioNameAndAbbreviation(myDU, 515.3, 0.1, "!DensityUnit!", "!SPCF!");
     }
 
 }

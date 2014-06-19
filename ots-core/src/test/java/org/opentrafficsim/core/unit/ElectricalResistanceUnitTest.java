@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 
 import java.util.Locale;
 
@@ -71,5 +73,19 @@ public class ElectricalResistanceUnitTest extends AbstractUnitTest<ElectricalRes
         assertEquals("one KILOOHM is 1000000 MILLIOHM", 1000000,
                 getMultiplicationFactorTo(ElectricalResistanceUnit.KILOOHM, ElectricalResistanceUnit.MILLIOHM), 0.0001);
     }
+    
+    /**
+     * Verify that we can create our own electrical resistance unit
+     */
+    @Test
+    public void createElectricalResistanceUnit()
+    {
+        ElectricalResistanceUnit myERU =
+                new ElectricalResistanceUnit(UnitLocalizationsTest.doNotCheckPrefix + "ElectricalResistanceUnit.GigaOhm",
+                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalResistanceUnit.GOhm", SI_DERIVED, ElectricalResistanceUnit.OHM, 1e9);
+        assertTrue("Can create a new ElectricalResistanceUnit", null != myERU);
+        checkUnitRatioNameAndAbbreviation(myERU, 1e9, 0.1, "!GigaOhm!", "!GOhm!");
+    }
+
 
 }

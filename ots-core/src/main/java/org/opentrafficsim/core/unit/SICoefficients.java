@@ -81,12 +81,12 @@ public class SICoefficients
                 }
             }
         }
-        
+
         if (result.length() == 0)
         {
             result = "1";
         }
-        
+
         for (SI si : map.keySet())
         {
             if (map.get(si) < 0)
@@ -210,9 +210,7 @@ public class SICoefficients
                 }
                 Integer oldValue = coefficients.get(si);
                 if (null == oldValue)
-                {
                     oldValue = 0;
-                }
                 coefficients.put(si, oldValue + value * factor);
                 parsedPowerString = true;
                 cs = cs.substring(endPos);

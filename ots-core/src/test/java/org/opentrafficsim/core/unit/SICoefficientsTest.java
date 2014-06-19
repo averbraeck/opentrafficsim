@@ -88,6 +88,8 @@ public class SICoefficientsTest
         parseString("s^-3", "1/s3");
         parseString("/s^4", "1/s4");
         parseString("/s^-5", "s5");
+        parseString("/", null);
+        parseString("/s/", null);
     }
 
     /**
