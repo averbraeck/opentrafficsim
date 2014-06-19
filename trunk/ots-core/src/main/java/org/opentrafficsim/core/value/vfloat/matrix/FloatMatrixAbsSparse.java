@@ -74,7 +74,9 @@ public class FloatMatrixAbsSparse<U extends Unit<U>> extends FloatMatrixAbs<U>
     @Override
     public FloatMatrix<U> copy()
     {
-        return new FloatMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit);
+        FloatMatrixAbsSparse<U> m = new FloatMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        m.unit = this.unit;
+        return m;
     }
 
     /**

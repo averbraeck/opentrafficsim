@@ -74,8 +74,9 @@ public class FloatMatrixAbsDense<U extends Unit<U>> extends FloatMatrixAbs<U>
     @Override
     public FloatMatrix<U> copy()
     {
-        
-        return new FloatMatrixAbsDense<U>(this.matrixSI.toArray(), this.unit);
+        FloatMatrixAbsDense<U> m = new FloatMatrixAbsDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        m.unit = this.unit;
+        return m;
     }
 
     /**

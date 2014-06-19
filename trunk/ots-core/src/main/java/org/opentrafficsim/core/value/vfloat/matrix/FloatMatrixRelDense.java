@@ -74,8 +74,9 @@ public class FloatMatrixRelDense<U extends Unit<U>> extends FloatMatrixRel<U>
     @Override
     public FloatMatrix<U> copy()
     {
-        
-        return new FloatMatrixRelDense<U>(this.matrixSI.toArray(), this.unit);
+        FloatMatrixRelDense<U> m = new FloatMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        m.unit = this.unit;
+        return m;
     }
 
     /**
