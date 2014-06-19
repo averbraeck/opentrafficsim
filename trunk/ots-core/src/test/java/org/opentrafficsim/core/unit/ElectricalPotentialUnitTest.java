@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 
 import java.util.Locale;
 
@@ -69,6 +71,19 @@ public class ElectricalPotentialUnitTest extends AbstractUnitTest<ElectricalPote
         // Check two conversions between non-standard units
         assertEquals("one KILOVOLT is 1000000 MILLIVOLT", 1000000,
                 getMultiplicationFactorTo(ElectricalPotentialUnit.KILOVOLT, ElectricalPotentialUnit.MILLIVOLT), 0.0001);
+    }
+    
+    /**
+     * Verify that we can create our own electrical potential unit
+     */
+    @Test
+    public void createElectricalPotentialUnit()
+    {
+        ElectricalPotentialUnit myEPU =
+                new ElectricalPotentialUnit(UnitLocalizationsTest.doNotCheckPrefix + "ElectricalPotentialUnit.NanoVolt",
+                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalPotentialUnit.NanoV", SI_DERIVED, ElectricalPotentialUnit.VOLT, 1e-9);
+        assertTrue("Can create a new ElectricalPotentialUnit", null != myEPU);
+        checkUnitRatioNameAndAbbreviation(myEPU, 1e-9, 0.1, "!NanoVolt!", "!NanoV!");
     }
 
 }
