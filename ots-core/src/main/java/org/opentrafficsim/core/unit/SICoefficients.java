@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.unit;
 
-import java.util.Collections;
 import java.util.EnumMap;
 
 /**
@@ -156,7 +155,7 @@ public class SICoefficients
         // System.out.println("coefficientString is \"" + coefficientString + "\"");
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
         String cs = coefficientString;
-        cs = cs.replace("^", "").replace(".", "").replace(" ", "");
+        cs = cs.replace(".", "").replace(" ", "");
         if (cs.equals("1")) // This is a special case...
         {
             return coefficients;
