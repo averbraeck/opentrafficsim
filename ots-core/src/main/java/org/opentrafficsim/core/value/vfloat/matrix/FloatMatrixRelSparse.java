@@ -75,8 +75,9 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U>
     @Override
     public FloatMatrix<U> copy()
     {
-        
-        return new FloatMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit);
+        FloatMatrixRelSparse<U> m = new FloatMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        m.unit = this.unit;
+        return m;
     }
 
     /**
