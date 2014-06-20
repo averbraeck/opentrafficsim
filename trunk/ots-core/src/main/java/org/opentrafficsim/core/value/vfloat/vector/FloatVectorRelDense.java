@@ -73,7 +73,7 @@ public class FloatVectorRelDense<U extends Unit<U>> extends FloatVectorRel<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
     @Override
-    public final FloatVector<U> copy()
+    public final FloatVectorRelDense<U> copy()
     {
         FloatVectorRelDense<U> v = new FloatVectorRelDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;

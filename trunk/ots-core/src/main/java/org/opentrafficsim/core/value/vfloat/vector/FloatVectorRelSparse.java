@@ -73,7 +73,7 @@ public class FloatVectorRelSparse<U extends Unit<U>> extends FloatVectorRel<U> i
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
     @Override
-    public final FloatVector<U> copy()
+    public final FloatVectorRelSparse<U> copy()
     {
         FloatVectorRelSparse<U> v = new FloatVectorRelSparse<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;
