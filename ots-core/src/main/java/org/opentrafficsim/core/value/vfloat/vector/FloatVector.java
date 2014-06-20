@@ -3,6 +3,8 @@ package org.opentrafficsim.core.value.vfloat.vector;
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.Vector;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
@@ -106,7 +108,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public FloatMatrix1D getVectorSI()
     {
-         return this.vectorSI;
+        return this.vectorSI;
     }
 
     /**
@@ -204,12 +206,6 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     {
         return this.vectorSI.cardinality();
     }
-
-    /**
-     * Create a deep copy of the vector, independent of the original vector.
-     * @return a deep copy of the absolute / relative, dense / sparse vector
-     */
-    public abstract FloatVector<U> copy();
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -471,7 +467,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     {
         this.vectorSI.assign(FloatFunctions.inv);
     }
-    
+
     /**
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
      */
@@ -571,7 +567,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorAbs<U> c = (FloatVectorAbs<U>) x.copy();
+        FloatVectorAbs<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -606,7 +602,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        FloatVectorRel<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -626,7 +622,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        FloatVectorRel<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -646,7 +642,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorAbs<U> c = (FloatVectorAbs<U>) x.copy();
+        FloatVectorAbs<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -666,7 +662,14 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        FloatVectorRel<U> c = (FloatVectorRel<U>) x.copy();
+        FloatVectorRel<U> c = null;
+        if (x instanceof Dense)
+            c = new FloatVectorRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else if (x instanceof Sparse)
+            c = new FloatVectorRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else
+            throw new ValueException("FloatVector.minus - vector neither sparse nor dense");
+
         c.vectorSI.assign(y.vectorSI, FloatFunctions.minus);
         return c;
     }
@@ -737,7 +740,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
                     + x.size() + " != " + c.length);
 
         // TODO: more elegant implementation that does not copy the entire vector?
-        FloatVectorAbs<U> result = (FloatVectorAbs<U>) x.copy();
+        FloatVectorAbs<U> result = x.copy();
+        // TODO: only dense?
         DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
         result.vectorSI.assign(cMatrix, FloatFunctions.mult);
         return result;
@@ -759,7 +763,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
                     + x.size() + " != " + c.length);
 
         // TODO: more elegant implementation that does not copy the entire vector?
-        FloatVectorRel<U> result = (FloatVectorRel<U>) x.copy();
+        FloatVectorRel<U> result = x.copy();
+        // TODO: only dense?
         DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
         result.vectorSI.assign(cMatrix, FloatFunctions.mult);
         return result;
@@ -776,7 +781,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         v.unit = x.unit;
         return v;
     }
-    
+
     /**
      * Convert sparse vector to dense vector.
      * @param x the vector to convert
@@ -788,7 +793,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         v.unit = x.unit;
         return v;
     }
-    
+
     /**
      * Convert dense vector to sparse vector.
      * @param x the vector to convert
@@ -800,7 +805,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         v.unit = x.unit;
         return v;
     }
-    
+
     /**
      * Convert dense vector to sparse vector.
      * @param x the vector to convert

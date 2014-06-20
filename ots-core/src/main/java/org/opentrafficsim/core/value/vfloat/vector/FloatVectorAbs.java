@@ -56,4 +56,11 @@ public abstract class FloatVectorAbs<U extends Unit<U>> extends FloatVector<U> i
         super(values);
     }
 
+    /**
+     * Create a deep copy of the vector, independent of the original vector.
+     * @return a deep copy of the absolute / relative, dense / sparse vector
+     */
+    public abstract FloatVectorAbs<U> copy();
+
+
 }

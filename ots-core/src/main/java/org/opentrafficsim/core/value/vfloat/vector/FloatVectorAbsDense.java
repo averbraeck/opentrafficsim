@@ -73,7 +73,7 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
      */
     @Override
-    public final FloatVector<U> copy()
+    public final FloatVectorAbsDense<U> copy()
     {
         FloatVectorAbsDense<U> v = new FloatVectorAbsDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;

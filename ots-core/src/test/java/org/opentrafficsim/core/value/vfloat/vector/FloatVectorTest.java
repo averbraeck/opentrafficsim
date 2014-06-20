@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.MassUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
@@ -142,7 +144,18 @@ public abstract class FloatVectorTest
                     0.0001);
         LengthUnit uOut = fv.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
-        FloatVector<LengthUnit> copy = fv.copy();
+        FloatVector<LengthUnit> copy = null;
+        if (fv instanceof FloatVectorAbs<?>)
+        {
+            copy = ((FloatVectorAbs<LengthUnit>) fv).copy();
+        }
+        else if (fv instanceof FloatVectorRel<?>)
+        {
+            copy = ((FloatVectorRel<LengthUnit>) fv).copy();
+        }
+        else
+            fail("Vector neither Absolute nor Relative");
+        
         assertEquals("copy should have 10 elements", 10, copy.size());
         float[] copyOut = copy.getValuesSI();
         for (int i = 0; i < in.length; i++)
