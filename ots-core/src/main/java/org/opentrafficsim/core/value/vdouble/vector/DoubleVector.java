@@ -3,6 +3,8 @@ package org.opentrafficsim.core.value.vdouble.vector;
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.Vector;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
@@ -204,12 +206,6 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     {
         return this.vectorSI.cardinality();
     }
-
-    /**
-     * Create a deep copy of the vector, independent of the original vector.
-     * @return a deep copy of the absolute / relative, dense / sparse vector
-     */
-    public abstract DoubleVector<U> copy();
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -571,7 +567,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
             throw new ValueException("DoubleVector.plus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        DoubleVectorAbs<U> c = (DoubleVectorAbs<U>) x.copy();
+        DoubleVectorAbs<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -606,7 +602,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
             throw new ValueException("DoubleVector.plus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        DoubleVectorRel<U> c = (DoubleVectorRel<U>) x.copy();
+        DoubleVectorRel<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -626,7 +622,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
             throw new ValueException("DoubleVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        DoubleVectorRel<U> c = (DoubleVectorRel<U>) x.copy();
+        DoubleVectorRel<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -646,7 +642,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
             throw new ValueException("DoubleVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        DoubleVectorAbs<U> c = (DoubleVectorAbs<U>) x.copy();
+        DoubleVectorAbs<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -666,19 +662,27 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
             throw new ValueException("DoubleVector.minus - two vectors have unequal size: " + x.size() + " != "
                     + y.size());
 
-        DoubleVectorRel<U> c = (DoubleVectorRel<U>) x.copy();
+        DoubleVectorRel<U> c = null;
+        if (x instanceof Dense)
+            c = new DoubleVectorRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else if (x instanceof Sparse)
+            c = new DoubleVectorRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else
+            throw new ValueException("DoubleVector.minus - vector neither sparse nor dense");
+
         c.vectorSI.assign(y.vectorSI, DoubleFunctions.minus);
+        c.unit = x.unit;
         return c;
     }
 
     /**
      * Multiply two absolute vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zDotProduct with
-     * @param y the second vector to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the multiplication with
+     * @param y the second vector to do the multiplication with
+     * @return the multiplication of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static DoubleVectorAbs<SIUnit> zDotProduct(final DoubleVectorAbs<?> x, final DoubleVectorAbs<?> y)
+    public static DoubleVectorAbs<SIUnit> multiplication(final DoubleVectorAbs<?> x, final DoubleVectorAbs<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
@@ -698,12 +702,12 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
 
     /**
      * Multiply two relative vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zDotProduct with
-     * @param y the second vector to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the with
+     * @param y the second vector to do the with
+     * @return the of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static DoubleVectorRel<SIUnit> zDotProduct(final DoubleVectorRel<?> x, final DoubleVectorRel<?> y)
+    public static DoubleVectorRel<SIUnit> multiplication(final DoubleVectorRel<?> x, final DoubleVectorRel<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
@@ -724,12 +728,12 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     /**
      * Multiply an absolute vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
      * result will have the same unit as vector x.
-     * @param x the first vector to do the zDotProduct with
-     * @param c the dimensionless vector with constants to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the with
+     * @param c the dimensionless vector with constants to do the with
+     * @return the of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> DoubleVectorAbs<U> zDotProduct(final DoubleVectorAbs<U> x, final double[] c)
+    public static <U extends Unit<U>> DoubleVectorAbs<U> multiplication(final DoubleVectorAbs<U> x, final double[] c)
             throws ValueException
     {
         if (x.size() != c.length)
@@ -738,7 +742,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
                             + " != " + c.length);
 
         // TODO: more elegant implementation that does not copy the entire vector?
-        DoubleVectorAbs<U> result = (DoubleVectorAbs<U>) x.copy();
+        DoubleVectorAbs<U> result = x.copy();
         DenseDoubleMatrix1D cMatrix = new DenseDoubleMatrix1D(c);
         result.vectorSI.assign(cMatrix, DoubleFunctions.mult);
         return result;
@@ -747,12 +751,12 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     /**
      * Multiply a relative vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
      * result will have the same unit as vector x.
-     * @param x the first vector to do the zDotProduct with
-     * @param c the dimensionless vector with constants to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the with
+     * @param c the dimensionless vector with constants to do the with
+     * @return the of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> DoubleVectorRel<U> zDotProduct(final DoubleVectorRel<U> x, final double[] c)
+    public static <U extends Unit<U>> DoubleVectorRel<U> multiplication(final DoubleVectorRel<U> x, final double[] c)
             throws ValueException
     {
         if (x.size() != c.length)
@@ -761,7 +765,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
                             + " != " + c.length);
 
         // TODO: more elegant implementation that does not copy the entire vector?
-        DoubleVectorRel<U> result = (DoubleVectorRel<U>) x.copy();
+        DoubleVectorRel<U> result = x.copy();
         DenseDoubleMatrix1D cMatrix = new DenseDoubleMatrix1D(c);
         result.vectorSI.assign(cMatrix, DoubleFunctions.mult);
         return result;

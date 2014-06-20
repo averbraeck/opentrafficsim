@@ -73,7 +73,7 @@ public class FloatMatrixAbsSparse<U extends Unit<U>> extends FloatMatrixAbs<U> i
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#copy()
      */
     @Override
-    public final FloatMatrix<U> copy()
+    public final FloatMatrixAbsSparse<U> copy()
     {
         FloatMatrixAbsSparse<U> m = new FloatMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;

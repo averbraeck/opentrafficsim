@@ -56,4 +56,10 @@ public abstract class DoubleVectorAbs<U extends Unit<U>> extends DoubleVector<U>
         super(values);
     }
 
+    /**
+     * Create a deep copy of the vector, independent of the original vector.
+     * @return a deep copy of the absolute / relative, dense / sparse vector
+     */
+    public abstract DoubleVectorAbs<U> copy();
+
 }

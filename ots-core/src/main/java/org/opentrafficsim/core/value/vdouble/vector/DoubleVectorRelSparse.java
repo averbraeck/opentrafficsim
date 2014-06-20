@@ -73,7 +73,7 @@ public class DoubleVectorRelSparse<U extends Unit<U>> extends DoubleVectorRel<U>
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#copy()
      */
     @Override
-    public final DoubleVector<U> copy()
+    public final DoubleVectorRelSparse<U> copy()
     {
         DoubleVectorRelSparse<U> v = new DoubleVectorRelSparse<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;

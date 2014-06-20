@@ -73,7 +73,7 @@ public class DoubleVectorRelDense<U extends Unit<U>> extends DoubleVectorRel<U> 
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#copy()
      */
     @Override
-    public final DoubleVector<U> copy()
+    public final DoubleVectorRelDense<U> copy()
     {
         DoubleVectorRelDense<U> v = new DoubleVectorRelDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;

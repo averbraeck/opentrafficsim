@@ -73,7 +73,7 @@ public class DoubleMatrixRelDense<U extends Unit<U>> extends DoubleMatrixRel<U> 
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#copy()
      */
     @Override
-    public final DoubleMatrix<U> copy()
+    public final DoubleMatrixRelDense<U> copy()
     {
         DoubleMatrixRelDense<U> m = new DoubleMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;

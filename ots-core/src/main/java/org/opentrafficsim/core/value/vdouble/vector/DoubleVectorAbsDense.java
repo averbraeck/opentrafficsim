@@ -73,7 +73,7 @@ public class DoubleVectorAbsDense<U extends Unit<U>> extends DoubleVectorAbs<U> 
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#copy()
      */
     @Override
-    public final DoubleVector<U> copy()
+    public final DoubleVectorAbsDense<U> copy()
     {
         DoubleVectorAbsDense<U> v = new DoubleVectorAbsDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
         v.unit = this.unit;

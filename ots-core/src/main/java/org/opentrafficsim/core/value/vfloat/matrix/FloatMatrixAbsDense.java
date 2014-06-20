@@ -73,7 +73,7 @@ public class FloatMatrixAbsDense<U extends Unit<U>> extends FloatMatrixAbs<U> im
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#copy()
      */
     @Override
-    public final FloatMatrix<U> copy()
+    public final FloatMatrixAbsDense<U> copy()
     {
         FloatMatrixAbsDense<U> m = new FloatMatrixAbsDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;
