@@ -59,7 +59,7 @@ public class SIUnit extends Unit<SIUnit>
     @Override
     public String getSICoefficientsString()
     {
-        return this.getAbbreviationKey();
+        return this.getAbbreviationKey().replace("SIUnit.","");
     }
 
 }
