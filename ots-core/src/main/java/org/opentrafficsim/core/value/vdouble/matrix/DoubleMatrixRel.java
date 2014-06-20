@@ -3,7 +3,6 @@ package org.opentrafficsim.core.value.vdouble.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
