@@ -383,7 +383,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         {
             return new HashSet<Unit<?>>(SI_UNITS.get(normalizedSICoefficientsString).values());
         }
-        SIUnit unit = new SIUnit(normalizedSICoefficientsString);
+        SIUnit unit = new SIUnit("SIUnit." + normalizedSICoefficientsString);
         Set<Unit<?>> unitSet = new HashSet<Unit<?>>();
         unitSet.add(unit);
         return unitSet;
@@ -402,7 +402,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         {
             return (SIUnit) SI_UNITS.get(normalizedSICoefficientsString).get(SIUnit.class);
         }
-        SIUnit unit = new SIUnit(normalizedSICoefficientsString);
+        SIUnit unit = new SIUnit("SIUnit." + normalizedSICoefficientsString);
         return unit;
     }
 
