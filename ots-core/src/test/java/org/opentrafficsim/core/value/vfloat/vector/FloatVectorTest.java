@@ -16,6 +16,7 @@ import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
@@ -109,7 +110,7 @@ public abstract class FloatVectorTest
         try
         {
             fv.getSI(-1);
-            fail("Using a negative index should throw a ValueException");
+            fail("Using a bad index should throw a ValueException");
         }
         catch (ValueException exception)
         {
@@ -142,7 +143,27 @@ public abstract class FloatVectorTest
         {
             // ignore
         }
+        try
+        {
+            fv.setSI(-1, 12345f);
+            fail("Using a negative index should throw a ValueException");
+        }
+        catch (ValueException exception1)
+        {
+            // ignore
+        }
+        try
+        {
+            fv.setSI(in.length, 12345f);
+            fail("Using an index that is too big should throw a ValueException");
+        }
+        catch (ValueException exception1)
+        {
+            // ignore
+        }
         out = fv.getValuesSI();
+        assertTrue("getValuesSI does not return null", null != out);
+        assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
             assertEquals("Values in floatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
                     0.0001);
@@ -169,7 +190,21 @@ public abstract class FloatVectorTest
         for (int i = 0; i < in.length; i++)
             assertEquals("Values in copy of floatVector in unit should be equal to input values", in[i], copyOut[i],
                     0.0001);
-        //TODO verify that copy is a deep copy
+        try
+        {
+            copy.setSI(0, 12345f);
+            assertEquals("value should be altered", 12345f, copy.getSI(0), 0.01);
+            assertEquals("original value should not be altered", out[0], fv.getSI(0), 0.001);
+            FloatScalar<LengthUnit> value = copy.get(1);
+            assertTrue("value cannot be null", null != value);
+            assertEquals("value should be same as SI value", copy.getSI(1), value.getValueSI(), 0.0001);
+            copy.set(2, value);
+            assertEquals("value should be same as SI value", copy.getSI(2), value.getValueSI(), 0.0001);
+        }
+        catch (ValueException exception)
+        {
+            fail("set*/get* should not throw ValueException for valid index and correctly typed value");
+        }
     }
 
     /**
@@ -440,7 +475,8 @@ public abstract class FloatVectorTest
         {
             try
             {
-                assertEquals("Value in product should be product of contributing values", fv4.getSI(i) * fv5.getSI(i), product.getSI(i), 0.00001);
+                assertEquals("Value in product should be product of contributing values", fv4.getSI(i) * fv5.getSI(i),
+                        product.getSI(i), 0.00001);
             }
             catch (ValueException exception)
             {
