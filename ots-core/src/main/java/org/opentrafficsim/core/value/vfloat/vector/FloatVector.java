@@ -677,12 +677,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
 
     /**
      * Multiply two absolute vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zDotProduct with
-     * @param y the second vector to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the multiplication with
+     * @param y the second vector to do the multiplication with
+     * @return the multiplication of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static FloatVectorAbs<SIUnit> zDotProduct(final FloatVectorAbs<?> x, final FloatVectorAbs<?> y)
+    public static FloatVectorAbs<SIUnit> multiply(final FloatVectorAbs<?> x, final FloatVectorAbs<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
@@ -702,12 +702,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
 
     /**
      * Multiply two relative vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the zDotProduct with
-     * @param y the second vector to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the multiplication with
+     * @param y the second vector to do the multiplication with
+     * @return the multiplication of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static FloatVectorRel<SIUnit> zDotProduct(final FloatVectorRel<?> x, final FloatVectorRel<?> y)
+    public static FloatVectorRel<SIUnit> multiply(final FloatVectorRel<?> x, final FloatVectorRel<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
@@ -728,12 +728,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     /**
      * Multiply an absolute vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
      * result will have the same unit as vector x.
-     * @param x the first vector to do the zDotProduct with
-     * @param c the dimensionless vector with constants to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the multiplication with
+     * @param c the dimensionless vector with constants to do the multiplication with
+     * @return the multiplication of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> zDotProduct(final FloatVectorAbs<U> x, final float[] c)
+    public static <U extends Unit<U>> FloatVectorAbs<U> multiply(final FloatVectorAbs<U> x, final float[] c)
             throws ValueException
     {
         if (x.size() != c.length)
@@ -751,12 +751,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     /**
      * Multiply a relative vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
      * result will have the same unit as vector x.
-     * @param x the first vector to do the zDotProduct with
-     * @param c the dimensionless vector with constants to do the zDotProduct with
-     * @return the zDotProduct of this vector and another vector of the same size.
+     * @param x the first vector to do the multiplication with
+     * @param c the dimensionless vector with constants to do the multiplication with
+     * @return the multiplication of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> FloatVectorRel<U> zDotProduct(final FloatVectorRel<U> x, final float[] c)
+    public static <U extends Unit<U>> FloatVectorRel<U> multiply(final FloatVectorRel<U> x, final float[] c)
             throws ValueException
     {
         if (x.size() != c.length)
