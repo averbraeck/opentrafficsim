@@ -436,6 +436,17 @@ public abstract class FloatVectorTest
         }
         // System.out.println("matches: " + matches);
         assertTrue("Result is an EnergyUnit", matches.contains(resultUnit.getStandardUnit()));
+        for (int i = 0; i < in1.length; i++)
+        {
+            try
+            {
+                assertEquals("Value in product should be product of contributing values", fv4.getSI(i) * fv5.getSI(i), product.getSI(i), 0.00001);
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
+        }
 
     }
 
