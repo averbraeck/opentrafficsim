@@ -128,6 +128,7 @@ public class SICoefficientsTest
         multiplyTest("Kmmol3/AsKcd4", "1", "m.s.K2.cd4.mol3/A");
         multiplyTest("1", "Kmmol3/AsKcd4", "m.s.K2.cd4.mol3/A");
         multiplyTest("Kmmol3", "/AsKcd4", "m.s.K2.cd4.mol3/A");
+        multiplyTest("kgm/s2", "m", "kg.m2/s2");
     }
 
     /**
