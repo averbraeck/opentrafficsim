@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -43,16 +44,25 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 public abstract class FloatVectorTest
 {
     /**
-     * Test the FloatVectorAbs that takes a float[] and a Unit as arguments and some methods.
+     * Test FloatVectorAbs and FloatVectorRel creators that take a float[] and a Unit as arguments
      */
     @Test
-    public void floatVectorAbs1()
+    public void floatVectorTwoArgs()
+    {
+        floatVectorTwoArgs(true); // test absolute version
+        floatVectorTwoArgs(false); // rest relative version
+    }
+
+    /**
+     * Test the FloatVectorAbs that takes a float[] and a Unit as arguments and some methods.
+     */
+    private void floatVectorTwoArgs(Boolean absolute)
     {
         float[] in = new float[10];
         for (int i = 0; i < in.length; i++)
             in[i] = i / 3.0f;
         LengthUnit u = LengthUnit.FOOT;
-        FloatVector<LengthUnit> fv = createFloatVectorAbs(in, u);
+        FloatVector<LengthUnit> fv = createFloatVector(in, u, absolute);
         assertEquals("FloatVector should have 10 elements", 10, fv.size());
         float[] out = fv.getValuesInUnit();
         for (int i = 0; i < in.length; i++)
@@ -120,7 +130,7 @@ public abstract class FloatVectorTest
         try
         {
             fv.getInUnit(in.length, LengthUnit.MILE);
-            fail("Using a index that is too hig should throw a ValueException");
+            fail("Using an index that is too big should throw a ValueException");
         }
         catch (ValueException exception)
         {
@@ -128,97 +138,72 @@ public abstract class FloatVectorTest
         }
         out = fv.getValuesSI();
         for (int i = 0; i < in.length; i++)
-            assertEquals("Values in floatVector should be equivalent value in meters", in[i], out[i] / (12 * 0.0254),
+            assertEquals("Values in floatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
                     0.0001);
         LengthUnit uOut = fv.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
-        FloatVectorAbs<LengthUnit> copy = (FloatVectorAbs<LengthUnit>) fv.copy();
+        FloatVector<LengthUnit> copy = fv.copy();
         assertEquals("copy should have 10 elements", 10, copy.size());
         float[] copyOut = copy.getValuesSI();
         for (int i = 0; i < in.length; i++)
-            assertEquals("Values in copy of floatVector should be equivalent value in meters", in[i], copyOut[i]
+            assertEquals("Values in copy of floatVector should be equivalent values in meters", in[i], copyOut[i]
                     / (12 * 0.0254), 0.0001);
         copyOut = fv.getValuesInUnit();
         for (int i = 0; i < in.length; i++)
             assertEquals("Values in copy of floatVector in unit should be equal to input values", in[i], copyOut[i],
                     0.0001);
-        /*
-         * TODO FloatMatrix1D fm1d = fv.getColtDenseFloatMatrix1D(); assertEquals("Colt 1D matrix should have size 10",
-         * 10, fm1d.size()); for (int i = 0; i < in.length; i++)
-         * assertEquals("values in colt matrix should match values in SI", out[i], fm1d.getQuick(i), 0.00001);
-         */
     }
 
     /**
-     * Test the FloatVectorAbs that takes a float[] as argument.
+     * Test FloatVectorAbs and FloatVectorRel creators that take an array of FloatScalar as argument
+     */
+    @Test
+    public void floatVectorOneArg()
+    {
+        floatVectorOneArg(true); // test absolute version
+        floatVectorOneArg(false); // test relative version
+    }
+
+    /**
+     * Test the FloatVectorAbs and FloatVectorRel that takes a FloatScalar*<U>[] as argument
      */
     @SuppressWarnings("unchecked")
-    @Test
-    public void floatVectorAbs2()
+    private void floatVectorOneArg(Boolean absolute)
     {
-        FloatVector<LengthUnit> fsa = null;
-        FloatScalarAbs<LengthUnit>[] in = new FloatScalarAbs[0];
+        FloatVector<LengthUnit> fv = null;
+        FloatScalarAbs<LengthUnit>[] inAbs = new FloatScalarAbs[0];
+        FloatScalarRel<LengthUnit>[] inRel = new FloatScalarRel[0];
         try
         {
-            fsa = createFloatVectorAbs(in);
+            if (absolute)
+                fv = createFloatVectorAbs(inAbs);
+            else
+                fv = createFloatVectorRel(inRel);
             fail("Should have thrown an exception");
         }
         catch (ValueException ve)
         {
             // Ignore expected exception
         }
-        in = new FloatScalarAbs[1];
-        in[0] = new FloatScalarAbs<LengthUnit>(123.456f, LengthUnit.FOOT);
+        inAbs = new FloatScalarAbs[1];
+        inAbs[0] = new FloatScalarAbs<LengthUnit>(123.456f, LengthUnit.FOOT);
+        inRel = new FloatScalarRel[1];
+        inRel[0] = new FloatScalarRel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
-            fsa = new FloatVectorAbsDense<LengthUnit>(in);
+            if (absolute)
+                fv = createFloatVectorAbs(inAbs);
+            else
+                fv = createFloatVectorRel(inRel);
         }
         catch (ValueException exception)
         {
             fail("Should NOT have thrown an exception");
         }
-        float[] out = fsa.getValuesInUnit();
+        float[] out = fv.getValuesInUnit();
         assertTrue("Result of getValuesInUnit should not be null", null != out);
         assertEquals("Array of values should have length 1", 1, out.length);
         assertEquals("Element in array should have the expected value", 123.456f, out[0], 0.001);
-    }
-
-    /**
-     * Test the FloatVectorAbsDense that takes a float[] and a Unit as arguments and some methods.
-     */
-    @Test
-    public void floatVectorRel1()
-    {
-        float[] in = new float[10];
-        for (int i = 0; i < in.length; i++)
-            in[i] = i / 3.0f;
-        LengthUnit u = LengthUnit.FOOT;
-        FloatVector<LengthUnit> fv = createFloatVectorRel(in, u);
-        assertEquals("FloatVector should have 10 elements", 10, fv.size());
-        float[] out = fv.getValuesInUnit();
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Values in floatVector in unit should be equal to input values", in[i], out[i], 0.0001);
-        out = fv.getValuesSI();
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Values in floatVector should be equivalent value in meters", in[i], out[i] / (12 * 0.0254),
-                    0.0001);
-        LengthUnit uOut = fv.getUnit();
-        assertEquals("Stored unit should be provided unit", u, uOut);
-        FloatVectorRel<LengthUnit> copy = (FloatVectorRel<LengthUnit>) fv.copy();
-        assertEquals("copy should have 10 elements", 10, copy.size());
-        float[] copyOut = copy.getValuesSI();
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Values in copy of floatVector should be equivalent value in meters", in[i], copyOut[i]
-                    / (12 * 0.0254), 0.0001);
-        copyOut = fv.getValuesInUnit();
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Values in copy of floatVector in unit should be equal to input values", in[i], copyOut[i],
-                    0.0001);
-        /*
-         * TODO FloatMatrix1D fm1d = fv.getColtDenseFloatMatrix1D(); assertEquals("Colt 1D matrix should have size 10",
-         * 10, fm1d.size()); for (int i = 0; i < in.length; i++)
-         * assertEquals("values in colt matrix should match values in SI", out[i], fm1d.getQuick(i), 0.00001);
-         */
     }
 
     /**
@@ -246,10 +231,24 @@ public abstract class FloatVectorTest
         assertEquals("Type of result should be type of inputs", u, sum.getUnit());
         float[] sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
-            assertEquals("Each element should equals the sum of the contributing elements", in1[i] + in2[i],
+            assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i],
                     sumValues[i], 0.0001);
-        // FloatVectorRel<MassUnit> difference = null;
-        // TODO difference = FloatVector.minus(fv1, fv2);
+        FloatVectorRel<MassUnit> difference = null;
+        try
+        {
+            difference = FloatVector.minus(fv1, fv2);
+        }
+        catch (ValueException exception1)
+        {
+            fail("Should be able to subtract FloatFectorRel from FloatFectorRel of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 4, difference.size());
+        assertEquals("Type of result should be type of inputs", u, difference.getUnit());
+        float[] differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+            assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
+                    differenceValues[i], 0.0001);
         float[] in3 = {110f, 120f, 130f};
         FloatVectorRel<MassUnit> fv3 = createFloatVectorRel(in3, u);
         try
@@ -261,6 +260,116 @@ public abstract class FloatVectorTest
         {
             // ignore
         }
+        try
+        {
+            difference = FloatVector.minus(fv1, fv3);
+            fail("Subtracting FloatVectors of unequal size should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        MassUnit u2 = MassUnit.OUNCE;
+        fv2 = createFloatVectorRel(in2, u2);
+        try
+        {
+            sum = FloatVector.plus(fv1, fv2);
+        }
+        catch (ValueException exception)
+        {
+            fail("Should be able to add FloatVectorRel to FloatVectorRel of same size");
+        }
+        assertTrue("Result should not be null", null != sum);
+        assertEquals("Size of result should be size of inputs", 4, sum.size());
+        assertEquals("Type of result should be type of first input", u, sum.getUnit());
+        assertFalse("Type of result should be different of type of second input", u2 == sum.getUnit());
+        sumValues = sum.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+        {
+            assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i] * 0.45359
+                    + in2[i] * 0.028350, sumValues[i] * 0.45359, 0.0001);
+        }
+        fv2 = createFloatVectorRel(in2, u2);
+        try
+        {
+            difference = FloatVector.minus(fv1, fv2);
+        }
+        catch (ValueException exception)
+        {
+            fail("Should be able to add FloatVectorRel to FloatVectorRel of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 4, difference.size());
+        assertEquals("Type of result should be type of first input", u, difference.getUnit());
+        assertFalse("Type of result should be different of type of second input", u2 == difference.getUnit());
+        differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+        {
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
+                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
+        }
+    }
+
+    /**
+     * Test adding and subtracting FloatVectorAbs.
+     */
+    @Test
+    public void absAbs()
+    {
+        float[] in1 = {10f, 20f, 30f, 40f};
+        float[] in2 = {110f, 120f, 130f, 140f};
+        MassUnit u = MassUnit.POUND;
+        FloatVectorAbs<MassUnit> fv1 = createFloatVectorAbs(in1, u);
+        FloatVectorAbs<MassUnit> fv2 = createFloatVectorAbs(in2, u);
+        FloatVectorRel<MassUnit> difference = null;
+        try
+        {
+            difference = FloatVector.minus(fv1, fv2);
+        }
+        catch (ValueException exception1)
+        {
+            fail("Should be able to subtract FloatFectorAbs from FloatFectorAbs of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 4, difference.size());
+        assertEquals("Type of result should be type of inputs", u, difference.getUnit());
+        float[] differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+            assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
+                    differenceValues[i], 0.0001);
+        float[] in3 = {110f, 120f, 130f};
+        FloatVectorAbs<MassUnit> fv3 = createFloatVectorAbs(in3, u);
+        try
+        {
+            difference = FloatVector.minus(fv1, fv3);
+            fail("Subtracting FloatVectors of unequal size should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        MassUnit u2 = MassUnit.OUNCE;
+        fv2 = createFloatVectorAbs(in2, u2);
+        fv2 = createFloatVectorAbs(in2, u2);
+        try
+        {
+            difference = FloatVector.minus(fv1, fv2);
+        }
+        catch (ValueException exception)
+        {
+            fail("Should be able to add FloatVectorAbs to FloatVectorAbs of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 4, difference.size());
+        assertEquals("Type of result should be type of first input", u, difference.getUnit());
+        assertFalse("Type of result should be different of type of second input", u2 == difference.getUnit());
+        differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+        {
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
+                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
+        }
+
     }
 
     /**
@@ -295,6 +404,21 @@ public abstract class FloatVectorTest
         assertTrue("Result of getValuesInUnit should not be null", null != out);
         assertEquals("Array of values should have length 1", 1, out.length);
         assertEquals("Element in array should have the expected value", 123.456f, out[0], 0.001);
+    }
+
+    /**
+     * Create a FloatVectorAbs or a FloatVectorRel from an array of float values and Unit
+     * @param in float[] with values
+     * @param u Unit; type for the new FloatVector
+     * @param absolute Boolean; true to create a FloatVectorAbs; false to create a FloatVectorRel
+     * @return FloatVector
+     */
+    private <U extends Unit<U>> FloatVector<U> createFloatVector(float[] in, U u, boolean absolute)
+    {
+        if (absolute)
+            return createFloatVectorAbs(in, u);
+        else
+            return createFloatVectorRel(in, u);
     }
 
     /**
