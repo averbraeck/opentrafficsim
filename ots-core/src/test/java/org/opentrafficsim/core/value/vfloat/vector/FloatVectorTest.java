@@ -5,12 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Set;
+
 import org.junit.Test;
+import org.opentrafficsim.core.unit.EnergyUnit;
+import org.opentrafficsim.core.unit.ForceUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.MassUnit;
+import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Absolute;
-import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
@@ -155,7 +159,7 @@ public abstract class FloatVectorTest
         }
         else
             fail("Vector neither Absolute nor Relative");
-        
+
         assertEquals("copy should have 10 elements", 10, copy.size());
         float[] copyOut = copy.getValuesSI();
         for (int i = 0; i < in.length; i++)
@@ -380,8 +384,57 @@ public abstract class FloatVectorTest
         for (int i = 0; i < in1.length; i++)
         {
             assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
-                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
+                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0002);
         }
+        try
+        {
+            difference = FloatVector.minus(fv2, fv1);
+        }
+        catch (ValueException exception)
+        {
+            fail("Should be able to add FloatVectorAbs to FloatVectorAbs of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 4, difference.size());
+        assertEquals("Type of result should be type of first input", u2, difference.getUnit());
+        assertFalse("Type of result should be different of type of second input", u == difference.getUnit());
+        differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+        {
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in2[i]
+                    * 0.028350 - in1[i] * 0.45359, differenceValues[i] * 0.028350, 0.001);
+        }
+        LengthUnit u4 = LengthUnit.INCH;
+        FloatVectorAbs<LengthUnit> fv4 = createFloatVectorAbs(in1, u4);
+        ForceUnit u5 = ForceUnit.POUND_FORCE;
+        FloatVectorAbs<ForceUnit> fv5 = createFloatVectorAbs(in2, u5);
+        Unit<EnergyUnit> resultUnit = EnergyUnit.CALORIE_IT;
+        FloatVectorAbs<?> product = null;
+        try
+        {
+            product = FloatVector.multiply(fv4, fv5);
+        }
+        catch (ValueException exception)
+        {
+            fail("Should be able to multiply FloatVectorAbs with FloatVectorAbs of same size");
+        }
+        assertTrue("Result should not be null", null != product);
+        assertEquals("Size of result should be size of inputs", 4, product.size());
+        System.out.println("unit of product is " + product.getUnit().getSICoefficientsString());
+        // System.out.println("expected result unit is " + resultUnit);
+        Set<Unit<?>> matches = null;
+        try
+        {
+            matches =
+                    Unit.lookupUnitWithSICoefficients(SICoefficients.normalize(product.getUnit().getStandardUnit()
+                            .getSICoefficientsString()));
+        }
+        catch (UnitException exception)
+        {
+            exception.printStackTrace();
+        }
+        // System.out.println("matches: " + matches);
+        assertTrue("Result is an EnergyUnit", matches.contains(resultUnit.getStandardUnit()));
 
     }
 
