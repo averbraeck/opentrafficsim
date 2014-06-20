@@ -169,6 +169,7 @@ public abstract class FloatVectorTest
         for (int i = 0; i < in.length; i++)
             assertEquals("Values in copy of floatVector in unit should be equal to input values", in[i], copyOut[i],
                     0.0001);
+        //TODO verify that copy is a deep copy
     }
 
     /**
