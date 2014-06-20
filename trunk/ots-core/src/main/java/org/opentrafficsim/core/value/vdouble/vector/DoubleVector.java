@@ -71,7 +71,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
             this.vectorSI = createMatrix1D(values.length);
             for (int index = 0; index < values.length; index++)
             {
-                this.vectorSI.set(index, convertToSIUnit(values[index]));
+                this.vectorSI.set(index, expressAsSIUnit(values[index]));
             }
         }
     }
@@ -126,7 +126,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     {
         double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = convertToSpecifiedUnit(values[i]);
+            values[i] = expressAsSpecifiedUnit(values[i]);
         return values;
     }
 
@@ -138,7 +138,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     {
         double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = convertToUnit(values[i], targetUnit);
+            values[i] = expressAsUnit(values[i], targetUnit);
         return values;
     }
 
@@ -165,7 +165,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      */
     public double getInUnit(final int index) throws ValueException
     {
-        return convertToSpecifiedUnit(getSI(index));
+        return expressAsSpecifiedUnit(getSI(index));
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      */
     public double getInUnit(final int index, final U targetUnit) throws ValueException
     {
-        return convertToUnit(getSI(index), targetUnit);
+        return expressAsUnit(getSI(index), targetUnit);
     }
 
     /**
@@ -505,7 +505,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
         String s = "[" + displayUnit.getAbbreviation() + "]";
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
-            double f = convertToUnit(this.vectorSI.get(i), displayUnit);
+            double f = expressAsUnit(this.vectorSI.get(i), displayUnit);
             if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
                 s += " " + String.format("%8.3f", f);
             else

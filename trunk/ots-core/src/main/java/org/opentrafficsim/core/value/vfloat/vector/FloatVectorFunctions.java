@@ -3,6 +3,7 @@ package org.opentrafficsim.core.value.vfloat.vector;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.VectorFunctions;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
@@ -40,14 +41,14 @@ public interface FloatVectorFunctions<U extends Unit<U>> extends VectorFunctions
      * @throws ValueException if index < 0 or index >= vector.size().
      */
     float getSI(int index) throws ValueException;
-    
+
     /**
      * @param index position to get the value for in the original unit of creation.
      * @return value at position index.
      * @throws ValueException if index < 0 or index >= vector.size().
      */
     float getInUnit(int index) throws ValueException;
-    
+
     /**
      * @param index position to get the value for in the SI unit in which it has been stored.
      * @param targetUnit the unit for the result.
@@ -56,6 +57,35 @@ public interface FloatVectorFunctions<U extends Unit<U>> extends VectorFunctions
      */
     float getInUnit(int index, U targetUnit) throws ValueException;
     
+    /**
+     * @param index index position to get the value that has been stored.
+     * @return a strongly typed value from the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    FloatScalar<U> get(int index) throws ValueException;
+
+    /**
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param valueSI the value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setSI(int index, float valueSI) throws ValueException;
+
+    /**
+     * @param index position to get the value for in the original unit of creation.
+     * @param value the strongly typed value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void set(int index, FloatScalar<U> value) throws ValueException;
+
+    /**
+     * @param index position to get the value for in the provided unit.
+     * @param value the value to store in the cell
+     * @param valueUnit the unit of the value.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setInUnit(int index, float value, U valueUnit) throws ValueException;
+
     /**
      * @return sum of all values of the vector.
      */

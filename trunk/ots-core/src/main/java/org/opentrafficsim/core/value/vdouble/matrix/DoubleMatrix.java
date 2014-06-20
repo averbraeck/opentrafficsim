@@ -81,7 +81,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             {
                 for (int column = 0; column < (values.length > 0 ? values[0].length : 0); column++)
                 {
-                    this.matrixSI.set(row, column, convertToSIUnit(values[row][column]));
+                    this.matrixSI.set(row, column, expressAsSIUnit(values[row][column]));
                 }
             }
         }
@@ -143,7 +143,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         double[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
             for (int j = 0; j < (values.length > 0 ? values[0].length : 0); j++)
-                values[i][j] = convertToSpecifiedUnit(values[i][j]);
+                values[i][j] = expressAsSpecifiedUnit(values[i][j]);
         return values;
     }
 
@@ -156,7 +156,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         double[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
             for (int j = 0; j < (values.length > 0 ? values[0].length : 0); j++)
-                values[i][j] = convertToUnit(values[i][j], targetUnit);
+                values[i][j] = expressAsUnit(values[i][j], targetUnit);
         return values;
     }
 
@@ -194,7 +194,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public double getInUnit(final int row, final int column) throws ValueException
     {
-        return convertToSpecifiedUnit(getSI(row, column));
+        return expressAsSpecifiedUnit(getSI(row, column));
     }
 
     /**
@@ -204,7 +204,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     @Override
     public double getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
-        return convertToUnit(getSI(row, column), targetUnit);
+        return expressAsUnit(getSI(row, column), targetUnit);
     }
 
     /**
@@ -549,7 +549,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             s += "\n";
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
-                double f = convertToUnit(this.matrixSI.get(i, j), displayUnit);
+                double f = expressAsUnit(this.matrixSI.get(i, j), displayUnit);
                 if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
                     s += " " + String.format("%8.3f", f);
                 else
