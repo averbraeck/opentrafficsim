@@ -671,6 +671,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             throw new ValueException("FloatVector.minus - vector neither sparse nor dense");
 
         c.vectorSI.assign(y.vectorSI, FloatFunctions.minus);
+        c.unit = x.unit;
         return c;
     }
 
