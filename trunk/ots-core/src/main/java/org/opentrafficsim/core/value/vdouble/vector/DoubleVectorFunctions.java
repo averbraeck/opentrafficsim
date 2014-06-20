@@ -3,6 +3,7 @@ package org.opentrafficsim.core.value.vdouble.vector;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.VectorFunctions;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -55,6 +56,35 @@ public interface DoubleVectorFunctions<U extends Unit<U>> extends VectorFunction
      * @throws ValueException if index < 0 or index >= vector.size().
      */
     double getInUnit(int index, U targetUnit) throws ValueException;
+
+    /**
+     * @param index index position to get the value that has been stored.
+     * @return a strongly typed value from the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    DoubleScalar<U> get(int index) throws ValueException;
+
+    /**
+     * @param index position to set the value in the SI unit in which it has been stored.
+     * @param valueSI the value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setSI(int index, double valueSI) throws ValueException;
+
+    /**
+     * @param index position to set the value in the original unit of creation.
+     * @param value the strongly typed value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void set(int index, DoubleScalar<U> value) throws ValueException;
+
+    /**
+     * @param index position to set the value in the provided unit.
+     * @param value the value to store in the cell
+     * @param valueUnit the unit of the value.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setInUnit(int index, double value, U valueUnit) throws ValueException;
 
     /**
      * @return sum of all values of the vector.

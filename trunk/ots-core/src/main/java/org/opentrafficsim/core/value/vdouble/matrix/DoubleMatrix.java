@@ -208,6 +208,38 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#setSI(int, int, double)
+     */
+    @Override
+    public void setSI(final int row, final int column, double valueSI) throws ValueException
+    {
+        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+            throw new ValueException("DoubleMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
+                    + ", size=" + rows() + ", column=" + column + ", size=" + columns());
+        this.matrixSI.set(row, column, valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#set(int, int,
+     *      org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
+     */
+    @Override
+    public void set(final int row, final int column, DoubleScalar<U> value) throws ValueException
+    {
+        setSI(row, column, value.getValueSI());
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#setInUnit(int, int, double,
+     *      org.opentrafficsim.core.unit.Unit)
+     */
+    @Override
+    public void setInUnit(final int row, final int column, double value, U valueUnit) throws ValueException
+    {
+        setSI(row, column, expressAsSIUnit(value, valueUnit));
+    }
+
+    /**
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#zSum()
      */
     public double zSum()

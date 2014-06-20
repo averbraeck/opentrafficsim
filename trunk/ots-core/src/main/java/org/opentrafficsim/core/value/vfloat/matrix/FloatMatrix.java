@@ -208,6 +208,38 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
+     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#setSI(int, int, float)
+     */
+    @Override
+    public void setSI(final int row, final int column, float valueSI) throws ValueException
+    {
+        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+            throw new ValueException("FloatMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
+                    + ", size=" + rows() + ", column=" + column + ", size=" + columns());
+        this.matrixSI.set(row, column, valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#set(int, int,
+     *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
+     */
+    @Override
+    public void set(final int row, final int column, FloatScalar<U> value) throws ValueException
+    {
+        setSI(row, column, value.getValueSI());
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#setInUnit(int, int, float,
+     *      org.opentrafficsim.core.unit.Unit)
+     */
+    @Override
+    public void setInUnit(final int row, final int column, float value, U valueUnit) throws ValueException
+    {
+        setSI(row, column, (float) expressAsSIUnit(value, valueUnit));
+    }
+
+    /**
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#zSum()
      */
     public float zSum()
@@ -784,9 +816,8 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
-            throw new ValueException(
-                    "FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
-                            + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
+            throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
+                    + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
         FloatMatrixAbs<U> result = x.copy();
@@ -807,9 +838,8 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
-            throw new ValueException(
-                    "FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
-                            + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
+            throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
+                    + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
         FloatMatrixRel<U> result = x.copy();

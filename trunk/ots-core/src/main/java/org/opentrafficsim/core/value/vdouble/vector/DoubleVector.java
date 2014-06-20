@@ -180,6 +180,35 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#setSI(int, double)
+     */
+    @Override
+    public void setSI(int index, double valueSI) throws ValueException
+    {
+        if (index < 0 || index >= this.vectorSI.size())
+            throw new ValueException("DoubleVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
+        this.vectorSI.set(index, valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#set(int, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
+     */
+    @Override
+    public void set(int index, DoubleScalar<U> value) throws ValueException
+    {
+        setSI(index, value.getValueSI());
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#setInUnit(int, double, org.opentrafficsim.core.unit.Unit)
+     */
+    @Override
+    public void setInUnit(int index, double value, U valueUnit) throws ValueException
+    {
+        setSI(index, expressAsSIUnit(value, valueUnit));
+    }
+
+    /**
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#zSum()
      */
     public double zSum()

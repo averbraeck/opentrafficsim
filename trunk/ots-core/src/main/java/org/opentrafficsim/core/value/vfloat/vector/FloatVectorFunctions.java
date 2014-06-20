@@ -65,21 +65,21 @@ public interface FloatVectorFunctions<U extends Unit<U>> extends VectorFunctions
     FloatScalar<U> get(int index) throws ValueException;
 
     /**
-     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param index position to set the value in the SI unit in which it has been stored.
      * @param valueSI the value to store in the cell
      * @throws ValueException if index < 0 or index >= vector.size().
      */
     void setSI(int index, float valueSI) throws ValueException;
 
     /**
-     * @param index position to get the value for in the original unit of creation.
+     * @param index position to set the value in the original unit of creation.
      * @param value the strongly typed value to store in the cell
      * @throws ValueException if index < 0 or index >= vector.size().
      */
     void set(int index, FloatScalar<U> value) throws ValueException;
 
     /**
-     * @param index position to get the value for in the provided unit.
+     * @param index position to set the value in the provided unit.
      * @param value the value to store in the cell
      * @param valueUnit the unit of the value.
      * @throws ValueException if index < 0 or index >= vector.size().

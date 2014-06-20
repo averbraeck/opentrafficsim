@@ -62,4 +62,13 @@ public abstract class DoubleVectorRel<U extends Unit<U>> extends DoubleVector<U>
      */
     public abstract DoubleVectorRel<U> copy();
 
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.DoubleVectorFunctions#get(int)
+     */
+    @Override
+    public DoubleScalarRel<U> get(int index) throws ValueException
+    {
+        return new DoubleScalarRel<U>(getInUnit(index, this.unit), this.unit);
+    }
+
 }

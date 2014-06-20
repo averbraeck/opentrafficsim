@@ -62,4 +62,13 @@ public abstract class DoubleMatrixAbs<U extends Unit<U>> extends DoubleMatrix<U>
      */
     public abstract DoubleMatrixAbs<U> copy();
 
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#get(int, int)
+     */
+    @Override
+    public DoubleScalarAbs<U> get(final int row, final int column) throws ValueException
+    {
+        return new DoubleScalarAbs<U>(getInUnit(row, column, this.unit), this.unit);
+    }
+
 }
