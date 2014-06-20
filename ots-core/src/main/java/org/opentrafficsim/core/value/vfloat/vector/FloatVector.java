@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
+import java.awt.image.ConvolveOp;
+
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
@@ -71,7 +73,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
             this.vectorSI = createMatrix1D(values.length);
             for (int index = 0; index < values.length; index++)
             {
-                this.vectorSI.set(index, (float) convertToSIUnit(values[index]));
+                this.vectorSI.set(index, (float) expressAsSIUnit(values[index]));
             }
         }
     }
@@ -126,7 +128,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     {
         float[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) convertToSpecifiedUnit(values[i]);
+            values[i] = (float) expressAsSpecifiedUnit(values[i]);
         return values;
     }
 
@@ -138,7 +140,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     {
         float[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) convertToUnit(values[i], targetUnit);
+            values[i] = (float) expressAsUnit(values[i], targetUnit);
         return values;
     }
 
@@ -165,18 +167,44 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public float getInUnit(final int index) throws ValueException
     {
-        return (float) convertToSpecifiedUnit(getSI(index));
+        return (float) expressAsSpecifiedUnit(getSI(index));
     }
 
     /**
-     * @param index position to get the value for in the SI unit in which it has been stored.
-     * @param targetUnit the unit for the result.
-     * @return value at position i.
-     * @throws ValueException if i < 0 or i >= vector.size().
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int, org.opentrafficsim.core.unit.Unit)
      */
     public float getInUnit(final int index, final U targetUnit) throws ValueException
     {
-        return (float) convertToUnit(getSI(index), targetUnit);
+        return (float) expressAsUnit(getSI(index), targetUnit);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setSI(int, float)
+     */
+    @Override
+    public void setSI(int index, float valueSI) throws ValueException
+    {
+        if (index < 0 || index >= this.vectorSI.size())
+            throw new ValueException("FloatVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
+        this.vectorSI.set(index, valueSI);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#set(int, org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
+     */
+    @Override
+    public void set(int index, FloatScalar<U> value) throws ValueException
+    {
+        setSI(index, value.getValueSI());
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setInUnit(int, float, org.opentrafficsim.core.unit.Unit)
+     */
+    @Override
+    public void setInUnit(int index, float value, U valueUnit) throws ValueException
+    {
+        setSI(index, (float) expressAsSIUnit(value, valueUnit));
     }
 
     /**
@@ -505,7 +533,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         String s = "[" + displayUnit.getAbbreviation() + "]";
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
-            float f = (float) convertToUnit(this.vectorSI.get(i), displayUnit);
+            float f = (float) expressAsUnit(this.vectorSI.get(i), displayUnit);
             if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
                 s += " " + String.format("%8.3f", f);
             else

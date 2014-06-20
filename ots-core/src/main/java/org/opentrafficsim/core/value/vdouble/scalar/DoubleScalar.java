@@ -54,7 +54,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
     public DoubleScalar(final double value, final U unit)
     {
         super(unit);
-        this.valueSI = convertToSIUnit(value);
+        this.valueSI = expressAsSIUnit(value);
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      */
     public double getValueInUnit()
     {
-        return convertToSpecifiedUnit(this.valueSI);
+        return expressAsSpecifiedUnit(this.valueSI);
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      */
     public double getValueInUnit(final U targetUnit)
     {
-        return convertToUnit(this.valueSI, targetUnit);
+        return expressAsUnit(this.valueSI, targetUnit);
     }
 
     /**

@@ -55,7 +55,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     public FloatScalar(final float value, final U unit)
     {
         super(unit);
-        this.valueSI = (float) convertToSIUnit(value);
+        this.valueSI = (float) expressAsSIUnit(value);
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     public float getValueInUnit()
     {
-        return (float) convertToSpecifiedUnit(this.valueSI);
+        return (float) expressAsSpecifiedUnit(this.valueSI);
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     public float getValueInUnit(final U targetUnit)
     {
-        return (float) convertToUnit(this.valueSI, targetUnit);
+        return (float) expressAsUnit(this.valueSI, targetUnit);
     }
 
     /**
@@ -160,6 +160,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void acos()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.acos(this.valueSI);
     }
 
@@ -169,6 +170,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void asin()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.asin(this.valueSI);
     }
 
@@ -178,6 +180,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void atan()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.atan(this.valueSI);
     }
 
@@ -187,6 +190,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void cbrt()
     {
+        // TODO: dimension for all SI coefficients / 3.
         this.valueSI = (float) Math.cbrt(this.valueSI);
     }
 
@@ -205,6 +209,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void cos()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.cos(this.valueSI);
     }
 
@@ -214,6 +219,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void cosh()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.cosh(this.valueSI);
     }
 
@@ -223,6 +229,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     @Override
     public void exp()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.exp(this.valueSI);
     }
 
@@ -230,6 +237,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#expm1()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void expm1()
     {
         this.valueSI = (float) Math.expm1(this.valueSI);
@@ -248,6 +256,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#log()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void log()
     {
         this.valueSI = (float) Math.log(this.valueSI);
@@ -257,6 +266,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#log10()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void log10()
     {
         this.valueSI = (float) Math.log10(this.valueSI);
@@ -266,6 +276,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#log1p()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void log1p()
     {
         this.valueSI = (float) Math.log1p(this.valueSI);
@@ -275,6 +286,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
+    // TODO: SI unit with coefficients * x.
     public void pow(double x)
     {
         this.valueSI = (float) Math.pow(this.valueSI, x);
@@ -302,6 +314,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#signum()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void signum()
     {
         this.valueSI = Math.signum(this.valueSI);
@@ -311,6 +324,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#sin()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void sin()
     {
         this.valueSI = (float) Math.sin(this.valueSI);
@@ -320,6 +334,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#sinh()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void sinh()
     {
         this.valueSI = (float) Math.sinh(this.valueSI);
@@ -329,6 +344,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
      */
     @Override
+    // TODO: unit coefficients / 2.
     public void sqrt()
     {
         this.valueSI = (float) Math.sqrt(this.valueSI);
@@ -338,6 +354,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#tan()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void tan()
     {
         this.valueSI = (float) Math.tan(this.valueSI);
@@ -347,6 +364,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#tanh()
      */
     @Override
+    // TODO: dimensionless result (SIUnit.ONE).
     public void tanh()
     {
         this.valueSI = (float) Math.tanh(this.valueSI);
@@ -374,6 +392,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#inv()
      */
     @Override
+    // TODO: negate all coefficients in the Unit.
     public void inv()
     {
         this.valueSI = 1.0f / this.valueSI;

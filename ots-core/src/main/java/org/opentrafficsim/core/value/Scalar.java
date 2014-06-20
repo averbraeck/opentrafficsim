@@ -59,10 +59,10 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     }
 
     /**
-     * @param value the value to convert in the specified unit for this scalar
+     * @param value the value to convert in SI units
      * @return the value in SI units
      */
-    protected double convertToSIUnit(final double value)
+    protected double expressAsSIUnit(final double value)
     {
         if (this.unit instanceof OffsetUnit<?>)
             return value + ((OffsetUnit<?>) this.unit).getOffsetToStandardUnit()
@@ -72,19 +72,33 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
 
     /**
      * @param value the value to convert in SI units
-     * @return the value in the unit as specified for this scalar
+     * @param valueUnit the unit of the offered value
+     * @return the value in SI units
      */
-    protected double convertToSpecifiedUnit(final double value)
+    // TODO: maybe as static method?
+    protected double expressAsSIUnit(final double value, final Unit<U> valueUnit)
     {
-        return convertToUnit(value, this.unit);
+        if (this.unit instanceof OffsetUnit<?>)
+            return value + ((OffsetUnit<?>) valueUnit).getOffsetToStandardUnit()
+                    * valueUnit.getConversionFactorToStandardUnit();
+        return value * valueUnit.getConversionFactorToStandardUnit();
     }
 
     /**
-     * @param value the value to convert in SI units
+     * @param value the value to convert in the specified unit for this scalar
+     * @return the value in the unit as specified for this scalar
+     */
+    protected double expressAsSpecifiedUnit(final double value)
+    {
+        return expressAsUnit(value, this.unit);
+    }
+
+    /**
+     * @param value the value to express in target unit
      * @param targetUnit the unit to convert the value to
      * @return the value in the target unit
      */
-    protected double convertToUnit(final double value, final Unit<U> targetUnit)
+    protected double expressAsUnit(final double value, final Unit<U> targetUnit)
     {
         if (targetUnit instanceof OffsetUnit<?>)
             return (value - ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit())

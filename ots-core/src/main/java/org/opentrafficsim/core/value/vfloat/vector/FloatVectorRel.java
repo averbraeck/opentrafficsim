@@ -62,4 +62,13 @@ public abstract class FloatVectorRel<U extends Unit<U>> extends FloatVector<U> i
      */
     public abstract FloatVectorRel<U> copy();
 
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#get(int)
+     */
+    @Override
+    public FloatScalarRel<U> get(int index) throws ValueException
+    {
+        return new FloatScalarRel<U>(getInUnit(index, this.unit), this.unit);
+    }
+
 }

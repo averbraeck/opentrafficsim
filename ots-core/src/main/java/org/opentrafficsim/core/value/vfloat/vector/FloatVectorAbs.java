@@ -62,5 +62,13 @@ public abstract class FloatVectorAbs<U extends Unit<U>> extends FloatVector<U> i
      */
     public abstract FloatVectorAbs<U> copy();
 
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#get(int)
+     */
+    @Override
+    public FloatScalarAbs<U> get(int index) throws ValueException
+    {
+        return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+    }
 
 }
