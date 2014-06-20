@@ -62,4 +62,13 @@ public abstract class FloatMatrixAbs<U extends Unit<U>> extends FloatMatrix<U> i
      */
     public abstract FloatMatrixAbs<U> copy();
 
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#get(int, int)
+     */
+    @Override
+    public FloatScalarAbs<U> get(final int row, final int column) throws ValueException
+    {
+        return new FloatScalarAbs<U>(getInUnit(row, column, this.unit), this.unit);
+    }
+
 }

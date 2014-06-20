@@ -3,6 +3,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.MatrixFunctions;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
@@ -58,6 +59,39 @@ public interface FloatMatrixFunctions<U extends Unit<U>> extends MatrixFunctions
      * @throws ValueException if row or column out of bounds.
      */
     float getInUnit(final int row, final int column, U targetUnit) throws ValueException;
+
+    /**
+     * @param row row position to get the value that has been stored.
+     * @param column column position to get the value that has been stored.
+     * @return a strongly typed value from the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    FloatScalar<U> get(final int row, final int column) throws ValueException;
+
+    /**
+     * @param row row position to set the value in the SI unit in which it has been stored.
+     * @param column column position to set the value in the SI unit in which it has been stored.
+     * @param valueSI the value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setSI(final int row, final int column, float valueSI) throws ValueException;
+
+    /**
+     * @param row row position to set the value in the original unit of creation.
+     * @param column column position to set the value in the original unit of creation.
+     * @param value the strongly typed value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void set(final int row, final int column, FloatScalar<U> value) throws ValueException;
+
+    /**
+     * @param row row position to set the value in the provided unit.
+     * @param column column position to set the value in the provided unit.
+     * @param value the value to store in the cell
+     * @param valueUnit the unit of the value.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setInUnit(final int row, final int column, float value, U valueUnit) throws ValueException;
 
     /**
      * @return sum of all values within the matrix.

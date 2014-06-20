@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
-import java.awt.image.ConvolveOp;
-
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;

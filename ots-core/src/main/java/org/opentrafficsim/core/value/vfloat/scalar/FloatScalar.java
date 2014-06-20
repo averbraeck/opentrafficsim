@@ -94,6 +94,33 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     }
 
     /**
+     * @param valueSI the value to store in the cell
+     */
+    void setSI(float valueSI)
+    {
+        this.valueSI = valueSI;
+    }
+
+    /**
+     * @param value the strongly typed value to store in the cell
+     */
+    void set(FloatScalar<U> value)
+    {
+        setDisplayUnit(value.unit);
+        this.valueSI = value.valueSI;
+    }
+
+    /**
+     * @param value the value to store in the cell
+     * @param valueUnit the unit of the value.
+     */
+    void setInUnit(float value, U valueUnit)
+    {
+        setDisplayUnit(valueUnit);
+        this.valueSI = (float) expressAsSIUnit(value);
+    }
+
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

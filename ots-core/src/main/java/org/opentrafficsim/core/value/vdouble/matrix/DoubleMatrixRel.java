@@ -3,6 +3,7 @@ package org.opentrafficsim.core.value.vdouble.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
@@ -61,5 +62,14 @@ public abstract class DoubleMatrixRel<U extends Unit<U>> extends DoubleMatrix<U>
      * @return a deep copy of the absolute / relative, dense / sparse matrix
      */
     public abstract DoubleMatrixRel<U> copy();
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#get(int, int)
+     */
+    @Override
+    public DoubleScalarRel<U> get(final int row, final int column) throws ValueException
+    {
+        return new DoubleScalarRel<U>(getInUnit(row, column, this.unit), this.unit);
+    }
 
 }

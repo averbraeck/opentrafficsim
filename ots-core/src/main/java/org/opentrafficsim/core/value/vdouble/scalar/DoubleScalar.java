@@ -93,6 +93,33 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
     }
 
     /**
+     * @param valueSI the value to store in the scalar
+     */
+    void setSI(final double valueSI)
+    {
+        this.valueSI = valueSI;
+    }
+
+    /**
+     * @param value the strongly typed value to store in the scalar
+     */
+    void set(final DoubleScalar<U> value)
+    {
+        setDisplayUnit(value.unit);
+        this.valueSI = value.valueSI;
+    }
+
+    /**
+     * @param value the value to store in the scalar
+     * @param valueUnit the unit of the value.
+     */
+    void setInUnit(final double value, final U valueUnit)
+    {
+        setDisplayUnit(valueUnit);
+        this.valueSI = expressAsSIUnit(value);
+    }
+
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -133,11 +160,11 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
                     + "and the other is relative.");
 
         if (this.valueSI < fs.valueSI)
-                return -1;
+            return -1;
         if (this.valueSI > fs.valueSI)
             return 1;
         return 0;
-        
+
     }
 
     /**********************************************************************************/
@@ -377,7 +404,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
     {
         this.valueSI = 1.0f / this.valueSI;
     }
-    
+
     /**
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
@@ -532,7 +559,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @param valueAbs2 value 2
      * @return the product of the two absolute values as an absolute value
      */
-    public static DoubleScalarAbs<SIUnit> multiply(final DoubleScalarAbs<?> valueAbs1, final DoubleScalarAbs<?> valueAbs2)
+    public static DoubleScalarAbs<SIUnit> multiply(final DoubleScalarAbs<?> valueAbs1,
+            final DoubleScalarAbs<?> valueAbs2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
@@ -546,7 +574,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @param valueRel2 value 2
      * @return the product of the two relative values as a relative value
      */
-    public static DoubleScalarRel<SIUnit> multiply(final DoubleScalarRel<?> valueRel1, final DoubleScalarRel<?> valueRel2)
+    public static DoubleScalarRel<SIUnit> multiply(final DoubleScalarRel<?> valueRel1,
+            final DoubleScalarRel<?> valueRel2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
