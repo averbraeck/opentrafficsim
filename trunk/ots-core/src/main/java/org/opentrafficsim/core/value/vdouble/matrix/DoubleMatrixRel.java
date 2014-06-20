@@ -56,4 +56,10 @@ public abstract class DoubleMatrixRel<U extends Unit<U>> extends DoubleMatrix<U>
         super(values);
     }
 
+    /**
+     * Create a deep copy of the matrix, independent of the original matrix.
+     * @return a deep copy of the absolute / relative, dense / sparse matrix
+     */
+    public abstract DoubleMatrixRel<U> copy();
+
 }

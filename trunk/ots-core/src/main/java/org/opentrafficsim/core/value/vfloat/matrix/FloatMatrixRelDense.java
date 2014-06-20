@@ -73,7 +73,7 @@ public class FloatMatrixRelDense<U extends Unit<U>> extends FloatMatrixRel<U> im
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#copy()
      */
     @Override
-    public final FloatMatrix<U> copy()
+    public final FloatMatrixRelDense<U> copy()
     {
         FloatMatrixRelDense<U> m = new FloatMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;

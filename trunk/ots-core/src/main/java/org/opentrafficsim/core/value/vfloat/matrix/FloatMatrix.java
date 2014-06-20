@@ -249,12 +249,6 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * Create a deep copy of the matrix, independent of the original matrix.
-     * @return a deep copy of the absolute / relative, dense / sparse matrix
-     */
-    public abstract FloatMatrix<U> copy();
-
-    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -618,7 +612,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throw new ValueException("FloatMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixAbs<U> c = (FloatMatrixAbs<U>) x.copy();
+        FloatMatrixAbs<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -653,7 +647,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throw new ValueException("FloatMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
+        FloatMatrixRel<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -673,7 +667,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
+        FloatMatrixRel<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -693,7 +687,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixAbs<U> c = (FloatMatrixAbs<U>) x.copy();
+        FloatMatrixAbs<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -713,23 +707,32 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        FloatMatrixRel<U> c = (FloatMatrixRel<U>) x.copy();
+        FloatMatrixRel<U> c = null;
+        if (x instanceof Dense)
+            c = new FloatMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else if (x instanceof Sparse)
+            c = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else
+            throw new ValueException("FloatVector.minus - vector neither sparse nor dense");
+
         c.matrixSI.assign(y.matrixSI, FloatFunctions.minus);
+        c.unit = x.unit;
+
         return c;
     }
 
     /**
      * Multiply two absolute matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the zDotProduct with
-     * @param y the second matrix to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param y the second matrix to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static FloatMatrixAbs<SIUnit> zDotProduct(final FloatMatrixAbs<?> x, final FloatMatrixAbs<?> y)
+    public static FloatMatrixAbs<SIUnit> multiply(final FloatMatrixAbs<?> x, final FloatMatrixAbs<?> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("FloatMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
         SIUnit targetUnit =
@@ -745,16 +748,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
 
     /**
      * Multiply two relative matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the zDotProduct with
-     * @param y the second matrix to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param y the second matrix to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static FloatMatrixRel<SIUnit> zDotProduct(final FloatMatrixRel<?> x, final FloatMatrixRel<?> y)
+    public static FloatMatrixRel<SIUnit> multiply(final FloatMatrixRel<?> x, final FloatMatrixRel<?> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("FloatMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
         SIUnit targetUnit =
@@ -771,21 +774,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     /**
      * Multiply an absolute matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
      * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the zDotProduct with
-     * @param c the dimensionless matrix with constants to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param c the dimensionless matrix with constants to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> zDotProduct(final FloatMatrixAbs<U> x, final float[][] c)
+    public static <U extends Unit<U>> FloatMatrixAbs<U> multiply(final FloatMatrixAbs<U> x, final float[][] c)
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException(
-                    "FloatMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
+                    "FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
                             + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
-        FloatMatrixAbs<U> result = (FloatMatrixAbs<U>) x.copy();
+        FloatMatrixAbs<U> result = x.copy();
         DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
         result.matrixSI.assign(cMatrix, FloatFunctions.mult);
         return result;
@@ -794,21 +797,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     /**
      * Multiply a relative matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
      * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the zDotProduct with
-     * @param c the dimensionless matrix with constants to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param c the dimensionless matrix with constants to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static <U extends Unit<U>> FloatMatrixRel<U> zDotProduct(final FloatMatrixRel<U> x, final float[][] c)
+    public static <U extends Unit<U>> FloatMatrixRel<U> multiply(final FloatMatrixRel<U> x, final float[][] c)
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException(
-                    "FloatMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
+                    "FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
                             + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
-        FloatMatrixRel<U> result = (FloatMatrixRel<U>) x.copy();
+        FloatMatrixRel<U> result = x.copy();
         DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
         result.matrixSI.assign(cMatrix, FloatFunctions.mult);
         return result;

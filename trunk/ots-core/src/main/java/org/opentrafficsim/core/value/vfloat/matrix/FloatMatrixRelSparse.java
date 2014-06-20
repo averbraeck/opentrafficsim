@@ -74,7 +74,7 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> i
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#copy()
      */
     @Override
-    public final FloatMatrix<U> copy()
+    public final FloatMatrixRelSparse<U> copy()
     {
         FloatMatrixRelSparse<U> m = new FloatMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;

@@ -249,12 +249,6 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
-     * Create a deep copy of the matrix, independent of the original matrix.
-     * @return a deep copy of the absolute / relative, dense / sparse matrix
-     */
-    public abstract DoubleMatrix<U> copy();
-
-    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -618,7 +612,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             throw new ValueException("DoubleMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        DoubleMatrixAbs<U> c = (DoubleMatrixAbs<U>) x.copy();
+        DoubleMatrixAbs<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -653,7 +647,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             throw new ValueException("DoubleMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        DoubleMatrixRel<U> c = (DoubleMatrixRel<U>) x.copy();
+        DoubleMatrixRel<U> c = x.copy();
         c.add(y);
         return c;
     }
@@ -673,7 +667,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        DoubleMatrixRel<U> c = (DoubleMatrixRel<U>) x.copy();
+        DoubleMatrixRel<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -693,7 +687,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        DoubleMatrixAbs<U> c = (DoubleMatrixAbs<U>) x.copy();
+        DoubleMatrixAbs<U> c = x.copy();
         c.subtract(y);
         return c;
     }
@@ -713,23 +707,32 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
-        DoubleMatrixRel<U> c = (DoubleMatrixRel<U>) x.copy();
+        DoubleMatrixRel<U> c = null;
+        if (x instanceof Dense)
+            c = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else if (x instanceof Sparse)
+            c = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
+        else
+            throw new ValueException("DoubleVector.minus - vector neither sparse nor dense");
+
         c.matrixSI.assign(y.matrixSI, DoubleFunctions.minus);
+        c.unit = x.unit;
+
         return c;
     }
 
     /**
      * Multiply two absolute matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the zDotProduct with
-     * @param y the second matrix to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param y the second matrix to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static DoubleMatrixAbs<SIUnit> zDotProduct(final DoubleMatrixAbs<?> x, final DoubleMatrixAbs<?> y)
+    public static DoubleMatrixAbs<SIUnit> multiply(final DoubleMatrixAbs<?> x, final DoubleMatrixAbs<?> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
         SIUnit targetUnit =
@@ -745,16 +748,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
 
     /**
      * Multiply two relative matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the zDotProduct with
-     * @param y the second matrix to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param y the second matrix to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static DoubleMatrixRel<SIUnit> zDotProduct(final DoubleMatrixRel<?> x, final DoubleMatrixRel<?> y)
+    public static DoubleMatrixRel<SIUnit> multiply(final DoubleMatrixRel<?> x, final DoubleMatrixRel<?> y)
             throws ValueException
     {
         if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.zDotProduct - two matrices have unequal size: " + x.rows() + "x"
+            throw new ValueException("DoubleMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
                     + x.columns() + " != " + y.rows() + "x" + y.columns());
 
         SIUnit targetUnit =
@@ -771,21 +774,21 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     /**
      * Multiply an absolute matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
      * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the zDotProduct with
-     * @param c the dimensionless matrix with constants to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param c the dimensionless matrix with constants to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static <U extends Unit<U>> DoubleMatrixAbs<U> zDotProduct(final DoubleMatrixAbs<U> x, final double[][] c)
+    public static <U extends Unit<U>> DoubleMatrixAbs<U> multiply(final DoubleMatrixAbs<U> x, final double[][] c)
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException(
-                    "DoubleMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
+                    "DoubleMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
                             + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
-        DoubleMatrixAbs<U> result = (DoubleMatrixAbs<U>) x.copy();
+        DoubleMatrixAbs<U> result = x.copy();
         DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
         result.matrixSI.assign(cMatrix, DoubleFunctions.mult);
         return result;
@@ -794,21 +797,21 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     /**
      * Multiply a relative matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
      * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the zDotProduct with
-     * @param c the dimensionless matrix with constants to do the zDotProduct with
-     * @return the zDotProduct of this matrix and another matrix of the same size.
+     * @param x the first matrix to do the multiplication with
+     * @param c the dimensionless matrix with constants to do the multiplication with
+     * @return the multiplication of this matrix and another matrix of the same size.
      * @throws ValueException if the two matrices have unequal size
      */
-    public static <U extends Unit<U>> DoubleMatrixRel<U> zDotProduct(final DoubleMatrixRel<U> x, final double[][] c)
+    public static <U extends Unit<U>> DoubleMatrixRel<U> multiply(final DoubleMatrixRel<U> x, final double[][] c)
             throws ValueException
     {
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException(
-                    "DoubleMatrix.zDotProduct with dimensionless matrix- two matrices have unequal size: " + x.rows()
+                    "DoubleMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
                             + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
 
         // TODO: more elegant implementation that does not copy the entire matrix?
-        DoubleMatrixRel<U> result = (DoubleMatrixRel<U>) x.copy();
+        DoubleMatrixRel<U> result = x.copy();
         DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
         result.matrixSI.assign(cMatrix, DoubleFunctions.mult);
         return result;

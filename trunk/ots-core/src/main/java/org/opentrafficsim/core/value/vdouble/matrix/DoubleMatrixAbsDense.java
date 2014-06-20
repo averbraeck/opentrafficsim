@@ -73,7 +73,7 @@ public class DoubleMatrixAbsDense<U extends Unit<U>> extends DoubleMatrixAbs<U> 
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#copy()
      */
     @Override
-    public final DoubleMatrix<U> copy()
+    public final DoubleMatrixAbsDense<U> copy()
     {
         DoubleMatrixAbsDense<U> m = new DoubleMatrixAbsDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;

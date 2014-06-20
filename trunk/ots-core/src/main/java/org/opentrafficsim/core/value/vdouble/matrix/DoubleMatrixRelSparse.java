@@ -74,7 +74,7 @@ public class DoubleMatrixRelSparse<U extends Unit<U>> extends DoubleMatrixRel<U>
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#copy()
      */
     @Override
-    public final DoubleMatrix<U> copy()
+    public final DoubleMatrixRelSparse<U> copy()
     {
         DoubleMatrixRelSparse<U> m = new DoubleMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;

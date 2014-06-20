@@ -73,7 +73,7 @@ public class DoubleMatrixAbsSparse<U extends Unit<U>> extends DoubleMatrixAbs<U>
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#copy()
      */
     @Override
-    public final DoubleMatrix<U> copy()
+    public final DoubleMatrixAbsSparse<U> copy()
     {
         DoubleMatrixAbsSparse<U> m = new DoubleMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
         m.unit = this.unit;
