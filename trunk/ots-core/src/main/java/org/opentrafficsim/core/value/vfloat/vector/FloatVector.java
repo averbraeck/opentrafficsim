@@ -99,7 +99,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     /**
      * This method has to be implemented by each leaf class.
      * @param size the number of cells in the vector
-     * @return an instance of the right type of matrix (absolute /relative, dense / sparse, etc.).
+     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
      */
     protected abstract FloatMatrix1D createMatrix1D(final int size);
 
@@ -532,12 +532,24 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
             float f = (float) expressAsUnit(this.vectorSI.get(i), displayUnit);
-            if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
+            if ((Math.abs(f) > 0.01 && Math.abs(f) < 999.0) || 0 == f)
                 s += " " + String.format("%8.3f", f);
             else
                 s += " " + String.format("%8.3e", f);
         }
         return s;
+    }
+    
+    /**
+     * Centralized size equality check
+     * @param other FloatVector<U>; other FloatVector
+     * @param where String; name of method that calls this check
+     * @throws ValueException when vectors have unequal size
+     */
+    void checkSize(final FloatVector<?> other, String where) throws ValueException
+    {
+        if (size() != other.size())
+            throw new ValueException(where + " - two vectors have unequal size: " + size() + " != " + other.size());
     }
 
     /**********************************************************************************/
@@ -553,9 +565,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public void add(final FloatVectorRel<U> vector) throws ValueException
     {
-        if (size() != vector.size())
-            throw new ValueException("FloatVector.add - two vectors have unequal size: " + size() + " != "
-                    + vector.size());
+        checkSize(vector, "FloatVector.add");
         this.vectorSI.assign(vector.vectorSI, FloatFunctions.plus);
     }
 
@@ -568,9 +578,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public void subtract(final FloatVectorRel<U> vector) throws ValueException
     {
-        if (size() != vector.size())
-            throw new ValueException("FloatVector.subtract - two vectors have unequal size: " + size() + " != "
-                    + vector.size());
+        checkSize(vector, "FloatVector.subtract");
         this.vectorSI.assign(vector.vectorSI, FloatFunctions.minus);
     }
 
@@ -589,10 +597,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static <U extends Unit<U>> FloatVectorAbs<U> plus(final FloatVectorAbs<U> x, final FloatVectorRel<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
-
+        x.checkSize(y, "FloatVector.plus");
         FloatVectorAbs<U> c = x.copy();
         c.add(y);
         return c;
@@ -624,10 +629,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static <U extends Unit<U>> FloatVectorRel<U> plus(final FloatVectorRel<U> x, final FloatVectorRel<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.plus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
-
+        x.checkSize(y, "FloatVector.plus");
         FloatVectorRel<U> c = x.copy();
         c.add(y);
         return c;
@@ -644,10 +646,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static <U extends Unit<U>> FloatVectorRel<U> minus(final FloatVectorRel<U> x, final FloatVectorRel<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
-
+        x.checkSize(y, "FloatVector.minus");
         FloatVectorRel<U> c = x.copy();
         c.subtract(y);
         return c;
@@ -664,10 +663,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static <U extends Unit<U>> FloatVectorAbs<U> minus(final FloatVectorAbs<U> x, final FloatVectorRel<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
-
+        x.checkSize(y, "FloatVector.minus");
         FloatVectorAbs<U> c = x.copy();
         c.subtract(y);
         return c;
@@ -684,10 +680,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static <U extends Unit<U>> FloatVectorRel<U> minus(final FloatVectorAbs<U> x, final FloatVectorAbs<U> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.minus - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
-
+        x.checkSize(y, "FloatVector.minus");
         FloatVectorRel<U> c = null;
         if (x instanceof Dense)
             c = new FloatVectorRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
@@ -711,9 +704,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static FloatVectorAbs<SIUnit> multiply(final FloatVectorAbs<?> x, final FloatVectorAbs<?> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
+        x.checkSize(y, "FloatVector.multiply");
 
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
@@ -736,9 +727,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     public static FloatVectorRel<SIUnit> multiply(final FloatVectorRel<?> x, final FloatVectorRel<?> y)
             throws ValueException
     {
-        if (x.size() != y.size())
-            throw new ValueException("FloatVector.zProduct - two vectors have unequal size: " + x.size() + " != "
-                    + y.size());
+        x.checkSize(y, "FloatVector.multiply");
 
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
