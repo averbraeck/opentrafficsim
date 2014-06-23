@@ -20,6 +20,8 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
+import cern.colt.matrix.tfloat.FloatMatrix1D;
+
 /**
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
@@ -89,6 +91,42 @@ public abstract class FloatVectorTest
                 fail("Get should not throw exceptions for legal values of the index");
             }
         }
+        System.out.println(fv.toString());
+        System.out.println(fv.toString(LengthUnit.NAUTICAL_MILE));
+        FloatMatrix1D fm1d;
+        if (fv instanceof FloatVectorAbsDense)
+            fm1d = ((FloatVectorAbsDense<LengthUnit>) fv).getColtDenseFloatMatrix1D();
+        else if (fv instanceof FloatVectorRelDense)
+            fm1d = ((FloatVectorRelDense<LengthUnit>) fv).getColtDenseFloatMatrix1D();
+        else if (fv instanceof FloatVectorAbsSparse)
+            fm1d = ((FloatVectorAbsSparse<LengthUnit>) fv).getColtSparseFloatMatrix1D();
+        else if (fv instanceof FloatVectorRelSparse)
+            fm1d = ((FloatVectorRelSparse<LengthUnit>) fv).getColtSparseFloatMatrix1D();
+        else
+            throw new Error("Vector neither Dense nor Sparse");
+        assertTrue("ColtMatrix1D should not be null", null != fm1d);
+        assertEquals("Size of Colt matrix should be size of input array", in.length, fm1d.size());
+        for (int i = 0; i < in.length; i++)
+            assertEquals("Contents of Colt matrix should be SI equivalent of input", in[i] * (12 * 0.0254),
+                    fm1d.getQuick(i), 0.0001);
+        fm1d = fv.getVectorSI();
+        assertTrue("VectorSI should not be null", null != fm1d);
+        assertEquals("Size of VectorSI should be size of input array", in.length, fm1d.size());
+        for (int i = 0; i < in.length; i++)
+            assertEquals("Contents of VectorSI should be SI equivalent of input", in[i] * (12 * 0.0254),
+                    fm1d.getQuick(i), 0.0001);
+        float[] valuesInUnit = fv.getValuesInUnit();
+        assertTrue("valuesInUnit should not be null", null != valuesInUnit);
+        assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInUnit.length);
+        for (int i = 0; i < in.length; i++)
+            assertEquals("Contents of valuesInUnit should be equal to input", in[i], valuesInUnit[i], 0.0001);
+        LengthUnit outputUnit = LengthUnit.DEKAMETER;
+        float[] valuesInOtherUnit = fv.getValuesInUnit(outputUnit);
+        assertTrue("valuesInUnit should not be null", null != valuesInOtherUnit);
+        assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInOtherUnit.length);
+        for (int i = 0; i < in.length; i++)
+            assertEquals("Contents of valuesInUnit should be equal to input", in[i] * (12 * 0.0254) / 10,
+                    valuesInOtherUnit[i], 0.0001);
         try
         {
             fv.getInUnit(-1);
@@ -205,6 +243,333 @@ public abstract class FloatVectorTest
         {
             fail("set*/get* should not throw ValueException for valid index and correctly typed value");
         }
+        try
+        {
+            copy.setInUnit(1, 321, LengthUnit.HECTOMETER);
+            assertEquals("321 hectometer is 32100m", copy.getSI(1), 32100, 0.001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Legal index should not throw exception");
+        }
+        float sum = 0;
+        for (int i = 0; i < in.length; i++)
+            sum += in[i];
+        sum *= (12 * 0.0254); // convert to meters
+        assertEquals("zsum should be sum of the values", sum, fv.zSum(), 0.001);
+        try
+        {
+            fv.normalize();
+            for (int i = 0; i < in.length; i++)
+                assertEquals("Unexpected normalized value", in[i] * (12 * 0.0254) / sum, fv.getSI(i), 0.0001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
+        }
+        assertEquals("Cardinality should be 9", 9, fv.cardinality());
+        float[] in2 = {1f, -1f, 0f};
+        fv = createFloatVector(in2, u, absolute);
+        assertEquals("zSum should be 0", 0, fv.zSum(), 0.00001);
+        try
+        {
+            fv.normalize();
+            fail("Should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        assertEquals("Cardinality should be 2", 2, fv.cardinality());
+        try
+        {
+            fv.setSI(0, 0);
+            assertEquals("Cardinality should be 1", 1, fv.cardinality());
+            fv.setSI(1, 0);
+            assertEquals("Cardinality should be 0", 0, fv.cardinality());
+            fv.setSI(2, 999);
+            assertEquals("Cardinality should be 1", 1, fv.cardinality());
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
+        }
+        assertTrue("FloatVector should be equal to itself", fv.equals(fv));
+        assertFalse("FloatVector should not be equal to null", fv.equals(null));
+        if (fv instanceof FloatVectorAbs<?>)
+        {
+            copy = ((FloatVectorAbs<LengthUnit>) fv).copy();
+        }
+        else if (fv instanceof FloatVectorRel<?>)
+        {
+            copy = ((FloatVectorRel<LengthUnit>) fv).copy();
+        }
+        else
+            fail("Vector neither Absolute nor Relative");
+        assertTrue("FloatVector should be equal to copy of itself", fv.equals(copy));
+        try
+        {
+            copy.setSI(1, copy.getSI(1) + 0.001f);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
+        }
+        assertFalse("FloatVector should different from slightly altered to copy of itself", fv.equals(copy));
+        try
+        {
+            copy.setSI(1, fv.getSI(1));
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
+        }
+        assertTrue("FloatVector should equals to repaired copy of itself", fv.equals(copy));
+        if (absolute)
+        {
+            float[] values = fv.getValuesInUnit();
+            FloatVector<LengthUnit> fvr = createFloatVector(values, fv.getUnit(), false);
+
+            try
+            {
+                for (int i = 0; i < in2.length; i++)
+                    assertEquals("Values should be equal", fv.getSI(i), fvr.getSI(i), 0.00001);
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected exception");
+            }
+            assertEquals("fv and fvr should have same unit", fv.getUnit(), fvr.getUnit());
+            assertFalse("fv and fvr should not be equal", fv.equals(fvr));
+            assertFalse("fvr and fv should not be equal", fvr.equals(fv));
+        }
+        float[] in3 = {-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100};
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.abs();
+        MathTester.tester(in3, "abs", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return Math.abs(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.acos();
+        MathTester.tester(in3, "acos", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.acos(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.asin();
+        MathTester.tester(in3, "asin", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.asin(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.atan();
+        MathTester.tester(in3, "atan", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.atan(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.cbrt();
+        MathTester.tester(in3, "cbrt", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.cbrt(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.ceil();
+        MathTester.tester(in3, "ceil", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.ceil(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.cos();
+        MathTester.tester(in3, "cos", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.cos(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.cosh();
+        MathTester.tester(in3, "cosh", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.cosh(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.exp();
+        MathTester.tester(in3, "exp", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.exp(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.expm1();
+        MathTester.tester(in3, "expm1", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.expm1(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.floor();
+        MathTester.tester(in3, "floor", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.floor(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.log();
+        MathTester.tester(in3, "log", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.log(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.log10();
+        MathTester.tester(in3, "log10", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.log10(f);
+            }
+        });
+        fv = createFloatVector(in3, LengthUnit.METER, absolute);
+        fv.log1p();
+        MathTester.tester(in3, "log1p", fv.getValuesSI(), 0.001, new FloatToFloat()
+        {
+            public float function(float f)
+            {
+                return (float) Math.log1p(f);
+            }
+        });
+
+    }
+
+    /**
+     * Interface encapsulating a function that takes a float and returns a float.
+     * <p>
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+     * reserved.
+     * <p>
+     * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
+     * <p>
+     * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
+     * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+     * following conditions are met:
+     * <ul>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
+     * following disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
+     * or promote products derived from this software without specific prior written permission.</li>
+     * </ul>
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied
+     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
+     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
+     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
+     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
+     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
+     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * @version Jun 23, 2014 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    interface FloatToFloat
+    {
+        /**
+         * @param f float value
+         * @return float value
+         */
+        float function(float f);
+    }
+
+    /**
+     * <p>
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+     * reserved.
+     * <p>
+     * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
+     * <p>
+     * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
+     * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+     * following conditions are met:
+     * <ul>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
+     * following disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
+     * or promote products derived from this software without specific prior written permission.</li>
+     * </ul>
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied
+     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
+     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
+     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
+     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
+     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
+     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * @version Jun 23, 2014 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    abstract static class MathTester
+    {
+
+        /**
+         * @param inputValues array of float with unprocessed values
+         * @param operation TODO
+         * @param resultValues array of float with processed values
+         * @param precision double expected accuracy
+         * @param function FloatToFloat encapsulating function that converts one value in inputValues to the
+         *            corresponding value in resultValues
+         */
+        public static void tester(final float[] inputValues, String operation, final float[] resultValues,
+                final double precision, final FloatToFloat function)
+        {
+            for (int i = 0; i < inputValues.length; i++)
+            {
+                float result = function.function(inputValues[i]);
+                String description =
+                        String.format("index=%d: %s(%f)->%f should be equal to %f with precision %f", i, operation,
+                                inputValues[i], result, resultValues[i], precision);
+                System.out.println(description);
+                assertEquals(description, result, resultValues[i], precision);
+            }
+        }
+
+        /**
+         * Function that takes a float value and returns a float value
+         * @param in float value
+         * @return float value
+         */
+        public abstract float function(float in);
     }
 
     /**
@@ -456,7 +821,7 @@ public abstract class FloatVectorTest
         }
         assertTrue("Result should not be null", null != product);
         assertEquals("Size of result should be size of inputs", 4, product.size());
-        System.out.println("unit of product is " + product.getUnit().getSICoefficientsString());
+        // System.out.println("unit of product is " + product.getUnit().getSICoefficientsString());
         // System.out.println("expected result unit is " + resultUnit);
         Set<Unit<?>> matches = null;
         try
