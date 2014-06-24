@@ -535,7 +535,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
             double f = expressAsUnit(this.vectorSI.get(i), displayUnit);
-            if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
+            if ((Math.abs(f) > 0.01 && Math.abs(f) < 999.0) || 0 == f)
                 s += " " + String.format("%8.3f", f);
             else
                 s += " " + String.format("%8.3e", f);
@@ -711,7 +711,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      * @return the multiplication of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static DoubleVectorAbs<SIUnit> multiplication(final DoubleVectorAbs<?> x, final DoubleVectorAbs<?> y)
+    public static DoubleVectorAbs<SIUnit> multiply(final DoubleVectorAbs<?> x, final DoubleVectorAbs<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
@@ -736,7 +736,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      * @return the of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static DoubleVectorRel<SIUnit> multiplication(final DoubleVectorRel<?> x, final DoubleVectorRel<?> y)
+    public static DoubleVectorRel<SIUnit> multiply(final DoubleVectorRel<?> x, final DoubleVectorRel<?> y)
             throws ValueException
     {
         if (x.size() != y.size())
@@ -762,7 +762,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      * @return the of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> DoubleVectorAbs<U> multiplication(final DoubleVectorAbs<U> x, final double[] c)
+    public static <U extends Unit<U>> DoubleVectorAbs<U> multiply(final DoubleVectorAbs<U> x, final double[] c)
             throws ValueException
     {
         if (x.size() != c.length)
@@ -785,7 +785,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      * @return the of this vector and another vector of the same size.
      * @throws ValueException if the two vectors have unequal size
      */
-    public static <U extends Unit<U>> DoubleVectorRel<U> multiplication(final DoubleVectorRel<U> x, final double[] c)
+    public static <U extends Unit<U>> DoubleVectorRel<U> multiply(final DoubleVectorRel<U> x, final double[] c)
             throws ValueException
     {
         if (x.size() != c.length)
