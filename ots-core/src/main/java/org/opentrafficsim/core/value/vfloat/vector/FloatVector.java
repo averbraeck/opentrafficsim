@@ -532,7 +532,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
             float f = (float) expressAsUnit(this.vectorSI.get(i), displayUnit);
-            if ((Math.abs(f) > 0.01 && Math.abs(f) < 999.0) || 0 == f)
+             if ((Math.abs(f) > 0.01 && Math.abs(f) < 999.0) || 0 == f)
                 s += " " + String.format("%8.3f", f);
             else
                 s += " " + String.format("%8.3e", f);

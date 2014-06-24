@@ -68,6 +68,24 @@ public class UnitTest
                 Unit.lookupOrCreateUnitWithSICoefficients(
                         SICoefficients.multiply(ElectricalPotentialUnit.ABVOLT.getSICoefficients(),
                                 ElectricalPotentialUnit.KILOVOLT.getSICoefficients()).toString()).toString());
+    }
 
+    /**
+     * Check objects returned by getAllUnitsOfType
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void getAllUnitsOfType()
+    {
+        Unit<?>[] baseUnits = { MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, TemperatureUnit.KELVIN, /*LuminousIntencity.CANDELA, ???.mol */ };   
+        for (Unit<?> u : baseUnits) 
+        {
+            for (Object unitObject : u.getAllUnitsOfThisType())
+            {
+                assertTrue("getAllUnitsOfThisType returns Units", unitObject instanceof Unit);
+                Unit<?> u2 = (Unit<?>) unitObject;
+                assertEquals("Standard unit of " + u2 + " should be " + u, u, u2.getStandardUnit());
+            }
+        }
     }
 }
