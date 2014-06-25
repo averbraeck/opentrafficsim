@@ -65,7 +65,7 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     protected double expressAsSIUnit(final double value)
     {
         if (this.unit instanceof OffsetUnit<?>)
-            return value + ((OffsetUnit<?>) this.unit).getOffsetToStandardUnit()
+            return value - ((OffsetUnit<?>) this.unit).getOffsetToStandardUnit()
                     * this.unit.getConversionFactorToStandardUnit();
         return value * this.unit.getConversionFactorToStandardUnit();
     }
@@ -101,11 +101,11 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     protected double expressAsUnit(final double value, final Unit<U> targetUnit)
     {
         if (targetUnit instanceof OffsetUnit<?>)
-            return (value - ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit())
-                    / targetUnit.getConversionFactorToStandardUnit();
+            return (value / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
+                    .getOffsetToStandardUnit());
         return value / targetUnit.getConversionFactorToStandardUnit();
     }
-    
+
     /**
      * Set a new unit for displaying the results.
      * @param newUnit the new unit of the right unit type
@@ -114,7 +114,7 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     {
         this.unit = newUnit;
     }
-    
+
     /**
      * @return whether the value is absolute.
      */

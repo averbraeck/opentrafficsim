@@ -153,7 +153,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
         if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
             throw new ClassCastException("FloatScalar.CompareTo compares two scalars with units: "
                     + this.getUnit().toString() + fs.getUnit().toString()
-                    + ", mwhich translate to different SI base units");
+                    + ", which translate to different SI base units");
 
         // exception if one is absolute and the other is relative
         if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
