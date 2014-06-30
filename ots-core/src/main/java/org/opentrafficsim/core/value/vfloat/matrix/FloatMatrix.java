@@ -65,10 +65,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * Construct the matrix and store the values in SI units.
      * @param values a 2D array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException when the array is not rectangular
      */
-    public FloatMatrix(final float[][] values, final U unit)
+    public FloatMatrix(final float[][] values, final U unit) throws ValueException
     {
         super(unit);
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("lengths of rows are not all the same");
         if (unit.equals(unit.getStandardUnit()))
         {
             this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
@@ -90,11 +94,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     /**
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered
+     * @throws ValueException exception thrown when array with zero elements is offered or the array is not rectangular
      */
     public FloatMatrix(final FloatScalar<U>[][] values) throws ValueException
     {
         super(values.length > 0 && (values.length > 0 ? values[0].length : 0) > 0 ? values[0][0].getUnit() : null);
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("lengths of rows are not all the same");
         if (values.length == 0 || (values.length > 0 ? values[0].length : 0) == 0)
         {
             throw new ValueException(
@@ -583,10 +590,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
                 float f = (float) expressAsUnit(this.matrixSI.get(i, j), displayUnit);
+                String valueString = String.format("%8.3g", f);
+                if (valueString.equals("0.000e+00"))
+                    valueString = "    0.000";
+                s += " " + valueString;
+                /*
                 if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
-                    s += " " + String.format("%8.3f", f);
+                    s += " " + String.format("%9.3f", f);
                 else
-                    s += " " + String.format("%8.3e", f);
+                    s += " " + String.format("%9.3e", f);
+                    */
             }
         }
         return s;
@@ -855,7 +868,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public static <U extends Unit<U>> FloatMatrixAbsDense<U> sparseToDense(final FloatMatrixAbsSparse<U> x)
     {
-        FloatMatrixAbsDense<U> v = new FloatMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        FloatMatrixAbsDense<U> v = null;
+        try
+        {
+            v = new FloatMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }
@@ -867,7 +889,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public static <U extends Unit<U>> FloatMatrixRelDense<U> sparseToDense(final FloatMatrixRelSparse<U> x)
     {
-        FloatMatrixRelDense<U> v = new FloatMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        FloatMatrixRelDense<U> v = null;
+        try
+        {
+            v = new FloatMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }
@@ -879,7 +910,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public static <U extends Unit<U>> FloatMatrixAbsSparse<U> denseToSparse(final FloatMatrixAbsDense<U> x)
     {
-        FloatMatrixAbsSparse<U> v = new FloatMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        FloatMatrixAbsSparse<U> v = null;
+        try
+        {
+            v = new FloatMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }
@@ -891,7 +931,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public static <U extends Unit<U>> FloatMatrixRelSparse<U> denseToSparse(final FloatMatrixRelDense<U> x)
     {
-        FloatMatrixRelSparse<U> v = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        FloatMatrixRelSparse<U> v = null;
+        try
+        {
+            v = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }

@@ -3,6 +3,7 @@ package org.opentrafficsim.core.unit;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
@@ -77,8 +78,10 @@ public class UnitTest
     @Test
     public void getAllUnitsOfType()
     {
-        Unit<?>[] baseUnits = { MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, TemperatureUnit.KELVIN, /*LuminousIntencity.CANDELA, ???.mol */ };   
-        for (Unit<?> u : baseUnits) 
+        Unit<?>[] baseUnits =
+                {MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND,
+                        TemperatureUnit.KELVIN, /* LuminousIntencity.CANDELA, ???.mol */};
+        for (Unit<?> u : baseUnits)
         {
             for (Object unitObject : u.getAllUnitsOfThisType())
             {

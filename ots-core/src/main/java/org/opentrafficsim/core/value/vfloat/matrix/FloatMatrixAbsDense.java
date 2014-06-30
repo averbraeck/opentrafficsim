@@ -45,8 +45,9 @@ public class FloatMatrixAbsDense<U extends Unit<U>> extends FloatMatrixAbs<U> im
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public FloatMatrixAbsDense(final float[][] values, final U unit)
+    public FloatMatrixAbsDense(final float[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -70,12 +71,22 @@ public class FloatMatrixAbsDense<U extends Unit<U>> extends FloatMatrixAbs<U> im
     }
 
     /**
+     * @throws ValueException 
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#copy()
      */
     @Override
     public final FloatMatrixAbsDense<U> copy()
     {
-        FloatMatrixAbsDense<U> m = new FloatMatrixAbsDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        FloatMatrixAbsDense<U> m = null;
+        try
+        {
+            m = new FloatMatrixAbsDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO: fix error logging
+        }
         m.unit = this.unit;
         return m;
     }

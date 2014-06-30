@@ -93,6 +93,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
         return (float) expressAsUnit(this.valueSI, targetUnit);
     }
 
+    // FIXME: explain setSI, set and setInUnit. These methods are not public and never used.
     /**
      * @param valueSI the value to store in the cell
      */
