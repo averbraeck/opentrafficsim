@@ -115,12 +115,11 @@ public class FloatScalarTest
         differenceRel = FloatScalar.minus(sum, leftAbs);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
         assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getValueSI(), 0.0001);
-        FloatScalarAbs<?> surface = FloatScalar.multiply(leftAbs, difference);
+               FloatScalarAbs<?> surface = FloatScalar.multiply(leftAbs, difference);
         //System.out.println("surface is " + surface);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), surface.getUnit().getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values", leftAbs.getValueSI() * difference.getValueSI(), surface.getValueSI(), 0.05);
         FloatScalarRel<?> relSurface = FloatScalar.multiply(right,  right2);
-        System.out.println("relSurface is " + relSurface);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), relSurface.getUnit().getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values", right.getValueSI() * right2.getValueSI(), relSurface.getValueSI(), 0.00000005);
         assertTrue("FloatScalar should be equal to itself", leftAbs.equals(leftAbs));
@@ -134,6 +133,14 @@ public class FloatScalarTest
         assertEquals("Value should match", leftAbs.getValueSI(), timeScalar.getValueSI(), 0.0001);
         assertTrue("Both are absolute", leftAbs.isAbsolute() && timeScalar.isAbsolute());
         assertFalse("Absolute length is not equal to absolute time with same value", leftAbs.equals(timeScalar));
+        leftAbs = new FloatScalarAbs<LengthUnit>(leftValue, LengthUnit.METER);
+        leftAbs.add(right);
+        assertEquals("after add-and-becomes the type should not be changed", LengthUnit.METER, leftAbs.getUnit());
+        assertEquals("after add-and-becomes the value should be changed", leftValue + rightValue * 0.0254, leftAbs.getValueSI(), 0.0001);
+        leftAbs = new FloatScalarAbs<LengthUnit>(leftValue, LengthUnit.METER);
+        leftAbs.subtract(right);
+        assertEquals("after subtract-and-becomes the type should not be changed", LengthUnit.METER, leftAbs.getUnit());
+        assertEquals("after subtract-and-becomes the value should be changed", leftValue - rightValue * 0.0254, leftAbs.getValueSI(), 0.0001);
     }
 
     /**
@@ -480,13 +487,14 @@ public class FloatScalarTest
     {
 
         /**
-         * @param inputValues array of float with unprocessed values
+         * @param inputValue Double; unprocessed value
          * @param operation String; description of method that is being tested
+         * @param actualResult FloatScalar; the actual result of the operation
          * @param precision double expected accuracy
          * @param function FloatToFloat encapsulating function that converts one value in inputValues to the
          *            corresponding value in resultValues
          */
-        public static void tester(final float inputValue, String operation, final FloatScalar actualResult,
+        public static void tester(final float inputValue, String operation, final FloatScalar<?> actualResult,
                 final double precision, final FloatToFloat function)
         {
             float expectedResult = function.function(inputValue);

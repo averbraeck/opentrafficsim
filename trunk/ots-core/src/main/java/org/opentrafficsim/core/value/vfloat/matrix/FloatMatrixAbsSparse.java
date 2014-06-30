@@ -45,8 +45,9 @@ public class FloatMatrixAbsSparse<U extends Unit<U>> extends FloatMatrixAbs<U> i
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public FloatMatrixAbsSparse(final float[][] values, final U unit)
+    public FloatMatrixAbsSparse(final float[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -75,7 +76,16 @@ public class FloatMatrixAbsSparse<U extends Unit<U>> extends FloatMatrixAbs<U> i
     @Override
     public final FloatMatrixAbsSparse<U> copy()
     {
-        FloatMatrixAbsSparse<U> m = new FloatMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        FloatMatrixAbsSparse<U> m = null;
+        try
+        {
+            m = new FloatMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         m.unit = this.unit;
         return m;
     }

@@ -6,7 +6,6 @@ import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 import cern.colt.matrix.tfloat.FloatMatrix2D;
-import cern.colt.matrix.tfloat.impl.DenseFloatMatrix2D;
 import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
 
 /**
@@ -46,8 +45,9 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> i
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public FloatMatrixRelSparse(final float[][] values, final U unit)
+    public FloatMatrixRelSparse(final float[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -76,7 +76,16 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> i
     @Override
     public final FloatMatrixRelSparse<U> copy()
     {
-        FloatMatrixRelSparse<U> m = new FloatMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        FloatMatrixRelSparse<U> m = null;
+        try
+        {
+            m = new FloatMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            //TODO: fix error logging
+        }
         m.unit = this.unit;
         return m;
     }
@@ -84,9 +93,9 @@ public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> i
     /**
      * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public final DenseFloatMatrix2D getColtDenseFloatMatrix2D()
+    public final SparseFloatMatrix2D getColtSparseFloatMatrix2D()
     {
-        return (DenseFloatMatrix2D) this.matrixSI;
+        return (SparseFloatMatrix2D) this.matrixSI;
     }
 
 }

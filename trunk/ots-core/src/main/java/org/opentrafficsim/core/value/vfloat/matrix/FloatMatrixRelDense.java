@@ -45,8 +45,9 @@ public class FloatMatrixRelDense<U extends Unit<U>> extends FloatMatrixRel<U> im
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public FloatMatrixRelDense(final float[][] values, final U unit)
+    public FloatMatrixRelDense(final float[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -75,7 +76,16 @@ public class FloatMatrixRelDense<U extends Unit<U>> extends FloatMatrixRel<U> im
     @Override
     public final FloatMatrixRelDense<U> copy()
     {
-        FloatMatrixRelDense<U> m = new FloatMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        FloatMatrixRelDense<U> m = null;
+        try
+        {
+            m = new FloatMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         m.unit = this.unit;
         return m;
     }

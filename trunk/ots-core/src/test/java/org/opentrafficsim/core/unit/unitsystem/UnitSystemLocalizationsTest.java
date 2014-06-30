@@ -87,6 +87,6 @@ public class UnitSystemLocalizationsTest
         }
         for (String s : errors)
             System.out.println(s);
-        assertTrue("There should be no errors", errors.isEmpty());
+        assertTrue("There should be no errors in UnitSystemLocalizations", errors.isEmpty());
     }
 }
