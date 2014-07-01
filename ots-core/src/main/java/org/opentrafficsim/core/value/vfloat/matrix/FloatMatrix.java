@@ -834,7 +834,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixAbs<U> multiply(final FloatMatrixAbs<U> x, final float[][] c)
             throws ValueException
     {
-        // FIXME test for same size is incomplete (will not catch array where some rows are longer than others)
+        for (int row = 1; row < c.length; row++)
+            if (c[0].length != c[row].length)
+                throw new ValueException("FloatMatrix.multiply lengths of rows of c are not all the same");
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
                     + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
@@ -857,7 +859,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixRel<U> multiply(final FloatMatrixRel<U> x, final float[][] c)
             throws ValueException
     {
-        // FIXME test for same size is incomplete (will not catch array where some rows are longer than others)
+        for (int row = 1; row < c.length; row++)
+            if (c[0].length != c[row].length)
+                throw new ValueException("FloatMatrix.multiply lengths of rows of c are not all the same");
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
                     + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));

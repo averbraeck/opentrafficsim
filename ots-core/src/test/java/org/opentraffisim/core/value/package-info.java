@@ -35,4 +35,4 @@
  * @version Jul 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-package core.value;
+package org.opentraffisim.core.value;

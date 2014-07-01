@@ -1,4 +1,4 @@
-package core.value;
+package org.opentraffisim.core.value;
 
 import static org.junit.Assert.*;
 
