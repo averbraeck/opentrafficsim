@@ -4,12 +4,6 @@ import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelDense;
 
 /**
  * <p>

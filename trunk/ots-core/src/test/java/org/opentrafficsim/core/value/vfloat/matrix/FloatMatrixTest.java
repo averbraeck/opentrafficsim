@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Locale;
 import java.util.Set;
 
 import org.junit.Test;
@@ -23,13 +22,6 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbs;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbsDense;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbsSparse;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRel;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRelDense;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRelSparse;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;

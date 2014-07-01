@@ -1,17 +1,15 @@
 package org.opentrafficsim.core.value.vfloat.scalar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opentrafficsim.core.unit.AreaUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 /**
  * <p>
