@@ -45,8 +45,9 @@ public class DoubleMatrixAbsSparse<U extends Unit<U>> extends DoubleMatrixAbs<U>
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public DoubleMatrixAbsSparse(final double[][] values, final U unit)
+    public DoubleMatrixAbsSparse(final double[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -75,7 +76,16 @@ public class DoubleMatrixAbsSparse<U extends Unit<U>> extends DoubleMatrixAbs<U>
     @Override
     public final DoubleMatrixAbsSparse<U> copy()
     {
-        DoubleMatrixAbsSparse<U> m = new DoubleMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        DoubleMatrixAbsSparse<U> m = null;
+        try
+        {
+            m = new DoubleMatrixAbsSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         m.unit = this.unit;
         return m;
     }

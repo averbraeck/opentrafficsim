@@ -66,10 +66,14 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * Construct the matrix and store the values in SI units.
      * @param values a 2D array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public DoubleMatrix(final double[][] values, final U unit)
+    public DoubleMatrix(final double[][] values, final U unit) throws ValueException
     {
         super(unit);
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("lengths of rows are not all the same");
         if (unit.equals(unit.getStandardUnit()))
         {
             this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
@@ -96,6 +100,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public DoubleMatrix(final DoubleScalar<U>[][] values) throws ValueException
     {
         super(values.length > 0 && (values.length > 0 ? values[0].length : 0) > 0 ? values[0][0].getUnit() : null);
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("lengths of rows are not all the same");
         if (values.length == 0 || (values.length > 0 ? values[0].length : 0) == 0)
         {
             throw new ValueException(
@@ -274,11 +281,26 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     @Override
     public double det() throws ValueException
     {
-        if (this instanceof Sparse)
-            return new SparseDoubleAlgebra().det(this.matrixSI);
-        if (this instanceof Dense)
-            return new DenseDoubleAlgebra().det(this.matrixSI);
-        throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
+        try
+        {
+            if (this instanceof Sparse)
+            {
+                //System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
+                return new SparseDoubleAlgebra().det(this.matrixSI);
+            }
+            if (this instanceof Dense)
+            {
+                //System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
+                return new DenseDoubleAlgebra().det(this.matrixSI);
+            }
+            throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+        }
+        catch (IllegalArgumentException exception)
+        {
+            if (! exception.getMessage().startsWith("Matrix must be square"))
+            exception.printStackTrace();
+            throw new ValueException(exception.getMessage());    // probably Matrix must be square
+        }
     }
 
     /**
@@ -854,7 +876,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public static <U extends Unit<U>> DoubleMatrixAbsDense<U> sparseToDense(final DoubleMatrixAbsSparse<U> x)
     {
-        DoubleMatrixAbsDense<U> v = new DoubleMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixAbsDense<U> v = null;
+        try
+        {
+            v = new DoubleMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }
@@ -866,7 +897,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public static <U extends Unit<U>> DoubleMatrixRelDense<U> sparseToDense(final DoubleMatrixRelSparse<U> x)
     {
-        DoubleMatrixRelDense<U> v = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixRelDense<U> v = null;
+        try
+        {
+            v = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }
@@ -878,7 +918,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public static <U extends Unit<U>> DoubleMatrixAbsSparse<U> denseToSparse(final DoubleMatrixAbsDense<U> x)
     {
-        DoubleMatrixAbsSparse<U> v = new DoubleMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixAbsSparse<U> v = null;
+        try
+        {
+            v = new DoubleMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }
@@ -890,7 +939,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public static <U extends Unit<U>> DoubleMatrixRelSparse<U> denseToSparse(final DoubleMatrixRelDense<U> x)
     {
-        DoubleMatrixRelSparse<U> v = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        DoubleMatrixRelSparse<U> v = null;
+        try
+        {
+            v = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         v.unit = x.unit;
         return v;
     }

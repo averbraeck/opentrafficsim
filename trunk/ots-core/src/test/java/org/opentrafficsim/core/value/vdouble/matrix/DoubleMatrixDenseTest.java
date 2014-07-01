@@ -1,15 +1,16 @@
 package org.opentrafficsim.core.value.vdouble.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -29,47 +30,50 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
+ * @version Jul 1, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class DoubleMatrixAbs<U extends Unit<U>> extends DoubleMatrix<U> implements Absolute
+public class DoubleMatrixDenseTest extends DoubleMatrixTest
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param values
-     * @param unit
-     * @throws ValueException 
-     */
-    public DoubleMatrixAbs(final double[][] values, final U unit) throws ValueException
-    {
-        super(values, unit);
-    }
-
-    /**
-     * @param values
-     * @throws ValueException
-     */
-    public DoubleMatrixAbs(final DoubleScalarAbs<U>[][] values) throws ValueException
-    {
-        super(values);
-    }
-
-    /**
-     * Create a deep copy of the matrix, independent of the original matrix.
-     * @return a deep copy of the absolute / relative, dense / sparse matrix
-     */
-    public abstract DoubleMatrixAbs<U> copy();
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#get(int, int)
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(double[][],
+     *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public DoubleScalarAbs<U> get(final int row, final int column) throws ValueException
+    protected <U extends Unit<U>> DoubleMatrixAbs<U> createDoubleMatrixAbs(double[][] in, U u) throws ValueException
     {
-        return new DoubleScalarAbs<U>(getInUnit(row, column, this.unit), this.unit);
+        return new DoubleMatrixAbsDense<U>(in, u);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs[][])
+     */
+    @Override
+    protected <U extends Unit<U>> DoubleMatrixAbs<U> createDoubleMatrixAbs(DoubleScalarAbs<U>[][] in)
+            throws ValueException
+    {
+        return new DoubleMatrixAbsDense<U>(in);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(double[][],
+     *      org.opentrafficsim.core.unit.Unit)
+     */
+    @Override
+    protected <U extends Unit<U>> DoubleMatrixRel<U> createDoubleMatrixRel(double[][] in, U u) throws ValueException
+    {
+        return new DoubleMatrixRelDense<U>(in, u);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel[][])
+     */
+    @Override
+    protected <U extends Unit<U>> DoubleMatrixRel<U> createDoubleMatrixRel(DoubleScalarRel<U>[][] in)
+            throws ValueException
+    {
+        return new DoubleMatrixRelSparse<U>(in);
     }
 
 }

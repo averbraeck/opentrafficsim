@@ -41,8 +41,9 @@ public abstract class DoubleMatrixRel<U extends Unit<U>> extends DoubleMatrix<U>
     /**
      * @param values
      * @param unit
+     * @throws ValueException 
      */
-    public DoubleMatrixRel(final double[][] values, final U unit)
+    public DoubleMatrixRel(final double[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
