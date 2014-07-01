@@ -4,6 +4,7 @@ import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.Vector;
@@ -169,7 +170,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int, org.opentrafficsim.core.unit.Unit)
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int,
+     *      org.opentrafficsim.core.unit.Unit)
      */
     public float getInUnit(final int index, final U targetUnit) throws ValueException
     {
@@ -188,7 +190,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#set(int, org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#set(int,
+     *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
      */
     @Override
     public void set(int index, FloatScalar<U> value) throws ValueException
@@ -197,7 +200,8 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setInUnit(int, float, org.opentrafficsim.core.unit.Unit)
+     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setInUnit(int, float,
+     *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
     public void setInUnit(int index, float value, U valueUnit) throws ValueException
@@ -527,19 +531,15 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public String toString(final U displayUnit)
     {
-        // TODO: check how to always format numbers corresponding to the Locale used.
         String s = "[" + displayUnit.getAbbreviation() + "]";
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
             float f = (float) expressAsUnit(this.vectorSI.get(i), displayUnit);
-             if ((Math.abs(f) > 0.01 && Math.abs(f) < 999.0) || 0 == f)
-                s += " " + String.format("%8.3f", f);
-            else
-                s += " " + String.format("%8.3e", f);
+            s += " " + Format.format(f);
         }
         return s;
     }
-    
+
     /**
      * Centralized size equality check
      * @param other FloatVector<U>; other FloatVector

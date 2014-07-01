@@ -4,6 +4,7 @@ import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.Vector;
@@ -191,7 +192,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#set(int, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#set(int,
+     *      org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
      */
     @Override
     public void set(int index, DoubleScalar<U> value) throws ValueException
@@ -200,7 +202,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#setInUnit(int, double, org.opentrafficsim.core.unit.Unit)
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#setInUnit(int, double,
+     *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
     public void setInUnit(int index, double value, U valueUnit) throws ValueException
@@ -535,10 +538,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
             double f = expressAsUnit(this.vectorSI.get(i), displayUnit);
-            if ((Math.abs(f) > 0.01 && Math.abs(f) < 999.0) || 0 == f)
-                s += " " + String.format("%8.3f", f);
-            else
-                s += " " + String.format("%8.3e", f);
+            s += " " + Format.format(f);
         }
         return s;
     }

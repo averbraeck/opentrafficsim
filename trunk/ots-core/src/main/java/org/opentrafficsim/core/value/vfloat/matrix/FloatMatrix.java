@@ -4,6 +4,7 @@ import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
@@ -261,7 +262,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     {
         float sum = this.zSum();
         if (sum == 0)
-            throw new ValueException("FloatMatrix.normalize: zSum of the vector values == 0, cannot normalize");
+            throw new ValueException("FloatMatrix.normalize: zSum of the matrix values == 0, cannot normalize");
         this.divide(sum);
     }
 
@@ -278,14 +279,28 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#det()
      */
     @Override
-    // TODO: error if matrix is not square.
     public float det() throws ValueException
     {
-        if (this instanceof Sparse)
-            return new SparseFloatAlgebra().det(this.matrixSI);
-        if (this instanceof Dense)
-            return new DenseFloatAlgebra().det(this.matrixSI);
-        throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+        try
+        {
+            if (this instanceof Sparse)
+            {
+                //System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
+                return new SparseFloatAlgebra().det(this.matrixSI);
+            }
+            if (this instanceof Dense)
+            {
+                //System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
+                return new DenseFloatAlgebra().det(this.matrixSI);
+            }
+            throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+        }
+        catch (IllegalArgumentException exception)
+        {
+            if (! exception.getMessage().startsWith("Matrix must be square"))
+            exception.printStackTrace();
+            throw new ValueException(exception.getMessage());    // probably Matrix must be square
+        }
     }
 
     /**
@@ -590,16 +605,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
                 float f = (float) expressAsUnit(this.matrixSI.get(i, j), displayUnit);
-                String valueString = String.format("%8.3g", f);
-                if (valueString.equals("0.000e+00"))
-                    valueString = "    0.000";
-                s += " " + valueString;
-                /*
-                if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
-                    s += " " + String.format("%9.3f", f);
-                else
-                    s += " " + String.format("%9.3e", f);
-                    */
+                    s += " " + Format.format(f);
             }
         }
         return s;
@@ -759,7 +765,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         else if (x instanceof Sparse)
             c = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
         else
-            throw new ValueException("FloatVector.minus - vector neither sparse nor dense");
+            throw new ValueException("FloatMatrix.minus - matrix neither sparse nor dense");
 
         c.matrixSI.assign(y.matrixSI, FloatFunctions.minus);
         c.unit = x.unit;
@@ -828,6 +834,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixAbs<U> multiply(final FloatMatrixAbs<U> x, final float[][] c)
             throws ValueException
     {
+        // FIXME test for same size is incomplete (will not catch array where some rows are longer than others)
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
                     + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
@@ -850,6 +857,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixRel<U> multiply(final FloatMatrixRel<U> x, final float[][] c)
             throws ValueException
     {
+        // FIXME test for same size is incomplete (will not catch array where some rows are longer than others)
         if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
             throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
                     + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));

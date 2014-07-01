@@ -19,6 +19,7 @@ import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
@@ -107,13 +108,7 @@ public abstract class DoubleVectorTest
         {
             double expectedValue = in[i - 1] * (12 * 0.0254) * 1000;
             String expected;
-            if (0 == expectedValue)
-                expected = String.format(Locale.US, "%8.3f", 0f);
-            else if (Math.abs(expectedValue) > 0.01 && Math.abs(expectedValue) < 999.0)
-                expected = String.format(Locale.US, "%8.3f", expectedValue);
-            else
-                expected = String.format(Locale.US, "%8.3e", expectedValue);
-            expected = expected.trim();
+            expected = Format.format(expectedValue).trim();
             // System.out.println("expected: \"" + expected + "\", got \"" + fields[i] + "\", in is "+ in[i-1] +
             // " expectedValue is " + expectedValue);
             assertEquals("Field " + i + " should contain \"" + expected + "\"", expected, fields[i]);
@@ -895,7 +890,7 @@ public abstract class DoubleVectorTest
             catch (ValueException exception)
             {
                 fail("Unexpected exception");
-            }            
+            }
         }
     }
 
@@ -1359,6 +1354,5 @@ public abstract class DoubleVectorTest
      */
     protected abstract <U extends Unit<U>> DoubleVectorRel<U> createDoubleVectorRel(DoubleScalarRel<U>[] in)
             throws ValueException;
-
 
 }

@@ -19,6 +19,7 @@ import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
@@ -106,16 +107,9 @@ public abstract class FloatVectorTest
         for (int i = 1; i < fields.length; i++)
         {
             float expectedValue = (float) (in[i - 1] * (12 * 0.0254) * 1000);
-            String expected;
-            if (0 == expectedValue)
-                expected = String.format(Locale.US, "%8.3f", 0f);
-            else if (Math.abs(expectedValue) > 0.01 && Math.abs(expectedValue) < 999.0)
-                expected = String.format(Locale.US, "%8.3f", expectedValue);
-            else
-                expected = String.format(Locale.US, "%8.3e", expectedValue);
-            expected = expected.trim();
-            // System.out.println("expected: \"" + expected + "\", got \"" + fields[i] + "\", in is "+ in[i-1] +
-            // " expectedValue is " + expectedValue);
+            String expected = Format.format(expectedValue).trim();
+            // System.out.println("expected: \"" + expected + "\", got \"" + fields[i] + "\", in is " + in[i - 1]
+            // + " expectedValue is " + expectedValue);
             assertEquals("Field " + i + " should contain \"" + expected + "\"", expected, fields[i]);
         }
         output = fv.toString();
@@ -126,12 +120,7 @@ public abstract class FloatVectorTest
         {
             float expectedValue = in[i - 1];
             String expected;
-            if (0 == expectedValue)
-                expected = String.format(Locale.US, "%8.3f", 0f);
-            else if (Math.abs(expectedValue) > 0.01 && Math.abs(expectedValue) < 999.0)
-                expected = String.format(Locale.US, "%8.3f", expectedValue);
-            else
-                expected = String.format(Locale.US, "%8.3e", expectedValue);
+            expected = Format.format(expectedValue);
             expected = expected.trim();
             // System.out.println("expected: \"" + expected + "\", got \"" + fields[i] + "\", in is "+ in[i-1] +
             // " expectedValue is " + expectedValue);
@@ -866,7 +855,7 @@ public abstract class FloatVectorTest
                 fv2 = FloatVector.denseToSparse((FloatVectorAbsDense<LengthUnit>) fv);
             else
                 fv2 = FloatVector.denseToSparse((FloatVectorRelDense<LengthUnit>) fv);
-            // FIXME this one fails: assertFalse("dense version is not equal to sparse version", fv.equals(fv2));
+            assertTrue("dense version is equal to sparse version", fv.equals(fv2));
             assertEquals("unit should be same", fv.getUnit(), fv2.getUnit());
             try
             {
@@ -885,7 +874,7 @@ public abstract class FloatVectorTest
                 fv2 = FloatVector.sparseToDense((FloatVectorAbsSparse<LengthUnit>) fv);
             else
                 fv2 = FloatVector.sparseToDense((FloatVectorRelSparse<LengthUnit>) fv);
-            // FIXME this one fails: assertFalse("dense version is not equal to sparse version", fv.equals(fv2));
+            assertTrue("dense version is  equal to sparse version", fv.equals(fv2));
             assertEquals("unit should be same", fv.getUnit(), fv2.getUnit());
             try
             {
@@ -895,7 +884,7 @@ public abstract class FloatVectorTest
             catch (ValueException exception)
             {
                 fail("Unexpected exception");
-            }            
+            }
         }
     }
 
@@ -1194,7 +1183,6 @@ public abstract class FloatVectorTest
         }
         MassUnit u2 = MassUnit.OUNCE;
         fv2 = createFloatVectorAbs(in2, u2);
-        fv2 = createFloatVectorAbs(in2, u2);
         try
         {
             difference = FloatVector.minus(fv1, fv2);
@@ -1346,13 +1334,13 @@ public abstract class FloatVectorTest
     /**
      * Create a new FloatVectorRel from an array of float values and Unit.
      * @param in float[] with values
-     * @param u Unit; type for the new FloatVectorAbs
+     * @param u Unit; type for the new FloatVectorRel
      * @return
      */
     protected abstract <U extends Unit<U>> FloatVectorRel<U> createFloatVectorRel(float[] in, U u);
 
     /**
-     * Create a new FloatVectorRel from an array of FloatScalarAbs values.
+     * Create a new FloatVectorRel from an array of FloatScalarRel values.
      * @param in FloatScalarAbs[]; the values
      * @return
      * @throws ValueException when the array is empty
