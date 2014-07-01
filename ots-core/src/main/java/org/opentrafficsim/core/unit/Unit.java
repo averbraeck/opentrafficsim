@@ -106,7 +106,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
-     * @throws UnitException 
+     * @throws UnitException
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem) throws UnitException
     {

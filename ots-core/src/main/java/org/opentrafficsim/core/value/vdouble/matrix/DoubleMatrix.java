@@ -4,6 +4,7 @@ import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
@@ -582,10 +583,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
                 double f = expressAsUnit(this.matrixSI.get(i, j), displayUnit);
-                if (Math.abs(f) > 0.01 && Math.abs(f) < 999.0)
-                    s += " " + String.format("%8.3f", f);
-                else
-                    s += " " + String.format("%8.3e", f);
+                s += " " + Format.format(f);
             }
         }
         return s;
