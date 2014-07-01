@@ -46,8 +46,9 @@ public class DoubleMatrixRelSparse<U extends Unit<U>> extends DoubleMatrixRel<U>
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public DoubleMatrixRelSparse(final double[][] values, final U unit)
+    public DoubleMatrixRelSparse(final double[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -76,7 +77,16 @@ public class DoubleMatrixRelSparse<U extends Unit<U>> extends DoubleMatrixRel<U>
     @Override
     public final DoubleMatrixRelSparse<U> copy()
     {
-        DoubleMatrixRelSparse<U> m = new DoubleMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        DoubleMatrixRelSparse<U> m = null;
+        try
+        {
+            m = new DoubleMatrixRelSparse<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         m.unit = this.unit;
         return m;
     }
@@ -84,9 +94,9 @@ public class DoubleMatrixRelSparse<U extends Unit<U>> extends DoubleMatrixRel<U>
     /**
      * @return the internally stored vector from the Colt library, converted to SI units.
      */
-    public final DenseDoubleMatrix2D getColtDenseDoubleMatrix2D()
+    public final SparseDoubleMatrix2D getColtSparseDoubleMatrix2D()
     {
-        return (DenseDoubleMatrix2D) this.matrixSI;
+        return (SparseDoubleMatrix2D) this.matrixSI;
     }
 
 }

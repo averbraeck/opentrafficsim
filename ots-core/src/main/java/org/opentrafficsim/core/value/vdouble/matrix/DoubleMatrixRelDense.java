@@ -45,8 +45,9 @@ public class DoubleMatrixRelDense<U extends Unit<U>> extends DoubleMatrixRel<U> 
      * Construct the matrix and store the values in SI units.
      * @param values an array of values for the constructor
      * @param unit the unit of the values
+     * @throws ValueException 
      */
-    public DoubleMatrixRelDense(final double[][] values, final U unit)
+    public DoubleMatrixRelDense(final double[][] values, final U unit) throws ValueException
     {
         super(values, unit);
     }
@@ -75,7 +76,16 @@ public class DoubleMatrixRelDense<U extends Unit<U>> extends DoubleMatrixRel<U> 
     @Override
     public final DoubleMatrixRelDense<U> copy()
     {
-        DoubleMatrixRelDense<U> m = new DoubleMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        DoubleMatrixRelDense<U> m = null;
+        try
+        {
+            m = new DoubleMatrixRelDense<U>(this.matrixSI.toArray(), this.unit.getStandardUnit());
+        }
+        catch (ValueException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            // TODO fix error logging
+        }
         m.unit = this.unit;
         return m;
     }
