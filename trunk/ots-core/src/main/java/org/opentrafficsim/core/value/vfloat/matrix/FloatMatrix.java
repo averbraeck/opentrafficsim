@@ -74,17 +74,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         for (int row = 1; row < values.length; row++)
             if (values[0].length != values[row].length)
                 throw new ValueException("lengths of rows are not all the same");
+        this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
         if (unit.equals(unit.getStandardUnit()))
         {
-            this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
             this.matrixSI.assign(values);
         }
         else
         {
-            this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
             for (int row = 0; row < values.length; row++)
             {
-                for (int column = 0; column < (values.length > 0 ? values[0].length : 0); column++)
+                for (int column = 0; column < values[row].length; column++)
                 {
                     this.matrixSI.set(row, column, (float) expressAsSIUnit(values[row][column]));
                 }
@@ -99,20 +98,20 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public FloatMatrix(final FloatScalar<U>[][] values) throws ValueException
     {
-        super(values.length > 0 && (values.length > 0 ? values[0].length : 0) > 0 ? values[0][0].getUnit() : null);
+        super(values.length > 0 && values[0].length > 0 ? values[0][0].getUnit() : null);
         for (int row = 1; row < values.length; row++)
             if (values[0].length != values[row].length)
                 throw new ValueException("lengths of rows are not all the same");
-        if (values.length == 0 || (values.length > 0 ? values[0].length : 0) == 0)
+        if (values.length == 0 || values[0].length == 0)
         {
             throw new ValueException(
                     "FloatMatrix constructor called with an empty row or column of FloatScalar elements");
         }
 
-        this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
+        this.matrixSI = createMatrix2D(values.length, values[0].length);
         for (int row = 0; row < values.length; row++)
         {
-            for (int column = 0; column < (values.length > 0 ? values[0].length : 0); column++)
+            for (int column = 0; column < values[row].length; column++)
             {
                 this.matrixSI.set(row, column, values[row][column].getValueSI());
             }
@@ -150,7 +149,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     {
         float[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
-            for (int j = 0; j < (values.length > 0 ? values[0].length : 0); j++)
+            for (int j = 0; j < values[i].length; j++)
                 values[i][j] = (float) expressAsSpecifiedUnit(values[i][j]);
         return values;
     }
@@ -163,7 +162,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     {
         float[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
-            for (int j = 0; j < (values.length > 0 ? values[0].length : 0); j++)
+            for (int j = 0; j < values[i].length; j++)
                 values[i][j] = (float) expressAsUnit(values[i][j], targetUnit);
         return values;
     }

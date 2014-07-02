@@ -22,13 +22,6 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixAbs;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixAbsDense;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixAbsSparse;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixRel;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixRelDense;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixRelSparse;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
@@ -76,14 +69,33 @@ public abstract class DoubleMatrixTest
     }
 
     /**
+     * Create a 2D array of double for testing. Entry 0,0 is zero, all others will be non-zero unless a non-zero offset
+     * is specified.
+     * @param rows Integer; number of rows in the 2D array
+     * @param cols Integer; number of columns in the 2D array
+     * @param badRow Boolean; if true; make the last row one entry longer than the rest
+     * @param offset Double; number to add to each entry
+     * @return double[][]; 2D array of double
+     */
+    private static double[][] buildArray(int rows, int cols, boolean badRow, double offset)
+    {
+        double[][] result = new double[rows][];
+        int badRowIndex = badRow ? rows - 1 : -1;
+        for (int row = 0; row < rows; row++)
+        {
+            result[row] = new double[row == badRowIndex ? cols + 1 : cols];
+            for (int col = 0; col < result[row].length; col++)
+                result[row][col] = row * 1000 + col + offset;
+        }
+        return result;
+    }
+
+    /**
      * Test the DoubleMatrixAbs that takes a double[][] and a Unit as arguments and some methods.
      */
     private void doubleMatrixTwoArgs(Boolean absolute)
     {
-        double[][] in = new double[12][3];
-        for (int i = 0; i < in.length; i++)
-            for (int j = 0; j < in[i].length; j++)
-                in[i][j] = i / 3f + j / 5f;
+        double[][] in = buildArray(12, 3, false, 0);
         LengthUnit u = LengthUnit.FOOT;
         DoubleMatrix<LengthUnit> fm = safeCreateDoubleMatrix(in, u, absolute);
         assertEquals("DoubleMatrix should have 12 rows", 12, fm.rows());
@@ -101,7 +113,7 @@ public abstract class DoubleMatrixTest
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
                             fm.getSI(i, j) / (12 * 0.0254), 0.0001);
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
-                            fm.getInUnit(i, j, LengthUnit.MILE) * 1609 / (12 * 0.0254), 0.001);
+                            fm.getInUnit(i, j, LengthUnit.MILE) * 1609.34 / (12 * 0.0254), 0.1);
                 }
                 catch (ValueException exception)
                 {
@@ -472,7 +484,7 @@ public abstract class DoubleMatrixTest
             assertFalse("fm and fmr should not be equal", fm.equals(fmr));
             assertFalse("fmr and fm should not be equal", fmr.equals(fm));
         }
-        double[][] inNonRect = {{1, 2, 3, 4, 5}, {1, 2, 3, 4}};
+        double[][] inNonRect = buildArray(4, 5, true, 0);
         try
         {
             fm = createDoubleMatrix(inNonRect, LengthUnit.METER, absolute);
@@ -816,7 +828,7 @@ public abstract class DoubleMatrixTest
             {
                 // ignore
             }
-            double[][] in5 = {{1, 2, 3, 4, 5, 6, 7, 8, 9}, {11, 12, 13, 14, 15, 16, 17, 18, 19}};
+            double[][] in5 = buildArray(2, 9, false, 0);
             fm2 = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(in5, LengthUnit.METER, false);
             try
             {
@@ -881,7 +893,7 @@ public abstract class DoubleMatrixTest
         {
             DoubleMatrixRel<LengthUnit> fm1 =
                     (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(in3, LengthUnit.METER, false);
-            double[][] in4 = {{1, 2, 3, 4}};
+            double[][] in4 = buildArray(1, 4, false, 0);
             DoubleMatrixRel<LengthUnit> fm2 =
                     (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(in4, LengthUnit.METER, false);
             DoubleMatrix<SIUnit> multiply = null;
@@ -894,7 +906,7 @@ public abstract class DoubleMatrixTest
             {
                 // ignore
             }
-            double[][] in5 = {{1, 2, 3, 4, 5, 6, 7, 8, 9}, {11, 12, 13, 14, 15, 16, 17, 18, 19}};
+            double[][] in5 = buildArray(2, 9, false, 0);
             fm2 = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(in5, LengthUnit.METER, false);
             try
             {
@@ -986,6 +998,93 @@ public abstract class DoubleMatrixTest
             {
                 fail("Unexpected exception");
             }
+        }
+        double[][] left = buildArray(4, 5, false, 0);
+        DoubleMatrix<LengthUnit>leftMatrix = safeCreateDoubleMatrix(left, LengthUnit.METER, absolute);
+        double[][] right = buildArray(4, 6, false, 0.3f);
+        DoubleMatrixRel<LengthUnit>rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        try
+        {
+            leftMatrix.add(rightMatrix);
+            fail("Adding matrices of different sizes should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
+        right = buildArray(3, 5, false, 0.3f);
+        rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        try
+        {
+            leftMatrix.add(rightMatrix);
+            fail("Adding matrices of different sizes should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
+        right = buildArray(4, 5, false, 0.3f);
+        rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        try
+        {
+            leftMatrix.add(rightMatrix);
+        }
+        catch (ValueException exception)
+        {
+            fail("Adding matrices of equal sizes should not have thrown an exception");
+        }
+        try
+        {
+            for (int i = 0; i < left.length; i++)
+                for (int j = 0; j < left[0].length; j++)
+                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j], leftMatrix.getSI(i, j), 0.001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
+        }
+        leftMatrix = safeCreateDoubleMatrix(left, LengthUnit.METER, absolute);
+        right = buildArray(4, 6, false, 0.3f);
+        rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        try
+        {
+            leftMatrix.subtract(rightMatrix);
+            fail("Subtracting matrices of different sizes should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
+        right = buildArray(3, 5, false, 0.3f);
+        rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        try
+        {
+            leftMatrix.subtract(rightMatrix);
+            fail("Subtracting matrices of different sizes should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
+        right = buildArray(4, 5, false, 0.3f);
+        rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        try
+        {
+            leftMatrix.subtract(rightMatrix);
+        }
+        catch (ValueException exception)
+        {
+            fail("Subtracting matrices of equal sizes should not have thrown an exception");
+        }
+        try
+        {
+            for (int i = 0; i < left.length; i++)
+                for (int j = 0; j < left[0].length; j++)
+                    assertEquals("Values should now be difference of input values", left[i][j] - right[i][j], leftMatrix.getSI(i, j), 0.001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
         }
     }
 
@@ -1120,6 +1219,34 @@ public abstract class DoubleMatrixTest
         {
             // Ignore expected exception
         }
+        inAbs = new DoubleScalarAbs[1][0];
+        inRel = new DoubleScalarRel[1][0];
+        try
+        {
+            if (absolute)
+                fm = createDoubleMatrixAbs(inAbs);
+            else
+                fm = createDoubleMatrixRel(inRel);
+            fail("Should have thrown an exception");
+        }
+        catch (ValueException ve)
+        {
+            // Ignore expected exception
+        }
+        inAbs = new DoubleScalarAbs[0][1];
+        inRel = new DoubleScalarRel[0][1];
+        try
+        {
+            if (absolute)
+                fm = createDoubleMatrixAbs(inAbs);
+            else
+                fm = createDoubleMatrixRel(inRel);
+            fail("Should have thrown an exception");
+        }
+        catch (ValueException ve)
+        {
+            // Ignore expected exception
+        }
         inAbs = new DoubleScalarAbs[1][1];
         inAbs[0][0] = new DoubleScalarAbs<LengthUnit>(123.456f, LengthUnit.FOOT);
         inRel = new DoubleScalarRel[1][1];
@@ -1139,7 +1266,7 @@ public abstract class DoubleMatrixTest
         assertTrue("Result of getValuesInUnit should not be null", null != out);
         assertEquals("Array of values should have length 1", 1, out.length);
         assertEquals("Element in array should have the expected value", 123.456f, out[0][0], 0.001);
-        double[][] in4 = {{110f, 120f, 130f}, {11f, 22f, 33f, 44f}};
+        double[][] in4 = buildArray(2, 3, true, 0);
         try
         {
             if (absolute)
@@ -1178,8 +1305,8 @@ public abstract class DoubleMatrixTest
     @Test
     public void relRel()
     {
-        double[][] in1 = {{10f, 20f, 30f, 40f}, {11f, 22f, 33f, 44f}};
-        double[][] in2 = {{110f, 120f, 130f, 140f}, {111f, 122f, 133f, 144f}};
+        double[][] in1 = buildArray(2, 4, false, 0);
+        double[][] in2 = buildArray(2, 4, false, 0);
         MassUnit u = MassUnit.POUND;
         DoubleMatrixRel<MassUnit> fm1 = null;
         DoubleMatrixRel<MassUnit> fm2 = null;
@@ -1228,7 +1355,7 @@ public abstract class DoubleMatrixTest
             for (int j = 0; j < in1[0].length; j++)
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
-        double[][] in3 = {{110f, 120f, 130f}, {111f, 122f, 133f}};
+        double[][] in3 = buildArray(2, 3, false, 0);
         DoubleMatrixRel<MassUnit> fm3 = null;
         try
         {
@@ -1283,7 +1410,7 @@ public abstract class DoubleMatrixTest
             for (int j = 0; j < in1[0].length; j++)
             {
                 assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i][j]
-                        * 0.45359 + in2[i][j] * 0.028350, sumValues[i][j] * 0.45359, 0.0001);
+                        * 0.45359 + in2[i][j] * 0.028350, sumValues[i][j] * 0.45359, 0.001);
             }
         try
         {
@@ -1310,18 +1437,18 @@ public abstract class DoubleMatrixTest
         for (int i = 0; i < in1.length; i++)
             for (int j = 0; j < in1[0].length; j++)
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.0001);
+                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.001);
     }
 
     /**
-     * Test adding and subtracting DoubleMatrixAbs.
+     * Test adding, subtracting and multiplication of DoubleMatrixAbs.
      */
 
     @Test
     public void absAbs()
     {
-        double[][] in1 = {{10f, 20f, 30f, 40f}, {11f, 22f, 33f, 44f}};
-        double[][] in2 = {{110f, 120f, 130f, 140f}, {111f, 122f, 133f, 144f}};
+        double[][] in1 = buildArray(2, 4, false, 0);
+        double[][] in2 = buildArray(2, 4, false, 0);
         MassUnit u = MassUnit.POUND;
         DoubleMatrixAbs<MassUnit> fm1 = null;
         DoubleMatrixAbs<MassUnit> fm2 = null;
@@ -1352,7 +1479,7 @@ public abstract class DoubleMatrixTest
             for (int j = 0; j < in1[0].length; j++)
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
-        double[][] in3 = {{110f, 120f, 130f}, {11f, 22f, 33f}};
+        double[][] in3 = buildArray(2, 3, false, 0);
         DoubleMatrixAbs<MassUnit> fm3 = null;
         try
         {
@@ -1386,7 +1513,7 @@ public abstract class DoubleMatrixTest
         }
         catch (ValueException exception)
         {
-            fail("Should be able to add DoubleMatrixAbs to DoubleMatrixAbs of same size");
+            fail("Should be able to subtract DoubleMatrixAbs to DoubleMatrixAbs of same size");
         }
         assertTrue("Result should not be null", null != difference);
         assertEquals("Size of result should be size of inputs", 2, difference.rows());
@@ -1397,7 +1524,7 @@ public abstract class DoubleMatrixTest
         for (int i = 0; i < in1.length; i++)
             for (int j = 0; j < in1[0].length; j++)
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.0002);
+                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.002);
         try
         {
             difference = DoubleMatrix.minus(fm2, fm1);
@@ -1415,7 +1542,7 @@ public abstract class DoubleMatrixTest
         for (int i = 0; i < in1.length; i++)
             for (int j = 0; j < in1[i].length; j++)
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in2[i][j] * 0.028350 - in1[i][j] * 0.45359, differenceValues[i][j] * 0.028350, 0.001);
+                        in2[i][j] * 0.028350 - in1[i][j] * 0.45359, differenceValues[i][j] * 0.028350, 0.02);
         LengthUnit u4 = LengthUnit.INCH;
         ForceUnit u5 = ForceUnit.POUND_FORCE;
         DoubleMatrixAbs<LengthUnit> fm4 = null;
@@ -1468,6 +1595,92 @@ public abstract class DoubleMatrixTest
                 {
                     fail("Unexpected ValueException");
                 }
+    }
+
+    /**
+     * Test adding, subtracting of absolute and relative matrix
+     */
+    @Test
+    public void absRel()
+    {
+        double[][] in1 = buildArray(2, 4, false, 0);
+        double[][] in2 = buildArray(2, 4, false, 10);
+        MassUnit u = MassUnit.POUND;
+        DoubleMatrixAbs<MassUnit> fm1 = null;
+        DoubleMatrixRel<MassUnit> fm2 = null;
+        try
+        {
+            fm1 = createDoubleMatrixAbs(in1, u);
+            fm2 = createDoubleMatrixRel(in2, u);
+        }
+        catch (ValueException exception2)
+        {
+            fail("Unexpected exception");
+        }
+        DoubleMatrixAbs<MassUnit> difference = null;
+        try
+        {
+            difference = DoubleMatrix.minus(fm1, fm2);
+        }
+        catch (ValueException exception1)
+        {
+            fail("Should be able to subtract FloatMatrixAbs from FloatMatrixAbs of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 2, difference.rows());
+        assertEquals("Size of result should be size of inputs", 4, difference.columns());
+        assertEquals("Type of result should be type of inputs", u, difference.getUnit());
+        double[][] differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+            for (int j = 0; j < in1[0].length; j++)
+                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
+                        - in2[i][j], differenceValues[i][j], 0.0001);
+        double[][] in3 = buildArray(2, 3, false, 0);
+        DoubleMatrixRel<MassUnit> fm3 = null;
+        try
+        {
+            fm3 = createDoubleMatrixRel(in3, u);
+        }
+        catch (ValueException exception2)
+        {
+            fail("Unexpected exception");
+        }
+        try
+        {
+            difference = DoubleMatrix.minus(fm1, fm3);
+            fail("Subtracting FloatMatrices of unequal size should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        MassUnit u2 = MassUnit.OUNCE;
+        try
+        {
+            fm2 = createDoubleMatrixRel(in2, u2);
+        }
+        catch (ValueException exception2)
+        {
+            fail("Unexpected exception");
+        }
+        try
+        {
+            difference = DoubleMatrix.minus(fm1, fm2);
+        }
+        catch (ValueException exception)
+        {
+            fail("Should be able to add FloatMatrixAbs to FloatMatrixAbs of same size");
+        }
+        assertTrue("Result should not be null", null != difference);
+        assertEquals("Size of result should be size of inputs", 2, difference.rows());
+        assertEquals("Size of result should be size of inputs", 4, difference.columns());
+        assertEquals("Type of result should be type of first input", u, difference.getUnit());
+        assertFalse("Type of result should be different of type of second input", u2 == difference.getUnit());
+        differenceValues = difference.getValuesInUnit();
+        for (int i = 0; i < in1.length; i++)
+            for (int j = 0; j < in1[0].length; j++)
+                assertEquals("Each element should equal the weighted difference of the contributing elements",
+                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.002);
     }
 
     /**
