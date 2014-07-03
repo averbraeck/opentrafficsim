@@ -30,7 +30,6 @@ import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsSparse;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelDense;
 
 import cern.colt.matrix.tfloat.FloatMatrix2D;
 
