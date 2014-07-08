@@ -42,7 +42,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<ots-version>${project.version}</ots-version>
-		<dsol-version>3.0.0-SNAPSHOT</dsol-version>
+		<dsol-version>2.1.0</dsol-version>
 		<junit.version>4.11</junit.version>
 		<java3d.version>1.5.1</java3d.version>
 		<parallelcolt.version>0.10.1</parallelcolt.version>
@@ -401,6 +401,11 @@
 				<version>${parallelcolt.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>dsol</groupId>
+				<artifactId>dsol</artifactId>
+				<version>${dsol-version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
