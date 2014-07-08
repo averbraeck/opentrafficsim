@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.location;
 
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 /**
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
@@ -35,5 +38,5 @@ public interface Edge<ID>
 {
     ID getID();
 
-    double getLength();
+    DoubleScalar<LengthUnit> getLength();
 }
