@@ -31,5 +31,9 @@
 			<artifactId>parallelcolt</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>dsol</groupId>
+			<artifactId>dsol</artifactId>
+		</dependency>
 	</dependencies>
 </project>
