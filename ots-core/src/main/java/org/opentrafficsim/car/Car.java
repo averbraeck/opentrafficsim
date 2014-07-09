@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;
@@ -47,10 +48,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  */
 public class Car implements GTU<Integer, LocationRelative<Line>, DoubleScalarRel<SpeedUnit>> 
 {
-    // FIXME: this class should be extending GTU
-
     /** Time of last evaluation */
     protected DoubleScalarAbs<TimeUnit> lastEvaluationTime;
+    
+    /** Time of next evaluation */
+    protected DoubleScalarAbs<TimeUnit> nextEvaluationTime;
 
     /** Longitudinal position */
     protected DoubleScalarAbs<LengthUnit> longitudinalPosition;
@@ -72,16 +74,21 @@ public class Car implements GTU<Integer, LocationRelative<Line>, DoubleScalarRel
     
     /** SimulatorInterface "running" this Car */
     private final SimulatorInterface simulator;
+    
+    /** CarFollowingModel used by this Car */
+    private final CarFollowingModel carFollowingModel;
 
     /** 
      * Create a new Car 
      * @param ID 
      * @param simulator 
+     * @param carFollowingModel 
      * */
-    public Car(final int ID, final SimulatorInterface simulator)
+    public Car(final int ID, final SimulatorInterface simulator, final CarFollowingModel carFollowingModel)
     {
         this.ID = ID;
         this.simulator = simulator;
+        this.carFollowingModel = carFollowingModel;
     }
     /**
      * Return the speed of this Car at the specified time. <br />
@@ -179,5 +186,13 @@ public class Car implements GTU<Integer, LocationRelative<Line>, DoubleScalarRel
             exception.printStackTrace();
             return null;    // TODO: STUB
         }
+    }
+    /**
+     * Return the last evaluation time
+     * @return DoubleScalarAbs&lt;TimeUnit&gt;; the time of last evaluation
+     */
+    public DoubleScalarAbs<TimeUnit> getLastEvaluationTime()
+    {
+        return this.lastEvaluationTime;
     }
 }

@@ -39,8 +39,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * of this software, even if advised of the possibility of such damage.
  * @version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <Line> 
  */
-public class IDMPlus implements CarFollowingModel
+public class IDMPlus<Line> implements CarFollowingModel
 {
     /** Longitudinal stopping distance [m]. */
     protected final DoubleScalarRel<LengthUnit> s0 = new DoubleScalarRel<LengthUnit>(3, LengthUnit.METER);
@@ -96,16 +97,19 @@ public class IDMPlus implements CarFollowingModel
      * speed limit, etc.)
      */
     protected final double delta = 1.0;
+    
+    /** Time slot size of IDMPlus */
+    protected final DoubleScalarRel<TimeUnit> stepSize = new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND);
 
     /**
      * @see org.opentrafficsim.car.following.CarFollowingModel#computeAcceleration(org.opentrafficsim.car.Car,
      *      java.util.Set, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs)
      */
     @Override
-    public DoubleScalarAbs<AccelerationUnit> computeAcceleration(final Car car, final Set<Car> leaders,
+    public CarFollowingModelResult computeAcceleration(final Car car, final Set<Car> leaders,
             final DoubleScalarAbs<SpeedUnit> speedLimit)
     {
-        DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(0.5, TimeUnit.SECOND); // STUB
+        DoubleScalarAbs<TimeUnit> now = DoubleScalar.plus(car.getLastEvaluationTime(), this.stepSize);
         DoubleScalarRel<SpeedUnit> vDes =
                 new DoubleScalarRel<SpeedUnit>(Math.min(this.delta * speedLimit.getValueSI(), car.vMax().getValueSI()),
                         SpeedUnit.METER_PER_SECOND);
@@ -129,7 +133,7 @@ public class IDMPlus implements CarFollowingModel
         double distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);
         DoubleScalarAbs<AccelerationUnit> result = new DoubleScalarAbs<AccelerationUnit>(this.a);
         result.multiply(Math.min(speedIncentive, distanceIncentive));
-        return result;
+        return new CarFollowingModelResult(result, now);
     }
 
 }
