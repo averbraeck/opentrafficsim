@@ -39,13 +39,18 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
  * 
  * @version Jul 8, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @param <ID> ID of this Line
  */
 public class Line<ID> implements Edge<ID>
 {
+    /** ID of this Line */
     private final ID id;
+    /** Length of this Line */
     private final DoubleScalarAbs<LengthUnit> length;
 
     /**
+     * @param id ID of the new Line
+     * @param length Length of the new Line
      * 
      */
     public Line(ID id, DoubleScalarAbs<LengthUnit> length)
