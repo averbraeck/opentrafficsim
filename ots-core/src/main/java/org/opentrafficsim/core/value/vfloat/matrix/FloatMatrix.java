@@ -297,7 +297,10 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         catch (IllegalArgumentException exception)
         {
             if (! exception.getMessage().startsWith("Matrix must be square"))
-            exception.printStackTrace();
+            {
+                exception.printStackTrace();
+                System.out.println("Offending matrix: " + this.matrixSI);
+            }
             throw new ValueException(exception.getMessage());    // probably Matrix must be square
         }
     }
