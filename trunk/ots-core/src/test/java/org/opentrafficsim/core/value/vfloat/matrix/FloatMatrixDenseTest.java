@@ -78,7 +78,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
     protected <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalarRel<U>[][] in)
             throws ValueException
     {
-        return new FloatMatrixRelSparse<U>(in);
+        return new FloatMatrixRelDense<U>(in);
     }
 
 }

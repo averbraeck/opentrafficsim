@@ -73,7 +73,7 @@ public class DoubleMatrixDenseTest extends DoubleMatrixTest
     protected <U extends Unit<U>> DoubleMatrixRel<U> createDoubleMatrixRel(DoubleScalarRel<U>[][] in)
             throws ValueException
     {
-        return new DoubleMatrixRelSparse<U>(in);
+        return new DoubleMatrixRelDense<U>(in);
     }
 
 }
