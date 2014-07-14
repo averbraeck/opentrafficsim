@@ -1,6 +1,6 @@
 package org.opentrafficsim.car.following;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -39,11 +39,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * of this software, even if advised of the possibility of such damage.
  * @version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <Line> 
+ * @param <Line>
  */
 public class IDMPlus<Line> implements CarFollowingModel
 {
-    /** Longitudinal stopping distance [m]. */
+    /** Preferred net longitudinal distance when stopped [m]. */
     protected final DoubleScalarRel<LengthUnit> s0 = new DoubleScalarRel<LengthUnit>(3, LengthUnit.METER);
 
     /** Longitudinal acceleration [m/s^2]. */
@@ -97,8 +97,11 @@ public class IDMPlus<Line> implements CarFollowingModel
      * speed limit, etc.)
      */
     protected final double delta = 1.0;
-    
-    /** Time slot size of IDMPlus */
+
+    /**
+     * Time slot size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between
+     * computational speed and accuracy)
+     */
     protected final DoubleScalarRel<TimeUnit> stepSize = new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND);
 
     /**
@@ -106,34 +109,60 @@ public class IDMPlus<Line> implements CarFollowingModel
      *      java.util.Set, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs)
      */
     @Override
-    public CarFollowingModelResult computeAcceleration(final Car car, final Set<Car> leaders,
+    public CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
             final DoubleScalarAbs<SpeedUnit> speedLimit)
     {
-        DoubleScalarAbs<TimeUnit> now = DoubleScalar.plus(car.getLastEvaluationTime(), this.stepSize);
+        DoubleScalarAbs<TimeUnit> thisEvaluationTime = car.getNextEvaluationTime();
+        //System.out.println("evaluation time is " + thisEvaluationTime);
         DoubleScalarRel<SpeedUnit> vDes =
                 new DoubleScalarRel<SpeedUnit>(Math.min(this.delta * speedLimit.getValueSI(), car.vMax().getValueSI()),
                         SpeedUnit.METER_PER_SECOND);
-        DoubleScalarAbs<LengthUnit> myFrontPosition = car.positionOfFront(now);
+        //System.out.println("vDes is " + vDes);
+        DoubleScalarAbs<LengthUnit> myFrontPosition = car.positionOfFront(thisEvaluationTime);
+        // System.out.println("myFrontPosition is " + myFrontPosition);
         DoubleScalarRel<LengthUnit> shortestHeadway =
                 new DoubleScalarRel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+        Car closestLeader = null;
         for (Car leader : leaders)
         {
-            DoubleScalarRel<LengthUnit> s = DoubleScalar.minus(leader.positionOfRear(now), myFrontPosition);
+            DoubleScalarRel<LengthUnit> s =
+                    DoubleScalar.minus(leader.positionOfRear(thisEvaluationTime), myFrontPosition);
+            // System.out.println("s is " + s);
+            if (s.getValueSI() < 0)
+                continue; // Ignore cars that are behind this car
             if (s.getValueSI() < shortestHeadway.getValueSI())
+            {
                 shortestHeadway = s;
+                closestLeader = leader;
+            }
         }
-        double speedIncentive = 1 - Math.pow(car.speed(now).getValueSI() / vDes.getValueSI(), 4);
-        DoubleScalarRel<AccelerationUnit> harmonicMeanABTimes2 =
+        //System.out.println("shortestHeadway is " + shortestHeadway);
+        DoubleScalarRel<SpeedUnit> myCurrentSpeed = car.speed(thisEvaluationTime);
+        double speedIncentive = 1 - Math.pow(myCurrentSpeed.getValueSI() / vDes.getValueSI(), 4);
+        //System.out.println("speedIncentive is " + speedIncentive);
+        DoubleScalarRel<AccelerationUnit> logWeightedAverageSpeedTimes2 =
                 new DoubleScalarRel<AccelerationUnit>(Math.sqrt(this.a.getValueSI() * this.b.getValueSI()),
                         AccelerationUnit.METER_PER_SECOND_2);
-        DoubleScalarRel<SpeedUnit> dV = null;
+        logWeightedAverageSpeedTimes2.multiply(2); // don't forget the times 2
+        DoubleScalarRel<SpeedUnit> dV =
+                (null == closestLeader) ? new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND) : DoubleScalar
+                        .minus(car.speed(thisEvaluationTime), closestLeader.speed(thisEvaluationTime));
+        //System.out.println("dV is " + dV);
+        //System.out.println(" v is " + car.speed(thisEvaluationTime));
+        //System.out.println("s0 is " + this.s0);
         DoubleScalarRel<LengthUnit> sStar =
-                DoubleScalar.plus(LengthUnit.METER, this.s0, Calc.speedTimesTime(car.speed(now), this.tSafe),
-                        Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(dV, harmonicMeanABTimes2)));
+                DoubleScalar.plus(LengthUnit.METER, this.s0,
+                        Calc.speedTimesTime(car.speed(thisEvaluationTime), this.tSafe),
+                        Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2)));
+        if (sStar.getValueSI() < 0) // Negative value should be treated as 0
+            sStar = new DoubleScalarRel<LengthUnit> (0, LengthUnit.METER);
+        //System.out.println("s* is " + sStar);
         double distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);
-        DoubleScalarAbs<AccelerationUnit> result = new DoubleScalarAbs<AccelerationUnit>(this.a);
-        result.multiply(Math.min(speedIncentive, distanceIncentive));
-        return new CarFollowingModelResult(result, now);
+        DoubleScalarAbs<AccelerationUnit> newAcceleration = new DoubleScalarAbs<AccelerationUnit>(this.a);
+        newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));
+        //System.out.println("distanceIncentive is " + distanceIncentive);
+        //System.out.println("newAcceleration is " + newAcceleration);
+        return new CarFollowingModelResult(newAcceleration, thisEvaluationTime);
     }
 
 }

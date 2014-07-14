@@ -4,6 +4,7 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
@@ -53,11 +54,11 @@ public class Calc
      * Distance is 0.5 times acceleration times time squared/ <br />
      * s(t) = 0.5 * a * t * t
      * @param acceleration DoubleScalarRel&lt;AccelerationUnit&gt;; the acceleration
-     * @param time DoubleScalarRel&lt;TimeUnit&gt;; the time
+     * @param time DoubleScalarAbs&lt;TimeUnit&gt;; the time
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the resulting distance
      */
     public static DoubleScalarRel<LengthUnit> accelerationTimesTimeSquaredDiv(
-            DoubleScalarRel<AccelerationUnit> acceleration, DoubleScalarRel<TimeUnit> time)
+            DoubleScalarAbs<AccelerationUnit> acceleration, DoubleScalarRel<TimeUnit> time)
     {
         double t = time.getValueSI();
         return new DoubleScalarRel<LengthUnit>(0.5 * acceleration.getValueSI() * t * t, LengthUnit.METER);
@@ -70,7 +71,7 @@ public class Calc
      * @param time DoubleScalarRel&lt;TimeUnit&gt;; the time
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the resulting speed
      */
-    public static DoubleScalarRel<SpeedUnit> accelerationTimesTime(DoubleScalarRel<AccelerationUnit> acceleration,
+    public static DoubleScalarRel<SpeedUnit> accelerationTimesTime(DoubleScalarAbs<AccelerationUnit> acceleration,
             DoubleScalarRel<TimeUnit> time)
     {
         return new DoubleScalarRel<SpeedUnit>(acceleration.getValueSI() * time.getValueSI(), SpeedUnit.METER_PER_SECOND);
