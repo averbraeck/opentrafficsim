@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.location;
 
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
  * <p>
@@ -46,14 +46,14 @@ public class Line<ID> implements Edge<ID>
     /** ID of this Line */
     private final ID id;
     /** Length of this Line */
-    private final DoubleScalarAbs<LengthUnit> length;
+    private final DoubleScalarRel<LengthUnit> length;
 
     /**
      * @param id ID of the new Line
      * @param length Length of the new Line
      * 
      */
-    public Line(ID id, DoubleScalarAbs<LengthUnit> length)
+    public Line(ID id, DoubleScalarRel<LengthUnit> length)
     {
         this.id = id;
         this.length = length;
@@ -72,7 +72,7 @@ public class Line<ID> implements Edge<ID>
      * @see org.opentrafficsim.core.location.Edge#getLength()
      */
     @Override
-    public DoubleScalarAbs<LengthUnit> getLength()
+    public DoubleScalarRel<LengthUnit> getLength()
     {
         return this.length;
     }

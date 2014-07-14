@@ -50,10 +50,10 @@ public class CarTest
         DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(12, LengthUnit.METER);
         DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
-        DoubleScalarAbs<AccelerationUnit> initialAcceleration = new DoubleScalarAbs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2);
-        Car referenceCar = new Car(12345, null, null, initialTime, initialPosition, initialSpeed, initialAcceleration);
+        Car referenceCar = new Car(12345, null, null, initialTime, initialPosition, initialSpeed);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getID());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getValueSI(), referenceCar.position(initialTime).getValueSI(), 0.0001);
         assertEquals("The car should store it's initial speed", initialSpeed.getValueSI(), referenceCar.speed(initialTime).getValueSI(), 0.00001);
+        assertEquals("The car should have an initial acceleratin equal to 0", 0, referenceCar.acceleration.getValueSI(), 0.0001);
     }
 }

@@ -1,6 +1,6 @@
 package org.opentrafficsim.car.following;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -45,7 +45,7 @@ public abstract interface CarFollowingModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return CarFollowingModelResult; the result of application of the car following model
      */
-    public abstract CarFollowingModelResult computeAcceleration(final Car car, final Set<Car> leaders,
+    public abstract CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
             final DoubleScalarAbs<SpeedUnit> speedLimit);
 
     /**
