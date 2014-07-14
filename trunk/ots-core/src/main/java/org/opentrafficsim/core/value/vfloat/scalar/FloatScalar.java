@@ -158,7 +158,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
         // exception if one is absolute and the other is relative
         if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
-            throw new ClassCastException("FloatScalar.CompareTo compares two scalars with of which one is absolute "
+            throw new ClassCastException("FloatScalar.CompareTo compares two scalars of which one is absolute "
                     + "and the other is relative.");
 
         if (this.valueSI < fs.valueSI)
