@@ -2,11 +2,6 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbs;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbsDense;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRel;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRelDense;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRelSparse;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
