@@ -3,7 +3,6 @@ package org.opentrafficsim.car;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;

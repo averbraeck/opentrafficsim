@@ -162,7 +162,9 @@ public class IDMPlus<Line> implements CarFollowingModel
         newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));
         //System.out.println("distanceIncentive is " + distanceIncentive);
         //System.out.println("newAcceleration is " + newAcceleration);
-        return new CarFollowingModelResult(newAcceleration, thisEvaluationTime);
+        DoubleScalarAbs<TimeUnit> nextEvaluationTime = thisEvaluationTime;
+        nextEvaluationTime.add(this.stepSize);
+        return new CarFollowingModelResult(newAcceleration, nextEvaluationTime);
     }
 
 }

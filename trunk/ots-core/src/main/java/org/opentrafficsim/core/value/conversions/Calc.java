@@ -57,7 +57,7 @@ public class Calc
      * @param time DoubleScalarAbs&lt;TimeUnit&gt;; the time
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the resulting distance
      */
-    public static DoubleScalarRel<LengthUnit> accelerationTimesTimeSquaredDiv(
+    public static DoubleScalarRel<LengthUnit> accelerationTimesTimeSquaredDiv2(
             DoubleScalarAbs<AccelerationUnit> acceleration, DoubleScalarRel<TimeUnit> time)
     {
         double t = time.getValueSI();
