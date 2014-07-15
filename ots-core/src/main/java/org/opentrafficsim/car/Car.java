@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.car.following.CarFollowingModel;
+import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;
@@ -95,10 +96,11 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         this.ID = ID;
         this.simulator = simulator;
         this.carFollowingModel = carFollowingModel;
-        this.lastEvaluationTime = initialTime;
-        this.longitudinalPosition = initialPosition;
-        this.speed = initialSpeed;
-        this.nextEvaluationTime = initialTime;
+        // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
+        this.lastEvaluationTime = new DoubleScalarAbs<TimeUnit>(initialTime);
+        this.longitudinalPosition = new DoubleScalarAbs<LengthUnit>(initialPosition);
+        this.speed = new DoubleScalarRel<SpeedUnit>(initialSpeed);
+        this.nextEvaluationTime = new DoubleScalarAbs<TimeUnit>(initialTime);
     }
 
     /**
@@ -123,8 +125,9 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     public DoubleScalarAbs<LengthUnit> position(DoubleScalarAbs<TimeUnit> when)
     {
         DoubleScalarRel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime);
+        //System.out.println("dT is " + dT);
         return DoubleScalar.plus(this.longitudinalPosition, Calc.speedTimesTime(this.speed, dT),
-                Calc.accelerationTimesTimeSquaredDiv(this.acceleration, dT));
+                Calc.accelerationTimesTimeSquaredDiv2(this.acceleration, dT));
     }
 
     /**
@@ -208,12 +211,13 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      */
     public DoubleScalarAbs<TimeUnit> getLastEvaluationTime()
     {
-        return this.lastEvaluationTime;
+        return new DoubleScalarAbs<TimeUnit>(this.lastEvaluationTime);
     }
 
     public String toString()
     {
-        return String.format("Car %d lastEval %.1f, nextEval %.1f s %.3fm, v %.3fm/s, a %.3fm/s/s", this.ID,
+        // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
+        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % .3fm, v % .3fm/s, a % .3fm/s/s", this.ID,
                 this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(),
                 this.longitudinalPosition.getValueSI(), this.speed.getValueSI(), this.acceleration.getValueSI());
     }
@@ -223,18 +227,24 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      */
     public DoubleScalarAbs<TimeUnit> getNextEvaluationTime()
     {
-        return this.nextEvaluationTime;
+        return new DoubleScalarAbs<TimeUnit>(this.nextEvaluationTime);
     }
 
     /**
-     * Set the time of next Evaluation
-     * @param nextEvaluationTime
+     * Set the new state
+     * @param cfmr CarFollowingModelResult; the new state of this Car
      */
-    public void setNextEvaluationTime(DoubleScalarAbs<TimeUnit> nextEvaluationTime)
+    public void setState(CarFollowingModelResult cfmr)
     {
+        //System.out.println("Moving car from " + position(this.lastEvaluationTime) + " to " + position(this.nextEvaluationTime));
+        //System.out.println("Updating lastEvaluationTime from " + this.lastEvaluationTime + " to " + this.nextEvaluationTime);
+        this.longitudinalPosition = position(this.nextEvaluationTime);
+        this.speed = speed(this.nextEvaluationTime);
         // TODO add a check that time is increasing
         this.lastEvaluationTime = this.nextEvaluationTime;
-        this.nextEvaluationTime = nextEvaluationTime;
+        this.nextEvaluationTime = cfmr.validUntil;
+        this.acceleration = cfmr.acceleration;
         // TODO schedule next evaluation in the scheduler.
     }
+
 }
