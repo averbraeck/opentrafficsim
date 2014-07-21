@@ -53,6 +53,6 @@ public class CarTest
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getID());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getValueSI(), referenceCar.position(initialTime).getValueSI(), 0.0001);
         assertEquals("The car should store it's initial speed", initialSpeed.getValueSI(), referenceCar.speed(initialTime).getValueSI(), 0.00001);
-        assertEquals("The car should have an initial acceleratin equal to 0", 0, referenceCar.acceleration.getValueSI(), 0.0001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.acceleration.getValueSI(), 0.0001);
     }
 }
