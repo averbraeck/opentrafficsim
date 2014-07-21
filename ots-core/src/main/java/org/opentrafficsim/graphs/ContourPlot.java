@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -19,6 +20,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.EventListenerList;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -32,14 +35,20 @@ import org.jfree.data.DomainOrder;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
-import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RefineryUtilities;
 import org.opentrafficsim.car.Car;
+import org.opentrafficsim.car.following.CarFollowingModel;
+import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.car.following.IDMPlus;
+import org.opentrafficsim.core.location.Line;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsDense;
 
@@ -121,10 +130,10 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     protected final JLabel statusLabel;
 
     /** Time granularity in seconds */
-    protected double timeGranularity = timeGranularities[0];
+    protected double timeGranularity = timeGranularities[3];
 
     /** Distance granularity in meters */
-    protected double distanceGranularity = distanceGranularities[0];
+    protected double distanceGranularity = distanceGranularities[1];
 
     /** List of parties interested in changes of this ContourPlot */
     transient EventListenerList listenerList = new EventListenerList();
@@ -171,19 +180,21 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                 boundaries[0] = 0;
                 boundaries[1] = 30;
                 boundaries[2] = 100;
-                contourDataSet = new DensityContourDataSet();
+                contourDataSet = new DensityContourDataset();
                 break;
             case FLOW:
                 valueFormat = "flow %.0f veh/hour";
                 boundaries[0] = 0;
                 boundaries[1] = 1000;
                 boundaries[2] = 3000;
+                // TODO FlowContourSet
                 break;
             case SPEED:
                 valueFormat = "speed %.1f km/h";
                 boundaries[0] = 0;
                 boundaries[1] = 40;
                 boundaries[2] = 150;
+                // TODO SpeedContourSet
                 break;
             default:
                 throw new Error("Bad switch; Cannot happen");
@@ -199,6 +210,17 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         popupMenu.insert(buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", distanceGranularities),
                 0);
         popupMenu.insert(buildMenu("Time granularity", "%.0f s", "setTimeGranularity", timeGranularities), 1);
+        this.reGraph();
+    }
+
+    /**
+     * Change the upper limit of the time range
+     * @param newUpperLimit double; the new upper limit for the time range
+     */
+    public void adjustTimeRange(double newUpperLimit)
+    {
+        this.timeRange = newUpperLimit;
+
     }
 
     /** The sub-menu that sets the distance granularity */
@@ -271,7 +293,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
          * Retrieve the number of cells to use along the distance axis.
          * @return Integer; the number of cells to use along the distance axis
          */
-        private int distances()
+        protected int distances()
         {
             return (int) Math.ceil((ContourPlot.this.maximumDistance - ContourPlot.this.minimumDistance)
                     / ContourPlot.this.distanceGranularity);
@@ -367,6 +389,8 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
          */
         public void addData(DoubleScalarAbs<TimeUnit> fromTime, DoubleScalarAbs<TimeUnit> toTime, Car car)
         {
+            if (toTime.getValueSI() > ContourPlot.this.timeRange)
+                adjustTimeRange(toTime.getValueSI());
             if (toTime.getValueSI() <= fromTime.getValueSI()) // degenerate sample???
                 return;
             double relativeFromDistance =
@@ -466,23 +490,27 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
      * @version Jul 17, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class DensityContourDataSet extends ContourDataSet
+    class DensityContourDataset extends ContourDataSet
     {
         /** Storage for the total time spent in each cell */
         private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
 
         @Override
-        public double getZValue(int timeBinGroup, int distanceBinGroup)
+        public double getZValue(int series, int item)
         {
+            // System.out.println("getZValue(" + series + ", " + item + ")");
+            int timeBinGroup = item / distances();
+            int distanceBinGroup = item % distances();
+            // System.out.println("getZValue(tbg=" + timeBinGroup + ", dbg=" + distanceBinGroup + ")");
             final int timeGroupSize = (int) (ContourPlot.this.timeGranularity / timeGranularities[0]);
             final int firstTimeBin = timeBinGroup * timeGroupSize;
             double cumulativeTimeInSI = 0;
             if (firstTimeBin >= this.cumulativeTimes.size())
-                return Double.NaN;
+                return 0;
             final int distanceGroupSize = (int) (ContourPlot.this.distanceGranularity / distanceGranularities[0]);
             final int firstDistanceBin = distanceBinGroup * distanceGroupSize;
             if (firstDistanceBin * distanceGranularities[0] >= ContourPlot.this.maximumDistance)
-                return Double.NaN;
+                return 0;
             try
             {
                 for (int timeBinIndex = firstTimeBin; timeBinIndex < firstTimeBin + timeGroupSize; timeBinIndex++)
@@ -493,6 +521,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                     for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < firstDistanceBin
                             + distanceGroupSize; distanceBinIndex++)
                     {
+                        // System.out.println("distanceBinIndex is " + distanceBinIndex);
                         cumulativeTimeInSI += values.getSI(distanceBinIndex);
                     }
                 }
@@ -519,7 +548,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         @Override
         public void incrementData(int timeBin, int distanceBin, double duration, double distanceCovered)
         {
-            if (timeBin < 0 || distanceBin < 0 || 0 == duration)
+            if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= ContourPlot.this.distanceBinCount)
                 return;
             while (timeBin >= this.cumulativeTimes.size())
                 this.cumulativeTimes.add(new DoubleVectorAbsDense<TimeUnit>(
@@ -743,12 +772,76 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
      */
     public static void main(String[] args)
     {
-        ContourPlot cp = new ContourPlot("Contour Graph", Type.DENSITY, 100, 500);
+        ContourPlot cp = new ContourPlot("Contour Graph", Type.DENSITY, 0, 5000);
         cp.setTitle("Stand-alone demo of Contour Graph");
         cp.setPreferredSize(new java.awt.Dimension(500, 270));
         cp.pack();
         RefineryUtilities.centerFrameOnScreen(cp);
         cp.setVisible(true);
+        DensityContourDataset dataSet =
+                (DensityContourDataset) ((XYPlot) cp.chartPanel.getChart().getPlot()).getDataset();
+        DEVSSimulator simulator = new DEVSSimulator();
+        CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
+        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        final double endTime = 1800; // [s]
+        final double headway = 3600.0 / 1500.0;
+        double thisTick = 0;
+        final double tick = 0.5;
+        int carsCreated = 0;
+        ArrayList<Car> cars = new ArrayList<Car>();
+        double nextSourceTick = 0;
+        double nextMoveTick = 0;
+        while (thisTick < endTime)
+        {
+            // System.out.println("timeStep is " + thisTick);
+            if (thisTick == nextSourceTick)
+            {
+                // generate another car
+                DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                Car car =
+                        new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
+                cars.add(0, car);
+                //System.out.println(String.format("TimeStep=%.1f, there are now %d vehicles", thisTick, cars.size()));
+                nextSourceTick += headway;
+            }
+            if (thisTick == nextMoveTick)
+            {
+                if (thisTick == 700) {
+                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                    for (int i = 0; i < cars.size(); i++)
+                        System.out.println(cars.get(i).toString(now));
+                }
+                // Move the vehicles
+                for (int carIndex = 0; carIndex < cars.size(); carIndex++)
+                {
+                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                    Car car = cars.get(carIndex);
+                    if (car.position(now).getValueSI() > 5000)
+                    {
+                        cars.remove(carIndex);
+                        break;
+                    } 
+                    Collection<Car> leaders = new ArrayList<Car>();
+                    if (carIndex < cars.size() - 1)
+                        leaders.add(cars.get(carIndex + 1));
+                    if (thisTick >= 300 && thisTick < 500)
+                    {
+                        Car block =
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000, LengthUnit.METER),
+                                        new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                        leaders.add(block);
+                    }
+                    CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
+                    car.setState(cfmr);
+                    dataSet.addData(car.getLastEvaluationTime(), car.getNextEvaluationTime(), car);
+                }
+                nextMoveTick += tick;
+            }
+            thisTick = Math.min(nextSourceTick, nextMoveTick);
+        }
+        cp.reGraph();
     }
 
     /**
