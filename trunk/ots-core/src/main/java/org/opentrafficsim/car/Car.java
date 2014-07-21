@@ -217,9 +217,22 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     public String toString()
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
-        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % .3fm, v % .3fm/s, a % .3fm/s/s", this.ID,
+        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.ID,
                 this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(),
                 this.longitudinalPosition.getValueSI(), this.speed.getValueSI(), this.acceleration.getValueSI());
+    }
+
+    /**
+     * Description of Car at specified time.
+     * @param when DoubleScalarAbs&lt;TimeUnit&gt;; the time
+     * @return String; description of this Car at the specified time
+     */
+    public String toString(DoubleScalarAbs<TimeUnit> when)
+    {
+        // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
+        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.ID,
+                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(),
+                this.position(when).getValueSI(), this.speed(when).getValueSI(), this.acceleration.getValueSI());
     }
 
     /**
