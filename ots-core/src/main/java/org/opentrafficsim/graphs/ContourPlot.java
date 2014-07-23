@@ -151,7 +151,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     protected double timeRange = 300;
 
     /** Granularity values for the distancePopupMenu */
-    protected final static double[] distanceGranularities = {10, 20, 50, 100};
+    protected final static double[] distanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
 
     /** Granularity values for the timePopupMenu */
     protected final static double[] timeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
@@ -866,6 +866,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                 break;
             legend.add(new LegendItem(String.format(legendFormat, value), paintScale.getPaint(value)));
         }
+        legend.add(new LegendItem("No data", Color.BLACK));
         plot.setFixedLegendItems(legend);
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
@@ -1100,7 +1101,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         final double endTime = 1800; // [s]
-        final double headway = 3600.0 / 1500.0;
+        final double headway = 3600.0 / 1500.0; // 1500 [veh / hour] == 2.4s headway
         double thisTick = 0;
         final double tick = 0.5;
         int carsCreated = 0;
@@ -1112,7 +1113,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             // System.out.println("timeStep is " + thisTick);
             if (thisTick == nextSourceTick)
             {
-                // generate another car
+                // Time to generate another car
                 DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
                 Car car =
                         new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
@@ -1122,13 +1123,15 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             }
             if (thisTick == nextMoveTick)
             {
-                if (thisTick == 700)
-                {
-                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                    for (int i = 0; i < cars.size(); i++)
-                        System.out.println(cars.get(i).toString(now));
-                }
-                // Move the vehicles
+                // Time to move all vehicles forward (even though they do not have simultaneous clock ticks)
+                /*
+                 * Debugging if (thisTick == 700) { DoubleScalarAbs<TimeUnit> now = new
+                 * DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND); for (int i = 0; i < cars.size(); i++)
+                 * System.out.println(cars.get(i).toString(now)); }
+                 */
+                /*
+                 * TODO: Currently all cars have to be moved "manually". This functionality should go to the simulator.
+                 */
                 for (int carIndex = 0; carIndex < cars.size(); carIndex++)
                 {
                     DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
@@ -1143,6 +1146,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                         leaders.add(cars.get(carIndex + 1));
                     if (thisTick >= 300 && thisTick < 500)
                     {
+                        // Add a stationary car at 4000m to simulate an opening bridge
                         Car block =
                                 new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
                                         LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
@@ -1150,6 +1154,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                     }
                     CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
                     car.setState(cfmr);
+                    // Add the movements of this Car to the contour plots
                     for (ContourPlot contourPlot : contourPlots)
                     {
                         ContourDataset dataSet =
@@ -1161,6 +1166,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             }
             thisTick = Math.min(nextSourceTick, nextMoveTick);
         }
+        // Notify all contour plots that the underlying data has changed
         for (ContourPlot contourPlot : contourPlots)
             contourPlot.reGraph();
     }
