@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
@@ -40,7 +41,6 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
-import org.jfree.ui.RefineryUtilities;
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
@@ -53,7 +53,7 @@ import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsDense;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
 
 /**
  * <p>
@@ -150,10 +150,10 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     /** Time range of this ContourPlot (automatically extended when data is added) */
     protected double timeRange = 300;
 
-    /** Granularity values for the distancePopupMenu */
+    /** Granularity values for the distancePopupMenu (all values must be an integer multiple of the first value) */
     protected final static double[] distanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
 
-    /** Granularity values for the timePopupMenu */
+    /** Granularity values for the timePopupMenu (all values must be an integer multiple of the first value) */
     protected final static double[] timeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
     /** Number of distance bins used */
@@ -163,14 +163,17 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
      * Create a new ContourPlot
      * @param caption String; text to show above the contour plot
      * @param type Contourplot.Type; the type of this contour plot
-     * @param minimumDistance double; the minimum distance value used in this contour plot
-     * @param maximumDistance double; the maximum distance value used in this contour plot
+     * @param minimumPosition DoubleScalarAbs&lt;LengthUnit>&gt;; the minimum distance value used in this contour plot
+     * @param maximumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the maximum distance value used in this contour plot
      */
-    public ContourPlot(String caption, Type type, final double minimumDistance, final double maximumDistance)
+    public ContourPlot(String caption, Type type, final DoubleScalarAbs<LengthUnit> minimumPosition,
+            final DoubleScalarAbs<LengthUnit> maximumPosition)
     {
-        this.minimumDistance = distanceGranularities[0] * Math.floor(minimumDistance / distanceGranularities[0]);
-        this.maximumDistance = distanceGranularities[0] * Math.ceil(maximumDistance / distanceGranularities[0]);
-        this.distanceBinCount = (int) ((maximumDistance - minimumDistance) / distanceGranularities[0]);
+        this.minimumDistance =
+                distanceGranularities[0] * Math.floor(minimumPosition.getValueSI() / distanceGranularities[0]);
+        this.maximumDistance =
+                distanceGranularities[0] * Math.ceil(maximumPosition.getValueSI() / distanceGranularities[0]);
+        this.distanceBinCount = (int) ((this.maximumDistance - this.minimumDistance) / distanceGranularities[0]);
         this.setLayout(new BorderLayout());
         String valueFormat;
         double[] boundaries = new double[3];
@@ -211,12 +214,11 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                 throw new Error("Bad switch; Cannot happen");
         }
         this.chartPanel =
-                new ChartPanel(createChart(caption, "\u2192 Distance", ", " + valueFormat, contourDataSet, boundaries,
-                        legendFormat, legendStep));
+                new ChartPanel(createChart(caption, valueFormat, contourDataSet, boundaries, legendFormat, legendStep));
         this.chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         this.chartPanel.addMouseMotionListener(this);
         this.add(this.chartPanel, BorderLayout.CENTER);
-        this.statusLabel = new JLabel(" ");
+        this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
         JPopupMenu popupMenu = this.chartPanel.getPopupMenu();
         popupMenu.insert(
@@ -256,6 +258,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     private JMenu buildMenu(String caption, String format, String commandPrefix, double[] values, double currentValue)
     {
         JMenu result = new JMenu(caption);
+        // Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?
         ButtonGroup group = new ButtonGroup();
         for (double value : values)
         {
@@ -270,7 +273,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     }
 
     /**
-     * Storage for the contour data of this ContourPlot
+     * Storage for the contour data of this ContourPlot. <br />
+     * Implements everything except getSeriesKey and adds virtual method incrementData and computeZValue and the
+     * non-virtual method addData.
      * <p>
      * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
      * reserved.
@@ -300,9 +305,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
      */
     abstract class ContourDataset implements XYZDataset
     {
-        // Implements everything except getSeriesKey and adds virtual method incrementData and computeZValue and
-        // non-virtual
-        // method addData.
+        /**
+         * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
+         */
         @Override
         public int getSeriesCount()
         {
@@ -328,66 +333,99 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             return (int) Math.ceil(ContourPlot.this.timeRange / ContourPlot.this.timeGranularity);
         }
 
+        /**
+         * @see org.jfree.data.xy.XYDataset#getItemCount(int)
+         */
         @Override
         public int getItemCount(int series)
         {
             return distances() * times();
         }
 
+        /**
+         * @see org.jfree.data.xy.XYDataset#getX(int, int)
+         */
         @Override
         public Number getX(int series, int item)
         {
             return new Double(getXValue(series, item));
         }
 
+        /**
+         * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
+         */
         @Override
         public double getXValue(int series, int item)
         {
             return item / distances() * ContourPlot.this.timeGranularity;
         }
 
+        /**
+         * @see org.jfree.data.xy.XYDataset#getY(int, int)
+         */
         @Override
         public Number getY(int series, int item)
         {
             return new Double(getYValue(series, item));
         }
 
+        /**
+         * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
+         */
         @Override
         public double getYValue(int series, int item)
         {
             return item % distances() * ContourPlot.this.distanceGranularity;
         }
 
+        /**
+         * @see org.jfree.data.xy.XYZDataset#getZ(int, int)
+         */
         @Override
         public Number getZ(int series, int item)
         {
             return new Double(getZValue(series, item));
         }
 
+        /**
+         * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
+         */
         @Override
         public void addChangeListener(DatasetChangeListener listener)
         {
             ContourPlot.this.listenerList.add(DatasetChangeListener.class, listener);
         }
 
+        /**
+         * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
+         */
         @Override
         public void removeChangeListener(DatasetChangeListener listener)
         {
             ContourPlot.this.listenerList.remove(DatasetChangeListener.class, listener);
         }
 
+        /**
+         * @see org.jfree.data.general.Dataset#getGroup()
+         */
         @Override
         public DatasetGroup getGroup()
         {
             return null;
         }
 
+        /**
+         * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
+         */
         @Override
         public void setGroup(DatasetGroup group)
         {
             // ignore
         }
 
+        /**
+         * @see org.jfree.data.general.SeriesDataset#indexOf(java.lang.Comparable)
+         */
         @SuppressWarnings("rawtypes")
         @Override
         public int indexOf(Comparable seriesKey)
@@ -395,6 +433,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             return 0;
         }
 
+        /**
+         * @see org.jfree.data.xy.XYDataset#getDomainOrder()
+         */
         @Override
         public DomainOrder getDomainOrder()
         {
@@ -403,8 +444,6 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
 
         /**
          * Add a fragment of a trajectory to this ContourPlot.
-         * @param fromTime Double; start time of the sub-trajectory
-         * @param toTime Double; end time of the sub-trajectory
          * @param car Car; the GTU that is being sampled TODO: replace Car by GTU
          */
         public void addData(Car car)
@@ -418,6 +457,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             // System.out.println(String.format("addData: fromTime=%.1f, toTime=%.1f, fromDist=%.2f, toDist=%.2f",
             // fromTime.getValueSI(), toTime.getValueSI(), car.position(fromTime).getValueSI(),
             // car.position(toTime).getValueSI()));
+            // The "relative" values are "counting" distance or time in the minimum bin size unit
             double relativeFromDistance =
                     (car.position(fromTime).getValueSI() - ContourPlot.this.minimumDistance) / distanceGranularities[0];
             double relativeToDistance =
@@ -447,7 +487,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                                 .getValueSI() - ContourPlot.this.minimumDistance)
                                 / distanceGranularities[0];
 
-                // Compute the time in each distanceBin (assuming constant speed during the timeBin)
+                // Compute the time in each distanceBin
                 for (int distanceBin = (int) Math.floor(binDistanceStart); distanceBin <= binDistanceEnd; distanceBin++)
                 {
                     double relativeDuration = 1;
@@ -463,7 +503,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                     {
                         // This GTU moves out of this distanceBin before the binEndTime
                         // Interpolate the time when this GTU crosses into the next distanceBin
-                        // Using f.i. Newton-Rhapson interpolation would yield a more precise result...
+                        // Using f.i. Newton-Rhapson interpolation would yield a slightly more precise result...
                         double timeToBinBoundary = (distanceBin + 1 - binDistanceStart) / relativeMeanSpeed;
                         double endTime = relativeFromTime + timeToBinBoundary;
                         relativeDuration -= timeBin + 1 - endTime;
@@ -490,6 +530,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
          */
         public abstract void incrementData(int timeBin, int distanceBin, double duration, double distanceCovered);
 
+        /**
+         * @see org.jfree.data.xy.XYZDataset#getZValue(int, int)
+         */
         @Override
         public double getZValue(int series, int item)
         {
@@ -510,7 +553,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         }
 
         /**
-         * Combine values in a range of time bins and distance bins to obtain a density value
+         * Combine values in a range of time bins and distance bins to obtain a combined density value of the ranges.
          * @param firstTimeBin Integer; the first time bin to use
          * @param endTimeBin Integer; one higher than the last time bin to use
          * @param firstDistanceBin Integer; the first distance bin to use
@@ -555,9 +598,11 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         /** Storage for the total time spent in each cell */
         private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
 
-        @SuppressWarnings("rawtypes")
+        /**
+         * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
+         */
         @Override
-        public Comparable getSeriesKey(int series)
+        public Comparable<String> getSeriesKey(int series)
         {
             return "density";
         }
@@ -571,7 +616,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= ContourPlot.this.distanceBinCount)
                 return;
             while (timeBin >= this.cumulativeTimes.size())
-                this.cumulativeTimes.add(new DoubleVectorAbsDense<TimeUnit>(
+                this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(
                         new double[ContourPlot.this.distanceBinCount], TimeUnit.SECOND));
             DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBin);
             try
@@ -602,10 +647,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                         break;
                     DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
                     for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
-                    {
-                        // System.out.println("distanceBinIndex is " + distanceBinIndex);
                         cumulativeTimeInSI += values.getSI(distanceBinIndex);
-                    }
                 }
             }
             catch (ValueException exception)
@@ -653,6 +695,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         /** Storage for the total length traveled in each cell */
         private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
 
+        /**
+         * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
+         */
         @SuppressWarnings("rawtypes")
         @Override
         public Comparable getSeriesKey(int series)
@@ -669,7 +714,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= ContourPlot.this.distanceBinCount)
                 return;
             while (timeBin >= this.cumulativeLengths.size())
-                this.cumulativeLengths.add(new DoubleVectorAbsDense<LengthUnit>(
+                this.cumulativeLengths.add(new DoubleVectorAbsSparse<LengthUnit>(
                         new double[ContourPlot.this.distanceBinCount], LengthUnit.METER));
             DoubleVectorAbs<LengthUnit> values = this.cumulativeLengths.get(timeBin);
             try
@@ -700,10 +745,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                         break;
                     DoubleVectorAbs<LengthUnit> values = this.cumulativeLengths.get(timeBinIndex);
                     for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
-                    {
-                        // System.out.println("distanceBinIndex is " + distanceBinIndex);
                         cumulativeLengthInSI += values.getSI(distanceBinIndex);
-                    }
                 }
             }
             catch (ValueException exception)
@@ -712,8 +754,6 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                         firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
                 exception.printStackTrace();
             }
-            // System.out.println("cumLength " + cumulativeLengthInSI + " timegran=" + timeGranularity + ", distgran=" +
-            // distanceGranularity);
             return 3600 * cumulativeLengthInSI / ContourPlot.this.timeGranularity
                     / ContourPlot.this.distanceGranularity;
         }
@@ -757,6 +797,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         /** Storage for the total length traveled in each cell */
         private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
 
+        /**
+         * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
+         */
         @SuppressWarnings("rawtypes")
         @Override
         public Comparable getSeriesKey(int series)
@@ -774,9 +817,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                 return;
             while (timeBin >= this.cumulativeTimes.size())
             {
-                this.cumulativeTimes.add(new DoubleVectorAbsDense<TimeUnit>(
+                this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(
                         new double[ContourPlot.this.distanceBinCount], TimeUnit.SECOND));
-                this.cumulativeLengths.add(new DoubleVectorAbsDense<LengthUnit>(
+                this.cumulativeLengths.add(new DoubleVectorAbsSparse<LengthUnit>(
                         new double[ContourPlot.this.distanceBinCount], LengthUnit.METER));
             }
             DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
@@ -813,7 +856,6 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                     DoubleVectorAbs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBinIndex);
                     for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                     {
-                        // System.out.println("distanceBinIndex is " + distanceBinIndex);
                         cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);
                         cumulativeLengthInSI += lengthValues.getSI(distanceBinIndex);
                     }
@@ -835,27 +877,27 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     /**
      * Create a XYBlockChart.
      * @param caption String; text to show above the chart
-     * @param contourType String; type of value plotted in the chart
-     * @param valueFormat String; format string used to render the value in the status bar
+     * @param valueFormat String; format string used to render the value under the mouse in the status bar
      * @param dataset XYZDataset with the values to render
      * @param boundaries double[]; array of three boundary values corresponding to Red, Yellow and Green
-     * @param legendStep value difference for successive colors in the legend
+     * @param legendStep value difference for successive colors in the legend. The first legend value displayed is equal
+     *            to the lowest value in boundaries.
      * @return JFreeChart; the new XYBlockChart
      */
-    private static JFreeChart createChart(String caption, String contourType, String valueFormat, XYZDataset dataset,
-            double[] boundaries, String legendFormat, double legendStep)
+    private static JFreeChart createChart(String caption, String valueFormat, XYZDataset dataset, double[] boundaries,
+            String legendFormat, double legendStep)
     {
-        NumberAxis xAxis = new NumberAxis("\u2192 time");
+        NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
-        NumberAxis yAxis = new NumberAxis(contourType);
+        NumberAxis yAxis = new NumberAxis("\u2192 " + "Distance [m]");
         yAxis.setAutoRangeIncludesZero(false);
         yAxis.setLowerMargin(0.0);
         yAxis.setUpperMargin(0.0);
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         XYBlockRenderer renderer = new XYBlockRenderer();
         Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
-        ColorPaintScale paintScale = new ColorPaintScale(valueFormat, boundaries, colorValues);
+        ContinuousColorPaintScale paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
         renderer.setPaintScale(paintScale);
         XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
         LegendItemCollection legend = new LegendItemCollection();
@@ -873,7 +915,6 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         plot.setRangeGridlinePaint(Color.white);
         plot.setForegroundAlpha(0.66f);
         JFreeChart chart = new JFreeChart(caption, plot);
-        // chart.removeLegend();
         chart.setBackgroundPaint(Color.white);
         return chart;
     }
@@ -907,7 +948,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
      * @version Jul 16, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    static class ColorPaintScale implements PaintScale
+    static class ContinuousColorPaintScale implements PaintScale
     {
         /** Boundary values for this ColorPaintScale */
         private double[] bounds;
@@ -919,12 +960,12 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         final String format;
 
         /**
-         * Create a new ColorPaintScale.
+         * Create a new ContinuousColorPaintScale.
          * @param format Format string to render the value under the mouse in a human readable format
-         * @param bounds Double[] array of boundary values (must be ordered by increasing value)
-         * @param boundColors Color[] array of the colors to use at the boundary values
+         * @param bounds Double[] array of boundary values (all values must be distinct; number of values must be >= 2)
+         * @param boundColors Color[] array of the colors to use at the boundary values (must have same size as bounds)
          */
-        ColorPaintScale(String format, double bounds[], Color boundColors[])
+        ContinuousColorPaintScale(String format, double bounds[], Color boundColors[])
         {
             this.format = format;
             if (bounds.length < 2)
@@ -954,6 +995,9 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             }
         }
 
+        /**
+         * @see org.jfree.chart.renderer.PaintScale#getLowerBound()
+         */
         @Override
         public double getLowerBound()
         {
@@ -1029,6 +1073,7 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     {
         ChartPanel cp = (ChartPanel) mouseEvent.getSource();
         XYPlot plot = (XYPlot) cp.getChart().getPlot();
+        // Show a cross hair cursor while the mouse is on the graph
         boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
         if (cp.getHorizontalAxisTrace() != showCrossHair)
         {
@@ -1060,115 +1105,15 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
                 // System.out.println("Value under mouse is " + valueUnderMouse);
                 if (Double.isNaN(valueUnderMouse))
                     break;
-                String format = ((ColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale())).format;
+                String format =
+                        ((ContinuousColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale())).format;
                 value = String.format(format, valueUnderMouse);
             }
-            this.statusLabel
-                    .setText(String.format("time %.0fs, distance %.0fm%s", roundedTime, roundedDistance, value));
+            this.statusLabel.setText(String.format("time %.0fs, distance %.0fm, %s", roundedTime, roundedDistance,
+                    value));
         }
         else
             this.statusLabel.setText(" ");
-    }
-
-    /**
-     * Main for stand alone running
-     * @param args
-     */
-    public static void main(String[] args)
-    {
-        ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
-        ContourPlot cp = new ContourPlot("Flow Contour Graph", Type.FLOW, 0, 5000);
-        cp.setTitle("Flow Contour Graph");
-        cp.setBounds(0, 0, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
-        cp = new ContourPlot("Speed Contour Graph", Type.SPEED, 0, 5000);
-        cp.setTitle("Speed Contour Graph");
-        cp.setBounds(100, 50, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
-        cp = new ContourPlot("Density Contour Graph", Type.DENSITY, 0, 5000);
-        cp.setTitle("Density Contour Graph");
-        cp.setBounds(200, 100, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
-        DEVSSimulator simulator = new DEVSSimulator();
-        CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        final double endTime = 1800; // [s]
-        final double headway = 3600.0 / 1500.0; // 1500 [veh / hour] == 2.4s headway
-        double thisTick = 0;
-        final double tick = 0.5;
-        int carsCreated = 0;
-        ArrayList<Car> cars = new ArrayList<Car>();
-        double nextSourceTick = 0;
-        double nextMoveTick = 0;
-        while (thisTick < endTime)
-        {
-            // System.out.println("timeStep is " + thisTick);
-            if (thisTick == nextSourceTick)
-            {
-                // Time to generate another car
-                DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                Car car =
-                        new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
-                cars.add(0, car);
-                // System.out.println(String.format("TimeStep=%.1f, there are now %d vehicles", thisTick, cars.size()));
-                nextSourceTick += headway;
-            }
-            if (thisTick == nextMoveTick)
-            {
-                // Time to move all vehicles forward (even though they do not have simultaneous clock ticks)
-                /*
-                 * Debugging if (thisTick == 700) { DoubleScalarAbs<TimeUnit> now = new
-                 * DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND); for (int i = 0; i < cars.size(); i++)
-                 * System.out.println(cars.get(i).toString(now)); }
-                 */
-                /*
-                 * TODO: Currently all cars have to be moved "manually". This functionality should go to the simulator.
-                 */
-                for (int carIndex = 0; carIndex < cars.size(); carIndex++)
-                {
-                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                    Car car = cars.get(carIndex);
-                    if (car.position(now).getValueSI() > 5000)
-                    {
-                        cars.remove(carIndex);
-                        break;
-                    }
-                    Collection<Car> leaders = new ArrayList<Car>();
-                    if (carIndex < cars.size() - 1)
-                        leaders.add(cars.get(carIndex + 1));
-                    if (thisTick >= 300 && thisTick < 500)
-                    {
-                        // Add a stationary car at 4000m to simulate an opening bridge
-                        Car block =
-                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
-                                        LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
-                        leaders.add(block);
-                    }
-                    CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
-                    car.setState(cfmr);
-                    // Add the movements of this Car to the contour plots
-                    for (ContourPlot contourPlot : contourPlots)
-                    {
-                        ContourDataset dataSet =
-                                (ContourDataset) ((XYPlot) contourPlot.chartPanel.getChart().getPlot()).getDataset();
-                        dataSet.addData(car);
-                    }
-                }
-                nextMoveTick += tick;
-            }
-            thisTick = Math.min(nextSourceTick, nextMoveTick);
-        }
-        // Notify all contour plots that the underlying data has changed
-        for (ContourPlot contourPlot : contourPlots)
-            contourPlot.reGraph();
     }
 
     /**
@@ -1201,6 +1146,8 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
             {
                 this.timeGranularity = value;
             }
+            else
+                throw new Error("Unknown ActionEvent");
             reGraph();
         }
         else
@@ -1228,6 +1175,109 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
     {
         for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
             dcl.datasetChanged(event);
+    }
+
+    /**
+     * Main for stand alone running
+     * @param args
+     */
+    public static void main(String[] args)
+    {
+        ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
+        DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(5000, LengthUnit.METER);
+        ContourPlot cp = new ContourPlot("Flow Contour", Type.FLOW, minimumDistance, maximumDistance);
+        cp.setTitle("Flow Contour Graph");
+        cp.setBounds(0, 0, 600, 400);
+        cp.pack();
+        cp.setVisible(true);
+        contourPlots.add(cp);
+        cp = new ContourPlot("Speed Contour", Type.SPEED, minimumDistance, maximumDistance);
+        cp.setTitle("Speed Contour Graph");
+        cp.setBounds(100, 50, 600, 400);
+        cp.pack();
+        cp.setVisible(true);
+        contourPlots.add(cp);
+        cp = new ContourPlot("Density Contour", Type.DENSITY, minimumDistance, maximumDistance);
+        cp.setTitle("Density Contour Graph");
+        cp.setBounds(200, 100, 600, 400);
+        cp.pack();
+        cp.setVisible(true);
+        contourPlots.add(cp);
+        DEVSSimulator simulator = new DEVSSimulator();
+        CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
+        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        final double endTime = 1800; // [s]
+        final double headway = 3600.0 / 1500.0; // 1500 [veh / hour] == 2.4s headway
+        double thisTick = 0;
+        final double tick = 0.5;
+        int carsCreated = 0;
+        ArrayList<Car> cars = new ArrayList<Car>();
+        double nextSourceTick = 0;
+        double nextMoveTick = 0;
+        while (thisTick < endTime)
+        {
+            // System.out.println("thisTick is " + thisTick);
+            if (thisTick == nextSourceTick)
+            {
+                // Time to generate another car
+                DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                Car car =
+                        new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
+                cars.add(0, car);
+                // System.out.println(String.format("thisTick=%.1f, there are now %d vehicles", thisTick, cars.size()));
+                nextSourceTick += headway;
+            }
+            if (thisTick == nextMoveTick)
+            {
+                // Time to move all vehicles forward (this works even though they do not have simultaneous clock ticks)
+                /*
+                 * Debugging if (thisTick == 700) { DoubleScalarAbs<TimeUnit> now = new
+                 * DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND); for (int i = 0; i < cars.size(); i++)
+                 * System.out.println(cars.get(i).toString(now)); }
+                 */
+                /*
+                 * TODO: Currently all cars have to be moved "manually". This functionality should go to the simulator.
+                 */
+                for (int carIndex = 0; carIndex < cars.size(); carIndex++)
+                {
+                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                    Car car = cars.get(carIndex);
+                    if (car.position(now).getValueSI() > 5000)
+                    {
+                        cars.remove(carIndex);
+                        break;
+                    }
+                    Collection<Car> leaders = new ArrayList<Car>();
+                    if (carIndex < cars.size() - 1)
+                        leaders.add(cars.get(carIndex + 1));
+                    if (thisTick >= 300 && thisTick < 500)
+                    {
+                        // Add a stationary car at 4000m to simulate an opening bridge
+                        Car block =
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
+                                        LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                        leaders.add(block);
+                    }
+                    CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
+                    car.setState(cfmr);
+                    // Add the movement of this Car to the contour plots
+                    for (ContourPlot contourPlot : contourPlots)
+                    {
+                        ContourDataset dataSet =
+                                (ContourDataset) ((XYPlot) contourPlot.chartPanel.getChart().getPlot()).getDataset();
+                        dataSet.addData(car);
+                    }
+                }
+                nextMoveTick += tick;
+            }
+            thisTick = Math.min(nextSourceTick, nextMoveTick);
+        }
+        // Notify the contour plots that the underlying data has changed
+        for (ContourPlot contourPlot : contourPlots)
+            contourPlot.reGraph();
     }
 
 }
