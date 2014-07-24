@@ -913,7 +913,6 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
-        plot.setForegroundAlpha(0.66f);
         JFreeChart chart = new JFreeChart(caption, plot);
         chart.setBackgroundPaint(Color.white);
         return chart;
