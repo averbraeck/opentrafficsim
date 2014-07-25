@@ -699,9 +699,8 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         /**
          * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
          */
-        @SuppressWarnings("rawtypes")
         @Override
-        public Comparable getSeriesKey(int series)
+        public Comparable<String> getSeriesKey(int series)
         {
             return "flow";
         }
@@ -801,9 +800,8 @@ public class ContourPlot extends JFrame implements MouseMotionListener, ActionLi
         /**
          * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
          */
-        @SuppressWarnings("rawtypes")
         @Override
-        public Comparable getSeriesKey(int series)
+        public Comparable<String> getSeriesKey(int series)
         {
             return "speed";
         }
