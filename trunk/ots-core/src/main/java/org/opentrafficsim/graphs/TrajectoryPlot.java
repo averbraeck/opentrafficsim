@@ -1,7 +1,6 @@
 package org.opentrafficsim.graphs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,7 +28,6 @@ import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.general.DatasetChangeEvent;
@@ -47,7 +45,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
-import org.opentrafficsim.graphs.ContourPlot.ContinuousColorPaintScale;
 
 /**
  * <p>
@@ -121,8 +118,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
         this.maximumPosition = maximumPosition;
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
-                ChartFactory.createXYLineChart(caption, "", "", this,
-                        PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
@@ -194,6 +190,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        // not yet
     }
 
     /**
@@ -596,10 +593,14 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
             if (thisTick == nextMoveTick)
             {
                 // Time to move all vehicles forward (this works even though they do not have simultaneous clock ticks)
-                /*
-                 * Debugging if (thisTick == 700) { DoubleScalarAbs<TimeUnit> now = new
-                 * DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND); for (int i = 0; i < cars.size(); i++)
-                 * System.out.println(cars.get(i).toString(now)); }
+                // Debugging
+                /*-
+                if (thisTick == 700)
+                {
+                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                    for (int i = 0; i < cars.size(); i++)
+                        System.out.println(cars.get(i).toString(now));
+                }
                  */
                 /*
                  * TODO: Currently all cars have to be moved "manually". This functionality should go to the simulator.
@@ -636,5 +637,4 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
         // Notify the trajectory plot that the underlying data has changed
         tp.reGraph();
     }
-
 }
