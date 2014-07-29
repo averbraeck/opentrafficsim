@@ -43,7 +43,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the value, stored in SI units */
+    /** the value, stored in SI units. */
     protected double valueSI;
 
     /**
@@ -123,7 +123,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         // unequal if object is of a different type.
         if (!(obj instanceof DoubleScalar<?>))
@@ -146,7 +146,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @throws a ClassCastException if one value is absolute and the other relative, or if the SI unit differs.
      */
     @Override
-    public int compareTo(DoubleScalar<U> fs)
+    public int compareTo(final DoubleScalar<U> fs)
     {
         // exception if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
@@ -301,7 +301,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(double x)
+    public void pow(final double x)
     {
         this.valueSI = Math.pow(this.valueSI, x);
     }
@@ -409,7 +409,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
     @Override
-    public void multiply(double constant)
+    public void multiply(final double constant)
     {
         this.valueSI *= constant;
     }
@@ -418,7 +418,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
      */
     @Override
-    public void divide(double constant)
+    public void divide(final double constant)
     {
         this.valueSI /= constant;
     }
@@ -453,7 +453,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to subtract
      */
-    public void subtract(DoubleScalarRel<U> value)
+    public void subtract(final DoubleScalarRel<U> value)
     {
         this.valueSI -= value.getValueSI();
     }
@@ -471,7 +471,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @return the sum of the values as an absolute value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> DoubleScalarAbs<U> plus(DoubleScalarAbs<U> valueAbs,
+    public static <U extends Unit<U>> DoubleScalarAbs<U> plus(final DoubleScalarAbs<U> valueAbs,
             final DoubleScalarRel<U>... valuesRel)
     {
         DoubleScalarAbs<U> value = new DoubleScalarAbs<U>(valueAbs);
@@ -490,7 +490,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @return the sum of the values as a relative value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> DoubleScalarRel<U> plus(U targetUnit, final DoubleScalarRel<U>... valuesRel)
+    public static <U extends Unit<U>> DoubleScalarRel<U> plus(final U targetUnit, final DoubleScalarRel<U>... valuesRel)
     {
         DoubleScalarRel<U> value = new DoubleScalarRel<U>(0.0f, targetUnit);
         for (DoubleScalarRel<U> v : valuesRel)
@@ -509,7 +509,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @return the resulting value as an absolute value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> DoubleScalarAbs<U> minus(DoubleScalarAbs<U> valueAbs,
+    public static <U extends Unit<U>> DoubleScalarAbs<U> minus(final DoubleScalarAbs<U> valueAbs,
             final DoubleScalarRel<U>... valuesRel)
     {
         DoubleScalarAbs<U> value = new DoubleScalarAbs<U>(valueAbs);
@@ -529,7 +529,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      * @return the resulting value as a relative value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> DoubleScalarRel<U> minus(DoubleScalarRel<U> valueRel,
+    public static <U extends Unit<U>> DoubleScalarRel<U> minus(final DoubleScalarRel<U> valueRel,
             final DoubleScalarRel<U>... valuesRel)
     {
         DoubleScalarRel<U> value = new DoubleScalarRel<U>(valueRel);

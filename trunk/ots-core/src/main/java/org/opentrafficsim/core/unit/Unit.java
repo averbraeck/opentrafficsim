@@ -13,7 +13,7 @@ import org.reflections.Reflections;
 /**
  * All units are internally <u>stored</u> relative to a standard unit with conversion factor. This means that e.g., a
  * meter is stored with conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This means
- * that if we want to display a meter as kilometers, we have to <u>divide<u> by the conversion factor.
+ * that if we want to display a meter as kilometers, we have to <u>divide</u> by the conversion factor.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -46,38 +46,38 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /** */
     private static final long serialVersionUID = 20140607;
 
-    /** the key to the locale file for the long name of the unit */
+    /** the key to the locale file for the long name of the unit. */
     private final String nameKey;
 
-    /** the key to the locale file for the abbreviation of the unit */
+    /** the key to the locale file for the abbreviation of the unit. */
     private final String abbreviationKey;
 
-    /** the unit system, e.g. SI or Imperial */
+    /** the unit system, e.g. SI or Imperial. */
     private final UnitSystem unitSystem;
 
-    /** multiply by this number to convert to the standard (e.g., SI) unit */
+    /** multiply by this number to convert to the standard (e.g., SI) unit. */
     private final double conversionFactorToStandardUnit;
 
-    /** SI unit information */
+    /** SI unit information. */
     private SICoefficients siCoefficients;
 
-    /** static map of all defined coefficient strings, to avoid double creation and allow lookup */
+    /** static map of all defined coefficient strings, to avoid double creation and allow lookup. */
     private static Map<String, SICoefficients> SI_COEFFICIENTS = new HashMap<String, SICoefficients>();
 
-    /** static map of all defined coefficient strings, mapped to the existing units */
+    /** static map of all defined coefficient strings, mapped to the existing units. */
     private static Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS =
             new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
 
-    /** a static map of all defined units */
+    /** a static map of all defined units. */
     private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
 
-    /** localization information */
+    /** localization information. */
     private static Localization localization = new Localization("localeunit");
 
     /** has this class been initialized? */
     private static boolean initialized = false;
 
-    /** force all units to be loaded */
+    /** force all units to be loaded. */
     private static void initialize()
     {
         Reflections reflections = new Reflections("org.opentrafficsim.core.unit");
@@ -150,7 +150,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param safe Boolean; if true, a UnitException is silently ignored; if false a UnitException is an Error
      */
-    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, boolean safe)
+    public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final boolean safe)
     {
         this.conversionFactorToStandardUnit = 1.0;
         this.nameKey = nameKey;
@@ -181,7 +181,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param safe Boolean; if true, a UnitException is silently ignored; if false a UnitException is an Error
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
-            final double conversionFactorToReferenceUnit, boolean safe)
+            final double conversionFactorToReferenceUnit, final boolean safe)
     {
         // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
         // the null pointer for the reference unit here.

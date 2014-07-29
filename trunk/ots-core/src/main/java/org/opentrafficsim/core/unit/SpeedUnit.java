@@ -39,29 +39,29 @@ public class SpeedUnit extends Unit<SpeedUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of length for the speed unit, e.g., meter */
+    /** the unit of length for the speed unit, e.g., meter. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of time for the speed unit, e.g., second */
+    /** the unit of time for the speed unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** m/s */
+    /** m/s. */
     public static final SpeedUnit METER_PER_SECOND = new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND,
             "SpeedUnit.meter_per_second", "SpeedUnit.m/s", SI_DERIVED);
 
-    /** km/h */
+    /** km/h. */
     public static final SpeedUnit KM_PER_HOUR = new SpeedUnit(LengthUnit.KILOMETER, TimeUnit.HOUR,
             "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h", SI_DERIVED);
 
-    /** mile/h */
+    /** mile/h. */
     public static final SpeedUnit MILE_PER_HOUR = new SpeedUnit(LengthUnit.MILE, TimeUnit.HOUR,
             "SpeedUnit.mile_per_hour", "SpeedUnit.mph", IMPERIAL);
 
-    /** ft/s */
+    /** ft/s. */
     public static final SpeedUnit FOOT_PER_SECOND = new SpeedUnit(LengthUnit.FOOT, TimeUnit.SECOND,
             "SpeedUnit.foot_per_second", "SpeedUnit.fps", IMPERIAL);
 
-    /** knot */
+    /** knot. */
     public static final SpeedUnit KNOT = new SpeedUnit(LengthUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot",
             "SpeedUnit.kt", IMPERIAL);
 

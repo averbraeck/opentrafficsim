@@ -66,7 +66,7 @@ public abstract class DoubleVectorAbs<U extends Unit<U>> extends DoubleVector<U>
      * @see org.opentrafficsim.core.value.vfloat.vector.DoubleVectorFunctions#get(int)
      */
     @Override
-    public DoubleScalarAbs<U> get(int index) throws ValueException
+    public DoubleScalarAbs<U> get(final int index) throws ValueException
     {
         return new DoubleScalarAbs<U>(getInUnit(index, this.unit), this.unit);
     }

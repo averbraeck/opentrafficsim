@@ -51,7 +51,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse */
+    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
     protected DoubleMatrix1D vectorSI;
 
     /**
@@ -184,7 +184,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorFunctions#setSI(int, double)
      */
     @Override
-    public void setSI(int index, double valueSI) throws ValueException
+    public void setSI(final int index, final double valueSI) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
             throw new ValueException("DoubleVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
@@ -196,7 +196,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      *      org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
      */
     @Override
-    public void set(int index, DoubleScalar<U> value) throws ValueException
+    public void set(final int index, final DoubleScalar<U> value) throws ValueException
     {
         setSI(index, value.getValueSI());
     }
@@ -206,7 +206,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public void setInUnit(int index, double value, U valueUnit) throws ValueException
+    public void setInUnit(final int index, final double value, final U valueUnit) throws ValueException
     {
         setSI(index, expressAsSIUnit(value, valueUnit));
     }
@@ -396,7 +396,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(double x)
+    public void pow(final double x)
     {
         this.vectorSI.assign(DoubleFunctions.pow(x));
     }

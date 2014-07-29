@@ -36,7 +36,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction cbrt = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.cbrt(a);
         }
@@ -47,7 +47,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction cosh = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.cosh(a);
         }
@@ -58,7 +58,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction expm1 = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.expm1(a);
         }
@@ -69,7 +69,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction log10 = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.log10(a);
         }
@@ -80,7 +80,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction log1p = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.log1p(a);
         }
@@ -91,7 +91,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction round = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return Math.round(a);
         }
@@ -102,7 +102,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction signum = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return Math.signum(a);
         }
@@ -113,7 +113,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction sinh = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.sinh(a);
         }
@@ -124,7 +124,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction tanh = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.tanh(a);
         }
@@ -135,7 +135,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction toDegrees = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.toDegrees(a);
         }
@@ -146,7 +146,7 @@ public class FloatMathFunctionsImpl
      */
     public static final FloatFunction toRadians = new FloatFunction()
     {
-        public final float apply(float a)
+        public final float apply(final float a)
         {
             return (float) Math.toRadians(a);
         }

@@ -37,11 +37,11 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** steradian */
+    /** steradian. */
     public static final AngleSolidUnit STERADIAN = new AngleSolidUnit("AngleSolidUnit.steradian", "AngleSolidUnit.sr",
             SI_DERIVED);
 
-    /** square degree */
+    /** square degree. */
     public static final AngleSolidUnit SQUARE_DEGREE = new AngleSolidUnit("AngleSolidUnit.square_degree",
             "AngleSolidUnit.sq_deg", SI_DERIVED, STERADIAN, (Math.PI / 180.0) * (Math.PI / 180.0));
 

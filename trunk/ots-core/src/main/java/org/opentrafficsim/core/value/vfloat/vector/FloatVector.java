@@ -51,7 +51,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse */
+    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
     protected FloatMatrix1D vectorSI;
 
     /**
@@ -182,7 +182,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setSI(int, float)
      */
     @Override
-    public void setSI(int index, float valueSI) throws ValueException
+    public void setSI(final int index, final float valueSI) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
             throw new ValueException("FloatVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
@@ -194,7 +194,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
      */
     @Override
-    public void set(int index, FloatScalar<U> value) throws ValueException
+    public void set(final int index, final FloatScalar<U> value) throws ValueException
     {
         setSI(index, value.getValueSI());
     }
@@ -204,7 +204,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public void setInUnit(int index, float value, U valueUnit) throws ValueException
+    public void setInUnit(final int index, final float value, final U valueUnit) throws ValueException
     {
         setSI(index, (float) expressAsSIUnit(value, valueUnit));
     }
@@ -394,7 +394,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(double x)
+    public void pow(final double x)
     {
         this.vectorSI.assign(FloatFunctions.pow((float) x));
     }
@@ -541,12 +541,12 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     }
 
     /**
-     * Centralized size equality check
+     * Centralized size equality check.
      * @param other FloatVector<U>; other FloatVector
      * @param where String; name of method that calls this check
      * @throws ValueException when vectors have unequal size
      */
-    void checkSize(final FloatVector<?> other, String where) throws ValueException
+    void checkSize(final FloatVector<?> other, final String where) throws ValueException
     {
         if (size() != other.size())
             throw new ValueException(where + " - two vectors have unequal size: " + size() + " != " + other.size());
@@ -608,7 +608,6 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      * absolute value y.
      * @param x relative vector 1
      * @param y absolute vector 2
-     * @param targetUnit unit in which the results will be displayed
      * @return new Vector with absolute elements sum of x[i] and y[i]
      * @throws ValueException when vectors have unequal size
      */

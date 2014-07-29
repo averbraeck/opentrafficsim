@@ -39,8 +39,8 @@ public abstract class DoubleMatrixAbs<U extends Unit<U>> extends DoubleMatrix<U>
     private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param values
-     * @param unit
+     * @param values double[][]; initial values for the new DoubleMatrixAbs
+     * @param unit Unit; the unit of the new DoubleMatrixAbs
      * @throws ValueException 
      */
     public DoubleMatrixAbs(final double[][] values, final U unit) throws ValueException
@@ -49,7 +49,7 @@ public abstract class DoubleMatrixAbs<U extends Unit<U>> extends DoubleMatrix<U>
     }
 
     /**
-     * @param values
+     * @param values double[][]; initial values for the new DoubleMatrixAbs
      * @throws ValueException
      */
     public DoubleMatrixAbs(final DoubleScalarAbs<U>[][] values) throws ValueException

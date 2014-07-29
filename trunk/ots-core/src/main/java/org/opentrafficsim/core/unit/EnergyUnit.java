@@ -42,108 +42,108 @@ public class EnergyUnit extends Unit<EnergyUnit>
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** the unit of mass for the energy unit, e.g., kilogram */
+    /** the unit of mass for the energy unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of length for the energy unit, e.g., length */
+    /** the unit of length for the energy unit, e.g., length. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of time for the energy unit, e.g., second */
+    /** the unit of time for the energy unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** Joule */
+    /** Joule. */
     public static final EnergyUnit JOULE = new EnergyUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
             "EnergyUnit.Joule", "EnergyUnit.J", SI_DERIVED);
 
-    /** foot-pound force */
+    /** foot-pound force. */
     public static final EnergyUnit FOOT_POUND_FORCE = new EnergyUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
             "EnergyUnit.foot_pound-force", "EnergyUnit.ft.lbf", IMPERIAL);
 
-    /** inch-pound force */
+    /** inch-pound force. */
     public static final EnergyUnit INCH_POUND_FORCE = new EnergyUnit(LengthUnit.INCH, ForceUnit.POUND_FORCE,
             "EnergyUnit.inch_pound-force", "EnergyUnit.in.lbf", IMPERIAL);
 
-    /** British thermal unit (ISO) */
+    /** British thermal unit (ISO). */
     public static final EnergyUnit BTU_ISO = new EnergyUnit("EnergyUnit.British_thermal_unit_(ISO)",
             "EnergyUnit.BTU(ISO)", IMPERIAL, JOULE, 1.0545E3);
 
-    /** British thermal unit (International Table) */
+    /** British thermal unit (International Table). */
     public static final EnergyUnit BTU_IT = new EnergyUnit("EnergyUnit.British_thermal_unit_(International_Table)",
             "EnergyUnit.BTU(IT)", IMPERIAL, JOULE, 1.05505585262E3);
 
-    /** calorie (International Table) */
+    /** calorie (International Table). */
     public static final EnergyUnit CALORIE_IT = new EnergyUnit("EnergyUnit.calorie_(International_Table)",
             "EnergyUnit.cal(IT)", OTHER, JOULE, 4.1868);
 
-    /** kilocalorie */
+    /** kilocalorie. */
     public static final EnergyUnit KILOCALORIE = new EnergyUnit("EnergyUnit.kilocalorie", "EnergyUnit.kcal", OTHER,
             CALORIE_IT, 1000.0);
 
-    /** watt-hour */
+    /** watt-hour. */
     public static final EnergyUnit WATT_HOUR = new EnergyUnit("EnergyUnit.watt-hour", "EnergyUnit.Wh", SI_DERIVED,
             JOULE, 3600.0);
 
-    /** kilowatt-hour */
+    /** kilowatt-hour. */
     public static final EnergyUnit KILOWATT_HOUR = new EnergyUnit("EnergyUnit.kilowatt-hour", "EnergyUnit.kWh",
             SI_DERIVED, WATT_HOUR, 1000.0);
 
-    /** megawatt-hour */
+    /** megawatt-hour. */
     public static final EnergyUnit MEGAWATT_HOUR = new EnergyUnit("EnergyUnit.megawatt-hour", "EnergyUnit.MWh",
             SI_DERIVED, WATT_HOUR, 1.0E6);
 
-    /** gigawatt-hour */
+    /** gigawatt-hour. */
     public static final EnergyUnit GIGAWATT_HOUR = new EnergyUnit("EnergyUnit.gigawatt-hour", "EnergyUnit.GWh",
             SI_DERIVED, WATT_HOUR, 1.0E9);
 
-    /** terawatt-hour */
+    /** terawatt-hour. */
     public static final EnergyUnit TERAWATT_HOUR = new EnergyUnit("EnergyUnit.terawatt-hour", "EnergyUnit.TWh",
             SI_DERIVED, WATT_HOUR, 1.0E12);
 
-    /** milliwatt-hour */
+    /** milliwatt-hour. */
     public static final EnergyUnit MILLIWATT_HOUR = new EnergyUnit("EnergyUnit.milliwatt-hour", "EnergyUnit.mWh",
             SI_DERIVED, WATT_HOUR, 1.0E-3);
 
-    /** microwatt-hour */
+    /** microwatt-hour. */
     public static final EnergyUnit MICROWATT_HOUR = new EnergyUnit("EnergyUnit.microwatt-hour", "EnergyUnit.muWh",
             SI_DERIVED, WATT_HOUR, 1.0E-6);
 
-    /** electronvolt */
+    /** electronvolt. */
     public static final EnergyUnit ELECTRONVOLT = new EnergyUnit("EnergyUnit.electronvolt", "EnergyUnit.eV",
             SI_ACCEPTED, JOULE, 1.602176565314E-19);
 
-    /** milli-electronvolt */
+    /** milli-electronvolt. */
     public static final EnergyUnit MILLI_ELECTRONVOLT = new EnergyUnit("EnergyUnit.milli-electronvolt",
             "EnergyUnit.meV", SI_ACCEPTED, ELECTRONVOLT, 1.0E-3);
 
-    /** kilo-electronvolt */
+    /** kilo-electronvolt. */
     public static final EnergyUnit KILO_ELECTRONVOLT = new EnergyUnit("EnergyUnit.kilo-electronvolt", "EnergyUnit.keV",
             SI_ACCEPTED, ELECTRONVOLT, 1.0E3);
 
-    /** mega-electronvolt */
+    /** mega-electronvolt. */
     public static final EnergyUnit MEGA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.mega-electronvolt", "EnergyUnit.MeV",
             SI_ACCEPTED, ELECTRONVOLT, 1.0E6);
 
-    /** giga-electronvolt */
+    /** giga-electronvolt. */
     public static final EnergyUnit GIGA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.giga-electronvolt", "EnergyUnit.GeV",
             SI_ACCEPTED, ELECTRONVOLT, 1.0E9);
 
-    /** tera-electronvolt */
+    /** tera-electronvolt. */
     public static final EnergyUnit TERA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.tera-electronvolt", "EnergyUnit.TeV",
             SI_ACCEPTED, ELECTRONVOLT, 1.0E12);
 
-    /** peta-electronvolt */
+    /** peta-electronvolt. */
     public static final EnergyUnit PETA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.peta-electronvolt", "EnergyUnit.PeV",
             SI_ACCEPTED, ELECTRONVOLT, 1.0E15);
 
-    /** exa-electronvolt */
+    /** exa-electronvolt. */
     public static final EnergyUnit EXA_ELECTRONVOLT = new EnergyUnit("EnergyUnit.exa-electronvolt", "EnergyUnit.EeV",
             SI_ACCEPTED, ELECTRONVOLT, 1.0E18);
 
-    /** sthene-meter (mts) */
+    /** sthene-meter (mts). */
     public static final EnergyUnit STHENE_METER = new EnergyUnit("EnergyUnit.sthene_meter", "EnergyUnit.sn.m", MTS,
             JOULE, 1000.0);
 
-    /** erg (cgs) */
+    /** erg (cgs). */
     public static final EnergyUnit ERG = new EnergyUnit("EnergyUnit.erg_(full)", "EnergyUnit.erg", CGS,
             JOULE, 1.0E-7);
 

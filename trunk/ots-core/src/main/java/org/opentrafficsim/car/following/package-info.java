@@ -1,4 +1,7 @@
 /**
+ * All car following models should extend CarFollowingModel.
+ * <br /> If that appears impossible, the abstract class ClarFollowingModel
+ * may need to be adapted. 
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
  * Delft, the Netherlands. All rights reserved.

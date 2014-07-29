@@ -39,7 +39,7 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     /** */
     private static final long serialVersionUID = 20140615L;
 
-    /** the unit of the value */
+    /** the unit of the value. */
     protected U unit;
 
     /**
@@ -110,7 +110,7 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
      * Set a new unit for displaying the results.
      * @param newUnit the new unit of the right unit type
      */
-    public void setDisplayUnit(U newUnit)
+    public void setDisplayUnit(final U newUnit)
     {
         this.unit = newUnit;
     }

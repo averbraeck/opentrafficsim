@@ -35,13 +35,13 @@ import java.util.ResourceBundle;
  */
 public class Localization
 {
-    /** filename without .properties, to be found in src/main/resources folder */
+    /** filename without .properties, to be found in src/main/resources folder. */
     private final String bundleNamePrefix;
 
-    /** the resource bundle */
+    /** the resource bundle. */
     protected ResourceBundle resourceBundle;
 
-    /** current locale */
+    /** current locale. */
     protected Locale currentLocale = null;
 
     /**
@@ -54,6 +54,8 @@ public class Localization
     }
 
     /**
+     * Retrieve a string from a locale bundle. If retrieval fails the value of key string, surrounded by exclamation
+     * marks is returned.
      * @param key the key for the locale in the properties file
      * @return localized string, or, if a translation could not be found return the key surrounded by exclamation marks
      */

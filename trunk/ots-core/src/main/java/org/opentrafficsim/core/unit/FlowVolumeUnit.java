@@ -40,73 +40,73 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of length for the flow unit, e.g., meter */
+    /** the unit of length for the flow unit, e.g., meter. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of time for the flow unit, e.g., second */
+    /** the unit of time for the flow unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** m^3/s */
+    /** m^3/s. */
     public static final FlowVolumeUnit CUBIC_METER_PER_SECOND = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.SECOND,
             "FlowVolumeUnit.cubic_meter_per_second", "FlowVolumeUnit.m^3/s", SI_DERIVED);
 
-    /** m^3/min */
+    /** m^3/min. */
     public static final FlowVolumeUnit CUBIC_METER_PER_MINUTE = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.MINUTE,
             "FlowVolumeUnit.cubic_meter_per_minute", "FlowVolumeUnit.m^3/min", SI_ACCEPTED);
 
-    /** m^3/hour */
+    /** m^3/hour. */
     public static final FlowVolumeUnit CUBIC_METER_PER_HOUR = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.HOUR,
             "FlowVolumeUnit.cubic_meter_per_hour", "FlowVolumeUnit.m^3/h", SI_ACCEPTED);
 
-    /** m^3/day */
+    /** m^3/day. */
     public static final FlowVolumeUnit CUBIC_METER_PER_DAY = new FlowVolumeUnit(LengthUnit.METER, TimeUnit.DAY,
             "FlowVolumeUnit.cubic_meter_per_day", "FlowVolumeUnit.m^3/d", SI_ACCEPTED);
 
-    /** L/s */
+    /** L/s. */
     public static final FlowVolumeUnit LITER_PER_SECOND = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.SECOND,
             "FlowVolumeUnit.liter_per_second", "FlowVolumeUnit.L/s", SI_ACCEPTED);
 
-    /** L/min */
+    /** L/min. */
     public static final FlowVolumeUnit LITER_PER_MINUTE = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.MINUTE,
             "FlowVolumeUnit.liter_per_minute", "FlowVolumeUnit.L/min", SI_ACCEPTED);
 
-    /** L/hour */
+    /** L/hour. */
     public static final FlowVolumeUnit LITER_PER_HOUR = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.HOUR,
             "FlowVolumeUnit.liter_per_hour", "FlowVolumeUnit.L/h", SI_ACCEPTED);
 
-    /** L/day */
+    /** L/day. */
     public static final FlowVolumeUnit LITER_PER_DAY = new FlowVolumeUnit(VolumeUnit.LITER, TimeUnit.DAY,
             "FlowVolumeUnit.liter_per_day", "FlowVolumeUnit.L/d", SI_ACCEPTED);
 
-    /** ft^3/s */
+    /** ft^3/s. */
     public static final FlowVolumeUnit CUBIC_FEET_PER_SECOND = new FlowVolumeUnit(LengthUnit.FOOT, TimeUnit.SECOND,
             "FlowVolumeUnit.cubic_feet_per_second", "FlowVolumeUnit.ft^3/s", IMPERIAL);
 
-    /** ft^3/min */
+    /** ft^3/min. */
     public static final FlowVolumeUnit CUBIC_FEET_PER_MINUTE = new FlowVolumeUnit(LengthUnit.FOOT, TimeUnit.MINUTE,
             "FlowVolumeUnit.cubic_feet_per_minute", "FlowVolumeUnit.ft^3/min", IMPERIAL);
 
-    /** in^3/s */
+    /** in^3/s. */
     public static final FlowVolumeUnit CUBIC_INCH_PER_SECOND = new FlowVolumeUnit(LengthUnit.INCH, TimeUnit.SECOND,
             "FlowVolumeUnit.cubic_inch_per_second", "FlowVolumeUnit.in^3/s", IMPERIAL);
 
-    /** in^3/min */
+    /** in^3/min. */
     public static final FlowVolumeUnit CUBIC_INCH_PER_MINUTE = new FlowVolumeUnit(LengthUnit.INCH, TimeUnit.MINUTE,
             "FlowVolumeUnit.cubic_inch_per_minute", "FlowVolumeUnit.in^3/min", IMPERIAL);
 
-    /** gallon/s (US) */
+    /** gallon/s (US). */
     public static final FlowVolumeUnit GALLON_PER_SECOND = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID,
             TimeUnit.SECOND, "FlowVolumeUnit.gallon_(US)_per_second", "FlowVolumeUnit.gal/s", US_CUSTOMARY);
 
-    /** gallon/min (US) */
+    /** gallon/min (US). */
     public static final FlowVolumeUnit GALLON_PER_MINUTE = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID,
             TimeUnit.MINUTE, "FlowVolumeUnit.gallon_(US)_per_minute", "FlowVolumeUnit.gal/min", US_CUSTOMARY);
 
-    /** gallon/hour (US) */
+    /** gallon/hour (US). */
     public static final FlowVolumeUnit GALLON_PER_HOUR = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID, TimeUnit.HOUR,
             "FlowVolumeUnit.gallon_(US)_per_hour", "FlowVolumeUnit.gal/h", US_CUSTOMARY);
 
-    /** gallon/day (US) */
+    /** gallon/day (US). */
     public static final FlowVolumeUnit GALLON_PER_DAY = new FlowVolumeUnit(VolumeUnit.GALLON_US_FLUID, TimeUnit.DAY,
             "FlowVolumeUnit.gallon_(US)_per_day", "FlowVolumeUnit.gal/d", US_CUSTOMARY);
 

@@ -27,25 +27,26 @@ package org.opentrafficsim.core.unit;
  * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public enum SI {
-    /** kilogram */
+public enum SI
+{
+    /** kilogram. */
     kg,
 
-    /** meter; note that the m is also in "mol" */
+    /** meter; note that the m is also in "mol". */
     m,
 
-    /** second */
+    /** second. */
     s,
 
-    /** Ampere */
+    /** Ampere. */
     A,
 
-    /** Kelvin */
+    /** Kelvin. */
     K,
 
-    /** candela */
+    /** candela. */
     cd,
 
-    /** mol */
+    /** mol. */
     mol;
 }

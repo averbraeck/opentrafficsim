@@ -7,7 +7,7 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * are internally <u>stored</u> as a standard unit with an offset and a conversion factor. This means that e.g., Kelvin
  * is stored with offset 0.0 and conversion factor 1.0, whereas degree Celsius is stored with offset -273.15 and
  * conversion factor 1.0. This means that if we have a Temperature, it is stored in Kelvins, and if we want to display
- * it in degree Celsius, we have to <u>divide<u> by the conversion factor and <u>subtract</u> the offset.
+ * it in degree Celsius, we have to <u>divide</u> by the conversion factor and <u>subtract</u> the offset.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -40,7 +40,7 @@ public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the offset that has to be taken into account for conversions */
+    /** the offset that has to be taken into account for conversions. */
     private final double offsetToStandardUnit;
 
     /**
@@ -60,7 +60,6 @@ public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
-     * @param standardUnit the SI standard unit for this unit, or the de facto standard unit if SI is not available
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit

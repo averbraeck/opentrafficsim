@@ -64,7 +64,7 @@ public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U> im
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
      */
-    protected final FloatMatrix1D createMatrix1D(int size)
+    protected final FloatMatrix1D createMatrix1D(final int size)
     {
         return new DenseFloatMatrix1D(size);
     }

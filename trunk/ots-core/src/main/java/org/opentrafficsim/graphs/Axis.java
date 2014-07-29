@@ -33,22 +33,22 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 class Axis
 {
-    /** Lowest value along this axis */
+    /** Lowest value along this axis. */
     private DoubleScalar<?> minimumValue;
 
-    /** Highest value along this axis */
+    /** Highest value along this axis. */
     private DoubleScalar<?> maximumValue;
 
-    /** Aggregation values along this axis (all values must be an integer multiple of the first value) */
+    /** Aggregation values along this axis (all values must be an integer multiple of the first value). */
     final double[] granularities;
 
-    /** Current aggregation value (must be one of the values in granularities) */
+    /** Current aggregation value (must be one of the values in granularities). */
     private double currentGranularity;
 
-    /** Name to describe the axis and to name the pop up menu that changes the current granularity */
+    /** Name to describe the axis and to name the pop up menu that changes the current granularity. */
     protected final String name;
 
-    /** Format for rendering a value along this axis */
+    /** Format for rendering a value along this axis. */
     protected String format;
 
     /**
@@ -78,7 +78,7 @@ class Axis
      * @param value DoubleScalar; the value
      * @return double; the bin that belongs to the value
      */
-    public double getRelativeBin(DoubleScalar<?> value)
+    public double getRelativeBin(final DoubleScalar<?> value)
     {
         return (value.getValueSI() - this.getMinimumValue().getValueSI()) / this.granularities[0];
     }
@@ -87,18 +87,18 @@ class Axis
      * Adjust (increase) the range of this AxisDefinition.
      * @param newMaximum DoubleScalar; the new maximum value of the axis
      */
-    public void adjustMaximumValue(DoubleScalar<?> newMaximum)
+    public void adjustMaximumValue(final DoubleScalar<?> newMaximum)
     {
         // System.out.println("extending axis " + this.name + " from " + this.maximumValue + " to " + newMaximum);
         this.setMaximumValue(newMaximum);
     }
 
     /**
-     * Return the value for an aggregated bin number
+     * Return the value for an aggregated bin number.
      * @param aggregatedBin Integer; the number of a bin
      * @return Double; the value corresponding to the center of aggregateBin
      */
-    public double getValue(int aggregatedBin)
+    public double getValue(final int aggregatedBin)
     {
         return this.getMinimumValue().getValueSI() + 1.0 * aggregatedBin * this.getCurrentGranularity();
     }
@@ -135,7 +135,7 @@ class Axis
      * <br/> The new value must be present in the granularities.
      * @param newGranularity double; the new value for the granularity of this axis
      */
-    public void setCurrentGranularity(double newGranularity)
+    public void setCurrentGranularity(final double newGranularity)
     {
         for (double g : this.granularities)
             if (g == newGranularity)
@@ -160,7 +160,7 @@ class Axis
      * <br /> The maximum value can only be increased.
      * @param newMaximumValue DoubleScalar; the new maximum value of this axis
      */
-    public void setMaximumValue(DoubleScalar<?> newMaximumValue)
+    public void setMaximumValue(final DoubleScalar<?> newMaximumValue)
     {
         if (null != this.maximumValue && newMaximumValue.getValueSI() < this.maximumValue.getValueSI())
             throw new Error("maximum value may not be decreased");

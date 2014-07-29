@@ -40,23 +40,23 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
     /** */
     private static final long serialVersionUID = 20140605L;
 
-    /** Kelvin */
+    /** Kelvin. */
     public static final TemperatureUnit KELVIN = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K",
             SI_BASE, 1.0, 0.0);
 
-    /** Degree Celsius */
+    /** Degree Celsius. */
     public static final TemperatureUnit DEGREE_CELSIUS = new TemperatureUnit("TemperatureUnit.degree_Celsius",
             "TemperatureUnit.dgC", SI_DERIVED, 1.0, -273.15);
 
-    /** Degree Fahrenheit */
+    /** Degree Fahrenheit. */
     public static final TemperatureUnit DEGREE_FAHRENHEIT = new TemperatureUnit("TemperatureUnit.degree_Fahrenheit",
             "TemperatureUnit.dgF", IMPERIAL, 5.0 / 9.0, -459.67);
 
-    /** Degree Rankine */
+    /** Degree Rankine. */
     public static final TemperatureUnit DEGREE_RANKINE = new TemperatureUnit("TemperatureUnit.degree_Rankine",
             "TemperatureUnit.dgR", OTHER, 5.0 / 9.0, 0.0);
 
-    /** Degree Reaumur */
+    /** Degree Reaumur. */
     public static final TemperatureUnit DEGREE_REAUMUR = new TemperatureUnit("TemperatureUnit.degree_Reaumur",
             "TemperatureUnit.dgRe", OTHER, 4.0 / 5.0, -273.15);
 

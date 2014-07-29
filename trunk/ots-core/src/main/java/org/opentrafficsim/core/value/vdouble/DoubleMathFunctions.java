@@ -32,13 +32,13 @@ import org.opentrafficsim.core.value.MathFunctions;
 public interface DoubleMathFunctions extends MathFunctions
 {
     /**
-     * Multiply the value(s) with a constant
+     * Multiply the value(s) with a constant.
      * @param constant the multiplier
      */
     void multiply(double constant);
 
     /**
-     * Divide the value(s) by a constant
+     * Divide the value(s) by a constant.
      * @param constant the divisor
      */
     void divide(double constant);

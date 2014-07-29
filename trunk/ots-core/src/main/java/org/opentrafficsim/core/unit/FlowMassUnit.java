@@ -38,17 +38,17 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of mass for the flow unit, e.g., kilogram */
+    /** the unit of mass for the flow unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of time for the flow unit, e.g., second */
+    /** the unit of time for the flow unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** kg/s */
+    /** kg/s. */
     public static final FlowMassUnit KILOGRAM_PER_SECOND = new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND,
             "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s", SI_DERIVED);
 
-    /** lb/s */
+    /** lb/s. */
     public static final FlowMassUnit POUND_PER_SECOND = new FlowMassUnit(MassUnit.POUND, TimeUnit.SECOND,
             "FlowMassUnit.pound_per_second", "FlowMassUnit.lb/s", IMPERIAL);
 

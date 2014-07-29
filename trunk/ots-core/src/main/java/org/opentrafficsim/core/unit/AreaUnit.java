@@ -39,48 +39,48 @@ public class AreaUnit extends Unit<AreaUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of length for the area unit, e.g., meter */
+    /** the unit of length for the area unit, e.g., meter. */
     private final LengthUnit lengthUnit;
 
-    /** m^2 */
+    /** m^2. */
     public static final AreaUnit SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2",
             SI_DERIVED);
 
-    /** km^2 */
+    /** km^2. */
     public static final AreaUnit SQUARE_KM = new AreaUnit(LengthUnit.KILOMETER, "AreaUnit.square_kilometer",
             "AreaUnit.km^2", SI_DERIVED);
 
-    /** cm^2 */
+    /** cm^2. */
     public static final AreaUnit SQUARE_CENTIMETER = new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter",
             "AreaUnit.cm^2", SI_DERIVED);
 
-    /** cm^2 */
+    /** cm^2. */
     public static final AreaUnit SQUARE_MILLIMETER = new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter",
             "AreaUnit.mm^2", SI_DERIVED);
 
-    /** are */
+    /** are. */
     public static final AreaUnit ARE = new AreaUnit("AreaUnit.are", "AreaUnit.a", OTHER, SQUARE_METER, 100.0);
 
-    /** hectare */
+    /** hectare. */
     public static final AreaUnit HECTARE = new AreaUnit("AreaUnit.hectare", "AreaUnit.ha", OTHER, ARE, 100.0);
 
-    /** mile^2 */
+    /** mile^2. */
     public static final AreaUnit SQUARE_MILE = new AreaUnit(LengthUnit.MILE, "AreaUnit.square_mile", "AreaUnit.mi^2",
             IMPERIAL);
 
-    /** ft^2 */
+    /** ft^2. */
     public static final AreaUnit SQUARE_FOOT = new AreaUnit(LengthUnit.FOOT, "AreaUnit.square_foot", "AreaUnit.ft^2",
             IMPERIAL);
 
-    /** in^2 */
+    /** in^2. */
     public static final AreaUnit SQUARE_INCH = new AreaUnit(LengthUnit.INCH, "AreaUnit.square_inch", "AreaUnit.in^2",
             IMPERIAL);
 
-    /** yd^2 */
+    /** yd^2. */
     public static final AreaUnit SQUARE_YARD = new AreaUnit(LengthUnit.YARD, "AreaUnit.square_yard", "AreaUnit.yd^2",
             IMPERIAL);
 
-    /** acre (international) */
+    /** acre (international). */
     public static final AreaUnit ACRE = new AreaUnit("AreaUnit.acre", "AreaUnit.ac", IMPERIAL, SQUARE_YARD, 4840.0);
 
     /**
@@ -107,8 +107,8 @@ public class AreaUnit extends Unit<AreaUnit>
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public AreaUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, final AreaUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+    public AreaUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final AreaUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();

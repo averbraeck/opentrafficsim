@@ -36,8 +36,8 @@ public class SIUnit extends Unit<SIUnit>
     private static final long serialVersionUID = 20140615L;
 
     /**
-     * Create an arbitrary SI unit based on a coefficient string, such as m3/cd2
-     * @param siCoefficientString
+     * Create an arbitrary SI unit based on a coefficient string, such as m3/cd2.
+     * @param siCoefficientString String; textual description of the unit.
      */
     public SIUnit(final String siCoefficientString)
     {
@@ -59,7 +59,7 @@ public class SIUnit extends Unit<SIUnit>
     @Override
     public String getSICoefficientsString()
     {
-        return this.getAbbreviationKey().replace("SIUnit.","");
+        return this.getAbbreviationKey().replace("SIUnit.", "");
     }
 
 }

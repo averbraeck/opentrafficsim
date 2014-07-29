@@ -42,41 +42,41 @@ public class MassUnit extends Unit<MassUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** kilogram */
+    /** kilogram. */
     public static final MassUnit KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
 
-    /** gram */
+    /** gram. */
     public static final MassUnit GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", SI_BASE, KILOGRAM, 0.001);
 
-    /** pound */
+    /** pound. */
     public static final MassUnit POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", IMPERIAL, KILOGRAM, 0.45359237);
 
-    /** pound */
+    /** pound. */
     public static final MassUnit OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", IMPERIAL, POUND, 1.0 / 16.0);
 
-    /** long ton = 2240 lb */
+    /** long ton = 2240 lb. */
     public static final MassUnit TON_LONG = new MassUnit("MassUnit.long_ton", "MassUnit.long_tn", IMPERIAL, POUND,
             2240.0);
 
-    /** short ton = 2000 lb */
+    /** short ton = 2000 lb. */
     public static final MassUnit TON_SHORT = new MassUnit("MassUnit.short_ton", "MassUnit.sh_tn", US_CUSTOMARY, POUND,
             2000.0);
 
-    /** metric ton = 1000 kg */
-    public static final MassUnit TON_METRIC = new MassUnit("MassUnit.metric_ton", "MassUnit.t", SI_ACCEPTED,
-            KILOGRAM, 1000.0);
+    /** metric ton = 1000 kg. */
+    public static final MassUnit TON_METRIC = new MassUnit("MassUnit.metric_ton", "MassUnit.t", SI_ACCEPTED, KILOGRAM,
+            1000.0);
 
-    /** metric ton = 1000 kg */
-    public static final MassUnit TONNE = new MassUnit("MassUnit.tonne_(mts)", "MassUnit.t_(mts)", MTS,
-            KILOGRAM, 1000.0);
-    
-    /** electronvolt via E=mc^2 */
+    /** metric ton = 1000 kg. */
+    public static final MassUnit TONNE =
+            new MassUnit("MassUnit.tonne_(mts)", "MassUnit.t_(mts)", MTS, KILOGRAM, 1000.0);
+
+    /** electronvolt via E=mc^2. */
     public static final MassUnit ELECTRONVOLT = new MassUnit("MassUnit.electronvolt", "MassUnit.eV", SI_ACCEPTED,
             KILOGRAM, 1.78266184539E-36);
 
-    /** dalton */
-    public static final MassUnit DALTON = new MassUnit("MassUnit.dalton", "MassUnit.Da", SI_ACCEPTED,
-            KILOGRAM, 1.6605388628E-27);
+    /** dalton. */
+    public static final MassUnit DALTON = new MassUnit("MassUnit.dalton", "MassUnit.Da", SI_ACCEPTED, KILOGRAM,
+            1.6605388628E-27);
 
     /**
      * Build a standard unit.
@@ -98,8 +98,8 @@ public class MassUnit extends Unit<MassUnit>
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public MassUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, MassUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+    public MassUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final MassUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

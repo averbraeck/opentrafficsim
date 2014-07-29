@@ -38,30 +38,30 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the actual time unit, e.g. second */
+    /** the actual time unit, e.g. second. */
     private final TimeUnit timeUnit;
 
-    /** hertz */
+    /** hertz. */
     public static final FrequencyUnit HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz",
             "FrequencyUnit.Hz", SI_DERIVED);
 
-    /** kilohertz */
+    /** kilohertz. */
     public static final FrequencyUnit KILOHERTZ = new FrequencyUnit("FrequencyUnit.kilohertz", "FrequencyUnit.kHz",
             SI_DERIVED, HERTZ, 1000.0);
 
-    /** megahertz */
+    /** megahertz. */
     public static final FrequencyUnit MEGAHERTZ = new FrequencyUnit("FrequencyUnit.megahertz", "FrequencyUnit.MHz",
             SI_DERIVED, HERTZ, 1.0E6);
 
-    /** gigahertz */
+    /** gigahertz. */
     public static final FrequencyUnit GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz",
             SI_DERIVED, HERTZ, 1.0E9);
 
-    /** terahertz */
+    /** terahertz. */
     public static final FrequencyUnit TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz",
             SI_DERIVED, HERTZ, 1.0E12);
 
-    /** revolutions per minute = 1/60 Hz */
+    /** revolutions per minute = 1/60 Hz. */
     public static final FrequencyUnit RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute",
             "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
 
@@ -71,7 +71,6 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
-     * @param baseUnit the base unit of this unit
      */
     public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
             final UnitSystem unitSystem)

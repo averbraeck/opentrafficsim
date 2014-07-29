@@ -64,7 +64,7 @@ public class DoubleVectorAbsDense<U extends Unit<U>> extends DoubleVectorAbs<U> 
     /**
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
      */
-    protected final DoubleMatrix1D createMatrix1D(int size)
+    protected final DoubleMatrix1D createMatrix1D(final int size)
     {
         return new DenseDoubleMatrix1D(size);
     }

@@ -34,32 +34,32 @@ package org.opentrafficsim.core.value;
  */
 public class Format
 {
-    /** Default total width of formatted value */
+    /** Default total width of formatted value. */
     public static final int defaultSize = 9;
 
-    /** Default number of fraction digits */
+    /** Default number of fraction digits. */
     public static final int defaultPrecision = 3;
     
     /**
-     * Build a format string
+     * Build a format string.
      * @param width Integer; number of characters in the result
      * @param precision Integer; number of fractional digits in the results
      * @param converter String; the format conversion specifier
      * @return String; suitable for formatting a float or double
      */
-    private static String formatString(int width, int precision, String converter)
+    private static String formatString(final int width, final int precision, final String converter)
     {
         return String.format("%%%d.%d%s", width, precision, converter);
     }
 
     /**
-     * Format a floating point value
+     * Format a floating point value.
      * @param value Float; the value to format
      * @param width Integer; number of characters in the result
      * @param precision Integer; number of fractional digits in the result
      * @return String; the formatted floating point value
      */
-    public static String format(float value, int width, int precision)
+    public static String format(final float value, final int width, final int precision)
     {
         if (0 == value || (Math.abs(value) > 0.01 && Math.abs(value) < 999.0))
             return String.format(formatString(width, precision, "f"), value);
@@ -67,34 +67,34 @@ public class Format
     }
 
     /**
-     * Format a floating point value
+     * Format a floating point value.
      * @param value Float; the value to format
      * @param size Integer; number of characters in the result
      * @return String; the formatted floating point value
      */
-    public static String format(float value, int size)
+    public static String format(final float value, final int size)
     {
         return Format.format(value, size, Format.defaultPrecision);
     }
 
     /**
-     * Format a floating point value
+     * Format a floating point value.
      * @param value Float; the value to format
      * @return String; the formatted floating point value
      */
-    public static String format(float value)
+    public static String format(final float value)
     {
         return format(value, Format.defaultSize, Format.defaultPrecision);
     }
 
     /**
-     * Format a floating point value
+     * Format a floating point value.
      * @param value Double; the value to format
      * @param width Integer; number of characters in the result
      * @param precision Integer; number of fractional digits in the result
      * @return String; the formatted floating point value
      */
-    public static String format(double value, int width, int precision)
+    public static String format(final double value, final int width, final int precision)
     {
         if (0 == value || (Math.abs(value) > 0.01 && Math.abs(value) < 999.0))
             return String.format(formatString(width, precision, "f"), value);
@@ -102,22 +102,22 @@ public class Format
     }
 
     /**
-     * Format a floating point value
+     * Format a floating point value.
      * @param value Double; the value to format
      * @param size Integer; number of characters in the result
      * @return String; the formatted floating point value
      */
-    public static String format(double value, int size)
+    public static String format(final double value, final int size)
     {
         return Format.format(value, size, Format.defaultPrecision);
     }
 
     /**
-     * Format a floating point value
+     * Format a floating point value.
      * @param value Double; the value to format
      * @return String; the formatted floating point value
      */
-    public static String format(double value)
+    public static String format(final double value)
     {
         return format(value, Format.defaultSize, Format.defaultPrecision);
     }

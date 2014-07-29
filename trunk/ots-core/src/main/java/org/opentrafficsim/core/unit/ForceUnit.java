@@ -41,40 +41,40 @@ public class ForceUnit extends Unit<ForceUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of mass for the force unit, e.g., kilogram */
+    /** the unit of mass for the force unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of length for the force unit, e.g., length */
+    /** the unit of length for the force unit, e.g., length. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of time for the force unit, e.g., second */
+    /** the unit of time for the force unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** Newton */
+    /** Newton. */
     public static final ForceUnit NEWTON = new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
             "ForceUnit.newton", "ForceUnit.N", SI_DERIVED);
 
-    /** Dyne */
+    /** Dyne. */
     public static final ForceUnit DYNE = new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND,
             "ForceUnit.dyne", "ForceUnit.dyn", CGS);
 
-    /** kilogram-force */
+    /** kilogram-force. */
     public static final ForceUnit KILOGRAM_FORCE = new ForceUnit(MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY,
             "ForceUnit.kilogram-force", "ForceUnit.kgf", OTHER);
 
-    /** ounce-force */
+    /** ounce-force. */
     public static final ForceUnit OUNCE_FORCE = new ForceUnit(MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY,
             "ForceUnit.ounce-force", "ForceUnit.ozf", IMPERIAL);
 
-    /** pound-force */
+    /** pound-force. */
     public static final ForceUnit POUND_FORCE = new ForceUnit(MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY,
             "ForceUnit.pound-force", "ForceUnit.lbf", IMPERIAL);
 
-    /** ton-force */
+    /** ton-force. */
     public static final ForceUnit TON_FORCE = new ForceUnit(MassUnit.TON_SHORT, AccelerationUnit.STANDARD_GRAVITY,
             "ForceUnit.ton-force", "ForceUnit.tnf", IMPERIAL);
 
-    /** sthene */
+    /** sthene. */
     public static final ForceUnit STHENE = new ForceUnit(MassUnit.TON_METRIC, AccelerationUnit.METER_PER_SECOND_2,
             "ForceUnit.sthene", "ForceUnit.sn", MTS);
 

@@ -32,7 +32,7 @@ import java.util.Locale;
  */
 public abstract class DefaultLocale
 {
-    /** the default locale to use in OpenTrafficSim */
+    /** The default locale to use in OpenTrafficSim. */
     protected static Locale locale;
 
     /**
@@ -46,7 +46,7 @@ public abstract class DefaultLocale
     /**
      * @param locale set locale
      */
-    public static void setLocale(Locale locale)
+    public static void setLocale(final Locale locale)
     {
         DefaultLocale.locale = locale;
     }

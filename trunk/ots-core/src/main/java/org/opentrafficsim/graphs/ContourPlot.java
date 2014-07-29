@@ -86,22 +86,22 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
     /** */
     private static final long serialVersionUID = 20140716L;
 
-    /** The ChartPanel for this ContourPlot */
+    /** The ChartPanel for this ContourPlot. */
     protected final ChartPanel chartPanel;
 
-    /** Area to show status information */
+    /** Area to show status information. */
     protected final JLabel statusLabel;
 
-    /** Definition of the X-axis */
+    /** Definition of the X-axis. */
     protected final Axis xAxis;
 
-    /** Definition of the Y-axis */
+    /** Definition of the Y-axis. */
     protected final Axis yAxis;
 
-    /** Time granularity values */
+    /** Time granularity values. */
     protected static double[] standardTimeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
-    /** Distance granularity values */
+    /** Distance granularity values. */
     protected static double[] standardDistanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
 
     /**
@@ -116,9 +116,9 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @param legendFormat String; format string for the captions in the color legend
      * @param legendStep Double; increment between color legend entries
      */
-    public ContourPlot(final String caption, Axis xAxis, Axis yAxis,
-            final double redValue, final double yellowValue, final double greenValue, final String valueFormat,
-            final String legendFormat, final double legendStep)
+    public ContourPlot(final String caption, final Axis xAxis, final Axis yAxis, final double redValue,
+            final double yellowValue, final double greenValue, final String valueFormat, final String legendFormat,
+            final double legendStep)
     {
         this.xAxis = xAxis;
         this.yAxis = yAxis;
@@ -242,13 +242,13 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      */
     static class ContinuousColorPaintScale implements PaintScale
     {
-        /** Boundary values for this ColorPaintScale */
+        /** Boundary values for this ColorPaintScale. */
         private double[] bounds;
 
-        /** Color values to use at the boundary values */
+        /** Color values to use at the boundary values. */
         private Color[] boundColors;
 
-        /** Format string to render values in a human readable format (used in tool tip texts) */
+        /** Format string to render values in a human readable format (used in tool tip texts). */
         final String format;
 
         /**
@@ -303,7 +303,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
          * @param high Integer; this value is returned when ratio equals 1.0
          * @return Integer; the ratio-weighted average of <i>low</i> and <i>high</i>
          */
-        private static int mixComponent(double ratio, int low, int high)
+        private static int mixComponent(final double ratio, final int low, final int high)
         {
             double mix = low * (1 - ratio) + high * ratio;
             int result = (int) mix;
@@ -352,7 +352,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
      */
     @Override
-    public void mouseDragged(MouseEvent e)
+    public void mouseDragged(final MouseEvent e)
     {
         // not used
     }
@@ -458,7 +458,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
     }
 
     /**
-     * Notify interested parties of an event affecting this ContourPlot
+     * Notify interested parties of an event affecting this ContourPlot.
      * @param event
      */
     private void notifyListeners(final DatasetChangeEvent event)
@@ -467,7 +467,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
             dcl.datasetChanged(event);
     }
 
-    /** List of parties interested in changes of this ContourPlot */
+    /** List of parties interested in changes of this ContourPlot. */
     transient EventListenerList listenerList = new EventListenerList();
 
     /**
@@ -501,7 +501,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYDataset#getItemCount(int)
      */
     @Override
-    public int getItemCount(int series)
+    public int getItemCount(final int series)
     {
         return yAxisBins() * xAxisBins();
     }
@@ -510,7 +510,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYDataset#getX(int, int)
      */
     @Override
-    public Number getX(int series, int item)
+    public Number getX(final int series, final int item)
     {
         return new Double(getXValue(series, item));
     }
@@ -519,7 +519,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
      */
     @Override
-    public double getXValue(int series, int item)
+    public double getXValue(final int series, final int item)
     {
         double result = this.xAxis.getValue(item / this.yAxis.getAggregatedBinCount());
         // System.out.println(String.format("XValue(%d, %d) -> %.3f, binCount=%d", series, item, result,
@@ -531,7 +531,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYDataset#getY(int, int)
      */
     @Override
-    public Number getY(int series, int item)
+    public Number getY(final int series, final int item)
     {
         return new Double(getYValue(series, item));
     }
@@ -540,7 +540,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
      */
     @Override
-    public double getYValue(int series, int item)
+    public double getYValue(final int series, final int item)
     {
         return this.yAxis.getValue(item % this.yAxis.getAggregatedBinCount());
     }
@@ -549,7 +549,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYZDataset#getZ(int, int)
      */
     @Override
-    public Number getZ(int series, int item)
+    public Number getZ(final int series, final int item)
     {
         return new Double(getZValue(series, item));
     }
@@ -558,7 +558,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void addChangeListener(DatasetChangeListener listener)
+    public void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
@@ -567,7 +567,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void removeChangeListener(DatasetChangeListener listener)
+    public void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
@@ -585,7 +585,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
      */
     @Override
-    public void setGroup(DatasetGroup group)
+    public void setGroup(final DatasetGroup group)
     {
         // ignore
     }
@@ -595,7 +595,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public int indexOf(Comparable seriesKey)
+    public int indexOf(final Comparable seriesKey)
     {
         return 0;
     }
@@ -613,7 +613,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled TODO: replace Car by GTU
      */
-    public void addData(Car car)
+    public void addData(final Car car)
     {
         DoubleScalarAbs<TimeUnit> fromTime = car.getLastEvaluationTime();
         DoubleScalarAbs<TimeUnit> toTime = car.getNextEvaluationTime();
@@ -637,11 +637,9 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
                 (car.position(toTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                         / this.yAxis.granularities[0];
         double relativeFromTime =
-                (fromTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI())
-                        / this.xAxis.granularities[0];
+                (fromTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI()) / this.xAxis.granularities[0];
         double relativeToTime =
-                (toTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI())
-                        / this.xAxis.granularities[0];
+                (toTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI()) / this.xAxis.granularities[0];
         int fromTimeBin = (int) Math.floor(relativeFromTime);
         int toTimeBin = (int) Math.floor(relativeToTime) + 1;
         double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
@@ -661,8 +659,8 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
                             / this.yAxis.granularities[0];
             double binDistanceEnd =
                     (car.position(
-                            new DoubleScalarAbs<TimeUnit>(binEndTime * this.xAxis.granularities[0],
-                                    TimeUnit.SECOND)).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
+                            new DoubleScalarAbs<TimeUnit>(binEndTime * this.xAxis.granularities[0], TimeUnit.SECOND))
+                            .getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                             / this.yAxis.granularities[0];
 
             // Compute the time in each distanceBin
@@ -702,8 +700,8 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
     }
 
     /**
-     * Increase storage for sample data.
-     * <br /> This is only implemented for the time axis.
+     * Increase storage for sample data. <br />
+     * This is only implemented for the time axis.
      * @param newUpperLimit DoubleScalar<?> new upper limit for the X range
      */
     public abstract void extendXRange(DoubleScalar<?> newUpperLimit);
@@ -721,19 +719,17 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @see org.jfree.data.xy.XYZDataset#getZValue(int, int)
      */
     @Override
-    public double getZValue(int series, int item)
+    public double getZValue(final int series, final int item)
     {
         int timeBinGroup = item / yAxisBins();
         int distanceBinGroup = item % yAxisBins();
         // System.out.println(String.format("getZValue(s=%d, i=%d) -> tbg=%d, dbg=%d", series, item, timeBinGroup,
         // distanceBinGroup));
-        final int timeGroupSize =
-                (int) (this.xAxis.getCurrentGranularity() / this.xAxis.granularities[0]);
+        final int timeGroupSize = (int) (this.xAxis.getCurrentGranularity() / this.xAxis.granularities[0]);
         final int firstTimeBin = timeBinGroup * timeGroupSize;
         if (firstTimeBin * this.xAxis.granularities[0] >= this.xAxis.getMaximumValue().getValueSI())
             return Double.NaN;
-        final int distanceGroupSize =
-                (int) (this.yAxis.getCurrentGranularity() / this.yAxis.granularities[0]);
+        final int distanceGroupSize = (int) (this.yAxis.getCurrentGranularity() / this.yAxis.granularities[0]);
         final int firstDistanceBin = distanceBinGroup * distanceGroupSize;
         if (firstDistanceBin * this.yAxis.granularities[0] >= this.yAxis.getMaximumValue().getValueSI())
             return Double.NaN;
@@ -752,8 +748,8 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
     public abstract double computeZValue(int firstTimeBin, int endTimeBin, int firstDistanceBin, int endDistanceBin);
 
     /**
-     * Main for stand alone running
-     * @param args
+     * Main for stand alone running.
+     * @param args String[]; the program arguments (not used)
      */
     public static void main(final String[] args)
     {

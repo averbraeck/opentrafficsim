@@ -37,17 +37,17 @@ public class DensityUnit extends Unit<DensityUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the actual mass unit, e.g. kg */
+    /** the actual mass unit, e.g. kg. */
     private final MassUnit massUnit;
 
-    /** the actual length unit, e.g. meter */
+    /** the actual length unit, e.g. meter. */
     private final LengthUnit lengthUnit;
 
-    /** kg/m^3 */
+    /** kg/m^3. */
     public static final DensityUnit KG_PER_METER_3 = new DensityUnit(MassUnit.KILOGRAM, LengthUnit.METER,
             "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3", SI_DERIVED);
 
-    /** g/cm^3 */
+    /** g/cm^3. */
     public static final DensityUnit GRAM_PER_CENTIMETER_3 = new DensityUnit(MassUnit.GRAM, LengthUnit.CENTIMETER,
             "DensityUnit.gram_per_cubic_centimeter", "DensityUnit.g/cm^3", SI_DERIVED);
 

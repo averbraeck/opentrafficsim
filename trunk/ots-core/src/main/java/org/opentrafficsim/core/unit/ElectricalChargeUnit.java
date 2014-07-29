@@ -41,47 +41,47 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of electrical current, e.g., Ampere */
+    /** the unit of electrical current, e.g., Ampere. */
     private final ElectricalCurrentUnit electricalCurrentUnit;
 
-    /** the unit of time, e.g., second */
+    /** the unit of time, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** Coulomb = A.s */
+    /** Coulomb = A.s. */
     public static final ElectricalChargeUnit COULOMB = new ElectricalChargeUnit(ElectricalCurrentUnit.AMPERE,
             TimeUnit.SECOND, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C", SI_DERIVED);
 
-    /** milliampere hour */
+    /** milliampere hour. */
     public static final ElectricalChargeUnit MILLIAMPERE_HOUR = new ElectricalChargeUnit(
             ElectricalCurrentUnit.MILLIAMPERE, TimeUnit.HOUR, "ElectricalChargeUnit.milliampere_hour",
             "ElectricalChargeUnit.mAh", SI_DERIVED);
 
-    /** Faraday */
+    /** Faraday. */
     public static final ElectricalChargeUnit FARADAY = new ElectricalChargeUnit("ElectricalChargeUnit.faraday",
             "ElectricalChargeUnit.F", OTHER, COULOMB, 96485.3383);
 
-    /** atomic unit of charge */
+    /** atomic unit of charge. */
     public static final ElectricalChargeUnit ATOMIC_UNIT = new ElectricalChargeUnit(
             "ElectricalChargeUnit.atomic_unit_of_charge", "ElectricalChargeUnit.e", SI_ACCEPTED, COULOMB,
             1.6021765314E-19);
 
-    /** statcoulomb (CGS ESU) */
+    /** statcoulomb (CGS ESU). */
     public static final ElectricalChargeUnit STATCOULOMB = new ElectricalChargeUnit("ElectricalChargeUnit.statcoulomb",
             "ElectricalChargeUnit.statC", CGS_ESU, COULOMB, 3.335641E-10);
 
-    /** franklin (CGS ESU) */
+    /** franklin (CGS ESU). */
     public static final ElectricalChargeUnit FRANKLIN = new ElectricalChargeUnit("ElectricalChargeUnit.franklin",
             "ElectricalChargeUnit.Fr", CGS_ESU, STATCOULOMB, 1.0);
 
-    /** esu (CGS ESU) */
+    /** esu (CGS ESU). */
     public static final ElectricalChargeUnit ESU = new ElectricalChargeUnit("ElectricalChargeUnit.electrostatic_unit",
             "ElectricalChargeUnit.esu", CGS_ESU, STATCOULOMB, 1.0);
 
-    /** abcoulomb (CGS EMU) */
+    /** abcoulomb (CGS EMU). */
     public static final ElectricalChargeUnit ABCOULOMB = new ElectricalChargeUnit("ElectricalChargeUnit.abcoulomb",
             "ElectricalChargeUnit.abC", CGS_EMU, COULOMB, 10.0);
 
-    /** emu (CGS EMU) */
+    /** emu (CGS EMU). */
     public static final ElectricalChargeUnit EMU = new ElectricalChargeUnit(
             "ElectricalChargeUnit.electromagnetic_unit", "ElectricalChargeUnit.emu", CGS_EMU, ABCOULOMB, 1.0);
 
