@@ -23,7 +23,6 @@
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
-			<version>0.9.9-RC1</version>
 		</dependency>
 
 		<dependency>
@@ -35,5 +34,11 @@
 			<groupId>dsol</groupId>
 			<artifactId>dsol</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>
