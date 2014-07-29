@@ -9,6 +9,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 
 /**
+ * Abstract car following model.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -39,7 +40,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 public abstract interface CarFollowingModel
 {
     /**
-     * Compute the acceleration that would be used to follow a specified leader
+     * Compute the acceleration that would be used to follow a specified leader.
      * @param car Car; the Car for which acceleration is computed
      * @param leaders Set&lt;Car&gt;; the set of leaders to take into consideration
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
@@ -79,16 +80,16 @@ public abstract interface CarFollowingModel
      */
     public class CarFollowingModelResult
     {
-        /** Acceleration that will be maintained during the current time slot */
+        /** Acceleration that will be maintained during the current time slot. */
         public final DoubleScalarAbs<AccelerationUnit> acceleration;
 
-        /** Time when the current time slot ends */
+        /** Time when the current time slot ends. */
         public final DoubleScalarAbs<TimeUnit> validUntil;
 
         /**
-         * Create a new CarFollowingModelResult
-         * @param acceleration
-         * @param validUntil
+         * Create a new CarFollowingModelResult.
+         * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
+         * @param validUntil DoubleScalarAbs&ltTimeUnit&gt;; time when this result expires
          */
         public CarFollowingModelResult(final DoubleScalarAbs<AccelerationUnit> acceleration,
                 final DoubleScalarAbs<TimeUnit> validUntil)

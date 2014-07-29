@@ -44,21 +44,21 @@ public class Calc
      * @param time DoubleScalarRel&lt;TimeUnit&gt;; the time
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the resulting distance
      */
-    public static DoubleScalarRel<LengthUnit> speedTimesTime(DoubleScalarRel<SpeedUnit> speed,
-            DoubleScalarRel<TimeUnit> time)
+    public static DoubleScalarRel<LengthUnit> speedTimesTime(final DoubleScalarRel<SpeedUnit> speed,
+            final DoubleScalarRel<TimeUnit> time)
     {
         return new DoubleScalarRel<LengthUnit>(speed.getValueSI() * time.getValueSI(), LengthUnit.METER);
     }
 
     /**
-     * Distance is 0.5 times acceleration times time squared/ <br />
+     * Distance is 0.5 times acceleration times time squared. <br />
      * s(t) = 0.5 * a * t * t
      * @param acceleration DoubleScalarRel&lt;AccelerationUnit&gt;; the acceleration
      * @param time DoubleScalarAbs&lt;TimeUnit&gt;; the time
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the resulting distance
      */
     public static DoubleScalarRel<LengthUnit> accelerationTimesTimeSquaredDiv2(
-            DoubleScalarAbs<AccelerationUnit> acceleration, DoubleScalarRel<TimeUnit> time)
+            final DoubleScalarAbs<AccelerationUnit> acceleration, final DoubleScalarRel<TimeUnit> time)
     {
         double t = time.getValueSI();
         return new DoubleScalarRel<LengthUnit>(0.5 * acceleration.getValueSI() * t * t, LengthUnit.METER);
@@ -71,8 +71,8 @@ public class Calc
      * @param time DoubleScalarRel&lt;TimeUnit&gt;; the time
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the resulting speed
      */
-    public static DoubleScalarRel<SpeedUnit> accelerationTimesTime(DoubleScalarAbs<AccelerationUnit> acceleration,
-            DoubleScalarRel<TimeUnit> time)
+    public static DoubleScalarRel<SpeedUnit> accelerationTimesTime(
+            final DoubleScalarAbs<AccelerationUnit> acceleration, final DoubleScalarRel<TimeUnit> time)
     {
         return new DoubleScalarRel<SpeedUnit>(acceleration.getValueSI() * time.getValueSI(), SpeedUnit.METER_PER_SECOND);
     }
@@ -85,8 +85,8 @@ public class Calc
      * @return DoubleScalarRel&lt;TimeUnit&gt;; the time it takes to accelerate using the given acceleration from 0 to
      *         the indicated speed
      */
-    public static DoubleScalarRel<TimeUnit> speedDividedByAcceleration(DoubleScalarRel<SpeedUnit> speed,
-            DoubleScalarRel<AccelerationUnit> acceleration)
+    public static DoubleScalarRel<TimeUnit> speedDividedByAcceleration(final DoubleScalarRel<SpeedUnit> speed,
+            final DoubleScalarRel<AccelerationUnit> acceleration)
     {
         return new DoubleScalarRel<TimeUnit>(speed.getValueSI() / acceleration.getValueSI(), TimeUnit.SECOND);
     }

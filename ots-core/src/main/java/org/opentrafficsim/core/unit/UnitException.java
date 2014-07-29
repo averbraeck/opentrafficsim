@@ -44,37 +44,38 @@ public class UnitException extends Exception
     }
 
     /**
-     * @param message
-     * @param cause
-     * @param enableSuppression
-     * @param writableStackTrace
+     * @param message String
+     * @param cause Throwable
+     * @param enableSuppression bpp;am 
+     * @param writableStackTrace boolean
      */
-    public UnitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+    public UnitException(final String message, final Throwable cause, final boolean enableSuppression,
+            final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
     /**
-     * @param message
-     * @param cause
+     * @param message String
+     * @param cause Throwable
      */
-    public UnitException(String message, Throwable cause)
+    public UnitException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
 
     /**
-     * @param message
+     * @param message String
      */
-    public UnitException(String message)
+    public UnitException(final String message)
     {
         super(message);
     }
 
     /**
-     * @param cause
+     * @param cause Throwable
      */
-    public UnitException(Throwable cause)
+    public UnitException(final Throwable cause)
     {
         super(cause);
     }

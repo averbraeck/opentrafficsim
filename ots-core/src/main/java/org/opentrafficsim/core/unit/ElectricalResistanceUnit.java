@@ -37,32 +37,32 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of mass for the electrical resistance unit, e.g., kilogram */
+    /** the unit of mass for the electrical resistance unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of length for the electrical resistance unit, e.g., meters */
+    /** the unit of length for the electrical resistance unit, e.g., meters. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of electrical current for the electrical resistance unit, e.g., Ampere */
+    /** the unit of electrical current for the electrical resistance unit, e.g., Ampere. */
     private final ElectricalCurrentUnit electricalCurrentUnit;
 
-    /** the unit of time for the electrical resistance unit, e.g., second */
+    /** the unit of time for the electrical resistance unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** Ohm */
+    /** Ohm. */
     public static final ElectricalResistanceUnit OHM = new ElectricalResistanceUnit(MassUnit.KILOGRAM,
             LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalResistanceUnit.ohm_(name)",
             "ElectricalResistanceUnit.ohm", SI_DERIVED);
 
-    /** milli-ohm */
+    /** milli-ohm. */
     public static final ElectricalResistanceUnit MILLIOHM = new ElectricalResistanceUnit(
             "ElectricalResistanceUnit.milli_ohm", "ElectricalResistanceUnit.m_ohm", SI_DERIVED, OHM, 0.001);
 
-    /** kilo-ohm */
+    /** kilo-ohm. */
     public static final ElectricalResistanceUnit KILOOHM = new ElectricalResistanceUnit(
             "ElectricalResistanceUnit.kilo_ohm", "ElectricalResistanceUnit.k_ohm", SI_DERIVED, OHM, 1000.0);
 
-    /** mega-ohm */
+    /** mega-ohm. */
     public static final ElectricalResistanceUnit MEGAOHM = new ElectricalResistanceUnit(
             "ElectricalResistanceUnit.mega_ohm", "ElectricalResistanceUnit.M_ohm", SI_DERIVED, OHM, 1.06);
 

@@ -44,7 +44,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the value, stored in SI units */
+    /** the value, stored in SI units. */
     protected float valueSI;
 
     /**
@@ -97,7 +97,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /**
      * @param valueSI the value to store in the cell
      */
-    void setSI(float valueSI)
+    void setSI(final float valueSI)
     {
         this.valueSI = valueSI;
     }
@@ -105,7 +105,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     /**
      * @param value the strongly typed value to store in the cell
      */
-    void set(FloatScalar<U> value)
+    void set(final FloatScalar<U> value)
     {
         setDisplayUnit(value.unit);
         this.valueSI = value.valueSI;
@@ -115,7 +115,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @param value the value to store in the cell
      * @param valueUnit the unit of the value.
      */
-    void setInUnit(float value, U valueUnit)
+    void setInUnit(final float value, final U valueUnit)
     {
         setDisplayUnit(valueUnit);
         this.valueSI = (float) expressAsSIUnit(value);
@@ -125,7 +125,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         // unequal if object is of a different type.
         if (!(obj instanceof FloatScalar<?>))
@@ -145,10 +145,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
 
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
-     * @throws a ClassCastException if one value is absolute and the other relative, or if the SI unit differs.
      */
     @Override
-    public int compareTo(FloatScalar<U> fs)
+    public int compareTo(final FloatScalar<U> fs)
     {
         // exception if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
@@ -162,11 +161,11 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
                     + "and the other is relative.");
 
         if (this.valueSI < fs.valueSI)
-                return -1;
+            return -1;
         if (this.valueSI > fs.valueSI)
             return 1;
         return 0;
-        
+
     }
 
     /**********************************************************************************/
@@ -315,7 +314,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     @Override
     // TODO: SI unit with coefficients * x.
-    public void pow(double x)
+    public void pow(final double x)
     {
         this.valueSI = (float) Math.pow(this.valueSI, x);
     }
@@ -425,12 +424,12 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     {
         this.valueSI = 1.0f / this.valueSI;
     }
-    
+
     /**
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
      */
     @Override
-    public void multiply(float constant)
+    public void multiply(final float constant)
     {
         this.valueSI *= constant;
     }
@@ -439,7 +438,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
      */
     @Override
-    public void divide(float constant)
+    public void divide(final float constant)
     {
         this.valueSI /= constant;
     }
@@ -474,7 +473,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to subtract
      */
-    public void subtract(FloatScalarRel<U> value)
+    public void subtract(final FloatScalarRel<U> value)
     {
         this.valueSI -= value.getValueSI();
     }
@@ -492,7 +491,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @return the sum of the values as an absolute value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarAbs<U> plus(FloatScalarAbs<U> valueAbs,
+    public static <U extends Unit<U>> FloatScalarAbs<U> plus(final FloatScalarAbs<U> valueAbs,
             final FloatScalarRel<U>... valuesRel)
     {
         FloatScalarAbs<U> value = new FloatScalarAbs<U>(valueAbs);
@@ -511,7 +510,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @return the sum of the values as a relative value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarRel<U> plus(U targetUnit, final FloatScalarRel<U>... valuesRel)
+    public static <U extends Unit<U>> FloatScalarRel<U> plus(final U targetUnit, final FloatScalarRel<U>... valuesRel)
     {
         FloatScalarRel<U> value = new FloatScalarRel<U>(0.0f, targetUnit);
         for (FloatScalarRel<U> v : valuesRel)
@@ -530,7 +529,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @return the resulting value as an absolute value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarAbs<U> minus(FloatScalarAbs<U> valueAbs,
+    public static <U extends Unit<U>> FloatScalarAbs<U> minus(final FloatScalarAbs<U> valueAbs,
             final FloatScalarRel<U>... valuesRel)
     {
         FloatScalarAbs<U> value = new FloatScalarAbs<U>(valueAbs);
@@ -550,7 +549,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      * @return the resulting value as a relative value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarRel<U> minus(FloatScalarRel<U> valueRel,
+    public static <U extends Unit<U>> FloatScalarRel<U> minus(final FloatScalarRel<U> valueRel,
             final FloatScalarRel<U>... valuesRel)
     {
         FloatScalarRel<U> value = new FloatScalarRel<U>(valueRel);

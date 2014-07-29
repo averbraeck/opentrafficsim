@@ -39,44 +39,44 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram */
+    /** the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of length for the electrical potential difference (voltage) unit, e.g., meters */
+    /** the unit of length for the electrical potential difference (voltage) unit, e.g., meters. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of electrical current for the electrical potential difference (voltage) unit, e.g., Ampere */
+    /** the unit of electrical current for the electrical potential difference (voltage) unit, e.g., Ampere. */
     private final ElectricalCurrentUnit electricalCurrentUnit;
 
-    /** the unit of time for the electrical potential difference (voltage) unit, e.g., second */
+    /** the unit of time for the electrical potential difference (voltage) unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** Volt */
+    /** Volt. */
     public static final ElectricalPotentialUnit VOLT = new ElectricalPotentialUnit(MassUnit.KILOGRAM, LengthUnit.METER,
             ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V",
             SI_DERIVED);
 
-    /** microvolt */
+    /** microvolt. */
     public static final ElectricalPotentialUnit MICROVOLT = new ElectricalPotentialUnit(
             "ElectricalPotentialUnit.microvolt", "ElectricalPotentialUnit.muV", SI_DERIVED, VOLT, 1.0E-6);
 
-    /** millivolt */
+    /** millivolt. */
     public static final ElectricalPotentialUnit MILLIVOLT = new ElectricalPotentialUnit(
             "ElectricalPotentialUnit.millivolt", "ElectricalPotentialUnit.mV", SI_DERIVED, VOLT, 0.001);
 
-    /** kilovolt */
+    /** kilovolt. */
     public static final ElectricalPotentialUnit KILOVOLT = new ElectricalPotentialUnit(
             "ElectricalPotentialUnit.kilovolt", "ElectricalPotentialUnit.kV", SI_DERIVED, VOLT, 1000.0);
 
-    /** megavolt */
+    /** megavolt. */
     public static final ElectricalPotentialUnit MEGAVOLT = new ElectricalPotentialUnit(
             "ElectricalPotentialUnit.megavolt", "ElectricalPotentialUnit.MV", SI_DERIVED, VOLT, 1.0E6);
 
-    /** statvolt */
+    /** statvolt. */
     public static final ElectricalPotentialUnit STATVOLT = new ElectricalPotentialUnit(
             "ElectricalPotentialUnit.statvolt", "ElectricalPotentialUnit.statV", CGS_ESU, VOLT, 299.792458);
 
-    /** abvolt */
+    /** abvolt. */
     public static final ElectricalPotentialUnit ABVOLT = new ElectricalPotentialUnit("ElectricalPotentialUnit.abvolt",
             "ElectricalPotentialUnit.abV", CGS_EMU, VOLT, 1.0E-8);
 

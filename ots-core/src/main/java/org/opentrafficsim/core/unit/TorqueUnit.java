@@ -39,28 +39,28 @@ public class TorqueUnit extends Unit<TorqueUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of mass for the torque unit, e.g., kilogram */
+    /** the unit of mass for the torque unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of length for the torque unit, e.g., length */
+    /** the unit of length for the torque unit, e.g., length. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of time for the torque unit, e.g., second */
+    /** the unit of time for the torque unit, e.g., second. */
     private final TimeUnit timeUnit;
 
-    /** Newton meter */
+    /** Newton meter. */
     public static final TorqueUnit NEWTON_METER = new TorqueUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
             "TorqueUnit.Newton_meter", "TorqueUnit.N.m", SI_DERIVED);
 
-    /** meter kilogram-force */
+    /** meter kilogram-force. */
     public static final TorqueUnit METER_KILOGRAM_FORCE = new TorqueUnit(ForceUnit.KILOGRAM_FORCE, LengthUnit.METER,
             "TorqueUnit.meter_kilogram-force", "TorqueUnit.m.kgf", OTHER);
 
-    /** foot pound-force */
+    /** foot pound-force. */
     public static final TorqueUnit FOOT_POUND_FORCE = new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.FOOT,
             "TorqueUnit.foot_pound-force", "TorqueUnit.ft.lbf", IMPERIAL);
 
-    /** inch pound-force */
+    /** inch pound-force. */
     public static final TorqueUnit INCH_POUND_FORCE = new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.INCH,
             "TorqueUnit.inch_pound-force", "TorqueUnit.in.lbf", IMPERIAL);
 

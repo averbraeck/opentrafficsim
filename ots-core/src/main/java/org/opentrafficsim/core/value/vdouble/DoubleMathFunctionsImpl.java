@@ -36,7 +36,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction cbrt = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.cbrt(a);
         }
@@ -47,7 +47,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction cosh = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.cosh(a);
         }
@@ -58,7 +58,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction expm1 = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.expm1(a);
         }
@@ -69,7 +69,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction log10 = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.log10(a);
         }
@@ -80,7 +80,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction log1p = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.log1p(a);
         }
@@ -91,7 +91,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction round = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.round(a);
         }
@@ -102,7 +102,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction signum = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.signum(a);
         }
@@ -113,7 +113,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction sinh = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.sinh(a);
         }
@@ -124,7 +124,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction tanh = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.tanh(a);
         }
@@ -135,7 +135,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction toDegrees = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.toDegrees(a);
         }
@@ -146,7 +146,7 @@ public class DoubleMathFunctionsImpl
      */
     public static final DoubleFunction toRadians = new DoubleFunction()
     {
-        public final double apply(double a)
+        public final double apply(final double a)
         {
             return Math.toRadians(a);
         }

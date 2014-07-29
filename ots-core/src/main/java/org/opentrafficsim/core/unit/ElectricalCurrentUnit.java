@@ -39,34 +39,34 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** Ampere */
+    /** Ampere. */
     public static final ElectricalCurrentUnit AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere",
             "ElectricalCurrentUnit.A", SI_BASE);
 
-    /** nanoampere */
+    /** nanoampere. */
     public static final ElectricalCurrentUnit NANOAMPERE = new ElectricalCurrentUnit(
             "ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", SI_BASE, AMPERE, 1.0E-9);
 
-    /** microampere */
+    /** microampere. */
     public static final ElectricalCurrentUnit MICROAMPERE = new ElectricalCurrentUnit(
             "ElectricalCurrentUnit.microampere", "ElectricalCurrentUnit.muA", SI_BASE, AMPERE, 1.0E-6);
 
-    /** milliampere */
+    /** milliampere. */
     public static final ElectricalCurrentUnit MILLIAMPERE = new ElectricalCurrentUnit(
             "ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", SI_BASE, AMPERE, 0.001);
 
-    /** kiloampere */
+    /** kiloampere. */
     public static final ElectricalCurrentUnit KILOAMPERE = new ElectricalCurrentUnit(
             "ElectricalCurrentUnit.kiloampere", "ElectricalCurrentUnit.kA", SI_BASE, AMPERE, 1000.0);
 
-    /** statampere (GCS ESU) */
+    /** statampere (GCS ESU). */
     public static final ElectricalCurrentUnit STATAMPERE = new ElectricalCurrentUnit(
             "ElectricalCurrentUnit.statampere", "ElectricalCurrentUnit.statA", CGS_ESU, AMPERE, 3.335641E-10);
-    
-    /** abampere (GCS EMU) */
-    public static final ElectricalCurrentUnit ABAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.abampere", "ElectricalCurrentUnit.abA", CGS_EMU, AMPERE, 10.0);
-    
+
+    /** abampere (GCS EMU). */
+    public static final ElectricalCurrentUnit ABAMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.abampere",
+            "ElectricalCurrentUnit.abA", CGS_EMU, AMPERE, 10.0);
+
     /**
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
@@ -85,8 +85,8 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public ElectricalCurrentUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem,
-            ElectricalCurrentUnit referenceUnit, double conversionFactorToReferenceUnit)
+    public ElectricalCurrentUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final ElectricalCurrentUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

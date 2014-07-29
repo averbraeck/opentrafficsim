@@ -59,7 +59,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse */
+    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse. */
     protected DoubleMatrix2D matrixSI;
 
     /**
@@ -217,7 +217,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#setSI(int, int, double)
      */
     @Override
-    public void setSI(final int row, final int column, double valueSI) throws ValueException
+    public void setSI(final int row, final int column, final double valueSI) throws ValueException
     {
         if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
             throw new ValueException("DoubleMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
@@ -230,7 +230,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      *      org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
      */
     @Override
-    public void set(final int row, final int column, DoubleScalar<U> value) throws ValueException
+    public void set(final int row, final int column, final DoubleScalar<U> value) throws ValueException
     {
         setSI(row, column, value.getValueSI());
     }
@@ -240,7 +240,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public void setInUnit(final int row, final int column, double value, U valueUnit) throws ValueException
+    public void setInUnit(final int row, final int column, final double value, final U valueUnit) throws ValueException
     {
         setSI(row, column, expressAsSIUnit(value, valueUnit));
     }
@@ -305,7 +305,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         // unequal if object is of a different type.
         if (!(obj instanceof DoubleMatrix<?>))
@@ -458,7 +458,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(double x)
+    public void pow(final double x)
     {
         this.matrixSI.assign(DoubleFunctions.pow(x));
     }
@@ -566,7 +566,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
     @Override
-    public void multiply(double constant)
+    public void multiply(final double constant)
     {
         this.matrixSI.assign(DoubleFunctions.mult(constant));
     }
@@ -575,7 +575,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
      */
     @Override
-    public void divide(double constant)
+    public void divide(final double constant)
     {
         this.matrixSI.assign(DoubleFunctions.div(constant));
     }

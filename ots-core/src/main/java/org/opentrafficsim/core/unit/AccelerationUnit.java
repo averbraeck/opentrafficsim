@@ -39,49 +39,49 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the actual length unit, e.g. KILOMETER */
+    /** the actual length unit, e.g. KILOMETER. */
     private final LengthUnit lengthUnit;
 
-    /** the actual time unit, e.g. HOUR */
+    /** the actual time unit, e.g. HOUR. */
     private final TimeUnit timeUnit;
 
-    /** m/s^2 */
+    /** m/s^2. */
     public static final AccelerationUnit METER_PER_SECOND_2 = new AccelerationUnit(LengthUnit.METER, TimeUnit.SECOND,
             "AccelerationUnit.meter_per_second_squared", "AccelerationUnit.m/s^2", SI_DERIVED);
 
-    /** km/h^2 */
+    /** km/h^2. */
     public static final AccelerationUnit KM_PER_HOUR_2 = new AccelerationUnit(LengthUnit.KILOMETER, TimeUnit.HOUR,
             "AccelerationUnit.km_per_hour_squared", "AccelerationUnit.km/h^2", SI_DERIVED);
 
-    /** ft/s^2 */
+    /** ft/s^2. */
     public static final AccelerationUnit FOOT_PER_SECOND_2 = new AccelerationUnit(LengthUnit.FOOT, TimeUnit.SECOND,
             "AccelerationUnit.foot_per_second_squared", "AccelerationUnit.ft/s^2", IMPERIAL);
 
-    /** in/s^2 */
+    /** in/s^2. */
     public static final AccelerationUnit INCH_PER_SECOND_2 = new AccelerationUnit(LengthUnit.INCH, TimeUnit.SECOND,
             "AccelerationUnit.inch_per_second_squared", "AccelerationUnit.in/s^2", IMPERIAL);
 
-    /** mi/h^2 */
+    /** mi/h^2. */
     public static final AccelerationUnit MILE_PER_HOUR_2 = new AccelerationUnit(LengthUnit.MILE, TimeUnit.HOUR,
             "AccelerationUnit.mile_per_hour_squared", "AccelerationUnit.mi/h^2", IMPERIAL);
 
-    /** mi/s^2 */
+    /** mi/s^2. */
     public static final AccelerationUnit MILE_PER_SECOND_2 = new AccelerationUnit(LengthUnit.MILE, TimeUnit.SECOND,
             "AccelerationUnit.mile_per_second_squared", "AccelerationUnit.mi/s^2", IMPERIAL);
 
-    /** kt/s */
+    /** kt/s. */
     public static final AccelerationUnit KNOT_PER_SECOND = new AccelerationUnit(SpeedUnit.KNOT, TimeUnit.SECOND,
             "AccelerationUnit.knot_per_second", "AccelerationUnit.kt/s", IMPERIAL);
 
-    /** mi/h/s */
+    /** mi/h/s. */
     public static final AccelerationUnit MILE_PER_HOUR_PER_SECOND = new AccelerationUnit(SpeedUnit.MILE_PER_HOUR,
             TimeUnit.SECOND, "AccelerationUnit.mile_per_hour_per_second", "AccelerationUnit.mi/h/s", IMPERIAL);
 
-    /** standard gravity */
+    /** standard gravity. */
     public static final AccelerationUnit STANDARD_GRAVITY = new AccelerationUnit("AccelerationUnit.standard_gravity",
             "AccelerationUnit.g", SI_DERIVED, METER_PER_SECOND_2, 9.80665);
 
-    /** standard gravity */
+    /** standard gravity. */
     public static final AccelerationUnit GAL = new AccelerationUnit(LengthUnit.CENTIMETER, TimeUnit.SECOND,
             "AccelerationUnit.gal", "AccelerationUnit.Gal", CGS);
 
@@ -120,6 +120,7 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
     }
 
     /**
+     * Create a new AccelerationUnit.
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial

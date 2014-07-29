@@ -31,7 +31,7 @@ import java.util.EnumMap;
  */
 public class SICoefficients
 {
-    /** the map with SI base units and corresponding coefficients */
+    /** the map with SI base units and corresponding coefficients. */
     private final EnumMap<SI, Integer> coefficientsMap;
 
     /**
@@ -53,11 +53,11 @@ public class SICoefficients
     }
 
     /**
-     * Convert an enumMap of coefficient to the normalized string representation
+     * Convert an enumMap of coefficient to the normalized string representation.
      * @param map EnumMap&lt;{@link SI}, Integer&gt;; the EnumMap
      * @return String
      */
-    protected static String enumMapToString(EnumMap<SI, Integer> map)
+    protected static String enumMapToString(final EnumMap<SI, Integer> map)
     {
         String result = "";
         boolean first = true;
@@ -148,9 +148,9 @@ public class SICoefficients
      *            White space can appear anywhere in a coefficientString. <br />
      *            If "integer" does not fit in an Integer, the resulting coefficient will be very wrong.
      * @return an instance of SICoefficients
-     * @throws UnitException
+     * @throws UnitException if the coefficientString is not parsable.
      */
-    public static EnumMap<SI, Integer> parse(String coefficientString) throws UnitException
+    public static EnumMap<SI, Integer> parse(final String coefficientString) throws UnitException
     {
         // System.out.println("coefficientString is \"" + coefficientString + "\"");
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
@@ -226,7 +226,7 @@ public class SICoefficients
      * @param b the second set of coefficients
      * @return the coefficients of a*b (coefficients are added)
      */
-    public static SICoefficients multiply(SICoefficients a, SICoefficients b)
+    public static SICoefficients multiply(final SICoefficients a, final SICoefficients b)
     {
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
         for (SI si : a.getCoefficientsMap().keySet())
@@ -253,7 +253,7 @@ public class SICoefficients
      * @param b the second set of coefficients
      * @return the coefficients of a/b (coefficients are subtracted)
      */
-    public static SICoefficients divide(SICoefficients a, SICoefficients b)
+    public static SICoefficients divide(final SICoefficients a, final SICoefficients b)
     {
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
         for (SI si : a.getCoefficientsMap().keySet())

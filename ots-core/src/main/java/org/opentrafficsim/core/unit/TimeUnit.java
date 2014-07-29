@@ -39,22 +39,23 @@ public class TimeUnit extends Unit<TimeUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** second */
+    /** second. */
     public static final TimeUnit SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
 
-    /** millisecond */
-    public static final TimeUnit MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND, 0.001);
+    /** millisecond. */
+    public static final TimeUnit MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND,
+            0.001);
 
-    /** minute */
+    /** minute. */
     public static final TimeUnit MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SI_ACCEPTED, SECOND, 60.0);
 
-    /** hour */
+    /** hour. */
     public static final TimeUnit HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", SI_ACCEPTED, MINUTE, 60.0);
 
-    /** day */
+    /** day. */
     public static final TimeUnit DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", SI_ACCEPTED, HOUR, 24.0);
 
-    /** week */
+    /** week. */
     public static final TimeUnit WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", OTHER, DAY, 7.0);
 
     /**
@@ -77,8 +78,8 @@ public class TimeUnit extends Unit<TimeUnit>
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
      */
-    public TimeUnit(String nameKey, String abbreviationKey, final UnitSystem unitSystem, TimeUnit referenceUnit,
-            double conversionFactorToReferenceUnit)
+    public TimeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
+            final TimeUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

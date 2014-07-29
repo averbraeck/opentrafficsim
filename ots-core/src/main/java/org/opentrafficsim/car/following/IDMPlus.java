@@ -66,7 +66,7 @@ public class IDMPlus<Line> implements CarFollowingModel
             AccelerationUnit.METER_PER_SECOND_2);
 
     /** Longitudinal regular following headway [s]. */
-    protected final DoubleScalarRel<TimeUnit> Tmax = new DoubleScalarRel<TimeUnit>(1.2, TimeUnit.SECOND);
+    protected final DoubleScalarRel<TimeUnit> tMax = new DoubleScalarRel<TimeUnit>(1.2, TimeUnit.SECOND);
 
     /** LMRS free lane change threshold. (Value between 0 and dSync) */
     protected final double dFree = .365;
@@ -86,21 +86,21 @@ public class IDMPlus<Line> implements CarFollowingModel
     /** LMRS speed gain [m/s] for full desire. (The paper specifies this value in [km/h]) */
     protected final DoubleScalarAbs<SpeedUnit> vGain = new DoubleScalarAbs<SpeedUnit>(69.6, SpeedUnit.KM_PER_HOUR);
 
-    /** LMRS critical speed [m/s] for a speed gain in the right lane. (The paper specifies this value in [km/h] */
+    /** LMRS critical speed [m/s] for a speed gain in the right lane. (The paper specifies this value in [km/h]) */
     protected final DoubleScalarAbs<SpeedUnit> vCong = new DoubleScalarAbs<SpeedUnit>(60, SpeedUnit.KM_PER_HOUR);
 
-    /** Safe time headway */
+    /** Safe time headway. */
     protected final DoubleScalarRel<TimeUnit> tSafe = new DoubleScalarRel<TimeUnit>(1.6, TimeUnit.SECOND);
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the
-     * speed limit, etc.)
+     * speed limit, etc.).
      */
     protected final double delta = 1.0;
 
     /**
      * Time slot size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between
-     * computational speed and accuracy)
+     * computational speed and accuracy).
      */
     protected final DoubleScalarRel<TimeUnit> stepSize = new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND);
 
@@ -155,7 +155,7 @@ public class IDMPlus<Line> implements CarFollowingModel
                         Calc.speedTimesTime(car.speed(thisEvaluationTime), this.tSafe),
                         Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2)));
         if (sStar.getValueSI() < 0) // Negative value should be treated as 0
-            sStar = new DoubleScalarRel<LengthUnit> (0, LengthUnit.METER);
+            sStar = new DoubleScalarRel<LengthUnit>(0, LengthUnit.METER);
         //System.out.println("s* is " + sStar);
         double distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);
         DoubleScalarAbs<AccelerationUnit> newAcceleration = new DoubleScalarAbs<AccelerationUnit>(this.a);

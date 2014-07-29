@@ -75,9 +75,9 @@ public class TestValue
     }
 
     /**
-     * @param args
+     * @param args String[]; program arguments (not used)
      */
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
         new TestValue();
     }

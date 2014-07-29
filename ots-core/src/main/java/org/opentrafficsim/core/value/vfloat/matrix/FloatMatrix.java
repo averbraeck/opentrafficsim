@@ -59,7 +59,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse */
+    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse. */
     protected FloatMatrix2D matrixSI;
 
     /**
@@ -218,7 +218,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#setSI(int, int, float)
      */
     @Override
-    public void setSI(final int row, final int column, float valueSI) throws ValueException
+    public void setSI(final int row, final int column, final float valueSI) throws ValueException
     {
         if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
             throw new ValueException("FloatMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
@@ -231,7 +231,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
      */
     @Override
-    public void set(final int row, final int column, FloatScalar<U> value) throws ValueException
+    public void set(final int row, final int column, final FloatScalar<U> value) throws ValueException
     {
         setSI(row, column, value.getValueSI());
     }
@@ -241,7 +241,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public void setInUnit(final int row, final int column, float value, U valueUnit) throws ValueException
+    public void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
     {
         setSI(row, column, (float) expressAsSIUnit(value, valueUnit));
     }
@@ -284,24 +284,24 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         {
             if (this instanceof Sparse)
             {
-                //System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
+                // System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
                 return new SparseFloatAlgebra().det(this.matrixSI);
             }
             if (this instanceof Dense)
             {
-                //System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
+                // System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
                 return new DenseFloatAlgebra().det(this.matrixSI);
             }
             throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
         }
         catch (IllegalArgumentException exception)
         {
-            if (! exception.getMessage().startsWith("Matrix must be square"))
+            if (!exception.getMessage().startsWith("Matrix must be square"))
             {
                 exception.printStackTrace();
                 System.out.println("Offending matrix: " + this.matrixSI);
             }
-            throw new ValueException(exception.getMessage());    // probably Matrix must be square
+            throw new ValueException(exception.getMessage()); // probably Matrix must be square
         }
     }
 
@@ -309,7 +309,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         // unequal if object is of a different type.
         if (!(obj instanceof FloatMatrix<?>))
@@ -462,7 +462,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(double x)
+    public void pow(final double x)
     {
         this.matrixSI.assign(FloatFunctions.pow((float) x));
     }
@@ -570,7 +570,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
      */
     @Override
-    public void multiply(float constant)
+    public void multiply(final float constant)
     {
         this.matrixSI.assign(FloatFunctions.mult(constant));
     }
@@ -579,7 +579,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
      */
     @Override
-    public void divide(float constant)
+    public void divide(final float constant)
     {
         this.matrixSI.assign(FloatFunctions.div(constant));
     }
@@ -607,7 +607,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
                 float f = (float) expressAsUnit(this.matrixSI.get(i, j), displayUnit);
-                    s += " " + Format.format(f);
+                s += " " + Format.format(f);
             }
         }
         return s;

@@ -79,28 +79,28 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     /** */
     private static final long serialVersionUID = 20140724L;
 
-    /** Sample interval of this TrajectoryPlot */
+    /** Sample interval of this TrajectoryPlot. */
     protected final DoubleScalarRel<TimeUnit> sampleInterval;
 
-    /** Minimum position on this TrajectoryPlot */
+    /** Minimum position on this TrajectoryPlot. */
     protected final DoubleScalarAbs<LengthUnit> minimumPosition;
 
-    /** Maximum position on this TrajectoryPlot */
+    /** Maximum position on this TrajectoryPlot. */
     protected final DoubleScalarAbs<LengthUnit> maximumPosition;
 
-    /** Maximum of the time axis */
+    /** Maximum of the time axis. */
     protected DoubleScalarAbs<TimeUnit> maximumTime = new DoubleScalarAbs<TimeUnit>(300, TimeUnit.SECOND);
 
-    /** The ChartPanel for this ContourPlot */
+    /** The ChartPanel for this ContourPlot. */
     protected final JFreeChart chartPanel;
 
-    /** Area to show status information */
+    /** Area to show status information. */
     protected final JLabel statusLabel;
 
-    /** List of parties interested in changes of this ContourPlot */
+    /** List of parties interested in changes of this ContourPlot. */
     transient EventListenerList listenerList = new EventListenerList();
 
-    /** Not used internally */
+    /** Not used internally. */
     private DatasetGroup datasetGroup = null;
 
     /**
@@ -110,7 +110,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @param minimumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the minimum position sampled by this TrajectoryPlot
      * @param maximumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the maximum position sampled by this TrajectoryPlot
      */
-    public TrajectoryPlot(String caption, DoubleScalarRel<TimeUnit> sampleInterval,
+    public TrajectoryPlot(final String caption, final DoubleScalarRel<TimeUnit> sampleInterval,
             final DoubleScalarAbs<LengthUnit> minimumPosition, final DoubleScalarAbs<LengthUnit> maximumPosition)
     {
         this.sampleInterval = sampleInterval;
@@ -159,10 +159,10 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     }
 
     /**
-     * Notify interested parties of an event affecting this TrajectoryPlot
+     * Notify interested parties of an event affecting this TrajectoryPlot.
      * @param event
      */
-    private void notifyListeners(DatasetChangeEvent event)
+    private void notifyListeners(final DatasetChangeEvent event)
     {
         for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
             dcl.datasetChanged(event);
@@ -173,7 +173,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @param valueAxis
      * @param range
      */
-    private static void configureAxis(ValueAxis valueAxis, double range)
+    private static void configureAxis(final ValueAxis valueAxis, final double range)
     {
         valueAxis.setUpperBound(range);
         valueAxis.setLowerMargin(0);
@@ -188,7 +188,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
-    public void actionPerformed(ActionEvent e)
+    public void actionPerformed(final ActionEvent e)
     {
         // not yet
     }
@@ -197,7 +197,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
      */
     @Override
-    public void mouseDragged(MouseEvent e)
+    public void mouseDragged(final MouseEvent e)
     {
         // ignored
     }
@@ -206,7 +206,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
      */
     @Override
-    public void mouseMoved(MouseEvent mouseEvent)
+    public void mouseMoved(final MouseEvent mouseEvent)
     {
         ChartPanel cp = (ChartPanel) mouseEvent.getSource();
         XYPlot plot = (XYPlot) cp.getChart().getPlot();
@@ -289,13 +289,13 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
             this.statusLabel.setText(" ");
     }
 
-    /** All stored trajectories */
+    /** All stored trajectories. */
     ArrayList<Trajectory> trajectories = new ArrayList<Trajectory>();
 
     /**
      * @param car Car; the Car that has determined it's next move
      */
-    public void addData(Car car)
+    public void addData(final Car car)
     {
         DoubleScalarAbs<TimeUnit> startTime = car.getLastEvaluationTime();
         DoubleScalarAbs<LengthUnit> startPosition = car.position(startTime);
@@ -344,23 +344,23 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      */
     class Trajectory
     {
-        /** Time of (current) end of trajectory */
+        /** Time of (current) end of trajectory. */
         DoubleScalarAbs<TimeUnit> currentEndTime;
 
-        /** Position of (current) end of trajectory */
+        /** Position of (current) end of trajectory. */
         DoubleScalarAbs<LengthUnit> currentEndPosition;
 
-        /** Storage for the position of the car */
+        /** Storage for the position of the car. */
         ArrayList<Double> positions = new ArrayList<Double>();
 
-        /** Time sample of first sample in positions (successive entries will each be one sampleTime later) */
+        /** Time sample of first sample in positions (successive entries will each be one sampleTime later). */
         int firstSample;
 
         /**
-         * Add a trajectory segment and update the currentEndTime and currentEndPosition
+         * Add a trajectory segment and update the currentEndTime and currentEndPosition.
          * @param car Car; the Car whose currently committed trajectory segment must be added
          */
-        public void addSegment(Car car)
+        public void addSegment(final Car car)
         {
             int startSample =
                     (int) Math.ceil(car.getLastEvaluationTime().getValueSI()
@@ -404,7 +404,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
          * @param item Integer; the sample number
          * @return Double; the time of the sample indexed by item
          */
-        public double getTime(int item)
+        public double getTime(final int item)
         {
             return (item + this.firstSample) * TrajectoryPlot.this.sampleInterval.getValueSI();
         }
@@ -413,7 +413,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
          * @param item Integer; the sample number
          * @return Double; the position indexed by item
          */
-        public double getDistance(int item)
+        public double getDistance(final int item)
         {
             return this.positions.get(item);
         }
@@ -432,7 +432,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
      */
     @Override
-    public Comparable<Integer> getSeriesKey(int series)
+    public Comparable<Integer> getSeriesKey(final int series)
     {
         return series;
     }
@@ -442,7 +442,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public int indexOf(Comparable seriesKey)
+    public int indexOf(final Comparable seriesKey)
     {
         if (seriesKey instanceof Integer)
             return (Integer) seriesKey;
@@ -453,7 +453,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void addChangeListener(DatasetChangeListener listener)
+    public void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
@@ -462,7 +462,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void removeChangeListener(DatasetChangeListener listener)
+    public void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
@@ -480,7 +480,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
      */
     @Override
-    public void setGroup(DatasetGroup group)
+    public void setGroup(final DatasetGroup group)
     {
         this.datasetGroup = group;
     }
@@ -498,7 +498,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.xy.XYDataset#getItemCount(int)
      */
     @Override
-    public int getItemCount(int series)
+    public int getItemCount(final int series)
     {
         if ((series < 0) || (series >= this.trajectories.size()))
             return 0;
@@ -509,7 +509,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.xy.XYDataset#getX(int, int)
      */
     @Override
-    public Number getX(int series, int item)
+    public Number getX(final int series, final int item)
     {
         if ((series < 0) || (series >= this.trajectories.size()))
             return null;
@@ -520,7 +520,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
      */
     @Override
-    public double getXValue(int series, int item)
+    public double getXValue(final int series, final int item)
     {
         if ((series < 0) || (series >= this.trajectories.size()))
             return Double.NaN;
@@ -531,7 +531,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.xy.XYDataset#getY(int, int)
      */
     @Override
-    public Number getY(int series, int item)
+    public Number getY(final int series, final int item)
     {
         if ((series < 0) || (series >= this.trajectories.size()))
             return null;
@@ -542,7 +542,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
      * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
      */
     @Override
-    public double getYValue(int series, int item)
+    public double getYValue(final int series, final int item)
     {
         if ((series < 0) || (series >= this.trajectories.size()))
             return Double.NaN;
@@ -550,10 +550,10 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     }
 
     /**
-     * Main for stand alone running
-     * @param args
+     * Main for stand alone running.
+     * @param args String[]; the program arguments (not used)
      */
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
         JOptionPane.showMessageDialog(null, "TrajectoryPlot", "Start experiment", JOptionPane.INFORMATION_MESSAGE);
         DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
