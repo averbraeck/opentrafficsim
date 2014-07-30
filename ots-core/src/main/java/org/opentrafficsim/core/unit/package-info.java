@@ -1,6 +1,7 @@
 /**
  * Classes that make up the unit system.
- * <br /> The unit system ensures that quantities (lengths, temperatures, etc) have a suitable unit and cannot be confused with quantities in other units
+ * <br /> The unit system ensures that quantities (lengths, temperatures, etc) 
+ * have a suitable unit and cannot be confused with quantities in other units
  * <br /> If that appears impossible, the abstract class ClarFollowingModel
  * may need to be adapted. 
  * <p>
@@ -38,6 +39,6 @@
  * 
  * @version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- */ 
+ */
 package org.opentrafficsim.core.unit;
- 
+

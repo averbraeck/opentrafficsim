@@ -63,17 +63,66 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     protected DoubleMatrix2D matrixSI;
 
     /**
+     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
+     * @param values double[][]; the 2D array to check
+     * @throws ValueException
+     */
+    private static void ensureRectangular(final double[][] values) throws ValueException
+    {
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("Lengths of rows are not all the same");
+    }
+
+    /**
+     * Check that a 2D array of DoubleScalar is rectangular; i.e. all rows have the same length.
+     * @param values DoubleScalar[][]; the 2D array to check
+     * @throws ValueException
+     */
+    private static void ensureRectangular(final DoubleScalar<?>[][] values) throws ValueException
+    {
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("lengths of rows are not all the same");
+    }
+
+    /**
+     * Check that two matrices have the same number of rows and columns.
+     * @param x DoubleMatrix; matrix to size-compare to y
+     * @param y DoubleMatrix; matrix to size-compare to x
+     * @throws ValueException
+     */
+    private static void ensureSameSize(final DoubleMatrix<?> x, final DoubleMatrix<?> y) throws ValueException
+    {
+        if (x.rows() != y.rows() || x.columns() != y.columns())
+            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
+                    x.rows(), y.columns(), y.rows()));
+    }
+    
+    /**
+     * Check that a DoubleMatrix has the same size as a 2D array
+     * @param x DoubleMatrix; matrix to size-compare to c
+     * @param c double[][]; the 2D array to size-compare to x
+     * @throws ValueException
+     */
+    private static void ensureSameSize(final DoubleMatrix<?> x, final double[][] c) throws ValueException
+    {
+        ensureRectangular(c);
+        if (x.rows() != c.length || x.columns() != c[0].length)
+            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
+                    x.rows(), c.length, c[0].length));
+    }
+
+    /**
      * Construct the matrix and store the values in SI units.
      * @param values a 2D array of values for the constructor
      * @param unit the unit of the values
-     * @throws ValueException 
+     * @throws ValueException
      */
     public DoubleMatrix(final double[][] values, final U unit) throws ValueException
     {
         super(unit);
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("lengths of rows are not all the same");
+        ensureRectangular(values);
         this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
         if (unit.equals(unit.getStandardUnit()))
         {
@@ -99,9 +148,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public DoubleMatrix(final DoubleScalar<U>[][] values) throws ValueException
     {
         super(values.length > 0 && values[0].length > 0 ? values[0][0].getUnit() : null);
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("lengths of rows are not all the same");
+        ensureRectangular(values);
         if (values.length == 0 || values[0].length == 0)
         {
             throw new ValueException(
@@ -283,21 +330,21 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         {
             if (this instanceof Sparse)
             {
-                //System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
+                // System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
                 return new SparseDoubleAlgebra().det(this.matrixSI);
             }
             if (this instanceof Dense)
             {
-                //System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
+                // System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
                 return new DenseDoubleAlgebra().det(this.matrixSI);
             }
             throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
         }
         catch (IllegalArgumentException exception)
         {
-            if (! exception.getMessage().startsWith("Matrix must be square"))
-            exception.printStackTrace();
-            throw new ValueException(exception.getMessage());    // probably Matrix must be square
+            if (!exception.getMessage().startsWith("Matrix must be square"))
+                exception.printStackTrace();
+            throw new ValueException(exception.getMessage()); // probably Matrix must be square
         }
     }
 
@@ -595,18 +642,19 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public String toString(final U displayUnit)
     {
+        StringBuffer buf = new StringBuffer();
         // TODO: check how to always format numbers corresponding to the Locale used.
-        String s = "[" + displayUnit.getAbbreviation() + "]";
+        buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.matrixSI.rows(); i++)
         {
-            s += "\n";
+            buf.append("\n");
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
                 double f = expressAsUnit(this.matrixSI.get(i, j), displayUnit);
-                s += " " + Format.format(f);
+                buf.append(" " + Format.format(f));
             }
         }
-        return s;
+        return buf.toString();
     }
 
     /**********************************************************************************/
@@ -622,9 +670,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public void add(final DoubleMatrixRel<U> matrix) throws ValueException
     {
-        if (rows() != matrix.rows() || columns() != matrix.columns())
-            throw new ValueException("DoubleMatrix.add - two matrices have unequal size: " + rows() + "x" + columns()
-                    + " != " + matrix.rows() + "x" + matrix.columns());
+        ensureSameSize(this, matrix);
         this.matrixSI.assign(matrix.matrixSI, DoubleFunctions.plus);
     }
 
@@ -637,9 +683,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      */
     public void subtract(final DoubleMatrixRel<U> matrix) throws ValueException
     {
-        if (rows() != matrix.rows() || columns() != matrix.columns())
-            throw new ValueException("DoubleMatrix.subtract - two matrices have unequal size: " + rows() + "x"
-                    + columns() + " != " + matrix.rows() + "x" + matrix.columns());
+        ensureSameSize(this, matrix);
         this.matrixSI.assign(matrix.matrixSI, DoubleFunctions.minus);
     }
 
@@ -658,10 +702,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixAbs<U> plus(final DoubleMatrixAbs<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         DoubleMatrixAbs<U> c = x.copy();
         c.add(y);
         return c;
@@ -693,10 +734,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixRel<U> plus(final DoubleMatrixRel<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         DoubleMatrixRel<U> c = x.copy();
         c.add(y);
         return c;
@@ -713,10 +751,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixRel<U> minus(final DoubleMatrixRel<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         DoubleMatrixRel<U> c = x.copy();
         c.subtract(y);
         return c;
@@ -733,10 +768,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixAbs<U> minus(final DoubleMatrixAbs<U> x, final DoubleMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         DoubleMatrixAbs<U> c = x.copy();
         c.subtract(y);
         return c;
@@ -753,10 +785,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixRel<U> minus(final DoubleMatrixAbs<U> x, final DoubleMatrixAbs<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         DoubleMatrixRel<U> c = null;
         if (x instanceof Dense)
             c = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
@@ -781,10 +810,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static DoubleMatrixAbs<SIUnit> multiply(final DoubleMatrixAbs<?> x, final DoubleMatrixAbs<?> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
                         y.getUnit().getSICoefficients()).toString());
@@ -806,10 +832,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static DoubleMatrixRel<SIUnit> multiply(final DoubleMatrixRel<?> x, final DoubleMatrixRel<?> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("DoubleMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
                         y.getUnit().getSICoefficients()).toString());
@@ -832,11 +855,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixAbs<U> multiply(final DoubleMatrixAbs<U> x, final double[][] c)
             throws ValueException
     {
-        if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
-            throw new ValueException(
-                    "DoubleMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
-                            + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
-
+        ensureSameSize(x, c);
         // TODO: more elegant implementation that does not copy the entire matrix?
         DoubleMatrixAbs<U> result = x.copy();
         DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
@@ -855,11 +874,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     public static <U extends Unit<U>> DoubleMatrixRel<U> multiply(final DoubleMatrixRel<U> x, final double[][] c)
             throws ValueException
     {
-        if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
-            throw new ValueException(
-                    "DoubleMatrix.multiply with dimensionless matrix- two matrices have unequal size: " + x.rows()
-                            + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
-
+        ensureSameSize(x, c);
         // TODO: more elegant implementation that does not copy the entire matrix?
         DoubleMatrixRel<U> result = x.copy();
         DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);

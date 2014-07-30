@@ -97,10 +97,10 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
     protected final Axis yAxis;
 
     /** Time granularity values. */
-    protected static double[] standardTimeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
+    protected static final double[] standardTimeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
     /** Distance granularity values. */
-    protected static double[] standardDistanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
+    protected static final double[] standardDistanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
 
     /**
      * Create a new ContourPlot.
@@ -249,12 +249,11 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
             for (int item = dataset.getItemCount(0); --item >= 0;)
             {
                 double x = dataset.getXValue(0, item);
-                if ((x + this.xAxis.getCurrentGranularity() / 2 < t)
-                        || (x - this.xAxis.getCurrentGranularity() / 2 >= t))
+                if (x + this.xAxis.getCurrentGranularity() / 2 < t || x - this.xAxis.getCurrentGranularity() / 2 >= t)
                     continue;
                 double y = dataset.getYValue(0, item);
-                if ((y + this.yAxis.getCurrentGranularity() / 2 < distance)
-                        || (y - this.yAxis.getCurrentGranularity() / 2 >= distance))
+                if (y + this.yAxis.getCurrentGranularity() / 2 < distance
+                        || y - this.yAxis.getCurrentGranularity() / 2 >= distance)
                     continue;
                 roundedTime = x;
                 roundedDistance = y;

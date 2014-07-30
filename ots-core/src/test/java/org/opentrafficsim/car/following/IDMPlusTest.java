@@ -156,12 +156,12 @@ public class IDMPlusTest
                         + referenceCar.position(initialTime).getValueSI(), LengthUnit.METER);
         leaderCar = new Car(0, simulator, null, initialTime, leaderPosition, initialSpeed);
         leaders.add(leaderCar);
-        System.out.println("Setup    referenceCar: " + referenceCar);
+        //System.out.println("Setup    referenceCar: " + referenceCar);
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             referenceCar.setState(cfmr);
-            System.out.println(String.format("step %3d referenceCar: %s", timeStep, referenceCar));
+            //System.out.println(String.format("step %3d referenceCar: %s", timeStep, referenceCar));
             if (timeStep > 100)
             {
                 double position = referenceCar.position(cfmr.validUntil).getValueSI();

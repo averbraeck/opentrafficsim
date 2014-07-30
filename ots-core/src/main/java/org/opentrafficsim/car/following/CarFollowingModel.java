@@ -46,7 +46,7 @@ public abstract interface CarFollowingModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return CarFollowingModelResult; the result of application of the car following model
      */
-    public abstract CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
+    CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
             final DoubleScalarAbs<SpeedUnit> speedLimit);
 
     /**
@@ -78,7 +78,7 @@ public abstract interface CarFollowingModel
      * @version Jul 9, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    public class CarFollowingModelResult
+    class CarFollowingModelResult
     {
         /** Acceleration that will be maintained during the current time slot. */
         public final DoubleScalarAbs<AccelerationUnit> acceleration;

@@ -61,7 +61,7 @@ public class Format
      */
     public static String format(final float value, final int width, final int precision)
     {
-        if (0 == value || (Math.abs(value) > 0.01 && Math.abs(value) < 999.0))
+        if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)
             return String.format(formatString(width, precision, "f"), value);
         return String.format(formatString(width, precision, "e"), value);
     }
@@ -96,7 +96,7 @@ public class Format
      */
     public static String format(final double value, final int width, final int precision)
     {
-        if (0 == value || (Math.abs(value) > 0.01 && Math.abs(value) < 999.0))
+        if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)
             return String.format(formatString(width, precision, "f"), value);
         return String.format(formatString(width, precision, "e"), value);
     }

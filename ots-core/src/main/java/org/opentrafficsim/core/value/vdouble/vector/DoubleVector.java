@@ -533,14 +533,15 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      */
     public String toString(final U displayUnit)
     {
+        StringBuffer buf = new StringBuffer();
         // TODO: check how to always format numbers corresponding to the Locale used.
-        String s = "[" + displayUnit.getAbbreviation() + "]";
+        buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
             double f = expressAsUnit(this.vectorSI.get(i), displayUnit);
-            s += " " + Format.format(f);
+            buf.append(" " + Format.format(f));
         }
-        return s;
+        return buf.toString();
     }
 
     /**********************************************************************************/
