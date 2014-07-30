@@ -59,7 +59,7 @@ public class SICoefficients
      */
     protected static String enumMapToString(final EnumMap<SI, Integer> map)
     {
-        String result = "";
+        StringBuffer result = new StringBuffer();
         boolean first = true;
         for (SI si : map.keySet())
         {
@@ -71,33 +71,33 @@ public class SICoefficients
                 }
                 else
                 {
-                    result += ".";
+                    result.append(".");
                 }
-                result += si.name();
+                result.append(si.name());
                 if (map.get(si) != 1)
                 {
-                    result += map.get(si);
+                    result.append(map.get(si));
                 }
             }
         }
 
         if (result.length() == 0)
         {
-            result = "1";
+            result.append("1");
         }
 
         for (SI si : map.keySet())
         {
             if (map.get(si) < 0)
             {
-                result += "/" + si.name();
+                result.append("/" + si.name());
                 if (map.get(si) != -1)
                 {
-                    result += (-map.get(si));
+                    result.append(-map.get(si));
                 }
             }
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -196,11 +196,11 @@ public class SICoefficients
                 while (cs.length() > endPos)
                 {
                     char digit = cs.charAt(endPos);
-                    if (digit >= '0' && (digit <= '9'))
+                    if (digit >= '0' && digit <= '9')
                     {
                         if (0 == digitsSeen)
                             value = 0;
-                        value = value * 10 + (digit - '0');
+                        value = value * 10 + digit - '0';
                         endPos++;
                         digitsSeen++;
                     }

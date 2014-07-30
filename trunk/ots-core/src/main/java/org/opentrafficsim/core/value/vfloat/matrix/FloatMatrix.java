@@ -8,6 +8,7 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
@@ -61,6 +62,57 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
 
     /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse. */
     protected FloatMatrix2D matrixSI;
+    
+    /**
+     * Check that a 2D array of float is rectangular; i.e. all rows have the same length.
+     * @param values float[][]; the 2D array to check
+     * @throws ValueException
+     */
+    private static void ensureRectangular(final float[][] values) throws ValueException
+    {
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("Lengths of rows are not all the same");
+    }
+    
+    /**
+     * Check that a 2D array of FloatScalar is rectangular; i.e. all rows have the same length.
+     * @param values FloatScalar[][]; the 2D array to check
+     * @throws ValueException
+     */
+    private static void ensureRectangular(final FloatScalar<?>[][] values) throws ValueException
+    {
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("lengths of rows are not all the same");
+    }
+
+    /**
+     * Check that two matrices have the same number of rows and columns.
+     * @param x FloatMatrix; matrix to size-compare to y
+     * @param y FloatMatrix; matrix to size-compare to x
+     * @throws ValueException
+     */
+    private static void ensureSameSize(final FloatMatrix<?> x, final FloatMatrix<?> y) throws ValueException
+    {
+        if (x.rows() != y.rows() || x.columns() != y.columns())
+            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
+                    x.rows(), y.columns(), y.rows()));
+    }
+
+    /**
+     * Check that a FloatMatrix has the same size as a 2D array
+     * @param x FloatMatrix; matrix to size-compare to c
+     * @param c float[][]; the 2D array to size-compare to x
+     * @throws ValueException
+     */
+    private static void ensureSameSize(final FloatMatrix<?> x, final float[][] c) throws ValueException
+    {
+        ensureRectangular(c);
+        if (x.rows() != c.length || x.columns() != c[0].length)
+            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
+                    x.rows(), c.length, c[0].length));
+    }
 
     /**
      * Construct the matrix and store the values in SI units.
@@ -71,9 +123,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public FloatMatrix(final float[][] values, final U unit) throws ValueException
     {
         super(unit);
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("lengths of rows are not all the same");
+        ensureRectangular(values);
         this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
         if (unit.equals(unit.getStandardUnit()))
         {
@@ -99,9 +149,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public FloatMatrix(final FloatScalar<U>[][] values) throws ValueException
     {
         super(values.length > 0 && values[0].length > 0 ? values[0][0].getUnit() : null);
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("lengths of rows are not all the same");
+        ensureRectangular(values);
         if (values.length == 0 || values[0].length == 0)
         {
             throw new ValueException(
@@ -599,18 +647,19 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public String toString(final U displayUnit)
     {
+        StringBuffer buf = new StringBuffer();
         // TODO: check how to always format numbers corresponding to the Locale used.
-        String s = "[" + displayUnit.getAbbreviation() + "]";
+        buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.matrixSI.rows(); i++)
         {
-            s += "\n";
+            buf.append("\n");
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
                 float f = (float) expressAsUnit(this.matrixSI.get(i, j), displayUnit);
-                s += " " + Format.format(f);
+                buf.append(" " + Format.format(f));
             }
         }
-        return s;
+        return buf.toString();
     }
 
     /**********************************************************************************/
@@ -626,9 +675,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public void add(final FloatMatrixRel<U> matrix) throws ValueException
     {
-        if (rows() != matrix.rows() || columns() != matrix.columns())
-            throw new ValueException("FloatMatrix.add - two matrices have unequal size: " + rows() + "x" + columns()
-                    + " != " + matrix.rows() + "x" + matrix.columns());
+        ensureSameSize(this, matrix);
         this.matrixSI.assign(matrix.matrixSI, FloatFunctions.plus);
     }
 
@@ -641,9 +688,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      */
     public void subtract(final FloatMatrixRel<U> matrix) throws ValueException
     {
-        if (rows() != matrix.rows() || columns() != matrix.columns())
-            throw new ValueException("FloatMatrix.subtract - two matrices have unequal size: " + rows() + "x"
-                    + columns() + " != " + matrix.rows() + "x" + matrix.columns());
+        ensureSameSize(this, matrix);
         this.matrixSI.assign(matrix.matrixSI, FloatFunctions.minus);
     }
 
@@ -662,10 +707,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixAbs<U> plus(final FloatMatrixAbs<U> x, final FloatMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         FloatMatrixAbs<U> c = x.copy();
         c.add(y);
         return c;
@@ -697,10 +739,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixRel<U> plus(final FloatMatrixRel<U> x, final FloatMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.plus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         FloatMatrixRel<U> c = x.copy();
         c.add(y);
         return c;
@@ -717,10 +756,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixRel<U> minus(final FloatMatrixRel<U> x, final FloatMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         FloatMatrixRel<U> c = x.copy();
         c.subtract(y);
         return c;
@@ -737,10 +773,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixAbs<U> minus(final FloatMatrixAbs<U> x, final FloatMatrixRel<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         FloatMatrixAbs<U> c = x.copy();
         c.subtract(y);
         return c;
@@ -757,10 +790,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixRel<U> minus(final FloatMatrixAbs<U> x, final FloatMatrixAbs<U> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.minus - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         FloatMatrixRel<U> c = null;
         if (x instanceof Dense)
             c = new FloatMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
@@ -785,10 +815,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static FloatMatrixAbs<SIUnit> multiply(final FloatMatrixAbs<?> x, final FloatMatrixAbs<?> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
                         y.getUnit().getSICoefficients()).toString());
@@ -810,10 +837,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static FloatMatrixRel<SIUnit> multiply(final FloatMatrixRel<?> x, final FloatMatrixRel<?> y)
             throws ValueException
     {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException("FloatMatrix.multiply - two matrices have unequal size: " + x.rows() + "x"
-                    + x.columns() + " != " + y.rows() + "x" + y.columns());
-
+        ensureSameSize(x, y);
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
                         y.getUnit().getSICoefficients()).toString());
@@ -836,13 +860,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixAbs<U> multiply(final FloatMatrixAbs<U> x, final float[][] c)
             throws ValueException
     {
-        for (int row = 1; row < c.length; row++)
-            if (c[0].length != c[row].length)
-                throw new ValueException("FloatMatrix.multiply lengths of rows of c are not all the same");
-        if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
-            throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
-                    + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
-
+        ensureSameSize(x, c);
         // TODO: more elegant implementation that does not copy the entire matrix?
         FloatMatrixAbs<U> result = x.copy();
         DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
@@ -861,13 +879,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     public static <U extends Unit<U>> FloatMatrixRel<U> multiply(final FloatMatrixRel<U> x, final float[][] c)
             throws ValueException
     {
-        for (int row = 1; row < c.length; row++)
-            if (c[0].length != c[row].length)
-                throw new ValueException("FloatMatrix.multiply lengths of rows of c are not all the same");
-        if (x.rows() != c.length || x.columns() != (c.length > 0 ? c[0].length : 0))
-            throw new ValueException("FloatMatrix.multiply with dimensionless matrix- two matrices have unequal size: "
-                    + x.rows() + "x" + x.columns() + " != " + c.length + "x" + (c.length > 0 ? c[0].length : 0));
-
+        ensureSameSize(x, c);
         // TODO: more elegant implementation that does not copy the entire matrix?
         FloatMatrixRel<U> result = x.copy();
         DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);

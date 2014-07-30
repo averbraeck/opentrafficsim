@@ -91,7 +91,8 @@ public class DensityContourPlot extends ContourPlot
      * @see org.opentrafficsim.graphs.ContourDataset#incrementBinData(int, int, double, double)
      */
     @Override
-    public void incrementBinData(final int timeBin, final int distanceBin, final double duration, final double distanceCovered)
+    public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
+            final double distanceCovered)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;

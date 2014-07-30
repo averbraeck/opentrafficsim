@@ -500,7 +500,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     @Override
     public int getItemCount(final int series)
     {
-        if ((series < 0) || (series >= this.trajectories.size()))
+        if (series < 0 || series >= this.trajectories.size())
             return 0;
         return this.trajectories.get(series).size();
     }
@@ -511,7 +511,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     @Override
     public Number getX(final int series, final int item)
     {
-        if ((series < 0) || (series >= this.trajectories.size()))
+        if (series < 0 || series >= this.trajectories.size())
             return null;
         return this.trajectories.get(series).getTime(item);
     }
@@ -522,7 +522,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     @Override
     public double getXValue(final int series, final int item)
     {
-        if ((series < 0) || (series >= this.trajectories.size()))
+        if (series < 0 || series >= this.trajectories.size())
             return Double.NaN;
         return this.trajectories.get(series).getTime(item);
     }
@@ -533,7 +533,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     @Override
     public Number getY(final int series, final int item)
     {
-        if ((series < 0) || (series >= this.trajectories.size()))
+        if (series < 0 || series >= this.trajectories.size())
             return null;
         return this.trajectories.get(series).getDistance(item);
     }
@@ -544,7 +544,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     @Override
     public double getYValue(final int series, final int item)
     {
-        if ((series < 0) || (series >= this.trajectories.size()))
+        if (series < 0 || series >= this.trajectories.size())
             return Double.NaN;
         return this.trajectories.get(series).getDistance(item);
     }
