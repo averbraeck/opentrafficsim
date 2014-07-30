@@ -7,7 +7,9 @@ import org.jfree.chart.renderer.PaintScale;
 
 /**
  * Create a continuous color paint scale. <br />
- * Primarily intended for the contour plots, but sufficiently abstract for more general use.
+ * Primarily intended for the contour plots, but sufficiently abstract for more general use. <br />
+ * A continuous color paint scale creates paints (actually simple Colors) by linearly interpolating between a limited set
+ * of RGB Color values that correspond to given input values.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -49,7 +51,8 @@ public class ContinuousColorPaintScale implements PaintScale
     /**
      * Create a new ContinuousColorPaintScale.
      * @param format Format string to render the value under the mouse in a human readable format
-     * @param bounds Double[] array of boundary values (all values must be distinct; number of values must be >= 2)
+     * @param bounds Double[] array of boundary values (all values must be distinct and the number of values must be >=
+     *            2)
      * @param boundColors Color[] array of the colors to use at the boundary values (must have same size as bounds)
      */
     ContinuousColorPaintScale(final String format, final double bounds[], final Color boundColors[])
@@ -92,8 +95,10 @@ public class ContinuousColorPaintScale implements PaintScale
     }
 
     /**
-     * Create a mixed color. Depending on the value of ratio the result varies from <i>low</i> to <i>high</i>.
-     * @param ratio Double; value between 0.0 and 1.0.
+     * Create a mixed color component. When ratio varies from 0.0 to 1.0, the result varies from <i>low</i> to
+     * <i>high</i>. If ratio is outside the range 0.0 to 1.0, the result value can be outside the <i>range</i>
+     * <i>low</i> to <i>high</i>. However, the result is always limited to the range 0..255.
+     * @param ratio Double; value (normally) between 0.0 and 1.0.
      * @param low Integer; this value is returned when ratio equals 0.0
      * @param high Integer; this value is returned when ratio equals 1.0
      * @return Integer; the ratio-weighted average of <i>low</i> and <i>high</i>
