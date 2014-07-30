@@ -125,6 +125,8 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
         this.chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         this.chartPanel.addMouseMotionListener(this);
+        this.chartPanel.setMouseWheelEnabled(true);
+        this.chartPanel.addMouseMotionListener(this);
         add(this.chartPanel, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         add(this.statusLabel, BorderLayout.SOUTH);
