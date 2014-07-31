@@ -93,7 +93,7 @@ public class DensityContourPlot extends ContourPlot
      */
     @Override
     public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-            final double distanceCovered, double acceleration)
+            final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
