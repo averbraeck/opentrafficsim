@@ -262,4 +262,15 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         // TODO schedule next evaluation in the scheduler.
     }
 
+    /**
+     * Return the acceleration at a specified time.
+     * @param lastEvaluationTime DoubleScalarAbs&lt;TimeUnit&gt;; the time for which the acceleration must be returned
+     * @return DoubleScalarAbs&lt;AccelerationUnit&gt;; the acceleration at the given time
+     */
+    public DoubleScalarAbs<AccelerationUnit> getAcceleration(@SuppressWarnings("hiding") DoubleScalarAbs<TimeUnit> lastEvaluationTime)
+    {
+        // Currently the acceleration is constant during the evaluation interval
+        return new DoubleScalarAbs<AccelerationUnit>(this.acceleration);
+    }
+
 }

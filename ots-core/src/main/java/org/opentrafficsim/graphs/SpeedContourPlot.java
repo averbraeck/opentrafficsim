@@ -11,6 +11,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
 
 /**
+ * Speed contour plot.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -45,7 +46,7 @@ public class SpeedContourPlot extends ContourPlot
 
     /**
      * Create a new SpeedContourPlot.
-     * @param caption String; text to show above the DensityContourPlot
+     * @param caption String; text to show above the SpeedContourPlot
      * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
      * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
@@ -60,10 +61,10 @@ public class SpeedContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
+    private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes;
 
     /** Storage for the total length traveled in each cell. */
-    private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
+    private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
@@ -98,21 +99,14 @@ public class SpeedContourPlot extends ContourPlot
     }
 
     /**
-     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double)
+     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double, double)
      */
     @Override
     public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-            final double distanceCovered)
+            final double distanceCovered, double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
-        while (timeBin >= this.cumulativeTimes.size())
-        {
-            this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(new double[this.yAxis.getBinCount()],
-                    TimeUnit.SECOND));
-            this.cumulativeLengths.add(new DoubleVectorAbsSparse<LengthUnit>(new double[this.yAxis.getBinCount()],
-                    LengthUnit.METER));
-        }
         DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
         DoubleVectorAbs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBin);
         try

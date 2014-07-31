@@ -8,7 +8,6 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
