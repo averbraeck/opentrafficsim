@@ -31,7 +31,8 @@ package org.opentrafficsim.core.direction;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public enum ABDirection implements Direction {
+public enum ABDirection implements Direction
+{
     A,
     B;
 

@@ -33,10 +33,20 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
+ * 
+ * @param <ID> The ID of the Edge
  */
 public interface Edge<ID>
 {
+    /**
+     * Retrieve the ID of this Edge.
+     * @return ID; the ID of this Edge
+     */
     ID getID();
 
+    /**
+     * Retrieve the length of this Edge.
+     * @return DoubleScalar&lt;LengthUnit&gt;; the length of this Edge
+     */
     DoubleScalar<LengthUnit> getLength();
 }

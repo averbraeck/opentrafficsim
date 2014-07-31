@@ -149,7 +149,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @param commandPrefix String; prefix for the actionCommand of the items under the new JMenu
      * @param values double[]; array of values to be formatted using the format strings to yield the items under the new
      *            JMenu
-     * @return
+     * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
      */
     private JMenu buildMenu(final String caption, final String format, final String commandPrefix,
             final double[] values, final double currentValue)

@@ -31,9 +31,14 @@ package org.opentrafficsim.core.direction;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public enum CompassDirection implements Direction {
+public enum CompassDirection implements Direction
+{
+    /** North. */
     NORTH,
+    /** South. */
     SOUTH,
+    /** East. */
     EAST,
+    /** West. */
     WEST;
 }
