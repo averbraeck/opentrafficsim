@@ -11,6 +11,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
 
 /**
+ * Flow contour plot.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -45,7 +46,7 @@ public class FlowContourPlot extends ContourPlot
 
     /**
      * Create a new FlowContourPlot.
-     * @param caption String; text to show above the DensityContourPlot
+     * @param caption String; text to show above the FlowContourPlot
      * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
      * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
@@ -88,11 +89,11 @@ public class FlowContourPlot extends ContourPlot
     }
 
     /**
-     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double)
+     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double, double)
      */
     @Override
     public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-            final double distanceCovered)
+            final double distanceCovered, double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;

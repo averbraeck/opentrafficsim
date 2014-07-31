@@ -52,6 +52,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
+ * Common code for a contour plot. <br />
+ * The data collection code for acceleration assumes constant acceleration during the evaluation period of the GTU.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -505,6 +507,9 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
         int fromTimeBin = (int) Math.floor(relativeFromTime);
         int toTimeBin = (int) Math.floor(relativeToTime) + 1;
         double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
+        // FIXME: The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
+        // wrong for other car following algorithms).
+        double acceleration = car.getAcceleration(car.getLastEvaluationTime()).getValueSI();
         for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
         {
             if (timeBin < 0)
@@ -552,7 +557,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
                 System.out.println(String.format("tb=%d, db=%d, t=%.2f, d=%.2f", timeBin, distanceBin, duration,
                         distance));
                  */
-                incrementBinData(timeBin, distanceBin, duration, distance);
+                incrementBinData(timeBin, distanceBin, duration, distance, acceleration);
                 relativeFromTime += relativeDuration;
                 binDistanceStart = distanceBin + 1;
             }
@@ -574,8 +579,10 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
      * @param distanceBin Integer; the rank of the bin on the distance-scale
      * @param duration Double; the time spent in this bin
      * @param distanceCovered Double; the distance covered in this bin
+     * @param acceleration Double; the average acceleration in this bin
      */
-    public abstract void incrementBinData(int timeBin, int distanceBin, double duration, double distanceCovered);
+    public abstract void incrementBinData(int timeBin, int distanceBin, double duration, double distanceCovered,
+            double acceleration);
 
     /**
      * @see org.jfree.data.xy.XYZDataset#getZValue(int, int)
@@ -641,6 +648,13 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
 
         cp = new FlowContourPlot("FlowPlot", minimumDistance, maximumDistance);
         cp.setTitle("FLow Contour Graph");
+        cp.setBounds(left + contourPlots.size() * deltaLeft, top + contourPlots.size() * deltaTop, 600, 400);
+        cp.pack();
+        cp.setVisible(true);
+        contourPlots.add(cp);
+
+        cp = new AccelerationContourPlot("AccelerationPlot", minimumDistance, maximumDistance);
+        cp.setTitle("Acceleration Contour Graph");
         cp.setBounds(left + contourPlots.size() * deltaLeft, top + contourPlots.size() * deltaTop, 600, 400);
         cp.pack();
         cp.setVisible(true);

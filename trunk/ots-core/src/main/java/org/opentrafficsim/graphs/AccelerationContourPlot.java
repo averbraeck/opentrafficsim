@@ -2,6 +2,7 @@ package org.opentrafficsim.graphs;
 
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
@@ -11,7 +12,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
 
 /**
- * Density contour plot.
+ * Acceleration contour plot.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -36,32 +37,35 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jul 28, 2014 <br>
+ * @version Jul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DensityContourPlot extends ContourPlot
+public class AccelerationContourPlot extends ContourPlot
 {
     /** */
-    private static final long serialVersionUID = 20140729L;
+    private static final long serialVersionUID = 20140731L;
 
     /**
-     * Create a new DensityContourPlot.
-     * @param caption String; text to show above the DensityContourPlot
+     * Create a new AccelerationContourPlot.
+     * @param caption String; text to show above the AccelerationContourPlot
      * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
      * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public DensityContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
+    public AccelerationContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
                 TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "xxTime", "%.0fs"),
                 new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "xxDistance", "%.0fm"), 120d, 10d, 0d, "density %.1f veh/km",
-                "%.1f veh/km", 20d);
+                        standardDistanceGranularities[3], "xxDistance", "%.0fm"), -5d, 0d, 3d,
+                "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 
     /** Storage for the total time spent in each cell. */
     private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes;
+
+    /** Storage for the total acceleration executed in each cell. */
+    private ArrayList<DoubleVectorAbs<AccelerationUnit>> cumulativeAccelerations;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
@@ -69,27 +73,34 @@ public class DensityContourPlot extends ContourPlot
     @Override
     public Comparable<String> getSeriesKey(final int series)
     {
-        return "density";
+        return "speed";
     }
 
     /**
-     * @see org.opentrafficsim.graphs.ContourDataset#extendXRange(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
+     * @see org.opentrafficsim.graphs.ContourPlot#extendXRange(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
      */
     @Override
     public void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeTimes)
+        {
             this.cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
+            this.cumulativeAccelerations = new ArrayList<DoubleVectorAbs<AccelerationUnit>>();
+        }
         int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
+        {
             this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(new double[this.yAxis.getBinCount()],
                     TimeUnit.SECOND));
+            this.cumulativeAccelerations.add(new DoubleVectorAbsSparse<AccelerationUnit>(new double[this.yAxis
+                    .getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
+        }
     }
 
     /**
-     * @see org.opentrafficsim.graphs.ContourDataset#incrementBinData(int, int, double, double, double)
+     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double, double)
      */
     @Override
     public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
@@ -97,10 +108,12 @@ public class DensityContourPlot extends ContourPlot
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
-        DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBin);
+        DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
+        DoubleVectorAbs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBin);
         try
         {
-            values.setSI(distanceBin, values.getSI(distanceBin) + duration);
+            timeValues.setSI(distanceBin, timeValues.getSI(distanceBin) + duration);
+            accelerationValues.setSI(distanceBin, accelerationValues.getSI(distanceBin) + acceleration * duration);
         }
         catch (ValueException exception)
         {
@@ -110,14 +123,15 @@ public class DensityContourPlot extends ContourPlot
     }
 
     /**
-     * @see org.opentrafficsim.graphs.ContourDataset#computeZValue(int, int, int, int)
+     * @see org.opentrafficsim.graphs.ContourPlot#computeZValue(int, int, int, int)
      */
     @Override
     public double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
             final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;
-        if (null == this.cumulativeTimes || firstTimeBin >= this.cumulativeTimes.size())
+        double cumulativeAccelerationInSI = 0;
+        if (firstTimeBin >= this.cumulativeTimes.size())
             return Double.NaN;
         try
         {
@@ -125,9 +139,13 @@ public class DensityContourPlot extends ContourPlot
             {
                 if (timeBinIndex >= this.cumulativeTimes.size())
                     break;
-                DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
+                DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
+                DoubleVectorAbs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
-                    cumulativeTimeInSI += values.getSI(distanceBinIndex);
+                {
+                    cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);
+                    cumulativeAccelerationInSI += accelerationValues.getSI(distanceBinIndex);
+                }
             }
         }
         catch (ValueException exception)
@@ -136,7 +154,9 @@ public class DensityContourPlot extends ContourPlot
                     firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
-        return 1000 * cumulativeTimeInSI / this.xAxis.getCurrentGranularity() / this.yAxis.getCurrentGranularity();
+        if (0 == cumulativeTimeInSI)
+            return Double.NaN;
+        return cumulativeAccelerationInSI / cumulativeTimeInSI;
     }
 
 }

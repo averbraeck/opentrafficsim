@@ -90,4 +90,16 @@ public class Calc
     {
         return new DoubleScalarRel<TimeUnit>(speed.getValueSI() / acceleration.getValueSI(), TimeUnit.SECOND);
     }
+    
+    /**
+     * Acceleration is speed difference divided by time difference. <br />
+     * a = dv / dt
+     * @param speedDifference DoubleScalarRel&lt;SpeedUnit&gt;; the speed difference
+     * @param timeDifference DoubleScalarRel&lt;TimeUnit&gt;; the time difference
+     * @return DoubleScalarAbs&lt;AccelerationUnit&gt;; the average acceleration needed to match the given inputs
+     */
+    public static DoubleScalarAbs<AccelerationUnit> deltaSpeedDividedByTime(final DoubleScalarRel<SpeedUnit> speedDifference, final DoubleScalarRel<TimeUnit> timeDifference)
+    {
+        return new DoubleScalarAbs<AccelerationUnit>(speedDifference.getValueSI() / timeDifference.getValueSI(), AccelerationUnit.METER_PER_SECOND_2);
+    }
 }
