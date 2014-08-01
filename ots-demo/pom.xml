@@ -5,9 +5,7 @@
     <artifactId>ots-base</artifactId>
     <version>0.1</version>
   </parent>
-  <groupId>opentrafficsim</groupId>
   <artifactId>ots-demo</artifactId>
-  <version>0.1</version>
   <name>Open Traffic Sim demo classes</name>
   <description>Demo classes for the Open Traffic Sim project</description>
 </project>
