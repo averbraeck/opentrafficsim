@@ -91,7 +91,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     /** Maximum of the time axis. */
     protected DoubleScalarAbs<TimeUnit> maximumTime = new DoubleScalarAbs<TimeUnit>(300, TimeUnit.SECOND);
 
-    /** The ChartPanel for this ContourPlot. */
+    /** The ChartPanel for this TrajectoryPlot. */
     protected final JFreeChart chartPanel;
 
     /** Area to show status information. */
@@ -152,7 +152,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     /**
      * Redraw this TrajectoryGraph (after the underlying data has been changed).
      */
-    private void reGraph()
+    public void reGraph()
     {
         configureAxis(this.chartPanel.getXYPlot().getDomainAxis(), this.maximumTime.getValueSI());
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
@@ -609,7 +609,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
                 {
                     DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
-                    if (car.position(now).getValueSI() > 5000)
+                    if (car.position(now).getValueSI() > maximumDistance.getValueSI())
                     {
                         cars.remove(carIndex);
                         break;

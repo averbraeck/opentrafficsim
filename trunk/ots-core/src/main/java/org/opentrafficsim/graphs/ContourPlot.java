@@ -311,7 +311,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
     /**
      * Redraw this ContourGraph (after the underlying data, or a granularity setting has been changed).
      */
-    private void reGraph()
+    public void reGraph()
     {
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
         XYPlot plot = this.chartPanel.getChart().getXYPlot();
@@ -701,7 +701,7 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
                 {
                     DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
-                    if (car.position(now).getValueSI() > 5000)
+                    if (car.position(now).getValueSI() > maximumDistance.getValueSI())
                     {
                         cars.remove(carIndex);
                         break;

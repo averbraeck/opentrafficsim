@@ -54,10 +54,10 @@ public class FlowContourPlot extends ContourPlot
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
-                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "xxTime", "%.0fs"),
+                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "", "Time", "%.0fs"),
                 new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "xxDistance", "%.0fm"), 2500d, 1500d, 0d, "flow %.0f veh/h",
-                "%.0f veh/h", 500d);
+                        standardDistanceGranularities[3], "", "Distance", "%.0fm"), 2500d, 1500d, 0d,
+                "flow %.0f veh/h", "%.0f veh/h", 500d);
     }
 
     /** Storage for the total length traveled in each cell. */
