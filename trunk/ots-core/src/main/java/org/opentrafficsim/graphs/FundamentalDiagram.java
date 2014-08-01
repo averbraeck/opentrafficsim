@@ -9,19 +9,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -31,7 +27,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.PlotChangeEvent;
-import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -43,12 +38,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
-import org.opentrafficsim.car.following.IDMPlus;
-import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.MassUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -209,7 +199,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
      * @param car Car; the car that passes FIXME replace Car by GTU
      * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
      */
-    private void addData(int lane, Car car, DoubleScalarAbs<TimeUnit> detectionTime)
+    public void addData(int lane, Car car, DoubleScalarAbs<TimeUnit> detectionTime)
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
@@ -359,8 +349,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
         if (item >= laneDetections.size())
             return Double.NaN;
         double result = laneDetections.get(item).getValue(axis);
-        System.out.println(String.format("getSample (lane=%d, item=%d, axis=%s) returns %f", lane, item, axis.name,
+        /*-
+        System.out.println(String.format("getSample(lane=%d, item=%d, axis=%s) returns %f", lane, item, axis.name,
                 result));
+         */
         return result;
     }
 
@@ -517,7 +509,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
     public void actionPerformed(ActionEvent actionEvent)
     {
         String command = actionEvent.getActionCommand();
-        System.out.println("command is \"" + command + "\"");
+        // System.out.println("command is \"" + command + "\"");
         String[] fields = command.split("[/]");
         if (fields.length == 2)
         {
@@ -547,118 +539,4 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
             throw new Error("Unknown ActionEvent");
     }
 
-    /**
-     * Main for stand alone running.
-     * @param args String[]; the program arguments (not used)
-     */
-    public static void main(final String[] args)
-    {
-        // TODO: a constant flow encountering a temporary blockage is not the way to obtain a nice Fundamental Diagram.
-        // Instead a bottleneck is needed an gradually increasing flow followed by gradually decreasing flow.
-        JOptionPane.showMessageDialog(null, "FundamentalDiagramPlot", "Start experiment",
-                JOptionPane.INFORMATION_MESSAGE);
-        // DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(5000, LengthUnit.METER);
-        DoubleScalarAbs<LengthUnit> detectorLocation = new DoubleScalarAbs<LengthUnit>(3500, LengthUnit.METER);
-        FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
-                        new DoubleScalarRel<TimeUnit>(1, TimeUnit.MINUTE));
-        fd.setTitle("Fundamental Diagram Graph");
-        fd.setBounds(0, 0, 600, 400);
-        fd.pack();
-        fd.setVisible(true);
-        DEVSSimulator simulator = new DEVSSimulator();
-        CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        final double endTime = 1800; // [s]
-        final double headway = 3600.0 / 1500.0; // 1500 [veh / hour] == 2.4s headway
-        double thisTick = 0;
-        int carsCreated = 0;
-        ArrayList<Car> cars = new ArrayList<Car>();
-        double nextSourceTick = 0;
-        double nextMoveTick = 0;
-        double idmPlusTick = 0.5;
-        while (thisTick < endTime)
-        {
-            // System.out.println("thisTick is " + thisTick);
-            if (thisTick == nextSourceTick)
-            {
-                // Time to generate another car
-                DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                Car car =
-                        new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
-                cars.add(0, car);
-                // System.out.println(String.format("thisTick=%.1f, there are now %d vehicles", thisTick, cars.size()));
-                nextSourceTick += headway;
-            }
-            if (thisTick == nextMoveTick)
-            {
-                // Time to move all vehicles forward (this works even though they do not have simultaneous clock ticks)
-                // Debugging
-                /*-
-                if (thisTick == 700)
-                {
-                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                    for (int i = 0; i < cars.size(); i++)
-                        System.out.println(cars.get(i).toString(now));
-                }
-                 */
-                /*
-                 * TODO: Currently all cars have to be moved "manually". This functionality should go to the simulator.
-                 */
-                for (int carIndex = 0; carIndex < cars.size(); carIndex++)
-                {
-                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                    Car car = cars.get(carIndex);
-                    if (car.position(now).getValueSI() > maximumDistance.getValueSI())
-                    {
-                        cars.remove(carIndex);
-                        break;
-                    }
-                    Collection<Car> leaders = new ArrayList<Car>();
-                    if (carIndex < cars.size() - 1)
-                        leaders.add(cars.get(carIndex + 1));
-                    if (thisTick >= 300 && thisTick < 500)
-                    {
-                        // Add a stationary car at 4000m to simulate an opening bridge
-                        Car block =
-                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
-                                        LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
-                        leaders.add(block);
-                    }
-                    CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
-                    car.setState(cfmr);
-                    DoubleScalarAbs<TimeUnit> lowerBound = car.getLastEvaluationTime();
-                    DoubleScalarAbs<TimeUnit> upperBound = car.getNextEvaluationTime();
-                    if (car.position(lowerBound).getValueSI() <= detectorLocation.getValueSI()
-                            && car.position(upperBound).getValueSI() > detectorLocation.getValueSI())
-                    {
-                        // This car passes the detector; add the movement of this Car to the fundamental diagram plot
-                        // Figure out at what time the car passes the detector.
-                        // For this demo we use bisection to converge to the correct time.
-                        final double maximumTimeError = 0.01; // [s]
-                        DoubleScalarAbs<TimeUnit> passingTime = lowerBound;
-                        while (upperBound.getValueSI() - lowerBound.getValueSI() > maximumTimeError)
-                        {
-                            passingTime =
-                                    new DoubleScalarAbs<TimeUnit>(
-                                            (lowerBound.getValueSI() + upperBound.getValueSI()) / 2, TimeUnit.SECOND);
-                            DoubleScalarAbs<LengthUnit> position = car.position(passingTime);
-                            if (position.getValueSI() > detectorLocation.getValueSI())
-                                lowerBound = passingTime;
-                            else
-                                upperBound = passingTime;
-                        }
-                        fd.addData(0, car, passingTime);
-                    }
-                }
-                nextMoveTick += idmPlusTick;
-            }
-            thisTick = Math.min(nextSourceTick, nextMoveTick);
-        }
-        // Notify the trajectory plot that the underlying data has changed
-        fd.reGraph();
-    }
 }
