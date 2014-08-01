@@ -32,6 +32,8 @@
 				<!-- generic base packages -->
 				<module>../ots-core</module>
 				<!-- other modules here -->
+				<module>../ots-demo</module>
+
 
 				<!-- micro model packages -->
 				<!-- module>../ots-yyy</module -->
@@ -408,6 +410,12 @@
 				<groupId>dsol</groupId>
 				<artifactId>dsol</artifactId>
 				<version>${dsol-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>opentrafficsim</groupId>
+				<artifactId>ots-core</artifactId>
+				<version>${ots-version}</version>
 			</dependency>
 
 			<dependency>
