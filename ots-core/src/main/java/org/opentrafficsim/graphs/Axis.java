@@ -47,6 +47,9 @@ class Axis
 
     /** Name to describe the axis and to name the pop up menu that changes the current granularity. */
     protected final String name;
+    
+    /** Name to identify this axis */
+    protected final String shortName;
 
     /** Format for rendering a value along this axis. */
     protected String format;
@@ -60,16 +63,19 @@ class Axis
      * @param initialGranularity double; initial aggregation value (must be one of the values in granularities)
      * @param name String; the name to describe the axis and to name the pop up menu that changes the current
      *            granularity
-     * @param format String; format string for rending a value along this axis
+     * @param shortName String; the name identifying this axis for use in a menu
+     * @param format String; format string for rendering a value along this axis
      */
     public Axis(final DoubleScalar<?> minimumValue, final DoubleScalar<?> maximumValue,
-            final double[] granularities, final double initialGranularity, final String name, final String format)
+            final double[] granularities, final double initialGranularity, final String name, final String shortName, final String format)
     {
         this.minimumValue = minimumValue;
         this.setMaximumValue(maximumValue);
         this.granularities = granularities;
-        this.setCurrentGranularity(initialGranularity);
+        if(null != granularities)
+            this.setCurrentGranularity(initialGranularity);
         this.name = name;
+        this.shortName = shortName;
         this.format = format;
     }
 

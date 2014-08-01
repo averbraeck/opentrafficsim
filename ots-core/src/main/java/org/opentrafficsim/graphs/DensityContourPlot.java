@@ -54,10 +54,10 @@ public class DensityContourPlot extends ContourPlot
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
-                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "xxTime", "%.0fs"),
+                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "", "Time", "%.0fs"),
                 new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "xxDistance", "%.0fm"), 120d, 10d, 0d, "density %.1f veh/km",
-                "%.1f veh/km", 20d);
+                        standardDistanceGranularities[3], "", "Distance", "%.0fm"), 120d, 10d, 0d,
+                "density %.1f veh/km", "%.1f veh/km", 20d);
     }
 
     /** Storage for the total time spent in each cell. */
