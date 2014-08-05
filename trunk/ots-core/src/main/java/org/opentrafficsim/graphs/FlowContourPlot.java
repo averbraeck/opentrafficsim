@@ -61,7 +61,7 @@ public class FlowContourPlot extends ContourPlot
     }
 
     /** Storage for the total length traveled in each cell. */
-    private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
+    private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
