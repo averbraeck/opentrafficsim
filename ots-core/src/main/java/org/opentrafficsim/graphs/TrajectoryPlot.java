@@ -8,15 +8,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -35,12 +31,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
-import org.opentrafficsim.car.following.IDMPlus;
-import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
