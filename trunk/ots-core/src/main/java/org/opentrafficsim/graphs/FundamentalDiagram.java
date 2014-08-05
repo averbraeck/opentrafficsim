@@ -343,7 +343,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
      */
     private Double getSample(final int lane, final int item, final Axis axis)
     {
-        if (lane < 0 || lane >= this.sampleSets.size() || (item < 0))
+        if (lane < 0 || lane >= this.sampleSets.size() || item < 0)
             return Double.NaN;
         ArrayList<Sample> laneDetections = this.sampleSets.get(lane);
         if (item >= laneDetections.size())
