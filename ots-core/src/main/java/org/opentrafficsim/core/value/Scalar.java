@@ -101,8 +101,8 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     protected double expressAsUnit(final double value, final Unit<U> targetUnit)
     {
         if (targetUnit instanceof OffsetUnit<?>)
-            return (value / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
-                    .getOffsetToStandardUnit());
+            return value / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
+                    .getOffsetToStandardUnit();
         return value / targetUnit.getConversionFactorToStandardUnit();
     }
 
