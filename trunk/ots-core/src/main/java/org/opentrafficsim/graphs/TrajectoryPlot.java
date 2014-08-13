@@ -3,10 +3,7 @@ package org.opentrafficsim.graphs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -20,10 +17,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.general.DatasetChangeEvent;
@@ -65,7 +59,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements MouseMotionListener, ActionListener, XYDataset
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -127,11 +121,82 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
         renderer.setBaseShapesVisible(false);
         renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
         ChartPanel cp = new ChartPanel(this.chartPanel);
-        cp.setFillZoomRectangle(true);
         cp.setMouseWheelEnabled(true);
-        cp.addMouseMotionListener(this);
+        cp.addMouseMotionListener(new PointerHandler(new PointerHandler.HintUpdater()
+        {
+            @Override
+            void updateHint(double domainValue, double rangeValue)
+            {
+                String value = "";
+                /*-
+                XYDataset dataset = plot.getDataset();
+                double bestDistance = Double.MAX_VALUE;
+                Trajectory bestTrajectory = null;
+                final int mousePrecision = 5;
+                java.awt.geom.Point2D.Double mousePoint = new java.awt.geom.Point2D.Double(t, distance);
+                double lowTime =
+                        plot.getDomainAxis().java2DToValue(p.getX() - mousePrecision, pi.getDataArea(),
+                                plot.getDomainAxisEdge()) - 1;
+                double highTime =
+                        plot.getDomainAxis().java2DToValue(p.getX() + mousePrecision, pi.getDataArea(),
+                                plot.getDomainAxisEdge()) + 1;
+                double lowDistance =
+                        plot.getRangeAxis().java2DToValue(p.getY() + mousePrecision, pi.getDataArea(),
+                                plot.getRangeAxisEdge()) - 20;
+                double highDistance =
+                        plot.getRangeAxis().java2DToValue(p.getY() - mousePrecision, pi.getDataArea(),
+                                plot.getRangeAxisEdge()) + 20;
+                // System.out.println(String.format("Searching area t[%.1f-%.1f], x[%.1f,%.1f]", lowTime, highTime,
+                // lowDistance, highDistance));
+                for (Trajectory trajectory : this.trajectories)
+                {
+                    java.awt.geom.Point2D.Double[] clippedTrajectory =
+                            trajectory.clipTrajectory(lowTime, highTime, lowDistance, highDistance);
+                    if (null == clippedTrajectory)
+                        continue;
+                    java.awt.geom.Point2D.Double prevPoint = null;
+                    for (java.awt.geom.Point2D.Double trajectoryPoint : clippedTrajectory)
+                    {
+                        if (null != prevPoint)
+                        {
+                            double thisDistance = Planar.distancePolygonToPoint(clippedTrajectory, mousePoint);
+                            if (thisDistance < bestDistance)
+                            {
+                                bestDistance = thisDistance;
+                                bestTrajectory = trajectory;
+                            }
+                        }
+                        prevPoint = trajectoryPoint;
+                    }
+                }
+                if (null != bestTrajectory)
+                {
+                    for (SimulatedObject so : indices.keySet())
+                        if (this.trajectories.get(indices.get(so)) == bestTrajectory)
+                        {
+                            Point2D.Double bestPosition = bestTrajectory.getEstimatedPosition(t);
+                            if (null == bestPosition)
+                                continue;
+                            value =
+                                    String.format(
+                                            Main.locale,
+                                            ": vehicle %s; location on measurement path at t=%.1fs: longitudinal %.1fm, lateral %.1fm",
+                                            so.toString(), t, bestPosition.x, bestPosition.y);
+                        }
+                }
+                else
+                    value = "";
+                 */
+                TrajectoryPlot.this.statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue, value));
+            }
+
+            @Override
+            void clearHint()
+            {
+                TrajectoryPlot.this.statusLabel.setText(" ");
+            }
+        }));
         setPreferredSize(new java.awt.Dimension(500, 270));
-        cp.addMouseMotionListener(this);
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
@@ -184,102 +249,6 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
         // not yet
     }
 
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseDragged(final MouseEvent e)
-    {
-        // ignored
-    }
-
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseMoved(final MouseEvent mouseEvent)
-    {
-        ChartPanel cp = (ChartPanel) mouseEvent.getSource();
-        XYPlot plot = (XYPlot) cp.getChart().getPlot();
-        boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
-        if (cp.getHorizontalAxisTrace() != showCrossHair)
-        {
-            cp.setHorizontalAxisTrace(showCrossHair);
-            cp.setVerticalAxisTrace(showCrossHair);
-            plot.notifyListeners(new PlotChangeEvent(plot));
-        }
-        if (showCrossHair)
-        {
-            Point2D p = cp.translateScreenToJava2D(mouseEvent.getPoint());
-            PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
-            double t = plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge());
-            double distance = plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge());
-            String value = "";
-            /*-
-            XYDataset dataset = plot.getDataset();
-            double bestDistance = Double.MAX_VALUE;
-            Trajectory bestTrajectory = null;
-            final int mousePrecision = 5;
-            java.awt.geom.Point2D.Double mousePoint = new java.awt.geom.Point2D.Double(t, distance);
-            double lowTime =
-                    plot.getDomainAxis().java2DToValue(p.getX() - mousePrecision, pi.getDataArea(),
-                            plot.getDomainAxisEdge()) - 1;
-            double highTime =
-                    plot.getDomainAxis().java2DToValue(p.getX() + mousePrecision, pi.getDataArea(),
-                            plot.getDomainAxisEdge()) + 1;
-            double lowDistance =
-                    plot.getRangeAxis().java2DToValue(p.getY() + mousePrecision, pi.getDataArea(),
-                            plot.getRangeAxisEdge()) - 20;
-            double highDistance =
-                    plot.getRangeAxis().java2DToValue(p.getY() - mousePrecision, pi.getDataArea(),
-                            plot.getRangeAxisEdge()) + 20;
-            // System.out.println(String.format("Searching area t[%.1f-%.1f], x[%.1f,%.1f]", lowTime, highTime,
-            // lowDistance, highDistance));
-            for (Trajectory trajectory : this.trajectories)
-            {
-                java.awt.geom.Point2D.Double[] clippedTrajectory =
-                        trajectory.clipTrajectory(lowTime, highTime, lowDistance, highDistance);
-                if (null == clippedTrajectory)
-                    continue;
-                java.awt.geom.Point2D.Double prevPoint = null;
-                for (java.awt.geom.Point2D.Double trajectoryPoint : clippedTrajectory)
-                {
-                    if (null != prevPoint)
-                    {
-                        double thisDistance = Planar.distancePolygonToPoint(clippedTrajectory, mousePoint);
-                        if (thisDistance < bestDistance)
-                        {
-                            bestDistance = thisDistance;
-                            bestTrajectory = trajectory;
-                        }
-                    }
-                    prevPoint = trajectoryPoint;
-                }
-            }
-            if (null != bestTrajectory)
-            {
-                for (SimulatedObject so : indices.keySet())
-                    if (this.trajectories.get(indices.get(so)) == bestTrajectory)
-                    {
-                        Point2D.Double bestPosition = bestTrajectory.getEstimatedPosition(t);
-                        if (null == bestPosition)
-                            continue;
-                        value =
-                                String.format(
-                                        Main.locale,
-                                        ": vehicle %s; location on measurement path at t=%.1fs: longitudinal %.1fm, lateral %.1fm",
-                                        so.toString(), t, bestPosition.x, bestPosition.y);
-                    }
-            }
-            else
-                value = "";
-             */
-            this.statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", t, distance, value));
-        }
-        else
-            this.statusLabel.setText(" ");
-    }
-
     /** All stored trajectories. */
     ArrayList<Trajectory> trajectories = new ArrayList<Trajectory>();
 
@@ -289,7 +258,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
     public void addData(final Car car)
     {
         DoubleScalarAbs<TimeUnit> startTime = car.getLastEvaluationTime();
-        DoubleScalarAbs<LengthUnit> startPosition = car.position(startTime);
+        DoubleScalarAbs<LengthUnit> startPosition = car.getPosition(startTime);
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
@@ -364,7 +333,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
                 DoubleScalarAbs<TimeUnit> sampleTime =
                         new DoubleScalarAbs<TimeUnit>(sample * TrajectoryPlot.this.sampleInterval.getValueSI(),
                                 TimeUnit.SECOND);
-                DoubleScalarAbs<LengthUnit> position = car.position(sampleTime);
+                DoubleScalarAbs<LengthUnit> position = car.getPosition(sampleTime);
                 if (position.getValueSI() < TrajectoryPlot.this.minimumPosition.getValueSI())
                     continue;
                 if (position.getValueSI() > TrajectoryPlot.this.maximumPosition.getValueSI())
@@ -377,7 +346,7 @@ public class TrajectoryPlot extends JFrame implements MouseMotionListener, Actio
                 this.positions.add(position.getValueSI());
             }
             this.currentEndTime = car.getNextEvaluationTime();
-            this.currentEndPosition = car.position(this.currentEndTime);
+            this.currentEndPosition = car.getPosition(this.currentEndTime);
             if (car.getNextEvaluationTime().getValueSI() > TrajectoryPlot.this.maximumTime.getValueSI())
                 TrajectoryPlot.this.maximumTime = car.getNextEvaluationTime();
         }
