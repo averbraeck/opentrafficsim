@@ -122,7 +122,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
         ChartPanel cp = new ChartPanel(this.chartPanel);
         cp.setMouseWheelEnabled(true);
-        cp.addMouseMotionListener(new PointerHandler(new PointerHandler.HintUpdater()
+        cp.addMouseMotionListener(new PointerHandler()
         {
             @Override
             void updateHint(double domainValue, double rangeValue)
@@ -195,7 +195,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
             {
                 TrajectoryPlot.this.statusLabel.setText(" ");
             }
-        }));
+        });
         setPreferredSize(new java.awt.Dimension(500, 270));
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);

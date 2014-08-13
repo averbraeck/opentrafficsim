@@ -148,7 +148,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         });
         renderer.setBaseItemLabelsVisible(true);
         ChartPanel cp = new ChartPanel(this.chartPanel);
-        cp.addMouseMotionListener(new PointerHandler(new PointerHandler.HintUpdater()
+        cp.addMouseMotionListener(new PointerHandler()
         {
             @Override
             void updateHint(double domainValue, double rangeValue)
@@ -163,7 +163,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             {
                 FundamentalDiagram.this.statusLabel.setText(" ");
             }
-        }));
+        });
         cp.setMouseWheelEnabled(true);
         setPreferredSize(new java.awt.Dimension(500, 270));
         JMenu subMenu = new JMenu("Set layout");
