@@ -109,7 +109,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when time for which the speed must be returned
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the speed at the specified time
      */
-    public DoubleScalarRel<SpeedUnit> speed(final DoubleScalarAbs<TimeUnit> when)
+    public DoubleScalarRel<SpeedUnit> getVelocity(final DoubleScalarAbs<TimeUnit> when)
     {
         DoubleScalarRel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime);
         return DoubleScalar.plus(SpeedUnit.METER_PER_SECOND, this.speed,
@@ -122,7 +122,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when time for which the position must be returned.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
      */
-    public DoubleScalarAbs<LengthUnit> position(final DoubleScalarAbs<TimeUnit> when)
+    public DoubleScalarAbs<LengthUnit> getPosition(final DoubleScalarAbs<TimeUnit> when)
     {
         DoubleScalarRel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime);
         // System.out.println("dT is " + dT);
@@ -155,7 +155,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      */
     public DoubleScalarAbs<LengthUnit> positionOfFront(final DoubleScalarAbs<TimeUnit> when)
     {
-        return position(when);
+        return getPosition(when);
     }
 
     /**
@@ -165,7 +165,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      */
     public DoubleScalarAbs<LengthUnit> positionOfRear(final DoubleScalarAbs<TimeUnit> when)
     {
-        return DoubleScalar.minus(position(when), this.length);
+        return DoubleScalar.minus(getPosition(when), this.length);
     }
 
     /**
@@ -194,9 +194,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     {
         try
         {
-            DoubleScalarAbs<TimeUnit> when =
-                    new DoubleScalarAbs<TimeUnit>(this.simulator.getSimulatorTime(), TimeUnit.SECOND);
-            return speed(when);
+            return getVelocity(new DoubleScalarAbs<TimeUnit>(this.simulator.getSimulatorTime(), TimeUnit.SECOND));
         }
         catch (RemoteException exception)
         {
@@ -216,10 +214,15 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
 
     public String toString()
     {
-        // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
-        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.iD,
-                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(),
-                this.longitudinalPosition.getValueSI(), this.speed.getValueSI(), this.acceleration.getValueSI());
+        try
+        {
+            return toString(new DoubleScalarAbs<TimeUnit>(this.simulator.getSimulatorTime(), TimeUnit.SECOND));
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+            return null; // TODO: STUB
+        }
     }
 
     /**
@@ -231,8 +234,8 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.iD,
-                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(), this.position(when)
-                        .getValueSI(), this.speed(when).getValueSI(), this.acceleration.getValueSI());
+                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(), this.getPosition(when)
+                        .getValueSI(), this.getVelocity(when).getValueSI(), this.acceleration.getValueSI());
     }
 
     /**
@@ -253,8 +256,8 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         // position(this.nextEvaluationTime));
         // System.out.println("Updating lastEvaluationTime from " + this.lastEvaluationTime + " to " +
         // this.nextEvaluationTime);
-        this.longitudinalPosition = position(this.nextEvaluationTime);
-        this.speed = speed(this.nextEvaluationTime);
+        this.longitudinalPosition = getPosition(this.nextEvaluationTime);
+        this.speed = getVelocity(this.nextEvaluationTime);
         // TODO add a check that time is increasing
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.validUntil;
