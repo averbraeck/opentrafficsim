@@ -5,9 +5,6 @@ import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -26,11 +23,8 @@ import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
-import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.general.DatasetChangeEvent;
@@ -75,7 +69,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @version Jul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotionListener, ActionListener
+public class FundamentalDiagram extends JFrame implements XYDataset, ActionListener
 {
     /** */
     private static final long serialVersionUID = 20140701L;
@@ -154,11 +148,24 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
         });
         renderer.setBaseItemLabelsVisible(true);
         ChartPanel cp = new ChartPanel(this.chartPanel);
-        cp.setFillZoomRectangle(true);
+        cp.addMouseMotionListener(new PointerHandler(new PointerHandler.HintUpdater()
+        {
+            @Override
+            void updateHint(double domainValue, double rangeValue)
+            {
+                String s1 = String.format(FundamentalDiagram.this.xAxis.format, domainValue);
+                String s2 = String.format(FundamentalDiagram.this.yAxis.format, rangeValue);
+                FundamentalDiagram.this.statusLabel.setText(s1 + ", " + s2);
+            }
+
+            @Override
+            void clearHint()
+            {
+                FundamentalDiagram.this.statusLabel.setText(" ");
+            }
+        }));
         cp.setMouseWheelEnabled(true);
-        cp.addMouseMotionListener(this);
         setPreferredSize(new java.awt.Dimension(500, 270));
-        cp.addMouseMotionListener(this);
         JMenu subMenu = new JMenu("Set layout");
         ButtonGroup group = new ButtonGroup();
         JRadioButtonMenuItem defaultItem = addMenuItem(subMenu, group, this.densityAxis, this.flowAxis, true);
@@ -208,7 +215,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
         while (timeBin >= laneData.size())
             laneData.add(new Sample());
         Sample sample = laneData.get(timeBin);
-        sample.addData(car.speed(detectionTime));
+        sample.addData(car.getVelocity(detectionTime));
     }
 
     /**
@@ -459,47 +466,6 @@ public class FundamentalDiagram extends JFrame implements XYDataset, MouseMotion
             sumReciprocalSpeeds += 1d / speed.getValueSI();
             this.harmonicMeanSpeed = this.flow / sumReciprocalSpeeds;
         }
-    }
-
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseDragged(MouseEvent e)
-    {
-        // Ignored
-    }
-
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseMoved(MouseEvent mouseEvent)
-    {
-        ChartPanel cp = (ChartPanel) mouseEvent.getSource();
-        XYPlot plot = (XYPlot) cp.getChart().getPlot();
-        boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
-        if (cp.getHorizontalAxisTrace() != showCrossHair)
-        {
-            cp.setHorizontalAxisTrace(showCrossHair);
-            cp.setVerticalAxisTrace(showCrossHair);
-            plot.notifyListeners(new PlotChangeEvent(plot));
-        }
-        if (showCrossHair)
-        {
-            Point2D p = cp.translateScreenToJava2D(mouseEvent.getPoint());
-            PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
-            String domainValue =
-                    String.format(this.xAxis.format,
-                            plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()));
-            String rangeValue =
-                    String.format(this.yAxis.format,
-                            plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
-            this.statusLabel.setText(domainValue + ", " + rangeValue);
-            // FIXME: show quantity in user's unit and use the name of the axis
-        }
-        else
-            this.statusLabel.setText(" ");
     }
 
     /**

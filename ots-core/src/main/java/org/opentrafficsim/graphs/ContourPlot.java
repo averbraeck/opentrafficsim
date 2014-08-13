@@ -4,9 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
@@ -26,7 +23,6 @@ import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.event.PlotChangeEvent;
-import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.DomainOrder;
@@ -69,7 +65,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
  * @version Jul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class ContourPlot extends JFrame implements MouseMotionListener, ActionListener, XYZDataset
+public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset
 {
     /** */
     private static final long serialVersionUID = 20140716L;
@@ -114,9 +110,48 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
         double[] boundaries = {redValue, yellowValue, greenValue};
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
         this.chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        this.chartPanel.addMouseMotionListener(this);
+        this.chartPanel.addMouseMotionListener(new PointerHandler(new PointerHandler.HintUpdater()
+        {
+            @Override
+            void updateHint(double domainValue, double rangeValue)
+            {
+                XYPlot plot = (XYPlot) ContourPlot.this.chartPanel.getChart().getPlot();
+                XYZDataset dataset = (XYZDataset) plot.getDataset();
+                String value = "";
+                double roundedTime = domainValue;
+                double roundedDistance = rangeValue;
+                for (int item = dataset.getItemCount(0); --item >= 0;)
+                {
+                    double x = dataset.getXValue(0, item);
+                    if (x + xAxis.getCurrentGranularity() / 2 < domainValue
+                            || x - xAxis.getCurrentGranularity() / 2 >= domainValue)
+                        continue;
+                    double y = dataset.getYValue(0, item);
+                    if (y + yAxis.getCurrentGranularity() / 2 < rangeValue
+                            || y - yAxis.getCurrentGranularity() / 2 >= rangeValue)
+                        continue;
+                    roundedTime = x;
+                    roundedDistance = y;
+                    double valueUnderMouse = dataset.getZValue(0, item);
+                    // System.out.println("Value under mouse is " + valueUnderMouse);
+                    if (Double.isNaN(valueUnderMouse))
+                        break;
+                    String format =
+                            ((ContinuousColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale())).format;
+                    value = String.format(format, valueUnderMouse);
+                }
+                ContourPlot.this.statusLabel.setText(String.format("time %.0fs, distance %.0fm, %s", roundedTime,
+                        roundedDistance, value));
+            }
+
+            @Override
+            void clearHint()
+            {
+                ContourPlot.this.statusLabel.setText(" ");
+            }
+
+        }));
         this.chartPanel.setMouseWheelEnabled(true);
-        this.chartPanel.addMouseMotionListener(this);
         add(this.chartPanel, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         add(this.statusLabel, BorderLayout.SOUTH);
@@ -199,67 +234,6 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
         JFreeChart chart = new JFreeChart(caption, plot);
         chart.setBackgroundPaint(Color.white);
         return chart;
-    }
-
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseDragged(final MouseEvent e)
-    {
-        // not used
-    }
-
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseMoved(final MouseEvent mouseEvent)
-    {
-        ChartPanel cp = (ChartPanel) mouseEvent.getSource();
-        XYPlot plot = (XYPlot) cp.getChart().getPlot();
-        // Show a cross hair cursor while the mouse is on the graph
-        boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
-        if (cp.getHorizontalAxisTrace() != showCrossHair)
-        {
-            cp.setHorizontalAxisTrace(showCrossHair);
-            cp.setVerticalAxisTrace(showCrossHair);
-            plot.notifyListeners(new PlotChangeEvent(plot));
-        }
-        if (showCrossHair)
-        {
-            Point2D p = cp.translateScreenToJava2D(mouseEvent.getPoint());
-            PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
-            double t = plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge());
-            double distance = plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge());
-            XYZDataset dataset = (XYZDataset) plot.getDataset();
-            String value = "";
-            double roundedTime = t;
-            double roundedDistance = distance;
-            for (int item = dataset.getItemCount(0); --item >= 0;)
-            {
-                double x = dataset.getXValue(0, item);
-                if (x + this.xAxis.getCurrentGranularity() / 2 < t || x - this.xAxis.getCurrentGranularity() / 2 >= t)
-                    continue;
-                double y = dataset.getYValue(0, item);
-                if (y + this.yAxis.getCurrentGranularity() / 2 < distance
-                        || y - this.yAxis.getCurrentGranularity() / 2 >= distance)
-                    continue;
-                roundedTime = x;
-                roundedDistance = y;
-                double valueUnderMouse = dataset.getZValue(0, item);
-                // System.out.println("Value under mouse is " + valueUnderMouse);
-                if (Double.isNaN(valueUnderMouse))
-                    break;
-                String format =
-                        ((ContinuousColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale())).format;
-                value = String.format(format, valueUnderMouse);
-            }
-            this.statusLabel.setText(String.format("time %.0fs, distance %.0fm, %s", roundedTime, roundedDistance,
-                    value));
-        }
-        else
-            this.statusLabel.setText(" ");
     }
 
     /**
@@ -483,10 +457,10 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
          */
         // The "relative" values are "counting" distance or time in the minimum bin size unit
         double relativeFromDistance =
-                (car.position(fromTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
+                (car.getPosition(fromTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                         / this.yAxis.granularities[0];
         double relativeToDistance =
-                (car.position(toTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
+                (car.getPosition(toTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                         / this.yAxis.granularities[0];
         double relativeFromTime =
                 (fromTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI()) / this.xAxis.granularities[0];
@@ -508,12 +482,12 @@ public abstract class ContourPlot extends JFrame implements MouseMotionListener,
             if (binEndTime <= relativeFromTime)
                 continue; // no time spent in this timeBin
             double binDistanceStart =
-                    (car.position(
+                    (car.getPosition(
                             new DoubleScalarAbs<TimeUnit>(relativeFromTime * this.xAxis.granularities[0],
                                     TimeUnit.SECOND)).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                             / this.yAxis.granularities[0];
             double binDistanceEnd =
-                    (car.position(
+                    (car.getPosition(
                             new DoubleScalarAbs<TimeUnit>(binEndTime * this.xAxis.granularities[0], TimeUnit.SECOND))
                             .getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                             / this.yAxis.granularities[0];
