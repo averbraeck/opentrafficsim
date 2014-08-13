@@ -137,7 +137,7 @@ public class IDMPlus<Line> implements CarFollowingModel
             }
         }
         //System.out.println("shortestHeadway is " + shortestHeadway);
-        DoubleScalarRel<SpeedUnit> myCurrentSpeed = car.speed(thisEvaluationTime);
+        DoubleScalarRel<SpeedUnit> myCurrentSpeed = car.getVelocity(thisEvaluationTime);
         double speedIncentive = 1 - Math.pow(myCurrentSpeed.getValueSI() / vDes.getValueSI(), 4);
         //System.out.println("speedIncentive is " + speedIncentive);
         DoubleScalarRel<AccelerationUnit> logWeightedAverageSpeedTimes2 =
@@ -146,13 +146,13 @@ public class IDMPlus<Line> implements CarFollowingModel
         logWeightedAverageSpeedTimes2.multiply(2); // don't forget the times 2
         DoubleScalarRel<SpeedUnit> dV =
                 (null == closestLeader) ? new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND) : DoubleScalar
-                        .minus(car.speed(thisEvaluationTime), closestLeader.speed(thisEvaluationTime));
+                        .minus(car.getVelocity(thisEvaluationTime), closestLeader.getVelocity(thisEvaluationTime));
         //System.out.println("dV is " + dV);
         //System.out.println(" v is " + car.speed(thisEvaluationTime));
         //System.out.println("s0 is " + this.s0);
         DoubleScalarRel<LengthUnit> sStar =
                 DoubleScalar.plus(LengthUnit.METER, this.s0,
-                        Calc.speedTimesTime(car.speed(thisEvaluationTime), this.tSafe),
+                        Calc.speedTimesTime(car.getVelocity(thisEvaluationTime), this.tSafe),
                         Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2)));
         if (sStar.getValueSI() < 0) // Negative value should be treated as 0
             sStar = new DoubleScalarRel<LengthUnit>(0, LengthUnit.METER);
