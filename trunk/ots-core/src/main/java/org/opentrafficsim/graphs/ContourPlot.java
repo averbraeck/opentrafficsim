@@ -110,7 +110,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         double[] boundaries = {redValue, yellowValue, greenValue};
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
         this.chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        this.chartPanel.addMouseMotionListener(new PointerHandler(new PointerHandler.HintUpdater()
+        this.chartPanel.addMouseMotionListener(new PointerHandler()
         {
             @Override
             void updateHint(double domainValue, double rangeValue)
@@ -150,7 +150,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 ContourPlot.this.statusLabel.setText(" ");
             }
 
-        }));
+        });
         this.chartPanel.setMouseWheelEnabled(true);
         add(this.chartPanel, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
