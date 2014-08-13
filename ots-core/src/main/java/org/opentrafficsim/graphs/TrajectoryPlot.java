@@ -124,6 +124,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         cp.setMouseWheelEnabled(true);
         cp.addMouseMotionListener(new PointerHandler()
         {
+            /**
+             * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
+             */
             @Override
             void updateHint(double domainValue, double rangeValue)
             {
@@ -190,6 +193,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                 TrajectoryPlot.this.statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue, value));
             }
 
+            /**
+             * @see org.opentrafficsim.graphs.PointerHandler#clearHint()
+             */
             @Override
             void clearHint()
             {

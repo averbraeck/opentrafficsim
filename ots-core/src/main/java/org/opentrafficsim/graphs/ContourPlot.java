@@ -112,6 +112,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         this.chartPanel.addMouseMotionListener(new PointerHandler()
         {
+            /**
+             * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
+             */
             @Override
             void updateHint(double domainValue, double rangeValue)
             {
@@ -144,6 +147,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                         roundedDistance, value));
             }
 
+            /**
+             * @see org.opentrafficsim.graphs.PointerHandler#clearHint()
+             */
             @Override
             void clearHint()
             {
