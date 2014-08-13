@@ -150,6 +150,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         ChartPanel cp = new ChartPanel(this.chartPanel);
         cp.addMouseMotionListener(new PointerHandler()
         {
+            /**
+             * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
+             */
             @Override
             void updateHint(double domainValue, double rangeValue)
             {
@@ -158,6 +161,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
                 FundamentalDiagram.this.statusLabel.setText(s1 + ", " + s2);
             }
 
+            /**
+             * @see org.opentrafficsim.graphs.PointerHandler#clearHint()
+             */
             @Override
             void clearHint()
             {
