@@ -114,7 +114,7 @@ public class Trajectories
                 {
                     DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
-                    if (car.position(now).getValueSI() > maximumDistance.getValueSI())
+                    if (car.getPosition(now).getValueSI() > maximumDistance.getValueSI())
                     {
                         cars.remove(carIndex);
                         break;

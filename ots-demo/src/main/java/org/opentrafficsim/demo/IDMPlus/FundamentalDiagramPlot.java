@@ -125,7 +125,7 @@ public class FundamentalDiagramPlot
                 {
                     DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
-                    if (car.position(now).getValueSI() > maximumDistance.getValueSI())
+                    if (car.getPosition(now).getValueSI() > maximumDistance.getValueSI())
                     {
                         cars.remove(carIndex);
                         break;
@@ -145,8 +145,8 @@ public class FundamentalDiagramPlot
                     car.setState(cfmr);
                     DoubleScalarAbs<TimeUnit> lowerBound = car.getLastEvaluationTime();
                     DoubleScalarAbs<TimeUnit> upperBound = car.getNextEvaluationTime();
-                    if (car.position(lowerBound).getValueSI() <= detectorLocation.getValueSI()
-                            && car.position(upperBound).getValueSI() > detectorLocation.getValueSI())
+                    if (car.getPosition(lowerBound).getValueSI() <= detectorLocation.getValueSI()
+                            && car.getPosition(upperBound).getValueSI() > detectorLocation.getValueSI())
                     {
                         // This car passes the detector; add the movement of this Car to the fundamental diagram plot
                         // Figure out at what time the car passes the detector.
@@ -158,7 +158,7 @@ public class FundamentalDiagramPlot
                             passingTime =
                                     new DoubleScalarAbs<TimeUnit>(
                                             (lowerBound.getValueSI() + upperBound.getValueSI()) / 2, TimeUnit.SECOND);
-                            DoubleScalarAbs<LengthUnit> position = car.position(passingTime);
+                            DoubleScalarAbs<LengthUnit> position = car.getPosition(passingTime);
                             if (position.getValueSI() > detectorLocation.getValueSI())
                                 lowerBound = passingTime;
                             else
