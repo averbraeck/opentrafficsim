@@ -2,6 +2,7 @@ package org.opentrafficsim.core.value.vdouble.scalar;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.Scalar;
 
 /**
  * <p>
@@ -53,6 +54,15 @@ public class DoubleScalarAbs<U extends Unit<U>> extends DoubleScalar<U> implemen
     public DoubleScalarAbs(final DoubleScalarAbs<U> value)
     {
         super(value);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.Scalar#copy()
+     */
+    @Override
+    public Scalar<U> copy()
+    {
+        return new DoubleScalarAbs<>(this);
     }
 
 }
