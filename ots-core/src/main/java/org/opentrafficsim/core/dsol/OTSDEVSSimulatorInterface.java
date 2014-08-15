@@ -1,6 +1,10 @@
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.dsol;
 
-import org.opentrafficsim.core.unit.Unit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
  * <p>
@@ -36,25 +40,16 @@ import org.opentrafficsim.core.unit.Unit;
  * arising in any way out of the use of this software, even if advised of the
  * possibility of such damage.
  * 
- * @version Aug 1, 2014 <br>
+ * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit type
+ * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public abstract class ScalarAbs<U extends Unit<U>> extends Scalar<U> implements Absolute
+/** Easy access interface SimulatorInterface.Double */
+public interface OTSDEVSSimulatorInterface extends
+        DEVSSimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>
 {
-    /** */
-    private static final long serialVersionUID = 20140801;
-
-    /**
-     * @param unit
-     */
-    public ScalarAbs(final U unit)
-    {
-        super(unit);
-    }
-
-    /**
-     * @return a copy of the object
-     */
-    public abstract ScalarAbs<U> copy();
+    // typed extension
 }

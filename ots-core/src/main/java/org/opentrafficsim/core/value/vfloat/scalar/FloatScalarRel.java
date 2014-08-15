@@ -33,7 +33,8 @@ import org.opentrafficsim.core.value.Scalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public class FloatScalarRel<U extends Unit<U>> extends FloatScalar<U> implements Relative
+public class FloatScalarRel<U extends Unit<U>> extends FloatScalar<U> implements Relative,
+        Comparable<FloatScalarRel<U>>
 {
     /** */
     private static final long serialVersionUID = 20140615L;
@@ -55,6 +56,19 @@ public class FloatScalarRel<U extends Unit<U>> extends FloatScalar<U> implements
     public FloatScalarRel(final FloatScalarRel<U> value)
     {
         super(value);
+    }
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(final FloatScalarRel<U> fsr)
+    {
+        if (this.valueSI < fsr.valueSI)
+            return -1;
+        if (this.valueSI > fsr.valueSI)
+            return 1;
+        return 0;
     }
 
     /**

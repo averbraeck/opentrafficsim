@@ -38,8 +38,7 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implements FloatMathFunctions,
-        Comparable<FloatScalar<U>>
+public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implements FloatMathFunctions
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -141,31 +140,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
             return false;
 
         return this.valueSI == fs.valueSI;
-    }
-
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    public int compareTo(final FloatScalar<U> fs)
-    {
-        // exception if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
-            throw new ClassCastException("FloatScalar.CompareTo compares two scalars with units: "
-                    + this.getUnit().toString() + fs.getUnit().toString()
-                    + ", which translate to different SI base units");
-
-        // exception if one is absolute and the other is relative
-        if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
-            throw new ClassCastException("FloatScalar.CompareTo compares two scalars of which one is absolute "
-                    + "and the other is relative.");
-
-        if (this.valueSI < fs.valueSI)
-            return -1;
-        if (this.valueSI > fs.valueSI)
-            return 1;
-        return 0;
-
     }
 
     /**********************************************************************************/

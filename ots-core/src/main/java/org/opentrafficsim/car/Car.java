@@ -6,6 +6,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;
@@ -72,28 +73,28 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     protected final DoubleScalarRel<LengthUnit> length = new DoubleScalarRel<LengthUnit>(4, LengthUnit.METER);
 
     /** ID of this car. */
-    private final int iD;
+    private final int id;
 
     /** SimulatorInterface "running" this Car. */
-    private final SimulatorInterface simulator;
+    private final OTSDEVSSimulatorInterface simulator;
 
     /** CarFollowingModel used by this Car. */
     private final CarFollowingModel carFollowingModel;
 
     /**
      * Create a new Car.
-     * @param iD
+     * @param id
      * @param simulator
      * @param carFollowingModel
      * @param initialTime
      * @param initialPosition
      * @param initialSpeed
      */
-    public Car(final int iD, final SimulatorInterface simulator, final CarFollowingModel carFollowingModel,
+    public Car(final int id, final OTSDEVSSimulatorInterface simulator, final CarFollowingModel carFollowingModel,
             final DoubleScalarAbs<TimeUnit> initialTime, final DoubleScalarAbs<LengthUnit> initialPosition,
             final DoubleScalarRel<SpeedUnit> initialSpeed)
     {
-        this.iD = iD;
+        this.id = id;
         this.simulator = simulator;
         this.carFollowingModel = carFollowingModel;
         // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
@@ -174,7 +175,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     @Override
     public Integer getID()
     {
-        return this.iD;
+        return this.id;
     }
 
     /**
@@ -194,7 +195,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     {
         try
         {
-            return getVelocity(new DoubleScalarAbs<TimeUnit>(this.simulator.getSimulatorTime(), TimeUnit.SECOND));
+            return getVelocity(this.simulator.getSimulatorTime().get());
         }
         catch (RemoteException exception)
         {
@@ -216,7 +217,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     {
         try
         {
-            return toString(new DoubleScalarAbs<TimeUnit>(this.simulator.getSimulatorTime(), TimeUnit.SECOND));
+            return toString(this.simulator.getSimulatorTime().get());
         }
         catch (RemoteException exception)
         {
@@ -233,7 +234,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     public String toString(final DoubleScalarAbs<TimeUnit> when)
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
-        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.iD,
+        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.id,
                 this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(), this.getPosition(when)
                         .getValueSI(), this.getVelocity(when).getValueSI(), this.acceleration.getValueSI());
     }
