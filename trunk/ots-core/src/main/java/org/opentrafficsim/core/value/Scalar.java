@@ -131,4 +131,9 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
         return this instanceof Relative;
     }
 
+    /**
+     * @return a copy of the object
+     */
+    public abstract Scalar<U> copy();
+    
 }

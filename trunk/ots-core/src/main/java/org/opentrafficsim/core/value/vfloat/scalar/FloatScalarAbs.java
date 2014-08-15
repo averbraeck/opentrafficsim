@@ -2,6 +2,7 @@ package org.opentrafficsim.core.value.vfloat.scalar;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.Scalar;
 
 /**
  * <p>
@@ -56,4 +57,12 @@ public class FloatScalarAbs<U extends Unit<U>> extends FloatScalar<U> implements
         super(value);
     }
 
+    /**
+     * @see org.opentrafficsim.core.value.Scalar#copy()
+     */
+    @Override
+    public Scalar<U> copy()
+    {
+        return new FloatScalarAbs<U>(this);
+    }
 }
