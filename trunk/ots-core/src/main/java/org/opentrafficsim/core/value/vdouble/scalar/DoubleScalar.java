@@ -37,8 +37,7 @@ import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implements DoubleMathFunctions,
-        Comparable<DoubleScalar<U>>
+public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implements DoubleMathFunctions
 {
     /** */
     private static final long serialVersionUID = 20140618L;
@@ -139,32 +138,6 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
             return false;
 
         return this.valueSI == ds.valueSI;
-    }
-
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     * @throws a ClassCastException if one value is absolute and the other relative, or if the SI unit differs.
-     */
-    @Override
-    public int compareTo(final DoubleScalar<U> fs)
-    {
-        // exception if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
-            throw new ClassCastException("DoubleScalar.CompareTo compares two scalars with units: "
-                    + this.getUnit().toString() + fs.getUnit().toString()
-                    + ", mwhich translate to different SI base units");
-
-        // exception if one is absolute and the other is relative
-        if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
-            throw new ClassCastException("DoubleScalar.CompareTo compares two scalars with of which one is absolute "
-                    + "and the other is relative.");
-
-        if (this.valueSI < fs.valueSI)
-            return -1;
-        if (this.valueSI > fs.valueSI)
-            return 1;
-        return 0;
-
     }
 
     /**********************************************************************************/

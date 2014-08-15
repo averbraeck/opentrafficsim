@@ -32,7 +32,8 @@ import org.opentrafficsim.core.value.Scalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public class DoubleScalarRel<U extends Unit<U>> extends DoubleScalar<U> implements Relative
+public class DoubleScalarRel<U extends Unit<U>> extends DoubleScalar<U> implements Relative,
+        Comparable<DoubleScalarRel<U>>
 {
     /** */
     private static final long serialVersionUID = 20140615L;
@@ -56,6 +57,18 @@ public class DoubleScalarRel<U extends Unit<U>> extends DoubleScalar<U> implemen
         super(value);
     }
 
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(final DoubleScalarRel<U> dsr)
+    {
+        if (this.valueSI < dsr.valueSI)
+            return -1;
+        if (this.valueSI > dsr.valueSI)
+            return 1;
+        return 0;
+    }
 
     /**
      * @see org.opentrafficsim.core.value.Scalar#copy()

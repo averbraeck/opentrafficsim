@@ -1,14 +1,17 @@
-package org.opentrafficsim.core.value.vdouble.scalar;
+package org.opentrafficsim.core.dsol;
 
-import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Absolute;
-import org.opentrafficsim.core.value.Scalar;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -28,54 +31,16 @@ import org.opentrafficsim.core.value.Scalar;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 15, 2014 <br>
+ * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit of the values in the constructor and for display
+ * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class DoubleScalarAbs<U extends Unit<U>> extends DoubleScalar<U> implements Absolute, Comparable<DoubleScalarAbs<U>>
+public class OTSDEVSSimulator extends
+        DEVSSimulator<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> implements OTSDEVSSimulatorInterface
 {
     /** */
-    private static final long serialVersionUID = 20140615L;
-
-    /**
-     * Construct a value in and store it in SI units for calculation.
-     * @param value the value in the given units
-     * @param unit the unit of the value
-     */
-    public DoubleScalarAbs(final double value, final U unit)
-    {
-        super(value, unit);
-    }
-
-    /**
-     * Construct a value from another value. The value is already in SI units.
-     * @param value the value to duplicate
-     */
-    public DoubleScalarAbs(final DoubleScalarAbs<U> value)
-    {
-        super(value);
-    }
-
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    public int compareTo(final DoubleScalarAbs<U> dsa)
-    {
-        if (this.valueSI < dsa.valueSI)
-            return -1;
-        if (this.valueSI > dsa.valueSI)
-            return 1;
-        return 0;
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Scalar#copy()
-     */
-    @Override
-    public Scalar<U> copy()
-    {
-        return new DoubleScalarAbs<>(this);
-    }
-
+    private static final long serialVersionUID = 20140815L;
 }

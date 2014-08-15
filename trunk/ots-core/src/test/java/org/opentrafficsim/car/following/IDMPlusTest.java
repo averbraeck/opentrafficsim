@@ -1,15 +1,15 @@
 package org.opentrafficsim.car.following;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-
 import org.junit.Test;
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -56,7 +56,7 @@ public class IDMPlusTest
     public void computeAcceleration()
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
-        DEVSSimulator simulator = new DEVSSimulator();
+        OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
         DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(123.456, LengthUnit.METER);
