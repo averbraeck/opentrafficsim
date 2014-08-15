@@ -5,12 +5,11 @@ import java.util.Collection;
 
 import javax.swing.JOptionPane;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.IDMPlus;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.car.following.IDMPlus;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -69,7 +68,7 @@ public class Trajectories
         tp.setBounds(0, 0, 600, 400);
         tp.pack();
         tp.setVisible(true);
-        DEVSSimulator simulator = new DEVSSimulator();
+        OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
         DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
