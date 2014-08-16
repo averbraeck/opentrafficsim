@@ -97,7 +97,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalarAbs<TimeUnit>, DoubleS
     @Override
     public OTSSimTimeDouble copy()
     {
-        return new OTSSimTimeDouble(this.time);
+        return new OTSSimTimeDouble(new DoubleScalarAbs<TimeUnit>(this.time.getValueInUnit(), this.time.getUnit()));
     }
 
     /**
