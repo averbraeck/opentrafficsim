@@ -430,6 +430,26 @@
 				<version>${reflections.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>dsol</groupId>
+				<artifactId>dsol-swing</artifactId>
+				<version>${dsol-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dsol</groupId>
+				<artifactId>dsol-fx</artifactId>
+				<version>${dsol-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dsol</groupId>
+				<artifactId>dsol-base</artifactId>
+				<version>${dsol-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dsol</groupId>
+				<artifactId>dsol-web</artifactId>
+				<version>${dsol-version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
