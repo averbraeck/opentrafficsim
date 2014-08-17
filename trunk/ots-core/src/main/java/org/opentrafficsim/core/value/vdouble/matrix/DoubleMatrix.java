@@ -8,6 +8,7 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctionsImpl;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -98,7 +99,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
                     x.rows(), y.columns(), y.rows()));
     }
-    
+
     /**
      * Check that a DoubleMatrix has the same size as a 2D array
      * @param x DoubleMatrix; matrix to size-compare to c
@@ -209,7 +210,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         double[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
             for (int j = 0; j < values[i].length; j++)
-                values[i][j] = expressAsUnit(values[i][j], targetUnit);
+                values[i][j] = ValueUtil.expressAsUnit(values[i][j], targetUnit);
         return values;
     }
 
@@ -257,7 +258,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     @Override
     public double getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
-        return expressAsUnit(getSI(row, column), targetUnit);
+        return ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
 
     /**
@@ -289,7 +290,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     @Override
     public void setInUnit(final int row, final int column, final double value, final U valueUnit) throws ValueException
     {
-        setSI(row, column, expressAsSIUnit(value, valueUnit));
+        setSI(row, column, ValueUtil.expressAsSIUnit(value, valueUnit));
     }
 
     /**
@@ -650,7 +651,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             buf.append("\n");
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
-                double f = expressAsUnit(this.matrixSI.get(i, j), displayUnit);
+                double f = ValueUtil.expressAsUnit(this.matrixSI.get(i, j), displayUnit);
                 buf.append(" " + Format.format(f));
             }
         }

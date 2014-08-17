@@ -8,6 +8,7 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
@@ -61,7 +62,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
 
     /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse. */
     protected FloatMatrix2D matrixSI;
-    
+
     /**
      * Check that a 2D array of float is rectangular; i.e. all rows have the same length.
      * @param values float[][]; the 2D array to check
@@ -73,7 +74,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             if (values[0].length != values[row].length)
                 throw new ValueException("Lengths of rows are not all the same");
     }
-    
+
     /**
      * Check that a 2D array of FloatScalar is rectangular; i.e. all rows have the same length.
      * @param values FloatScalar[][]; the 2D array to check
@@ -210,7 +211,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         float[][] values = this.matrixSI.toArray();
         for (int i = 0; i < values.length; i++)
             for (int j = 0; j < values[i].length; j++)
-                values[i][j] = (float) expressAsUnit(values[i][j], targetUnit);
+                values[i][j] = (float) ValueUtil.expressAsUnit(values[i][j], targetUnit);
         return values;
     }
 
@@ -258,7 +259,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public float getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
-        return (float) expressAsUnit(getSI(row, column), targetUnit);
+        return (float) ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
 
     /**
@@ -290,7 +291,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     @Override
     public void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
     {
-        setSI(row, column, (float) expressAsSIUnit(value, valueUnit));
+        setSI(row, column, (float) ValueUtil.expressAsSIUnit(value, valueUnit));
     }
 
     /**
@@ -654,7 +655,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             buf.append("\n");
             for (int j = 0; j < this.matrixSI.columns(); j++)
             {
-                float f = (float) expressAsUnit(this.matrixSI.get(i, j), displayUnit);
+                float f = (float) ValueUtil.expressAsUnit(this.matrixSI.get(i, j), displayUnit);
                 buf.append(" " + Format.format(f));
             }
         }

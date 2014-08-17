@@ -4,6 +4,7 @@ import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Scalar;
+import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 
 /**
@@ -89,7 +90,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     public float getValueInUnit(final U targetUnit)
     {
-        return (float) expressAsUnit(this.valueSI, targetUnit);
+        return (float) ValueUtil.expressAsUnit(this.valueSI, targetUnit);
     }
 
     // FIXME: explain setSI, set and setInUnit. These methods are not public and never used.
@@ -143,6 +144,46 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
     }
 
     /**********************************************************************************/
+    /******************************** NUMBER METHODS **********************************/
+    /**********************************************************************************/
+
+    /**
+     * @see java.lang.Number#intValue()
+     */
+    @Override
+    public int intValue()
+    {
+        return Math.round(this.valueSI);
+    }
+
+    /**
+     * @see java.lang.Number#longValue()
+     */
+    @Override
+    public long longValue()
+    {
+        return Math.round(this.valueSI);
+    }
+
+    /**
+     * @see java.lang.Number#floatValue()
+     */
+    @Override
+    public float floatValue()
+    {
+        return this.valueSI;
+    }
+
+    /**
+     * @see java.lang.Number#doubleValue()
+     */
+    @Override
+    public double doubleValue()
+    {
+        return this.valueSI;
+    }
+
+/**********************************************************************************/
     /********************************** MATH METHODS **********************************/
     /**********************************************************************************/
 

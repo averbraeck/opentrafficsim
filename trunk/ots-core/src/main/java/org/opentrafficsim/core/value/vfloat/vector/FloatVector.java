@@ -7,6 +7,7 @@ import org.opentrafficsim.core.value.Dense;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.Vector;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
@@ -139,7 +140,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     {
         float[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = (float) expressAsUnit(values[i], targetUnit);
+            values[i] = (float) ValueUtil.expressAsUnit(values[i], targetUnit);
         return values;
     }
 
@@ -175,7 +176,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
      */
     public float getInUnit(final int index, final U targetUnit) throws ValueException
     {
-        return (float) expressAsUnit(getSI(index), targetUnit);
+        return (float) ValueUtil.expressAsUnit(getSI(index), targetUnit);
     }
 
     /**
@@ -206,7 +207,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
     @Override
     public void setInUnit(final int index, final float value, final U valueUnit) throws ValueException
     {
-        setSI(index, (float) expressAsSIUnit(value, valueUnit));
+        setSI(index, (float) ValueUtil.expressAsSIUnit(value, valueUnit));
     }
 
     /**
@@ -535,7 +536,7 @@ public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implement
         buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
-            float f = (float) expressAsUnit(this.vectorSI.get(i), displayUnit);
+            float f = (float) ValueUtil.expressAsUnit(this.vectorSI.get(i), displayUnit);
             buf.append(" " + Format.format(f));
         }
         return buf.toString();

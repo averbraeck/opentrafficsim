@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.opentrafficsim.core.unit.Unit;
 
 /**
+ * AbstractValue is a class to help construct Matrix, Complex, and Vector but it does not extend java.lang.Number.
+ * The Scalar class <i>does</i> extend Number, and implements the same interfaces from Value. 
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -33,17 +35,69 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class Vector<U extends Unit<U>> extends AbstractValue<U> implements Serializable, MathFunctions
+public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Serializable, MathFunctions
 {
     /** */
     private static final long serialVersionUID = 20140615L;
 
+    /** the unit of the value. */
+    protected U unit;
+
     /**
      * @param unit the unit of the value
      */
-    public Vector(final U unit)
+    public AbstractValue(final U unit)
     {
-        super(unit);
+        this.unit = unit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.Value#getUnit()
+     */
+    public U getUnit()
+    {
+        return this.unit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.Value#expressAsSIUnit(double)
+     */
+    public double expressAsSIUnit(final double value)
+    {
+        return ValueUtil.expressAsSIUnit(value, this.unit);
+    }
+
+    /**
+     * @param value the value to convert in the specified unit for this scalar
+     * @return the value in the unit as specified for this scalar
+     */
+    protected double expressAsSpecifiedUnit(final double value)
+    {
+        return ValueUtil.expressAsUnit(value, this.unit);
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.Value#setDisplayUnit(org.opentrafficsim.core.unit.Unit)
+     */
+    public void setDisplayUnit(final U newUnit)
+    {
+        this.unit = newUnit;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.Value#isAbsolute()
+     */
+    public boolean isAbsolute()
+    {
+        return this instanceof Absolute;
+    }
+
+    /**
+     * @see org.opentrafficsim.core.value.Value#isRelative()
+     */
+    public boolean isRelative()
+    {
+        return this instanceof Relative;
     }
 
 }

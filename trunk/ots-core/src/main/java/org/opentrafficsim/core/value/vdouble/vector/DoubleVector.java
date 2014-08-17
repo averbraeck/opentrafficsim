@@ -7,6 +7,7 @@ import org.opentrafficsim.core.value.Dense;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.Vector;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctionsImpl;
@@ -139,7 +140,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     {
         double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
-            values[i] = expressAsUnit(values[i], targetUnit);
+            values[i] = ValueUtil.expressAsUnit(values[i], targetUnit);
         return values;
     }
 
@@ -177,7 +178,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
      */
     public double getInUnit(final int index, final U targetUnit) throws ValueException
     {
-        return expressAsUnit(getSI(index), targetUnit);
+        return ValueUtil.expressAsUnit(getSI(index), targetUnit);
     }
 
     /**
@@ -208,7 +209,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     @Override
     public void setInUnit(final int index, final double value, final U valueUnit) throws ValueException
     {
-        setSI(index, expressAsSIUnit(value, valueUnit));
+        setSI(index, ValueUtil.expressAsSIUnit(value, valueUnit));
     }
 
     /**
@@ -538,7 +539,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
         buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
-            double f = expressAsUnit(this.vectorSI.get(i), displayUnit);
+            double f = ValueUtil.expressAsUnit(this.vectorSI.get(i), displayUnit);
             buf.append(" " + Format.format(f));
         }
         return buf.toString();
