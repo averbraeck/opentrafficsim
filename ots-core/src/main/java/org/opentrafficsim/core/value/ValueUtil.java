@@ -1,12 +1,10 @@
-package org.opentrafficsim.core.dsol;
+package org.opentrafficsim.core.value;
 
-import nl.tudelft.simulation.dsol.simulators.Simulator;
-
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.unit.OffsetUnit;
+import org.opentrafficsim.core.unit.Unit;
 
 /**
+ * Value is a static interface that implements a couple of unit-related static methods.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -31,13 +29,36 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Aug 15, 2014 <br>
+ * @version Aug 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class OTSSimulator extends
-        Simulator<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> implements
-        OTSSimulatorInterface
+public class ValueUtil
 {
-    /** */
-    private static final long serialVersionUID = 20140815L;
+    /**
+     * @param value the value to convert into SI units
+     * @param unit the unit belonging to the value
+     * @return the value in SI units
+     */
+    public static double expressAsSIUnit(final double value, final Unit<?> unit)
+    {
+        if (unit instanceof OffsetUnit<?>)
+            return value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit()
+                    * unit.getConversionFactorToStandardUnit();
+        return value * unit.getConversionFactorToStandardUnit();
+    }
+
+    /**
+     * @param value the value to express in target unit
+     * @param targetUnit the unit to convert the value to
+     * @return the value in the target unit
+     */
+    public static double expressAsUnit(final double value, final Unit<?> targetUnit)
+    {
+        if (targetUnit instanceof OffsetUnit<?>)
+            return value / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
+                    .getOffsetToStandardUnit();
+        return value / targetUnit.getConversionFactorToStandardUnit();
+    }
+
 }

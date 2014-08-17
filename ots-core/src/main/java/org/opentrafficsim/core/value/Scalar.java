@@ -2,7 +2,6 @@ package org.opentrafficsim.core.value;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.unit.OffsetUnit;
 import org.opentrafficsim.core.unit.Unit;
 
 /**
@@ -34,7 +33,7 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFunctions
+public abstract class Scalar<U extends Unit<U>> extends Number implements Value<U>, Serializable, MathFunctions
 {
     /** */
     private static final long serialVersionUID = 20140615L;
@@ -51,7 +50,7 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     }
 
     /**
-     * @return unit
+     * @see org.opentrafficsim.core.value.Value#getUnit()
      */
     public U getUnit()
     {
@@ -59,29 +58,11 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     }
 
     /**
-     * @param value the value to convert in SI units
-     * @return the value in SI units
+     * @see org.opentrafficsim.core.value.Value#expressAsSIUnit(double)
      */
-    protected double expressAsSIUnit(final double value)
+    public double expressAsSIUnit(final double value)
     {
-        if (this.unit instanceof OffsetUnit<?>)
-            return value - ((OffsetUnit<?>) this.unit).getOffsetToStandardUnit()
-                    * this.unit.getConversionFactorToStandardUnit();
-        return value * this.unit.getConversionFactorToStandardUnit();
-    }
-
-    /**
-     * @param value the value to convert in SI units
-     * @param valueUnit the unit of the offered value
-     * @return the value in SI units
-     */
-    // TODO: maybe as static method?
-    protected double expressAsSIUnit(final double value, final Unit<U> valueUnit)
-    {
-        if (this.unit instanceof OffsetUnit<?>)
-            return value + ((OffsetUnit<?>) valueUnit).getOffsetToStandardUnit()
-                    * valueUnit.getConversionFactorToStandardUnit();
-        return value * valueUnit.getConversionFactorToStandardUnit();
+        return ValueUtil.expressAsSIUnit(value, this.unit);
     }
 
     /**
@@ -90,25 +71,11 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
      */
     protected double expressAsSpecifiedUnit(final double value)
     {
-        return expressAsUnit(value, this.unit);
+        return ValueUtil.expressAsUnit(value, this.unit);
     }
 
     /**
-     * @param value the value to express in target unit
-     * @param targetUnit the unit to convert the value to
-     * @return the value in the target unit
-     */
-    protected double expressAsUnit(final double value, final Unit<U> targetUnit)
-    {
-        if (targetUnit instanceof OffsetUnit<?>)
-            return value / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
-                    .getOffsetToStandardUnit();
-        return value / targetUnit.getConversionFactorToStandardUnit();
-    }
-
-    /**
-     * Set a new unit for displaying the results.
-     * @param newUnit the new unit of the right unit type
+     * @see org.opentrafficsim.core.value.Value#setDisplayUnit(org.opentrafficsim.core.unit.Unit)
      */
     public void setDisplayUnit(final U newUnit)
     {
@@ -116,7 +83,7 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     }
 
     /**
-     * @return whether the value is absolute.
+     * @see org.opentrafficsim.core.value.Value#isAbsolute()
      */
     public boolean isAbsolute()
     {
@@ -124,16 +91,11 @@ public abstract class Scalar<U extends Unit<U>> implements Serializable, MathFun
     }
 
     /**
-     * @return whether the value is relative.
+     * @see org.opentrafficsim.core.value.Value#isRelative()
      */
     public boolean isRelative()
     {
         return this instanceof Relative;
     }
-
-    /**
-     * @return a copy of the object
-     */
-    public abstract Scalar<U> copy();
     
 }
