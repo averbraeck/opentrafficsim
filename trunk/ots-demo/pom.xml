@@ -14,5 +14,9 @@
   		<groupId>opentrafficsim</groupId>
   		<artifactId>ots-core</artifactId>
   	</dependency>
+  	<dependency>
+  		<groupId>dsol</groupId>
+  		<artifactId>dsol-swing</artifactId>
+  	</dependency>
   </dependencies>
 </project>

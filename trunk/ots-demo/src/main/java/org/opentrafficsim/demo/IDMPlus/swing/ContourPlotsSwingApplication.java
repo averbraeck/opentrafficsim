@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -46,13 +48,26 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ContourPlotsApplication
+public class ContourPlotsSwingApplication extends DSOLApplication
 {
     /**
-     * @throws SimRuntimeException 
-     * @throws RemoteException 
+     * @param title
+     * @param panel
      */
-    public ContourPlotsApplication() throws SimRuntimeException, RemoteException
+    public ContourPlotsSwingApplication(String title, ContourPlotsPanel panel)
+    {
+        super(title, panel);
+    }
+
+    /** */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @param args
+     * @throws SimRuntimeException
+     * @throws RemoteException
+     */
+    public static void main(String[] args) throws SimRuntimeException, RemoteException
     {
         OTSModelInterface model = new ContourPlotsModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
@@ -61,63 +76,43 @@ public class ContourPlotsApplication
                         new DoubleScalarRel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalarRel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        makePlots((ContourPlotsModel) model);
-        simulator.start();
+        ContourPlotsPanel panel = new ContourPlotsPanel(model, simulator);
+        makePlots((ContourPlotsModel) model, panel);
+        new ContourPlotsSwingApplication("IDM-plus contourplots model", panel);
     }
 
     /**
-     * make the stand-alone plots for the model.
+     * make the stand-alone plots for the model and put them in the statistics panel.
      * @param model the model.
      */
-    private void makePlots(ContourPlotsModel model)
+    private static void makePlots(final ContourPlotsModel model, final ContourPlotsPanel panel)
     {
         ContourPlot cp;
-        int left = 200;
-        int deltaLeft = 100;
-        int top = 100;
-        int deltaTop = 50;
 
         cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Density Contour Graph");
-        cp.setBounds(left + model.getContourPlots().size() * deltaLeft,
-                top + model.getContourPlots().size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
+        cp.setExtendedState(MAXIMIZED_BOTH);
         model.getContourPlots().add(cp);
 
         cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Speed Contour Graph");
-        cp.setBounds(left + model.getContourPlots().size() * deltaLeft,
-                top + model.getContourPlots().size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
         model.getContourPlots().add(cp);
 
         cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("FLow Contour Graph");
-        cp.setBounds(left + model.getContourPlots().size() * deltaLeft,
-                top + model.getContourPlots().size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
         model.getContourPlots().add(cp);
 
         cp = new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Acceleration Contour Graph");
-        cp.setBounds(left + model.getContourPlots().size() * deltaLeft,
-                top + model.getContourPlots().size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
         model.getContourPlots().add(cp);
-    }
+        
+        TablePanel charts = new TablePanel(2, 2);
+        panel.addTab("statistics", charts);
 
-    /**
-     * @param args
-     * @throws SimRuntimeException 
-     * @throws RemoteException 
-     */
-    public static void main(String[] args) throws SimRuntimeException, RemoteException
-    {
-        new ContourPlotsApplication();
+        charts.setCell(model.getContourPlots().get(0).getContentPane(), 0, 0);
+        charts.setCell(model.getContourPlots().get(1).getContentPane(), 1, 0);
+        charts.setCell(model.getContourPlots().get(2).getContentPane(), 0, 1);
+        charts.setCell(model.getContourPlots().get(3).getContentPane(), 1, 1);
     }
 
 }

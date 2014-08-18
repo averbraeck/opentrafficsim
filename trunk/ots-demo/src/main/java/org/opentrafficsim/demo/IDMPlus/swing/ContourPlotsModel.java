@@ -21,11 +21,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
-import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
-import org.opentrafficsim.graphs.DensityContourPlot;
-import org.opentrafficsim.graphs.FlowContourPlot;
-import org.opentrafficsim.graphs.SpeedContourPlot;
 
 /**
  * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
@@ -70,6 +66,9 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  */
 public class ContourPlotsModel implements OTSModelInterface
 {
+    /** */
+    private static final long serialVersionUID = 20140815L;
+
     /** the simulator */
     private OTSDEVSSimulator simulator;
 
@@ -80,7 +79,7 @@ public class ContourPlotsModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus */
-    private CarFollowingModel carFollowingModel;
+    protected CarFollowingModel carFollowingModel;
 
     /** cars in the model */
     private ArrayList<Car> cars = new ArrayList<Car>();
@@ -106,40 +105,6 @@ public class ContourPlotsModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulator) _simulator;
-
-        ContourPlot cp;
-        int left = 200;
-        int deltaLeft = 100;
-        int top = 100;
-        int deltaTop = 50;
-
-        cp = new DensityContourPlot("DensityPlot", minimumDistance, maximumDistance);
-        cp.setTitle("Density Contour Graph");
-        cp.setBounds(left + contourPlots.size() * deltaLeft, top + contourPlots.size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
-
-        cp = new SpeedContourPlot("SpeedPlot", minimumDistance, maximumDistance);
-        cp.setTitle("Speed Contour Graph");
-        cp.setBounds(left + contourPlots.size() * deltaLeft, top + contourPlots.size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
-
-        cp = new FlowContourPlot("FlowPlot", minimumDistance, maximumDistance);
-        cp.setTitle("FLow Contour Graph");
-        cp.setBounds(left + contourPlots.size() * deltaLeft, top + contourPlots.size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
-
-        cp = new AccelerationContourPlot("AccelerationPlot", minimumDistance, maximumDistance);
-        cp.setTitle("Acceleration Contour Graph");
-        cp.setBounds(left + contourPlots.size() * deltaLeft, top + contourPlots.size() * deltaTop, 600, 400);
-        cp.pack();
-        cp.setVisible(true);
-        contourPlots.add(cp);
 
         this.carFollowingModel = new IDMPlus<Line<String>>();
 
@@ -209,8 +174,34 @@ public class ContourPlotsModel implements OTSModelInterface
         return this.simulator;
     }
 
+    /**
+     * @return contourPlots
+     */
+    public ArrayList<ContourPlot> getContourPlots()
+    {
+        return this.contourPlots;
+    }
+
+    /**
+     * @return minimumDistance
+     */
+    public DoubleScalarAbs<LengthUnit> getMinimumDistance()
+    {
+        return this.minimumDistance;
+    }
+
+    /**
+     * @return maximumDistance
+     */
+    public DoubleScalarAbs<LengthUnit> getMaximumDistance()
+    {
+        return this.maximumDistance;
+    }
+
+    /** Inner class IDMCar */
     protected class IDMCar extends Car
     {
+        /** local access to simulator for scheduling */
         private final OTSDEVSSimulatorInterface simulator;
 
         /**
@@ -247,25 +238,28 @@ public class ContourPlotsModel implements OTSModelInterface
         {
             System.out.println("move " + this.getID());
             DoubleScalarAbs<TimeUnit> now = this.simulator.getSimulatorTime().get();
-            if (getPosition(now).getValueSI() > maximumDistance.getValueSI())
+            if (getPosition(now).getValueSI() > ContourPlotsModel.this.maximumDistance.getValueSI())
             {
-                cars.remove(this);
+                ContourPlotsModel.this.cars.remove(this);
                 return;
             }
             Collection<Car> leaders = new ArrayList<Car>();
-            int carIndex = cars.indexOf(this);
-            if (carIndex < cars.size() - 1)
-                leaders.add(cars.get(carIndex + 1));
+            int carIndex = ContourPlotsModel.this.cars.indexOf(this);
+            if (carIndex < ContourPlotsModel.this.cars.size() - 1)
+                leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
 
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getValueSI() >= 300 && now.getValueSI() < 500)
             {
                 IDMCar block =
-                        new IDMCar(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
-                                LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                        new IDMCar(99999, this.simulator, ContourPlotsModel.this.carFollowingModel, now,
+                                new DoubleScalarAbs<LengthUnit>(4000, LengthUnit.METER),
+                                new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);
             }
-            CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(this, leaders, speedLimit);
+            CarFollowingModelResult cfmr =
+                    ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                            ContourPlotsModel.this.speedLimit);
             setState(cfmr);
 
             // Add the movement of this Car to the contour plots
@@ -273,8 +267,8 @@ public class ContourPlotsModel implements OTSModelInterface
 
             try
             {
-                simulator.scheduleEventRel(new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
-                        null);
+                this.simulator.scheduleEventRel(new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND), this, this,
+                        "move", null);
             }
             catch (RemoteException | SimRuntimeException exception)
             {
