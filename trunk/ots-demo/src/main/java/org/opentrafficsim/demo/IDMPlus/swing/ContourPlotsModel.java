@@ -202,7 +202,7 @@ public class ContourPlotsModel implements OTSModelInterface
     protected class IDMCar extends Car
     {
         /** local access to simulator for scheduling */
-        private final OTSDEVSSimulatorInterface simulator;
+        private final OTSDEVSSimulator simulator;
 
         /**
          * @param id
@@ -212,7 +212,7 @@ public class ContourPlotsModel implements OTSModelInterface
          * @param initialPosition
          * @param initialSpeed
          */
-        public IDMCar(int id, OTSDEVSSimulatorInterface simulator, CarFollowingModel carFollowingModel,
+        public IDMCar(int id, OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
                 DoubleScalarAbs<TimeUnit> initialTime, DoubleScalarAbs<LengthUnit> initialPosition,
                 DoubleScalarRel<SpeedUnit> initialSpeed)
         {
