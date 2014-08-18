@@ -12,7 +12,6 @@ import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
 import org.opentrafficsim.car.following.IDMPlus;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.location.Line;
