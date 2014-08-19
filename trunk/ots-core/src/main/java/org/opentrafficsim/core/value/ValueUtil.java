@@ -49,16 +49,16 @@ public class ValueUtil
     }
 
     /**
-     * @param value the value to express in target unit
+     * @param siValue the value to express in target unit
      * @param targetUnit the unit to convert the value to
      * @return the value in the target unit
      */
-    public static double expressAsUnit(final double value, final Unit<?> targetUnit)
+    public static double expressAsUnit(final double siValue, final Unit<?> targetUnit)
     {
         if (targetUnit instanceof OffsetUnit<?>)
-            return value / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
+            return siValue / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
                     .getOffsetToStandardUnit();
-        return value / targetUnit.getConversionFactorToStandardUnit();
+        return siValue / targetUnit.getConversionFactorToStandardUnit();
     }
 
 }
