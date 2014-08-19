@@ -109,7 +109,6 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         extendXRange(xAxis.getMaximumValue());
         double[] boundaries = {redValue, yellowValue, greenValue};
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
-        this.chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         this.chartPanel.addMouseMotionListener(new PointerHandler()
         {
             /**
