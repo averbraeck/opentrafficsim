@@ -1,5 +1,6 @@
 package org.opentrafficsim.car.following;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.opentrafficsim.car.Car;
@@ -237,7 +238,7 @@ public class IDMPlus<Line> implements CarFollowingModel
         double nonPreferredLaneChangeDesire =
                 totalDesire(nonPreferredLaneRouteIncentive, nonPreferredLaneSpeedIncentive, 0);
         boolean preferredLaneChangeOK =
-                checkLaneChange(car, preferredLaneCars, preferredLaneCars, preferredLaneChangeDesire, speedLimit);
+                checkLaneChange(car, preferredLaneCars, preferredLaneChangeDesire, speedLimit);
         CarFollowingModelResult straight = computeAcceleration(car, sameLaneCars, speedLimit);
         System.out.println(String.format(
                 "Total desire to merge to preferredLane: %.3f, total desire to merge to overtakingLane: %.3f",
@@ -245,20 +246,59 @@ public class IDMPlus<Line> implements CarFollowingModel
         return null;
     }
 
-    private boolean checkLaneChange(Car car, Collection<Car> leaders, Collection<Car> followers, double desire, DoubleScalarAbs<SpeedUnit> speedLimit)
+    /**
+     * Check if a lane change can be executed safely
+     * @param car Car; the Car that considers changing lane
+     * @param carsInOtherLane Collection&lt;Car&gt; the car in the adjacent lane
+     * @param desire double; the desire to change into the adjacent lane
+     * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit in the adjacent lane
+     * @return boolean; true if the lane change can be performed; false if the lane change should not be performed
+     */
+    private boolean checkLaneChange(Car car, Collection<Car> carsInOtherLane, double desire,
+            DoubleScalarAbs<SpeedUnit> speedLimit)
     {
-        DoubleScalarAbs<AccelerationUnit> carAcceleration = computeAcceleration(car, leaders, speedLimit).acceleration;
-        if (carAcceleration.getValueSI() < b.getValueSI())
-            return false;
-        // Find the new follower
+        // Find the new leader and follower
+        Car leader = null;
+        DoubleScalarRel<LengthUnit> leaderHeadway = null;
         Car follower = null;
-        DoubleScalarAbs<LengthUnit> carFront = car.positionOfFront(car.getNextEvaluationTime());
-        /*-
-        for (Car c : followers)
-            if (c.positionOfRear(car.getNextEvaluationTime()).getValueSI() < carFront.getValueSI() && (null == follower || follower.))
-                ;
-                */
-        return false;
+        DoubleScalarRel<LengthUnit> followerHeadway = null;
+        for (Car c : carsInOtherLane)
+        {
+            DoubleScalarRel<LengthUnit> headway = car.headway(c);
+            if (headway.getValueSI() > 0)
+            {
+                if (null == leader || headway.getValueSI() < leaderHeadway.getValueSI())
+                {
+                    leader = c;
+                    leaderHeadway = headway;
+                }
+            }
+            else
+            {
+                if (null == follower || headway.getValueSI() > followerHeadway.getValueSI())
+                {
+                    follower = c;
+                    followerHeadway = headway;
+                }
+            }
+        }
+        Collection<Car> leaders = new ArrayList<Car>();
+        if (null != leader)
+            leaders.add(leader);
+        DoubleScalarAbs<AccelerationUnit> carAcceleration = computeAcceleration(car, leaders, speedLimit).acceleration;
+        if (carAcceleration.getValueSI() < this.b.getValueSI())
+            return false; // leader would be too close
+        if (null != follower)
+        {
+            Collection<Car> referenceCarGroup = new ArrayList<Car>();
+            referenceCarGroup.add(car);
+            DoubleScalarAbs<AccelerationUnit> otherCarAcceleration =
+                    computeAcceleration(follower, referenceCarGroup, speedLimit).acceleration;
+            // This assumes that the follower also uses IDMPlus (which is not unreasonable)
+            if (otherCarAcceleration.getValueSI() < this.b.getValueSI())
+                return false; // follower would be too close
+        }
+        return true;
     }
 
     /**
@@ -285,7 +325,7 @@ public class IDMPlus<Line> implements CarFollowingModel
     {
         if (routeIncentive * speedIncentive < 0 && Math.abs(routeIncentive) >= this.dCoop)
             return 0;
-        else if (routeIncentive * speedIncentive >= 0 && Math.abs(routeIncentive) <= this.dSync)
+        else if (routeIncentive * speedIncentive >= 0 || Math.abs(routeIncentive) <= this.dSync)
             return 1;
         else
             return (this.dCoop - Math.abs(routeIncentive)) / (this.dCoop - this.dSync);

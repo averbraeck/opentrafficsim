@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
@@ -38,7 +37,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
  * @version Jul 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract interface CarFollowingModel
+public interface CarFollowingModel
 {
     /**
      * Compute the acceleration that would be used to follow a set of leaders.
@@ -49,15 +48,13 @@ public abstract interface CarFollowingModel
      */
     CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
             final DoubleScalarAbs<SpeedUnit> speedLimit);
-
+    
     /**
      * Compute the acceleration and lane change.
      * @param car Car; the Car for which the acceleration and lane change is computed
      * @param sameLaneCars Collection&lt;Car&gt;; the set of observable Cars in the current lane (can not be null)
      * @param preferredLaneCars Collection&lt;Car&gt;; the set of observable Cars in the adjacent lane where cars should
      *            drive in the absence of other traffic (must be null if there is no such lane)
-     * @param nonPreferredLaneLeaders Collection&lt;Car&gt;; the set of leaders in the adjacent lane into which cars
-     *            should merge to overtake other traffic (must be null if there is no such lane)
      * @param nonPreferredLaneCars Collection&lt;Car&gt;; the set of observable Cars in the adjacent lane into which
      *            cars should merge to overtake other traffic (must be null if there is no such lane)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
