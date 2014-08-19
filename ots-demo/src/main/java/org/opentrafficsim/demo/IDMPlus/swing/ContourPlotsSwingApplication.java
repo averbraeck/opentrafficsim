@@ -1,10 +1,15 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.net.URL;
 import java.rmi.RemoteException;
+
+import javax.swing.JScrollPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
+import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
@@ -54,13 +59,14 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      * @param title
      * @param panel
      */
-    public ContourPlotsSwingApplication(String title, ContourPlotsPanel panel)
+    public ContourPlotsSwingApplication(String title,
+            DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
 
     /** */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 20140819L;
 
     /**
      * @param args
@@ -69,15 +75,17 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      */
     public static void main(String[] args) throws SimRuntimeException, RemoteException
     {
-        OTSModelInterface model = new ContourPlotsModel();
+        ContourPlotsModel model = new ContourPlotsModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         OTSReplication replication =
                 new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalarAbs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalarRel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalarRel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        ContourPlotsPanel panel = new ContourPlotsPanel(model, simulator);
-        makePlots((ContourPlotsModel) model, panel);
+        DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel =
+                new DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+        makePlots(model, panel);
+        addInfoTab(panel);
         new ContourPlotsSwingApplication("IDM-plus contourplots model", panel);
     }
 
@@ -85,34 +93,49 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      * make the stand-alone plots for the model and put them in the statistics panel.
      * @param model the model.
      */
-    private static void makePlots(final ContourPlotsModel model, final ContourPlotsPanel panel)
+    private static void makePlots(final ContourPlotsModel model,
+            final DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
     {
+        TablePanel charts = new TablePanel(2, 2);
+        panel.getTabbedPane().addTab("statistics", charts);
+
         ContourPlot cp;
 
         cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Density Contour Graph");
         cp.setExtendedState(MAXIMIZED_BOTH);
         model.getContourPlots().add(cp);
+        charts.setCell(cp.getContentPane(), 0, 0);
 
         cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Speed Contour Graph");
         model.getContourPlots().add(cp);
+        charts.setCell(cp.getContentPane(), 1, 0);
 
         cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("FLow Contour Graph");
         model.getContourPlots().add(cp);
+        charts.setCell(cp.getContentPane(), 0, 1);
 
         cp = new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Acceleration Contour Graph");
         model.getContourPlots().add(cp);
-        
-        TablePanel charts = new TablePanel(2, 2);
-        panel.addTab("statistics", charts);
-
-        charts.setCell(model.getContourPlots().get(0).getContentPane(), 0, 0);
-        charts.setCell(model.getContourPlots().get(1).getContentPane(), 1, 0);
-        charts.setCell(model.getContourPlots().get(2).getContentPane(), 0, 1);
-        charts.setCell(model.getContourPlots().get(3).getContentPane(), 1, 1);
+        charts.setCell(cp.getContentPane(), 1, 1);
     }
 
+    /**
+     * @param panel
+     */
+    private static void addInfoTab(
+            final DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
+    {
+        // Let's find some content for our infoscreen and add it to our tabbedPane
+        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
+        URL page = ContourPlotsModel.class.getResource(helpSource);
+        if (page != null)
+        {
+            HTMLPanel htmlPanel = new HTMLPanel(page);
+            panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
+        }
+    }
 }
