@@ -7,6 +7,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;
@@ -277,4 +278,26 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         return new DoubleScalarAbs<AccelerationUnit>(this.acceleration);
     }
 
+    /**
+     * Determine by what distance the front of this Car is ahead or behind the front an other Car. <br />
+     * Positive values indicate that this Car is ahead, negative values indicate behind.
+     * @param otherCar
+     * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
+     */
+    public DoubleScalarRel<LengthUnit> headway(Car otherCar)
+    {
+        try
+        {
+            DoubleScalarAbs<TimeUnit> when = this.simulator.getSimulatorTime().get();
+            return DoubleScalar.minus(positionOfFront(when), otherCar.positionOfFront(when));
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    // TODO: we need something like headway that returns the lateral offset in lanes or meters
+    
 }
