@@ -1,6 +1,7 @@
 package org.opentrafficsim.graphs;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 
@@ -37,7 +38,7 @@ import org.jfree.chart.plot.XYPlot;
  * @version Aug 13, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-abstract public class PointerHandler implements MouseMotionListener
+abstract public class PointerHandler implements MouseListener, MouseMotionListener
 {
     /**
      * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
@@ -68,23 +69,73 @@ abstract public class PointerHandler implements MouseMotionListener
         {
             Point2D p = cp.translateScreenToJava2D(mouseEvent.getPoint());
             PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
-            this.updateHint(
-                    plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()), plot
-                            .getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
+            this.updateHint(plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()),
+                    plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
 
         }
         else
-            this.clearHint();
+            this.updateHint(Double.NaN, Double.NaN);
     }
+
     /**
-     * Called when the mouse is in the data area of the graph.
-     * @param domainValue Double; the X-value (in domain units)
-     * @param rangeValue Double; the Y-value (in domain units)
+     * Called when the pointer is positioned inside the data area of the graph, or when it leaves the data area. <br />
+     * When the mouse is outside the data area both parameters are set to Double.NaN.
+     * @param domainValue Double; the X-value (in domain units), or Double.NaN if the pointer is outside the data area
+     * @param rangeValue Double; the Y-value (in domain units), or Double.NaN if the pointer is outside the data area
      */
     abstract void updateHint(double domainValue, double rangeValue);
 
     /**
-     * Called when the mouse is outside the data area of the graph.
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
-    abstract void clearHint();
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        // No action
+    }
+
+    /**
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+        // No action
+    }
+
+    /**
+     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        // No action
+    }
+
+    /**
+     * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+        // No action
+    }
+
+    /**
+     * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseExited(MouseEvent mouseEvent)
+    {
+        ChartPanel cp = (ChartPanel) mouseEvent.getSource();
+        XYPlot plot = (XYPlot) cp.getChart().getPlot();
+        // Remove the cross hair cursor when the cursor moves outside the graph
+        if (cp.getHorizontalAxisTrace())
+        {
+            cp.setHorizontalAxisTrace(false);
+            cp.setVerticalAxisTrace(false);
+            plot.notifyListeners(new PlotChangeEvent(plot));
+        }
+        updateHint(Double.NaN, Double.NaN); // Clear the hint text
+    }
 }

@@ -122,7 +122,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
         ChartPanel cp = new ChartPanel(this.chartPanel);
         cp.setMouseWheelEnabled(true);
-        cp.addMouseMotionListener(new PointerHandler()
+        PointerHandler ph = new PointerHandler()
         {
             /**
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
@@ -130,6 +130,11 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
             @Override
             void updateHint(double domainValue, double rangeValue)
             {
+                if (Double.isNaN(domainValue))
+                {
+                    TrajectoryPlot.this.statusLabel.setText(" ");
+                    return;
+                }
                 String value = "";
                 /*-
                 XYDataset dataset = plot.getDataset();
@@ -190,19 +195,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                 else
                     value = "";
                  */
-                TrajectoryPlot.this.statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue, value));
+                TrajectoryPlot.this.statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", domainValue,
+                        rangeValue, value));
             }
-
-            /**
-             * @see org.opentrafficsim.graphs.PointerHandler#clearHint()
-             */
-            @Override
-            void clearHint()
-            {
-                TrajectoryPlot.this.statusLabel.setText(" ");
-            }
-        });
-        setPreferredSize(new java.awt.Dimension(500, 270));
+        };
+        cp.addMouseMotionListener(ph);
+        cp.addMouseListener(ph);
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
