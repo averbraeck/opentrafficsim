@@ -1,13 +1,9 @@
 package org.opentrafficsim.car;
 
-import java.rmi.RemoteException;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;
@@ -51,6 +47,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  */
 public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleScalarRel<SpeedUnit>>
 {
+    // TODO lots of these fields should probably be moved int the GTU class...
+    
     /** Time of last evaluation. */
     protected DoubleScalarAbs<TimeUnit> lastEvaluationTime;
 
@@ -76,8 +74,8 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     /** ID of this car. */
     private final int id;
 
-    /** SimulatorInterface "running" this Car. */
-    private final OTSDEVSSimulatorInterface simulator;
+    /** Simulator "running" this Car. */
+    private final OTSDEVSSimulator simulator;
 
     /** CarFollowingModel used by this Car. */
     private final CarFollowingModel carFollowingModel;
@@ -91,7 +89,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param initialPosition
      * @param initialSpeed
      */
-    public Car(final int id, final OTSDEVSSimulatorInterface simulator, final CarFollowingModel carFollowingModel,
+    public Car(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
             final DoubleScalarAbs<TimeUnit> initialTime, final DoubleScalarAbs<LengthUnit> initialPosition,
             final DoubleScalarRel<SpeedUnit> initialSpeed)
     {
@@ -180,6 +178,15 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     }
 
     /**
+     * Retrieve the simulator of this Car.
+     * @return OTSDEVSSimulatorInterface; the simulator of this Car
+     */
+    public OTSDEVSSimulator getSimulator()
+    {
+        return this.simulator;
+    }
+
+    /**
      * @see org.opentrafficsim.core.gtu.GTU#getLocation()
      */
     @Override
@@ -194,15 +201,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     @Override
     public DoubleScalarRel<SpeedUnit> getVelocity()
     {
-        try
-        {
-            return getVelocity(this.simulator.getSimulatorTime().get());
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-            return null; // TODO: STUB
-        }
+        return getVelocity(this.simulator.getSimulatorTime().get());
     }
 
     /**
@@ -216,15 +215,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
 
     public String toString()
     {
-        try
-        {
-            return toString(this.simulator.getSimulatorTime().get());
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-            return null; // TODO: STUB
-        }
+        return toString(this.simulator.getSimulatorTime().get());
     }
 
     /**
@@ -264,7 +255,6 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.validUntil;
         this.acceleration = cfmr.acceleration;
-        // TODO schedule next evaluation in the scheduler.
     }
 
     /**
@@ -286,18 +276,10 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      */
     public DoubleScalarRel<LengthUnit> headway(Car otherCar)
     {
-        try
-        {
-            DoubleScalarAbs<TimeUnit> when = this.simulator.getSimulatorTime().get();
-            return DoubleScalar.minus(positionOfFront(when), otherCar.positionOfFront(when));
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-        return null;
+        DoubleScalarAbs<TimeUnit> when = this.simulator.getSimulatorTime().get();
+        return DoubleScalar.minus(positionOfFront(when), otherCar.positionOfFront(when));
     }
 
     // TODO: we need something like headway that returns the lateral offset in lanes or meters
-    
+
 }
