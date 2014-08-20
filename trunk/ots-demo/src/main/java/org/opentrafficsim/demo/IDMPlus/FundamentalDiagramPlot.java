@@ -74,7 +74,7 @@ public class FundamentalDiagramPlot
         DoubleScalarAbs<LengthUnit> detectorLocation = new DoubleScalarAbs<LengthUnit>(3500, LengthUnit.METER);
         FundamentalDiagram fd =
                 new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
-                        new DoubleScalarRel<TimeUnit>(1, TimeUnit.MINUTE));
+                        new DoubleScalarRel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
         fd.setTitle("Fundamental Diagram Graph");
         fd.setBounds(0, 0, 600, 400);
         fd.pack();
