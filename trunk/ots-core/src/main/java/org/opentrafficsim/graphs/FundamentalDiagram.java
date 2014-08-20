@@ -33,6 +33,7 @@ import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.MassUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -79,6 +80,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Caption for this Fundamental Diagram */
     final String caption;
+    
+    /** Position of this Fundamental Diagram */
+    final DoubleScalarAbs<LengthUnit> position;
 
     /** Area to show status information. */
     protected final JLabel statusLabel;
@@ -122,15 +126,17 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      *            Fundamental diagram
      * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data
      *            for this Fundamental diagram
+     * @param position DoubleScalarAbs&lt;LengthUnit&gt;; position of the detector (FIXME: should be a LOT more general)
      */
     public FundamentalDiagram(final String caption, final int numberOfLanes,
-            final DoubleScalarRel<TimeUnit> aggregationTime)
+            final DoubleScalarRel<TimeUnit> aggregationTime, final DoubleScalarAbs<LengthUnit> position)
     {
         this.aggregationTime = aggregationTime;
         this.sampleSets = new ArrayList<ArrayList<Sample>>(numberOfLanes);
         for (int i = 0; i < numberOfLanes; i++)
             this.sampleSets.add(new ArrayList<Sample>());
         this.caption = caption;
+        this.position = new DoubleScalarAbs<LengthUnit>(position);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
@@ -148,7 +154,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         });
         renderer.setBaseItemLabelsVisible(true);
         ChartPanel cp = new ChartPanel(this.chartPanel);
-        cp.addMouseMotionListener(new PointerHandler()
+        PointerHandler ph = new PointerHandler()
         {
             /**
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
@@ -156,22 +162,20 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             @Override
             void updateHint(double domainValue, double rangeValue)
             {
+                if (Double.isNaN(domainValue))
+                {
+                    FundamentalDiagram.this.statusLabel.setText(" ");
+                    return;
+                }
                 String s1 = String.format(FundamentalDiagram.this.xAxis.format, domainValue);
                 String s2 = String.format(FundamentalDiagram.this.yAxis.format, rangeValue);
                 FundamentalDiagram.this.statusLabel.setText(s1 + ", " + s2);
             }
 
-            /**
-             * @see org.opentrafficsim.graphs.PointerHandler#clearHint()
-             */
-            @Override
-            void clearHint()
-            {
-                FundamentalDiagram.this.statusLabel.setText(" ");
-            }
-        });
+        };
+        cp.addMouseMotionListener(ph);
+        cp.addMouseListener(ph);
         cp.setMouseWheelEnabled(true);
-        setPreferredSize(new java.awt.Dimension(500, 270));
         JMenu subMenu = new JMenu("Set layout");
         ButtonGroup group = new ButtonGroup();
         JRadioButtonMenuItem defaultItem = addMenuItem(subMenu, group, this.densityAxis, this.flowAxis, true);
@@ -183,6 +187,15 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
+    }
+    
+    /**
+     * Retrieve the position of the detector.
+     * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position of the detector
+     */
+    public DoubleScalarAbs<LengthUnit> getPosition()
+    {
+        return new DoubleScalarAbs<LengthUnit>(this.position);
     }
 
     /**

@@ -109,7 +109,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         extendXRange(xAxis.getMaximumValue());
         double[] boundaries = {redValue, yellowValue, greenValue};
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
-        this.chartPanel.addMouseMotionListener(new PointerHandler()
+        PointerHandler ph = new PointerHandler()
         {
             /**
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
@@ -117,6 +117,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             @Override
             void updateHint(double domainValue, double rangeValue)
             {
+                if (Double.isNaN(domainValue))
+                {
+                    ContourPlot.this.statusLabel.setText(" ");
+                    return;
+                }
                 XYPlot plot = (XYPlot) ContourPlot.this.chartPanel.getChart().getPlot();
                 XYZDataset dataset = (XYZDataset) plot.getDataset();
                 String value = "";
@@ -146,16 +151,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                         roundedDistance, value));
             }
 
-            /**
-             * @see org.opentrafficsim.graphs.PointerHandler#clearHint()
-             */
-            @Override
-            void clearHint()
-            {
-                ContourPlot.this.statusLabel.setText(" ");
-            }
-
-        });
+        };
+        this.chartPanel.addMouseMotionListener(ph);
+        this.chartPanel.addMouseListener(ph);
         this.chartPanel.setMouseWheelEnabled(true);
         add(this.chartPanel, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
