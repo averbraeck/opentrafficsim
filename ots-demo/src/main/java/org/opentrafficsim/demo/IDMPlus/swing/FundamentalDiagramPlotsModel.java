@@ -9,8 +9,8 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
 import org.opentrafficsim.car.following.IDMPlus;
+import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -21,21 +21,9 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 import org.opentrafficsim.graphs.ContourPlot;
+import org.opentrafficsim.graphs.FundamentalDiagram;
 
 /**
- * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
- * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
- * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br />
- * Output is a set of block charts:
- * <ul>
- * <li>Traffic density</li>
- * <li>Speed</li>
- * <li>Flow</li>
- * <li>Acceleration</li>
- * </ul>
- * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical
- * axis.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -60,13 +48,14 @@ import org.opentrafficsim.graphs.ContourPlot;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Aug 1, 2014 <br>
+ * @version Aug 20, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlotsModel implements OTSModelInterface
+public class FundamentalDiagramPlotsModel implements OTSModelInterface
 {
+
     /** */
-    private static final long serialVersionUID = 20140815L;
+    private static final long serialVersionUID = 20140820L;
 
     /** the simulator */
     private OTSDEVSSimulator simulator;
@@ -92,8 +81,8 @@ public class ContourPlotsModel implements OTSModelInterface
     /** the speed limit */
     private DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-    /** the contour plots */
-    private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
+    /** the fundamental diagram plots */
+    private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
 
     /**
      * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
@@ -124,33 +113,14 @@ public class ContourPlotsModel implements OTSModelInterface
     }
 
     /**
-     * @param car
-     */
-    protected void addToContourPlots(final Car car)
-    {
-        for (ContourPlot contourPlot : this.contourPlots)
-            contourPlot.addData(car);
-    }
-
-    /**
-     * Notify the contour plots that the underlying data has changed
-     */
-    protected void drawGraphs()
-    {
-        for (ContourPlot contourPlot : this.contourPlots)
-            contourPlot.reGraph();
-    }
-
-    /**
-     * Generate cars at a fixed rate (implemented by re-scheduling this method).
+     * Method to generate cars that schedules itself till end of run.
      */
     protected void generateCar()
     {
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         IDMCar car =
                 new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
-                        .getSimulatorTime().get(), initialPosition, initialSpeed);
+                        .getSimulatorTime().get(), this.minimumDistance, initialSpeed);
         this.cars.add(0, car);
         try
         {
@@ -163,37 +133,31 @@ public class ContourPlotsModel implements OTSModelInterface
     }
 
     /**
+     * 
+     */
+    protected void drawGraphs()
+    {
+        // Notify the Fundamental Diagram plots that the underlying data has changed
+        for (FundamentalDiagram fd : this.fundamentalDiagrams)
+            fd.reGraph();
+    }
+
+    /**
      * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
      */
     @Override
     public SimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
-        return this.simulator;
+        return null;
     }
 
     /**
-     * @return contourPlots
+     * @return fundamentalDiagramPlots
      */
-    public ArrayList<ContourPlot> getContourPlots()
+    public ArrayList<FundamentalDiagram> getFundamentalDiagrams()
     {
-        return this.contourPlots;
-    }
-
-    /**
-     * @return minimumDistance
-     */
-    public DoubleScalarAbs<LengthUnit> getMinimumDistance()
-    {
-        return this.minimumDistance;
-    }
-
-    /**
-     * @return maximumDistance
-     */
-    public DoubleScalarAbs<LengthUnit> getMaximumDistance()
-    {
-        return this.maximumDistance;
+        return this.fundamentalDiagrams;
     }
 
     /** Inner class IDMCar */
@@ -229,32 +193,32 @@ public class ContourPlotsModel implements OTSModelInterface
         {
             System.out.println("move " + this.getID());
             DoubleScalarAbs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            if (getPosition(now).getValueSI() > ContourPlotsModel.this.maximumDistance.getValueSI())
+            if (getPosition(now).getValueSI() > FundamentalDiagramPlotsModel.this.maximumDistance.getValueSI())
             {
-                ContourPlotsModel.this.cars.remove(this);
+                FundamentalDiagramPlotsModel.this.cars.remove(this);
                 return;
             }
             Collection<Car> leaders = new ArrayList<Car>();
-            int carIndex = ContourPlotsModel.this.cars.indexOf(this);
-            if (carIndex < ContourPlotsModel.this.cars.size() - 1)
-                leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
+            int carIndex = FundamentalDiagramPlotsModel.this.cars.indexOf(this);
+            if (carIndex < FundamentalDiagramPlotsModel.this.cars.size() - 1)
+                leaders.add(FundamentalDiagramPlotsModel.this.cars.get(carIndex + 1));
 
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getValueSI() >= 300 && now.getValueSI() < 500)
             {
                 Car block =
-                        new Car(99999, null, ContourPlotsModel.this.carFollowingModel, now,
+                        new Car(99999, null, FundamentalDiagramPlotsModel.this.carFollowingModel, now,
                                 new DoubleScalarAbs<LengthUnit>(4000, LengthUnit.METER),
                                 new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);
             }
             CarFollowingModelResult cfmr =
-                    ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                            ContourPlotsModel.this.speedLimit);
+                    FundamentalDiagramPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                            FundamentalDiagramPlotsModel.this.speedLimit);
             setState(cfmr);
 
-            // Add the movement of this Car to the contour plots
-            addToContourPlots(this);
+            // Add the movement of this Car to the Fundamental Diagram plots
+            addToFundamentalDiagramPlots(this);
 
             try
             {
@@ -266,5 +230,40 @@ public class ContourPlotsModel implements OTSModelInterface
                 exception.printStackTrace();
             }
         }
+
+        /**
+         * @param idmCar
+         */
+        private void addToFundamentalDiagramPlots(IDMCar idmCar)
+        {
+            DoubleScalarAbs<TimeUnit> lowerBound = idmCar.getLastEvaluationTime();
+            DoubleScalarAbs<TimeUnit> upperBound = idmCar.getNextEvaluationTime();
+            for (FundamentalDiagram fd : getFundamentalDiagrams())
+            {
+                DoubleScalarAbs<LengthUnit> detectorPosition = fd.getPosition();
+                if (idmCar.getPosition(lowerBound).getValueSI() <= detectorPosition.getValueSI()
+                        && idmCar.getPosition(upperBound).getValueSI() > detectorPosition.getValueSI())
+                {
+                    // This car passes the detector; add the movement of this Car to the fundamental diagram plot
+                    // Figure out at what time the car passes the detector.
+                    // For this demo we use bisection to converge to the correct time.
+                    final double maximumTimeError = 0.01; // [s]
+                    DoubleScalarAbs<TimeUnit> passingTime = lowerBound;
+                    while (upperBound.getValueSI() - lowerBound.getValueSI() > maximumTimeError)
+                    {
+                        passingTime =
+                                new DoubleScalarAbs<TimeUnit>((lowerBound.getValueSI() + upperBound.getValueSI()) / 2,
+                                        TimeUnit.SECOND);
+                        DoubleScalarAbs<LengthUnit> position = idmCar.getPosition(passingTime);
+                        if (position.getValueSI() > detectorPosition.getValueSI())
+                            lowerBound = passingTime;
+                        else
+                            upperBound = passingTime;
+                    }
+                    fd.addData(0, idmCar, passingTime);
+                }
+            }
+        }
     }
+
 }

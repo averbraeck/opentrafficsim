@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.IDMPlus.swing;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
 
@@ -12,17 +13,15 @@ import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
+import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
-import org.opentrafficsim.graphs.AccelerationContourPlot;
-import org.opentrafficsim.graphs.ContourPlot;
-import org.opentrafficsim.graphs.DensityContourPlot;
-import org.opentrafficsim.graphs.FlowContourPlot;
-import org.opentrafficsim.graphs.SpeedContourPlot;
+import org.opentrafficsim.graphs.FundamentalDiagram;
 
 /**
  * <p>
@@ -31,7 +30,7 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
- * The DSOL project is distributed under the following BSD-style license:<br>
+ * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
  * following conditions are met:
  * <ul>
@@ -49,23 +48,37 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Aug 15, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @version Aug 19, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlotsSwingApplication extends DSOLApplication
+public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
 {
+    /** */
+    private static final long serialVersionUID = 20140820L;
+
     /**
      * @param title
      * @param panel
      */
-    public ContourPlotsSwingApplication(String title,
+    public FundamentalDiagramPlotsSwingApplication(String title,
             DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
 
-    /** */
-    private static final long serialVersionUID = 20140819L;
+    /** the car following model, e.g. IDM Plus */
+    protected CarFollowingModel carFollowingModel;
+
+    /** the fundamental diagram plots */
+    private ArrayList<FundamentalDiagram> fundamentalDiagramPlots = new ArrayList<FundamentalDiagram>();
+
+    /**
+     * @return fundamentalDiagramPlots
+     */
+    public ArrayList<FundamentalDiagram> getFundamentalDiagramPlots()
+    {
+        return this.fundamentalDiagramPlots;
+    }
 
     /**
      * @param args
@@ -75,7 +88,7 @@ public class ContourPlotsSwingApplication extends DSOLApplication
     @SuppressWarnings("unused")
     public static void main(String[] args) throws SimRuntimeException, RemoteException
     {
-        ContourPlotsModel model = new ContourPlotsModel();
+        FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         OTSReplication replication =
                 new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalarAbs<TimeUnit>(0.0, TimeUnit.SECOND)),
@@ -86,41 +99,30 @@ public class ContourPlotsSwingApplication extends DSOLApplication
                 new DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
         makePlots(model, panel);
         addInfoTab(panel);
-        new ContourPlotsSwingApplication("IDM-plus model - Contourplots", panel);
+        new FundamentalDiagramPlotsSwingApplication("IDM-plus model - Fundamental Diagrams", panel);
     }
 
     /**
      * make the stand-alone plots for the model and put them in the statistics panel.
      * @param model the model.
      */
-    private static void makePlots(final ContourPlotsModel model,
+    private static void makePlots(final FundamentalDiagramPlotsModel model,
             final DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
     {
-        TablePanel charts = new TablePanel(2, 2);
+        final int panelsPerRow = 3;
+        TablePanel charts = new TablePanel(4, panelsPerRow);
         panel.getTabbedPane().addTab("statistics", charts);
-
-        ContourPlot cp;
-
-        cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
-        cp.setTitle("Density Contour Graph");
-        cp.setExtendedState(MAXIMIZED_BOTH);
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 0, 0);
-
-        cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
-        cp.setTitle("Speed Contour Graph");
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 1, 0);
-
-        cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
-        cp.setTitle("FLow Contour Graph");
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 0, 1);
-
-        cp = new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model.getMaximumDistance());
-        cp.setTitle("Acceleration Contour Graph");
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 1, 1);
+        for (int plotNumber = 0; plotNumber < 10; plotNumber++)
+        {
+            DoubleScalarAbs<LengthUnit> detectorLocation = new DoubleScalarAbs<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
+            FundamentalDiagram fd =
+                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
+                            new DoubleScalarRel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
+            fd.setTitle("Density Contour Graph");
+            fd.setExtendedState(MAXIMIZED_BOTH);
+            model.getFundamentalDiagrams().add(fd);
+            charts.setCell(fd.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
+        }
     }
 
     /**

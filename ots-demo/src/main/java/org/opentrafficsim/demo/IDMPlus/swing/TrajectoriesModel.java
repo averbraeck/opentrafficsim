@@ -20,22 +20,9 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
-import org.opentrafficsim.graphs.ContourPlot;
+import org.opentrafficsim.graphs.TrajectoryPlot;
 
 /**
- * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
- * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
- * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br />
- * Output is a set of block charts:
- * <ul>
- * <li>Traffic density</li>
- * <li>Speed</li>
- * <li>Flow</li>
- * <li>Acceleration</li>
- * </ul>
- * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical
- * axis.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -60,10 +47,10 @@ import org.opentrafficsim.graphs.ContourPlot;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Aug 1, 2014 <br>
+ * @version Aug 20, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlotsModel implements OTSModelInterface
+public class TrajectoriesModel implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -92,8 +79,8 @@ public class ContourPlotsModel implements OTSModelInterface
     /** the speed limit */
     private DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-    /** the contour plots */
-    private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
+    /** the trajectory plot */
+    private TrajectoryPlot trajectoryPlot;
 
     /**
      * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
@@ -115,30 +102,12 @@ public class ContourPlotsModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalarAbs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "generateCar", null);
             this.simulator.scheduleEventAbs(new DoubleScalarAbs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+                    "drawGraph", null);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
-    }
-
-    /**
-     * @param car
-     */
-    protected void addToContourPlots(final Car car)
-    {
-        for (ContourPlot contourPlot : this.contourPlots)
-            contourPlot.addData(car);
-    }
-
-    /**
-     * Notify the contour plots that the underlying data has changed
-     */
-    protected void drawGraphs()
-    {
-        for (ContourPlot contourPlot : this.contourPlots)
-            contourPlot.reGraph();
     }
 
     /**
@@ -170,30 +139,6 @@ public class ContourPlotsModel implements OTSModelInterface
             throws RemoteException
     {
         return this.simulator;
-    }
-
-    /**
-     * @return contourPlots
-     */
-    public ArrayList<ContourPlot> getContourPlots()
-    {
-        return this.contourPlots;
-    }
-
-    /**
-     * @return minimumDistance
-     */
-    public DoubleScalarAbs<LengthUnit> getMinimumDistance()
-    {
-        return this.minimumDistance;
-    }
-
-    /**
-     * @return maximumDistance
-     */
-    public DoubleScalarAbs<LengthUnit> getMaximumDistance()
-    {
-        return this.maximumDistance;
     }
 
     /** Inner class IDMCar */
@@ -229,32 +174,32 @@ public class ContourPlotsModel implements OTSModelInterface
         {
             System.out.println("move " + this.getID());
             DoubleScalarAbs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            if (getPosition(now).getValueSI() > ContourPlotsModel.this.maximumDistance.getValueSI())
+            if (getPosition(now).getValueSI() > TrajectoriesModel.this.maximumDistance.getValueSI())
             {
-                ContourPlotsModel.this.cars.remove(this);
+                TrajectoriesModel.this.cars.remove(this);
                 return;
             }
             Collection<Car> leaders = new ArrayList<Car>();
-            int carIndex = ContourPlotsModel.this.cars.indexOf(this);
-            if (carIndex < ContourPlotsModel.this.cars.size() - 1)
-                leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
+            int carIndex = TrajectoriesModel.this.cars.indexOf(this);
+            if (carIndex < TrajectoriesModel.this.cars.size() - 1)
+                leaders.add(TrajectoriesModel.this.cars.get(carIndex + 1));
 
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getValueSI() >= 300 && now.getValueSI() < 500)
             {
                 Car block =
-                        new Car(99999, null, ContourPlotsModel.this.carFollowingModel, now,
+                        new Car(99999, null, TrajectoriesModel.this.carFollowingModel, now,
                                 new DoubleScalarAbs<LengthUnit>(4000, LengthUnit.METER),
                                 new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);
             }
             CarFollowingModelResult cfmr =
-                    ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                            ContourPlotsModel.this.speedLimit);
+                    TrajectoriesModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                            TrajectoriesModel.this.speedLimit);
             setState(cfmr);
 
             // Add the movement of this Car to the contour plots
-            addToContourPlots(this);
+            addToTrajectoryPlot(this);
 
             try
             {
@@ -266,5 +211,47 @@ public class ContourPlotsModel implements OTSModelInterface
                 exception.printStackTrace();
             }
         }
+
     }
+
+    /**
+     * @param idmCar
+     */
+    private void addToTrajectoryPlot(IDMCar idmCar)
+    {
+        this.trajectoryPlot.addData(idmCar);
+    }
+
+    /**
+     * Notify the contour plots that the underlying data has changed
+     */
+    protected void drawGraph()
+    {
+        this.trajectoryPlot.reGraph();
+    }
+
+    /**
+     * @return minimum distance of the simulation
+     */
+    public DoubleScalarAbs<LengthUnit> getMinimumDistance()
+    {
+        return this.minimumDistance;
+    }
+
+    /**
+     * @return maximum distance of the simulation
+     */
+    public DoubleScalarAbs<LengthUnit> getMaximumDistance()
+    {
+        return this.maximumDistance;
+    }
+
+    /**
+     * @param trajectoryPlot 
+     */
+    public void setTrajectories(TrajectoryPlot trajectoryPlot)
+    {
+        this.trajectoryPlot = trajectoryPlot;
+    }
+
 }
