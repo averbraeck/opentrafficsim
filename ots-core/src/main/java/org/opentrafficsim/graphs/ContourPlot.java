@@ -84,9 +84,21 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** Time granularity values. */
     protected static final double[] standardTimeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
+    
+    /** Index of the initial time granularity in standardTimeGranularites */
+    protected static final int standardInitialTimeGranularityIndex = 3;
 
     /** Distance granularity values. */
     protected static final double[] standardDistanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
+    
+    /** Index of the initial distance granularity in standardTimeGranularites */
+    protected static final int standardInitialDistanceGranularityIndex = 3;
+
+    /** Initial lower bound for the time scale */
+    protected static final DoubleScalarAbs<TimeUnit> initialLowerTimeBound = new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND);
+    
+    /** Initial upper bound for the time scale */
+    protected static final DoubleScalarAbs<TimeUnit> initialUpperTimeBound = new DoubleScalarAbs<TimeUnit>(300, TimeUnit.SECOND);
 
     /**
      * Create a new ContourPlot.
@@ -109,7 +121,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         extendXRange(xAxis.getMaximumValue());
         double[] boundaries = {redValue, yellowValue, greenValue};
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
-        PointerHandler ph = new PointerHandler()
+        final PointerHandler ph = new PointerHandler()
         {
             /**
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
@@ -158,7 +170,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         add(this.chartPanel, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         add(this.statusLabel, BorderLayout.SOUTH);
-        JPopupMenu popupMenu = this.chartPanel.getPopupMenu();
+        final JPopupMenu popupMenu = this.chartPanel.getPopupMenu();
         popupMenu.insert(
                 buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", yAxis.granularities,
                         yAxis.getCurrentGranularity()), 0);
@@ -180,12 +192,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     private JMenu buildMenu(final String caption, final String format, final String commandPrefix,
             final double[] values, final double currentValue)
     {
-        JMenu result = new JMenu(caption);
+        final JMenu result = new JMenu(caption);
         // Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?
-        ButtonGroup group = new ButtonGroup();
+        final ButtonGroup group = new ButtonGroup();
         for (double value : values)
         {
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, value));
+            final JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, value));
             item.setSelected(value == currentValue);
             item.setActionCommand(commandPrefix + String.format(Locale.US, " %f", value));
             item.addActionListener(this);
@@ -208,20 +220,21 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     private static JFreeChart createChart(final String caption, final String valueFormat, final XYZDataset dataset,
             final double[] boundaries, final String legendFormat, final double legendStep)
     {
-        NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
+        final NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
-        NumberAxis yAxis = new NumberAxis("\u2192 " + "Distance [m]");
+        final NumberAxis yAxis = new NumberAxis("\u2192 " + "Distance [m]");
         yAxis.setAutoRangeIncludesZero(false);
         yAxis.setLowerMargin(0.0);
         yAxis.setUpperMargin(0.0);
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         XYBlockRenderer renderer = new XYBlockRenderer();
-        Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
-        ContinuousColorPaintScale paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
+        final Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
+        final ContinuousColorPaintScale paintScale =
+                new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
         renderer.setPaintScale(paintScale);
-        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
-        LegendItemCollection legend = new LegendItemCollection();
+        final XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+        final LegendItemCollection legend = new LegendItemCollection();
         for (int i = 0;; i++)
         {
             double value = paintScale.getLowerBound() + i * legendStep;
@@ -234,7 +247,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
-        JFreeChart chart = new JFreeChart(caption, plot);
+        final JFreeChart chart = new JFreeChart(caption, plot);
         chart.setBackgroundPaint(Color.white);
         return chart;
     }
@@ -245,12 +258,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public void actionPerformed(final ActionEvent actionEvent)
     {
-        String command = actionEvent.getActionCommand();
+        final String command = actionEvent.getActionCommand();
         // System.out.println("command is \"" + command + "\"");
         String[] fields = command.split("[ ]");
         if (fields.length == 2)
         {
-            NumberFormat nf = NumberFormat.getInstance(Locale.US);
+            final NumberFormat nf = NumberFormat.getInstance(Locale.US);
             double value;
             try
             {
@@ -258,8 +271,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             }
             catch (ParseException e)
             {
-                e.printStackTrace();
-                return;
+                throw new Error("Bad value: " + fields[1]);
             }
             if (fields[0].equalsIgnoreCase("setDistanceGranularity"))
                 this.yAxis.setCurrentGranularity(value);
@@ -270,7 +282,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             reGraph();
         }
         else
-            throw new Error("Unknown ActionEvent");
+            throw new Error("Unknown ActionEvent: " + command);
     }
 
     /**
@@ -279,9 +291,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     public void reGraph()
     {
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
-        XYPlot plot = this.chartPanel.getChart().getXYPlot();
+        final XYPlot plot = this.chartPanel.getChart().getXYPlot();
         plot.notifyListeners(new PlotChangeEvent(plot));
-        XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();
+        final XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();
         blockRenderer.setBlockHeight(this.yAxis.getCurrentGranularity());
         blockRenderer.setBlockWidth(this.xAxis.getCurrentGranularity());
     }
@@ -318,10 +330,36 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /**
+     * Return the y-axis bin number (the row number) of an item. <br />
+     * Do not rely on the (current) fact that the data is stored column by column!
+     * @param item Integer; the item
+     * @return Integer; the bin number along the y axis of the item
+     */
+    protected int yAxisBin(int item)
+    {
+        if (item < 0 || item >= getItemCount(0))
+            throw new Error("yAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
+        return item % yAxisBins();
+    }
+
+    /**
+     * Return the x-axis bin number (the column number) of an item. <br />
+     * Do not rely on the (current) fact that the data is stored column by column!
+     * @param item Integer; the item
+     * @return Integer; the bin number along the x axis of the item
+     */
+    protected int xAxisBin(int item)
+    {
+        if (item < 0 || item >= getItemCount(0))
+            throw new Error("xAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
+        return item / yAxisBins();
+    }
+
+    /**
      * Retrieve the number of cells to use along the time axis.
      * @return Integer; the number of cells to use along the time axis
      */
-    private int xAxisBins()
+    protected int xAxisBins()
     {
         return this.xAxis.getAggregatedBinCount();
     }
@@ -341,7 +379,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public Number getX(final int series, final int item)
     {
-        return new Double(getXValue(series, item));
+        return getXValue(series, item);
     }
 
     /**
@@ -350,7 +388,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public double getXValue(final int series, final int item)
     {
-        double result = this.xAxis.getValue(item / this.yAxis.getAggregatedBinCount());
+        double result = this.xAxis.getValue(xAxisBin(item));
         // System.out.println(String.format("XValue(%d, %d) -> %.3f, binCount=%d", series, item, result,
         // this.yAxisDefinition.getAggregatedBinCount()));
         return result;
@@ -362,7 +400,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public Number getY(final int series, final int item)
     {
-        return new Double(getYValue(series, item));
+        return getYValue(series, item);
     }
 
     /**
@@ -371,7 +409,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public double getYValue(final int series, final int item)
     {
-        return this.yAxis.getValue(item % this.yAxis.getAggregatedBinCount());
+        return this.yAxis.getValue(yAxisBin(item));
     }
 
     /**
@@ -380,7 +418,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public Number getZ(final int series, final int item)
     {
-        return new Double(getZValue(series, item));
+        return getZValue(series, item);
     }
 
     /**
@@ -444,8 +482,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     public void addData(final Car car)
     {
-        DoubleScalarAbs<TimeUnit> fromTime = car.getLastEvaluationTime();
-        DoubleScalarAbs<TimeUnit> toTime = car.getNextEvaluationTime();
+        final DoubleScalarAbs<TimeUnit> fromTime = car.getLastEvaluationTime();
+        final DoubleScalarAbs<TimeUnit> toTime = car.getNextEvaluationTime();
         if (toTime.getValueSI() > this.xAxis.getMaximumValue().getValueSI())
         {
             extendXRange(toTime);
@@ -459,18 +497,18 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 .getValueSI()));
          */
         // The "relative" values are "counting" distance or time in the minimum bin size unit
-        double relativeFromDistance =
+        final double relativeFromDistance =
                 (car.getPosition(fromTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                         / this.yAxis.granularities[0];
-        double relativeToDistance =
+        final double relativeToDistance =
                 (car.getPosition(toTime).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                         / this.yAxis.granularities[0];
         double relativeFromTime =
                 (fromTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI()) / this.xAxis.granularities[0];
-        double relativeToTime =
+        final double relativeToTime =
                 (toTime.getValueSI() - this.xAxis.getMinimumValue().getValueSI()) / this.xAxis.granularities[0];
-        int fromTimeBin = (int) Math.floor(relativeFromTime);
-        int toTimeBin = (int) Math.floor(relativeToTime) + 1;
+        final int fromTimeBin = (int) Math.floor(relativeFromTime);
+        final int toTimeBin = (int) Math.floor(relativeToTime) + 1;
         double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
         // FIXME: The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
         // wrong for other car following algorithms).
@@ -555,20 +593,17 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public double getZValue(final int series, final int item)
     {
-        int timeBinGroup = item / yAxisBins();
-        int distanceBinGroup = item % yAxisBins();
+        final int timeBinGroup = xAxisBin(item);
+        final int distanceBinGroup = yAxisBin(item);
         // System.out.println(String.format("getZValue(s=%d, i=%d) -> tbg=%d, dbg=%d", series, item, timeBinGroup,
         // distanceBinGroup));
         final int timeGroupSize = (int) (this.xAxis.getCurrentGranularity() / this.xAxis.granularities[0]);
         final int firstTimeBin = timeBinGroup * timeGroupSize;
-        if (firstTimeBin * this.xAxis.granularities[0] >= this.xAxis.getMaximumValue().getValueSI())
-            return Double.NaN;
         final int distanceGroupSize = (int) (this.yAxis.getCurrentGranularity() / this.yAxis.granularities[0]);
         final int firstDistanceBin = distanceBinGroup * distanceGroupSize;
-        if (firstDistanceBin * this.yAxis.granularities[0] >= this.yAxis.getMaximumValue().getValueSI())
-            return Double.NaN;
-        return computeZValue(firstTimeBin, firstTimeBin + timeGroupSize, firstDistanceBin, firstDistanceBin
-                + distanceGroupSize);
+        final int endTimeBin = Math.min(firstTimeBin + timeGroupSize, this.xAxis.getBinCount());
+        final int endDistanceBin = Math.min(firstDistanceBin + distanceGroupSize, this.yAxis.getBinCount());
+        return computeZValue(firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin);
     }
 
     /**

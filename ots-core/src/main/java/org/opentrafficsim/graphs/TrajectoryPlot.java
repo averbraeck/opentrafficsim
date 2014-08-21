@@ -116,13 +116,13 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         this.chartPanel.getXYPlot().setRangeAxis(yAxis);
         configureAxis(this.chartPanel.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition)
                 .getValueSI());
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
+        final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
         renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
-        ChartPanel cp = new ChartPanel(this.chartPanel);
+        final ChartPanel cp = new ChartPanel(this.chartPanel);
         cp.setMouseWheelEnabled(true);
-        PointerHandler ph = new PointerHandler()
+        final PointerHandler ph = new PointerHandler()
         {
             /**
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
@@ -261,8 +261,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      */
     public void addData(final Car car)
     {
-        DoubleScalarAbs<TimeUnit> startTime = car.getLastEvaluationTime();
-        DoubleScalarAbs<LengthUnit> startPosition = car.getPosition(startTime);
+        final DoubleScalarAbs<TimeUnit> startTime = car.getLastEvaluationTime();
+        final DoubleScalarAbs<LengthUnit> startPosition = car.getPosition(startTime);
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
@@ -326,10 +326,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
          */
         public void addSegment(final Car car)
         {
-            int startSample =
+            final int startSample =
                     (int) Math.ceil(car.getLastEvaluationTime().getValueSI()
                             / TrajectoryPlot.this.sampleInterval.getValueSI());
-            int endSample =
+            final int endSample =
                     (int) (Math.ceil(car.getNextEvaluationTime().getValueSI()
                             / TrajectoryPlot.this.sampleInterval.getValueSI()));
             for (int sample = startSample; sample < endSample; sample++)
@@ -475,9 +475,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     @Override
     public Number getX(final int series, final int item)
     {
-        if (series < 0 || series >= this.trajectories.size())
+        double v = getXValue(series, item);
+        if (Double.isNaN(v))
             return null;
-        return this.trajectories.get(series).getTime(item);
+        return v;
     }
 
     /**
@@ -497,9 +498,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     @Override
     public Number getY(final int series, final int item)
     {
-        if (series < 0 || series >= this.trajectories.size())
+        double v = getYValue(series, item);
+        if (Double.isNaN(v))
             return null;
-        return this.trajectories.get(series).getDistance(item);
+        return v;
     }
 
     /**

@@ -55,10 +55,10 @@ abstract public class PointerHandler implements MouseListener, MouseMotionListen
     @Override
     public void mouseMoved(MouseEvent mouseEvent)
     {
-        ChartPanel cp = (ChartPanel) mouseEvent.getSource();
-        XYPlot plot = (XYPlot) cp.getChart().getPlot();
+        final ChartPanel cp = (ChartPanel) mouseEvent.getSource();
+        final XYPlot plot = (XYPlot) cp.getChart().getPlot();
         // Show a cross hair cursor while the mouse is on the graph
-        boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
+        final boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
         if (cp.getHorizontalAxisTrace() != showCrossHair)
         {
             cp.setHorizontalAxisTrace(showCrossHair);
@@ -71,7 +71,6 @@ abstract public class PointerHandler implements MouseListener, MouseMotionListen
             PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
             this.updateHint(plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()),
                     plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
-
         }
         else
             this.updateHint(Double.NaN, Double.NaN);
@@ -127,8 +126,8 @@ abstract public class PointerHandler implements MouseListener, MouseMotionListen
     @Override
     public void mouseExited(MouseEvent mouseEvent)
     {
-        ChartPanel cp = (ChartPanel) mouseEvent.getSource();
-        XYPlot plot = (XYPlot) cp.getChart().getPlot();
+        final ChartPanel cp = (ChartPanel) mouseEvent.getSource();
+        final XYPlot plot = (XYPlot) cp.getChart().getPlot();
         // Remove the cross hair cursor when the cursor moves outside the graph
         if (cp.getHorizontalAxisTrace())
         {

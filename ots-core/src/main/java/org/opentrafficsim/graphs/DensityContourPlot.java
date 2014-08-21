@@ -53,11 +53,11 @@ public class DensityContourPlot extends ContourPlot
     public DensityContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
-                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "", "Time", "%.0fs"),
-                new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "", "Distance", "%.0fm"), 120d, 10d, 0d,
-                "density %.1f veh/km", "%.1f veh/km", 20d);
+        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
+                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, standardDistanceGranularities,
+                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"), 120d,
+                10d, 0d, "density %.1f veh/km", "%.1f veh/km", 20d);
     }
 
     /** Storage for the total time spent in each cell. */
@@ -80,7 +80,7 @@ public class DensityContourPlot extends ContourPlot
     {
         if (null == this.cumulativeTimes)
             this.cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
-        int highestBinNeeded =
+        final int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
@@ -117,14 +117,12 @@ public class DensityContourPlot extends ContourPlot
             final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;
-        if (null == this.cumulativeTimes || firstTimeBin >= this.cumulativeTimes.size())
+        if (null == this.cumulativeTimes)
             return Double.NaN;
         try
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)
             {
-                if (timeBinIndex >= this.cumulativeTimes.size())
-                    break;
                 DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                     cumulativeTimeInSI += values.getSI(distanceBinIndex);
