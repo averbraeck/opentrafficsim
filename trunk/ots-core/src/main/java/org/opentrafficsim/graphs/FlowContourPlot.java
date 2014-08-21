@@ -3,7 +3,6 @@ package org.opentrafficsim.graphs;
 import java.util.ArrayList;
 
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
@@ -53,11 +52,11 @@ public class FlowContourPlot extends ContourPlot
     public FlowContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
-                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "", "Time", "%.0fs"),
-                new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "", "Distance", "%.0fm"), 2500d, 1500d, 0d,
-                "flow %.0f veh/h", "%.0f veh/h", 500d);
+        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
+                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, standardDistanceGranularities,
+                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"),
+                2500d, 1500d, 0d, "flow %.0f veh/h", "%.0f veh/h", 500d);
     }
 
     /** Storage for the total length traveled in each cell. */
@@ -80,7 +79,7 @@ public class FlowContourPlot extends ContourPlot
     {
         if (null == this.cumulativeLengths)
             this.cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
-        int highestBinNeeded =
+        final int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeLengths.size())

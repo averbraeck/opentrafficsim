@@ -141,7 +141,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.chartPanel =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
                         false);
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
+        final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(true);
         renderer.setBaseItemLabelGenerator(new XYItemLabelGenerator()
@@ -153,7 +153,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             }
         });
         renderer.setBaseItemLabelsVisible(true);
-        ChartPanel cp = new ChartPanel(this.chartPanel);
+        final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
         {
             /**
@@ -176,13 +176,13 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         cp.addMouseMotionListener(ph);
         cp.addMouseListener(ph);
         cp.setMouseWheelEnabled(true);
-        JMenu subMenu = new JMenu("Set layout");
-        ButtonGroup group = new ButtonGroup();
-        JRadioButtonMenuItem defaultItem = addMenuItem(subMenu, group, this.densityAxis, this.flowAxis, true);
+        final JMenu subMenu = new JMenu("Set layout");
+        final ButtonGroup group = new ButtonGroup();
+        final JRadioButtonMenuItem defaultItem = addMenuItem(subMenu, group, this.densityAxis, this.flowAxis, true);
         addMenuItem(subMenu, group, this.flowAxis, this.speedAxis, false);
         addMenuItem(subMenu, group, this.densityAxis, this.speedAxis, false);
         actionPerformed(new ActionEvent(this, 0, defaultItem.getActionCommand()));
-        JPopupMenu popupMenu = cp.getPopupMenu();
+        final JPopupMenu popupMenu = cp.getPopupMenu();
         popupMenu.insert(subMenu, 0);
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
@@ -210,7 +210,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private JRadioButtonMenuItem addMenuItem(JMenu subMenu, ButtonGroup group, Axis newXAxis, Axis newYAxis,
             boolean selected)
     {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(newYAxis.shortName + " / " + newXAxis.shortName);
+        final JRadioButtonMenuItem item = new JRadioButtonMenuItem(newYAxis.shortName + " / " + newXAxis.shortName);
         item.setSelected(selected);
         item.setActionCommand(newYAxis.shortName + "/" + newXAxis.shortName);
         item.addActionListener(this);
@@ -229,7 +229,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
-        int timeBin = (int) Math.floor(detectionTime.getValueSI() / this.aggregationTime.getValueSI());
+        final int timeBin = (int) Math.floor(detectionTime.getValueSI() / this.aggregationTime.getValueSI());
         // Extend storage if needed
         while (timeBin >= laneData.size())
             laneData.add(new Sample());
@@ -388,7 +388,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public Number getX(final int series, final int item)
     {
-        return getSample(series, item, this.xAxis);
+        return getXValue(series, item);
     }
 
     /**
@@ -406,7 +406,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public Number getY(final int series, final int item)
     {
-        return getSample(series, item, this.yAxis);
+        return getYValue(series, item);
     }
 
     /**
@@ -450,10 +450,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     class Sample
     {
         /** Harmonic mean speed observed during this sample [m/s] */
-        double harmonicMeanSpeed;
+        private double harmonicMeanSpeed;
 
         /** Flow observed during this sample [veh/s] */
-        double flow;
+        private double flow;
 
         /**
          * Retrieve a value stored in this Sample.
@@ -469,7 +469,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             else if (axis == FundamentalDiagram.this.speedAxis)
                 return this.harmonicMeanSpeed * 3600 / 1000;
             else
-                throw new Error("Bad switch. Cannot happen");
+                throw new Error("Sample.getValue: Can not identify axis");
         }
 
         /**
@@ -493,9 +493,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public void actionPerformed(ActionEvent actionEvent)
     {
-        String command = actionEvent.getActionCommand();
+        final String command = actionEvent.getActionCommand();
         // System.out.println("command is \"" + command + "\"");
-        String[] fields = command.split("[/]");
+        final String[] fields = command.split("[/]");
         if (fields.length == 2)
         {
             for (String field : fields)

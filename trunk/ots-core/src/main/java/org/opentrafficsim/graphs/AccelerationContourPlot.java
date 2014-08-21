@@ -54,11 +54,11 @@ public class AccelerationContourPlot extends ContourPlot
     public AccelerationContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
-                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "", "Time", "%.0fs"),
-                new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "", "Distance", "%.0fm"), -5d, 0d, 3d,
-                "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
+        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
+                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, standardDistanceGranularities,
+                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"), -5d,
+                0d, 3d, "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 
     /** Storage for the total time spent in each cell. */

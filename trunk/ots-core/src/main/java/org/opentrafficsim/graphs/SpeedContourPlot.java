@@ -53,11 +53,11 @@ public class SpeedContourPlot extends ContourPlot
     public SpeedContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
             final DoubleScalarAbs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalarAbs<TimeUnit>(300,
-                TimeUnit.SECOND), standardTimeGranularities, standardTimeGranularities[3], "", "Time", "%.0fs"),
-                new Axis(minimumDistance, maximumDistance, standardDistanceGranularities,
-                        standardDistanceGranularities[3], "", "Distance", "%.0fm"), 0d, 40d, 150d, "speed %.1f km/h",
-                "%.1f km/h", 20d);
+        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
+                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, standardDistanceGranularities,
+                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"), 0d,
+                40d, 150d, "speed %.1f km/h", "%.1f km/h", 20d);
     }
 
     /** Storage for the total time spent in each cell. */

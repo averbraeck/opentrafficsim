@@ -105,7 +105,7 @@ public class ContinuousColorPaintScale implements PaintScale
      */
     private static int mixComponent(final double ratio, final int low, final int high)
     {
-        double mix = low * (1 - ratio) + high * ratio;
+        final double mix = low * (1 - ratio) + high * ratio;
         int result = (int) mix;
         if (result < 0)
             result = 0;
@@ -126,8 +126,7 @@ public class ContinuousColorPaintScale implements PaintScale
                 break;
         if (bucket >= this.bounds.length - 1)
             bucket = this.bounds.length - 2;
-        double ratio = (value - this.bounds[bucket]) / (this.bounds[bucket + 1] - this.bounds[bucket]);
-
+        final double ratio = (value - this.bounds[bucket]) / (this.bounds[bucket + 1] - this.bounds[bucket]);
         Color mix =
                 new Color(
                         mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
