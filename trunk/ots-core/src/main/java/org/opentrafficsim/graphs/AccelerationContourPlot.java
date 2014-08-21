@@ -73,7 +73,7 @@ public class AccelerationContourPlot extends ContourPlot
     @Override
     public Comparable<String> getSeriesKey(final int series)
     {
-        return "speed";
+        return "acceleration";
     }
 
     /**

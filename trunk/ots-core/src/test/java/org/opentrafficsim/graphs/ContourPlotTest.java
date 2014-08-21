@@ -48,13 +48,27 @@ public class ContourPlotTest
     static DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(12345, LengthUnit.METER);
 
     /**
+     * Test the AccelerationContourPlot
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void accelerationContourTest()
+    {
+        AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", minimumDistance, maximumDistance);
+        assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
+        assertEquals("seriesCount should be 1", 1, acp.getSeriesCount());
+        assertTrue("SeriesKey should be \"acceleration\"", "acceleration".equals(acp.getSeriesKey(0)));
+        standardEmptyContourTests(acp, Double.NaN);
+    }
+    
+    /**
      * Test the DensityContourPlot
      */
     @SuppressWarnings("static-method")
     @Test
     public void densityContourTest()
     {
-        DensityContourPlot dcp = new DensityContourPlot("title", minimumDistance, maximumDistance);
+        DensityContourPlot dcp = new DensityContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
         assertEquals("seriesCount should be 1", 1, dcp.getSeriesCount());
         assertTrue("SeriesKey should be \"density\"", "density".equals(dcp.getSeriesKey(0)));
@@ -62,8 +76,37 @@ public class ContourPlotTest
     }
 
     /**
+     * Test the FlowContourPlot
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void flowContourTest()
+    {
+        FlowContourPlot fcp = new FlowContourPlot("Density", minimumDistance, maximumDistance);
+        assertTrue("newly created DensityContourPlot should not be null", null != fcp);
+        assertEquals("seriesCount should be 1", 1, fcp.getSeriesCount());
+        assertTrue("SeriesKey should be \"flow\"", "flow".equals(fcp.getSeriesKey(0)));
+        standardEmptyContourTests(fcp, 0);
+    }
+
+    /**
+     * Test the SpeedContourPlot
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void speedContourTest()
+    {
+        SpeedContourPlot scp = new SpeedContourPlot("Density", minimumDistance, maximumDistance);
+        assertTrue("newly created DensityContourPlot should not be null", null != scp);
+        assertEquals("seriesCount should be 1", 1, scp.getSeriesCount());
+        assertTrue("SeriesKey should be \"speed\"", "speed".equals(scp.getSeriesKey(0)));
+        standardEmptyContourTests(scp, Double.NaN);
+    }
+
+    /**
      * Test various properties of a ContourPlot that has no observed data added.
      * @param cp ContourPlot; the ContourPlot to test
+     * @param expectedZValue double; the value that getZ and getZValue should return for valid a valid item
      */
     public static void standardEmptyContourTests(ContourPlot cp, double expectedZValue)
     {
@@ -123,6 +166,11 @@ public class ContourPlotTest
                         assertTrue("Z value should be NaN", Double.isNaN(z));
                     else
                         assertEquals("Z value should be " + expectedZValue, expectedZValue, z, 0.0001);
+                    Number alternateZ = cp.getZ(0, item);
+                    if (Double.isNaN(expectedZValue))
+                        assertTrue("Alternate Z value should be NaN", Double.isNaN(alternateZ.doubleValue()));
+                    else
+                        assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(), 0.0000);
                 }
                 try
                 {
@@ -136,6 +184,24 @@ public class ContourPlotTest
                 try
                 {
                     cp.getXValue(0, bins);
+                    fail("Should have thrown an Error");
+                }
+                catch (Error e)
+                {
+                    // Ignore
+                }
+                try
+                {
+                    cp.yAxisBin(-1);
+                    fail("Should have thrown an Error");
+                }
+                catch (Error e)
+                {
+                    // Ignore
+                }
+                try
+                {
+                    cp.yAxisBin(bins);
                     fail("Should have thrown an Error");
                 }
                 catch (Error e)
