@@ -30,7 +30,7 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Node
+public class Node<ID> 
 {
 
     /**
