@@ -464,8 +464,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     @Override
     public int getItemCount(final int series)
     {
-        if (series < 0 || series >= this.trajectories.size())
-            return 0;
         return this.trajectories.get(series).size();
     }
 
@@ -487,8 +485,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     @Override
     public double getXValue(final int series, final int item)
     {
-        if (series < 0 || series >= this.trajectories.size())
-            return Double.NaN;
         return this.trajectories.get(series).getTime(item);
     }
 
@@ -510,8 +506,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     @Override
     public double getYValue(final int series, final int item)
     {
-        if (series < 0 || series >= this.trajectories.size())
-            return Double.NaN;
         return this.trajectories.get(series).getDistance(item);
     }
 
