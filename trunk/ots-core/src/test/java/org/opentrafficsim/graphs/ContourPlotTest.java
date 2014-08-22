@@ -72,7 +72,7 @@ public class ContourPlotTest
     {
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", minimumDistance, maximumDistance);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
-        assertTrue("SeriesKey should be \"acceleration\"", "acceleration".equals(acp.getSeriesKey(0)));
+        assertEquals("SeriesKey should be \"acceleration\"", "acceleration", acp.getSeriesKey(0));
         standardContourTests(acp, Double.NaN, 0);
     }
 
@@ -85,7 +85,7 @@ public class ContourPlotTest
     {
         DensityContourPlot dcp = new DensityContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
-        assertTrue("SeriesKey should be \"density\"", "density".equals(dcp.getSeriesKey(0)));
+        assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
         standardContourTests(dcp, 0, Double.NaN);
     }
 
@@ -98,7 +98,7 @@ public class ContourPlotTest
     {
         FlowContourPlot fcp = new FlowContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
-        assertTrue("SeriesKey should be \"flow\"", "flow".equals(fcp.getSeriesKey(0)));
+        assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
         standardContourTests(fcp, 0, Double.NaN);
     }
 
@@ -111,7 +111,7 @@ public class ContourPlotTest
     {
         SpeedContourPlot scp = new SpeedContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
-        assertTrue("SeriesKey should be \"speed\"", "speed".equals(scp.getSeriesKey(0)));
+        assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));
         standardContourTests(scp, Double.NaN, 50);
     }
 
