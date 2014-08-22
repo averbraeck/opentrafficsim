@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -88,7 +89,7 @@ import java.util.HashSet;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> the ID type of the network.
  */
-public class Network<ID> extends HashSet<Link> implements Serializable
+public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -109,12 +110,13 @@ public class Network<ID> extends HashSet<Link> implements Serializable
         this.id = id;
     }
 
+
     /**
      * Construction of a network with an initial set of links.
      * @param id the network id.
      * @param collection the initial collection of links.
      */
-    public Network(final ID id, final Collection<? extends Link> collection)
+    public Network(final ID id, final Collection<? extends L> collection)
     {
         super(collection);
         this.id = id;
@@ -127,7 +129,7 @@ public class Network<ID> extends HashSet<Link> implements Serializable
      * @param expansionNode Node of which this network is an expansion.
      * @throws NetworkException when expansion node is part of the initial collection.
      */
-    public Network(final ID id, final Collection<? extends Link> collection, final Node expansionNode)
+    public Network(final ID id, final Collection<? extends L> collection, final Node expansionNode)
             throws NetworkException
     {
         super(collection);
