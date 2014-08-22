@@ -69,11 +69,11 @@ abstract public class PointerHandler implements MouseListener, MouseMotionListen
         {
             Point2D p = cp.translateScreenToJava2D(mouseEvent.getPoint());
             PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
-            this.updateHint(plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()),
+            updateHint(plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()),
                     plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
         }
         else
-            this.updateHint(Double.NaN, Double.NaN);
+            updateHint(Double.NaN, Double.NaN);
     }
 
     /**
