@@ -107,7 +107,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     public Network(final ID id)
     {
         super();
-        this.id = id;
+        this.id = id ;
     }
 
 
