@@ -22,6 +22,8 @@
 				href="http://opentrafficsim.org/docs/${version}/index.html" />
 			<item name="ots-core"
 				href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
+			<item name="ots-demo"
+				href="http://opentrafficsim.org/docs/${version}/ots-demo/index.html" />
 		</menu>
 
 		${reports}
