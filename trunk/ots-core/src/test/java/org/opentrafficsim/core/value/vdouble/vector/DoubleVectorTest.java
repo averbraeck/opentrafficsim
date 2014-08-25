@@ -23,6 +23,7 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
@@ -718,6 +719,22 @@ public abstract class DoubleVectorTest
             // System.out.println("plus is       " + plus);
             // System.out.println("plusReverse is" + plusReverse);
             assertTrue("result of a + b should be equal to result of b + a", plus.equals(plusReverse));
+            try
+            {
+                double in6[]= {1, 2, 3};
+                DoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute);
+                DoubleVector<LengthUnit> duplicate = (DoubleVector<LengthUnit>) original.copy();
+                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
+                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
+                original.setSI(0, 123.456);
+                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
+                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
+                
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
         }
         else
         {
@@ -786,6 +803,22 @@ public abstract class DoubleVectorTest
             // System.out.println("plus is       " + multiply);
             // System.out.println("plusReverse is" + multiplyReverse);
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
+            try
+            {
+                double in6[]= {1, 2, 3};
+                DoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute);
+                DoubleVector<LengthUnit> duplicate = (DoubleVector<LengthUnit>) original.copy();
+                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
+                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
+                original.setSI(0, 123.456);
+                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
+                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
+                
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
         }
         fv = createDoubleVector(in, u, absolute);
         double[] factorsTooShort = {10, 20, 30, 40, 50, 60};

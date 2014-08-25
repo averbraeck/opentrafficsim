@@ -888,6 +888,22 @@ public abstract class DoubleMatrixTest
             // System.out.println("plus is       " + plus);
             // System.out.println("plusReverse is" + plusReverse);
             assertTrue("result of a + b should be equal to result of b + a", plus.equals(plusReverse));
+            try
+            {
+                double in4[][] = {{1, 2, 3}, {4, 5, 6}};
+                DoubleMatrix<LengthUnit> original = safeCreateDoubleMatrix(in4, LengthUnit.METER, absolute);
+                DoubleMatrix<LengthUnit> duplicate = (DoubleMatrix<LengthUnit>) original.copy();
+                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
+                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
+                original.setSI(0, 0, 123.456);
+                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
+                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
+                
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
         }
         else
         {
@@ -958,6 +974,22 @@ public abstract class DoubleMatrixTest
             // System.out.println("plus is       " + multiply);
             // System.out.println("plusReverse is" + multiplyReverse);
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
+            try
+            {
+                double in6[][] = {{1, 2, 3}, {4, 5, 6}};
+                DoubleMatrix<LengthUnit> original = safeCreateDoubleMatrix(in6, LengthUnit.METER, absolute);
+                DoubleMatrix<LengthUnit> duplicate = (DoubleMatrix<LengthUnit>) original.copy();
+                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
+                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
+                original.setSI(0, 0, 123.456);
+                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
+                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
+                
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
         }
         if (fm instanceof Dense)
         {
