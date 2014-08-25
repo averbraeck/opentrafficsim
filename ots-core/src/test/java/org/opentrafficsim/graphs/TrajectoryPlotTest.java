@@ -60,7 +60,6 @@ public class TrajectoryPlotTest
     /**
      * Test the TrajectoryPlot
      */
-    @SuppressWarnings("static-method")
     @Test
     public void TrajectoryTest()
     {
