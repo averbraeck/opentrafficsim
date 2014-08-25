@@ -22,9 +22,6 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixAbs;
-import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixRel;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
@@ -1646,6 +1643,28 @@ public abstract class FloatMatrixTest
         catch (ValueException exception)
         {
             fail("Unexpected ValueException");
+        }
+        try
+        {
+            FloatMatrixAbs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            float rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            FloatMatrix.multiply(lhs, rhs);
+            fail("Should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
+        try
+        {
+            FloatMatrixRel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            float rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            FloatMatrix.multiply(lhs, rhs);
+            fail("Should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
         }
 
     }
