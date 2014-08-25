@@ -22,6 +22,7 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
@@ -901,6 +902,22 @@ public abstract class FloatMatrixTest
             // System.out.println("plus is       " + plus);
             // System.out.println("plusReverse is" + plusReverse);
             assertTrue("result of a + b should be equal to result of b + a", plus.equals(plusReverse));
+            try
+            {
+                float in4[][] = {{1, 2, 3}, {4, 5, 6}};
+                FloatMatrix<LengthUnit> original = safeCreateFloatMatrix(in4, LengthUnit.METER, absolute);
+                FloatMatrix<LengthUnit> duplicate = (FloatMatrix<LengthUnit>) original.copy();
+                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
+                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
+                original.setSI(0, 0, 123.456f);
+                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
+                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
+                
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
         }
         else
         {
@@ -971,6 +988,22 @@ public abstract class FloatMatrixTest
             // System.out.println("plus is       " + multiply);
             // System.out.println("plusReverse is" + multiplyReverse);
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
+            try
+            {
+                float in6[][] = {{1, 2, 3}, {4, 5, 6}};
+                FloatMatrix<LengthUnit> original = safeCreateFloatMatrix(in6, LengthUnit.METER, absolute);
+                FloatMatrix<LengthUnit> duplicate = (FloatMatrix<LengthUnit>) original.copy();
+                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
+                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
+                original.setSI(0, 0, 123.456f);
+                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
+                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
+                
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected ValueException");
+            }
         }
         if (fm instanceof Dense)
         {
