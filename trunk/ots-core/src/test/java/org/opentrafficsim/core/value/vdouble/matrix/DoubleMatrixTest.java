@@ -1632,6 +1632,28 @@ public abstract class DoubleMatrixTest
         {
             fail("Unexpected ValueException");
         }
+        try
+        {
+            DoubleMatrixAbs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5), LengthUnit.METER);
+            double rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            DoubleMatrix.multiply(lhs, rhs);
+            fail("Should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
+        try
+        {
+            DoubleMatrixRel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5), LengthUnit.METER);
+            double rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            DoubleMatrix.multiply(lhs, rhs);
+            fail("Should have thrown a ValueException");
+        }
+        catch (ValueException exception)
+        {
+            // Ignore
+        }
     }
 
     /**
