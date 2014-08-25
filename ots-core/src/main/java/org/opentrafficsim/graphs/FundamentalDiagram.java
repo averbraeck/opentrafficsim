@@ -131,6 +131,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     public FundamentalDiagram(final String caption, final int numberOfLanes,
             final DoubleScalarRel<TimeUnit> aggregationTime, final DoubleScalarAbs<LengthUnit> position)
     {
+        if (numberOfLanes <= 0)
+            throw new Error("Number of lanes must be > 0 (got " + numberOfLanes + ")");
+        if (aggregationTime.getValueSI() <= 0)
+            throw new Error("Aggregation time must be > 0 (got " + aggregationTime + ")");
         this.aggregationTime = aggregationTime;
         this.sampleSets = new ArrayList<ArrayList<Sample>>(numberOfLanes);
         for (int i = 0; i < numberOfLanes; i++)
@@ -202,17 +206,17 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Build one JRadioButtonMenuItem for the sub menu of the context menu.
      * @param subMenu JMenu; the menu to which the new JRadioButtonMenuItem is added
      * @param group ButtonGroup; the buttonGroup for the new JRadioButtonMenuItem
-     * @param newXAxis Axis; the Axis that will become X-axis when this item is clicked
-     * @param newYAxis Axis; the Axis that will become Y-axis when this item is clicked
+     * @param xAxisToSelect Axis; the Axis that will become X-axis when this item is clicked
+     * @param yAxisToSelect Axis; the Axis that will become Y-axis when this item is clicked
      * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new
      *            JRadioButtonMenuItem will <b>not</b> be selected
      */
-    private JRadioButtonMenuItem addMenuItem(JMenu subMenu, ButtonGroup group, Axis newXAxis, Axis newYAxis,
+    private JRadioButtonMenuItem addMenuItem(JMenu subMenu, ButtonGroup group, Axis xAxisToSelect, Axis yAxisToSelect,
             boolean selected)
     {
-        final JRadioButtonMenuItem item = new JRadioButtonMenuItem(newYAxis.shortName + " / " + newXAxis.shortName);
+        final JRadioButtonMenuItem item = new JRadioButtonMenuItem(yAxisToSelect.shortName + " / " + xAxisToSelect.shortName);
         item.setSelected(selected);
-        item.setActionCommand(newYAxis.shortName + "/" + newXAxis.shortName);
+        item.setActionCommand(yAxisToSelect.shortName + "/" + xAxisToSelect.shortName);
         item.addActionListener(this);
         subMenu.add(item);
         group.add(item);
@@ -355,8 +359,6 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public int getItemCount(final int series)
     {
-        if (series < 0 || series >= this.sampleSets.size())
-            return 0;
         return this.sampleSets.get(series).size();
     }
 
