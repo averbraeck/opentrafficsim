@@ -80,7 +80,43 @@ public class FloatScalarTest
         assertEquals("Unit should not be Millimeter", LengthUnit.MILLIMETER, lengthFS.getUnit());
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
     }
-    
+
+    /**
+     * Check that copy really performs a deep copy.
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void testCopyAbs()
+    {
+        FloatScalarAbs<TemperatureUnit> value = new FloatScalarAbs<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
+        FloatScalarAbs<?> copy = (FloatScalarAbs<?>) value.copy();
+        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertTrue("Copy should be equal to value", value.equals(copy));
+        assertTrue("Value should be equal to copy", copy.equals(value));
+        value.set(new FloatScalarAbs<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
+        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should be equal to value", value.equals(copy));
+        assertFalse("Value should be equal to copy", copy.equals(value));        
+    }
+
+    /**
+     * Check that copy really performs a deep copy.
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void testCopyRel()
+    {
+        FloatScalarRel<TemperatureUnit> value = new FloatScalarRel<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
+        FloatScalarRel<?> copy = (FloatScalarRel<?>) value.copy();
+        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertTrue("Copy should be equal to value", value.equals(copy));
+        assertTrue("Value should be equal to copy", copy.equals(value));
+        value.set(new FloatScalarRel<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
+        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should be equal to value", value.equals(copy));
+        assertFalse("Value should be equal to copy", copy.equals(value));        
+    }
+
     /**
      * Test plus, minus, etc.
      */
@@ -485,7 +521,7 @@ public class FloatScalarTest
     {
 
         /**
-         * @param inputValue Double; unprocessed value
+         * @param inputValue Float; unprocessed value
          * @param operation String; description of method that is being tested
          * @param actualResult FloatScalar; the actual result of the operation
          * @param precision double expected accuracy

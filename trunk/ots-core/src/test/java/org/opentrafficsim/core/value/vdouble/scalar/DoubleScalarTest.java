@@ -10,9 +10,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
 /**
  * <p>
@@ -80,6 +77,42 @@ public class DoubleScalarTest
         lengthFS.setDisplayUnit(LengthUnit.MILLIMETER);
         assertEquals("Unit should not be Millimeter", LengthUnit.MILLIMETER, lengthFS.getUnit());
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
+    }
+    
+    /**
+     * Check that copy really performs a deep copy.
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void testCopyAbs()
+    {
+        DoubleScalarAbs<TemperatureUnit> value = new DoubleScalarAbs<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
+        DoubleScalarAbs<?> copy = (DoubleScalarAbs<?>) value.copy();
+        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertTrue("Copy should be equal to value", value.equals(copy));
+        assertTrue("Value should be equal to copy", copy.equals(value));
+        value.set(new DoubleScalarAbs<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
+        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should be equal to value", value.equals(copy));
+        assertFalse("Value should be equal to copy", copy.equals(value));        
+    }
+
+    /**
+     * Check that copy really performs a deep copy.
+     */
+    @SuppressWarnings("static-method")
+    @Test
+    public void testCopyRel()
+    {
+        DoubleScalarRel<TemperatureUnit> value = new DoubleScalarRel<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
+        DoubleScalarRel<?> copy = (DoubleScalarRel<?>) value.copy();
+        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertTrue("Copy should be equal to value", value.equals(copy));
+        assertTrue("Value should be equal to copy", copy.equals(value));
+        value.set(new DoubleScalarRel<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
+        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should be equal to value", value.equals(copy));
+        assertFalse("Value should be equal to copy", copy.equals(value));        
     }
 
     /**
@@ -429,7 +462,7 @@ public class DoubleScalarTest
             }
         }
     }
-
+    
     /**
      * Interface encapsulating a function that takes a double and returns a double.
      * <p>
