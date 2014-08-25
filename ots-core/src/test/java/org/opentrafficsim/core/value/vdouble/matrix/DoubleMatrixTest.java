@@ -1000,9 +1000,10 @@ public abstract class DoubleMatrixTest
             }
         }
         double[][] left = buildArray(4, 5, false, 0);
-        DoubleMatrix<LengthUnit>leftMatrix = safeCreateDoubleMatrix(left, LengthUnit.METER, absolute);
+        DoubleMatrix<LengthUnit> leftMatrix = safeCreateDoubleMatrix(left, LengthUnit.METER, absolute);
         double[][] right = buildArray(4, 6, false, 0.3f);
-        DoubleMatrixRel<LengthUnit>rightMatrix = (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
+        DoubleMatrixRel<LengthUnit> rightMatrix =
+                (DoubleMatrixRel<LengthUnit>) safeCreateDoubleMatrix(right, LengthUnit.METER, false);
         try
         {
             leftMatrix.add(rightMatrix);
@@ -1037,7 +1038,8 @@ public abstract class DoubleMatrixTest
         {
             for (int i = 0; i < left.length; i++)
                 for (int j = 0; j < left[0].length; j++)
-                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j], leftMatrix.getSI(i, j), 0.001);
+                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j],
+                            leftMatrix.getSI(i, j), 0.001);
         }
         catch (ValueException exception)
         {
@@ -1080,7 +1082,8 @@ public abstract class DoubleMatrixTest
         {
             for (int i = 0; i < left.length; i++)
                 for (int j = 0; j < left[0].length; j++)
-                    assertEquals("Values should now be difference of input values", left[i][j] - right[i][j], leftMatrix.getSI(i, j), 0.001);
+                    assertEquals("Values should now be difference of input values", left[i][j] - right[i][j],
+                            leftMatrix.getSI(i, j), 0.001);
         }
         catch (ValueException exception)
         {
@@ -1595,6 +1598,40 @@ public abstract class DoubleMatrixTest
                 {
                     fail("Unexpected ValueException");
                 }
+        try
+        {
+            DoubleMatrixAbs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5), LengthUnit.METER);
+            double rhs[][] = {{1, 2, 3}, {4, 5, 6}};
+            DoubleMatrix<LengthUnit> result = DoubleMatrix.multiply(lhs, rhs);
+            assertTrue("Result should not be null", null != result);
+            assertEquals("Result should have 2 rows", 2, result.rows());
+            assertEquals("Result should have 3 columns", 3, result.columns());
+            for (int row = 0; row < 2; row++)
+                for (int column = 0; column < 3; column++)
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
+                            .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected ValueException");
+        }
+        try
+        {
+            DoubleMatrixRel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5), LengthUnit.METER);
+            double rhs[][] = {{1, 2, 3}, {4, 5, 6}};
+            DoubleMatrix<LengthUnit> result = DoubleMatrix.multiply(lhs, rhs);
+            assertTrue("Result should not be null", null != result);
+            assertEquals("Result should have 2 rows", 2, result.rows());
+            assertEquals("Result should have 3 columns", 3, result.columns());
+            for (int row = 0; row < 2; row++)
+                for (int column = 0; column < 3; column++)
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
+                            .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected ValueException");
+        }
     }
 
     /**

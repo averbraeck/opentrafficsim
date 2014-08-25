@@ -22,6 +22,9 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix;
+import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixAbs;
+import org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixRel;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
@@ -1013,9 +1016,10 @@ public abstract class FloatMatrixTest
             }
         }
         float[][] left = buildArray(4, 5, false, 0);
-        FloatMatrix<LengthUnit>leftMatrix = safeCreateFloatMatrix(left, LengthUnit.METER, absolute);
+        FloatMatrix<LengthUnit> leftMatrix = safeCreateFloatMatrix(left, LengthUnit.METER, absolute);
         float[][] right = buildArray(4, 6, false, 0.3f);
-        FloatMatrixRel<LengthUnit>rightMatrix = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        FloatMatrixRel<LengthUnit> rightMatrix =
+                (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
             leftMatrix.add(rightMatrix);
@@ -1050,7 +1054,8 @@ public abstract class FloatMatrixTest
         {
             for (int i = 0; i < left.length; i++)
                 for (int j = 0; j < left[0].length; j++)
-                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j], leftMatrix.getSI(i, j), 0.001);
+                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j],
+                            leftMatrix.getSI(i, j), 0.001);
         }
         catch (ValueException exception)
         {
@@ -1093,7 +1098,8 @@ public abstract class FloatMatrixTest
         {
             for (int i = 0; i < left.length; i++)
                 for (int j = 0; j < left[0].length; j++)
-                    assertEquals("Values should now be difference of input values", left[i][j] - right[i][j], leftMatrix.getSI(i, j), 0.001);
+                    assertEquals("Values should now be difference of input values", left[i][j] - right[i][j],
+                            leftMatrix.getSI(i, j), 0.001);
         }
         catch (ValueException exception)
         {
@@ -1607,6 +1613,41 @@ public abstract class FloatMatrixTest
                 {
                     fail("Unexpected ValueException");
                 }
+        try
+        {
+            FloatMatrixAbs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            float rhs[][] = {{1, 2, 3}, {4, 5, 6}};
+            FloatMatrix<LengthUnit> result = FloatMatrix.multiply(lhs, rhs);
+            assertTrue("Result should not be null", null != result);
+            assertEquals("Result should have 2 rows", 2, result.rows());
+            assertEquals("Result should have 3 columns", 3, result.columns());
+            for (int row = 0; row < 2; row++)
+                for (int column = 0; column < 3; column++)
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
+                            .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected ValueException");
+        }
+        try
+        {
+            FloatMatrixRel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            float rhs[][] = {{1, 2, 3}, {4, 5, 6}};
+            FloatMatrix<LengthUnit> result = FloatMatrix.multiply(lhs, rhs);
+            assertTrue("Result should not be null", null != result);
+            assertEquals("Result should have 2 rows", 2, result.rows());
+            assertEquals("Result should have 3 columns", 3, result.columns());
+            for (int row = 0; row < 2; row++)
+                for (int column = 0; column < 3; column++)
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
+                            .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected ValueException");
+        }
+
     }
 
     /**
@@ -1694,7 +1735,7 @@ public abstract class FloatMatrixTest
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
                         in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.002);
     }
-    
+
     /**
      * Test the solve methods
      */
@@ -1719,17 +1760,24 @@ public abstract class FloatMatrixTest
                     // This case does not work (the other three do work)
                     FloatMatrix2D m = aMatrix.getMatrixSI();
                     System.out.println(m.toString());
-                    return; //result = FloatMatrix.solve((FloatMatrixAbsSparse<LengthUnit>) aMatrix, (FloatVectorAbs<ForceUnit>) bVector);
+                    return; // result = FloatMatrix.solve((FloatMatrixAbsSparse<LengthUnit>) aMatrix,
+                            // (FloatVectorAbs<ForceUnit>) bVector);
                 }
                 else if (aMatrix instanceof Relative)
-                    result = FloatMatrix.solve((FloatMatrixRelSparse<LengthUnit>) aMatrix, (FloatVectorRel<ForceUnit>) bVector);
+                    result =
+                            FloatMatrix.solve((FloatMatrixRelSparse<LengthUnit>) aMatrix,
+                                    (FloatVectorRel<ForceUnit>) bVector);
             }
             else
             {
                 if (aMatrix instanceof Absolute)
-                    result = FloatMatrix.solve((FloatMatrixAbsDense<LengthUnit>) aMatrix, (FloatVectorAbs<ForceUnit>) bVector);
+                    result =
+                            FloatMatrix.solve((FloatMatrixAbsDense<LengthUnit>) aMatrix,
+                                    (FloatVectorAbs<ForceUnit>) bVector);
                 else
-                    result = FloatMatrix.solve((FloatMatrixRelDense<LengthUnit>) aMatrix, (FloatVectorRel<ForceUnit>) bVector);
+                    result =
+                            FloatMatrix.solve((FloatMatrixRelDense<LengthUnit>) aMatrix,
+                                    (FloatVectorRel<ForceUnit>) bVector);
             }
             System.out.println("unit of result is " + result.getUnit());
             assertEquals("result[0] should be -2", -2, result.getSI(0), 0.0001);
@@ -1746,7 +1794,7 @@ public abstract class FloatMatrixTest
             fail("Unexpected exception");
         }
     }
-    
+
     /**
      * Test the FloatMatrixRelDense that takes a float[] as argument.
      */
