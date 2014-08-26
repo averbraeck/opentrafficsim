@@ -15,8 +15,6 @@ import javax.swing.JLabel;
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
 import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
