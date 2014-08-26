@@ -77,7 +77,7 @@ public abstract class FloatMatrixTest
          * result)); } System.out.println(""); }
          */
         floatMatrixTwoArgs(true); // test absolute version
-        floatMatrixTwoArgs(false); // rest relative version
+        floatMatrixTwoArgs(false); // test relative version
     }
 
     /**
