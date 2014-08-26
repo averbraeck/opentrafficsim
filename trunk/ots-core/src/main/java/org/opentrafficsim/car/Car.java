@@ -3,7 +3,6 @@ package org.opentrafficsim.car;
 import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;

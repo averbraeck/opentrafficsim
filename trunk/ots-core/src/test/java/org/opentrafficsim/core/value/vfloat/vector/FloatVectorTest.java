@@ -22,7 +22,6 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
