@@ -84,21 +84,23 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** Time granularity values. */
     protected static final double[] standardTimeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
-    
-    /** Index of the initial time granularity in standardTimeGranularites */
+
+    /** Index of the initial time granularity in standardTimeGranularites. */
     protected static final int standardInitialTimeGranularityIndex = 3;
 
     /** Distance granularity values. */
     protected static final double[] standardDistanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
-    
-    /** Index of the initial distance granularity in standardTimeGranularites */
+
+    /** Index of the initial distance granularity in standardTimeGranularites. */
     protected static final int standardInitialDistanceGranularityIndex = 3;
 
-    /** Initial lower bound for the time scale */
-    protected static final DoubleScalarAbs<TimeUnit> initialLowerTimeBound = new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND);
-    
-    /** Initial upper bound for the time scale */
-    protected static final DoubleScalarAbs<TimeUnit> initialUpperTimeBound = new DoubleScalarAbs<TimeUnit>(300, TimeUnit.SECOND);
+    /** Initial lower bound for the time scale. */
+    protected static final DoubleScalarAbs<TimeUnit> initialLowerTimeBound = new DoubleScalarAbs<TimeUnit>(0,
+            TimeUnit.SECOND);
+
+    /** Initial upper bound for the time scale. */
+    protected static final DoubleScalarAbs<TimeUnit> initialUpperTimeBound = new DoubleScalarAbs<TimeUnit>(300,
+            TimeUnit.SECOND);
 
     /**
      * Create a new ContourPlot.
@@ -127,7 +129,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
              */
             @Override
-            void updateHint(double domainValue, double rangeValue)
+            void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {
@@ -187,6 +189,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param commandPrefix String; prefix for the actionCommand of the items under the new JMenu
      * @param values double[]; array of values to be formatted using the format strings to yield the items under the new
      *            JMenu
+     * @param currentValue double; the currently selected value (used to put the bullet on the correct item)
      * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
      */
     private JMenu buildMenu(final String caption, final String format, final String commandPrefix,

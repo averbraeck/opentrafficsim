@@ -8,8 +8,8 @@ import org.jfree.chart.renderer.PaintScale;
 /**
  * Create a continuous color paint scale. <br />
  * Primarily intended for the contour plots, but sufficiently abstract for more general use. <br />
- * A continuous color paint scale creates paints (actually simple Colors) by linearly interpolating between a limited set
- * of RGB Color values that correspond to given input values.
+ * A continuous color paint scale creates paints (actually simple Colors) by linearly interpolating between a limited
+ * set of RGB Color values that correspond to given input values.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.

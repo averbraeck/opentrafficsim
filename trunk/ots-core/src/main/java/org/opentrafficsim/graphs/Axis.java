@@ -47,8 +47,8 @@ class Axis
 
     /** Name to describe the axis and to name the pop up menu that changes the current granularity. */
     protected final String name;
-    
-    /** Name to identify this axis */
+
+    /** Name to identify this axis. */
     protected final String shortName;
 
     /** Format for rendering a value along this axis. */
@@ -66,13 +66,13 @@ class Axis
      * @param shortName String; the name identifying this axis for use in a menu
      * @param format String; format string for rendering a value along this axis
      */
-    public Axis(final DoubleScalar<?> minimumValue, final DoubleScalar<?> maximumValue,
-            final double[] granularities, final double initialGranularity, final String name, final String shortName, final String format)
+    public Axis(final DoubleScalar<?> minimumValue, final DoubleScalar<?> maximumValue, final double[] granularities,
+            final double initialGranularity, final String name, final String shortName, final String format)
     {
         this.minimumValue = minimumValue;
         this.setMaximumValue(maximumValue);
         this.granularities = granularities;
-        if(null != granularities)
+        if (null != granularities)
             this.setCurrentGranularity(initialGranularity);
         this.name = name;
         this.shortName = shortName;
@@ -137,8 +137,8 @@ class Axis
     }
 
     /**
-     * Change the granularity for this axis.
-     * <br/> The new value must be present in the granularities.
+     * Change the granularity for this axis. <br/>
+     * The new value must be present in the granularities.
      * @param newGranularity double; the new value for the granularity of this axis
      */
     public void setCurrentGranularity(final double newGranularity)
@@ -162,8 +162,8 @@ class Axis
     }
 
     /**
-     * Change the maximum value of this axis.
-     * <br /> The maximum value can only be increased.
+     * Change the maximum value of this axis. <br />
+     * The maximum value can only be increased.
      * @param newMaximumValue DoubleScalar; the new maximum value of this axis
      */
     public void setMaximumValue(final DoubleScalar<?> newMaximumValue)

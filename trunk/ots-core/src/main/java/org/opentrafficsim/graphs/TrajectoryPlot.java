@@ -128,7 +128,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
              */
             @Override
-            void updateHint(double domainValue, double rangeValue)
+            void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {

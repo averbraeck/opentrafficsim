@@ -78,10 +78,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /** The ChartPanel for this Fundamental Diagram. */
     protected JFreeChart chartPanel;
 
-    /** Caption for this Fundamental Diagram */
+    /** Caption for this Fundamental Diagram. */
     final String caption;
-    
-    /** Position of this Fundamental Diagram */
+
+    /** Position of this Fundamental Diagram. */
     final DoubleScalarAbs<LengthUnit> position;
 
     /** Area to show status information. */
@@ -90,7 +90,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /** Sample duration of the detector that generates this Fundamental Diagram. */
     protected final DoubleScalarRel<TimeUnit> aggregationTime;
 
-    /** Storage for the Samples; one for each lane covered by the detector */
+    /** Storage for the Samples; one for each lane covered by the detector. */
     private ArrayList<ArrayList<Sample>> sampleSets;
 
     // TODO we need a linear density unit (1/m, 1/km). Now badly abusing MassUnit.KILOGRAM.
@@ -98,19 +98,19 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     Axis densityAxis = new Axis(new DoubleScalarAbs<MassUnit>(0, MassUnit.KILOGRAM), new DoubleScalarAbs<MassUnit>(200,
             MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
-    /** Definition of the speed axis */
+    /** Definition of the speed axis. */
     Axis speedAxis = new Axis(new DoubleScalarAbs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalarAbs<SpeedUnit>(
             180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
 
-    /** Definition of the flow axis */
+    /** Definition of the flow axis. */
     Axis flowAxis = new Axis(new DoubleScalarAbs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR,
             "FrequencyUnit.PerHour", "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalarAbs<FrequencyUnit>(3000d,
             FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
-    /** The currently shown X-axis */
+    /** The currently shown X-axis. */
     Axis xAxis;
 
-    /** The currently shown Y-axis */
+    /** The currently shown Y-axis. */
     Axis yAxis;
 
     /** List of parties interested in changes of this ContourPlot. */
@@ -164,7 +164,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
              * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
              */
             @Override
-            void updateHint(double domainValue, double rangeValue)
+            void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {
@@ -192,7 +192,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
     }
-    
+
     /**
      * Retrieve the position of the detector.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position of the detector
@@ -211,10 +211,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new
      *            JRadioButtonMenuItem will <b>not</b> be selected
      */
-    private JRadioButtonMenuItem addMenuItem(JMenu subMenu, ButtonGroup group, Axis xAxisToSelect, Axis yAxisToSelect,
-            boolean selected)
+    private JRadioButtonMenuItem addMenuItem(final JMenu subMenu, final ButtonGroup group, final Axis xAxisToSelect,
+            final Axis yAxisToSelect, final boolean selected)
     {
-        final JRadioButtonMenuItem item = new JRadioButtonMenuItem(yAxisToSelect.shortName + " / " + xAxisToSelect.shortName);
+        final JRadioButtonMenuItem item =
+                new JRadioButtonMenuItem(yAxisToSelect.shortName + " / " + xAxisToSelect.shortName);
         item.setSelected(selected);
         item.setActionCommand(yAxisToSelect.shortName + "/" + xAxisToSelect.shortName);
         item.addActionListener(this);
@@ -229,7 +230,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param car Car; the car that passes FIXME replace Car by GTU
      * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
      */
-    public void addData(int lane, Car car, DoubleScalarAbs<TimeUnit> detectionTime)
+    public void addData(final int lane, final Car car, final DoubleScalarAbs<TimeUnit> detectionTime)
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
@@ -246,7 +247,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param valueAxis ValueAxis; the axis to set up
      * @param axis Axis; the Axis that provides the data to setup the ValueAxis
      */
-    private static void configureAxis(ValueAxis valueAxis, Axis axis)
+    private static void configureAxis(final ValueAxis valueAxis, final Axis axis)
     {
         valueAxis.setLabel("\u2192 " + axis.name);
         valueAxis.setRange(axis.getMinimumValue().getValueInUnit(), axis.getMaximumValue().getValueInUnit());
