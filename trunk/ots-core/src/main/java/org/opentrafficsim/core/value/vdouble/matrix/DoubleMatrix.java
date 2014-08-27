@@ -101,7 +101,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
-     * Check that a DoubleMatrix has the same size as a 2D array
+     * Check that a DoubleMatrix has the same size as a 2D array.
      * @param x DoubleMatrix; matrix to size-compare to c
      * @param c double[][]; the 2D array to size-compare to x
      * @throws ValueException

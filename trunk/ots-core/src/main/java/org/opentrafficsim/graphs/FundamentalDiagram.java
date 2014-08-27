@@ -364,7 +364,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /**
-     * Retrieve a value from the recorded samples
+     * Retrieve a value from the recorded samples.
      * @param lane Integer; the lane
      * @param item Integer; the rank number of the sample
      * @param axis Axis; the axis that determines which quantity to retrieve
@@ -452,10 +452,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     class Sample
     {
-        /** Harmonic mean speed observed during this sample [m/s] */
+        /** Harmonic mean speed observed during this sample [m/s]. */
         private double harmonicMeanSpeed;
 
-        /** Flow observed during this sample [veh/s] */
+        /** Flow observed during this sample [veh/s]. */
         private double flow;
 
         /**
