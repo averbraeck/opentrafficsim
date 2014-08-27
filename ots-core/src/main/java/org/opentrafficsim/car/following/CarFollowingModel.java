@@ -108,7 +108,7 @@ public interface CarFollowingModel
 
         /**
          * Lane change; 0: stay in current lane; -1 merge onto adjacent overtaking lane; +1 merge towards the default
-         * lane
+         * lane.
          */
         public final int laneChange;
 

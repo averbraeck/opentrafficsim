@@ -101,7 +101,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * Check that a FloatMatrix has the same size as a 2D array
+     * Check that a FloatMatrix has the same size as a 2D array.
      * @param x FloatMatrix; matrix to size-compare to c
      * @param c float[][]; the 2D array to size-compare to x
      * @throws ValueException

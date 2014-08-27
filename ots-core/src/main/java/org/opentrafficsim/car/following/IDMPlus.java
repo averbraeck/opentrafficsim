@@ -247,7 +247,7 @@ public class IDMPlus<Line> implements CarFollowingModel
     }
 
     /**
-     * Check if a lane change can be executed safely
+     * Check if a lane change can be executed safely.
      * @param car Car; the Car that considers changing lane
      * @param carsInOtherLane Collection&lt;Car&gt; the car in the adjacent lane
      * @param desire double; the desire to change into the adjacent lane
