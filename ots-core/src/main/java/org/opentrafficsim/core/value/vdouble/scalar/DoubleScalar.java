@@ -105,7 +105,6 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      */
     void set(final DoubleScalar<U> value)
     {
-        setDisplayUnit(value.unit);
         this.valueSI = value.valueSI;
     }
 
@@ -115,7 +114,6 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U> implemen
      */
     void setInUnit(final double value, final U valueUnit)
     {
-        setDisplayUnit(valueUnit);
         this.valueSI = expressAsSIUnit(value);
     }
 

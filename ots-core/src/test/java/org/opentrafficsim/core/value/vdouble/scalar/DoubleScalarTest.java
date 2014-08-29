@@ -56,9 +56,9 @@ public class DoubleScalarTest
         assertEquals("Value in SI is equivalent in Kelvin", 311.15, temperatureFS.getValueSI(), 0.05);
         assertEquals("Value in Fahrenheit", 100.4, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         DoubleScalarAbs<TemperatureUnit> u2 = new DoubleScalarAbs<TemperatureUnit>(temperatureFS);
-        temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
-        assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
-        assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4, temperatureFS.getValueInUnit(), 0.05);
+        //temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
+        //assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
+        //assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4, temperatureFS.getValueInUnit(), 0.05);
         assertEquals("Value in SI is equivalent in Kelvin", 311.15, temperatureFS.getValueSI(), 0.1);
         assertEquals("Value in Fahrenheit", 100.4, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         assertTrue("Value is absolute", temperatureFS.isAbsolute());
@@ -74,9 +74,9 @@ public class DoubleScalarTest
         assertEquals("Value in SI is equivalent in Meter", 0.3048, lengthFS.getValueSI(), 0.0005);
         assertEquals("Value in Foot", 1, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
         DoubleScalarRel<LengthUnit> copy = new DoubleScalarRel<LengthUnit>(lengthFS);
-        lengthFS.setDisplayUnit(LengthUnit.MILLIMETER);
-        assertEquals("Unit should not be Millimeter", LengthUnit.MILLIMETER, lengthFS.getUnit());
-        assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
+        //lengthFS.setDisplayUnit(LengthUnit.MILLIMETER);
+        //assertEquals("Unit should not be Millimeter", LengthUnit.MILLIMETER, lengthFS.getUnit());
+        assertEquals("Unit of copy should also be in Inch", LengthUnit.INCH, copy.getUnit());
     }
     
     /**

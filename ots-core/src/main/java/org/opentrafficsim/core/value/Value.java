@@ -47,12 +47,6 @@ public interface Value<U extends Unit<U>>
     double expressAsSIUnit(final double value);
 
     /**
-     * Set a new unit for displaying the results.
-     * @param newUnit the new unit of the right unit type
-     */
-    void setDisplayUnit(final U newUnit);
-
-    /**
      * @return whether the value is absolute.
      */
     boolean isAbsolute();
