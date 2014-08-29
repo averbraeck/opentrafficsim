@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.network;
 
+import java.util.HashSet;
+
+
 /**
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
@@ -30,14 +33,44 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Node<ID> 
+public class Node<ID>
 {
 
+    private final ID id;
+    
+    private String nodeName;
     /**
-     * 
+     * Construction of a Node
+     * @param ID of the Node ID
+     * @param name of the Node
      */
-    public Node()
+    
+    public Node(final ID id, String nodeName)
     {
+        this.id=id;
+        this.nodeName = nodeName;
+        
     }
+    /**
+     * @return nodeName
+     */
+   public  String  getNodeName()
+    {
+        return this.nodeName;
+    }
+   /**
+    * @return id
+    */
+   public ID getNodeID()
+   {
+       return this.id;
+   }
+   
+   
+    
+    
+    
+    
+    
 
 }

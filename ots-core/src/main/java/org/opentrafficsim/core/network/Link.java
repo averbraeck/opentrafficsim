@@ -1,5 +1,10 @@
 package org.opentrafficsim.core.network;
 
+
+//import org.jgrapht.*;
+//import org.jgrapht.graph.*; 
+
+
 /**
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
@@ -33,11 +38,77 @@ package org.opentrafficsim.core.network;
 public class Link<ID>
 {
 
+    
+    private final ID id;
+    
+    private Node beginNode;
+    private Node endNode;
+    
+    private double linkLength;
+    private double linkCapacity;
+    
+
+    
+    
+    private double linkResistance;
+    
     /**
-     * 
+     * Construction of a link.
+     * @param id the Link id.
+     * @param beginNode.
+     * @param endNode.
+     * @param linkLength.
+     * @param linkCapacity.
+     * @param linkResistance.
      */
-    public Link()
+    
+    public Link(final ID id, Node beginNode, Node endNode, double linkLength, double linkCapacity, double linkResistance)
     {
+        this.id=id;
+        this.beginNode = beginNode;
+        this.endNode = endNode;
+        this.linkLength = linkLength;
+        this.linkCapacity = linkCapacity;
+        this.linkResistance = linkResistance;
+        
     }
+    
+    
+    /**
+     * @return linkLength
+     */
+     public double getLenght()
+    {
+        return this.linkLength;
+    }
+     
+     
+     /**
+      * @return id
+      */
+     public ID getID()
+     {
+       return this.id;  
+     }
+     
+     
+     /**
+      * @return linkCapacity
+      */
+     public double getCapacity()
+     {
+         return this.linkCapacity;
+     }
+     
+     
+     /**
+      * @return linkResistance
+      */
+     public double getResistance()
+     {
+         return this.linkResistance;
+     }
+    
+    
 
 }
