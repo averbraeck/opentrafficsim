@@ -39,7 +39,7 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     private static final long serialVersionUID = 20140615L;
 
     /** the unit of the value. */
-    protected U unit;
+    protected final U unit;
 
     /**
      * @param unit the unit of the value
@@ -72,14 +72,6 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     protected double expressAsSpecifiedUnit(final double value)
     {
         return ValueUtil.expressAsUnit(value, this.unit);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Value#setDisplayUnit(org.opentrafficsim.core.unit.Unit)
-     */
-    public void setDisplayUnit(final U newUnit)
-    {
-        this.unit = newUnit;
     }
 
     /**

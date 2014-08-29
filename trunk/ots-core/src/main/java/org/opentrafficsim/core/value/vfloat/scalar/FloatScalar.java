@@ -107,7 +107,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     void set(final FloatScalar<U> value)
     {
-        setDisplayUnit(value.unit);
         this.valueSI = value.valueSI;
     }
 
@@ -117,7 +116,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
      */
     void setInUnit(final float value, final U valueUnit)
     {
-        setDisplayUnit(valueUnit);
         this.valueSI = (float) expressAsSIUnit(value);
     }
 
