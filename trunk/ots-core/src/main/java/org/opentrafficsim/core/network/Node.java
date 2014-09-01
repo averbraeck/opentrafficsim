@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import java.util.HashSet;
-
 
 /**
  * <p>
@@ -32,15 +30,21 @@ import java.util.HashSet;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @param <ID> 
  */
 public class Node<ID>
 {
 
+    /**id */
     private final ID id;
     
-    private String nodeName;
+    /** nodeName*/
+    private final String nodeName;
+    
     /**
      * Construction of a Node
+     * @param id 
+     * @param nodeName 
      * @param ID of the Node ID
      * @param name of the Node
      */
@@ -49,7 +53,15 @@ public class Node<ID>
     {
         this.id=id;
         this.nodeName = nodeName;
+
         
+    }
+    
+    /**
+     * @param id
+     */
+    public Node(final ID id){
+        this(id,"");
     }
     /**
      * @return nodeName
@@ -66,11 +78,9 @@ public class Node<ID>
        return this.id;
    }
    
+
    
-    
-    
-    
-    
-    
+   
+   
 
 }

@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. In addition, a
@@ -88,6 +88,7 @@ import java.util.HashSet;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> the ID type of the network.
+ * @param <L> 
  */
 public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serializable
 {
@@ -98,7 +99,10 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     private final ID id;
 
     /** Node of which this network is an expansion */
-    private Node expansionOfNode = null;
+    private Node<?> expansionOfNode = null;
+    
+    /** HashSet of Nodes*/
+    private Set<Node<?>> nodeSet = new HashSet<Node<?>>();
 
     /**
      * Construction of an empty network.
@@ -129,7 +133,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @param expansionNode Node of which this network is an expansion.
      * @throws NetworkException when expansion node is part of the initial collection.
      */
-    public Network(final ID id, final Collection<? extends L> collection, final Node expansionNode)
+    public Network(final ID id, final Collection<? extends L> collection, final Node<?> expansionNode)
             throws NetworkException
     {
         super(collection);
@@ -143,7 +147,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     /**
      * @return expansionOfNode
      */
-    public Node getExpansionOfNode()
+    public Node<?> getExpansionOfNode()
     {
         return this.expansionOfNode;
     }
@@ -152,7 +156,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @param expansionOfNode set expansionOfNode
      * @throws NetworkException when expansion node is part of the node collection.
      */
-    public void setExpansionOfNode(Node expansionOfNode) throws NetworkException
+    public void setExpansionOfNode(Node<?> expansionOfNode) throws NetworkException
     {
         this.expansionOfNode = expansionOfNode;
     }
@@ -165,4 +169,44 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         return this.id;
     }
 
+
+    /**
+     * @return nodeSet
+     */
+    public Set<Node<?>> getNodeSet()
+    {
+        return this.nodeSet;
+    }
+
+
+    /**
+     * @param nodeSet set nodeSet
+     */
+    public void setNodeSet(Set<Node<?>> nodeSet)
+    {
+        this.nodeSet = nodeSet;
+    }
+    
+  /* later implementation  
+    public boolean isElement(Node<?> node){
+        
+        
+        return true; // cheat so far
+    }
+    
+    public boolean isInNetwork()
+    {
+        return true; // cheat so far
+    }
+    
+    public boolean addNodeToNetwork(Network addThis){
+        /*if (includedInNetworks.contains(addThis))
+        {
+           ;//throw 
+        }
+        else{
+            includedInNetworks.add(addThis);
+        } return true;}    // cheat so far
+        
+*/
 }
