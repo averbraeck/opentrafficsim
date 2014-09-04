@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network;
 
+//import java.util.Set;
+
 
 /**
  * <p>
@@ -77,10 +79,8 @@ public class Node<ID>
    {
        return this.id;
    }
-   
 
-   
-   
-   
+
+
 
 }

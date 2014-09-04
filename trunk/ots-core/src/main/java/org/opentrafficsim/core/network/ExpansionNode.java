@@ -50,7 +50,7 @@ public class ExpansionNode<ID> extends Node<ID>
     
     
     /**Network attribute of expanded Node */
-    private Network<?,?> networkName;
+    private Network<?,?> network;
     
        /**
      * @param id
@@ -62,14 +62,14 @@ public class ExpansionNode<ID> extends Node<ID>
 
      /**
      * @param id
-     * @param networkName 
+     * @param network 
      * @param network 
      */
-    public ExpansionNode(final ID id,Network<?,?> networkName)
+    public ExpansionNode(final ID id,Network<?,?> network)
     { 
         super(id);
         this.id = id;
-        this.setNetworkName(networkName);
+        this.setNetwork(network);
     }
 
     /**
@@ -81,19 +81,19 @@ public class ExpansionNode<ID> extends Node<ID>
     }
 
     /**
-     * @return networkName
+     * @return network
      */
-    public Network<?,?> getNetworkName()
+    public Network<?,?> getNetwork()
     {
-        return this.networkName;
+        return this.network;
     }
 
     /**
-     * @param networkName set networkName
+     * @param network set network
      */
-    public void setNetworkName(Network<?,?> networkName)
+    public void setNetwork(Network<?,?> network)
     {
-        this.networkName = networkName;
+        this.network = network;
     }
 
     
