@@ -187,26 +187,43 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         this.nodeSet = nodeSet;
     }
     
-  /* later implementation  
-    public boolean isElement(Node<?> node){
-        
-        
-        return true; // cheat so far
-    }
-    
-    public boolean isInNetwork()
+  /**
+ * @param node
+ * @return true or false
+ */
+    public boolean isInNetwork(Node<?> node)
     {
-        return true; // cheat so far
-    }
-    
-    public boolean addNodeToNetwork(Network addThis){
-        /*if (includedInNetworks.contains(addThis))
-        {
-           ;//throw 
-        }
+       
+        if (this.nodeSet.contains(node)){ return true;}
         else{
-            includedInNetworks.add(addThis);
-        } return true;}    // cheat so far
+            for(Node<?> n:this.nodeSet){
+                if (n instanceof ExpansionNode ){
+                 if (((ExpansionNode<?>) n).getNetwork().contains(node)){
+                     return true;    
+                 }
+                }
+             }
+          }
         
-*/
-}
+        return false; 
+      }
+    
+    /**
+     * @param addThis
+     * @return true or false
+     * @throws NetworkException 
+     */
+    public boolean addNode(Node<?> addThis) throws NetworkException{
+        if (isInNetwork(addThis))
+        {           
+         throw new NetworkException("Adding Node " + addThis.getNodeID().toString() + ". Node "
+                  + addThis.getNodeName().toString() + " is  already in the Set");
+               }
+        else{
+          this.nodeSet.add(addThis);
+          return true;
+        } 
+        
+    } 
+     
+} // End of class
