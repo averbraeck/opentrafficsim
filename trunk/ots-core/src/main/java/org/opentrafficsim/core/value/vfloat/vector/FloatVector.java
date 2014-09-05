@@ -1,23 +1,21 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
-import org.opentrafficsim.core.unit.SICoefficients;
-import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Dense;
-import org.opentrafficsim.core.value.Format;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.DenseData;
+import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.ValueUtil;
-import org.opentrafficsim.core.value.Vector;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 import cern.colt.matrix.tfloat.FloatMatrix1D;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
-import cern.jet.math.tfloat.FloatFunctions;
+import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
 
 /**
+ * Immutable float vector.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -44,794 +42,372 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> The unit for this value type
+ * @param <U> The unit for this FloatVector
  */
-public abstract class FloatVector<U extends Unit<U>> extends Vector<U> implements FloatMathFunctions,
-        FloatVectorFunctions<U>
+public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector<U>
 {
+    /**
+     * @param unit
+     */
+    protected FloatVector(U unit)
+    {
+        super(unit);
+        // System.out.println("Created FloatVector");
+    }
+
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
-    protected FloatMatrix1D vectorSI;
-
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @param unit the unit of the values
+     * @param <U> Unit
      */
-    public FloatVector(final float[] values, final U unit)
+    public abstract static class Dense<U extends Unit<U>> extends FloatVector<U> implements DenseData
     {
-        super(unit);
-        if (unit.equals(unit.getStandardUnit()))
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * @param unit
+         */
+        private Dense(U unit)
         {
-            this.vectorSI = createMatrix1D(values.length);
-            this.vectorSI.assign(values);
+            super(unit);
+            // System.out.println("Created Dense");
         }
-        else
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Abs<U extends Unit<U>> extends FloatVector<U> implements Absolute
         {
-            this.vectorSI = createMatrix1D(values.length);
-            for (int index = 0; index < values.length; index++)
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only.
+             * @param values
+             * @param unit
+             */
+            protected Abs(final FloatMatrix1D values, final U unit)
             {
-                this.vectorSI.set(index, (float) expressAsSIUnit(values[index]));
+                super(unit);
+                // System.out.println("Created Abs");
+                initialize(values); // shallow copy
             }
-        }
-    }
 
-    /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered
-     */
-    public FloatVector(final FloatScalar<U>[] values) throws ValueException
-    {
-        super(values.length > 0 ? values[0].getUnit() : null);
-        if (values.length == 0)
+            /**
+             * @param values
+             * @param unit
+             */
+            public Abs(final float[] values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Abs");
+                initialize(values);
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException 
+             */
+            public Abs(final FloatScalarAbs<U>[] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0].getUnit());
+                // System.out.println("Created Abs");
+                initialize(values);
+            }
+
+            /**
+             * Make a mutable version.
+             * @return Dense Absolute MutableFloatVector
+             */
+            public MutableFloatVector.Dense.Abs<U> mutable()
+            {
+                return new MutableFloatVector.Dense.Abs<U>(this.vectorSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(final int index) throws ValueException
+            {
+                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             */
+            @Override
+            protected FloatMatrix1D createMatrix1D(int size)
+            {
+                return new DenseFloatMatrix1D(size);
+            }
+
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Rel<U extends Unit<U>> extends FloatVector<U> implements Relative
         {
-            throw new ValueException("FloatVector constructor called with an empty array of FloatScalar elements");
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only
+             * @param values
+             * @param unit
+             */
+            protected Rel(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Rel");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * Create a Dense Relative Immutable FloatVector
+             * @param values
+             * @param unit
+             */
+            public Rel(final float[] values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Rel");
+                initialize(values);
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException 
+             */
+            public Rel(final FloatScalarRel<U>[] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0].getUnit());
+                // System.out.println("Created Rel");
+                initialize(values);
+            }
+
+            /**
+             * Create a mutable version.
+             * @return Dense Relative Mutable FloatVector
+             */
+            public MutableFloatVector.Dense.Rel<U> mutable()
+            {
+                return new MutableFloatVector.Dense.Rel<U>(this.vectorSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(int index) throws ValueException
+            {
+                return new FloatScalarRel<U>(getInUnit(index, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             */
+            @Override
+            protected FloatMatrix1D createMatrix1D(int size)
+            {
+                return new DenseFloatMatrix1D(size);
+            }
+
         }
 
-        this.vectorSI = createMatrix1D(values.length);
-        for (int index = 0; index < values.length; index++)
+    }
+
+    /**
+     * @param <U> Unit
+     */
+    public abstract static class Sparse<U extends Unit<U>> extends FloatVector<U> implements SparseData
+    {
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * @param unit
+         */
+        private Sparse(U unit)
         {
-            this.vectorSI.set(index, values[index].getValueSI());
+            super(unit);
+            // System.out.println("Created Sparse");
         }
-    }
 
-    /**
-     * This method has to be implemented by each leaf class.
-     * @param size the number of cells in the vector
-     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
-     */
-    protected abstract FloatMatrix1D createMatrix1D(final int size);
-
-    /**
-     * @return the Colt vector.
-     */
-    public FloatMatrix1D getVectorSI()
-    {
-        return this.vectorSI;
-    }
-
-    /**
-     * @return values in SI units
-     */
-    public float[] getValuesSI()
-    {
-        return this.vectorSI.toArray();
-    }
-
-    /**
-     * @return values in original units
-     */
-    public float[] getValuesInUnit()
-    {
-        float[] values = this.vectorSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            values[i] = (float) expressAsSpecifiedUnit(values[i]);
-        return values;
-    }
-
-    /**
-     * @param targetUnit the unit to convert the values to
-     * @return values in specific target unit
-     */
-    public float[] getValuesInUnit(final U targetUnit)
-    {
-        float[] values = this.vectorSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            values[i] = (float) ValueUtil.expressAsUnit(values[i], targetUnit);
-        return values;
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.VectorFunctions#size()
-     */
-    public int size()
-    {
-        return (int) this.vectorSI.size();
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getSI(int)
-     */
-    public float getSI(final int index) throws ValueException
-    {
-        if (index < 0 || index >= this.vectorSI.size())
-            throw new ValueException("FloatVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
-        return this.vectorSI.get(index);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int)
-     */
-    public float getInUnit(final int index) throws ValueException
-    {
-        return (float) expressAsSpecifiedUnit(getSI(index));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#getInUnit(int,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
-    public float getInUnit(final int index, final U targetUnit) throws ValueException
-    {
-        return (float) ValueUtil.expressAsUnit(getSI(index), targetUnit);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setSI(int, float)
-     */
-    @Override
-    public void setSI(final int index, final float valueSI) throws ValueException
-    {
-        if (index < 0 || index >= this.vectorSI.size())
-            throw new ValueException("FloatVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
-        this.vectorSI.set(index, valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#set(int,
-     *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
-     */
-    @Override
-    public void set(final int index, final FloatScalar<U> value) throws ValueException
-    {
-        setSI(index, value.getValueSI());
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#setInUnit(int, float,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
-    @Override
-    public void setInUnit(final int index, final float value, final U valueUnit) throws ValueException
-    {
-        setSI(index, (float) ValueUtil.expressAsSIUnit(value, valueUnit));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorFunctions#zSum()
-     */
-    public float zSum()
-    {
-        return this.vectorSI.zSum();
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.VectorFunctions#normalize()
-     */
-    public void normalize() throws ValueException
-    {
-        float sum = this.zSum();
-        if (sum == 0)
-            throw new ValueException("FloatVector.normalize: zSum of the vector values == 0, cannot normalize");
-        this.divide(sum);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.VectorFunctions#cardinality()
-     */
-    @Override
-    public int cardinality()
-    {
-        return this.vectorSI.cardinality();
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof FloatVector<?>))
-            return false;
-        FloatVector<?> fv = (FloatVector<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
-            return false;
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
-            return false;
-
-        // Colt's equals also tests the size of the vector
-        return this.vectorSI.equals(fv.vectorSI);
-    }
-
-    /**********************************************************************************/
-    /********************************** MATH METHODS **********************************/
-    /**********************************************************************************/
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#abs()
-     */
-    @Override
-    public void abs()
-    {
-        this.vectorSI.assign(FloatFunctions.abs);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#acos()
-     */
-    @Override
-    public void acos()
-    {
-        this.vectorSI.assign(FloatFunctions.acos);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#asin()
-     */
-    @Override
-    public void asin()
-    {
-        this.vectorSI.assign(FloatFunctions.asin);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#atan()
-     */
-    @Override
-    public void atan()
-    {
-        this.vectorSI.assign(FloatFunctions.atan);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
-     */
-    @Override
-    public void cbrt()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.cbrt);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#ceil()
-     */
-    @Override
-    public void ceil()
-    {
-        this.vectorSI.assign(FloatFunctions.ceil);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cos()
-     */
-    @Override
-    public void cos()
-    {
-        this.vectorSI.assign(FloatFunctions.cos);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cosh()
-     */
-    @Override
-    public void cosh()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.cosh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#exp()
-     */
-    @Override
-    public void exp()
-    {
-        this.vectorSI.assign(FloatFunctions.exp);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#expm1()
-     */
-    @Override
-    public void expm1()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.expm1);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#floor()
-     */
-    @Override
-    public void floor()
-    {
-        this.vectorSI.assign(FloatFunctions.floor);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log()
-     */
-    @Override
-    public void log()
-    {
-        this.vectorSI.assign(FloatFunctions.log);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log10()
-     */
-    @Override
-    public void log10()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.log10);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log1p()
-     */
-    @Override
-    public void log1p()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.log1p);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
-     */
-    @Override
-    public void pow(final double x)
-    {
-        this.vectorSI.assign(FloatFunctions.pow((float) x));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#rint()
-     */
-    @Override
-    public void rint()
-    {
-        this.vectorSI.assign(FloatFunctions.rint);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#round()
-     */
-    @Override
-    public void round()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.round);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#signum()
-     */
-    @Override
-    public void signum()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.signum);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sin()
-     */
-    @Override
-    public void sin()
-    {
-        this.vectorSI.assign(FloatFunctions.sin);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sinh()
-     */
-    @Override
-    public void sinh()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.sinh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
-     */
-    @Override
-    public void sqrt()
-    {
-        this.vectorSI.assign(FloatFunctions.sqrt);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tan()
-     */
-    @Override
-    public void tan()
-    {
-        this.vectorSI.assign(FloatFunctions.tan);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tanh()
-     */
-    @Override
-    public void tanh()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.tanh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
-     */
-    @Override
-    public void toDegrees()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.toDegrees);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
-     */
-    @Override
-    public void toRadians()
-    {
-        this.vectorSI.assign(FloatMathFunctionsImpl.toRadians);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#inv()
-     */
-    @Override
-    public void inv()
-    {
-        this.vectorSI.assign(FloatFunctions.inv);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
-     */
-    @Override
-    public void multiply(final float constant)
-    {
-        this.vectorSI.assign(FloatFunctions.mult(constant));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
-     */
-    @Override
-    public void divide(final float constant)
-    {
-        this.vectorSI.assign(FloatFunctions.div(constant));
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return toString(this.unit);
-    }
-
-    /**
-     * @param displayUnit the unit to display the vector in.
-     * @return a printable String with the vector contents
-     */
-    public String toString(final U displayUnit)
-    {
-        StringBuffer buf = new StringBuffer();
-        buf.append("[" + displayUnit.getAbbreviation() + "]");
-        for (int i = 0; i < this.vectorSI.size(); i++)
+        /**
+         * @param <U>
+         */
+        public static class Abs<U extends Unit<U>> extends FloatVector<U> implements Absolute
         {
-            float f = (float) ValueUtil.expressAsUnit(this.vectorSI.get(i), displayUnit);
-            buf.append(" " + Format.format(f));
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only.
+             * @param values
+             * @param unit
+             */
+            protected Abs(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Abs");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             */
+            public Abs(final float[] values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Abs");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException 
+             */
+            public Abs(final FloatScalarAbs<U>[] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0].getUnit());
+                // System.out.println("Created Abs");
+                initialize(values);
+            }
+
+            /**
+             * Construct a mutable version containing the same data.
+             * @return Dense Absolute MutableFloatVector
+             */
+            public MutableFloatVector.Sparse.Abs<U> mutable()
+            {
+                return new MutableFloatVector.Sparse.Abs<U>(this.vectorSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(int index) throws ValueException
+            {
+                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             */
+            @Override
+            protected FloatMatrix1D createMatrix1D(int size)
+            {
+                return new SparseFloatMatrix1D(size);
+            }
+
         }
-        return buf.toString();
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Rel<U extends Unit<U>> extends FloatVector<U> implements Relative
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only
+             * @param values
+             * @param unit
+             */
+            protected Rel(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Rel");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * Create a new Sparse Relative Immutable FloatVector
+             * @param values
+             * @param unit
+             */
+            public Rel(final float[] values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Rel");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException 
+             */
+            public Rel(final FloatScalarRel<U>[] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0].getUnit());
+                // System.out.println("Created Rel");
+                initialize(values);
+            }
+
+            /**
+             * Construct a mutable version.
+             * @return Sparse Relative Mutable FloatVector
+             */
+            public MutableFloatVector.Sparse.Rel<U> mutable()
+            {
+                return new MutableFloatVector.Sparse.Rel<U>(this.vectorSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(int index) throws ValueException
+            {
+                return new FloatScalarRel<U>(getInUnit(index, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             */
+            @Override
+            protected FloatMatrix1D createMatrix1D(int size)
+            {
+                return new SparseFloatMatrix1D(size);
+            }
+
+        }
     }
 
     /**
-     * Centralized size equality check.
-     * @param other FloatVector<U>; other FloatVector
-     * @param where String; name of method that calls this check
-     * @throws ValueException when vectors have unequal size
+     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
      */
-    void checkSize(final FloatVector<?> other, final String where) throws ValueException
+    @Override
+    public FloatScalar<U> get(int index) throws ValueException
     {
-        if (size() != other.size())
-            throw new ValueException(where + " - two vectors have unequal size: " + size() + " != " + other.size());
-    }
-
-    /**********************************************************************************/
-    /******************************* NON-STATIC METHODS *******************************/
-    /**********************************************************************************/
-
-    /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
-     * is not allowed. Adding an absolute value to an existing relative value would require the result to become
-     * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param vector the vector to add
-     * @throws ValueException when vectors have unequal size
-     */
-    public void add(final FloatVectorRel<U> vector) throws ValueException
-    {
-        checkSize(vector, "FloatVector.add");
-        this.vectorSI.assign(vector.vectorSI, FloatFunctions.plus);
+        return null;
     }
 
     /**
-     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
-     * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
-     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param vector the value to subtract
-     * @throws ValueException when vectors have unequal size
+     * Create a mutable version of this FloatVector. <br />
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * @return MutableFloatVector; mutable version of this FloatVector
      */
-    public void subtract(final FloatVectorRel<U> vector) throws ValueException
-    {
-        checkSize(vector, "FloatVector.subtract");
-        this.vectorSI.assign(vector.vectorSI, FloatFunctions.minus);
-    }
-
-    /**********************************************************************************/
-    /********************************* STATIC METHODS *********************************/
-    /**********************************************************************************/
+    public abstract MutableFloatVector<U> mutable();
 
     /**
-     * Add a vector with absolute values x and a vector with relative values y. The target unit will be the unit of
-     * absolute value x.
-     * @param x absolute vector 1
-     * @param y relative vector 2
-     * @return new Vector with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when vectors have unequal size
+     * @see org.opentrafficsim.core.value.Value#copy()
      */
-    public static <U extends Unit<U>> FloatVectorAbs<U> plus(final FloatVectorAbs<U> x, final FloatVectorRel<U> y)
-            throws ValueException
+    public FloatVector<U> copy()
     {
-        x.checkSize(y, "FloatVector.plus");
-        FloatVectorAbs<U> c = x.copy();
-        c.add(y);
-        return c;
+        return this; // That was easy!
     }
 
-    /**
-     * Add a vector with relative values x and a vector with absolute values y. The target unit will be the unit of
-     * absolute value y.
-     * @param x relative vector 1
-     * @param y absolute vector 2
-     * @return new Vector with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorAbs<U> plus(final FloatVectorRel<U> x, final FloatVectorAbs<U> y)
-            throws ValueException
-    {
-        return plus(y, x);
-    }
-
-    /**
-     * Add a vector with relative values x and a vector with relative values y. The target unit will be the unit of
-     * relative value x.
-     * @param x relative vector 1
-     * @param y relative vector 2
-     * @return new Vector with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorRel<U> plus(final FloatVectorRel<U> x, final FloatVectorRel<U> y)
-            throws ValueException
-    {
-        x.checkSize(y, "FloatVector.plus");
-        FloatVectorRel<U> c = x.copy();
-        c.add(y);
-        return c;
-    }
-
-    /**
-     * Subtract a vector with relative values y from a vector with relative values x. The result is a vector with
-     * relative values. The target unit will be the unit of relative value x.
-     * @param x relative vector 1
-     * @param y relative vector 2
-     * @return new Vector with absolute elements values x[i] minus y[i]
-     * @throws ValueException when vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorRel<U> minus(final FloatVectorRel<U> x, final FloatVectorRel<U> y)
-            throws ValueException
-    {
-        x.checkSize(y, "FloatVector.minus");
-        FloatVectorRel<U> c = x.copy();
-        c.subtract(y);
-        return c;
-    }
-
-    /**
-     * Subtract a vector with relative values y from a vector with absolute values x. The result is a vector with
-     * absolute values. The target unit will be the unit of vector x.
-     * @param x absolute vector 1
-     * @param y relative vector 2
-     * @return new Vector with absolute elements: values x[i] minus y[i]
-     * @throws ValueException when vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorAbs<U> minus(final FloatVectorAbs<U> x, final FloatVectorRel<U> y)
-            throws ValueException
-    {
-        x.checkSize(y, "FloatVector.minus");
-        FloatVectorAbs<U> c = x.copy();
-        c.subtract(y);
-        return c;
-    }
-
-    /**
-     * Subtract a vector with absolute values y from a vector with absolute values x. The result is a vector with
-     * relative values. The target unit will be the unit of vector x.
-     * @param x absolute vector 1
-     * @param y absolute vector 2
-     * @return new Vector with relative elements: values x[i] minus y[i]
-     * @throws ValueException when vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorRel<U> minus(final FloatVectorAbs<U> x, final FloatVectorAbs<U> y)
-            throws ValueException
-    {
-        x.checkSize(y, "FloatVector.minus");
-        FloatVectorRel<U> c = null;
-        if (x instanceof Dense)
-            c = new FloatVectorRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else if (x instanceof Sparse)
-            c = new FloatVectorRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else
-            throw new ValueException("FloatVector.minus - vector neither sparse nor dense");
-
-        c.vectorSI.assign(y.vectorSI, FloatFunctions.minus);
-        c.unit = x.unit;
-        return c;
-    }
-
-    /**
-     * Multiply two absolute vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the multiplication with
-     * @param y the second vector to do the multiplication with
-     * @return the multiplication of this vector and another vector of the same size.
-     * @throws ValueException if the two vectors have unequal size
-     */
-    public static FloatVectorAbs<SIUnit> multiply(final FloatVectorAbs<?> x, final FloatVectorAbs<?> y)
-            throws ValueException
-    {
-        x.checkSize(y, "FloatVector.multiply");
-
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
-                        y.getUnit().getSICoefficients()).toString());
-
-        @SuppressWarnings("unchecked")
-        FloatVectorAbs<SIUnit> c = (FloatVectorAbs<SIUnit>) x.copy();
-        c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
-        c.unit = targetUnit;
-        return c;
-    }
-
-    /**
-     * Multiply two relative vectors on a cell-by-cell basis, e.g. x[i] * y[i]. The result will have a new SI unit.
-     * @param x the first vector to do the multiplication with
-     * @param y the second vector to do the multiplication with
-     * @return the multiplication of this vector and another vector of the same size.
-     * @throws ValueException if the two vectors have unequal size
-     */
-    public static FloatVectorRel<SIUnit> multiply(final FloatVectorRel<?> x, final FloatVectorRel<?> y)
-            throws ValueException
-    {
-        x.checkSize(y, "FloatVector.multiply");
-
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
-                        y.getUnit().getSICoefficients()).toString());
-
-        @SuppressWarnings("unchecked")
-        FloatVectorRel<SIUnit> c = (FloatVectorRel<SIUnit>) x.copy();
-        c.vectorSI.assign(y.vectorSI, FloatFunctions.mult);
-        c.unit = targetUnit;
-        return c;
-    }
-
-    /**
-     * Multiply an absolute vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
-     * result will have the same unit as vector x.
-     * @param x the first vector to do the multiplication with
-     * @param c the dimensionless vector with constants to do the multiplication with
-     * @return the multiplication of this vector and another vector of the same size.
-     * @throws ValueException if the two vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorAbs<U> multiply(final FloatVectorAbs<U> x, final float[] c)
-            throws ValueException
-    {
-        if (x.size() != c.length)
-            throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
-                    + x.size() + " != " + c.length);
-
-        // TODO: more elegant implementation that does not copy the entire vector?
-        FloatVectorAbs<U> result = x.copy();
-        // TODO: only dense?
-        DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
-        result.vectorSI.assign(cMatrix, FloatFunctions.mult);
-        return result;
-    }
-
-    /**
-     * Multiply a relative vector with units on a cell-by-cell basis with a dimensionless vector, e.g. x[i] * c[i]. The
-     * result will have the same unit as vector x.
-     * @param x the first vector to do the multiplication with
-     * @param c the dimensionless vector with constants to do the multiplication with
-     * @return the multiplication of this vector and another vector of the same size.
-     * @throws ValueException if the two vectors have unequal size
-     */
-    public static <U extends Unit<U>> FloatVectorRel<U> multiply(final FloatVectorRel<U> x, final float[] c)
-            throws ValueException
-    {
-        if (x.size() != c.length)
-            throw new ValueException("FloatVector.zProduct with dimensionless vector - two vectors have unequal size: "
-                    + x.size() + " != " + c.length);
-
-        // TODO: more elegant implementation that does not copy the entire vector?
-        FloatVectorRel<U> result = x.copy();
-        // TODO: only dense?
-        DenseFloatMatrix1D cMatrix = new DenseFloatMatrix1D(c);
-        result.vectorSI.assign(cMatrix, FloatFunctions.mult);
-        return result;
-    }
-
-    /**
-     * Convert sparse vector to dense vector.
-     * @param x the vector to convert
-     * @return the converted vector
-     */
-    public static <U extends Unit<U>> FloatVectorAbsDense<U> sparseToDense(final FloatVectorAbsSparse<U> x)
-    {
-        FloatVectorAbsDense<U> v = new FloatVectorAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert sparse vector to dense vector.
-     * @param x the vector to convert
-     * @return the converted vector
-     */
-    public static <U extends Unit<U>> FloatVectorRelDense<U> sparseToDense(final FloatVectorRelSparse<U> x)
-    {
-        FloatVectorRelDense<U> v = new FloatVectorRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert dense vector to sparse vector.
-     * @param x the vector to convert
-     * @return the converted vector
-     */
-    public static <U extends Unit<U>> FloatVectorAbsSparse<U> denseToSparse(final FloatVectorAbsDense<U> x)
-    {
-        FloatVectorAbsSparse<U> v = new FloatVectorAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert dense vector to sparse vector.
-     * @param x the vector to convert
-     * @return the converted vector
-     */
-    public static <U extends Unit<U>> FloatVectorRelSparse<U> denseToSparse(final FloatVectorRelDense<U> x)
-    {
-        FloatVectorRelSparse<U> v = new FloatVectorRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        v.unit = x.unit;
-        return v;
-    }
 }

@@ -3,9 +3,9 @@ package org.opentrafficsim.core.value.vdouble.vector;
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.Vector;
@@ -145,7 +145,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.VectorFunctions#size()
+     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#size()
      */
     public int size()
     {
@@ -221,7 +221,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.VectorFunctions#normalize()
+     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#normalize()
      */
     public void normalize() throws ValueException
     {
@@ -232,7 +232,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.VectorFunctions#cardinality()
+     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#cardinality()
      */
     @Override
     public int cardinality()
@@ -694,9 +694,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
                     + y.size());
 
         DoubleVectorRel<U> c = null;
-        if (x instanceof Dense)
+        if (x instanceof DenseData)
             c = new DoubleVectorRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else if (x instanceof Sparse)
+        else if (x instanceof SparseData)
             c = new DoubleVectorRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
         else
             throw new ValueException("DoubleVector.minus - vector neither sparse nor dense");

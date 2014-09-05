@@ -17,16 +17,12 @@ import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
-import org.opentrafficsim.core.value.Dense;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.Sparse;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
-
-import cern.colt.matrix.tfloat.FloatMatrix1D;
 
 /**
  * <p>
@@ -101,11 +97,11 @@ public abstract class FloatVectorTest
         String output = fv.toString(LengthUnit.MILLIMETER);
         // System.out.println("output is \"" + output + "\"");
         String[] fields = output.split("[ ]+");
-        assertEquals("Number of fields should be number of entries + one", fv.size() + 1, fields.length);
-        assertEquals("first field should contain unit in brackers", "[mm]", fields[0]);
-        for (int i = 1; i < fields.length; i++)
+        assertEquals("Number of fields should be number of entries + four", fv.size() + 4, fields.length);
+        assertEquals("field 3 should contain unit in brackers", "[mm]", fields[3]);
+        for (int i = 4; i < fields.length; i++)
         {
-            float expectedValue = (float) (in[i - 1] * (12 * 0.0254) * 1000);
+            float expectedValue = (float) (in[i - 4] * (12 * 0.0254) * 1000);
             String expected = Format.format(expectedValue).trim();
             // System.out.println("expected: \"" + expected + "\", got \"" + fields[i] + "\", in is " + in[i - 1]
             // + " expectedValue is " + expectedValue);
@@ -113,11 +109,11 @@ public abstract class FloatVectorTest
         }
         output = fv.toString();
         fields = output.split("[ ]+");
-        assertEquals("Number of fields should be number of entries + one", fv.size() + 1, fields.length);
-        assertEquals("first field should contain unit in brackers", "[ft]", fields[0]);
-        for (int i = 1; i < fields.length; i++)
+        assertEquals("Number of fields should be number of entries + four", fv.size() + 4, fields.length);
+        assertEquals("field 3 should contain unit in brackers", "[ft]", fields[3]);
+        for (int i = 4; i < fields.length; i++)
         {
-            float expectedValue = in[i - 1];
+            float expectedValue = in[i - 4];
             String expected;
             expected = Format.format(expectedValue);
             expected = expected.trim();
@@ -126,28 +122,6 @@ public abstract class FloatVectorTest
             assertEquals("Field " + i + " should contain \"" + expected + "\"", expected, fields[i]);
         }
 
-        FloatMatrix1D fm1d;
-        if (fv instanceof FloatVectorAbsDense)
-            fm1d = ((FloatVectorAbsDense<LengthUnit>) fv).getColtDenseFloatMatrix1D();
-        else if (fv instanceof FloatVectorRelDense)
-            fm1d = ((FloatVectorRelDense<LengthUnit>) fv).getColtDenseFloatMatrix1D();
-        else if (fv instanceof FloatVectorAbsSparse)
-            fm1d = ((FloatVectorAbsSparse<LengthUnit>) fv).getColtSparseFloatMatrix1D();
-        else if (fv instanceof FloatVectorRelSparse)
-            fm1d = ((FloatVectorRelSparse<LengthUnit>) fv).getColtSparseFloatMatrix1D();
-        else
-            throw new Error("Vector neither Dense nor Sparse");
-        assertTrue("ColtMatrix1D should not be null", null != fm1d);
-        assertEquals("Size of Colt matrix should be size of input array", in.length, fm1d.size());
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Contents of Colt matrix should be SI equivalent of input", in[i] * (12 * 0.0254),
-                    fm1d.getQuick(i), 0.0001);
-        fm1d = fv.getVectorSI();
-        assertTrue("VectorSI should not be null", null != fm1d);
-        assertEquals("Size of VectorSI should be size of input array", in.length, fm1d.size());
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Contents of VectorSI should be SI equivalent of input", in[i] * (12 * 0.0254),
-                    fm1d.getQuick(i), 0.0001);
         float[] valuesInUnit = fv.getValuesInUnit();
         assertTrue("valuesInUnit should not be null", null != valuesInUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInUnit.length);
@@ -214,9 +188,11 @@ public abstract class FloatVectorTest
         {
             // ignore
         }
+        MutableFloatVector<LengthUnit> mfv = fv.mutable();
+        assertEquals("fv and mfv should have same size", mfv.size(), fv.size());
         try
         {
-            fv.setSI(-1, 12345f);
+            mfv.setSI(-1, 12345f);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception1)
@@ -225,7 +201,7 @@ public abstract class FloatVectorTest
         }
         try
         {
-            fv.setSI(in.length, 12345f);
+            mfv.setSI(in.length, 12345f);
             fail("Using an index that is too big should throw a ValueException");
         }
         catch (ValueException exception1)
@@ -238,39 +214,24 @@ public abstract class FloatVectorTest
         for (int i = 0; i < in.length; i++)
             assertEquals("Values in FloatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
                     0.0001);
+        out = mfv.getValuesSI();
+        assertTrue("getValuesSI does not return null", null != out);
+        assertEquals("Length of getValuesSI should match size", in.length, out.length);
+        for (int i = 0; i < in.length; i++)
+            assertEquals("Values in FloatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
+                    0.0001);
         LengthUnit uOut = fv.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
-        FloatVector<LengthUnit> copy = null;
-        if (fv instanceof FloatVectorAbs<?>)
-        {
-            copy = ((FloatVectorAbs<LengthUnit>) fv).copy();
-        }
-        else if (fv instanceof FloatVectorRel<?>)
-        {
-            copy = ((FloatVectorRel<LengthUnit>) fv).copy();
-        }
-        else
-            fail("Vector neither Absolute nor Relative");
-
-        assertEquals("copy should have 12 elements", 12, copy.size());
-        float[] copyOut = copy.getValuesSI();
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Values in copy of FloatVector should be equivalent values in meters", in[i], copyOut[i]
-                    / (12 * 0.0254), 0.0001);
-        copyOut = fv.getValuesInUnit();
-        for (int i = 0; i < in.length; i++)
-            assertEquals("Values in copy of FloatVector in unit should be equal to input values", in[i], copyOut[i],
-                    0.0001);
         try
         {
-            copy.setSI(0, 12345f);
-            assertEquals("value should be altered", 12345f, copy.getSI(0), 0.01);
+            mfv.setSI(0, 12345f);
+            assertEquals("value should be altered", 12345f, mfv.getSI(0), 0.01);
             assertEquals("original value should not be altered", out[0], fv.getSI(0), 0.001);
-            FloatScalar<LengthUnit> value = copy.get(1);
+            FloatScalar<LengthUnit> value = mfv.get(1);
             assertTrue("value cannot be null", null != value);
-            assertEquals("value should be same as SI value", copy.getSI(1), value.getValueSI(), 0.0001);
-            copy.set(2, value);
-            assertEquals("value should be same as SI value", copy.getSI(2), value.getValueSI(), 0.0001);
+            assertEquals("value should be same as SI value", mfv.getSI(1), value.getValueSI(), 0.0001);
+            mfv.set(2, value);
+            assertEquals("value should be same as SI value", mfv.getSI(2), value.getValueSI(), 0.0001);
         }
         catch (ValueException exception)
         {
@@ -278,8 +239,8 @@ public abstract class FloatVectorTest
         }
         try
         {
-            copy.setInUnit(1, 321, LengthUnit.HECTOMETER);
-            assertEquals("321 hectometer is 32100m", copy.getSI(1), 32100, 0.001);
+            mfv.setInUnit(1, 321, LengthUnit.HECTOMETER);
+            assertEquals("321 hectometer is 32100m", mfv.getSI(1), 32100, 0.001);
         }
         catch (ValueException exception)
         {
@@ -290,11 +251,12 @@ public abstract class FloatVectorTest
             sum += in[i];
         sum *= (12 * 0.0254); // convert to meters
         assertEquals("zsum should be sum of the values", sum, fv.zSum(), 0.001);
+        mfv = fv.mutable(); // undo edits to mfv
         try
         {
-            fv.normalize();
+            mfv.normalize();
             for (int i = 0; i < in.length; i++)
-                assertEquals("Unexpected normalized value", in[i] * (12 * 0.0254) / sum, fv.getSI(i), 0.0001);
+                assertEquals("Expected normalized value", in[i] * (12 * 0.0254) / sum, mfv.getSI(i), 0.0001);
         }
         catch (ValueException exception)
         {
@@ -302,44 +264,35 @@ public abstract class FloatVectorTest
         }
         assertEquals("Cardinality should be 11", 11, fv.cardinality());
         float[] in2 = {1f, -1f, 0f};
-        fv = createFloatVector(in2, u, absolute);
-        assertEquals("zSum should be 0", 0, fv.zSum(), 0.00001);
+        mfv = createFloatVector(in2, u, absolute).mutable();
+        assertEquals("zSum should be 0", 0, mfv.zSum(), 0.00001);
         try
         {
-            fv.normalize();
+            mfv.normalize();
             fail("Should have thrown a ValueException");
         }
         catch (ValueException exception)
         {
             // ignore
         }
-        assertEquals("Cardinality should be 2", 2, fv.cardinality());
+        assertEquals("Cardinality should be 2", 2, mfv.cardinality());
         try
         {
-            fv.setSI(0, 0);
-            assertEquals("Cardinality should be 1", 1, fv.cardinality());
-            fv.setSI(1, 0);
-            assertEquals("Cardinality should be 0", 0, fv.cardinality());
-            fv.setSI(2, 999);
-            assertEquals("Cardinality should be 1", 1, fv.cardinality());
+            mfv.setSI(0, 0);
+            assertEquals("Cardinality should be 1", 1, mfv.cardinality());
+            mfv.setSI(1, 0);
+            assertEquals("Cardinality should be 0", 0, mfv.cardinality());
+            mfv.setSI(2, 999);
+            assertEquals("Cardinality should be 1", 1, mfv.cardinality());
         }
         catch (ValueException exception)
         {
             fail("Unexpected exception");
         }
-        assertTrue("FloatVector should be equal to itself", fv.equals(fv));
-        assertFalse("FloatVector should not be equal to null", fv.equals(null));
-        if (fv instanceof FloatVectorAbs<?>)
-        {
-            copy = ((FloatVectorAbs<LengthUnit>) fv).copy();
-        }
-        else if (fv instanceof FloatVectorRel<?>)
-        {
-            copy = ((FloatVectorRel<LengthUnit>) fv).copy();
-        }
-        else
-            fail("Vector neither Absolute nor Relative");
-        assertTrue("FloatVector should be equal to copy of itself", fv.equals(copy));
+        assertTrue("FloatVector should be equal to itself", mfv.equals(mfv));
+        assertFalse("FloatVector should not be equal to null", mfv.equals(null));
+        MutableFloatVector<LengthUnit> copy = mfv.copy();
+        assertTrue("FloatVector should be equal to copy of itself", mfv.equals(copy));
         try
         {
             copy.setSI(1, copy.getSI(1) + 0.001f);
@@ -348,21 +301,20 @@ public abstract class FloatVectorTest
         {
             fail("Unexpected exception");
         }
-        assertFalse("FloatVector should be different from slightly altered to copy of itself", fv.equals(copy));
+        assertFalse("FloatVector should be different from slightly altered to copy of itself", mfv.equals(copy));
         try
         {
-            copy.setSI(1, fv.getSI(1));
+            copy.setSI(1, mfv.getSI(1));
         }
         catch (ValueException exception)
         {
             fail("Unexpected exception");
         }
-        assertTrue("FloatVector should be equal to repaired copy of itself", fv.equals(copy));
+        assertTrue("FloatVector should be equal to repaired copy of itself", mfv.equals(copy));
         if (absolute)
         {
             float[] values = fv.getValuesInUnit();
             FloatVector<LengthUnit> fvr = createFloatVector(values, fv.getUnit(), false);
-
             try
             {
                 for (int i = 0; i < in2.length; i++)
@@ -377,126 +329,126 @@ public abstract class FloatVectorTest
             assertFalse("fvr and fv should not be equal", fvr.equals(fv));
         }
         float[] in3 = {-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100};
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.abs();
-        MathTester.tester(in3, "abs", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.abs();
+        MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return Math.abs(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.acos();
-        MathTester.tester(in3, "acos", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.acos();
+        MathTester.tester(in3, "acos", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.acos(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.asin();
-        MathTester.tester(in3, "asin", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.asin();
+        MathTester.tester(in3, "asin", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.asin(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.atan();
-        MathTester.tester(in3, "atan", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.atan();
+        MathTester.tester(in3, "atan", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.atan(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.cbrt();
-        MathTester.tester(in3, "cbrt", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.cbrt();
+        MathTester.tester(in3, "cbrt", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.cbrt(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.ceil();
-        MathTester.tester(in3, "ceil", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.ceil();
+        MathTester.tester(in3, "ceil", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.ceil(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.cos();
-        MathTester.tester(in3, "cos", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.cos();
+        MathTester.tester(in3, "cos", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.cos(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.cosh();
-        MathTester.tester(in3, "cosh", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.cosh();
+        MathTester.tester(in3, "cosh", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.cosh(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.exp();
-        MathTester.tester(in3, "exp", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.exp();
+        MathTester.tester(in3, "exp", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.exp(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.expm1();
-        MathTester.tester(in3, "expm1", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.expm1();
+        MathTester.tester(in3, "expm1", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.expm1(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.floor();
-        MathTester.tester(in3, "floor", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.floor();
+        MathTester.tester(in3, "floor", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.floor(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.log();
-        MathTester.tester(in3, "log", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.log();
+        MathTester.tester(in3, "log", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.log(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.log10();
-        MathTester.tester(in3, "log10", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.log10();
+        MathTester.tester(in3, "log10", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.log10(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.log1p();
-        MathTester.tester(in3, "log1p", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.log1p();
+        MathTester.tester(in3, "log1p", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
@@ -505,10 +457,10 @@ public abstract class FloatVectorTest
         });
         for (float power = -5; power <= 5; power += 0.5)
         {
-            fv = createFloatVector(in3, LengthUnit.METER, absolute);
-            fv.pow(power);
+            mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+            mfv.pow(power);
             final float myPower = power;
-            MathTester.tester(in3, "pow(" + power + ")", fv.getValuesSI(), 0.001, new FloatToFloat()
+            MathTester.tester(in3, "pow(" + power + ")", mfv.getValuesSI(), 0.001, new FloatToFloat()
             {
                 public float function(final float f)
                 {
@@ -516,99 +468,99 @@ public abstract class FloatVectorTest
                 }
             });
         }
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.rint();
-        MathTester.tester(in3, "rint", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.rint();
+        MathTester.tester(in3, "rint", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.rint(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.round();
-        MathTester.tester(in3, "round", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.round();
+        MathTester.tester(in3, "round", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return Math.round(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.signum();
-        MathTester.tester(in3, "signum", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.signum();
+        MathTester.tester(in3, "signum", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return Math.signum(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.sin();
-        MathTester.tester(in3, "sin", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.sin();
+        MathTester.tester(in3, "sin", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.sin(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.sinh();
-        MathTester.tester(in3, "sinh", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.sinh();
+        MathTester.tester(in3, "sinh", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.sinh(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.sqrt();
-        MathTester.tester(in3, "sqrt", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.sqrt();
+        MathTester.tester(in3, "sqrt", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.sqrt(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.tan();
-        MathTester.tester(in3, "tan", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.tan();
+        MathTester.tester(in3, "tan", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.tan(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.tanh();
-        MathTester.tester(in3, "tanh", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.tanh();
+        MathTester.tester(in3, "tanh", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.tanh(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.toDegrees();
-        MathTester.tester(in3, "toDegrees", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.toDegrees();
+        MathTester.tester(in3, "toDegrees", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.toDegrees(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.toRadians();
-        MathTester.tester(in3, "toRadians", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.toRadians();
+        MathTester.tester(in3, "toRadians", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.toRadians(f);
             }
         });
-        fv = createFloatVector(in3, LengthUnit.METER, absolute);
-        fv.inv();
-        MathTester.tester(in3, "inv", fv.getValuesSI(), 0.001, new FloatToFloat()
+        mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+        mfv.inv();
+        MathTester.tester(in3, "inv", mfv.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
@@ -617,10 +569,10 @@ public abstract class FloatVectorTest
         });
         for (float factor = -5; factor <= 5; factor += 0.5)
         {
-            fv = createFloatVector(in3, LengthUnit.METER, absolute);
-            fv.multiply(factor);
+            mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
+            mfv.multiply(factor);
             final float myFactor = factor;
-            MathTester.tester(in3, "multiply(" + factor + ")", fv.getValuesSI(), 0.001, new FloatToFloat()
+            MathTester.tester(in3, "multiply(" + factor + ")", mfv.getValuesSI(), 0.001, new FloatToFloat()
             {
                 public float function(final float f)
                 {
@@ -630,16 +582,19 @@ public abstract class FloatVectorTest
         }
         if (absolute)
         {
-            FloatVectorAbs<LengthUnit> fv1 =
-                    (FloatVectorAbs<LengthUnit>) createFloatVector(in3, LengthUnit.METER, true);
+            FloatVector<LengthUnit> fvAbsolute = createFloatVector(in3, LengthUnit.METER, true);
             float[] in4 = {1, 2, 3, 4};
-            FloatVectorRel<LengthUnit> fv2 =
-                    (FloatVectorRel<LengthUnit>) createFloatVector(in4, LengthUnit.METER, false);
-            FloatVector<LengthUnit> plus = null;
-            FloatVector<LengthUnit> minus = null;
+            FloatVector<LengthUnit> fvRelative = createFloatVector(in4, LengthUnit.METER, false);
+            MutableFloatVector<LengthUnit> plus = null;
+            MutableFloatVector<LengthUnit> minus = null;
             try
             {
-                plus = FloatVector.plus(fv1, fv2);
+                if (fvAbsolute instanceof FloatVector.Dense.Abs)
+                    plus = MutableFloatVector.plus((FloatVector.Dense.Abs<LengthUnit>) fvAbsolute, (FloatVector.Dense.Rel<LengthUnit>) fvRelative);
+                else if (fvAbsolute instanceof FloatVector.Sparse.Abs)
+                    plus = MutableFloatVector.plus((FloatVector.Sparse.Abs<LengthUnit>)fvAbsolute, (FloatVector.Sparse.Rel<LengthUnit>) fvRelative);
+                else
+                    fail("Error in test: cannot figure out type of fvAbsolute");
                 fail("Adding FloatVectors of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -648,7 +603,12 @@ public abstract class FloatVectorTest
             }
             try
             {
-                minus = FloatVector.minus(fv1, fv2);
+                if (fvAbsolute instanceof FloatVector.Dense.Abs)
+                    minus = MutableFloatVector.minus((FloatVector.Dense.Abs<LengthUnit>) fvAbsolute, (FloatVector.Dense.Rel<LengthUnit>) fvRelative);
+                else if (fvAbsolute instanceof FloatVector.Sparse.Abs)
+                    minus = MutableFloatVector.minus((FloatVector.Sparse.Abs<LengthUnit>)fvAbsolute, (FloatVector.Sparse.Rel<LengthUnit>) fvRelative);
+                else
+                    fail("Error in test: cannot figure out type of fvAbsolute");
                 fail("Subtracting FloatVectors of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -656,11 +616,21 @@ public abstract class FloatVectorTest
                 // ignore
             }
             float[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-            fv2 = (FloatVectorRel<LengthUnit>) createFloatVector(in5, LengthUnit.METER, false);
+            fvRelative = createFloatVector(in5, LengthUnit.METER, false);
             try
             {
-                plus = FloatVector.plus(fv1, fv2);
-                minus = FloatVector.minus(fv1, fv2);
+                if (fvAbsolute instanceof FloatVector.Dense.Abs)
+                    plus = MutableFloatVector.plus((FloatVector.Dense.Abs<LengthUnit>) fvAbsolute, (FloatVector.Dense.Rel<LengthUnit>) fvRelative);
+                else if (fvAbsolute instanceof FloatVector.Sparse.Abs)
+                    plus = MutableFloatVector.plus((FloatVector.Sparse.Abs<LengthUnit>)fvAbsolute, (FloatVector.Sparse.Rel<LengthUnit>) fvRelative);
+                else
+                    fail("Error in test: cannot figure out type of fvAbsolute");
+                if (fvAbsolute instanceof FloatVector.Dense.Abs)
+                    minus = MutableFloatVector.minus((FloatVector.Dense.Abs<LengthUnit>) fvAbsolute, (FloatVector.Dense.Rel<LengthUnit>) fvRelative);
+                else if (fvAbsolute instanceof FloatVector.Sparse.Abs)
+                    minus = MutableFloatVector.minus((FloatVector.Sparse.Abs<LengthUnit>)fvAbsolute, (FloatVector.Sparse.Rel<LengthUnit>) fvRelative);
+                else
+                    fail("Error in test: cannot figure out type of fvAbsolute");
             }
             catch (ValueException exception)
             {
@@ -685,107 +655,101 @@ public abstract class FloatVectorTest
             }
             assertTrue("result should be Absolute", plus instanceof Absolute);
             assertTrue("result should be Absolute", minus instanceof Absolute);
-            if (fv1 instanceof Dense)
+            if (fvAbsolute instanceof FloatVector.Dense.Abs)
             {
-                assertTrue("result should be Dense", plus instanceof Dense);
-                assertTrue("result should be Dense", minus instanceof Dense);
+                assertTrue("result should be Dense", plus instanceof MutableFloatVector.Dense.Abs);
+                assertTrue("result should be Dense", minus instanceof MutableFloatVector.Dense.Abs);
             }
-            else if (fv1 instanceof Sparse)
+            else if (fvAbsolute instanceof FloatVector.Sparse.Abs)
             {
-                assertTrue("result should be Sparse", plus instanceof Sparse);
-                assertTrue("result should be Sparse", minus instanceof Sparse);
+                assertTrue("result should be Sparse", plus instanceof MutableFloatVector.Sparse.Abs);
+                assertTrue("result should be Sparse", minus instanceof MutableFloatVector.Sparse.Abs);
             }
             else
                 fail("fv1 neither Dense nor Sparse");
 
-            FloatVector<LengthUnit> plusReverse = null;
             try
             {
-                plusReverse = FloatVector.plus(fv2, fv1);
-            }
-            catch (ValueException exception)
-            {
-                fail("Unexpected exception");
-            }
-            assertTrue("result should be Absolute", plusReverse instanceof Absolute);
-            // System.out.println("plus is       " + plus);
-            // System.out.println("plusReverse is" + plusReverse);
-            assertTrue("result of a + b should be equal to result of b + a", plus.equals(plusReverse));
-            try
-            {
-                float in6[]= {1, 2, 3};
-                FloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute);
-                FloatVector<LengthUnit> duplicate = (FloatVector<LengthUnit>) original.copy();
+                float in6[] = {1, 2, 3};
+                MutableFloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute).mutable();
+                MutableFloatVector<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
                 assertTrue("Duplicate should be equal to original", duplicate.equals(original));
                 original.setSI(0, 123.456f);
                 assertFalse("Original should now differ from duplicate", original.equals(duplicate));
                 assertFalse("Duplicate should now differ from original", duplicate.equals(original));
-                
+
             }
             catch (ValueException exception)
             {
                 fail("Unexpected ValueException");
             }
         }
-        else
+        else    // Relative
         {
-            FloatVectorRel<LengthUnit> fv1 =
-                    (FloatVectorRel<LengthUnit>) createFloatVector(in3, LengthUnit.METER, false);
+            FloatVector<LengthUnit> fv1 = createFloatVector(in3, LengthUnit.METER, false);
             float[] in4 = {1, 2, 3, 4};
-            FloatVectorRel<LengthUnit> fv2 =
-                    (FloatVectorRel<LengthUnit>) createFloatVector(in4, LengthUnit.METER, false);
-            FloatVector<SIUnit> multiply = null;
+            FloatVector<LengthUnit> fv2 = createFloatVector(in4, LengthUnit.METER, false);
+            MutableFloatVector<SIUnit> product = null;
             try
             {
-                multiply = FloatVector.multiply(fv1, fv2);
-                fail("Adding FloatVectors of unequal length should have thrown a ValueException");
+                if (fv1 instanceof FloatVector.Dense.Rel)
+                    product = MutableFloatVector.times((FloatVector.Dense.Rel<?>) fv1, (FloatVector.Dense.Rel<?>) fv2);
+                else if (fv1 instanceof FloatVector.Sparse.Rel)
+                    product = MutableFloatVector.times((FloatVector.Sparse.Rel<?>) fv1, (FloatVector.Sparse.Rel<?>) fv2);
+                fail("Multiplying FloatVectors of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
             {
                 // ignore
             }
             float[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-            fv2 = (FloatVectorRel<LengthUnit>) createFloatVector(in5, LengthUnit.METER, false);
+            fv2 = createFloatVector(in5, LengthUnit.METER, false);
             try
             {
-                multiply = FloatVector.multiply(fv1, fv2);
+                if (fv1 instanceof FloatVector.Dense.Rel)
+                    product = MutableFloatVector.times((FloatVector.Dense.Rel<?>) fv1, (FloatVector.Dense.Rel<?>) fv2);
+                else if (fv1 instanceof FloatVector.Sparse.Rel)
+                    product = MutableFloatVector.times((FloatVector.Sparse.Rel<?>) fv1, (FloatVector.Sparse.Rel<?>) fv2);
             }
             catch (ValueException exception)
             {
                 fail("Unexpected exception");
             }
-            assertTrue("multiply should not return null", null != multiply);
-            assertEquals("size of result should be " + in5.length, in5.length, multiply.size());
+            assertTrue("multiply should not return null", null != product);
+            assertEquals("size of result should be " + in5.length, in5.length, product.size());
             try
             {
                 for (int i = 0; i < in3.length; i++)
                     assertEquals("value of element should be sum of contributing elements", in3[i] * in5[i],
-                            multiply.getSI(i), 0.00001);
+                            product.getSI(i), 0.00001);
             }
             catch (ValueException exception)
             {
                 fail("Unexpected exception");
             }
-            assertTrue("result should be Relative", multiply instanceof Relative);
-            if (fv1 instanceof Dense)
+            assertTrue("result should be Relative", product instanceof Relative);
+            if (fv1 instanceof FloatVector.Dense.Abs || fv1 instanceof FloatVector.Dense.Rel)
             {
-                assertTrue("result should be Dense", multiply instanceof Dense);
+                assertTrue("result should be Dense", product instanceof MutableFloatVector.Dense.Abs || product instanceof MutableFloatVector.Dense.Rel);
             }
-            else if (fv1 instanceof Sparse)
+            else if (fv1 instanceof FloatVector.Sparse.Abs || fv1 instanceof FloatVector.Sparse.Rel)
             {
-                assertTrue("result should be Sparse", multiply instanceof Sparse);
+                assertTrue("result should be Sparse", product instanceof MutableFloatVector.Sparse.Abs || product instanceof MutableFloatVector.Sparse.Rel);
             }
             else
                 fail("fv1 neither Dense nor Sparse");
             // System.out.println("Result of multiply has unit " + multiply);
-            assertEquals("Result of multiplication should be in square meters", "m2", multiply.getUnit()
+            assertEquals("Result of multiplication should be in square meters", "m2", product.getUnit()
                     .getSICoefficientsString());
 
-            FloatVector<SIUnit> multiplyReverse = null;
+            MutableFloatVector<SIUnit> multiplyReverse = null;
             try
             {
-                multiplyReverse = FloatVector.multiply(fv2, fv1);
+                if (fv1 instanceof FloatVector.Dense.Rel)
+                    multiplyReverse = MutableFloatVector.times((FloatVector.Dense.Rel<?>) fv2, (FloatVector.Dense.Rel<?>) fv1);
+                else if (fv1 instanceof FloatVector.Sparse.Rel)
+                    multiplyReverse = MutableFloatVector.times((FloatVector.Sparse.Rel<?>) fv2, (FloatVector.Sparse.Rel<?>) fv1);
             }
             catch (ValueException exception)
             {
@@ -794,18 +758,18 @@ public abstract class FloatVectorTest
             assertTrue("result should be Absolute", multiplyReverse instanceof Relative);
             // System.out.println("plus is       " + multiply);
             // System.out.println("plusReverse is" + multiplyReverse);
-            assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
+            assertTrue("result of a * b should be equal to result of b * a", product.equals(multiplyReverse));
             try
             {
-                float in6[]= {1, 2, 3};
+                float in6[] = {1, 2, 3};
                 FloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute);
-                FloatVector<LengthUnit> duplicate = (FloatVector<LengthUnit>) original.copy();
+                MutableFloatVector<LengthUnit> duplicate = original.mutable();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
                 assertTrue("Duplicate should be equal to original", duplicate.equals(original));
-                original.setSI(0, 123.456f);
+                duplicate.setSI(0, 123.456f);
                 assertFalse("Original should now differ from duplicate", original.equals(duplicate));
                 assertFalse("Duplicate should now differ from original", duplicate.equals(original));
-                
+
             }
             catch (ValueException exception)
             {
@@ -817,10 +781,13 @@ public abstract class FloatVectorTest
         float[] factorsCorrectLength = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
         if (absolute)
         {
-            FloatVectorAbs<LengthUnit> fv2 = null;
+            MutableFloatVector<LengthUnit> fv2 = null;
             try
             {
-                fv2 = FloatVector.multiply((FloatVectorAbs<LengthUnit>) fv, factorsTooShort);
+                if (fv instanceof FloatVector.Dense.Abs)
+                    MutableFloatVector.times((FloatVector.Dense.Abs<LengthUnit>) fv, factorsTooShort);
+                else if (fv instanceof FloatVector.Sparse.Abs)
+                    MutableFloatVector.times((FloatVector.Sparse.Abs<LengthUnit>) fv, factorsTooShort);
                 fail("Multiplication array of wrong length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -829,7 +796,10 @@ public abstract class FloatVectorTest
             }
             try
             {
-                fv2 = FloatVector.multiply((FloatVectorAbs<LengthUnit>) fv, factorsCorrectLength);
+                if (fv instanceof FloatVector.Dense.Abs)
+                    fv2 = MutableFloatVector.times((FloatVector.Dense.Abs<LengthUnit>) fv, factorsCorrectLength);
+                else if (fv instanceof FloatVector.Sparse.Abs)
+                    fv2 = MutableFloatVector.times((FloatVector.Sparse.Abs<LengthUnit>) fv, factorsCorrectLength);
             }
             catch (ValueException exception)
             {
@@ -847,12 +817,15 @@ public abstract class FloatVectorTest
             }
             assertEquals("type of result should be input type", fv.getUnit(), fv2.getUnit());
         }
-        else
+        else    // Relative
         {
-            FloatVectorRel<LengthUnit> fv2 = null;
+            MutableFloatVector<LengthUnit> fv2 = null;
             try
             {
-                fv2 = FloatVector.multiply((FloatVectorRel<LengthUnit>) fv, factorsTooShort);
+                if (fv instanceof FloatVector.Dense.Rel)
+                    MutableFloatVector.times((FloatVector.Dense.Rel<LengthUnit>) fv, factorsTooShort);
+                else if (fv instanceof FloatVector.Sparse.Rel)
+                    MutableFloatVector.times((FloatVector.Sparse.Rel<LengthUnit>) fv, factorsTooShort);
                 fail("Multiplication array of wrong length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -861,7 +834,10 @@ public abstract class FloatVectorTest
             }
             try
             {
-                fv2 = FloatVector.multiply((FloatVectorRel<LengthUnit>) fv, factorsCorrectLength);
+                if (fv instanceof FloatVector.Dense.Rel)
+                    fv2 = MutableFloatVector.times((FloatVector.Dense.Rel<LengthUnit>) fv, factorsCorrectLength);
+                else if (fv instanceof FloatVector.Sparse.Rel)
+                    fv2 = MutableFloatVector.times((FloatVector.Sparse.Rel<LengthUnit>) fv, factorsCorrectLength);
             }
             catch (ValueException exception)
             {
@@ -879,13 +855,15 @@ public abstract class FloatVectorTest
             }
             assertEquals("type of result should be input type", fv.getUnit(), fv2.getUnit());
         }
-        if (fv instanceof Dense)
+        if (fv instanceof FloatVector.Dense.Abs || fv instanceof FloatVector.Dense.Rel)
         {
-            FloatVector<LengthUnit> fv2 = null;
+            MutableFloatVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)
-                fv2 = FloatVector.denseToSparse((FloatVectorAbsDense<LengthUnit>) fv);
+                fv2 = MutableFloatVector.denseToSparse((FloatVector.Dense.Abs<LengthUnit>) fv);
             else
-                fv2 = FloatVector.denseToSparse((FloatVectorRelDense<LengthUnit>) fv);
+                fv2 = MutableFloatVector.denseToSparse((FloatVector.Dense.Rel<LengthUnit>) fv);
+            //System.out.println("fv:  " + fv);
+            //System.out.println("fv2: " + fv2);
             assertTrue("dense version is equal to sparse version", fv.equals(fv2));
             assertEquals("unit should be same", fv.getUnit(), fv2.getUnit());
             try
@@ -898,13 +876,13 @@ public abstract class FloatVectorTest
                 fail("Unexpected exception");
             }
         }
-        else
+        else    // SparseData
         {
-            FloatVector<LengthUnit> fv2 = null;
+            MutableFloatVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)
-                fv2 = FloatVector.sparseToDense((FloatVectorAbsSparse<LengthUnit>) fv);
+                fv2 = MutableFloatVector.sparseToDense((FloatVector.Sparse.Abs<LengthUnit>) fv);
             else
-                fv2 = FloatVector.sparseToDense((FloatVectorRelSparse<LengthUnit>) fv);
+                fv2 = MutableFloatVector.sparseToDense((FloatVector.Sparse.Rel<LengthUnit>) fv);
             assertTrue("dense version is  equal to sparse version", fv.equals(fv2));
             assertEquals("unit should be same", fv.getUnit(), fv2.getUnit());
             try
@@ -1005,7 +983,7 @@ public abstract class FloatVectorTest
                 String description =
                         String.format("index=%d: %s(%f)->%f should be equal to %f with precision %f", i, operation,
                                 inputValues[i], result, resultValues[i], precision);
-                // System.out.println(description);
+                //System.out.println(description);
                 assertEquals(description, result, resultValues[i], precision);
             }
         }
@@ -1079,12 +1057,17 @@ public abstract class FloatVectorTest
         float[] in1 = {10f, 20f, 30f, 40f};
         float[] in2 = {110f, 120f, 130f, 140f};
         MassUnit u = MassUnit.POUND;
-        FloatVectorRel<MassUnit> fv1 = createFloatVectorRel(in1, u);
-        FloatVectorRel<MassUnit> fv2 = createFloatVectorRel(in2, u);
-        FloatVectorRel<MassUnit> sum = null;
+        FloatVector<MassUnit> fv1 = createFloatVectorRel(in1, u);
+        FloatVector<MassUnit> fv2 = createFloatVectorRel(in2, u);
+        MutableFloatVector<MassUnit> sum = null;
         try
         {
-            sum = FloatVector.plus(fv1, fv2);
+            if (fv1 instanceof FloatVector.Dense.Rel)
+                sum = MutableFloatVector.plus((FloatVector.Dense.Rel<MassUnit>) fv1, (FloatVector.Dense.Rel<MassUnit>) fv2);
+            else if (fv1 instanceof FloatVector.Sparse.Rel)
+                sum = MutableFloatVector.plus((FloatVector.Sparse.Rel<MassUnit>) fv1, (FloatVector.Sparse.Rel<MassUnit>) fv2);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception)
         {
@@ -1097,10 +1080,15 @@ public abstract class FloatVectorTest
         for (int i = 0; i < in1.length; i++)
             assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i],
                     sumValues[i], 0.0001);
-        FloatVectorRel<MassUnit> difference = null;
+        MutableFloatVector<MassUnit> difference = null;
         try
         {
-            difference = FloatVector.minus(fv1, fv2);
+            if (fv1 instanceof FloatVector.Dense.Rel)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Rel<MassUnit>) fv1, (FloatVector.Dense.Rel<MassUnit>) fv2);
+            else if (fv1 instanceof FloatVector.Sparse.Rel)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Rel<MassUnit>) fv1, (FloatVector.Sparse.Rel<MassUnit>) fv2);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception1)
         {
@@ -1114,10 +1102,15 @@ public abstract class FloatVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         float[] in3 = {110f, 120f, 130f};
-        FloatVectorRel<MassUnit> fv3 = createFloatVectorRel(in3, u);
+        FloatVector<MassUnit> fv3 = createFloatVectorRel(in3, u);
         try
         {
-            sum = FloatVector.plus(fv1, fv3);
+            if (fv1 instanceof FloatVector.Dense.Rel)
+                sum = MutableFloatVector.plus((FloatVector.Dense.Rel<MassUnit>) fv1, (FloatVector.Dense.Rel<MassUnit>) fv3);
+            else if (fv1 instanceof FloatVector.Sparse.Rel)
+                sum = MutableFloatVector.plus((FloatVector.Sparse.Rel<MassUnit>) fv1, (FloatVector.Sparse.Rel<MassUnit>) fv3);
+            else
+                fail("Error in test: unhandled type of FloatVector");
             fail("Adding FloatVectors of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1126,7 +1119,12 @@ public abstract class FloatVectorTest
         }
         try
         {
-            difference = FloatVector.minus(fv1, fv3);
+            if (fv1 instanceof FloatVector.Dense.Rel)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Rel<MassUnit>) fv1, (FloatVector.Dense.Rel<MassUnit>) fv3);
+            else if (fv1 instanceof FloatVector.Sparse.Rel)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Rel<MassUnit>) fv1, (FloatVector.Sparse.Rel<MassUnit>) fv3);
+            else
+                fail("Error in test: unhandled type of FloatVector");
             fail("Subtracting FloatVectors of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1137,7 +1135,12 @@ public abstract class FloatVectorTest
         fv2 = createFloatVectorRel(in2, u2);
         try
         {
-            sum = FloatVector.plus(fv1, fv2);
+            if (fv1 instanceof FloatVector.Dense.Rel)
+                sum = MutableFloatVector.plus((FloatVector.Dense.Rel<MassUnit>) fv1, (FloatVector.Dense.Rel<MassUnit>) fv2);
+            else if (fv1 instanceof FloatVector.Sparse.Rel)
+                sum = MutableFloatVector.plus((FloatVector.Sparse.Rel<MassUnit>) fv1, (FloatVector.Sparse.Rel<MassUnit>) fv2);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception)
         {
@@ -1156,7 +1159,12 @@ public abstract class FloatVectorTest
         fv2 = createFloatVectorRel(in2, u2);
         try
         {
-            difference = FloatVector.minus(fv1, fv2);
+            if (fv1 instanceof FloatVector.Dense.Rel)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Rel<MassUnit>) fv1, (FloatVector.Dense.Rel<MassUnit>) fv2);
+            else if (fv1 instanceof FloatVector.Sparse.Rel)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Rel<MassUnit>) fv1, (FloatVector.Sparse.Rel<MassUnit>) fv2);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception)
         {
@@ -1181,19 +1189,27 @@ public abstract class FloatVectorTest
     public void absAbs()
     {
         float[] in1 = {10f, 20f, 30f, 40f};
-        float[] in2 = {110f, 120f, 130f, 140f};
+        float[] in2 = {110f, 220f, 330f, 440f};
         MassUnit u = MassUnit.POUND;
-        FloatVectorAbs<MassUnit> fv1 = createFloatVectorAbs(in1, u);
-        FloatVectorAbs<MassUnit> fv2 = createFloatVectorAbs(in2, u);
-        FloatVectorRel<MassUnit> difference = null;
+        FloatVector<MassUnit> fv1 = createFloatVectorAbs(in1, u);
+        //System.out.println("fv1: " + fv1);
+        FloatVector<MassUnit> fv2 = createFloatVectorAbs(in2, u);
+        //System.out.println("fv2: " + fv2);
+        MutableFloatVector<MassUnit> difference = null;
         try
         {
-            difference = FloatVector.minus(fv1, fv2);
+            if (fv1 instanceof FloatVector.Dense.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Abs<MassUnit>) fv1, (FloatVector.Dense.Abs<MassUnit>) fv2);
+            else if (fv1 instanceof FloatVector.Sparse.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Abs<MassUnit>) fv1, (FloatVector.Sparse.Abs<MassUnit>) fv2);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception1)
         {
             fail("Should be able to subtract FloatVectorAbs from FloatVectorAbs of same size");
         }
+        //System.out.println("difference: " + difference);
         assertTrue("Result should not be null", null != difference);
         assertEquals("Size of result should be size of inputs", 4, difference.size());
         assertEquals("Type of result should be type of inputs", u, difference.getUnit());
@@ -1202,10 +1218,15 @@ public abstract class FloatVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         float[] in3 = {110f, 120f, 130f};
-        FloatVectorAbs<MassUnit> fv3 = createFloatVectorAbs(in3, u);
+        FloatVector<MassUnit> fv3 = createFloatVectorAbs(in3, u);
         try
         {
-            difference = FloatVector.minus(fv1, fv3);
+            if (fv1 instanceof FloatVector.Dense.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Abs<MassUnit>) fv1, (FloatVector.Dense.Abs<MassUnit>) fv3);
+            else if (fv1 instanceof FloatVector.Sparse.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Abs<MassUnit>) fv1, (FloatVector.Sparse.Abs<MassUnit>) fv3);
+            else
+                fail("Error in test: unhandled type of FloatVector");
             fail("Subtracting FloatVectors of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1216,11 +1237,16 @@ public abstract class FloatVectorTest
         fv2 = createFloatVectorAbs(in2, u2);
         try
         {
-            difference = FloatVector.minus(fv1, fv2);
+            if (fv1 instanceof FloatVector.Dense.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Abs<MassUnit>) fv1, (FloatVector.Dense.Abs<MassUnit>) fv2);
+            else if (fv1 instanceof FloatVector.Sparse.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Abs<MassUnit>) fv1, (FloatVector.Sparse.Abs<MassUnit>) fv2);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception)
         {
-            fail("Should be able to add FloatVectorAbs to FloatVectorAbs of same size");
+            fail("Should be able to subtract FloatVectorAbs from FloatVectorAbs of same size and compatible type");
         }
         assertTrue("Result should not be null", null != difference);
         assertEquals("Size of result should be size of inputs", 4, difference.size());
@@ -1230,15 +1256,20 @@ public abstract class FloatVectorTest
         for (int i = 0; i < in1.length; i++)
         {
             assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
-                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0002);
+                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.001);
         }
         try
         {
-            difference = FloatVector.minus(fv2, fv1);
+            if (fv1 instanceof FloatVector.Dense.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Dense.Abs<MassUnit>) fv2, (FloatVector.Dense.Abs<MassUnit>) fv1);
+            else if (fv1 instanceof FloatVector.Sparse.Abs)
+                difference = MutableFloatVector.minus((FloatVector.Sparse.Abs<MassUnit>) fv2, (FloatVector.Sparse.Abs<MassUnit>) fv1);
+            else
+                fail("Error in test: unhandled type of FloatVector");
         }
         catch (ValueException exception)
         {
-            fail("Should be able to add FloatVectorAbs to FloatVectorAbs of same size");
+            fail("Should be able to add FloatVectorAbs to FloatVectorAbs of same size and compatible type");
         }
         assertTrue("Result should not be null", null != difference);
         assertEquals("Size of result should be size of inputs", 4, difference.size());
@@ -1251,14 +1282,23 @@ public abstract class FloatVectorTest
                     * 0.028350 - in1[i] * 0.45359, differenceValues[i] * 0.028350, 0.001);
         }
         LengthUnit u4 = LengthUnit.INCH;
-        FloatVectorAbs<LengthUnit> fv4 = createFloatVectorAbs(in1, u4);
+        FloatVector<LengthUnit> fv4 = createFloatVectorAbs(in1, u4);
         ForceUnit u5 = ForceUnit.POUND_FORCE;
-        FloatVectorAbs<ForceUnit> fv5 = createFloatVectorAbs(in2, u5);
+        FloatVector<ForceUnit> fv5 = createFloatVectorAbs(in2, u5);
         Unit<EnergyUnit> resultUnit = EnergyUnit.CALORIE_IT;
-        FloatVectorAbs<?> product = null;
+        //System.out.println("fv4:             " + fv4);
+        //System.out.println("fv4:             " + fv4.toString(LengthUnit.METER));
+        //System.out.println("fv5:            " + fv5);
+        //System.out.println("fv5:            " + fv5.toString(ForceUnit.NEWTON));
+        MutableFloatVector<SIUnit> product = null;
         try
         {
-            product = FloatVector.multiply(fv4, fv5);
+            if (fv4 instanceof FloatVector.Dense.Abs)
+                product = MutableFloatVector.times((FloatVector.Dense.Abs<?>) fv4, (FloatVector.Dense.Abs<?>) fv5);
+            else if (fv4 instanceof FloatVector.Sparse.Abs)
+                product = MutableFloatVector.times((FloatVector.Sparse.Abs<?>) fv4, (FloatVector.Sparse.Abs<?>) fv5);
+            else
+                fail("Error in test: unhandled type");
         }
         catch (ValueException exception)
         {
@@ -1266,6 +1306,7 @@ public abstract class FloatVectorTest
         }
         assertTrue("Result should not be null", null != product);
         assertEquals("Size of result should be size of inputs", 4, product.size());
+        //System.out.println("product: " + product);
         // System.out.println("unit of product is " + product.getUnit().getSICoefficientsString());
         // System.out.println("expected result unit is " + resultUnit);
         Set<Unit<?>> matches = null;
@@ -1297,7 +1338,7 @@ public abstract class FloatVectorTest
     }
 
     /**
-     * Test the FloatVectorRelDense that takes a float[] as argument.
+     * Test the FloatVector.newDenseRelInstance method that takes a FloatScalarRel[] as argument.
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -1318,7 +1359,7 @@ public abstract class FloatVectorTest
         in[0] = new FloatScalarRel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
-            fsa = new FloatVectorRelDense<LengthUnit>(in);
+            fsa = createFloatVectorRel(in);
         }
         catch (ValueException exception)
         {
@@ -1351,7 +1392,7 @@ public abstract class FloatVectorTest
      * @param u Unit; type for the new FloatVectorAbs
      * @return
      */
-    protected abstract <U extends Unit<U>> FloatVectorAbs<U> createFloatVectorAbs(float[] in, U u);
+    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorAbs(float[] in, U u);
 
     /**
      * Create a new FloatVectorAbs from an array of FloatScalarAbs values.
@@ -1359,24 +1400,24 @@ public abstract class FloatVectorTest
      * @return
      * @throws ValueException when the array is empty
      */
-    protected abstract <U extends Unit<U>> FloatVectorAbs<U> createFloatVectorAbs(FloatScalarAbs<U>[] in)
+    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorAbs(FloatScalarAbs<U>[] in)
             throws ValueException;
 
     /**
-     * Create a new FloatVectorRel from an array of float values and Unit.
+     * Create a new FloatVector.*.Rel from an array of float values and Unit.
      * @param in float[] with values
      * @param u Unit; type for the new FloatVectorRel
      * @return
      */
-    protected abstract <U extends Unit<U>> FloatVectorRel<U> createFloatVectorRel(float[] in, U u);
+    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorRel(float[] in, U u);
 
     /**
-     * Create a new FloatVectorRel from an array of FloatScalarRel values.
+     * Create a new FloatVector.*.Rel from an array of FloatScalarRel values.
      * @param in FloatScalarAbs[]; the values
      * @return
      * @throws ValueException when the array is empty
      */
-    protected abstract <U extends Unit<U>> FloatVectorRel<U> createFloatVectorRel(FloatScalarRel<U>[] in)
+    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorRel(FloatScalarRel<U>[] in)
             throws ValueException;
 
 }

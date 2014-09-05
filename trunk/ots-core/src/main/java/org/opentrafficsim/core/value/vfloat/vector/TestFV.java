@@ -1,9 +1,8 @@
 package org.opentrafficsim.core.value.vfloat.vector;
 
-import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.TemperatureUnit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 /**
  * <p>
@@ -30,48 +29,55 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 19, 2014 <br>
+ * @version Sep 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FloatVectorSparseTest extends FloatVectorTest
+public class TestFV
 {
-
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVector(float[],
-     *      org.opentrafficsim.core.unit.Unit)
+     * @param args
      */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Sparse.Abs<U> createFloatVectorAbs(float[] in, U u)
+    public static void main(final String[] args)
     {
-        return new FloatVector.Sparse.Abs<U>(in, u);
-    }
+        System.out.println("Creating FloatVector.Dense.Abs fda");
+        FloatVector.Dense.Abs<LengthUnit> fda =
+                new FloatVector.Dense.Abs<LengthUnit>(new float[]{1.0f, 2.0f, 3.0f}, LengthUnit.MILE);
+        System.out.println("fda:             " + fda.toString());
+        
+        System.out.println("Creating FloatVector.Dense.Rel fdr");
+        FloatVector.Dense.Rel<LengthUnit> fdr =
+                new FloatVector.Dense.Rel<LengthUnit>(new float[]{4.0f, 5.0f, 6.0f}, LengthUnit.KILOMETER);
+        System.out.println("fdr:             " + fdr.toString());
+        
+        System.out.println("Creating FloatVector.Dense.Abs fdsum by adding fdb to fda");
+        MutableFloatVector.Dense.Abs<LengthUnit> fdsum = null;
+        try
+        {
+            fdsum = MutableFloatVector.plus(fda, fdr);
+        }
+        catch (ValueException exception)
+        {
+            exception.printStackTrace();
+        }
+        System.out.println("fdsum:           " + fdsum.toString());
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[])
-     */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Sparse.Abs<U> createFloatVectorAbs(FloatScalarAbs<U>[] in) throws ValueException
-    {
-        return new FloatVector.Sparse.Abs<U>(in);
+        System.out.println("Creating MutableFloatVector.Dense.Abs mfda");
+        MutableFloatVector.Dense.Abs<TemperatureUnit> mfda =
+                new MutableFloatVector.Dense.Abs<TemperatureUnit>(new float[]{1.0f, 2.0f, 3.0f}, TemperatureUnit.KELVIN);
+        System.out.println("mfda:            " + mfda.toString());
+        System.out.println("Making immutable version ifda of mfda");
+        FloatVector.Dense.Abs<TemperatureUnit> ifda = mfda.immutable();
+        System.out.println("ifda:            " + ifda);
+        System.out.println("normalizing mfda");
+        try
+        {
+            mfda.normalize();
+        }
+        catch (ValueException exception)
+        {
+            exception.printStackTrace();
+        }
+        System.out.println("normalized mfda: " + mfda.toString());
+        System.out.println("ifda:            " + ifda);
     }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVector(float[],
-     *      org.opentrafficsim.core.unit.Unit)
-     */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Sparse.Rel<U> createFloatVectorRel(float[] in, U u)
-    {
-        return new FloatVector.Sparse.Rel<U>(in, u);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[])
-     */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Sparse.Rel<U> createFloatVectorRel(FloatScalarRel<U>[] in) throws ValueException
-    {
-        return new FloatVector.Sparse.Rel<U>(in);
-    }
-
 }

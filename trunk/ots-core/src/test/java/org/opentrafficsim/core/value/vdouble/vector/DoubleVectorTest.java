@@ -18,10 +18,10 @@ import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
@@ -692,15 +692,15 @@ public abstract class DoubleVectorTest
             }
             assertTrue("result should be Absolute", plus instanceof Absolute);
             assertTrue("result should be Absolute", minus instanceof Absolute);
-            if (fv1 instanceof Dense)
+            if (fv1 instanceof DenseData)
             {
-                assertTrue("result should be Dense", plus instanceof Dense);
-                assertTrue("result should be Dense", minus instanceof Dense);
+                assertTrue("result should be Dense", plus instanceof DenseData);
+                assertTrue("result should be Dense", minus instanceof DenseData);
             }
-            else if (fv1 instanceof Sparse)
+            else if (fv1 instanceof SparseData)
             {
-                assertTrue("result should be Sparse", plus instanceof Sparse);
-                assertTrue("result should be Sparse", minus instanceof Sparse);
+                assertTrue("result should be Sparse", plus instanceof SparseData);
+                assertTrue("result should be Sparse", minus instanceof SparseData);
             }
             else
                 fail("fv1 neither Dense nor Sparse");
@@ -775,13 +775,13 @@ public abstract class DoubleVectorTest
                 fail("Unexpected exception");
             }
             assertTrue("result should be Relative", multiply instanceof Relative);
-            if (fv1 instanceof Dense)
+            if (fv1 instanceof DenseData)
             {
-                assertTrue("result should be Dense", multiply instanceof Dense);
+                assertTrue("result should be Dense", multiply instanceof DenseData);
             }
-            else if (fv1 instanceof Sparse)
+            else if (fv1 instanceof SparseData)
             {
-                assertTrue("result should be Sparse", multiply instanceof Sparse);
+                assertTrue("result should be Sparse", multiply instanceof SparseData);
             }
             else
                 fail("fv1 neither Dense nor Sparse");
@@ -886,7 +886,7 @@ public abstract class DoubleVectorTest
             }
             assertEquals("type of result should be input type", fv.getUnit(), fv2.getUnit());
         }
-        if (fv instanceof Dense)
+        if (fv instanceof DenseData)
         {
             DoubleVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)

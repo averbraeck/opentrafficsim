@@ -41,18 +41,18 @@ public class FloatVectorDenseTest extends FloatVectorTest
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> FloatVectorAbs<U> createFloatVectorAbs(float[] in, U u)
+    protected <U extends Unit<U>> FloatVector.Dense.Abs<U> createFloatVectorAbs(float[] in, U u)
     {
-        return new FloatVectorAbsDense<U>(in, u);
+        return new FloatVector.Dense.Abs<U>(in, u);
     }
 
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[])
      */
     @Override
-    protected <U extends Unit<U>> FloatVectorAbs<U> createFloatVectorAbs(FloatScalarAbs<U>[] in) throws ValueException
+    protected <U extends Unit<U>> FloatVector.Dense.Abs<U> createFloatVectorAbs(FloatScalarAbs<U>[] in) throws ValueException
     {
-        return new FloatVectorAbsDense<U>(in);
+        return new FloatVector.Dense.Abs<U>(in);
     }
 
     /**
@@ -60,18 +60,18 @@ public class FloatVectorDenseTest extends FloatVectorTest
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> FloatVectorRel<U> createFloatVectorRel(float[] in, U u)
+    protected <U extends Unit<U>> FloatVector.Dense.Rel<U> createFloatVectorRel(float[] in, U u)
     {
-        return new FloatVectorRelDense<U>(in, u);
+        return new FloatVector.Dense.Rel<U>(in, u);
     }
 
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[])
      */
     @Override
-    protected <U extends Unit<U>> FloatVectorRel<U> createFloatVectorRel(FloatScalarRel<U>[] in) throws ValueException
+    protected <U extends Unit<U>> FloatVector.Dense.Rel<U> createFloatVectorRel(FloatScalarRel<U>[] in) throws ValueException
     {
-        return new FloatVectorRelDense<U>(in);
+        return new FloatVector.Dense.Rel<U>(in);
     }
 
 }

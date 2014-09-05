@@ -35,13 +35,14 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Serializable, MathFunctions
+public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140615L;
 
     /** the unit of the value. */
     protected U unit;
+    // FIXME: should be final, but that requires lots of changes elsewhere
 
     /**
      * @param unit the unit of the value
@@ -74,14 +75,6 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     protected double expressAsSpecifiedUnit(final double value)
     {
         return ValueUtil.expressAsUnit(value, this.unit);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.Value#setDisplayUnit(org.opentrafficsim.core.unit.Unit)
-     */
-    public void setDisplayUnit(final U newUnit)
-    {
-        this.unit = newUnit;
     }
 
     /**

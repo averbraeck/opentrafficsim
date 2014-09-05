@@ -3,27 +3,24 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsSparse;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRelSparse;
+import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
 
 import cern.colt.matrix.tfloat.FloatMatrix1D;
 import cern.colt.matrix.tfloat.FloatMatrix2D;
 import cern.colt.matrix.tfloat.algo.DenseFloatAlgebra;
 import cern.colt.matrix.tfloat.algo.SparseFloatAlgebra;
+import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix2D;
+import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
 import cern.jet.math.tfloat.FloatFunctions;
 
 /**
@@ -330,12 +327,12 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     {
         try
         {
-            if (this instanceof Sparse)
+            if (this instanceof SparseData)
             {
                 // System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
                 return new SparseFloatAlgebra().det(this.matrixSI);
             }
-            if (this instanceof Dense)
+            if (this instanceof DenseData)
             {
                 // System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
                 return new DenseFloatAlgebra().det(this.matrixSI);
@@ -792,9 +789,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     {
         ensureSameSize(x, y);
         FloatMatrixRel<U> c = null;
-        if (x instanceof Dense)
+        if (x instanceof DenseData)
             c = new FloatMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else if (x instanceof Sparse)
+        else if (x instanceof SparseData)
             c = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
         else
             throw new ValueException("FloatMatrix.minus - matrix neither sparse nor dense");
@@ -979,7 +976,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return vector x in A*x = b
      * @throws ValueException when Matrix A is neither Sparse nor Dense.
      */
-    public static FloatVectorAbs<SIUnit> solve(final FloatMatrixAbs<?> A, final FloatVectorAbs<?> b)
+    public static FloatVector<SIUnit> solve(final FloatMatrixAbs<?> A, final FloatVector<?> b)
             throws ValueException
     {
         // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
@@ -989,17 +986,18 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
         FloatMatrix2D A2D = A.getMatrixSI();
-        FloatMatrix1D b1D = b.getVectorSI();
-        if (A instanceof Sparse)
+        if (A instanceof SparseData)
         {
+            SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());
             FloatMatrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorAbsSparse<SIUnit> x = new FloatVectorAbsSparse<SIUnit>(x1D.toArray(), targetUnit);
+            FloatVector.Sparse.Abs<SIUnit> x = new FloatVector.Sparse.Abs<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
-        if (A instanceof Dense)
+        if (A instanceof DenseData)
         {
+            DenseFloatMatrix1D b1D = new DenseFloatMatrix1D(b.getValuesSI());
             FloatMatrix1D x1D = new DenseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorAbsDense<SIUnit> x = new FloatVectorAbsDense<SIUnit>(x1D.toArray(), targetUnit);
+            FloatVector.Dense.Abs<SIUnit> x = new FloatVector.Dense.Abs<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
@@ -1013,7 +1011,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return vector x in A*x = b
      * @throws ValueException when Matrix A is neither Sparse nor Dense.
      */
-    public static FloatVectorRel<SIUnit> solve(final FloatMatrixRel<?> A, final FloatVectorRel<?> b)
+    public static FloatVector<SIUnit> solve(final FloatMatrixRel<?> A, final FloatVector<?> b)
             throws ValueException
     {
         // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
@@ -1023,17 +1021,18 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
         FloatMatrix2D A2D = A.getMatrixSI();
-        FloatMatrix1D b1D = b.getVectorSI();
-        if (A instanceof Sparse)
+        if (A instanceof SparseData)
         {
+            SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());
             FloatMatrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorRelSparse<SIUnit> x = new FloatVectorRelSparse<SIUnit>(x1D.toArray(), targetUnit);
+            FloatVector.Sparse.Rel<SIUnit> x = new FloatVector.Sparse.Rel<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
-        if (A instanceof Dense)
+        if (A instanceof DenseData)
         {
+            DenseFloatMatrix1D b1D = new DenseFloatMatrix1D(b.getValuesSI());
             FloatMatrix1D x1D = new DenseFloatAlgebra().solve(A2D, b1D);
-            FloatVectorRelDense<SIUnit> x = new FloatVectorRelDense<SIUnit>(x1D.toArray(), targetUnit);
+            FloatVector.Dense.Rel<SIUnit> x = new FloatVector.Dense.Rel<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");

@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
@@ -36,7 +36,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> implements Sparse
+public class FloatMatrixRelSparse<U extends Unit<U>> extends FloatMatrixRel<U> implements SparseData
 {
     /** */
     private static final long serialVersionUID = 20140619L;
