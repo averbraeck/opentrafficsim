@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 
@@ -36,7 +36,7 @@ import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public class DoubleVectorAbsDense<U extends Unit<U>> extends DoubleVectorAbs<U> implements Dense
+public class DoubleVectorAbsDense<U extends Unit<U>> extends DoubleVectorAbs<U> implements DenseData
 {
     /** */
     private static final long serialVersionUID = 20140618L;

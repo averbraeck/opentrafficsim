@@ -1,12 +1,7 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Dense;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-
-import cern.colt.matrix.tfloat.FloatMatrix1D;
-import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
@@ -32,60 +27,54 @@ import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
+ * @param <U> Unit of the vector
  */
-public class FloatVectorAbsDense<U extends Unit<U>> extends FloatVectorAbs<U> implements Dense
+public interface ReadOnlyFloatVectorFunctions<U extends Unit<U>>
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
+    /**
+     * @return the size of the vector as an int.
+     */
+    int size();
+    
+    /**
+     * @return the number of cells having non-zero values; ignores tolerance.
+     */
+    int cardinality();
+    
+    /**
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    float getSI(int index) throws ValueException;
 
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @param unit the unit of the values
+     * @param index position to get the value for in the original unit of creation.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public FloatVectorAbsDense(final float[] values, final U unit)
-    {
-        super(values, unit);
-    }
+    float getInUnit(int index) throws ValueException;
 
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param targetUnit the unit for the result.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public FloatVectorAbsDense(final FloatScalarAbs<U>[] values) throws ValueException
-    {
-        super(values);
-    }
+    float getInUnit(int index, U targetUnit) throws ValueException;
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
+     * @param index index position to get the value that has been stored.
+     * @return a strongly typed value from the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    protected final FloatMatrix1D createMatrix1D(final int size)
-    {
-        return new DenseFloatMatrix1D(size);
-    }
+    FloatScalar<U> get(int index) throws ValueException;
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#copy()
+     * @return sum of all values of the vector.
      */
-    @Override
-    public final FloatVectorAbsDense<U> copy()
-    {
-        FloatVectorAbsDense<U> v = new FloatVectorAbsDense<U>(this.vectorSI.toArray(), this.unit.getStandardUnit());
-        v.unit = this.unit;
-        return v;
-    }
-
-    /**
-     * @return the internally stored vector from the Colt library, converted to SI units.
-     */
-    public final DenseFloatMatrix1D getColtDenseFloatMatrix1D()
-    {
-        return (DenseFloatMatrix1D) this.vectorSI;
-    }
-
+    float zSum();
+    
 }

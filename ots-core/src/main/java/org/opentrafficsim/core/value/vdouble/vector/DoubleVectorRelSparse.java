@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 
@@ -36,7 +36,7 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <U> the unit
  */
-public class DoubleVectorRelSparse<U extends Unit<U>> extends DoubleVectorRel<U> implements Sparse
+public class DoubleVectorRelSparse<U extends Unit<U>> extends DoubleVectorRel<U> implements SparseData
 {
     /** */
     private static final long serialVersionUID = 20140618L;

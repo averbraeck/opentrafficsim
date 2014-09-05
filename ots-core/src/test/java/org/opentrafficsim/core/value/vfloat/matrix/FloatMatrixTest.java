@@ -17,19 +17,15 @@ import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbs;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsDense;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorAbsSparse;
-import org.opentrafficsim.core.value.vfloat.vector.FloatVectorRel;
 
 import cern.colt.matrix.tfloat.FloatMatrix2D;
 
@@ -69,13 +65,6 @@ public abstract class FloatMatrixTest
     @Test
     public void floatMatrixTwoArgs()
     {
-        /*
-         * String[] formats = { "e", "f", "g"}; for (String format : formats) for (int i = 6; i <= 10; i++) { for (int j
-         * = 1; j < 5; j++) { String formatString = String.format("\"%%%d.%d%s\"", i, j, format);
-         * System.out.print(String.format("%8s: ", formatString)); String result = "ERROR"; try { result =
-         * String.format(formatString, 0f); } catch (Exception e) { // } System.out.print(String.format("%-20.20s",
-         * result)); } System.out.println(""); }
-         */
         floatMatrixTwoArgs(true); // test absolute version
         floatMatrixTwoArgs(false); // test relative version
     }
@@ -761,9 +750,9 @@ public abstract class FloatMatrixTest
         float[][] singular = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
         fm = safeCreateFloatMatrix(singular, LengthUnit.METER, absolute);
         System.out.println("matrix is " + fm.toString());
-        if (fm instanceof Sparse)
+        if (fm instanceof SparseData)
             System.out.println("(sparse)");
-        if (fm instanceof Dense)
+        if (fm instanceof DenseData)
             System.out.println("(dense)");
         if (fm instanceof Absolute)
             System.out.println("(absolute)");
@@ -875,15 +864,15 @@ public abstract class FloatMatrixTest
             }
             assertTrue("result should be Absolute", plus instanceof Absolute);
             assertTrue("result should be Absolute", minus instanceof Absolute);
-            if (fm1 instanceof Dense)
+            if (fm1 instanceof DenseData)
             {
-                assertTrue("result should be Dense", plus instanceof Dense);
-                assertTrue("result should be Dense", minus instanceof Dense);
+                assertTrue("result should be Dense", plus instanceof DenseData);
+                assertTrue("result should be Dense", minus instanceof DenseData);
             }
-            else if (fm1 instanceof Sparse)
+            else if (fm1 instanceof SparseData)
             {
-                assertTrue("result should be Sparse", plus instanceof Sparse);
-                assertTrue("result should be Sparse", minus instanceof Sparse);
+                assertTrue("result should be Sparse", plus instanceof SparseData);
+                assertTrue("result should be Sparse", minus instanceof SparseData);
             }
             else
                 fail("fm1 neither Dense nor Sparse");
@@ -911,7 +900,7 @@ public abstract class FloatMatrixTest
                 original.setSI(0, 0, 123.456f);
                 assertFalse("Original should now differ from duplicate", original.equals(duplicate));
                 assertFalse("Duplicate should now differ from original", duplicate.equals(original));
-                
+
             }
             catch (ValueException exception)
             {
@@ -960,13 +949,13 @@ public abstract class FloatMatrixTest
                 fail("Unexpected exception");
             }
             assertTrue("result should be Relative", multiply instanceof Relative);
-            if (fm1 instanceof Dense)
+            if (fm1 instanceof DenseData)
             {
-                assertTrue("result should be Dense", multiply instanceof Dense);
+                assertTrue("result should be Dense", multiply instanceof DenseData);
             }
-            else if (fm1 instanceof Sparse)
+            else if (fm1 instanceof SparseData)
             {
-                assertTrue("result should be Sparse", multiply instanceof Sparse);
+                assertTrue("result should be Sparse", multiply instanceof SparseData);
             }
             else
                 fail("fm1 neither Dense nor Sparse");
@@ -997,14 +986,14 @@ public abstract class FloatMatrixTest
                 original.setSI(0, 0, 123.456f);
                 assertFalse("Original should now differ from duplicate", original.equals(duplicate));
                 assertFalse("Duplicate should now differ from original", duplicate.equals(original));
-                
+
             }
             catch (ValueException exception)
             {
                 fail("Unexpected ValueException");
             }
         }
-        if (fm instanceof Dense)
+        if (fm instanceof DenseData)
         {
             FloatMatrix<LengthUnit> fm2 = null;
             if (fm instanceof Absolute)
@@ -1797,14 +1786,14 @@ public abstract class FloatMatrixTest
         float[] b = {4, 8, 12};
         FloatMatrix<LengthUnit> aMatrix = safeCreateFloatMatrix(a, LengthUnit.METER, true);
         FloatVector<ForceUnit> bVector = null;
-        if (aMatrix instanceof Sparse)
-            bVector = new FloatVectorAbsSparse<ForceUnit>(b, ForceUnit.NEWTON);
+        if (aMatrix instanceof SparseData)
+            bVector = new FloatVector.Sparse.Abs<ForceUnit>(b, ForceUnit.NEWTON);
         else
-            bVector = new FloatVectorAbsDense<ForceUnit>(b, ForceUnit.NEWTON);
+            bVector = new FloatVector.Dense.Abs<ForceUnit>(b, ForceUnit.NEWTON);
         try
         {
             FloatVector<SIUnit> result = null;
-            if (aMatrix instanceof Sparse)
+            if (aMatrix instanceof SparseData)
             {
                 if (aMatrix instanceof Absolute)
                 {
@@ -1815,20 +1804,14 @@ public abstract class FloatMatrixTest
                             // (FloatVectorAbs<ForceUnit>) bVector);
                 }
                 else if (aMatrix instanceof Relative)
-                    result =
-                            FloatMatrix.solve((FloatMatrixRelSparse<LengthUnit>) aMatrix,
-                                    (FloatVectorRel<ForceUnit>) bVector);
+                    result = FloatMatrix.solve((FloatMatrixRelSparse<LengthUnit>) aMatrix, bVector);
             }
             else
             {
                 if (aMatrix instanceof Absolute)
-                    result =
-                            FloatMatrix.solve((FloatMatrixAbsDense<LengthUnit>) aMatrix,
-                                    (FloatVectorAbs<ForceUnit>) bVector);
+                    result = FloatMatrix.solve((FloatMatrixAbsDense<LengthUnit>) aMatrix, bVector);
                 else
-                    result =
-                            FloatMatrix.solve((FloatMatrixRelDense<LengthUnit>) aMatrix,
-                                    (FloatVectorRel<ForceUnit>) bVector);
+                    result = FloatMatrix.solve((FloatMatrixRelDense<LengthUnit>) aMatrix, bVector);
             }
             System.out.println("unit of result is " + result.getUnit());
             assertEquals("result[0] should be -2", -2, result.getSI(0), 0.0001);

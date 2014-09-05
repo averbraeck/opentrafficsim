@@ -17,10 +17,10 @@ import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
@@ -748,9 +748,9 @@ public abstract class DoubleMatrixTest
         double[][] singular = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
         fm = safeCreateDoubleMatrix(singular, LengthUnit.METER, absolute);
         System.out.println("matrix is " + fm.toString());
-        if (fm instanceof Sparse)
+        if (fm instanceof SparseData)
             System.out.println("(sparse)");
-        if (fm instanceof Dense)
+        if (fm instanceof DenseData)
             System.out.println("(dense)");
         if (fm instanceof Absolute)
             System.out.println("(absolute)");
@@ -862,15 +862,15 @@ public abstract class DoubleMatrixTest
             }
             assertTrue("result should be Absolute", plus instanceof Absolute);
             assertTrue("result should be Absolute", minus instanceof Absolute);
-            if (fm1 instanceof Dense)
+            if (fm1 instanceof DenseData)
             {
-                assertTrue("result should be Dense", plus instanceof Dense);
-                assertTrue("result should be Dense", minus instanceof Dense);
+                assertTrue("result should be Dense", plus instanceof DenseData);
+                assertTrue("result should be Dense", minus instanceof DenseData);
             }
-            else if (fm1 instanceof Sparse)
+            else if (fm1 instanceof SparseData)
             {
-                assertTrue("result should be Sparse", plus instanceof Sparse);
-                assertTrue("result should be Sparse", minus instanceof Sparse);
+                assertTrue("result should be Sparse", plus instanceof SparseData);
+                assertTrue("result should be Sparse", minus instanceof SparseData);
             }
             else
                 fail("fm1 neither Dense nor Sparse");
@@ -947,13 +947,13 @@ public abstract class DoubleMatrixTest
                 fail("Unexpected exception");
             }
             assertTrue("result should be Relative", multiply instanceof Relative);
-            if (fm1 instanceof Dense)
+            if (fm1 instanceof DenseData)
             {
-                assertTrue("result should be Dense", multiply instanceof Dense);
+                assertTrue("result should be Dense", multiply instanceof DenseData);
             }
-            else if (fm1 instanceof Sparse)
+            else if (fm1 instanceof SparseData)
             {
-                assertTrue("result should be Sparse", multiply instanceof Sparse);
+                assertTrue("result should be Sparse", multiply instanceof SparseData);
             }
             else
                 fail("fm1 neither Dense nor Sparse");
@@ -991,7 +991,7 @@ public abstract class DoubleMatrixTest
                 fail("Unexpected ValueException");
             }
         }
-        if (fm instanceof Dense)
+        if (fm instanceof DenseData)
         {
             DoubleMatrix<LengthUnit> fm2 = null;
             if (fm instanceof Absolute)

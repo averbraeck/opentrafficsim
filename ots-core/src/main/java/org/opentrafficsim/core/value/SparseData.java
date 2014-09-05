@@ -31,7 +31,7 @@ package org.opentrafficsim.core.value;
  * @author <a href="http://www.tudelft.nl/gftamminga">Guus Tamminga</a>
  * @author <a href="http://www.tudelft.nl/yufeiyuan">Yufei Yuan</a>
  */
-public interface Dense
+public interface SparseData
 {
     //
 }

@@ -3,10 +3,10 @@ package org.opentrafficsim.core.value.vdouble.matrix;
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Dense;
+import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Matrix;
-import org.opentrafficsim.core.value.Sparse;
+import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
@@ -329,12 +329,12 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     {
         try
         {
-            if (this instanceof Sparse)
+            if (this instanceof SparseData)
             {
                 // System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
                 return new SparseDoubleAlgebra().det(this.matrixSI);
             }
-            if (this instanceof Dense)
+            if (this instanceof DenseData)
             {
                 // System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
                 return new DenseDoubleAlgebra().det(this.matrixSI);
@@ -788,9 +788,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     {
         ensureSameSize(x, y);
         DoubleMatrixRel<U> c = null;
-        if (x instanceof Dense)
+        if (x instanceof DenseData)
             c = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else if (x instanceof Sparse)
+        else if (x instanceof SparseData)
             c = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
         else
             throw new ValueException("DoubleVector.minus - vector neither sparse nor dense");
@@ -986,13 +986,13 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
         DoubleMatrix2D A2D = A.getMatrixSI();
         DoubleMatrix1D b1D = b.getVectorSI();
-        if (A instanceof Sparse)
+        if (A instanceof SparseData)
         {
             DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
             DoubleVectorAbsSparse<SIUnit> x = new DoubleVectorAbsSparse<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
-        if (A instanceof Dense)
+        if (A instanceof DenseData)
         {
             DoubleMatrix1D x1D = new DenseDoubleAlgebra().solve(A2D, b1D);
             DoubleVectorAbsDense<SIUnit> x = new DoubleVectorAbsDense<SIUnit>(x1D.toArray(), targetUnit);
@@ -1020,13 +1020,13 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
         DoubleMatrix2D A2D = A.getMatrixSI();
         DoubleMatrix1D b1D = b.getVectorSI();
-        if (A instanceof Sparse)
+        if (A instanceof SparseData)
         {
             DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
             DoubleVectorRelSparse<SIUnit> x = new DoubleVectorRelSparse<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
-        if (A instanceof Dense)
+        if (A instanceof DenseData)
         {
             DoubleMatrix1D x1D = new DenseDoubleAlgebra().solve(A2D, b1D);
             DoubleVectorRelDense<SIUnit> x = new DoubleVectorRelDense<SIUnit>(x1D.toArray(), targetUnit);
