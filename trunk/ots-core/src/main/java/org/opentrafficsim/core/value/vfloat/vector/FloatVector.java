@@ -7,8 +7,6 @@ import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 import cern.colt.matrix.tfloat.FloatMatrix1D;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
@@ -111,7 +109,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
              * @param unit
              * @throws ValueException 
              */
-            public Abs(final FloatScalarAbs<U>[] values) throws ValueException
+            public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Abs");
@@ -133,7 +131,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             @Override
             public FloatScalar<U> get(final int index) throws ValueException
             {
-                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -184,7 +182,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
              * @param unit
              * @throws ValueException 
              */
-            public Rel(final FloatScalarRel<U>[] values) throws ValueException
+            public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Rel");
@@ -206,7 +204,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarRel<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -275,7 +273,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
              * @param unit
              * @throws ValueException 
              */
-            public Abs(final FloatScalarAbs<U>[] values) throws ValueException
+            public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Abs");
@@ -297,7 +295,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -348,7 +346,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
              * @param unit
              * @throws ValueException 
              */
-            public Rel(final FloatScalarRel<U>[] values) throws ValueException
+            public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Rel");
@@ -370,7 +368,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarRel<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**

@@ -12,8 +12,6 @@ import org.opentrafficsim.core.value.WriteFloatVectorFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 import cern.colt.matrix.tfloat.FloatMatrix1D;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
@@ -135,7 +133,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException 
              */
-            public Abs(final FloatScalarAbs<U>[] values) throws ValueException
+            public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Abs");
@@ -158,7 +156,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -210,7 +208,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException 
              */
-            public Rel(final FloatScalarRel<U>[] values) throws ValueException
+            public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Rel");
@@ -233,7 +231,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarRel<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -304,7 +302,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException 
              */
-            public Abs(final FloatScalarAbs<U>[] values) throws ValueException
+            public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Abs");
@@ -327,7 +325,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -379,7 +377,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException 
              */
-            public Rel(final FloatScalarRel<U>[] values) throws ValueException
+            public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Rel");
@@ -402,7 +400,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             @Override
             public FloatScalar<U> get(int index) throws ValueException
             {
-                return new FloatScalarAbs<U>(getInUnit(index, this.unit), this.unit);
+                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
             }
 
             /**
@@ -425,9 +423,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     public FloatScalar<U> get(int index) throws ValueException
     {
         if (this instanceof MutableFloatVector.Dense.Abs || this instanceof MutableFloatVector.Sparse.Abs)
-            return new FloatScalarAbs<U>(getInUnit(index), this.unit);
+            return new FloatScalar.Abs<U>(getInUnit(index), this.unit);
         else if (this instanceof MutableFloatVector.Dense.Rel || this instanceof MutableFloatVector.Sparse.Rel)
-            return new FloatScalarRel<U>(getInUnit(index), this.unit);
+            return new FloatScalar.Rel<U>(getInUnit(index), this.unit);
         throw new Error("Cannot figure out subtype of this");
     }
 
@@ -491,7 +489,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     public void setInUnit(final int index, final float value, final U valueUnit) throws ValueException
     {
         // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do it...
-        setSI(index, new FloatScalarAbs<U>(value, valueUnit).getValueSI());
+        setSI(index, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());
     }
 
     /**

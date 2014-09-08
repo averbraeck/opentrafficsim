@@ -3,7 +3,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
@@ -52,7 +52,7 @@ public abstract class FloatMatrixAbs<U extends Unit<U>> extends FloatMatrix<U> i
      * @param values
      * @throws ValueException
      */
-    public FloatMatrixAbs(final FloatScalarAbs<U>[][] values) throws ValueException
+    public FloatMatrixAbs(final FloatScalar.Abs<U>[][] values) throws ValueException
     {
         super(values);
     }
@@ -67,9 +67,9 @@ public abstract class FloatMatrixAbs<U extends Unit<U>> extends FloatMatrix<U> i
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#get(int, int)
      */
     @Override
-    public FloatScalarAbs<U> get(final int row, final int column) throws ValueException
+    public FloatScalar.Abs<U> get(final int row, final int column) throws ValueException
     {
-        return new FloatScalarAbs<U>(getInUnit(row, column, this.unit), this.unit);
+        return new FloatScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
     }
 
 }

@@ -21,8 +21,6 @@ import org.opentrafficsim.core.value.Format;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 
 /**
  * <p>
@@ -1013,8 +1011,8 @@ public abstract class FloatVectorTest
     private void floatVectorOneArg(Boolean absolute)
     {
         FloatVector<LengthUnit> fv = null;
-        FloatScalarAbs<LengthUnit>[] inAbs = new FloatScalarAbs[0];
-        FloatScalarRel<LengthUnit>[] inRel = new FloatScalarRel[0];
+        FloatScalar.Abs<LengthUnit>[] inAbs = new FloatScalar.Abs[0];
+        FloatScalar.Rel<LengthUnit>[] inRel = new FloatScalar.Rel[0];
         try
         {
             if (absolute)
@@ -1027,10 +1025,10 @@ public abstract class FloatVectorTest
         {
             // Ignore expected exception
         }
-        inAbs = new FloatScalarAbs[1];
-        inAbs[0] = new FloatScalarAbs<LengthUnit>(123.456f, LengthUnit.FOOT);
-        inRel = new FloatScalarRel[1];
-        inRel[0] = new FloatScalarRel<LengthUnit>(123.456f, LengthUnit.FOOT);
+        inAbs = new FloatScalar.Abs[1];
+        inAbs[0] = new FloatScalar.Abs<LengthUnit>(123.456f, LengthUnit.FOOT);
+        inRel = new FloatScalar.Rel[1];
+        inRel[0] = new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
             if (absolute)
@@ -1345,7 +1343,7 @@ public abstract class FloatVectorTest
     public void floatVectorRel2()
     {
         FloatVector<LengthUnit> fsa = null;
-        FloatScalarRel<LengthUnit>[] in = new FloatScalarRel[0];
+        FloatScalar.Rel<LengthUnit>[] in = new FloatScalar.Rel[0];
         try
         {
             fsa = createFloatVectorRel(in);
@@ -1355,8 +1353,8 @@ public abstract class FloatVectorTest
         {
             // Ignore expected exception
         }
-        in = new FloatScalarRel[1];
-        in[0] = new FloatScalarRel<LengthUnit>(123.456f, LengthUnit.FOOT);
+        in = new FloatScalar.Rel[1];
+        in[0] = new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
             fsa = createFloatVectorRel(in);
@@ -1400,7 +1398,7 @@ public abstract class FloatVectorTest
      * @return
      * @throws ValueException when the array is empty
      */
-    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorAbs(FloatScalarAbs<U>[] in)
+    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorAbs(FloatScalar.Abs<U>[] in)
             throws ValueException;
 
     /**
@@ -1417,7 +1415,7 @@ public abstract class FloatVectorTest
      * @return
      * @throws ValueException when the array is empty
      */
-    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorRel(FloatScalarRel<U>[] in)
+    protected abstract <U extends Unit<U>> FloatVector<U> createFloatVectorRel(FloatScalar.Rel<U>[] in)
             throws ValueException;
 
 }

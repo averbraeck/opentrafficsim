@@ -3,7 +3,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 import cern.colt.matrix.tfloat.FloatMatrix2D;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix2D;
@@ -57,7 +57,7 @@ public class FloatMatrixRelDense<U extends Unit<U>> extends FloatMatrixRel<U> im
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatMatrixRelDense(final FloatScalarRel<U>[][] values) throws ValueException
+    public FloatMatrixRelDense(final FloatScalar.Rel<U>[][] values) throws ValueException
     {
         super(values);
     }

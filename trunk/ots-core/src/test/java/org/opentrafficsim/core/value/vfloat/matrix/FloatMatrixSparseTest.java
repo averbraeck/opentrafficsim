@@ -2,12 +2,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbs;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixAbsSparse;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRel;
-import org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixRelSparse;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 
 /**
@@ -55,7 +50,7 @@ public class FloatMatrixSparseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[][])
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalarAbs<U>[][] in)
+    protected <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalar.Abs<U>[][] in)
             throws ValueException
     {
         return new FloatMatrixAbsSparse<U>(in);
@@ -75,7 +70,7 @@ public class FloatMatrixSparseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[][])
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalarRel<U>[][] in)
+    protected <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalar.Rel<U>[][] in)
             throws ValueException
     {
         return new FloatMatrixRelSparse<U>(in);

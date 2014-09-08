@@ -2,8 +2,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
@@ -50,7 +49,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[][])
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalarAbs<U>[][] in)
+    protected <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalar.Abs<U>[][] in)
             throws ValueException
     {
         return new FloatMatrixAbsDense<U>(in);
@@ -70,7 +69,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[][])
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalarRel<U>[][] in)
+    protected <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalar.Rel<U>[][] in)
             throws ValueException
     {
         return new FloatMatrixRelDense<U>(in);
