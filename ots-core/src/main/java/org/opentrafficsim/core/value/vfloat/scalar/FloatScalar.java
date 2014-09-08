@@ -1,11 +1,9 @@
 package org.opentrafficsim.core.value.vfloat.scalar;
 
-import org.opentrafficsim.core.unit.SICoefficients;
-import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Scalar;
-import org.opentrafficsim.core.value.ValueUtil;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
+import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.ValueException;
 
 /**
  * All calculations are according to IEEE 754. This means that division by zero results in Float.INFINITY, and some
@@ -39,85 +37,135 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implements FloatMathFunctions
+public abstract class FloatScalar<U extends Unit<U>> extends AbstractFloatScalar<U>
 {
+    /**
+     * @param unit
+     */
+    public FloatScalar(U unit)
+    {
+        super(unit);
+    }
+
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the value, stored in SI units. */
-    protected float valueSI;
-
     /**
-     * Construct a value and store it in SI units for calculation.
-     * @param value the value in the given units
-     * @param unit the unit of the value
+     * @param <U> Unit
      */
-    public FloatScalar(final float value, final U unit)
+    public static class Abs<U extends Unit<U>> extends FloatScalar<U> implements Absolute
     {
-        super(unit);
-        this.valueSI = (float) expressAsSIUnit(value);
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * Create a new Absolute Mutable FloatScalar.
+         * @param value float; the value of the new Absolute Mutable FloatScalar
+         * @param unit Unit; the unit of the new Absolute Mutable FloatScalar
+         */
+        public Abs(final float value, final U unit)
+        {
+            super(unit);
+            // System.out.println("Created Abs");
+            initialize(value);
+        }
+
+        /**
+         * Create a new Absolute Mutable FloatScalar from an existing one.
+         * @param value Absolute Mutable FloatScalar; the reference
+         */
+        public Abs(final FloatScalar.Abs<U> value)
+        {
+            super(value.getUnit());
+            // System.out.println("Created Abs");
+            this.valueSI = value.valueSI;
+        }
+
+        /**
+         * Create a new Absolute Mutable FloatScalar from an existing one.
+         * @param value Absolute Mutable FloatScalar; the reference
+         */
+        public Abs(final MutableFloatScalar.Abs<U> value)
+        {
+            super(value.getUnit());
+            // System.out.println("Created Abs");
+            this.valueSI = value.valueSI;
+        }
+
+        /**
+         * Create an mutable version of this FloatScalar
+         * @return Absolute Mutable FloatScalar
+         */
+        @Override
+        public MutableFloatScalar.Abs<U> mutable()
+        {
+            return new MutableFloatScalar.Abs<U>(this);
+        }
+
     }
 
     /**
-     * Construct a value from another value. The value is already in SI units.
-     * @param value the value to duplicate
+     * @param <U> Unit
      */
-    public FloatScalar(final FloatScalar<U> value)
+    public static class Rel<U extends Unit<U>> extends FloatScalar<U> implements Relative
     {
-        super(value.getUnit());
-        this.valueSI = value.valueSI;
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * Create a new Relative Mutable FloatVector.
+         * @param value float; the value of the new Relative Mutable FloatScalar
+         * @param unit
+         */
+        public Rel(final float value, final U unit)
+        {
+            super(unit);
+            // System.out.println("Created Rel");
+            initialize(value);
+        }
+
+        /**
+         * @param value
+         * @param unit
+         * @throws ValueException
+         */
+        public Rel(final FloatScalar.Rel<U> value)
+        {
+            super(value.getUnit());
+            // System.out.println("Created Rel");
+            initialize(value);
+        }
+
+        /**
+         * @param value
+         * @param unit
+         * @throws ValueException
+         */
+        public Rel(final MutableFloatScalar.Rel<U> value)
+        {
+            super(value.getUnit());
+            // System.out.println("Created Rel");
+            initialize(value);
+        }
+
+        /**
+         * Create a mutable version.
+         * @return Relative Mutable FloatVector
+         */
+        @Override
+        public MutableFloatScalar.Rel<U> mutable()
+        {
+            return new MutableFloatScalar.Rel<U>(this);
+        }
+
     }
 
     /**
-     * @return value in SI units
+     * Create a mutable version of this FloatScalar. <br />
+     * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
+     * @return MutableFloatScalar; mutable version of this FloatScalar
      */
-    public float getValueSI()
-    {
-        return this.valueSI;
-    }
-
-    /**
-     * @return value in original units
-     */
-    public float getValueInUnit()
-    {
-        return (float) expressAsSpecifiedUnit(this.valueSI);
-    }
-
-    /**
-     * @param targetUnit the unit to convert the value to
-     * @return value in specific target unit
-     */
-    public float getValueInUnit(final U targetUnit)
-    {
-        return (float) ValueUtil.expressAsUnit(this.valueSI, targetUnit);
-    }
-
-    // FIXME: explain setSI, set and setInUnit. These methods are not public and never used.
-    /**
-     * @param valueSI the value to store in the cell
-     */
-    void setSI(final float valueSI)
-    {
-        this.valueSI = valueSI;
-    }
-
-    /**
-     * @param value the strongly typed value to store in the cell
-     */
-    void set(final FloatScalar<U> value)
-    {
-        this.valueSI = value.valueSI;
-    }
-
-    /**
-     * @param value the value to store in the cell
-     * @param valueUnit the unit of the value.
-     */
-    void setInUnit(final float value, final U valueUnit)
-    {
-        this.valueSI = (float) expressAsSIUnit(value);
-    }
+    public abstract MutableFloatScalar<U> mutable();
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -181,281 +229,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
         return this.valueSI;
     }
 
-/**********************************************************************************/
-    /********************************** MATH METHODS **********************************/
-    /**********************************************************************************/
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#abs()
-     */
-    @Override
-    public void abs()
-    {
-        this.valueSI = Math.abs(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#acos()
-     */
-    @Override
-    public void acos()
-    {
-        // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.acos(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#asin()
-     */
-    @Override
-    public void asin()
-    {
-        // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.asin(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#atan()
-     */
-    @Override
-    public void atan()
-    {
-        // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.atan(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
-     */
-    @Override
-    public void cbrt()
-    {
-        // TODO: dimension for all SI coefficients / 3.
-        this.valueSI = (float) Math.cbrt(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#ceil()
-     */
-    @Override
-    public void ceil()
-    {
-        this.valueSI = (float) Math.ceil(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cos()
-     */
-    @Override
-    public void cos()
-    {
-        // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.cos(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cosh()
-     */
-    @Override
-    public void cosh()
-    {
-        // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.cosh(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#exp()
-     */
-    @Override
-    public void exp()
-    {
-        // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.exp(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#expm1()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void expm1()
-    {
-        this.valueSI = (float) Math.expm1(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#floor()
-     */
-    @Override
-    public void floor()
-    {
-        this.valueSI = (float) Math.floor(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void log()
-    {
-        this.valueSI = (float) Math.log(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log10()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void log10()
-    {
-        this.valueSI = (float) Math.log10(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log1p()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void log1p()
-    {
-        this.valueSI = (float) Math.log1p(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
-     */
-    @Override
-    // TODO: SI unit with coefficients * x.
-    public void pow(final double x)
-    {
-        this.valueSI = (float) Math.pow(this.valueSI, x);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#rint()
-     */
-    @Override
-    public void rint()
-    {
-        this.valueSI = (float) Math.rint(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#round()
-     */
-    @Override
-    public void round()
-    {
-        this.valueSI = Math.round(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#signum()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void signum()
-    {
-        this.valueSI = Math.signum(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sin()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void sin()
-    {
-        this.valueSI = (float) Math.sin(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sinh()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void sinh()
-    {
-        this.valueSI = (float) Math.sinh(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
-     */
-    @Override
-    // TODO: unit coefficients / 2.
-    public void sqrt()
-    {
-        this.valueSI = (float) Math.sqrt(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tan()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void tan()
-    {
-        this.valueSI = (float) Math.tan(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tanh()
-     */
-    @Override
-    // TODO: dimensionless result (SIUnit.ONE).
-    public void tanh()
-    {
-        this.valueSI = (float) Math.tanh(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
-     */
-    @Override
-    public void toDegrees()
-    {
-        this.valueSI = (float) Math.toDegrees(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
-     */
-    @Override
-    public void toRadians()
-    {
-        this.valueSI = (float) Math.toRadians(this.valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#inv()
-     */
-    @Override
-    // TODO: negate all coefficients in the Unit.
-    public void inv()
-    {
-        this.valueSI = 1.0f / this.valueSI;
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
-     */
-    @Override
-    public void multiply(final float constant)
-    {
-        this.valueSI *= constant;
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
-     */
-    @Override
-    public void divide(final float constant)
-    {
-        this.valueSI /= constant;
-    }
-
     /**
      * @see java.lang.Object#toString()
      */
@@ -465,180 +238,12 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U> implement
         return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
     }
 
-    /**********************************************************************************/
-    /******************************* NON-STATIC METHODS *******************************/
-    /**********************************************************************************/
-
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
-     * is not allowed. Adding an absolute value to an existing relative value would require the result to become
-     * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param value the value to add
+     * @see org.opentrafficsim.core.value.Value#copy()
      */
-    public void add(final FloatScalarRel<U> value)
+    public FloatScalar<U> copy()
     {
-        this.valueSI += value.getValueSI();
+        return this; // That was easy!
     }
 
-    /**
-     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
-     * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
-     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param value the value to subtract
-     */
-    public void subtract(final FloatScalarRel<U> value)
-    {
-        this.valueSI -= value.getValueSI();
-    }
-
-    /**********************************************************************************/
-    /********************************* STATIC METHODS *********************************/
-    /**********************************************************************************/
-
-    /**
-     * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
-     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs the absolute base value
-     * @param valuesRel zero or more values to add to the absolute value
-     * @return the sum of the values as an absolute value
-     */
-    @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarAbs<U> plus(final FloatScalarAbs<U> valueAbs,
-            final FloatScalarRel<U>... valuesRel)
-    {
-        FloatScalarAbs<U> value = new FloatScalarAbs<U>(valueAbs);
-        for (FloatScalarRel<U> v : valuesRel)
-        {
-            value.valueSI += v.valueSI;
-        }
-        return value;
-    }
-
-    /**
-     * Add a number of relative values. Return a new instance of the value. Because of type erasure of generics, the
-     * method cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param targetUnit the unit of the sum
-     * @param valuesRel zero or more values to add
-     * @return the sum of the values as a relative value
-     */
-    @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarRel<U> plus(final U targetUnit, final FloatScalarRel<U>... valuesRel)
-    {
-        FloatScalarRel<U> value = new FloatScalarRel<U>(0.0f, targetUnit);
-        for (FloatScalarRel<U> v : valuesRel)
-        {
-            value.valueSI += v.valueSI;
-        }
-        return value;
-    }
-
-    /**
-     * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
-     * return value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
-     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs the absolute base value
-     * @param valuesRel zero or more values to subtract from the absolute value
-     * @return the resulting value as an absolute value
-     */
-    @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarAbs<U> minus(final FloatScalarAbs<U> valueAbs,
-            final FloatScalarRel<U>... valuesRel)
-    {
-        FloatScalarAbs<U> value = new FloatScalarAbs<U>(valueAbs);
-        for (FloatScalarRel<U> v : valuesRel)
-        {
-            value.valueSI -= v.valueSI;
-        }
-        return value;
-    }
-
-    /**
-     * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the
-     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
-     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueRel the relative base value
-     * @param valuesRel zero or more values to subtract from the first value
-     * @return the resulting value as a relative value
-     */
-    @SafeVarargs
-    public static <U extends Unit<U>> FloatScalarRel<U> minus(final FloatScalarRel<U> valueRel,
-            final FloatScalarRel<U>... valuesRel)
-    {
-        FloatScalarRel<U> value = new FloatScalarRel<U>(valueRel);
-        for (FloatScalarRel<U> v : valuesRel)
-        {
-            value.valueSI -= v.valueSI;
-        }
-        return value;
-    }
-
-    /**
-     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
-     * will be the unit of the first argument.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the difference of the two absolute values as a relative value
-     */
-    public static <U extends Unit<U>> FloatScalarRel<U> minus(final FloatScalarAbs<U> valueAbs1,
-            final FloatScalarAbs<U> valueAbs2)
-    {
-        return new FloatScalarRel<U>(valueAbs1.valueSI - valueAbs2.valueSI, valueAbs1.getUnit());
-    }
-
-    /**
-     * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the product of the two absolute values as an absolute value
-     */
-    public static FloatScalarAbs<SIUnit> multiply(final FloatScalarAbs<?> valueAbs1, final FloatScalarAbs<?> valueAbs2)
-    {
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        valueAbs1.getUnit().getSICoefficients(), valueAbs2.getUnit().getSICoefficients()).toString());
-        return new FloatScalarAbs<SIUnit>(valueAbs1.valueSI * valueAbs2.valueSI, targetUnit);
-    }
-
-    /**
-     * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueRel1 value 1
-     * @param valueRel2 value 2
-     * @return the product of the two relative values as a relative value
-     */
-    public static FloatScalarRel<SIUnit> multiply(final FloatScalarRel<?> valueRel1, final FloatScalarRel<?> valueRel2)
-    {
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
-        return new FloatScalarRel<SIUnit>(valueRel1.valueSI * valueRel2.valueSI, targetUnit);
-    }
-
-    /**
-     * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the division of the two absolute values as an absolute value
-     */
-    public static FloatScalarAbs<SIUnit> divide(final FloatScalarAbs<?> valueAbs1, final FloatScalarAbs<?> valueAbs2)
-    {
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
-                        valueAbs1.getUnit().getSICoefficients(), valueAbs2.getUnit().getSICoefficients()).toString());
-        return new FloatScalarAbs<SIUnit>(valueAbs1.valueSI / valueAbs2.valueSI, targetUnit);
-    }
-
-    /**
-     * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueRel1 value 1
-     * @param valueRel2 value 2
-     * @return the division of the two two relative values as a relative value
-     */
-    public static FloatScalarRel<SIUnit> divide(final FloatScalarRel<?> valueRel1, final FloatScalarRel<?> valueRel2)
-    {
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
-                        valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
-        return new FloatScalarRel<SIUnit>(valueRel1.valueSI / valueRel2.valueSI, targetUnit);
-    }
 }

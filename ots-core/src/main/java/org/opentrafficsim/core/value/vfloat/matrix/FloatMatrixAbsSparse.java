@@ -3,7 +3,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 import cern.colt.matrix.tfloat.FloatMatrix2D;
 import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
@@ -57,7 +57,7 @@ public class FloatMatrixAbsSparse<U extends Unit<U>> extends FloatMatrixAbs<U> i
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public FloatMatrixAbsSparse(final FloatScalarAbs<U>[][] values) throws ValueException
+    public FloatMatrixAbsSparse(final FloatScalar.Abs<U>[][] values) throws ValueException
     {
         super(values);
     }

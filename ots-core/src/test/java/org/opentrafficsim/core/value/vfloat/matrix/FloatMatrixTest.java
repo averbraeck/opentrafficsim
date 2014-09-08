@@ -23,8 +23,6 @@ import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
 
 import cern.colt.matrix.tfloat.FloatMatrix2D;
@@ -1242,8 +1240,8 @@ public abstract class FloatMatrixTest
     private void floatMatrixOneArg(Boolean absolute)
     {
         FloatMatrix<LengthUnit> fm = null;
-        FloatScalarAbs<LengthUnit>[][] inAbs = new FloatScalarAbs[0][0];
-        FloatScalarRel<LengthUnit>[][] inRel = new FloatScalarRel[0][0];
+        FloatScalar.Abs<LengthUnit>[][] inAbs = new FloatScalar.Abs[0][0];
+        FloatScalar.Rel<LengthUnit>[][] inRel = new FloatScalar.Rel[0][0];
         try
         {
             if (absolute)
@@ -1256,8 +1254,8 @@ public abstract class FloatMatrixTest
         {
             // Ignore expected exception
         }
-        inAbs = new FloatScalarAbs[1][0];
-        inRel = new FloatScalarRel[1][0];
+        inAbs = new FloatScalar.Abs[1][0];
+        inRel = new FloatScalar.Rel[1][0];
         try
         {
             if (absolute)
@@ -1270,8 +1268,8 @@ public abstract class FloatMatrixTest
         {
             // Ignore expected exception
         }
-        inAbs = new FloatScalarAbs[0][1];
-        inRel = new FloatScalarRel[0][1];
+        inAbs = new FloatScalar.Abs[0][1];
+        inRel = new FloatScalar.Rel[0][1];
         try
         {
             if (absolute)
@@ -1284,10 +1282,10 @@ public abstract class FloatMatrixTest
         {
             // Ignore expected exception
         }
-        inAbs = new FloatScalarAbs[1][1];
-        inAbs[0][0] = new FloatScalarAbs<LengthUnit>(123.456f, LengthUnit.FOOT);
-        inRel = new FloatScalarRel[1][1];
-        inRel[0][0] = new FloatScalarRel<LengthUnit>(123.456f, LengthUnit.FOOT);
+        inAbs = new FloatScalar.Abs[1][1];
+        inAbs[0][0] = new FloatScalar.Abs<LengthUnit>(123.456f, LengthUnit.FOOT);
+        inRel = new FloatScalar.Rel[1][1];
+        inRel[0][0] = new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
             if (absolute)
@@ -1308,23 +1306,23 @@ public abstract class FloatMatrixTest
         {
             if (absolute)
             {
-                FloatScalarAbs<LengthUnit>[][] inv4 = new FloatScalarAbs[in4.length][];
+                FloatScalar.Abs<LengthUnit>[][] inv4 = new FloatScalar.Abs[in4.length][];
                 for (int i = 0; i < in4.length; i++)
                 {
-                    inv4[i] = new FloatScalarAbs[in4[i].length];
+                    inv4[i] = new FloatScalar.Abs[in4[i].length];
                     for (int j = 0; j < in4[i].length; j++)
-                        inv4[i][j] = new FloatScalarAbs<LengthUnit>(in4[i][j], LengthUnit.FOOT);
+                        inv4[i][j] = new FloatScalar.Abs<LengthUnit>(in4[i][j], LengthUnit.FOOT);
                 }
                 fm = createFloatMatrixAbs(inv4);
             }
             else
             {
-                FloatScalarRel<LengthUnit>[][] inv4 = new FloatScalarRel[in4.length][];
+                FloatScalar.Rel<LengthUnit>[][] inv4 = new FloatScalar.Rel[in4.length][];
                 for (int i = 0; i < in4.length; i++)
                 {
-                    inv4[i] = new FloatScalarRel[in4[i].length];
+                    inv4[i] = new FloatScalar.Rel[in4[i].length];
                     for (int j = 0; j < in4[i].length; j++)
-                        inv4[i][j] = new FloatScalarRel<LengthUnit>(in4[i][j], LengthUnit.FOOT);
+                        inv4[i][j] = new FloatScalar.Rel<LengthUnit>(in4[i][j], LengthUnit.FOOT);
                 }
                 fm = createFloatMatrixRel(inv4);
             }
@@ -1837,7 +1835,7 @@ public abstract class FloatMatrixTest
     public void floatMatrixRel2()
     {
         FloatMatrix<LengthUnit> fsa = null;
-        FloatScalarRel<LengthUnit>[][] in = new FloatScalarRel[0][0];
+        FloatScalar.Rel<LengthUnit>[][] in = new FloatScalar.Rel[0][0];
         try
         {
             fsa = createFloatMatrixRel(in);
@@ -1847,8 +1845,8 @@ public abstract class FloatMatrixTest
         {
             // Ignore expected exception
         }
-        in = new FloatScalarRel[1][1];
-        in[0][0] = new FloatScalarRel<LengthUnit>(123.456f, LengthUnit.FOOT);
+        in = new FloatScalar.Rel[1][1];
+        in[0][0] = new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
             fsa = new FloatMatrixRelDense<LengthUnit>(in);
@@ -1917,7 +1915,7 @@ public abstract class FloatMatrixTest
      * @return
      * @throws ValueException when the array is empty or not rectangular
      */
-    protected abstract <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalarAbs<U>[][] in)
+    protected abstract <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalar.Abs<U>[][] in)
             throws ValueException;
 
     /**
@@ -1936,7 +1934,7 @@ public abstract class FloatMatrixTest
      * @return
      * @throws ValueException when the array is empty or not rectangular
      */
-    protected abstract <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalarRel<U>[][] in)
+    protected abstract <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalar.Rel<U>[][] in)
             throws ValueException;
 
 }

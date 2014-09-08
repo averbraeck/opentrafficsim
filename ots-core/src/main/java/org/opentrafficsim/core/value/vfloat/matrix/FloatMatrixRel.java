@@ -3,7 +3,7 @@ package org.opentrafficsim.core.value.vfloat.matrix;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
@@ -52,7 +52,7 @@ public abstract class FloatMatrixRel<U extends Unit<U>> extends FloatMatrix<U> i
      * @param values
      * @throws ValueException
      */
-    public FloatMatrixRel(final FloatScalarRel<U>[][] values) throws ValueException
+    public FloatMatrixRel(final FloatScalar.Rel<U>[][] values) throws ValueException
     {
         super(values);
     }
@@ -67,9 +67,9 @@ public abstract class FloatMatrixRel<U extends Unit<U>> extends FloatMatrix<U> i
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#get(int, int)
      */
     @Override
-    public FloatScalarRel<U> get(final int row, final int column) throws ValueException
+    public FloatScalar.Rel<U> get(final int row, final int column) throws ValueException
     {
-        return new FloatScalarRel<U>(getInUnit(row, column, this.unit), this.unit);
+        return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
     }
 
 }
