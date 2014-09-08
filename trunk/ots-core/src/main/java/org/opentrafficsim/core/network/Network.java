@@ -198,7 +198,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         else{
             for(Node<?> n:this.nodeSet){
                 if (n instanceof ExpansionNode ){
-                 if (((ExpansionNode<?>) n).getNetwork().contains(node)){
+                 if (((ExpansionNode<?>) n).getNetwork().isInNetwork(node)){
                      return true;    
                  }
                 }
@@ -225,5 +225,75 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         } 
         
     } 
+    
+    /**
+     * @param node
+     * @return boolean
+     */
+    public boolean isInNetworkLevel(Node<?> node){
+        if ( this.nodeSet.contains(node)){return true;}
+        else {return false;}
+    }
+    
+    /**
+     * @param node
+     * @return network
+     * @throws NetworkException
+     */
+    public Network<?,?> getSubNetworkConsistNode (Node<?> node) throws NetworkException{
+        if (isInNetwork (node)) 
+        {
+            if (isInNetworkLevel(node)) {return this;}
+            else{
+                for(Node<?> n:this.nodeSet){
+                   if (n instanceof ExpansionNode ){
+                      if (((ExpansionNode<?>) n).getNetwork().isInNetworkLevel(node)){
+                            return getSubNetworkConsistNode(node);   
+                       }  
+                    }
+                 }       
+            }
+        }
+        else{ 
+            throw new NetworkException("The network does not contain the Node"+node.getNodeID().toString() +".");
+        }
+        return null;
+    }
+    
+    /**
+     * @param deleteThis
+     * @return boolean
+     * @throws NetworkException
+     */
+    public boolean deleteNode(Node<?> deleteThis) throws NetworkException{
+        if (isInNetwork(deleteThis))
+        {
+            if (isInNetworkLevel(deleteThis)){
+            this.nodeSet.remove(deleteThis);
+            return true;
+            }
+            else{
+                Network<?,?> n=getSubNetworkConsistNode(deleteThis);
+                n.remove(deleteThis);
+                return true;
+            }
+        }else{
+            throw new NetworkException("Deleting"+deleteThis.getNodeID().toString()+"is failed. Possible cause:"
+                    + " node is not a member of the given Network");
+        }
+    }
+    
+  /*  public boolean expandNode(Node<?> node) throws NetworkException{
+        if (expansionOfNode == null){
+            throw new NetworkException("This Node"+node.getNodeID().toString()+"is not able to expand.")
+        }
+        else{
+            
+        }
+    }
+    
+    public boolean collapseToNode(Network<?,?> node){
+        
+    }*/
      
 } // End of class
