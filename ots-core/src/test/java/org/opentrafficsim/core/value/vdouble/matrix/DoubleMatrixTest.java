@@ -747,15 +747,6 @@ public abstract class DoubleMatrixTest
         }
         double[][] singular = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
         fm = safeCreateDoubleMatrix(singular, LengthUnit.METER, absolute);
-        System.out.println("matrix is " + fm.toString());
-        if (fm instanceof SparseData)
-            System.out.println("(sparse)");
-        if (fm instanceof DenseData)
-            System.out.println("(dense)");
-        if (fm instanceof Absolute)
-            System.out.println("(absolute)");
-        if (fm instanceof Relative)
-            System.out.println("(relative)");
         try
         {
             assertEquals("Determinant should be 15", 15, fm.det(), 0.0001);

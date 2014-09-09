@@ -42,9 +42,16 @@ import cern.colt.matrix.tfloat.FloatMatrix1D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of this AbstractFloatVector
  */
-public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable, ReadOnlyFloatVectorFunctions<U>
+public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+        ReadOnlyFloatVectorFunctions<U>
 
 {
+    /** */
+    private static final long serialVersionUID = 20140828L;
+
+    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
+    protected FloatMatrix1D vectorSI;
+
     /**
      * @param unit
      */
@@ -53,12 +60,6 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
         super(unit);
         // System.out.println("Created AbstractFloatVector");
     }
-
-    /** */
-    private static final long serialVersionUID = 20140828L;
-
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
-    protected FloatMatrix1D vectorSI;
 
     /**
      * Import the values and convert them into SI units.
@@ -77,16 +78,6 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
             {
                 safeSet(index, (float) expressAsSIUnit(values[index]));
             }
-            /*- Alternative implementation that employs colt parallelism
-            this.vectorSI.assign(new FloatFunction()
-            {
-                @Override
-                public final float apply(float a)
-                {
-                    return (float) expressAsSIUnit(a);
-                }
-            });
-             */
         }
     }
 
@@ -108,7 +99,7 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
         this.vectorSI = createMatrix1D(values.length);
         for (int index = 0; index < values.length; index++)
         {
-            this.vectorSI.set(index, values[index].getValueSI());
+            safeSet(index, values[index].getValueSI());
         }
     }
 
@@ -118,25 +109,23 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
      * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
      */
     protected abstract FloatMatrix1D createMatrix1D(final int size);
-    
+
     /**
-     * @return values in SI units
+     * Create a float[] array filled with the values in SI unit.
+     * @return float[]; array of values in SI unit
      */
     public float[] getValuesSI()
     {
-        return this.vectorSI.toArray(); // makes a deep copy
+        return this.vectorSI.toArray(); // this makes a deep copy
     }
 
     /**
      * Create a float[] array filled with the values in the original unit.
-     * @return values in original units
+     * @return values in original unit
      */
     public float[] getValuesInUnit()
     {
-        float[] values = this.vectorSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            values[i] = (float) expressAsSpecifiedUnit(values[i]);
-        return values;
+        return getValuesInUnit(this.unit);
     }
 
     /**
@@ -162,8 +151,7 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
      */
     public float getSI(final int index) throws ValueException
     {
-        if (index < 0 || index >= this.vectorSI.size())
-            throw new ValueException("AbstractFloatVector.get: index<0 || index>=size. index=" + index + ", size=" + size());
+        checkIndex(index);
         return safeGet(index);
     }
 
@@ -245,9 +233,9 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
         {
             buf.append("Immutable ");
             if (this instanceof FloatVector.Dense.Abs)
-                buf.append("Dense Abs ");
+                buf.append("Dense  Abs ");
             else if (this instanceof FloatVector.Dense.Rel)
-                buf.append("Dense Rel ");
+                buf.append("Dense  Rel ");
             else if (this instanceof FloatVector.Sparse.Abs)
                 buf.append("Sparse Abs ");
             else if (this instanceof FloatVector.Sparse.Rel)
@@ -259,9 +247,9 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
         {
             buf.append("Mutable   ");
             if (this instanceof MutableFloatVector.Dense.Abs)
-                buf.append("Dense Abs ");
+                buf.append("Dense  Abs ");
             else if (this instanceof MutableFloatVector.Dense.Rel)
-                buf.append("Dense Rel ");
+                buf.append("Dense  Rel ");
             else if (this instanceof MutableFloatVector.Sparse.Abs)
                 buf.append("Sparse Abs ");
             else if (this instanceof MutableFloatVector.Sparse.Rel)
@@ -293,7 +281,7 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
 
     /**
      * Centralized size equality check.
-     * @param other FloatVector<U>; other FloatVector
+     * @param other float[]; array of float
      * @throws ValueException when vectors have unequal size
      */
     protected void checkSize(final float[] other) throws ValueException
@@ -303,9 +291,8 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
     }
 
     /**
-     * Check that a provided index is valid. TODO: if we can replace this Exception by an indexOutOfBoundsException this
-     * would be handled in colt.
-     * @param index
+     * Check that a provided index is valid. <br />
+     * @param index integer; the value to check
      * @throws ValueException
      */
     protected void checkIndex(final int index) throws ValueException
@@ -324,21 +311,7 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
     {
         return this.vectorSI.getQuick(index);
     }
-    
-    /**
-     * Build an array of the values of an array of FloatScalar.
-     * @param values FloatScalar[]; the array of FloatScalar
-     * @return float[]; array of float filled with the values.
-     * FIXME: this is not particularly efficient...
-     */
-    protected static float[] valueArrayOf(FloatScalar<?>[] values)
-    {
-        float[] result = new float[values.length];
-        for (int i = result.length; --i >= 0; )
-            result[i] = values[i].getValueInUnit();
-        return result;
-    }
-    
+
     /**
      * Modify a value in vectorSI without checking validity of the index.
      * @param index integer; the index
@@ -357,17 +330,18 @@ public abstract class AbstractFloatVector<U extends Unit<U>> extends AbstractVal
     {
         return this.vectorSI.copy();
     }
-    
+
     /**
      * Check that a provided array can be used to create some descendant of an AbstractFloatVector.
-     * @param fsArray FloatScalar; the provided array
-     * @return the provided array
+     * @param fsArray FloatScalar[]; the provided array
+     * @return FloatScalar[]; the provided array
      * @throws ValueException
      */
     protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(FloatScalar<U>[] fsArray) throws ValueException
     {
         if (0 == fsArray.length)
-            throw new ValueException("Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
+            throw new ValueException(
+                    "Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
         return fsArray;
     }
 
