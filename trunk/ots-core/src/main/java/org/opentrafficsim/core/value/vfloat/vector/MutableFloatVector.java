@@ -8,7 +8,6 @@ import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.WriteFloatVectorFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
@@ -152,7 +151,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -227,7 +226,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -322,7 +321,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -397,7 +396,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -419,7 +418,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
      */
     @Override
     public FloatScalar<U> get(int index) throws ValueException
@@ -459,7 +458,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * @see org.opentrafficsim.core.value.WriteFloatVectorFunctions#setSI(int, float)
+     * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#setSI(int, float)
      */
     @Override
     public void setSI(final int index, final float valueSI) throws ValueException
@@ -470,7 +469,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * @see org.opentrafficsim.core.value.WriteFloatVectorFunctions#set(int,
+     * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#set(int,
      *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
      */
     @Override
@@ -480,7 +479,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * @see org.opentrafficsim.core.value.WriteFloatVectorFunctions#setInUnit(int, float,
+     * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#setInUnit(int, float,
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override

@@ -1,34 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <interface id="1" language="java" name="org.opentrafficsim.core.value.Value" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/value/Value.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1496" y="618"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </interface>  
-  <class id="2" language="java" name="org.opentrafficsim.core.value.Matrix" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/value/Matrix.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="902" y="1156"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="3" language="java" name="org.opentrafficsim.core.value.Scalar" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/value/Scalar.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1493" y="895"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="4" language="java" name="org.opentrafficsim.core.value.AbstractValue" project="ots-core" 
+  <class id="1" language="java" name="org.opentrafficsim.core.value.AbstractValue" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/AbstractValue.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1067" y="908"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -37,7 +10,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.opentrafficsim.core.value.Vector" project="ots-core" 
+  <class id="2" language="java" name="org.opentrafficsim.core.value.Vector" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/Vector.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1168" y="1160"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -46,7 +19,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="6" language="java" name="org.opentrafficsim.core.value.MathFunctions" project="ots-core" 
+  <interface id="3" language="java" name="org.opentrafficsim.core.value.MathFunctions" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/MathFunctions.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1457" y="1477"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -55,7 +28,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="7" language="java" name="org.opentrafficsim.core.unit.Unit" project="ots-core" 
+  <class id="4" language="java" name="org.opentrafficsim.core.unit.Unit" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/unit/Unit.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1071" y="396"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -64,9 +37,10 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="8" language="java" name="org.opentrafficsim.core.value.VectorFunctions" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/value/VectorFunctions.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="5" language="java" name="org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions" 
+    project="ots-core" 
+    file="/ots-core/src/main/java/org/opentrafficsim/core/value/vfloat/vector/ReadOnlyFloatVectorFunctions.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1169" y="1426"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -74,7 +48,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <interface id="9" language="java" name="org.opentrafficsim.core.value.MatrixFunctions" project="ots-core" 
+  <interface id="6" language="java" name="org.opentrafficsim.core.value.MatrixFunctions" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/MatrixFunctions.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="902" y="1430"/>    
@@ -84,63 +58,18 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <realization id="10">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <association id="11">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="12" name="unit"/>      
-      <multiplicity id="13" minimum="0" maximum="1"/>    
+  <association id="7">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="8" name="unit"/>      
+      <multiplicity id="9" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="14">    
+  <generalization id="10">    
     <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <generalization id="15">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <realization id="16">    
-    <bendpoint x="1415" y="1168"/>    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <generalization id="17">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <association id="18">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="19" name="unit"/>      
-      <multiplicity id="20" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="21">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="8"/>  
-  </realization>  
-  <realization id="22">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <realization id="23">    
-    <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="1"/>  
-  </realization>  
-  <realization id="24">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </realization>  
-  <realization id="25">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
+  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.AbstractValue;
 import org.opentrafficsim.core.value.Format;
-import org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
