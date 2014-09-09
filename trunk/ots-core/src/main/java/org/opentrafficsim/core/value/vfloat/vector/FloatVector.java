@@ -65,12 +65,13 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
         private static final long serialVersionUID = 20140905L;
 
         /**
+         * Create a Dense.
          * @param unit
          */
         private Dense(U unit)
         {
             super(unit);
-            // System.out.println("Created Dense");
+            throw new Error("There is never a need to create a Dense");
         }
 
         /**
@@ -229,12 +230,13 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
         private static final long serialVersionUID = 20140905L;
 
         /**
+         * Create a Sparse
          * @param unit
          */
         private Sparse(U unit)
         {
             super(unit);
-            // System.out.println("Created Sparse");
+            throw new Error("There is never a need to create a Sparse");
         }
 
         /**

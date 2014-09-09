@@ -87,12 +87,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
         private static final long serialVersionUID = 20140905L;
 
         /**
+         * Create a Dense.
          * @param unit
          */
         private Dense(U unit)
         {
             super(unit);
-            // System.out.println("Created Dense");
+            throw new Error("There is never a need to create a Dense");
         }
 
         /**
@@ -131,7 +132,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             /**
              * @param values
              * @param unit
-             * @throws ValueException 
+             * @throws ValueException
              */
             public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
             {
@@ -206,7 +207,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             /**
              * @param values
              * @param unit
-             * @throws ValueException 
+             * @throws ValueException
              */
             public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
             {
@@ -256,12 +257,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
         private static final long serialVersionUID = 20140905L;
 
         /**
+         * Create a Sparse.
          * @param unit
          */
         private Sparse(U unit)
         {
             super(unit);
-            // System.out.println("Created Sparse");
+            throw new Error("There is never a need to create a Sparse");
         }
 
         /**
@@ -300,7 +302,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             /**
              * @param values
              * @param unit
-             * @throws ValueException 
+             * @throws ValueException
              */
             public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
             {
@@ -375,7 +377,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
             /**
              * @param values
              * @param unit
-             * @throws ValueException 
+             * @throws ValueException
              */
             public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
             {
@@ -430,13 +432,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * Make (immutable) FloatVector equivalent for any type of MutableFloatVector
-     * @return FloatVector public FloatVector<U> immutable() { if (this instanceof MutableFloatVector.Dense.Abs) return
-     *         ((MutableFloatVector.Dense.Abs<U>) this).immutable(); else if (this instanceof
-     *         MutableFloatVector.Dense.Rel) return ((MutableFloatVector.Dense.Rel<U>) this).immutable(); else if (this
-     *         instanceof MutableFloatVector.Sparse.Abs) return ((MutableFloatVector.Sparse.Abs<U>) this).immutable();
-     *         else if (this instanceof MutableFloatVector.Sparse.Rel) return ((MutableFloatVector.Sparse.Rel<U>)
-     *         this).immutable(); throw new Error("Cannot figure out subtype of this"); }
+     * Make (immutable) FloatVector equivalent for any type of MutableFloatVector.
+     * @return FloatVector
      */
     public abstract FloatVector<U> immutable();
 
@@ -449,13 +446,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * Check the copyOnWrite flag and, if it is set make a copy and clear the flag.
+     * Check the copyOnWrite flag and, if it is set make a deep copy of the data and clear the flag.
      */
     protected void checkCopyOnWrite()
     {
         if (this.copyOnWrite)
         {
-            //System.out.println("copyOnWrite is set: Copying data");
+            // System.out.println("copyOnWrite is set: Copying data");
             this.vectorSI = this.vectorSI.copy(); // makes a deep copy, using multithreading
             this.copyOnWrite = false;
         }
@@ -483,12 +480,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * @see org.opentrafficsim.core.value.WriteFloatVectorFunctions#setInUnit(int, float, org.opentrafficsim.core.unit.Unit)
+     * @see org.opentrafficsim.core.value.WriteFloatVectorFunctions#setInUnit(int, float,
+     *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
     public void setInUnit(final int index, final float value, final U valueUnit) throws ValueException
     {
-        // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do it...
+        // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do this...
         setSI(index, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());
     }
 

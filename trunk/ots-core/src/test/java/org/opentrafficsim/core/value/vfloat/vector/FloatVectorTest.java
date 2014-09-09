@@ -72,6 +72,7 @@ public abstract class FloatVectorTest
             in[i] = i / 3f;
         LengthUnit u = LengthUnit.FOOT;
         FloatVector<LengthUnit> fv = createFloatVector(in, u, absolute);
+        //System.out.println("fv: " + fv);
         assertEquals("FloatVector should have 12 elements", 12, fv.size());
         float[] out = fv.getValuesInUnit();
         for (int i = 0; i < in.length; i++)

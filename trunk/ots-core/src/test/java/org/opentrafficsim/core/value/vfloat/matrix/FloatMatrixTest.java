@@ -747,15 +747,6 @@ public abstract class FloatMatrixTest
         }
         float[][] singular = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
         fm = safeCreateFloatMatrix(singular, LengthUnit.METER, absolute);
-        System.out.println("matrix is " + fm.toString());
-        if (fm instanceof SparseData)
-            System.out.println("(sparse)");
-        if (fm instanceof DenseData)
-            System.out.println("(dense)");
-        if (fm instanceof Absolute)
-            System.out.println("(absolute)");
-        if (fm instanceof Relative)
-            System.out.println("(relative)");
         try
         {
             assertEquals("Determinant should be 15", 15, fm.det(), 0.0001);
@@ -1811,7 +1802,7 @@ public abstract class FloatMatrixTest
                 else
                     result = FloatMatrix.solve((FloatMatrixRelDense<LengthUnit>) aMatrix, bVector);
             }
-            System.out.println("unit of result is " + result.getUnit());
+            // System.out.println("unit of result is " + result.getUnit());
             assertEquals("result[0] should be -2", -2, result.getSI(0), 0.0001);
             assertEquals("result[1] should be 3", 3, result.getSI(1), 0.0001);
             assertEquals("result[2] should be 0", 0, result.getSI(2), 0.0001);
