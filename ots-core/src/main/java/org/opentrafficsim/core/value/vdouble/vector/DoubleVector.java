@@ -145,7 +145,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#size()
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#size()
      */
     public int size()
     {
@@ -221,7 +221,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#normalize()
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#normalize()
      */
     public void normalize() throws ValueException
     {
@@ -232,7 +232,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends Vector<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#cardinality()
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#cardinality()
      */
     @Override
     public int cardinality()

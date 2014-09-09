@@ -11,16 +11,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="org.opentrafficsim.core.value.Scalar" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/value/Scalar.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="212" x="414" y="-300"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <interface id="3" language="java" name="org.opentrafficsim.core.value.AbsoluteRelative" project="ots-core" 
+  <interface id="2" language="java" name="org.opentrafficsim.core.value.AbsoluteRelative" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/AbsoluteRelative.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="63" width="134" x="215" y="860"/>    
@@ -30,7 +21,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <interface id="4" language="java" name="org.opentrafficsim.core.value.Absolute" project="ots-core" 
+  <interface id="3" language="java" name="org.opentrafficsim.core.value.Absolute" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/Absolute.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="63" width="134" x="95" y="1017"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -39,7 +30,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="5" language="java" name="org.opentrafficsim.core.value.vfloat.scalar.FloatScalar" project="ots-core" 
+  <class id="4" language="java" name="org.opentrafficsim.core.value.vfloat.scalar.FloatScalar" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/vfloat/scalar/FloatScalar.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="909" width="372" x="208" y="-89"/>    
@@ -49,7 +40,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="6" language="java" name="org.opentrafficsim.core.value.Relative" project="ots-core" 
+  <interface id="5" language="java" name="org.opentrafficsim.core.value.Relative" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/Relative.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="63" width="134" x="302" y="1017"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -58,7 +49,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="7" language="java" name="org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel" project="ots-core" 
+  <class id="6" language="java" name="org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/vfloat/scalar/FloatScalarRel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="117" width="191" x="389" y="860"/>    
@@ -68,7 +59,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="8" language="java" name="org.opentrafficsim.core.value.vfloat.FloatMathFunctions" project="ots-core" 
+  <interface id="7" language="java" name="org.opentrafficsim.core.value.vfloat.FloatMathFunctions" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/vfloat/FloatMathFunctions.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="99" width="134" x="620" y="860"/>    
@@ -78,7 +69,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <interface id="9" language="java" name="org.opentrafficsim.core.value.MathFunctions" project="ots-core" 
+  <interface id="8" language="java" name="org.opentrafficsim.core.value.MathFunctions" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/value/MathFunctions.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="513" width="134" x="620" y="-89"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -87,46 +78,38 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
+  <realization id="9">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </realization>  
   <generalization id="10">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="5"/>  
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
   </generalization>  
   <generalization id="11">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <realization id="12">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="6"/>  
-  </realization>  
-  <generalization id="13">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <realization id="14">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <realization id="15">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="4"/>  
-  </realization>  
-  <generalization id="16">    
+  </generalization>  
+  <generalization id="12">    
     <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="17">    
-    <end type="SOURCE" refId="1"/>    
+  <generalization id="13">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <realization id="14">    
+    <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="5"/>  
-  </generalization>  
-  <realization id="18">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="8"/>  
   </realization>  
-  <generalization id="19">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="9"/>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="8"/>  
   </generalization>  
+  <realization id="16">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
+  </realization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

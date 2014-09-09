@@ -127,7 +127,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(final int index) throws ValueException
@@ -200,7 +200,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -292,7 +292,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -365,7 +365,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
             }
 
             /**
-             * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
              */
             @Override
             public FloatScalar<U> get(int index) throws ValueException
@@ -386,7 +386,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractFloatVector
     }
 
     /**
-     * @see org.opentrafficsim.core.value.ReadOnlyFloatVectorFunctions#get(int)
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
      */
     @Override
     public FloatScalar<U> get(int index) throws ValueException
