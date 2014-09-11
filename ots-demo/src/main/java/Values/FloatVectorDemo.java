@@ -42,45 +42,45 @@ public class FloatVectorDemo
      */
     public static void main(final String[] args)
     {
-        System.out.println("Creating FloatVector.Dense.Abs fda");
-        FloatVector.Dense.Abs<LengthUnit> fda =
-                new FloatVector.Dense.Abs<LengthUnit>(new float[]{1.0f, 2.0f, 3.0f}, LengthUnit.MILE);
-        System.out.println("fda:             " + fda.toString());
+        System.out.println("Creating FloatVector.Dense.Abs fad");
+        FloatVector.Abs.Dense<LengthUnit> fad =
+                new FloatVector.Abs.Dense<LengthUnit>(new float[]{1.0f, 2.0f, 3.0f}, LengthUnit.MILE);
+        System.out.println("fad:             " + fad.toString());
         
-        System.out.println("Creating FloatVector.Dense.Rel fdr");
-        FloatVector.Dense.Rel<LengthUnit> fdr =
-                new FloatVector.Dense.Rel<LengthUnit>(new float[]{4.0f, 5.0f, 6.0f}, LengthUnit.KILOMETER);
-        System.out.println("fdr:             " + fdr.toString());
+        System.out.println("Creating FloatVector.Dense.Rel frd");
+        FloatVector.Rel.Dense<LengthUnit> frd =
+                new FloatVector.Rel.Dense<LengthUnit>(new float[]{4.0f, 5.0f, 6.0f}, LengthUnit.KILOMETER);
+        System.out.println("frd:             " + frd.toString());
         
         System.out.println("Creating FloatVector.Dense.Abs fdsum by adding fdb to fda");
-        MutableFloatVector.Dense.Abs<LengthUnit> fdsum = null;
+        MutableFloatVector.Abs.Dense<LengthUnit> fadsum = null;
         try
         {
-            fdsum = MutableFloatVector.plus(fda, fdr);
+            fadsum = MutableFloatVector.plus(fad, frd);
         }
         catch (ValueException exception)
         {
             exception.printStackTrace();
         }
-        System.out.println("fdsum:           " + fdsum.toString());
+        System.out.println("fadsum:           " + fadsum.toString());
 
-        System.out.println("Creating MutableFloatVector.Dense.Abs mfda");
-        MutableFloatVector.Dense.Abs<TemperatureUnit> mfda =
-                new MutableFloatVector.Dense.Abs<TemperatureUnit>(new float[]{1.0f, 2.0f, 3.0f}, TemperatureUnit.KELVIN);
-        System.out.println("mfda:            " + mfda.toString());
-        System.out.println("Making immutable version ifda of mfda");
-        FloatVector.Dense.Abs<TemperatureUnit> ifda = mfda.immutable();
-        System.out.println("ifda:            " + ifda);
-        System.out.println("normalizing mfda");
+        System.out.println("Creating MutableFloatVector.Abs.Dense mfad");
+        MutableFloatVector.Abs.Dense<TemperatureUnit> mfad =
+                new MutableFloatVector.Abs.Dense<TemperatureUnit>(new float[]{1.0f, 2.0f, 3.0f}, TemperatureUnit.KELVIN);
+        System.out.println("mafa:            " + mfad.toString());
+        System.out.println("Making immutable version ifad of mfad");
+        FloatVector.Abs.Dense<TemperatureUnit> ifad = mfad.immutable();
+        System.out.println("ifad:            " + ifad);
+        System.out.println("normalizing mfad");
         try
         {
-            mfda.normalize();
+            mfad.normalize();
         }
         catch (ValueException exception)
         {
             exception.printStackTrace();
         }
-        System.out.println("normalized mfda: " + mfda.toString());
-        System.out.println("ifda:            " + ifda);
+        System.out.println("normalized mfad: " + mfad.toString());
+        System.out.println("ifad:            " + ifad);
     }
 }
