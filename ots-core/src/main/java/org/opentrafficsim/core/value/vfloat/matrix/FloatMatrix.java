@@ -1,16 +1,18 @@
 package org.opentrafficsim.core.value.vfloat.matrix;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.AbstractValue;
 import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
-import org.opentrafficsim.core.value.Matrix;
+import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
-import org.opentrafficsim.core.value.vfloat.FloatMathFunctionsImpl;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
 
@@ -21,13 +23,15 @@ import cern.colt.matrix.tfloat.algo.SparseFloatAlgebra;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
 import cern.colt.matrix.tfloat.impl.DenseFloatMatrix2D;
 import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
-import cern.jet.math.tfloat.FloatFunctions;
+import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
 
 /**
+ * Immutable float matrix.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -47,82 +51,364 @@ import cern.jet.math.tfloat.FloatFunctions;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 13, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> The unit for this value type
+ * @version Sep 9, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> Unit
  */
-public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implements FloatMathFunctions,
-        FloatMatrixFunctions<U>
+public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+        ReadOnlyFloatMatrixFunctions<U>
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse. */
+    /** */
+    private static final long serialVersionUID = 20140909L;
+
+    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
     protected FloatMatrix2D matrixSI;
 
     /**
-     * Check that a 2D array of float is rectangular; i.e. all rows have the same length.
-     * @param values float[][]; the 2D array to check
-     * @throws ValueException
+     * @param unit
      */
-    private static void ensureRectangular(final float[][] values) throws ValueException
-    {
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("Lengths of rows are not all the same");
-    }
-
-    /**
-     * Check that a 2D array of FloatScalar is rectangular; i.e. all rows have the same length.
-     * @param values FloatScalar[][]; the 2D array to check
-     * @throws ValueException
-     */
-    private static void ensureRectangular(final FloatScalar<?>[][] values) throws ValueException
-    {
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("lengths of rows are not all the same");
-    }
-
-    /**
-     * Check that two matrices have the same number of rows and columns.
-     * @param x FloatMatrix; matrix to size-compare to y
-     * @param y FloatMatrix; matrix to size-compare to x
-     * @throws ValueException
-     */
-    private static void ensureSameSize(final FloatMatrix<?> x, final FloatMatrix<?> y) throws ValueException
-    {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
-                    x.rows(), y.columns(), y.rows()));
-    }
-
-    /**
-     * Check that a FloatMatrix has the same size as a 2D array.
-     * @param x FloatMatrix; matrix to size-compare to c
-     * @param c float[][]; the 2D array to size-compare to x
-     * @throws ValueException
-     */
-    private static void ensureSameSize(final FloatMatrix<?> x, final float[][] c) throws ValueException
-    {
-        ensureRectangular(c);
-        if (x.rows() != c.length || x.columns() != c[0].length)
-            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
-                    x.rows(), c.length, c[0].length));
-    }
-
-    /**
-     * Construct the matrix and store the values in SI units.
-     * @param values a 2D array of values for the constructor
-     * @param unit the unit of the values
-     * @throws ValueException when the array is not rectangular
-     */
-    public FloatMatrix(final float[][] values, final U unit) throws ValueException
+    protected FloatMatrix(U unit)
     {
         super(unit);
+    }
+
+    /**
+     * @param <U> Unit
+     */
+    public abstract static class Abs<U extends Unit<U>> extends FloatMatrix<U> implements Absolute
+    {
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * Create a Abs.
+         * @param unit
+         */
+        protected Abs(U unit)
+        {
+            super(unit);
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only.
+             * @param values
+             * @param unit
+             */
+            protected Dense(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final float[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values);
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final FloatScalar.Abs<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Dense");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
+             */
+            public MutableFloatMatrix.Abs.Dense<U> mutable()
+            {
+                return new MutableFloatMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.Matrix.ReadOnlyFloatMatrixFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new FloatScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.AbstractFloatMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected FloatMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new DenseFloatMatrix2D(rows, columns);
+            }
+
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only
+             * @param values
+             * @param unit
+             */
+            protected Sparse(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * Create a Dense Relative Immutable FloatMatrix
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final float[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values);
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final FloatScalar.Abs<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Sparse");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
+             */
+            public MutableFloatMatrix.Abs.Sparse<U> mutable()
+            {
+                return new MutableFloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.Matrix.ReadOnlyFloatMatrixFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.AbstractFloatMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected FloatMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new DenseFloatMatrix2D(rows, columns);
+            }
+        }
+
+    }
+
+    /**
+     * @param <U> Unit
+     */
+    public abstract static class Rel<U extends Unit<U>> extends FloatMatrix<U> implements Relative
+    {
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * Create a Sparse
+         * @param unit
+         */
+        protected Rel(U unit)
+        {
+            super(unit);
+        }
+
+        /**
+         * @param <U>
+         */
+        public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only.
+             * @param values
+             * @param unit
+             */
+            protected Dense(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final float[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final FloatScalar.Rel<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Dense");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
+             */
+            public MutableFloatMatrix.Rel.Dense<U> mutable()
+            {
+                return new MutableFloatMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.Matrix.ReadOnlyFloatMatrixFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.AbstractFloatMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected FloatMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new SparseFloatMatrix2D(rows, columns);
+            }
+
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only
+             * @param values
+             * @param unit
+             */
+            protected Sparse(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * Create a new Sparse Relative Immutable FloatMatrix
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final float[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final FloatScalar.Rel<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Sparse");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
+             */
+            public MutableFloatMatrix.Rel.Sparse<U> mutable()
+            {
+                return new MutableFloatMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.Matrix.ReadOnlyFloatMatrixFunctions#get(int)
+             */
+            @Override
+            public FloatScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vfloat.matrix.AbstractFloatMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected FloatMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new SparseFloatMatrix2D(rows, columns);
+            }
+
+        }
+    }
+
+    /**
+     * Import the values and convert them into SI units.
+     * @param values an array of values
+     * @throws ValueException
+     */
+    protected void initialize(final float[][] values) throws ValueException
+    {
         ensureRectangular(values);
-        this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
-        if (unit.equals(unit.getStandardUnit()))
+        this.matrixSI = createMatrix2D(values.length, 0 == values.length ? 0 : values[0].length);
+        if (this.unit.equals(this.unit.getStandardUnit()))
         {
             this.matrixSI.assign(values);
         }
@@ -132,34 +418,33 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
             {
                 for (int column = 0; column < values[row].length; column++)
                 {
-                    this.matrixSI.set(row, column, (float) expressAsSIUnit(values[row][column]));
+                    safeSet(row, column, (float) expressAsSIUnit(values[row][column]));
                 }
             }
         }
     }
 
     /**
-     * Construct the matrix and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered or the array is not rectangular
+     * @param values
      */
-    public FloatMatrix(final FloatScalar<U>[][] values) throws ValueException
+    protected void initialize(final FloatMatrix2D values)
     {
-        super(values.length > 0 && values[0].length > 0 ? values[0][0].getUnit() : null);
-        ensureRectangular(values);
-        if (values.length == 0 || values[0].length == 0)
-        {
-            throw new ValueException(
-                    "FloatMatrix constructor called with an empty row or column of FloatScalar elements");
-        }
+        this.matrixSI = values;
+    }
 
+    /**
+     * Construct the vector and store the values in SI units.
+     * @param values float[][] a 2D array of values for the constructor
+     * @throws ValueException exception thrown when array with zero elements is offered
+     */
+    protected void initialize(final FloatScalar<U>[][] values) throws ValueException
+    {
+        ensureRectangularAndNonEmpty(values);
         this.matrixSI = createMatrix2D(values.length, values[0].length);
         for (int row = 0; row < values.length; row++)
         {
-            for (int column = 0; column < values[row].length; column++)
-            {
-                this.matrixSI.set(row, column, values[row][column].getValueSI());
-            }
+            for (int column = 0; column < values[0].length; column++)
+                safeSet(row, column, values[row][column].getValueSI());
         }
     }
 
@@ -167,82 +452,69 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * This method has to be implemented by each leaf class.
      * @param rows the number of rows in the matrix
      * @param columns the number of columns in the matrix
-     * @return an instance of the right type of matrix (absolute /relative, dense / sparse, etc.).
+     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
      */
     protected abstract FloatMatrix2D createMatrix2D(final int rows, final int columns);
 
     /**
-     * @return the Colt matrix.
-     */
-    public FloatMatrix2D getMatrixSI()
-    {
-        return this.matrixSI;
-    }
-
-    /**
-     * @return values in SI units
+     * Create a float[][] array filled with the values in SI unit.
+     * @return float[][]; array of values in SI unit
      */
     public float[][] getValuesSI()
     {
-        return this.matrixSI.toArray();
+        return this.matrixSI.toArray(); // this makes a deep copy
     }
 
     /**
-     * @return values in original units
+     * Create a float[][] array filled with the values in the original unit.
+     * @return values in original unit
      */
     public float[][] getValuesInUnit()
     {
-        float[][] values = this.matrixSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            for (int j = 0; j < values[i].length; j++)
-                values[i][j] = (float) expressAsSpecifiedUnit(values[i][j]);
-        return values;
+        return getValuesInUnit(this.unit);
     }
 
     /**
+     * Create a float[][] array filled with the values in the specified unit.
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
     public float[][] getValuesInUnit(final U targetUnit)
     {
         float[][] values = this.matrixSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            for (int j = 0; j < values[i].length; j++)
-                values[i][j] = (float) ValueUtil.expressAsUnit(values[i][j], targetUnit);
+        for (int row = 0; row < values.length; row++)
+            for (int column = 0; column < values[0].length; column++)
+                values[row][column] = (float) ValueUtil.expressAsUnit(values[row][column], targetUnit);
         return values;
     }
 
     /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#rows()
+     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#rows()
      */
-    @Override
     public int rows()
     {
         return this.matrixSI.rows();
     }
 
     /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#columns()
+     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#columns()
      */
-    @Override
     public int columns()
     {
         return this.matrixSI.columns();
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#getSI(int, int)
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getSI(int)
      */
     public float getSI(final int row, final int column) throws ValueException
     {
-        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
-            throw new ValueException("FloatMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
-                    + ", size=" + rows() + ", column=" + column + ", size=" + columns());
-        return this.matrixSI.get(row, column);
+        checkIndex(row, column);
+        return safeGet(row, column);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#getInUnit(int, int)
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int)
      */
     public float getInUnit(final int row, final int column) throws ValueException
     {
@@ -250,49 +522,16 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#getInUnit(int, int,
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int,
      *      org.opentrafficsim.core.unit.Unit)
      */
-    @Override
     public float getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
         return (float) ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#setSI(int, int, float)
-     */
-    @Override
-    public void setSI(final int row, final int column, final float valueSI) throws ValueException
-    {
-        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
-            throw new ValueException("FloatMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
-                    + ", size=" + rows() + ", column=" + column + ", size=" + columns());
-        this.matrixSI.set(row, column, valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#set(int, int,
-     *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
-     */
-    @Override
-    public void set(final int row, final int column, final FloatScalar<U> value) throws ValueException
-    {
-        setSI(row, column, value.getValueSI());
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#setInUnit(int, int, float,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
-    @Override
-    public void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
-    {
-        setSI(row, column, (float) ValueUtil.expressAsSIUnit(value, valueUnit));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#zSum()
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#zSum()
      */
     public float zSum()
     {
@@ -300,18 +539,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#normalize()
-     */
-    public void normalize() throws ValueException
-    {
-        float sum = this.zSum();
-        if (sum == 0)
-            throw new ValueException("FloatMatrix.normalize: zSum of the matrix values == 0, cannot normalize");
-        this.divide(sum);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#cardinality()
+     * @see org.opentrafficsim.core.value.vfloat.vectormut.Vectormut#cardinality()
      */
     @Override
     public int cardinality()
@@ -320,7 +548,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixFunctions#det()
+     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#det()
      */
     @Override
     public float det() throws ValueException
@@ -342,10 +570,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         catch (IllegalArgumentException exception)
         {
             if (!exception.getMessage().startsWith("Matrix must be square"))
-            {
                 exception.printStackTrace();
-                System.out.println("Offending matrix: " + this.matrixSI);
-            }
             throw new ValueException(exception.getMessage()); // probably Matrix must be square
         }
     }
@@ -359,274 +584,18 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
         // unequal if object is of a different type.
         if (!(obj instanceof FloatMatrix<?>))
             return false;
-        FloatMatrix<?> fm = (FloatMatrix<?>) obj;
+        FloatMatrix<?> fv = (FloatMatrix<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fm.getUnit().getStandardUnit()))
+        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
             return false;
 
         // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fm.isAbsolute() || this.isRelative() != fm.isRelative())
+        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
             return false;
 
-        // Colt's equals also tests the number of rows and columns
-        return this.matrixSI.equals(fm.matrixSI);
-    }
-
-    /**********************************************************************************/
-    /********************************** MATH METHODS **********************************/
-    /**********************************************************************************/
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#abs()
-     */
-    @Override
-    public void abs()
-    {
-        this.matrixSI.assign(FloatFunctions.abs);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#acos()
-     */
-    @Override
-    public void acos()
-    {
-        this.matrixSI.assign(FloatFunctions.acos);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#asin()
-     */
-    @Override
-    public void asin()
-    {
-        this.matrixSI.assign(FloatFunctions.asin);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#atan()
-     */
-    @Override
-    public void atan()
-    {
-        this.matrixSI.assign(FloatFunctions.atan);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
-     */
-    @Override
-    public void cbrt()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.cbrt);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#ceil()
-     */
-    @Override
-    public void ceil()
-    {
-        this.matrixSI.assign(FloatFunctions.ceil);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cos()
-     */
-    @Override
-    public void cos()
-    {
-        this.matrixSI.assign(FloatFunctions.cos);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cosh()
-     */
-    @Override
-    public void cosh()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.cosh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#exp()
-     */
-    @Override
-    public void exp()
-    {
-        this.matrixSI.assign(FloatFunctions.exp);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#expm1()
-     */
-    @Override
-    public void expm1()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.expm1);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#floor()
-     */
-    @Override
-    public void floor()
-    {
-        this.matrixSI.assign(FloatFunctions.floor);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log()
-     */
-    @Override
-    public void log()
-    {
-        this.matrixSI.assign(FloatFunctions.log);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log10()
-     */
-    @Override
-    public void log10()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.log10);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log1p()
-     */
-    @Override
-    public void log1p()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.log1p);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
-     */
-    @Override
-    public void pow(final double x)
-    {
-        this.matrixSI.assign(FloatFunctions.pow((float) x));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#rint()
-     */
-    @Override
-    public void rint()
-    {
-        this.matrixSI.assign(FloatFunctions.rint);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#round()
-     */
-    @Override
-    public void round()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.round);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#signum()
-     */
-    @Override
-    public void signum()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.signum);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sin()
-     */
-    @Override
-    public void sin()
-    {
-        this.matrixSI.assign(FloatFunctions.sin);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sinh()
-     */
-    @Override
-    public void sinh()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.sinh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
-     */
-    @Override
-    public void sqrt()
-    {
-        this.matrixSI.assign(FloatFunctions.sqrt);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tan()
-     */
-    @Override
-    public void tan()
-    {
-        this.matrixSI.assign(FloatFunctions.tan);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tanh()
-     */
-    @Override
-    public void tanh()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.tanh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
-     */
-    @Override
-    public void toDegrees()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.toDegrees);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
-     */
-    @Override
-    public void toRadians()
-    {
-        this.matrixSI.assign(FloatMathFunctionsImpl.toRadians);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#inv()
-     */
-    @Override
-    public void inv()
-    {
-        this.matrixSI.assign(FloatFunctions.inv);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
-     */
-    @Override
-    public void multiply(final float constant)
-    {
-        this.matrixSI.assign(FloatFunctions.mult(constant));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
-     */
-    @Override
-    public void divide(final float constant)
-    {
-        this.matrixSI.assign(FloatFunctions.div(constant));
+        // Colt's equals also tests the size of the vector
+        return this.matrixSI.equals(fv.matrixSI);
     }
 
     /**
@@ -639,333 +608,161 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
     }
 
     /**
-     * @param displayUnit the unit to display the matrix in.
-     * @return a printable String with the matrix contents
+     * Print this AbstractFloatVector with the values expressed in the specified unit.
+     * @param displayUnit the unit to display the vector in.
+     * @return a printable String with the vector contents
      */
     public String toString(final U displayUnit)
     {
         StringBuffer buf = new StringBuffer();
-        // TODO: check how to always format numbers corresponding to the Locale used.
-        buf.append("[" + displayUnit.getAbbreviation() + "]");
-        for (int i = 0; i < this.matrixSI.rows(); i++)
+        if (this instanceof MutableFloatMatrix)
         {
-            buf.append("\n");
-            for (int j = 0; j < this.matrixSI.columns(); j++)
+            buf.append("Mutable   ");
+            if (this instanceof MutableFloatMatrix.Abs.Dense)
+                buf.append("Abs Dense  ");
+            else if (this instanceof MutableFloatMatrix.Rel.Dense)
+                buf.append("Rel Dense  ");
+            else if (this instanceof MutableFloatMatrix.Abs.Sparse)
+                buf.append("Abs Sparse ");
+            else if (this instanceof MutableFloatMatrix.Rel.Sparse)
+                buf.append("Rel Sparse ");
+            else
+                buf.append("??? ");
+        }
+        else
+        {
+            buf.append("Immutable ");
+            if (this instanceof FloatMatrix.Abs.Dense)
+                buf.append("Abs Dense  ");
+            else if (this instanceof FloatMatrix.Rel.Dense)
+                buf.append("Rel Dense  ");
+            else if (this instanceof FloatMatrix.Abs.Sparse)
+                buf.append("Abs Sparse ");
+            else if (this instanceof FloatMatrix.Rel.Sparse)
+                buf.append("Rel Sparse ");
+            else
+                buf.append("??? ");
+        }
+        buf.append("[" + displayUnit.getAbbreviation() + "]");
+        for (int row = 0; row < this.matrixSI.rows(); row++)
+        {
+            buf.append("\r\n\t");
+            for (int column = 0; column < this.matrixSI.columns(); column++)
             {
-                float f = (float) ValueUtil.expressAsUnit(this.matrixSI.get(i, j), displayUnit);
+                float f = (float) ValueUtil.expressAsUnit(safeGet(row, column), displayUnit);
                 buf.append(" " + Format.format(f));
             }
         }
         return buf.toString();
     }
 
-    /**********************************************************************************/
-    /******************************* NON-STATIC METHODS *******************************/
-    /**********************************************************************************/
-
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
-     * is not allowed. Adding an absolute value to an existing relative value would require the result to become
-     * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param matrix the matrix to add
-     * @throws ValueException when matrices have unequal size
+     * Centralized size equality check.
+     * @param other FloatMatrix<U>; other FloatVector
+     * @throws ValueException when vectors have unequal size
      */
-    public void add(final FloatMatrixRel<U> matrix) throws ValueException
+    protected void checkSize(final FloatMatrix<?> other) throws ValueException
     {
-        ensureSameSize(this, matrix);
-        this.matrixSI.assign(matrix.matrixSI, FloatFunctions.plus);
+        if (rows() != other.rows() || columns() != other.columns())
+            throw new ValueException("The matrices have different sizes: " + rows() + "x" + columns() + " != "
+                    + other.rows() + "x" + other.columns());
     }
 
     /**
-     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
-     * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
-     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param matrix the value to subtract
-     * @throws ValueException when matrices have unequal size
+     * Centralized size equality check.
+     * @param other float[][]; array of float
+     * @throws ValueException when vectors have unequal size
      */
-    public void subtract(final FloatMatrixRel<U> matrix) throws ValueException
+    protected void checkSize(final float[][] other) throws ValueException
     {
-        ensureSameSize(this, matrix);
-        this.matrixSI.assign(matrix.matrixSI, FloatFunctions.minus);
+        if (rows() != other.length || columns() != other[0].length)
+            throw new ValueException("The vector and the array have different sizes: " + rows() + " != " + other.length);
+        ensureRectangular(other);
     }
 
-    /**********************************************************************************/
-    /********************************* STATIC METHODS *********************************/
-    /**********************************************************************************/
+    /**
+     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
+     * @param values float[][]; the 2D array to check
+     * @throws ValueException
+     */
+    private static void ensureRectangular(final float[][] values) throws ValueException
+    {
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("Lengths of rows are not all the same");
+    }
 
     /**
-     * Add a matrix with absolute values x and a matrix with relative values y. The target unit will be the unit of
-     * absolute value x.
-     * @param x absolute matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when matrices have unequal size
+     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
+     * @param values FloatScalar[][]; the 2D array to check
+     * @throws ValueException
      */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> plus(final FloatMatrixAbs<U> x, final FloatMatrixRel<U> y)
+    private static void ensureRectangularAndNonEmpty(final FloatScalar<?>[][] values) throws ValueException
+    {
+        if (0 == values.length || 0 == values[0].length)
+            throw new ValueException("Cannot determine unit for FloatMatrix from an empty array of FloatScalar");
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("Lengths of rows are not all the same");
+    }
+
+    /**
+     * Check that provided row and column indices are valid.
+     * @param row integer; the row value to check
+     * @param column integer; the column value to check
+     * @throws ValueException
+     */
+    protected void checkIndex(final int row, final int column) throws ValueException
+    {
+        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+            throw new ValueException("index out of range (valid range is 0.." + (this.matrixSI.rows() - 1) + ", 0.."
+                    + this.matrixSI.columns() + ", got " + row + ", " + column + ")");
+    }
+
+    /**
+     * Retrieve a value in vectorSI without checking validity of the index.
+     * @param row integer; the row where the value must be retrieved
+     * @param column integer; the column where the value must be retrieved
+     * @return float; the value stored at the indicated row and column
+     */
+    protected float safeGet(int row, int column)
+    {
+        return this.matrixSI.getQuick(row, column);
+    }
+
+    /**
+     * Modify a value in vectorSI without checking validity of the indices.
+     * @param row integer; the row where the value must be stored
+     * @param col integer; the column where the value must be stored
+     * @param valueSI float; the new value for the entry in vectorSI
+     */
+    protected void safeSet(final int row, final int column, final float valueSI)
+    {
+        this.matrixSI.setQuick(row, column, valueSI);
+    }
+
+    /**
+     * Create a deep copy of the data.
+     * @return FloatMatrix2D; deep copy of the data
+     */
+    protected FloatMatrix2D deepCopyOfData()
+    {
+        return this.matrixSI.copy();
+    }
+
+    /**
+     * Check that a provided array can be used to create some descendant of an AbstractFloatMatrix.
+     * @param fsArray FloatScalar[][]; the provided array
+     * @return FloatScalar[][]; the provided array
+     * @throws ValueException
+     */
+    protected static <U extends Unit<U>> FloatScalar<U>[][] checkNonEmpty(FloatScalar<U>[][] fsArray)
             throws ValueException
     {
-        ensureSameSize(x, y);
-        FloatMatrixAbs<U> c = x.copy();
-        c.add(y);
-        return c;
-    }
-
-    /**
-     * Add a matrix with relative values x and a matrix with absolute values y. The target unit will be the unit of
-     * absolute value y.
-     * @param x relative matrix 1
-     * @param y absolute matrix 2
-     * @param targetUnit unit in which the results will be displayed
-     * @return new Matrix with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> plus(final FloatMatrixRel<U> x, final FloatMatrixAbs<U> y)
-            throws ValueException
-    {
-        return plus(y, x);
-    }
-
-    /**
-     * Add a matrix with relative values x and a matrix with relative values y. The target unit will be the unit of
-     * relative value x.
-     * @param x relative matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixRel<U> plus(final FloatMatrixRel<U> x, final FloatMatrixRel<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        FloatMatrixRel<U> c = x.copy();
-        c.add(y);
-        return c;
-    }
-
-    /**
-     * Subtract a matrix with relative values y from a matrix with relative values x. The result is a matrix with
-     * relative values. The target unit will be the unit of relative value x.
-     * @param x relative matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements values x[i,j] minus y[i,j]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixRel<U> minus(final FloatMatrixRel<U> x, final FloatMatrixRel<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        FloatMatrixRel<U> c = x.copy();
-        c.subtract(y);
-        return c;
-    }
-
-    /**
-     * Subtract a matrix with relative values y from a matrix with absolute values x. The result is a matrix with
-     * absolute values. The target unit will be the unit of matrix x.
-     * @param x absolute matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements: values x[i,j] minus y[i,j]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> minus(final FloatMatrixAbs<U> x, final FloatMatrixRel<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        FloatMatrixAbs<U> c = x.copy();
-        c.subtract(y);
-        return c;
-    }
-
-    /**
-     * Subtract a matrix with absolute values y from a matrix with absolute values x. The result is a matrix with
-     * relative values. The target unit will be the unit of matrix x.
-     * @param x absolute matrix 1
-     * @param y absolute matrix 2
-     * @return new Matrix with relative elements: values x[i,j] minus y[i,j]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixRel<U> minus(final FloatMatrixAbs<U> x, final FloatMatrixAbs<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        FloatMatrixRel<U> c = null;
-        if (x instanceof DenseData)
-            c = new FloatMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else if (x instanceof SparseData)
-            c = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else
-            throw new ValueException("FloatMatrix.minus - matrix neither sparse nor dense");
-
-        c.matrixSI.assign(y.matrixSI, FloatFunctions.minus);
-        c.unit = x.unit;
-
-        return c;
-    }
-
-    /**
-     * Multiply two absolute matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the multiplication with
-     * @param y the second matrix to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static FloatMatrixAbs<SIUnit> multiply(final FloatMatrixAbs<?> x, final FloatMatrixAbs<?> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
-                        y.getUnit().getSICoefficients()).toString());
-
-        @SuppressWarnings("unchecked")
-        FloatMatrixAbs<SIUnit> c = (FloatMatrixAbs<SIUnit>) x.copy();
-        c.matrixSI.assign(y.matrixSI, FloatFunctions.mult);
-        c.unit = targetUnit;
-        return c;
-    }
-
-    /**
-     * Multiply two relative matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the multiplication with
-     * @param y the second matrix to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static FloatMatrixRel<SIUnit> multiply(final FloatMatrixRel<?> x, final FloatMatrixRel<?> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
-                        y.getUnit().getSICoefficients()).toString());
-
-        @SuppressWarnings("unchecked")
-        FloatMatrixRel<SIUnit> c = (FloatMatrixRel<SIUnit>) x.copy();
-        c.matrixSI.assign(y.matrixSI, FloatFunctions.mult);
-        c.unit = targetUnit;
-        return c;
-    }
-
-    /**
-     * Multiply an absolute matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
-     * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the multiplication with
-     * @param c the dimensionless matrix with constants to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixAbs<U> multiply(final FloatMatrixAbs<U> x, final float[][] c)
-            throws ValueException
-    {
-        ensureSameSize(x, c);
-        // TODO: more elegant implementation that does not copy the entire matrix?
-        FloatMatrixAbs<U> result = x.copy();
-        DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
-        result.matrixSI.assign(cMatrix, FloatFunctions.mult);
-        return result;
-    }
-
-    /**
-     * Multiply a relative matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
-     * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the multiplication with
-     * @param c the dimensionless matrix with constants to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static <U extends Unit<U>> FloatMatrixRel<U> multiply(final FloatMatrixRel<U> x, final float[][] c)
-            throws ValueException
-    {
-        ensureSameSize(x, c);
-        // TODO: more elegant implementation that does not copy the entire matrix?
-        FloatMatrixRel<U> result = x.copy();
-        DenseFloatMatrix2D cMatrix = new DenseFloatMatrix2D(c);
-        result.matrixSI.assign(cMatrix, FloatFunctions.mult);
-        return result;
-    }
-
-    /**
-     * Convert sparse matrix to dense matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> FloatMatrixAbsDense<U> sparseToDense(final FloatMatrixAbsSparse<U> x)
-    {
-        FloatMatrixAbsDense<U> v = null;
-        try
-        {
-            v = new FloatMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert sparse matrix to dense matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> FloatMatrixRelDense<U> sparseToDense(final FloatMatrixRelSparse<U> x)
-    {
-        FloatMatrixRelDense<U> v = null;
-        try
-        {
-            v = new FloatMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert dense matrix to sparse matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> FloatMatrixAbsSparse<U> denseToSparse(final FloatMatrixAbsDense<U> x)
-    {
-        FloatMatrixAbsSparse<U> v = null;
-        try
-        {
-            v = new FloatMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert dense matrix to sparse matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> FloatMatrixRelSparse<U> denseToSparse(final FloatMatrixRelDense<U> x)
-    {
-        FloatMatrixRelSparse<U> v = null;
-        try
-        {
-            v = new FloatMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
+        if (0 == fsArray.length || 0 == fsArray[0].length)
+            throw new ValueException(
+                    "Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
+        return fsArray;
     }
 
     /**
@@ -976,8 +773,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
      * @return vector x in A*x = b
      * @throws ValueException when Matrix A is neither Sparse nor Dense.
      */
-    public static FloatVector<SIUnit> solve(final FloatMatrixAbs<?> A, final FloatVector<?> b)
-            throws ValueException
+    public static FloatVector<SIUnit> solve(final FloatMatrix<?> A, final FloatVector<?> b) throws ValueException
     {
         // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
         SIUnit targetUnit =
@@ -985,57 +781,38 @@ public abstract class FloatMatrix<U extends Unit<U>> extends Matrix<U> implement
                         A.getUnit().getSICoefficients()).toString());
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        FloatMatrix2D A2D = A.getMatrixSI();
+        FloatMatrix2D A2D = A.matrixSI;
         if (A instanceof SparseData)
         {
             SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());
             FloatMatrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);
-            FloatVector.Sparse.Abs<SIUnit> x = new FloatVector.Sparse.Abs<SIUnit>(x1D.toArray(), targetUnit);
+            FloatVector.Abs.Sparse<SIUnit> x = new FloatVector.Abs.Sparse<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         if (A instanceof DenseData)
         {
             DenseFloatMatrix1D b1D = new DenseFloatMatrix1D(b.getValuesSI());
             FloatMatrix1D x1D = new DenseFloatAlgebra().solve(A2D, b1D);
-            FloatVector.Dense.Abs<SIUnit> x = new FloatVector.Dense.Abs<SIUnit>(x1D.toArray(), targetUnit);
+            FloatVector.Abs.Dense<SIUnit> x = new FloatVector.Abs.Dense<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
     /**
-     * Solve x for A*x = b. According to Colt: x; a new independent matrix; solution if A is square, least squares
-     * solution if A.rows() > A.columns(), underdetermined system solution if A.rows() < A.columns().
-     * @param A matrix A in A*x = b
-     * @param b vector b in A*x = b
-     * @return vector x in A*x = b
-     * @throws ValueException when Matrix A is neither Sparse nor Dense.
+     * Create a mutable version of this FloatMatrix. <br />
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * @return MutableFloatMatrix; mutable version of this FloatMatrix
      */
-    public static FloatVector<SIUnit> solve(final FloatMatrixRel<?> A, final FloatVector<?> b)
-            throws ValueException
-    {
-        // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(b.getUnit().getSICoefficients(),
-                        A.getUnit().getSICoefficients()).toString());
+    public abstract MutableFloatMatrix<U> mutable();
 
-        // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        FloatMatrix2D A2D = A.getMatrixSI();
-        if (A instanceof SparseData)
-        {
-            SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());
-            FloatMatrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);
-            FloatVector.Sparse.Rel<SIUnit> x = new FloatVector.Sparse.Rel<SIUnit>(x1D.toArray(), targetUnit);
-            return x;
-        }
-        if (A instanceof DenseData)
-        {
-            DenseFloatMatrix1D b1D = new DenseFloatMatrix1D(b.getValuesSI());
-            FloatMatrix1D x1D = new DenseFloatAlgebra().solve(A2D, b1D);
-            FloatVector.Dense.Rel<SIUnit> x = new FloatVector.Dense.Rel<SIUnit>(x1D.toArray(), targetUnit);
-            return x;
-        }
-        throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+    /**
+     * @see org.opentrafficsim.core.value.Value#copy()
+     */
+    public FloatMatrix<U> copy()
+    {
+        return this; // That was easy!
     }
 
 }
