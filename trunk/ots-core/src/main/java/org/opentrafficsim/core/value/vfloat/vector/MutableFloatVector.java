@@ -47,7 +47,7 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of this MutableFloatVector
  */
-public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloatVector<U> implements
+public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements
         WriteFloatVectorFunctions<U>, FloatMathFunctions
 {
     /** */
@@ -73,32 +73,31 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
         checkCopyOnWrite();
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
-            safeSet(i, this.vectorSI.get(i) / sum);
+            safeSet(i, safeGet(i) / sum);
         }
     }
 
     /**
      * @param <U> Unit
      */
-    public abstract static class Dense<U extends Unit<U>> extends MutableFloatVector<U> implements DenseData
+    public abstract static class Abs<U extends Unit<U>> extends MutableFloatVector<U> implements Absolute
     {
         /** */
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Dense.
+         * Create an Abs.
          * @param unit
          */
-        private Dense(U unit)
+        protected Abs(U unit)
         {
             super(unit);
-            throw new Error("There is never a need to create a Dense");
         }
 
         /**
          * @param <U> Unit
          */
-        public static class Abs<U extends Unit<U>> extends MutableFloatVector<U> implements Absolute
+        public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
         {
             /** */
             private static final long serialVersionUID = 20140905L;
@@ -108,23 +107,23 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param values
              * @param unit
              */
-            protected Abs(final FloatMatrix1D values, final U unit)
+            protected Dense(final FloatMatrix1D values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Abs");
+                // System.out.println("Created Dense");
                 this.copyOnWrite = true;
                 initialize(values); // shallow copy
             }
 
             /**
-             * Create a new Dense Absolute Mutable FloatVector
+             * Create a new Absolute Dense Mutable FloatVector
              * @param values
              * @param unit
              */
-            public Abs(final float[] values, final U unit)
+            public Dense(final float[] values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Abs");
+                // System.out.println("Created Dense");
                 initialize(values);
             }
 
@@ -133,10 +132,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException
              */
-            public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
+            public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
-                // System.out.println("Created Abs");
+                // System.out.println("Created Dense");
                 initialize(values);
             }
 
@@ -144,19 +143,19 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * Create an immutable version
              * @return Dense Absolute Immutable FloatVector
              */
-            public FloatVector.Dense.Abs<U> immutable()
+            public FloatVector.Abs.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
-                return new FloatVector.Dense.Abs<U>(this.vectorSI, this.unit);
+                return new FloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
-            @Override
-            public FloatScalar<U> get(int index) throws ValueException
+            public MutableFloatVector.Abs.Dense<U> mutable()
             {
-                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+                this.copyOnWrite = true;
+                return new MutableFloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
 
             /**
@@ -173,7 +172,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
         /**
          * @param <U> Unit
          */
-        public static class Rel<U extends Unit<U>> extends MutableFloatVector<U> implements Relative
+        public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
         {
             /** */
             private static final long serialVersionUID = 20140905L;
@@ -183,7 +182,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param values
              * @param unit
              */
-            protected Rel(final FloatMatrix1D values, final U unit)
+            protected Sparse(final FloatMatrix1D values, final U unit)
             {
                 super(unit);
                 // System.out.println("Created Rel");
@@ -196,7 +195,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param values
              * @param unit
              */
-            public Rel(final float[] values, final U unit)
+            public Sparse(final float[] values, final U unit)
             {
                 super(unit);
                 // System.out.println("Created Rel");
@@ -208,7 +207,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException
              */
-            public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
+            public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Rel");
@@ -217,21 +216,21 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
 
             /**
              * Create an immutable version.
-             * @return Dense Relative Immutable FloatVector
+             * @return Absolute Dense Immutable FloatVector
              */
-            public FloatVector.Dense.Rel<U> immutable()
+            public FloatVector.Abs.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
-                return new FloatVector.Dense.Rel<U>(this.vectorSI, this.unit);
+                return new FloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
-            @Override
-            public FloatScalar<U> get(int index) throws ValueException
+            public MutableFloatVector.Abs.Sparse<U> mutable()
             {
-                return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
+                this.copyOnWrite = true;
+                return new MutableFloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
             }
 
             /**
@@ -245,30 +244,38 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
 
         }
 
+        /**
+         * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
+         */
+        @Override
+        public FloatScalar.Abs<U> get(int index) throws ValueException
+        {
+            return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+        }
+
     }
 
     /**
      * @param <U> Unit
      */
-    public abstract static class Sparse<U extends Unit<U>> extends MutableFloatVector<U> implements SparseData
+    public abstract static class Rel<U extends Unit<U>> extends MutableFloatVector<U> implements Relative
     {
         /** */
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Sparse.
+         * Create a Relative.
          * @param unit
          */
-        private Sparse(U unit)
+        protected Rel(U unit)
         {
             super(unit);
-            throw new Error("There is never a need to create a Sparse");
         }
 
         /**
          * @param <U> Unit
          */
-        public static class Abs<U extends Unit<U>> extends MutableFloatVector<U> implements Absolute
+        public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
             /** */
             private static final long serialVersionUID = 20140905L;
@@ -278,10 +285,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param values
              * @param unit
              */
-            protected Abs(final FloatMatrix1D values, final U unit)
+            protected Dense(final FloatMatrix1D values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Abs");
+                // System.out.println("Created Dense");
                 this.copyOnWrite = true;
                 initialize(values); // shallow copy
             }
@@ -291,10 +298,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param values
              * @param unit
              */
-            public Abs(final float[] values, final U unit)
+            public Dense(final float[] values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Abs");
+                // System.out.println("Created Dense");
                 initialize(values);
             }
 
@@ -303,10 +310,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException
              */
-            public Abs(final FloatScalar.Abs<U>[] values) throws ValueException
+            public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
-                // System.out.println("Created Abs");
+                // System.out.println("Created Dense");
                 initialize(values);
             }
 
@@ -314,19 +321,19 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * Create an immutable version.
              * @return Sparse Absolute Immutable FloatVector
              */
-            public FloatVector.Sparse.Abs<U> immutable()
+            public FloatVector.Rel.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
-                return new FloatVector.Sparse.Abs<U>(this.vectorSI, this.unit);
+                return new FloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
-            @Override
-            public FloatScalar<U> get(int index) throws ValueException
+            public MutableFloatVector.Rel.Dense<U> mutable()
             {
-                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+                this.copyOnWrite = true;
+                return new MutableFloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
             }
 
             /**
@@ -343,7 +350,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
         /**
          * @param <U> Unit
          */
-        public static class Rel<U extends Unit<U>> extends MutableFloatVector<U> implements Relative
+        public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
         {
             /** */
             private static final long serialVersionUID = 20140905L;
@@ -353,23 +360,23 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param values
              * @param unit
              */
-            protected Rel(final FloatMatrix1D values, final U unit)
+            protected Sparse(final FloatMatrix1D values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Rel");
+                // System.out.println("Created Sparse");
                 this.copyOnWrite = true;
                 initialize(values); // shallow copy
             }
 
             /**
-             * Create a new Sparse Relative Mutable FloatVector.
+             * Create a new Relative Sparse Mutable FloatVector.
              * @param values
              * @param unit
              */
-            public Rel(final float[] values, final U unit)
+            public Sparse(final float[] values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Rel");
+                // System.out.println("Created Sparse");
                 initialize(values);
             }
 
@@ -378,10 +385,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * @param unit
              * @throws ValueException
              */
-            public Rel(final FloatScalar.Rel<U>[] values) throws ValueException
+            public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
-                // System.out.println("Created Rel");
+                // System.out.println("Created Sparse");
                 initialize(values);
             }
 
@@ -389,19 +396,19 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
              * Create an immutable version.
              * @return Sparse Relative Immutable FloatVector
              */
-            public FloatVector.Sparse.Rel<U> immutable()
+            public FloatVector.Rel.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
-                return new FloatVector.Sparse.Rel<U>(this.vectorSI, this.unit);
+                return new FloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
-            @Override
-            public FloatScalar<U> get(int index) throws ValueException
+            public MutableFloatVector.Rel.Sparse<U> mutable()
             {
-                return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+                this.copyOnWrite = true;
+                return new MutableFloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
 
             /**
@@ -415,17 +422,26 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
 
         }
 
+        /**
+         * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
+         */
+        @Override
+        public FloatScalar.Rel<U> get(int index) throws ValueException
+        {
+            return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
+        }
+
     }
 
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
      */
     @Override
-    public FloatScalar<U> get(int index) throws ValueException
+    public FloatScalar<U> get(final int index) throws ValueException
     {
-        if (this instanceof MutableFloatVector.Dense.Abs || this instanceof MutableFloatVector.Sparse.Abs)
+        if (this instanceof MutableFloatVector.Abs)
             return new FloatScalar.Abs<U>(getInUnit(index), this.unit);
-        else if (this instanceof MutableFloatVector.Dense.Rel || this instanceof MutableFloatVector.Sparse.Rel)
+        else if (this instanceof MutableFloatVector.Rel)
             return new FloatScalar.Rel<U>(getInUnit(index), this.unit);
         throw new Error("Cannot figure out subtype of this");
     }
@@ -752,13 +768,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * Increment the values in this MutableFloatVector by the corresponding values in an AbstractFloatVector.
-     * @param increment AbstractFloatVector; contains the amounts by which to increment the corresponding entries in
-     *            this MutableFloatVector
+     * Increment the values in this MutableFloatVector by the corresponding values in a FloatVector.
+     * @param increment FloatVector; contains the amounts by which to increment the corresponding entries in this
+     *            MutableFloatVector
      * @return this
      * @throws ValueException
      */
-    private MutableFloatVector<U> incrementValueByValue(AbstractFloatVector<U> increment) throws ValueException
+    private MutableFloatVector<U> incrementValueByValue(FloatVector<U> increment) throws ValueException
     {
         checkSizeAndCopyOnWrite(increment);
         for (int index = this.size(); --index >= 0;)
@@ -767,35 +783,24 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * Increment the entries in this MutableFloatVector by the corresponding values in a Dense Relative FloatVector
+     * Increment the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector
      * @param rel
      * @return this
      * @throws ValueException
      */
-    public MutableFloatVector<U> incrementBy(FloatVector.Dense.Rel<U> rel) throws ValueException
+    public MutableFloatVector<U> incrementBy(FloatVector.Rel<U> rel) throws ValueException
     {
         return incrementValueByValue(rel);
     }
 
     /**
-     * Increment the entries in this MutableFloatVector by the corresponding values in a Sparse Relative FloatVector
-     * @param rel
+     * Decrement the values in this MutableFloatVector by the corresponding values in a FloatVector.
+     * @param decrement FloatVector; contains the amounts by which to decrement the corresponding entries in this
+     *            MutableFloatVector
      * @return this
      * @throws ValueException
      */
-    public MutableFloatVector<U> incrementBy(FloatVector.Sparse.Rel<U> rel) throws ValueException
-    {
-        return incrementValueByValue(rel);
-    }
-
-    /**
-     * Decrement the values in this MutableFloatVector by the corresponding values in an AbstractFloatVector.
-     * @param decrement AbstractFloatVector; contains the amounts by which to decrement the corresponding entries in
-     *            this MutableFloatVector
-     * @return this
-     * @throws ValueException
-     */
-    private MutableFloatVector<U> decrementValueByValue(AbstractFloatVector<U> decrement) throws ValueException
+    private MutableFloatVector<U> decrementValueByValue(FloatVector<U> decrement) throws ValueException
     {
         checkSizeAndCopyOnWrite(decrement);
         for (int index = this.size(); --index >= 0;)
@@ -804,56 +809,34 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Dense Relative FloatVector
+     * Decrement the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector
      * @param rel
      * @return this
      * @throws ValueException
      */
-    public MutableFloatVector<U> decrementBy(FloatVector.Dense.Rel<U> rel) throws ValueException
+    public MutableFloatVector<U> decrementBy(FloatVector.Rel<U> rel) throws ValueException
     {
         return decrementValueByValue(rel);
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Sparse Relative FloatVector
-     * @param rel
-     * @return this
-     * @throws ValueException
-     */
-    public MutableFloatVector<U> decrementBy(FloatVector.Sparse.Rel<U> rel) throws ValueException
-    {
-        return decrementValueByValue(rel);
-    }
-
-    /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Dense Relative FloatVector
+     * Decrement the entries in this MutableFloatVector by the corresponding values in a Absolute FloatVector
      * @param abs
      * @return this
      * @throws ValueException
      */
-    public MutableFloatVector<U> decrementBy(FloatVector.Dense.Abs<U> abs) throws ValueException
+    public MutableFloatVector<U> decrementBy(FloatVector.Abs<U> abs) throws ValueException
     {
         return decrementValueByValue(abs);
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Sparse Relative FloatVector
-     * @param abs
-     * @return this
-     * @throws ValueException
-     */
-    public MutableFloatVector<U> decrementBy(FloatVector.Sparse.Abs<U> abs) throws ValueException
-    {
-        return decrementValueByValue(abs);
-    }
-
-    /**
-     * Scale the values in this MutableFloatVector by the corresponding values in an AbstractFloatVector.
-     * @param factor AbstractFloatVector; contains the values by which to scale the corresponding entries in this
+     * Scale the values in this MutableFloatVector by the corresponding values in a FloatVector.
+     * @param factor FloatVector; contains the values by which to scale the corresponding entries in this
      *            MutableFloatVector
      * @throws ValueException
      */
-    public void scaleValueByValue(AbstractFloatVector<?> factor) throws ValueException
+    public void scaleValueByValue(FloatVector<?> factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int index = this.size(); --index >= 0;)
@@ -879,7 +862,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
      * @param other AbstractFloatVector; partner for the size check
      * @throws ValueException
      */
-    private void checkSizeAndCopyOnWrite(AbstractFloatVector<?> other) throws ValueException
+    private void checkSizeAndCopyOnWrite(FloatVector<?> other) throws ValueException
     {
         checkSize(other);
         checkCopyOnWrite();
@@ -898,394 +881,275 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
 
     /**
      * Add two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Dense Absolute Mutable FloatVector
+     * @param left Absolute Dense FloatVector
+     * @param right Relative FloatVector
+     * @return new Absolute Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Abs<U> plus(final FloatVector.Dense.Abs<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Dense<U> left,// tweede
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Abs<U>) left.mutable().incrementBy(right);
+        return (MutableFloatVector.Abs.Dense<U>) left.mutable().incrementBy(right);
     }
 
     /**
      * Add two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Sparse Absolute Mutable FloatVector
+     * @param left Absolute Sparse FloatVector
+     * @param right Relative Dense FloatVector
+     * @return new Absolute Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Abs<U> plus(final FloatVector.Sparse.Abs<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Sparse<U> left,
+            final FloatVector.Rel.Dense<U> right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Abs<U>) left.mutable().incrementBy(right);
+        return (MutableFloatVector.Abs.Dense<U>) sparseToDense(left).incrementBy(right);
     }
 
     /**
      * Add two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Dense Absolute Mutable FloatVector
+     * @param left Absolute Sparse FloatVector
+     * @param right Relative FloatVector
+     * @return new Absolute Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Abs<U> plus(final FloatVector.Dense.Abs<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> plus(final FloatVector.Abs.Sparse<U> left,
+            final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Abs<U>) left.mutable().incrementBy(right);
+        return (MutableFloatVector.Abs.Sparse<U>) left.mutable().incrementBy(right);
     }
 
     /**
      * Add two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Sparse Absolute Mutable FloatVector
+     * @param left Relative Dense FloatVector
+     * @param right Relative FloatVector
+     * @return new Absolute Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Abs<U> plus(final FloatVector.Sparse.Abs<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> plus(final FloatVector.Rel.Dense<U> left,// eerste
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Abs<U>) left.mutable().incrementBy(right);
+        return (MutableFloatVector.Rel.Dense<U>) left.mutable().incrementBy(right);
     }
 
     /**
      * Add two FloatVectors entry by entry
-     * @param left Dense Relative FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Dense Absolute Mutable FloatVector
+     * @param left Relative Sparse FloatVector
+     * @param right Relative FloatVector
+     * @return new Relative Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> plus(final FloatVector.Dense.Rel<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> plus(final FloatVector.Rel.Sparse<U> left,
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Rel<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two FloatVectors entry by entry
-     * @param left Sparse Relative FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Sparse Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> plus(final FloatVector.Sparse.Rel<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Sparse.Rel<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two FloatVectors entry by entry
-     * @param left Dense Relative FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Dense Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> plus(final FloatVector.Dense.Rel<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Dense.Rel<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two FloatVectors entry by entry
-     * @param left Sparse Relative FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Sparse Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> plus(final FloatVector.Sparse.Rel<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Sparse.Rel<U>) left.mutable().incrementBy(right);
+        return (MutableFloatVector.Rel.Sparse<U>) left.mutable().incrementBy(right);
     }
 
     /**
      * Subtract two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Dense Absolute FloatVector
-     * @return new Dense Relative Mutable FloatVector
+     * @param left Absolute Dense FloatVector
+     * @param right Absolute FloatVector
+     * @return new Relative Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> minus(final FloatVector.Dense.Abs<U> left,
-            final FloatVector.Dense.Abs<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
+            final FloatVector.Abs<U> right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Rel<U>) new MutableFloatVector.Dense.Rel<U>(left.deepCopyOfData(),
+        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(),
                 left.getUnit()).decrementBy(right);
     }
 
     /**
      * Subtract two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Sparse Absolute FloatVector
-     * @return new Sparse Relative Mutable FloatVector
+     * @param left Absolute Sparse FloatVector
+     * @param right Absolute FloatVector
+     * @return new Relative Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> minus(final FloatVector.Sparse.Abs<U> left,
-            final FloatVector.Sparse.Abs<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
+            final FloatVector.Abs<U> right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Rel<U>) new MutableFloatVector.Sparse.Rel<U>(left.deepCopyOfData(),
+        return (MutableFloatVector.Rel.Sparse<U>) new MutableFloatVector.Rel.Sparse<U>(left.deepCopyOfData(),
                 left.getUnit()).decrementBy(right);
     }
 
     /**
      * Subtract two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Sparse Absolute FloatVector
-     * @return new Dense Relative Mutable FloatVector
+     * @param left Absolute Dense FloatVector
+     * @param right Relative FloatVector
+     * @return new Relative Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> minus(final FloatVector.Dense.Abs<U> left,
-            final FloatVector.Sparse.Abs<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Rel<U>) new MutableFloatVector.Dense.Rel<U>(left.deepCopyOfData(),
-                left.getUnit()).decrementBy(right);
+        return (MutableFloatVector.Abs.Dense<U>) left.mutable().decrementBy(right);
     }
 
     /**
      * Subtract two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Dense Absolute FloatVector
-     * @return new Sparse Relative Mutable FloatVector
+     * @param left Absolute Sparse FloatVector
+     * @param right Relative FloatVector
+     * @return new Absolute Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> minus(final FloatVector.Sparse.Abs<U> left,
-            final FloatVector.Dense.Abs<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Rel<U>) new MutableFloatVector.Dense.Rel<U>(left.deepCopyOfData(),
-                left.getUnit()).decrementBy(right);
+        return (MutableFloatVector.Abs.Sparse<U>) left.mutable().decrementBy(right);
     }
 
     /**
      * Subtract two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Dense Relative Mutable FloatVector
+     * @param left Relative Dense FloatVector
+     * @param right Relative FloatVector
+     * @return new Relative Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Abs<U> minus(final FloatVector.Dense.Abs<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Rel.Dense<U> left,
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Abs<U>) left.mutable().decrementBy(right);
+        return (MutableFloatVector.Rel.Dense<U>) left.mutable().decrementBy(right);
     }
 
     /**
      * Subtract two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Sparse Absolute Mutable FloatVector
+     * @param left Relative Sparse FloatVector
+     * @param right Relative FloatVector
+     * @return new Relative Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Abs<U> minus(final FloatVector.Sparse.Abs<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Rel.Sparse<U> left,
+            final FloatVector.Rel<U> right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Abs<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Dense Absolute Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Abs<U> minus(final FloatVector.Dense.Abs<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Dense.Abs<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Sparse Absolute Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Abs<U> minus(final FloatVector.Sparse.Abs<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Sparse.Abs<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatVectors entry by entry
-     * @param left Dense Relative FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Dense Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> minus(final FloatVector.Dense.Rel<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Dense.Rel<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatVectors entry by entry
-     * @param left Sparse Relative FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Sparse Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> minus(final FloatVector.Sparse.Rel<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Sparse.Rel<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatVectors entry by entry
-     * @param left Dense Relative FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Dense Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> minus(final FloatVector.Dense.Rel<U> left,
-            final FloatVector.Sparse.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Dense.Rel<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatVectors entry by entry
-     * @param left Sparse Relative FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Sparse Relative Mutable FloatVector
-     * @throws ValueException
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> minus(final FloatVector.Sparse.Rel<U> left,
-            final FloatVector.Dense.Rel<U> right) throws ValueException
-    {
-        return (MutableFloatVector.Sparse.Rel<U>) left.mutable().decrementBy(right);
+        return (MutableFloatVector.Rel.Sparse<U>) left.mutable().decrementBy(right);
     }
 
     /**
      * Multiply two FloatVectors entry by entry
-     * @param left Dense Absolute FloatVector
-     * @param right Dense Absolute FloatVector
-     * @return new Dense Absolute Mutable FloatVector
+     * @param left Absolute Dense FloatVector
+     * @param right Absolute FloatVector
+     * @return new Absolute Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static MutableFloatVector.Dense.Abs<SIUnit> times(final FloatVector.Dense.Abs<?> left,
-            final FloatVector.Dense.Abs<?> right) throws ValueException
+    public static MutableFloatVector.Abs.Dense<SIUnit> times(final FloatVector.Abs.Dense<?> left,
+            final FloatVector.Abs<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Dense.Abs<SIUnit> work =
-                new MutableFloatVector.Dense.Abs<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Abs.Dense<SIUnit> work =
+                new MutableFloatVector.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
      * Multiply two FloatVectors entry by entry
-     * @param left Dense Relative FloatVector
-     * @param right Dense Relative FloatVector
-     * @return new Dense Relative Mutable FloatVector
+     * @param left Relative Dense FloatVector
+     * @param right Relative FloatVector
+     * @return new Relative Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static MutableFloatVector.Dense.Rel<SIUnit> times(final FloatVector.Dense.Rel<?> left,
-            final FloatVector.Dense.Rel<?> right) throws ValueException
+    public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left,
+            final FloatVector.Rel<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Dense.Rel<SIUnit> work =
-                new MutableFloatVector.Dense.Rel<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Rel.Dense<SIUnit> work =
+                new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
      * Multiply two FloatVectors entry by entry
-     * @param left Sparse Absolute FloatVector
-     * @param right Sparse Absolute FloatVector
-     * @return new Sparse Absolute Mutable FloatVector
+     * @param left Absolute Sparse FloatVector
+     * @param right Absolute FloatVector
+     * @return new XAbsolute Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static MutableFloatVector.Sparse.Abs<SIUnit> times(final FloatVector.Sparse.Abs<?> left,
-            final FloatVector.Sparse.Abs<?> right) throws ValueException
+    public static MutableFloatVector.Abs.Sparse<SIUnit> times(final FloatVector.Abs.Sparse<?> left,
+            final FloatVector.Abs<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Sparse.Abs<SIUnit> work =
-                new MutableFloatVector.Sparse.Abs<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Abs.Sparse<SIUnit> work =
+                new MutableFloatVector.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
      * Multiply two FloatVectors entry by entry
-     * @param left Sparse Relative FloatVector
-     * @param right Sparse Relative FloatVector
-     * @return new Sparse Relative Mutable FloatVector
+     * @param left Relative Sparse FloatVector
+     * @param right Relative FloatVector
+     * @return new Relative Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static MutableFloatVector.Sparse.Rel<SIUnit> times(final FloatVector.Sparse.Rel<?> left,
-            final FloatVector.Sparse.Rel<?> right) throws ValueException
+    public static MutableFloatVector.Rel.Sparse<SIUnit> times(final FloatVector.Rel.Sparse<?> left,
+            final FloatVector.Rel<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Sparse.Rel<SIUnit> work =
-                new MutableFloatVector.Sparse.Rel<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Rel.Sparse<SIUnit> work =
+                new MutableFloatVector.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Dense Absolute FloatVector
+     * @param left Absolute Dense FloatVector
      * @param right float[]
      * @return new Dense Absolute Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Abs<U> times(final FloatVector.Dense.Abs<U> left,
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> times(final FloatVector.Abs.Dense<U> left,
             final float[] right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Abs<U>) left.mutable().scaleValueByValue(right);
+        return (MutableFloatVector.Abs.Dense<U>) left.mutable().scaleValueByValue(right);
     }
 
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Dense Relative FloatVector
+     * @param left Relative Dense FloatVector
      * @param right float[]
-     * @return new Dense Relative Mutable FloatVector
+     * @return new Relative Dense Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> times(final FloatVector.Dense.Rel<U> left,
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> times(final FloatVector.Rel.Dense<U> left,
             final float[] right) throws ValueException
     {
-        return (MutableFloatVector.Dense.Rel<U>) left.mutable().scaleValueByValue(right);
+        return (MutableFloatVector.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
     }
 
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Sparse Absolute FloatVector
+     * @param left Absolute Sparse FloatVector
      * @param right float[]
-     * @return new Sparse Absolute Mutable FloatVector
+     * @return new Absolute Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Abs<U> times(final FloatVector.Sparse.Abs<U> left,
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> times(final FloatVector.Abs.Sparse<U> left,
             final float[] right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Abs<U>) left.mutable().scaleValueByValue(right);
+        return (MutableFloatVector.Abs.Sparse<U>) left.mutable().scaleValueByValue(right);
     }
 
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Sparse Relative FloatVector
+     * @param left Relative Sparse FloatVector
      * @param right float[]
-     * @return new Sparse Relative Mutable FloatVector
+     * @return new Relative Sparse Mutable FloatVector
      * @throws ValueException
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> times(final FloatVector.Sparse.Rel<U> left,
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> times(final FloatVector.Rel.Sparse<U> left,
             final float[] right) throws ValueException
     {
-        return (MutableFloatVector.Sparse.Rel<U>) left.mutable().scaleValueByValue(right);
+        return (MutableFloatVector.Rel.Sparse<U>) left.mutable().scaleValueByValue(right);
     }
 
     /**
@@ -1302,22 +1166,22 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
 
     /**
      * Create a Sparse version of this Dense FloatVector. <br />
-     * @param in FloatVector.Dense.Abs the Dense FloatVector
-     * @return MutableFloatVector.Sparse.Abs
+     * @param in FloatVector.Abs.Dense the Dense FloatVector
+     * @return MutableFloatVector.Abs.Sparse
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Abs<U> denseToSparse(final FloatVector.Dense.Abs<U> in)
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> denseToSparse(final FloatVector.Abs.Dense<U> in)
     {
-        return new MutableFloatVector.Sparse.Abs<U>(makeSparse(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Abs.Sparse<U>(makeSparse(in.vectorSI), in.getUnit());
     }
 
     /**
      * Create a Sparse version of this Dense FloatVector. <br />
-     * @param in FloatVector.Dense.Abs the Dense FloatVector
-     * @return MutableFloatVector.Sparse.Abs
+     * @param in FloatVector.Rel.Dense the Dense FloatVector
+     * @return MutableFloatVector.Rel.Sparse
      */
-    public static <U extends Unit<U>> MutableFloatVector.Sparse.Rel<U> denseToSparse(final FloatVector.Dense.Rel<U> in)
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> denseToSparse(final FloatVector.Rel.Dense<U> in)
     {
-        return new MutableFloatVector.Sparse.Rel<U>(makeSparse(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Rel.Sparse<U>(makeSparse(in.vectorSI), in.getUnit());
     }
 
     /**
@@ -1334,22 +1198,22 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends AbstractFloa
 
     /**
      * Create a Dense version of this Sparse FloatVector. <br />
-     * @param in FloatVector.Dense.Abs the Dense FloatVector
-     * @return MutableFloatVector.Sparse.Abs
+     * @param in FloatVector.Abs.Dense the Dense FloatVector
+     * @return MutableFloatVector.Abs.Sparse
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Abs<U> sparseToDense(final FloatVector.Sparse.Abs<U> in)
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> sparseToDense(final FloatVector.Abs.Sparse<U> in)
     {
-        return new MutableFloatVector.Dense.Abs<U>(makeDense(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Abs.Dense<U>(makeDense(in.vectorSI), in.getUnit());
     }
 
     /**
      * Create a Dense version of this Sparse FloatVector. <br />
-     * @param in FloatVector.Dense.Abs the Dense FloatVector
-     * @return MutableFloatVector.Sparse.Abs
+     * @param in FloatVector.Rel.Dense the Dense FloatVector
+     * @return MutableFloatVector.Rel.Sparse
      */
-    public static <U extends Unit<U>> MutableFloatVector.Dense.Rel<U> sparseToDense(final FloatVector.Sparse.Rel<U> in)
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> sparseToDense(final FloatVector.Rel.Sparse<U> in)
     {
-        return new MutableFloatVector.Dense.Rel<U>(makeDense(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Rel.Dense<U>(makeDense(in.vectorSI), in.getUnit());
     }
 
 }

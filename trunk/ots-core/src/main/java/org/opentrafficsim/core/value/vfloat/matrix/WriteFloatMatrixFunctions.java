@@ -1,10 +1,11 @@
-package org.opentrafficsim.core.value.vfloat.vector;
+package org.opentrafficsim.core.value.vfloat.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
+ * Methods that modify the data stored in a matrix.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -29,48 +30,44 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 19, 2014 <br>
+ * @version Sep 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> Unit of the matrix
  */
-public class FloatVectorSparseTest extends FloatVectorTest
+public interface WriteFloatMatrixFunctions<U extends Unit<U>>
 {
+    /**
+     * Store a value in a cell of this matrix.
+     * @param row integer; row of the entry where the value must be stored
+     * @param column integer; column of the entry where the value must be store
+     * @param valueSI the value to store in the cell
+     * @throws ValueException if row or column is invalid.
+     */
+    void setSI(int row, int column, float valueSI) throws ValueException;
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVector(float[],
-     *      org.opentrafficsim.core.unit.Unit)
+     * Store a value in a cell of this matrix.
+     * @param row integer; row of the entry where the value must be stored
+     * @param column integer; column of the entry where the value must be store
+     * @param value FloatScalar; the value to store in the cell
+     * @throws ValueException if row or column is invalid.
      */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(float[] in, U u)
-    {
-        return new FloatVector.Abs.Sparse<U>(in, u);
-    }
+    void set(int row, int column, FloatScalar<U> value) throws ValueException;
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalar.Abs[])
+     * Store a value in a cell of this matrix.
+     * @param row integer; row of the entry where the value must be stored
+     * @param column integer; column of the entry where the value must be store
+     * @param value float; the value to store in the cell
+     * @param valueUnit U; the unit of the provided value
+     * @throws ValueException if row or column is invalid.
      */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(FloatScalar.Abs<U>[] in) throws ValueException
-    {
-        return new FloatVector.Abs.Sparse<U>(in);
-    }
+    void setInUnit(int row, int column, float value, U valueUnit) throws ValueException;
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVector(float[],
-     *      org.opentrafficsim.core.unit.Unit)
+    /** 
+     * normalize the matrix, i.e. make the sum of all elements equal to 1.
+     * @throws ValueException if the sum of the values is zero, and normalization is not possible
      */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(float[] in, U u)
-    {
-        return new FloatVector.Rel.Sparse<U>(in, u);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[])
-     */
-    @Override
-    protected <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(FloatScalar.Rel<U>[] in) throws ValueException
-    {
-        return new FloatVector.Rel.Sparse<U>(in);
-    }
+    void normalize() throws ValueException;
 
 }

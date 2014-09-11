@@ -14,6 +14,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.MassUnit;
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
+import org.opentrafficsim.core.unit.TemperatureUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.unit.UnitException;
 import org.opentrafficsim.core.value.Absolute;
@@ -24,8 +25,6 @@ import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 import org.opentrafficsim.core.value.vfloat.vector.FloatVector;
-
-import cern.colt.matrix.tfloat.FloatMatrix2D;
 
 /**
  * <p>
@@ -65,6 +64,258 @@ public abstract class FloatMatrixTest
     {
         floatMatrixTwoArgs(true); // test absolute version
         floatMatrixTwoArgs(false); // test relative version
+    }
+
+    /**
+     * Check that the values in a FloatMatrix match with the values in a 2D float array.
+     * @param fm FloatMatrix; the FloatMatrix to match
+     * @param reference float[][]; the 2D float array
+     * @param precision float; the maximum allowed error
+     * @param expectAbsolute boolean; if true; the FloatMatrix should be Absolute; otherwise it should be Relative
+     * @param expectDense boolean; if true; the FloatMatrix should be Dense; otherwise it should be Sparse
+     */
+    private static void checkContentsAndType(FloatMatrix<?> fm, float[][] reference, float precision,
+            boolean expectAbsolute, boolean expectDense)
+    {
+        assertTrue("FloatMatrix argument should not be null", null != fm);
+        assertEquals("Number of rows should match", fm.rows(), reference.length);
+        assertEquals("Number of columns should match", fm.columns(), reference[0].length);
+        for (int row = 0; row < fm.rows(); row++)
+            for (int column = 0; column < fm.columns(); column++)
+                try
+                {
+                    assertEquals("Value should match", reference[row][column], fm.getInUnit(row, column), precision);
+                }
+                catch (ValueException exception)
+                {
+                    fail("Unexpected exception");
+                }
+        if (expectAbsolute)
+            assertTrue("FloatMatrix argument should be Absolute", fm instanceof Absolute);
+        else
+            assertTrue("FloatMatrix argument should be Relative", fm instanceof Relative);
+        if (expectDense)
+            assertTrue("FloatMatrix argument should be Dense", fm instanceof DenseData);
+        else
+            assertTrue("FloatMatrix argument should be Sparse", fm instanceof SparseData);
+        MutableFloatMatrix<?> mutableVersion = fm.mutable();
+        try
+        {
+            mutableVersion.setSI(0, 0, mutableVersion.getSI(0, 0) + 10);
+            assertTrue("Value in mutable version is changed", mutableVersion.getSI(0, 0) != fm.getSI(0, 0));
+        }
+        catch (ValueException exception)
+        {
+            fail("Unexpected exception");
+        }
+        for (int row = 0; row < fm.rows(); row++)
+            for (int column = 0; column < fm.columns(); column++)
+                try
+                {
+                    assertEquals("Value should still match", reference[row][column], fm.getInUnit(row, column),
+                            precision);
+                }
+                catch (ValueException exception)
+                {
+                    fail("Unexpected exception");
+                }
+        if (fm instanceof MutableFloatMatrix)
+        {
+            MutableFloatMatrix<?> mfm = (MutableFloatMatrix<?>) fm;
+            FloatMatrix<?> immutableVersion = mfm.immutable();
+            try
+            {
+                mfm.setSI(0, 0, mfm.getSI(0, 0) + 10);
+                assertTrue("Only the value in the mutable version is changed", mfm.getSI(0, 0) != reference[0][0]);
+                assertEquals("Value in the immutable version still matches the reference", reference[0][0],
+                        immutableVersion.getSI(0, 0), precision);
+            }
+            catch (ValueException exception)
+            {
+                fail("Unexpected exception");
+            }
+        }
+    }
+
+    /**
+     * Check that the four creators of MutableFloatMatrix work
+     */
+    @SuppressWarnings({"static-method", "unused"})
+    @Test
+    public void mutableFloatMatrixCreators()
+    {
+        float[][] data = buildArray(5, 7, false, 0);
+        try
+        {
+            checkContentsAndType(new FloatMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true, true);
+            checkContentsAndType(new FloatMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true,
+                    false);
+            checkContentsAndType(new FloatMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false,
+                    true);
+            checkContentsAndType(new FloatMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false,
+                    false);
+            checkContentsAndType(new MutableFloatMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
+                    true, true);
+            checkContentsAndType(new MutableFloatMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
+                    true, false);
+            checkContentsAndType(new MutableFloatMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
+                    false, true);
+            checkContentsAndType(new MutableFloatMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
+                    false, false);
+        }
+        catch (ValueException exception)
+        {
+            fail("Correctly formed data array should not throw an exception");
+        }
+        data = buildArray(3, 8, true, 2);
+        try
+        {
+            new FloatMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new FloatMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new FloatMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new FloatMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT);
+            fail("Non-rectangular data should have thrown a valueException");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        @SuppressWarnings("unchecked")
+        FloatScalar.Abs<TemperatureUnit>[][] emptyAbsMatrix = new FloatScalar.Abs[0][0];
+        @SuppressWarnings("unchecked")
+        FloatScalar.Rel<TemperatureUnit>[][] emptyRelMatrix = new FloatScalar.Rel[0][0];
+        try
+        {
+            new FloatMatrix.Abs.Dense<TemperatureUnit>(emptyAbsMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new FloatMatrix.Abs.Sparse<TemperatureUnit>(emptyAbsMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new FloatMatrix.Rel.Dense<TemperatureUnit>(emptyRelMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new FloatMatrix.Rel.Sparse<TemperatureUnit>(emptyRelMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Abs.Dense<TemperatureUnit>(emptyAbsMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Abs.Sparse<TemperatureUnit>(emptyAbsMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Rel.Dense<TemperatureUnit>(emptyRelMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
+        try
+        {
+            new MutableFloatMatrix.Rel.Sparse<TemperatureUnit>(emptyRelMatrix);
+            fail("Empty array should have thrown an exception");
+        }
+        catch (ValueException exception)
+        {
+            // ignore
+        }
     }
 
     /**
@@ -122,7 +373,7 @@ public abstract class FloatMatrixTest
         String output = fm.toString(LengthUnit.MILLIMETER);
         String[] lines = output.split("[\n]");
         assertEquals("Number of lines should be number of rows + 1", in.length + 1, lines.length);
-        assertEquals("first line should contain unit in brackers", "[mm]", lines[0]);
+        assertTrue("first line should contain unit in brackers", lines[0].contains("[mm]"));
         for (int i = 1; i < lines.length; i++)
         {
             String[] fields = lines[i].trim().split("[ ]+");
@@ -137,7 +388,7 @@ public abstract class FloatMatrixTest
         output = fm.toString();
         lines = output.split("[\n]");
         assertEquals("Number of lines should be number of rows + 1", in.length + 1, lines.length);
-        assertEquals("first line should contain unit in brackers", "[ft]", lines[0]);
+        assertTrue("first line should contain unit in brackers", lines[0].contains("[ft]"));
         for (int i = 1; i < lines.length; i++)
         {
             String[] fields = lines[i].trim().split("[ ]+");
@@ -150,30 +401,6 @@ public abstract class FloatMatrixTest
             }
         }
 
-        FloatMatrix2D fm2d;
-        if (fm instanceof FloatMatrixAbsDense)
-            fm2d = ((FloatMatrixAbsDense<LengthUnit>) fm).getColtDenseFloatMatrix2D();
-        else if (fm instanceof FloatMatrixRelDense)
-            fm2d = ((FloatMatrixRelDense<LengthUnit>) fm).getColtDenseFloatMatrix2D();
-        else if (fm instanceof FloatMatrixAbsSparse)
-            fm2d = ((FloatMatrixAbsSparse<LengthUnit>) fm).getColtSparseFloatMatrix2D();
-        else if (fm instanceof FloatMatrixRelSparse)
-            fm2d = ((FloatMatrixRelSparse<LengthUnit>) fm).getColtSparseFloatMatrix2D();
-        else
-            throw new Error("Matrix neither Dense nor Sparse");
-        assertTrue("ColtMatrix1D should not be null", null != fm2d);
-        assertEquals("Size of Colt matrix should be number of cells", in.length * in[0].length, fm2d.size());
-        for (int i = 0; i < in.length; i++)
-            for (int j = 0; j < in[i].length; j++)
-                assertEquals("Contents of Colt matrix should be SI equivalent of input", in[i][j] * (12 * 0.0254),
-                        fm2d.getQuick(i, j), 0.001);
-        fm2d = fm.getMatrixSI();
-        assertTrue("MatrixSI should not be null", null != fm2d);
-        assertEquals("Size of MatrixSI should be number of cells", in.length * in[0].length, fm2d.size());
-        for (int i = 0; i < in.length; i++)
-            for (int j = 0; j < in[i].length; j++)
-                assertEquals("Contents of MatrixSI should be SI equivalent of input", in[i][j] * (12 * 0.0254),
-                        fm2d.getQuick(i, j), 0.001);
         float[][] valuesInUnit = fm.getValuesInUnit();
         assertTrue("valuesInUnit should not be null", null != valuesInUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInUnit.length);
@@ -296,9 +523,10 @@ public abstract class FloatMatrixTest
         {
             // ignore
         }
+        MutableFloatMatrix<LengthUnit> mfm = fm.mutable();
         try
         {
-            fm.setSI(-1, 0, 12345f);
+            mfm.setSI(-1, 0, 12345f);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception1)
@@ -307,7 +535,7 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            fm.setSI(in.length, 0, 12345f);
+            mfm.setSI(in.length, 0, 12345f);
             fail("Using an index that is too big should throw a ValueException");
         }
         catch (ValueException exception1)
@@ -316,7 +544,7 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            fm.setSI(0, -1, 12345f);
+            mfm.setSI(0, -1, 12345f);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception1)
@@ -325,7 +553,7 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            fm.setSI(0, in[0].length, 12345f);
+            mfm.setSI(0, in[0].length, 12345f);
             fail("Using an index that is too big should throw a ValueException");
         }
         catch (ValueException exception1)
@@ -341,18 +569,7 @@ public abstract class FloatMatrixTest
                         / (12 * 0.0254), 0.001);
         LengthUnit uOut = fm.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
-        FloatMatrix<LengthUnit> copy = null;
-        if (fm instanceof FloatMatrixAbs<?>)
-        {
-            copy = ((FloatMatrixAbs<LengthUnit>) fm).copy();
-        }
-        else if (fm instanceof FloatMatrixRel<?>)
-        {
-            copy = ((FloatMatrixRel<LengthUnit>) fm).copy();
-        }
-        else
-            fail("Matrix neither Absolute nor Relative");
-
+        FloatMatrix<LengthUnit> copy = fm.copy();
         assertEquals("copy should have 12 rows", 12, copy.rows());
         assertEquals("copy should have 3 columns", 3, copy.columns());
         float[][] copyOut = copy.getValuesSI();
@@ -365,16 +582,17 @@ public abstract class FloatMatrixTest
             for (int j = 0; j < in[i].length; j++)
                 assertEquals("Values in copy of FloatMatrix in unit should be equal to input values", in[i][j],
                         copyOut[i][j], 0.001);
+        MutableFloatMatrix<LengthUnit> mcopy = copy.mutable();
         try
         {
-            copy.setSI(0, 0, 12345f);
-            assertEquals("value should be altered", 12345f, copy.getSI(0, 0), 0.01);
+            mcopy.setSI(0, 0, 12345f);
+            assertEquals("value should be altered", 12345f, mcopy.getSI(0, 0), 0.01);
             assertEquals("original value should not be altered", out[0][0], fm.getSI(0, 0), 0.001);
-            FloatScalar<LengthUnit> value = copy.get(1, 0);
+            FloatScalar<LengthUnit> value = mcopy.get(1, 0);
             assertTrue("value cannot be null", null != value);
-            assertEquals("value should be same as SI value", copy.getSI(1, 0), value.getValueSI(), 0.0001);
-            copy.set(2, 0, value);
-            assertEquals("value should be same as SI value", copy.getSI(2, 0), value.getValueSI(), 0.0001);
+            assertEquals("value should be same as SI value", mcopy.getSI(1, 0), value.getValueSI(), 0.0001);
+            mcopy.set(2, 0, value);
+            assertEquals("value should be same as SI value", mcopy.getSI(2, 0), value.getValueSI(), 0.0001);
         }
         catch (ValueException exception)
         {
@@ -382,8 +600,8 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            copy.setInUnit(1, 0, 321, LengthUnit.HECTOMETER);
-            assertEquals("321 hectometer is 32100m", copy.getSI(1, 0), 32100, 0.001);
+            mcopy.setInUnit(1, 0, 321, LengthUnit.HECTOMETER);
+            assertEquals("321 hectometer is 32100m", mcopy.getSI(1, 0), 32100, 0.001);
         }
         catch (ValueException exception)
         {
@@ -397,10 +615,10 @@ public abstract class FloatMatrixTest
         assertEquals("zsum should be sum of the values", sum, fm.zSum(), 0.01);
         try
         {
-            fm.normalize();
+            mfm.normalize();
             for (int i = 0; i < in.length; i++)
                 for (int j = 0; j < in[i].length; j++)
-                    assertEquals("Unexpected normalized value", in[i][j] * (12 * 0.0254) / sum, fm.getSI(i, j), 0.0001);
+                    assertEquals("Unexpected normalized value", in[i][j] * (12 * 0.0254) / sum, mfm.getSI(i, j), 0.0001);
         }
         catch (ValueException exception)
         {
@@ -408,63 +626,54 @@ public abstract class FloatMatrixTest
         }
         assertEquals("Cardinality should be 35", 35, fm.cardinality());
         float[][] in2 = {{1f, -1f, 0f}};
-        fm = safeCreateFloatMatrix(in2, u, absolute);
-        assertEquals("Cardinality should be 2", 2, fm.cardinality());
-        assertEquals("zSum should be 0", 0, fm.zSum(), 0.00001);
+        mfm = safeCreateFloatMatrix(in2, u, absolute).mutable();
+        assertEquals("Cardinality should be 2", 2, mfm.cardinality());
+        assertEquals("zSum should be 0", 0, mfm.zSum(), 0.00001);
         try
         {
-            fm.normalize();
+            mfm.normalize();
             fail("Should have thrown a ValueException");
         }
         catch (ValueException exception)
         {
             // ignore
         }
-        assertEquals("Cardinality should be 2", 2, fm.cardinality());
+        assertEquals("Cardinality should be 2", 2, mfm.cardinality());
         try
         {
-            fm.setSI(0, 0, 0);
-            assertEquals("Cardinality should be 1", 1, fm.cardinality());
-            fm.setSI(0, 1, 0);
-            assertEquals("Cardinality should be 0", 0, fm.cardinality());
-            fm.setSI(0, 2, 999);
-            assertEquals("Cardinality should be 1", 1, fm.cardinality());
+            mfm.setSI(0, 0, 0);
+            assertEquals("Cardinality should be 1", 1, mfm.cardinality());
+            mfm.setSI(0, 1, 0);
+            assertEquals("Cardinality should be 0", 0, mfm.cardinality());
+            mfm.setSI(0, 2, 999);
+            assertEquals("Cardinality should be 1", 1, mfm.cardinality());
         }
         catch (ValueException exception)
         {
             fail("Unexpected exception");
         }
-        assertTrue("FloatMatrix should be equal to itself", fm.equals(fm));
-        assertFalse("FloatMatrix should not be equal to null", fm.equals(null));
-        if (fm instanceof FloatMatrixAbs<?>)
-        {
-            copy = ((FloatMatrixAbs<LengthUnit>) fm).copy();
-        }
-        else if (fm instanceof FloatMatrixRel<?>)
-        {
-            copy = ((FloatMatrixRel<LengthUnit>) fm).copy();
-        }
-        else
-            fail("Matrix neither Absolute nor Relative");
-        assertTrue("FloatMatrix should be equal to copy of itself", fm.equals(copy));
+        assertTrue("FloatMatrix should be equal to itself", mfm.equals(mfm));
+        assertFalse("FloatMatrix should not be equal to null", mfm.equals(null));
+        mcopy = mfm.copy();
+        assertTrue("FloatMatrix should be equal to copy of itself", mfm.equals(mcopy));
         try
         {
-            copy.setSI(0, 1, copy.getSI(0, 1) + 0.001f);
+            mcopy.setSI(0, 1, mcopy.getSI(0, 1) + 0.001f);
         }
         catch (ValueException exception)
         {
             fail("Unexpected exception");
         }
-        assertFalse("FloatMatrix should be different from slightly altered to copy of itself", fm.equals(copy));
+        assertFalse("FloatMatrix should be different from slightly altered to copy of itself", mfm.equals(mcopy));
         try
         {
-            copy.setSI(0, 1, fm.getSI(0, 1));
+            mcopy.setSI(0, 1, mfm.getSI(0, 1));
         }
         catch (ValueException exception)
         {
             fail("Unexpected exception");
         }
-        assertTrue("FloatMatrix should be equal to repaired copy of itself", fm.equals(copy));
+        assertTrue("FloatMatrix should be equal to repaired copy of itself", mfm.equals(mcopy));
         if (absolute)
         {
             float[][] values = fm.getValuesInUnit();
@@ -497,126 +706,126 @@ public abstract class FloatMatrixTest
         float[][] in3 =
                 {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100},
                         {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000}};
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.abs();
-        MathTester.tester(in3, "abs", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.abs();
+        MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return Math.abs(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.acos();
-        MathTester.tester(in3, "acos", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.acos();
+        MathTester.tester(in3, "acos", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.acos(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.asin();
-        MathTester.tester(in3, "asin", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.asin();
+        MathTester.tester(in3, "asin", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.asin(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.atan();
-        MathTester.tester(in3, "atan", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.atan();
+        MathTester.tester(in3, "atan", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.atan(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.cbrt();
-        MathTester.tester(in3, "cbrt", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.cbrt();
+        MathTester.tester(in3, "cbrt", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.cbrt(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.ceil();
-        MathTester.tester(in3, "ceil", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.ceil();
+        MathTester.tester(in3, "ceil", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.ceil(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.cos();
-        MathTester.tester(in3, "cos", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.cos();
+        MathTester.tester(in3, "cos", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.cos(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.cosh();
-        MathTester.tester(in3, "cosh", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.cosh();
+        MathTester.tester(in3, "cosh", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.cosh(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.exp();
-        MathTester.tester(in3, "exp", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.exp();
+        MathTester.tester(in3, "exp", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.exp(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.expm1();
-        MathTester.tester(in3, "expm1", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.expm1();
+        MathTester.tester(in3, "expm1", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.expm1(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.floor();
-        MathTester.tester(in3, "floor", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.floor();
+        MathTester.tester(in3, "floor", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.floor(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.log();
-        MathTester.tester(in3, "log", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.log();
+        MathTester.tester(in3, "log", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.log(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.log10();
-        MathTester.tester(in3, "log10", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.log10();
+        MathTester.tester(in3, "log10", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.log10(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.log1p();
-        MathTester.tester(in3, "log1p", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.log1p();
+        MathTester.tester(in3, "log1p", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
@@ -625,10 +834,10 @@ public abstract class FloatMatrixTest
         });
         for (float power = -5; power <= 5; power += 0.5)
         {
-            fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-            fm.pow(power);
+            mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+            mfm.pow(power);
             final float myPower = power;
-            MathTester.tester(in3, "pow(" + power + ")", fm.getValuesSI(), 0.001, new FloatToFloat()
+            MathTester.tester(in3, "pow(" + power + ")", mfm.getValuesSI(), 0.001, new FloatToFloat()
             {
                 public float function(final float f)
                 {
@@ -636,109 +845,109 @@ public abstract class FloatMatrixTest
                 }
             });
         }
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.rint();
-        MathTester.tester(in3, "rint", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.rint();
+        MathTester.tester(in3, "rint", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.rint(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.round();
-        MathTester.tester(in3, "round", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.round();
+        MathTester.tester(in3, "round", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return Math.round(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.signum();
-        MathTester.tester(in3, "signum", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.signum();
+        MathTester.tester(in3, "signum", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return Math.signum(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.sin();
-        MathTester.tester(in3, "sin", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.sin();
+        MathTester.tester(in3, "sin", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.sin(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.sinh();
-        MathTester.tester(in3, "sinh", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.sinh();
+        MathTester.tester(in3, "sinh", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.sinh(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.sqrt();
-        MathTester.tester(in3, "sqrt", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.sqrt();
+        MathTester.tester(in3, "sqrt", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.sqrt(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.tan();
-        MathTester.tester(in3, "tan", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.tan();
+        MathTester.tester(in3, "tan", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.tan(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.tanh();
-        MathTester.tester(in3, "tanh", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.tanh();
+        MathTester.tester(in3, "tanh", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.tanh(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.toDegrees();
-        MathTester.tester(in3, "toDegrees", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.toDegrees();
+        MathTester.tester(in3, "toDegrees", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.toDegrees(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.toRadians();
-        MathTester.tester(in3, "toRadians", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.toRadians();
+        MathTester.tester(in3, "toRadians", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) Math.toRadians(f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-        fm.inv();
-        MathTester.tester(in3, "inv", fm.getValuesSI(), 0.001, new FloatToFloat()
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+        mfm.inv();
+        MathTester.tester(in3, "inv", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
             public float function(float f)
             {
                 return (float) (1.0 / f);
             }
         });
-        fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
+        mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
         try
         {
-            fm.det();
+            mfm.det();
             fail("det of non-square matrix should have thrown a ValueException");
         }
         catch (ValueException exception1)
@@ -746,10 +955,10 @@ public abstract class FloatMatrixTest
             // ignore
         }
         float[][] singular = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
-        fm = safeCreateFloatMatrix(singular, LengthUnit.METER, absolute);
+        mfm = safeCreateFloatMatrix(singular, LengthUnit.METER, absolute).mutable();
         try
         {
-            assertEquals("Determinant should be 15", 15, fm.det(), 0.0001);
+            assertEquals("Determinant should be 15", 15, mfm.det(), 0.0001);
         }
         catch (ValueException exception1)
         {
@@ -760,10 +969,10 @@ public abstract class FloatMatrixTest
         }
         for (float factor = -5; factor <= 5; factor += 0.5)
         {
-            fm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute);
-            fm.multiply(factor);
+            mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+            mfm.multiply(factor);
             final float myFactor = factor;
-            MathTester.tester(in3, "multiply(" + factor + ")", fm.getValuesSI(), 0.001, new FloatToFloat()
+            MathTester.tester(in3, "multiply(" + factor + ")", mfm.getValuesSI(), 0.001, new FloatToFloat()
             {
                 public float function(final float f)
                 {
@@ -771,20 +980,49 @@ public abstract class FloatMatrixTest
                 }
             });
         }
+        for (float divisor = -4.75f; divisor <= 5; divisor += 0.5)
+        {
+            mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
+            mfm.divide(divisor);
+            final float myDivisor = divisor;
+            MathTester.tester(in3, "divide(" + divisor + ")", mfm.getValuesSI(), 0.1, new FloatToFloat()
+            {
+                public float function(final float f)
+                {
+                    return f / myDivisor;
+                }
+            });
+        }
         if (absolute)
         {
-            FloatMatrixAbs<LengthUnit> fm1 =
-                    (FloatMatrixAbs<LengthUnit>) safeCreateFloatMatrix(in3, LengthUnit.METER, true);
+            FloatMatrix<LengthUnit> fm1 = safeCreateFloatMatrix(in3, LengthUnit.METER, true);
             float[][] inRowCountMismatch =
                     {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10}, {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000}};
             float[][] inColCountMismatch = {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100}};
-            FloatMatrixRel<LengthUnit> fm2 =
-                    (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(inRowCountMismatch, LengthUnit.METER, false);
+            FloatMatrix<LengthUnit> fm2 = safeCreateFloatMatrix(inRowCountMismatch, LengthUnit.METER, false);
             FloatMatrix<LengthUnit> plus = null;
             FloatMatrix<LengthUnit> minus = null;
             try
             {
-                plus = FloatMatrix.plus(fm1, fm2);
+                if (fm1 instanceof DenseData)
+                    plus =
+                            MutableFloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel<LengthUnit>) fm2);
+                else if (fm1 instanceof SparseData)
+                {
+                    if (fm2 instanceof DenseData)
+                        plus =
+                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                    else if (fm2 instanceof SparseData)
+                        plus =
+                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    else
+                        fail("Error in test; unexpected type");
+                }
+                else
+                    fail("Error in test; unexpected type");
                 fail("Adding FloatMatrices of unequal size should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -793,17 +1031,53 @@ public abstract class FloatMatrixTest
             }
             try
             {
-                minus = FloatMatrix.minus(fm1, fm2);
+                if (fm1 instanceof DenseData)
+                    plus =
+                            MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel<LengthUnit>) fm2);
+                else if (fm1 instanceof SparseData)
+                {
+                    if (fm2 instanceof DenseData)
+                        plus =
+                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                    else if (fm2 instanceof SparseData)
+                        plus =
+                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    else
+                        fail("Error in test; unexpected type");
+                }
+                else
+                    fail("Error in test; unexpected type");
                 fail("Subtracting FloatMatrices of unequal size should have thrown a ValueException");
             }
             catch (ValueException exception)
             {
                 // ignore
             }
-            fm2 = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(inColCountMismatch, LengthUnit.METER, false);
+            fm2 = safeCreateFloatMatrix(inColCountMismatch, LengthUnit.METER, false);
             try
             {
-                plus = FloatMatrix.plus(fm1, fm2);
+                if (fm1 instanceof DenseData)
+                    plus =
+                            MutableFloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel<LengthUnit>) fm2);
+                else if (fm1 instanceof SparseData)
+                {
+                    if (fm2 instanceof DenseData)
+                        plus =
+                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                    else if (fm2 instanceof SparseData)
+                        plus =
+                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    else
+                        fail("Error in test; unexpected type");
+                }
+                else
+                    fail("Error in test; unexpected type");
                 fail("Adding FloatMatrices of unequal size should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -812,7 +1086,25 @@ public abstract class FloatMatrixTest
             }
             try
             {
-                minus = FloatMatrix.minus(fm1, fm2);
+                if (fm1 instanceof DenseData)
+                    minus =
+                            MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel<LengthUnit>) fm2);
+                else if (fm1 instanceof SparseData)
+                {
+                    if (fm2 instanceof DenseData)
+                        minus =
+                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                    else if (fm2 instanceof SparseData)
+                        minus =
+                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    else
+                        fail("Error in test; unexpected type");
+                }
+                else
+                    fail("Error in test; unexpected type");
                 fail("Subtracting FloatMatrices of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -820,11 +1112,43 @@ public abstract class FloatMatrixTest
                 // ignore
             }
             float[][] in5 = buildArray(2, 9, false, 0);
-            fm2 = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(in5, LengthUnit.METER, false);
+            fm2 = safeCreateFloatMatrix(in5, LengthUnit.METER, false);
             try
             {
-                plus = FloatMatrix.plus(fm1, fm2);
-                minus = FloatMatrix.minus(fm1, fm2);
+                if (fm1 instanceof DenseData)
+                {
+                    plus =
+                            MutableFloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel<LengthUnit>) fm2);
+                    minus =
+                            MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel<LengthUnit>) fm2);
+                }
+                else if (fm1 instanceof SparseData)
+                {
+                    if (fm2 instanceof DenseData)
+                    {
+                        plus =
+                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                        minus =
+                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                    }
+                    else if (fm2 instanceof SparseData)
+                    {
+                        plus =
+                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                        minus =
+                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                        (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    }
+                    else
+                        fail("Error in test; unexpected type");
+                }
+                else
+                    fail("Error in test; unexpected type");
             }
             catch (ValueException exception)
             {
@@ -866,58 +1190,46 @@ public abstract class FloatMatrixTest
             else
                 fail("fm1 neither Dense nor Sparse");
 
-            FloatMatrix<LengthUnit> plusReverse = null;
-            try
-            {
-                plusReverse = FloatMatrix.plus(fm2, fm1);
-            }
-            catch (ValueException exception)
-            {
-                fail("Unexpected exception");
-            }
-            assertTrue("result should be Absolute", plusReverse instanceof Absolute);
-            // System.out.println("plus is       " + plus);
-            // System.out.println("plusReverse is" + plusReverse);
-            assertTrue("result of a + b should be equal to result of b + a", plus.equals(plusReverse));
-            try
-            {
-                float in4[][] = {{1, 2, 3}, {4, 5, 6}};
-                FloatMatrix<LengthUnit> original = safeCreateFloatMatrix(in4, LengthUnit.METER, absolute);
-                FloatMatrix<LengthUnit> duplicate = (FloatMatrix<LengthUnit>) original.copy();
-                assertTrue("Original should be equal to duplicate", original.equals(duplicate));
-                assertTrue("Duplicate should be equal to original", duplicate.equals(original));
-                original.setSI(0, 0, 123.456f);
-                assertFalse("Original should now differ from duplicate", original.equals(duplicate));
-                assertFalse("Duplicate should now differ from original", duplicate.equals(original));
-
-            }
-            catch (ValueException exception)
-            {
-                fail("Unexpected ValueException");
-            }
         }
         else
+        // not absolute; i.e. Relative
         {
-            FloatMatrixRel<LengthUnit> fm1 =
-                    (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(in3, LengthUnit.METER, false);
+            FloatMatrix<LengthUnit> fm1 = safeCreateFloatMatrix(in3, LengthUnit.METER, false);
             float[][] in4 = buildArray(1, 4, false, 0);
-            FloatMatrixRel<LengthUnit> fm2 =
-                    (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(in4, LengthUnit.METER, false);
+            FloatMatrix<LengthUnit> fm2 = safeCreateFloatMatrix(in4, LengthUnit.METER, false);
             FloatMatrix<SIUnit> multiply = null;
             try
             {
-                multiply = FloatMatrix.multiply(fm1, fm2);
-                fail("Adding FloatMatrices of unequal length should have thrown a ValueException");
+                if (fm1 instanceof DenseData)
+                    multiply =
+                            MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                else if (fm1 instanceof SparseData)
+                    multiply =
+                            MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                else
+                    fail("Error in test; unanticipated type");
+                fail("Multiplying FloatMatrices of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
             {
                 // ignore
             }
             float[][] in5 = buildArray(2, 9, false, 0);
-            fm2 = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(in5, LengthUnit.METER, false);
+            fm2 = safeCreateFloatMatrix(in5, LengthUnit.METER, false);
             try
             {
-                multiply = FloatMatrix.multiply(fm1, fm2);
+                if (fm1 instanceof DenseData)
+                    multiply =
+                            MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
+                else if (fm1 instanceof SparseData)
+                    multiply =
+                            MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm1,
+                                    (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
+                else
+                    fail("Error in test; unanticipated type");
             }
             catch (ValueException exception)
             {
@@ -938,16 +1250,16 @@ public abstract class FloatMatrixTest
                 fail("Unexpected exception");
             }
             assertTrue("result should be Relative", multiply instanceof Relative);
-            if (fm1 instanceof DenseData)
+            if (fm1 instanceof DenseData && fm2 instanceof DenseData)
             {
                 assertTrue("result should be Dense", multiply instanceof DenseData);
             }
-            else if (fm1 instanceof SparseData)
+            else if (fm1 instanceof SparseData || fm2 instanceof SparseData)
             {
                 assertTrue("result should be Sparse", multiply instanceof SparseData);
             }
             else
-                fail("fm1 neither Dense nor Sparse");
+                fail("Error in test; failed to account for some combination of dens and sparse");
             // System.out.println("Result of multiply has unit " + multiply);
             assertEquals("Result of multiplication should be in square meters", "m2", multiply.getUnit()
                     .getSICoefficientsString());
@@ -955,7 +1267,16 @@ public abstract class FloatMatrixTest
             FloatMatrix<SIUnit> multiplyReverse = null;
             try
             {
-                multiplyReverse = FloatMatrix.multiply(fm2, fm1);
+                if (fm2 instanceof DenseData)
+                    multiplyReverse =
+                            MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm2,
+                                    (FloatMatrix.Rel.Dense<LengthUnit>) fm1);
+                else if (fm2 instanceof SparseData)
+                    multiplyReverse =
+                            MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm2,
+                                    (FloatMatrix.Rel.Sparse<LengthUnit>) fm1);
+                else
+                    fail("Error in test; unanticipated type");
             }
             catch (ValueException exception)
             {
@@ -968,8 +1289,9 @@ public abstract class FloatMatrixTest
             try
             {
                 float in6[][] = {{1, 2, 3}, {4, 5, 6}};
-                FloatMatrix<LengthUnit> original = safeCreateFloatMatrix(in6, LengthUnit.METER, absolute);
-                FloatMatrix<LengthUnit> duplicate = (FloatMatrix<LengthUnit>) original.copy();
+                MutableFloatMatrix<LengthUnit> original =
+                        safeCreateFloatMatrix(in6, LengthUnit.METER, absolute).mutable();
+                FloatMatrix<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
                 assertTrue("Duplicate should be equal to original", duplicate.equals(original));
                 original.setSI(0, 0, 123.456f);
@@ -984,11 +1306,11 @@ public abstract class FloatMatrixTest
         }
         if (fm instanceof DenseData)
         {
-            FloatMatrix<LengthUnit> fm2 = null;
+            MutableFloatMatrix<LengthUnit> fm2 = null;
             if (fm instanceof Absolute)
-                fm2 = FloatMatrix.denseToSparse((FloatMatrixAbsDense<LengthUnit>) fm);
+                fm2 = MutableFloatMatrix.denseToSparse((FloatMatrix.Abs.Dense<LengthUnit>) fm);
             else
-                fm2 = FloatMatrix.denseToSparse((FloatMatrixRelDense<LengthUnit>) fm);
+                fm2 = MutableFloatMatrix.denseToSparse((FloatMatrix.Rel.Dense<LengthUnit>) fm);
             assertTrue("dense version is  equal to sparse version", fm.equals(fm2));
             assertEquals("unit should be same", fm.getUnit(), fm2.getUnit());
             try
@@ -1003,12 +1325,13 @@ public abstract class FloatMatrixTest
             }
         }
         else
+        // fm instanceof SparseData
         {
-            FloatMatrix<LengthUnit> fm2 = null;
+            MutableFloatMatrix<LengthUnit> fm2 = null;
             if (fm instanceof Absolute)
-                fm2 = FloatMatrix.sparseToDense((FloatMatrixAbsSparse<LengthUnit>) fm);
+                fm2 = MutableFloatMatrix.sparseToDense((FloatMatrix.Abs.Sparse<LengthUnit>) fm);
             else
-                fm2 = FloatMatrix.sparseToDense((FloatMatrixRelSparse<LengthUnit>) fm);
+                fm2 = MutableFloatMatrix.sparseToDense((FloatMatrix.Rel.Sparse<LengthUnit>) fm);
             assertTrue("dense version is equal to sparse version", fm.equals(fm2));
             assertEquals("unit should be same", fm.getUnit(), fm2.getUnit());
             try
@@ -1023,13 +1346,13 @@ public abstract class FloatMatrixTest
             }
         }
         float[][] left = buildArray(4, 5, false, 0);
-        FloatMatrix<LengthUnit> leftMatrix = safeCreateFloatMatrix(left, LengthUnit.METER, absolute);
+        MutableFloatMatrix<LengthUnit> leftMatrix = safeCreateFloatMatrix(left, LengthUnit.METER, absolute).mutable();
         float[][] right = buildArray(4, 6, false, 0.3f);
-        FloatMatrixRel<LengthUnit> rightMatrix =
-                (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        FloatMatrix.Rel<LengthUnit> rightMatrix =
+                (FloatMatrix.Rel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
-            leftMatrix.add(rightMatrix);
+            leftMatrix.incrementBy(rightMatrix);
             fail("Adding matrices of different sizes should have thrown an exception");
         }
         catch (ValueException exception)
@@ -1037,10 +1360,10 @@ public abstract class FloatMatrixTest
             // Ignore
         }
         right = buildArray(3, 5, false, 0.3f);
-        rightMatrix = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        rightMatrix = (FloatMatrix.Rel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
-            leftMatrix.add(rightMatrix);
+            leftMatrix.incrementBy(rightMatrix);
             fail("Adding matrices of different sizes should have thrown an exception");
         }
         catch (ValueException exception)
@@ -1048,10 +1371,10 @@ public abstract class FloatMatrixTest
             // Ignore
         }
         right = buildArray(4, 5, false, 0.3f);
-        rightMatrix = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        rightMatrix = (FloatMatrix.Rel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
-            leftMatrix.add(rightMatrix);
+            leftMatrix.incrementBy(rightMatrix);
         }
         catch (ValueException exception)
         {
@@ -1068,12 +1391,12 @@ public abstract class FloatMatrixTest
         {
             fail("Unexpected exception");
         }
-        leftMatrix = safeCreateFloatMatrix(left, LengthUnit.METER, absolute);
+        leftMatrix = safeCreateFloatMatrix(left, LengthUnit.METER, absolute).mutable();
         right = buildArray(4, 6, false, 0.3f);
-        rightMatrix = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        rightMatrix = (FloatMatrix.Rel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
-            leftMatrix.subtract(rightMatrix);
+            leftMatrix.decrementBy(rightMatrix);
             fail("Subtracting matrices of different sizes should have thrown an exception");
         }
         catch (ValueException exception)
@@ -1081,10 +1404,10 @@ public abstract class FloatMatrixTest
             // Ignore
         }
         right = buildArray(3, 5, false, 0.3f);
-        rightMatrix = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        rightMatrix = (FloatMatrix.Rel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
-            leftMatrix.subtract(rightMatrix);
+            leftMatrix.decrementBy(rightMatrix);
             fail("Subtracting matrices of different sizes should have thrown an exception");
         }
         catch (ValueException exception)
@@ -1092,10 +1415,10 @@ public abstract class FloatMatrixTest
             // Ignore
         }
         right = buildArray(4, 5, false, 0.3f);
-        rightMatrix = (FloatMatrixRel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
+        rightMatrix = (FloatMatrix.Rel<LengthUnit>) safeCreateFloatMatrix(right, LengthUnit.METER, false);
         try
         {
-            leftMatrix.subtract(rightMatrix);
+            leftMatrix.decrementBy(rightMatrix);
         }
         catch (ValueException exception)
         {
@@ -1199,8 +1522,8 @@ public abstract class FloatMatrixTest
                 {
                     float result = function.function(inputValues[i][j]);
                     String description =
-                            String.format("index=%d: %s(%f)->%f should be equal to %f with precision %f", i, operation,
-                                    inputValues[i][j], result, resultValues[i][j], precision);
+                            String.format("indices=%d,%d: %s(%f)->%f should be equal to %f with precision %f", i, j,
+                                    operation, inputValues[i][j], result, resultValues[i][j], precision);
                     // System.out.println(description);
                     assertEquals(description, result, resultValues[i][j], precision);
                 }
@@ -1334,8 +1657,8 @@ public abstract class FloatMatrixTest
         float[][] in1 = buildArray(2, 4, false, 0);
         float[][] in2 = buildArray(2, 4, false, 0);
         MassUnit u = MassUnit.POUND;
-        FloatMatrixRel<MassUnit> fm1 = null;
-        FloatMatrixRel<MassUnit> fm2 = null;
+        FloatMatrix.Rel<MassUnit> fm1 = null;
+        FloatMatrix.Rel<MassUnit> fm2 = null;
         try
         {
             fm1 = createFloatMatrixRel(in1, u);
@@ -1345,10 +1668,17 @@ public abstract class FloatMatrixTest
         {
             fail("Unexpected exception");
         }
-        FloatMatrixRel<MassUnit> sum = null;
+        MutableFloatMatrix.Rel<MassUnit> sum = null;
         try
         {
-            sum = FloatMatrix.plus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+            else if (fm1 instanceof SparseData)
+                sum =
+                        MutableFloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1363,10 +1693,19 @@ public abstract class FloatMatrixTest
             for (int j = 0; j < in1[0].length; j++)
                 assertEquals("Each element should equal the sum of the contributing elements", in1[i][j] + in2[i][j],
                         sumValues[i][j], 0.0001);
-        FloatMatrixRel<MassUnit> difference = null;
+        MutableFloatMatrix.Rel<MassUnit> difference = null;
         try
         {
-            difference = FloatMatrix.minus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Dense<MassUnit>) fm2);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Rel.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticiapted type");
         }
         catch (ValueException exception1)
         {
@@ -1382,7 +1721,7 @@ public abstract class FloatMatrixTest
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
         float[][] in3 = buildArray(2, 3, false, 0);
-        FloatMatrixRel<MassUnit> fm3 = null;
+        FloatMatrix.Rel<MassUnit> fm3 = null;
         try
         {
             fm3 = createFloatMatrixRel(in3, u);
@@ -1393,7 +1732,14 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            sum = FloatMatrix.plus(fm1, fm3);
+            if (fm1 instanceof DenseData)
+                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+            else if (fm1 instanceof SparseData)
+                sum =
+                        MutableFloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
+            else
+                fail("Error in test; unanticipated type");
             fail("Adding FloatMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1402,7 +1748,14 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            difference = FloatMatrix.minus(fm1, fm3);
+            if (fm1 instanceof DenseData)
+                difference = MutableFloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Rel.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
+            else
+                fail("Error in test; unanticipated type");
             fail("Subtracting FloatMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1420,7 +1773,14 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            sum = FloatMatrix.plus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+            else if (fm1 instanceof SparseData)
+                sum =
+                        MutableFloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1448,7 +1808,14 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            difference = FloatMatrix.minus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                difference = MutableFloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Rel.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1475,8 +1842,8 @@ public abstract class FloatMatrixTest
         float[][] in1 = buildArray(2, 4, false, 0);
         float[][] in2 = buildArray(2, 4, false, 0);
         MassUnit u = MassUnit.POUND;
-        FloatMatrixAbs<MassUnit> fm1 = null;
-        FloatMatrixAbs<MassUnit> fm2 = null;
+        FloatMatrix<MassUnit> fm1 = null;
+        FloatMatrix<MassUnit> fm2 = null;
         try
         {
             fm1 = createFloatMatrixAbs(in1, u);
@@ -1486,10 +1853,19 @@ public abstract class FloatMatrixTest
         {
             fail("Unexpected exception");
         }
-        FloatMatrixRel<MassUnit> difference = null;
+        MutableFloatMatrix<MassUnit> difference = null;
         try
         {
-            difference = FloatMatrix.minus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Abs.Dense<MassUnit>) fm2);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Abs.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception1)
         {
@@ -1505,7 +1881,7 @@ public abstract class FloatMatrixTest
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
         float[][] in3 = buildArray(2, 3, false, 0);
-        FloatMatrixAbs<MassUnit> fm3 = null;
+        FloatMatrix<MassUnit> fm3 = null;
         try
         {
             fm3 = createFloatMatrixAbs(in3, u);
@@ -1516,7 +1892,16 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            difference = FloatMatrix.minus(fm1, fm3);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Abs.Dense<MassUnit>) fm3);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Abs.Sparse<MassUnit>) fm3);
+            else
+                fail("Error in test; unanticipated type");
             fail("Subtracting FloatMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1534,7 +1919,16 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            difference = FloatMatrix.minus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Abs.Dense<MassUnit>) fm2);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Abs.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1552,7 +1946,16 @@ public abstract class FloatMatrixTest
                         in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.01);
         try
         {
-            difference = FloatMatrix.minus(fm2, fm1);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm2,
+                                (FloatMatrix.Abs.Dense<MassUnit>) fm1);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm2,
+                                (FloatMatrix.Abs.Sparse<MassUnit>) fm1);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1570,8 +1973,8 @@ public abstract class FloatMatrixTest
                         in2[i][j] * 0.028350 - in1[i][j] * 0.45359, differenceValues[i][j] * 0.028350, 0.02);
         LengthUnit u4 = LengthUnit.INCH;
         ForceUnit u5 = ForceUnit.POUND_FORCE;
-        FloatMatrixAbs<LengthUnit> fm4 = null;
-        FloatMatrixAbs<ForceUnit> fm5 = null;
+        FloatMatrix.Abs<LengthUnit> fm4 = null;
+        FloatMatrix.Abs<ForceUnit> fm5 = null;
         try
         {
             fm4 = createFloatMatrixAbs(in1, u4);
@@ -1582,10 +1985,19 @@ public abstract class FloatMatrixTest
             fail("Unexpected exception");
         }
         Unit<EnergyUnit> resultUnit = EnergyUnit.CALORIE_IT;
-        FloatMatrixAbs<?> product = null;
+        MutableFloatMatrix.Abs<?> product = null;
         try
         {
-            product = FloatMatrix.multiply(fm4, fm5);
+            if (fm4 instanceof DenseData)
+                product =
+                        MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) fm4,
+                                (FloatMatrix.Abs.Dense<ForceUnit>) fm5);
+            else if (fm4 instanceof SparseData)
+                product =
+                        MutableFloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) fm4,
+                                (FloatMatrix.Abs.Sparse<ForceUnit>) fm5);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1622,9 +2034,15 @@ public abstract class FloatMatrixTest
                 }
         try
         {
-            FloatMatrixAbs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            FloatMatrix.Abs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
             float rhs[][] = {{1, 2, 3}, {4, 5, 6}};
-            FloatMatrix<LengthUnit> result = FloatMatrix.multiply(lhs, rhs);
+            MutableFloatMatrix<LengthUnit> result = null;
+            if (lhs instanceof DenseData)
+                result = MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+            else if (lhs instanceof SparseData)
+                result = MutableFloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+            else
+                fail("Error in test; unanticipated type");
             assertTrue("Result should not be null", null != result);
             assertEquals("Result should have 2 rows", 2, result.rows());
             assertEquals("Result should have 3 columns", 3, result.columns());
@@ -1639,9 +2057,15 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            FloatMatrixRel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            FloatMatrix.Rel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
             float rhs[][] = {{1, 2, 3}, {4, 5, 6}};
-            FloatMatrix<LengthUnit> result = FloatMatrix.multiply(lhs, rhs);
+            MutableFloatMatrix<LengthUnit> result = null;
+            if (lhs instanceof DenseData)
+                result = MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+            else if (lhs instanceof SparseData)
+                result = MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+            else
+                fail("Error in test; unanticipated type");
             assertTrue("Result should not be null", null != result);
             assertEquals("Result should have 2 rows", 2, result.rows());
             assertEquals("Result should have 3 columns", 3, result.columns());
@@ -1656,9 +2080,14 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            FloatMatrixAbs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            FloatMatrix.Abs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
             float rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-            FloatMatrix.multiply(lhs, rhs);
+            if (lhs instanceof DenseData)
+                MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+            else if (lhs instanceof SparseData)
+                MutableFloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+            else
+                fail("Error in test; unanticipated type");
             fail("Should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1667,9 +2096,15 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            FloatMatrixRel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
+            FloatMatrix.Rel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
             float rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-            FloatMatrix.multiply(lhs, rhs);
+            if (lhs instanceof DenseData)
+                MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+            else if (lhs instanceof SparseData)
+                MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+            else
+                fail("Error in test; unanticipated type");
+
             fail("Should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1688,8 +2123,8 @@ public abstract class FloatMatrixTest
         float[][] in1 = buildArray(2, 4, false, 0);
         float[][] in2 = buildArray(2, 4, false, 10);
         MassUnit u = MassUnit.POUND;
-        FloatMatrixAbs<MassUnit> fm1 = null;
-        FloatMatrixRel<MassUnit> fm2 = null;
+        FloatMatrix<MassUnit> fm1 = null;
+        FloatMatrix<MassUnit> fm2 = null;
         try
         {
             fm1 = createFloatMatrixAbs(in1, u);
@@ -1699,10 +2134,19 @@ public abstract class FloatMatrixTest
         {
             fail("Unexpected exception");
         }
-        FloatMatrixAbs<MassUnit> difference = null;
+        MutableFloatMatrix<MassUnit> difference = null;
         try
         {
-            difference = FloatMatrix.minus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Dense<MassUnit>) fm2);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception1)
         {
@@ -1718,7 +2162,7 @@ public abstract class FloatMatrixTest
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
         float[][] in3 = buildArray(2, 3, false, 0);
-        FloatMatrixRel<MassUnit> fm3 = null;
+        FloatMatrix<MassUnit> fm3 = null;
         try
         {
             fm3 = createFloatMatrixRel(in3, u);
@@ -1729,7 +2173,16 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            difference = FloatMatrix.minus(fm1, fm3);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Dense<MassUnit>) fm3);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
+            else
+                fail("Error in test; unanticipated type");
             fail("Subtracting FloatMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1747,7 +2200,16 @@ public abstract class FloatMatrixTest
         }
         try
         {
-            difference = FloatMatrix.minus(fm1, fm2);
+            if (fm1 instanceof DenseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Dense<MassUnit>) fm2);
+            else if (fm1 instanceof SparseData)
+                difference =
+                        MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1,
+                                (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+            else
+                fail("Error in test; unanticipated type");
         }
         catch (ValueException exception)
         {
@@ -1776,9 +2238,9 @@ public abstract class FloatMatrixTest
         FloatMatrix<LengthUnit> aMatrix = safeCreateFloatMatrix(a, LengthUnit.METER, true);
         FloatVector<ForceUnit> bVector = null;
         if (aMatrix instanceof SparseData)
-            bVector = new FloatVector.Sparse.Abs<ForceUnit>(b, ForceUnit.NEWTON);
+            bVector = new FloatVector.Abs.Sparse<ForceUnit>(b, ForceUnit.NEWTON);
         else
-            bVector = new FloatVector.Dense.Abs<ForceUnit>(b, ForceUnit.NEWTON);
+            bVector = new FloatVector.Abs.Dense<ForceUnit>(b, ForceUnit.NEWTON);
         try
         {
             FloatVector<SIUnit> result = null;
@@ -1787,20 +2249,16 @@ public abstract class FloatMatrixTest
                 if (aMatrix instanceof Absolute)
                 {
                     // This case does not work (the other three do work)
-                    FloatMatrix2D m = aMatrix.getMatrixSI();
-                    System.out.println(m.toString());
+                    System.out.println(aMatrix);
                     return; // result = FloatMatrix.solve((FloatMatrixAbsSparse<LengthUnit>) aMatrix,
                             // (FloatVectorAbs<ForceUnit>) bVector);
                 }
                 else if (aMatrix instanceof Relative)
-                    result = FloatMatrix.solve((FloatMatrixRelSparse<LengthUnit>) aMatrix, bVector);
+                    result = FloatMatrix.solve(aMatrix, bVector);
             }
             else
             {
-                if (aMatrix instanceof Absolute)
-                    result = FloatMatrix.solve((FloatMatrixAbsDense<LengthUnit>) aMatrix, bVector);
-                else
-                    result = FloatMatrix.solve((FloatMatrixRelDense<LengthUnit>) aMatrix, bVector);
+                result = FloatMatrix.solve(aMatrix, bVector);
             }
             // System.out.println("unit of result is " + result.getUnit());
             assertEquals("result[0] should be -2", -2, result.getSI(0), 0.0001);
@@ -1840,7 +2298,7 @@ public abstract class FloatMatrixTest
         in[0][0] = new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.FOOT);
         try
         {
-            fsa = new FloatMatrixRelDense<LengthUnit>(in);
+            fsa = new FloatMatrix.Rel.Dense<LengthUnit>(in);
         }
         catch (ValueException exception)
         {
@@ -1891,41 +2349,41 @@ public abstract class FloatMatrixTest
     }
 
     /**
-     * Create a new FloatMatrixAbs from an array of float values and Unit.
+     * Create a new FloatMatrix.Abs from an array of float values and Unit.
      * @param in float[][] with values
      * @param u Unit; type for the new FloatMatrixAbs
      * @return
      * @throws ValueException when the array is not rectangular
      */
-    protected abstract <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(float[][] in, U u)
+    protected abstract <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(float[][] in, U u)
             throws ValueException;
 
     /**
-     * Create a new FloatMatrixAbs from an array of FloatScalarAbs values.
-     * @param in FloatScalarAbs[][]; the values
+     * Create a new FloatMatrix.Abs from an array of FloatScalarAbs values.
+     * @param in FloatScalar.Abs[][]; the values
      * @return
      * @throws ValueException when the array is empty or not rectangular
      */
-    protected abstract <U extends Unit<U>> FloatMatrixAbs<U> createFloatMatrixAbs(FloatScalar.Abs<U>[][] in)
+    protected abstract <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(FloatScalar.Abs<U>[][] in)
             throws ValueException;
 
     /**
-     * Create a new FloatMatrixRel from an array of float values and Unit.
+     * Create a new FloatMatrix.Rel from an array of float values and Unit.
      * @param in float[][] with values
      * @param u Unit; type for the new FloatMatrixRel
      * @return
      * @throws ValueException when the array is not rectangular
      */
-    protected abstract <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(float[][] in, U u)
+    protected abstract <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(float[][] in, U u)
             throws ValueException;
 
     /**
-     * Create a new FloatMatrixRel from an array of FloatScalarRel values.
-     * @param in FloatScalarAbs[][]; the values
+     * Create a new FloatMatrix.Rel from an array of FloatScalarRel values.
+     * @param in FloatScalar.Rel[][]; the values
      * @return
      * @throws ValueException when the array is empty or not rectangular
      */
-    protected abstract <U extends Unit<U>> FloatMatrixRel<U> createFloatMatrixRel(FloatScalar.Rel<U>[][] in)
+    protected abstract <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(FloatScalar.Rel<U>[][] in)
             throws ValueException;
 
 }
