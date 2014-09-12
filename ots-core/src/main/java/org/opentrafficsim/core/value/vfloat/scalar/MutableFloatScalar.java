@@ -6,6 +6,7 @@ import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
+import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 
 /**
@@ -37,7 +38,7 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit
  */
-public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloatScalar<U> implements
+public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<U> implements
         FloatMathFunctions
 {
     /** */
@@ -60,42 +61,42 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloa
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute Mutable FloatScalar.
-         * @param value float; the value of the new Absolute Mutable FloatScalar
-         * @param unit Unit; the unit of the new Absolute Mutable FloatScalar
+         * Create a new Absolute MutableFloatScalar.
+         * @param value float; the value of the new Absolute MutableFloatScalar
+         * @param unit Unit; the unit of the new Absolute MutableFloatScalar
          */
         protected Abs(final float value, final U unit)
         {
             super(unit);
             // System.out.println("Created Abs");
-            this.valueSI = value;
+            initialize(value);
         }
 
         /**
-         * Create a new Absolute Mutable FloatScalar from an existing immutable one.
+         * Create a new Absolute MutableFloatScalar from an existing immutable one.
          * @param value Absolute FloatScalar; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
         {
             super(value.getUnit());
             // System.out.println("Created Abs");
-            this.valueSI = value.valueSI;
+            initialize(value);
         }
-
+        
         /**
-         * Create a new Absolute Mutable FloatScalar from an existing one.
-         * @param value Absolute Mutable FloatScalar; the reference
+         * Create a new Absolute MutableFloatScalar from an existing one.
+         * @param value
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
         {
             super(value.getUnit());
             // System.out.println("Created Abs");
-            this.valueSI = value.valueSI;
+            initialize(value);
         }
 
         /**
          * Create an immutable version of this FloatScalar
-         * @return Absolute Immutable FloatScalar
+         * @return Absolute FloatScalar
          */
         @Override
         public FloatScalar.Abs<U> immutable()
@@ -104,12 +105,22 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloa
         }
 
         /**
+         * Create a mutable version.
+         * @return Absolute MutableFloatScalar
+         */
+        @Override
+        public MutableFloatScalar.Abs<U> mutable()
+        {
+            return new MutableFloatScalar.Abs<U>(this);
+        }
+
+        /**
          * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#copy()
          */
         @Override
         public MutableFloatScalar.Abs<U> copy()
         {
-            return new MutableFloatScalar.Abs<U>(this.valueSI, this.unit);
+            return new MutableFloatScalar.Abs<U>(this);
         }
 
     }
@@ -123,8 +134,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloa
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative Mutable FloatVector.
-         * @param value float; the value of the new Relative Mutable FloatScalar
+         * Create a new Relative MutableFloatScalar.
+         * @param value float; the value of the new Relative MutableFloatScalar
          * @param unit
          */
         public Rel(final float value, final U unit)
@@ -147,24 +158,34 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloa
         }
 
         /**
-         * Create a new Relative Mutable FloatScalar from an existing one.
-         * @param value Relative Mutable FloatScalar; the reference
+         * Create a new Absolute MutableFloatScalar from an existing one.
+         * @param value
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
         {
             super(value.getUnit());
-            // System.out.println("Created Abs");
-            this.valueSI = value.valueSI;
+            // System.out.println("Created Rel");
+            initialize(value);
         }
 
         /**
          * Create an immutable version.
-         * @return Dense Relative Immutable FloatVector
+         * @return Relative ImmutableFloatScalar
          */
         @Override
         public FloatScalar.Rel<U> immutable()
         {
             return new FloatScalar.Rel<U>(this);
+        }
+
+        /**
+         * Create a mutable version.
+         * @return Relative MutableFloatScalar
+         */
+        @Override
+        public MutableFloatScalar.Rel<U> mutable()
+        {
+            return new MutableFloatScalar.Rel<U>(this);
         }
 
         /**
@@ -184,28 +205,6 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloa
      * @return MutableFloatScalar; mutable version of this FloatScalar
      */
     public abstract FloatScalar<U> immutable();
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof MutableFloatScalar<?>))
-            return false;
-        MutableFloatScalar<?> mfs = (MutableFloatScalar<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(mfs.getUnit().getStandardUnit()))
-            return false;
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != mfs.isAbsolute() || this.isRelative() != mfs.isRelative())
-            return false;
-
-        return this.valueSI == mfs.valueSI;
-    }
 
     /**
      * @param valueSI the value to store in the cell
@@ -237,7 +236,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends AbstractFloa
      */
     void setInUnit(final float value, final U valueUnit)
     {
-        this.valueSI = (float) expressAsSIUnit(value);
+        this.valueSI = (float) ValueUtil.expressAsSIUnit(value, valueUnit);
     }
 
     /**********************************************************************************/
