@@ -39,7 +39,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public interface OTSDEVSSimulatorInterface extends
-        DEVSSimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>
+        DEVSSimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>,
+        OTSSimulatorInterface
 {
     // typed extension
 }
