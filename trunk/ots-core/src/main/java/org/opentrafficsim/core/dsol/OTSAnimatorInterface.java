@@ -1,14 +1,9 @@
 package org.opentrafficsim.core.dsol;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 
 /**
  * <p>
@@ -38,24 +33,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSDEVSSimulator extends
-        DEVSSimulator<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> implements
-        OTSDEVSSimulatorInterface
+public interface OTSAnimatorInterface extends AnimatorInterface
 {
-    /** */
-    private static final long serialVersionUID = 20140815L;
+    // typed extension
 
-    /** the cached context that can be used for animation and statistics for this simulator */
-    private Context cachedContext = null;
-
-   /**
+    /**
      * TODO: to be moved to DEVSSimulator!
-     * @see org.opentrafficsim.core.dsol.OTSSimulatorInterface#getContext()
+     * @return the context specific to the simulator
+     * @throws NamingException
      */
-    public Context getContext() throws NamingException
-    {
-        if (this.cachedContext == null)
-            this.cachedContext = (new InitialContext()).createSubcontext(String.valueOf(this.hashCode()));
-        return this.cachedContext;
-    }
+    Context getContext() throws NamingException;
 }
