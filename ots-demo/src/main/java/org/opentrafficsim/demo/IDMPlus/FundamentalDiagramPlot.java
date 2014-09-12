@@ -14,8 +14,7 @@ import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.FundamentalDiagram;
 
 /**
@@ -70,20 +69,20 @@ public class FundamentalDiagramPlot
         JOptionPane.showMessageDialog(null, "FundamentalDiagramPlot", "Start experiment",
                 JOptionPane.INFORMATION_MESSAGE);
         // DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(5000, LengthUnit.METER);
-        DoubleScalarAbs<LengthUnit> detectorLocation = new DoubleScalarAbs<LengthUnit>(3500, LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> detectorLocation = new DoubleScalar.Abs<LengthUnit>(3500, LengthUnit.METER);
         FundamentalDiagram fd =
                 new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
-                        new DoubleScalarRel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
+                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
         fd.setTitle("Fundamental Diagram Graph");
         fd.setBounds(0, 0, 600, 400);
         fd.pack();
         fd.setVisible(true);
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         final double endTime = 1800; // [s]
         final double headway = 3600.0 / 1500.0; // 1500 [veh / hour] == 2.4s headway
         double thisTick = 0;
@@ -98,7 +97,7 @@ public class FundamentalDiagramPlot
             if (thisTick == nextSourceTick)
             {
                 // Time to generate another car
-                DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
                 Car car =
                         new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
                 cars.add(0, car);
@@ -122,7 +121,7 @@ public class FundamentalDiagramPlot
                  */
                 for (int carIndex = 0; carIndex < cars.size(); carIndex++)
                 {
-                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                    DoubleScalar.Abs<TimeUnit> now = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
                     if (car.getPosition(now).getValueSI() > maximumDistance.getValueSI())
                     {
@@ -136,14 +135,14 @@ public class FundamentalDiagramPlot
                     {
                         // Add a stationary car at 4000m to simulate an opening bridge
                         Car block =
-                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
-                                        LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(4000,
+                                        LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                         leaders.add(block);
                     }
                     CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
                     car.setState(cfmr);
-                    DoubleScalarAbs<TimeUnit> lowerBound = car.getLastEvaluationTime();
-                    DoubleScalarAbs<TimeUnit> upperBound = car.getNextEvaluationTime();
+                    DoubleScalar.Abs<TimeUnit> lowerBound = car.getLastEvaluationTime();
+                    DoubleScalar.Abs<TimeUnit> upperBound = car.getNextEvaluationTime();
                     if (car.getPosition(lowerBound).getValueSI() <= detectorLocation.getValueSI()
                             && car.getPosition(upperBound).getValueSI() > detectorLocation.getValueSI())
                     {
@@ -151,13 +150,13 @@ public class FundamentalDiagramPlot
                         // Figure out at what time the car passes the detector.
                         // For this demo we use bisection to converge to the correct time.
                         final double maximumTimeError = 0.01; // [s]
-                        DoubleScalarAbs<TimeUnit> passingTime = lowerBound;
+                        DoubleScalar.Abs<TimeUnit> passingTime = lowerBound;
                         while (upperBound.getValueSI() - lowerBound.getValueSI() > maximumTimeError)
                         {
                             passingTime =
-                                    new DoubleScalarAbs<TimeUnit>(
+                                    new DoubleScalar.Abs<TimeUnit>(
                                             (lowerBound.getValueSI() + upperBound.getValueSI()) / 2, TimeUnit.SECOND);
-                            DoubleScalarAbs<LengthUnit> position = car.getPosition(passingTime);
+                            DoubleScalar.Abs<LengthUnit> position = car.getPosition(passingTime);
                             if (position.getValueSI() > detectorLocation.getValueSI())
                                 lowerBound = passingTime;
                             else

@@ -14,8 +14,7 @@ import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 
 /**
@@ -60,9 +59,9 @@ public class Trajectories
     public static void main(final String[] args)
     {
         JOptionPane.showMessageDialog(null, "TrajectoryPlot", "Start experiment", JOptionPane.INFORMATION_MESSAGE);
-        DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(5000, LengthUnit.METER);
-        DoubleScalarRel<TimeUnit> sampleInterval = new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
+        DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
         TrajectoryPlot tp = new TrajectoryPlot("Trajectories", sampleInterval, minimumDistance, maximumDistance);
         tp.setTitle("Flow Contour Graph");
         tp.setBounds(0, 0, 600, 400);
@@ -70,9 +69,9 @@ public class Trajectories
         tp.setVisible(true);
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         final double endTime = 1800; // [s]
         final double headway = 3600.0 / 1500.0; // 1500 [veh / hour] == 2.4s headway
         double thisTick = 0;
@@ -87,7 +86,7 @@ public class Trajectories
             if (thisTick == nextSourceTick)
             {
                 // Time to generate another car
-                DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
                 Car car =
                         new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
                 cars.add(0, car);
@@ -111,7 +110,7 @@ public class Trajectories
                  */
                 for (int carIndex = 0; carIndex < cars.size(); carIndex++)
                 {
-                    DoubleScalarAbs<TimeUnit> now = new DoubleScalarAbs<TimeUnit>(thisTick, TimeUnit.SECOND);
+                    DoubleScalar.Abs<TimeUnit> now = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
                     if (car.getPosition(now).getValueSI() > maximumDistance.getValueSI())
                     {
@@ -125,8 +124,8 @@ public class Trajectories
                     {
                         // Add a stationary car at 4000m to simulate an opening bridge
                         Car block =
-                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalarAbs<LengthUnit>(4000,
-                                        LengthUnit.METER), new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(4000,
+                                        LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                         leaders.add(block);
                     }
                     CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);

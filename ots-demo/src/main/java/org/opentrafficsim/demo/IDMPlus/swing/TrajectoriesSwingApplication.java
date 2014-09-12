@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
-import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -17,8 +16,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 
 /**
@@ -59,7 +57,7 @@ public class TrajectoriesSwingApplication extends DSOLApplication
      * @param panel
      */
     public TrajectoriesSwingApplication(String title,
-            DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
+            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -75,12 +73,12 @@ public class TrajectoriesSwingApplication extends DSOLApplication
         TrajectoriesModel model = new TrajectoriesModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         OTSReplication replication =
-                new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalarAbs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                        new DoubleScalarRel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalarRel<TimeUnit>(1800.0,
+                new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel =
-                new DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
+                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
         makePlot(model, panel);
         addInfoTab(panel);
         new TrajectoriesSwingApplication("IDM-plus model - Trajectories", panel);
@@ -91,11 +89,11 @@ public class TrajectoriesSwingApplication extends DSOLApplication
      * @param model the model.
      */
     private static void makePlot(final TrajectoriesModel model,
-            final DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         TablePanel charts = new TablePanel(1, 1);
         panel.getTabbedPane().addTab("statistics", charts);
-        DoubleScalarRel<TimeUnit> sampleInterval = new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND);
+        DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
         TrajectoryPlot tp =
                 new TrajectoryPlot("Trajectory Plot", sampleInterval, model.getMinimumDistance(),
                         model.getMaximumDistance());
@@ -109,7 +107,7 @@ public class TrajectoriesSwingApplication extends DSOLApplication
      * @param panel
      */
     private static void addInfoTab(
-            final DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
         String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
