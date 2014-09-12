@@ -7,8 +7,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.simulators.DEVSAnimator;
 
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -39,7 +38,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class OTSDEVSAnimator extends
-        DEVSAnimator<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> implements
+        DEVSAnimator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> implements
         OTSDEVSSimulatorInterface, OTSAnimatorInterface
 {
     /** */
