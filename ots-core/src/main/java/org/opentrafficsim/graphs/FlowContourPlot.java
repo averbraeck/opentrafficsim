@@ -76,13 +76,17 @@ public class FlowContourPlot extends ContourPlot
     public void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeLengths)
+        {
             this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
+        }
         final int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeLengths.size())
-            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
-                    LengthUnit.METER));
+        {
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis
+                    .getBinCount()], LengthUnit.METER));
+        }
     }
 
     /**
@@ -93,10 +97,14 @@ public class FlowContourPlot extends ContourPlot
             final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        {
             return;
+        }
         while (timeBin >= this.cumulativeLengths.size())
-            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
-                    LengthUnit.METER));
+        {
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis
+                    .getBinCount()], LengthUnit.METER));
+        }
         MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBin);
         try
         {
@@ -118,13 +126,17 @@ public class FlowContourPlot extends ContourPlot
     {
         double cumulativeLengthInSI = 0;
         if (firstTimeBin >= this.cumulativeLengths.size())
+        {
             return Double.NaN;
+        }
         try
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)
             {
                 if (timeBinIndex >= this.cumulativeLengths.size())
+                {
                     break;
+                }
                 MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                     cumulativeLengthInSI += values.getSI(distanceBinIndex);

@@ -73,7 +73,9 @@ class Axis
         this.setMaximumValue(maximumValue);
         this.granularities = granularities;
         if (null != granularities)
+        {
             this.setCurrentGranularity(initialGranularity);
+        }
         this.name = name;
         this.shortName = shortName;
         this.format = format;
@@ -169,7 +171,9 @@ class Axis
     public void setMaximumValue(final DoubleScalar<?> newMaximumValue)
     {
         if (null != this.maximumValue && newMaximumValue.getValueSI() < this.maximumValue.getValueSI())
+        {
             throw new Error("maximum value may not be decreased");
+        }
         this.maximumValue = newMaximumValue;
     }
 

@@ -91,8 +91,8 @@ public class SpeedContourPlot extends ContourPlot
         {
             this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
                     TimeUnit.SECOND));
-            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
-                    LengthUnit.METER));
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis
+                    .getBinCount()], LengthUnit.METER));
         }
     }
 
@@ -104,7 +104,9 @@ public class SpeedContourPlot extends ContourPlot
             final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        {
             return;
+        }
         MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
         MutableDoubleVector.Abs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBin);
         try
@@ -129,13 +131,17 @@ public class SpeedContourPlot extends ContourPlot
         double cumulativeTimeInSI = 0;
         double cumulativeLengthInSI = 0;
         if (firstTimeBin >= this.cumulativeTimes.size())
+        {
             return Double.NaN;
+        }
         try
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)
             {
                 if (timeBinIndex >= this.cumulativeTimes.size())
+                {
                     break;
+                }
                 MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
                 MutableDoubleVector.Abs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
@@ -152,7 +158,9 @@ public class SpeedContourPlot extends ContourPlot
             exception.printStackTrace();
         }
         if (0 == cumulativeTimeInSI)
+        {
             return Double.NaN;
+        }
         return 3600d / 1000 * cumulativeLengthInSI / cumulativeTimeInSI;
     }
 

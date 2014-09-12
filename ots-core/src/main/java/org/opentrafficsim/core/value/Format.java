@@ -3,8 +3,8 @@ package org.opentrafficsim.core.value;
 /**
  * Format a floating point number in a reasonable way. <br />
  * I've experienced problems with the %g conversions that caused array bounds violations. Those versions of the JRE that
- * do <b>not</b> throw such Exceptions use one digit less than specified in the %g conversions.
- * TODO: check how to always format numbers corresponding to the Locale used.
+ * do <b>not</b> throw such Exceptions use one digit less than specified in the %g conversions. TODO: check how to
+ * always format numbers corresponding to the Locale used.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -39,7 +39,7 @@ public class Format
 
     /** Default number of fraction digits. */
     public static final int defaultPrecision = 3;
-    
+
     /**
      * Build a format string.
      * @param width Integer; number of characters in the result
@@ -62,7 +62,9 @@ public class Format
     public static String format(final float value, final int width, final int precision)
     {
         if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)
+        {
             return String.format(formatString(width, precision, "f"), value);
+        }
         return String.format(formatString(width, precision, "e"), value);
     }
 
@@ -97,7 +99,9 @@ public class Format
     public static String format(final double value, final int width, final int precision)
     {
         if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)
+        {
             return String.format(formatString(width, precision, "f"), value);
+        }
         return String.format(formatString(width, precision, "e"), value);
     }
 

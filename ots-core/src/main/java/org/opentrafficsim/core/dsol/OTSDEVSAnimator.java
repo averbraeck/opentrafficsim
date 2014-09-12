@@ -44,11 +44,11 @@ public class OTSDEVSAnimator extends
     /** */
     private static final long serialVersionUID = 20140909L;
     
-    /** the cached context that can be used for animation and statistics for this simulator */
+    /** the cached context that can be used for animation and statistics for this simulator. */
     private Context cachedContext = null;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public OTSDEVSAnimator()
     {
@@ -63,7 +63,9 @@ public class OTSDEVSAnimator extends
     public Context getContext() throws NamingException
     {
         if (this.cachedContext == null)
+        {
             this.cachedContext = (new InitialContext()).createSubcontext(String.valueOf(this.hashCode()));
+        }
         return this.cachedContext;
     }
 }

@@ -145,17 +145,23 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                     double x = dataset.getXValue(0, item);
                     if (x + xAxis.getCurrentGranularity() / 2 < domainValue
                             || x - xAxis.getCurrentGranularity() / 2 >= domainValue)
+                    {
                         continue;
+                    }
                     double y = dataset.getYValue(0, item);
                     if (y + yAxis.getCurrentGranularity() / 2 < rangeValue
                             || y - yAxis.getCurrentGranularity() / 2 >= rangeValue)
+                    {
                         continue;
+                    }
                     roundedTime = x;
                     roundedDistance = y;
                     double valueUnderMouse = dataset.getZValue(0, item);
                     // System.out.println("Value under mouse is " + valueUnderMouse);
                     if (Double.isNaN(valueUnderMouse))
+                    {
                         break;
+                    }
                     String format =
                             ((ContinuousColorPaintScale) (((XYBlockRenderer) (plot.getRenderer(0))).getPaintScale())).format;
                     value = String.format(format, valueUnderMouse);
@@ -241,7 +247,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             double value = paintScale.getLowerBound() + i * legendStep;
             if (value > paintScale.getUpperBound())
+            {
                 break;
+            }
             legend.add(new LegendItem(String.format(legendFormat, value), paintScale.getPaint(value)));
         }
         legend.add(new LegendItem("No data", Color.BLACK));
@@ -276,15 +284,23 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 throw new Error("Bad value: " + fields[1]);
             }
             if (fields[0].equalsIgnoreCase("setDistanceGranularity"))
+            {
                 this.yAxis.setCurrentGranularity(value);
+            }
             else if (fields[0].equalsIgnoreCase("setTimeGranularity"))
+            {
                 this.xAxis.setCurrentGranularity(value);
+            }
             else
+            {
                 throw new Error("Unknown ActionEvent");
+            }
             reGraph();
         }
         else
+        {
             throw new Error("Unknown ActionEvent: " + command);
+        }
     }
 
     /**
@@ -340,7 +356,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected int yAxisBin(int item)
     {
         if (item < 0 || item >= getItemCount(0))
+        {
             throw new Error("yAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
+        }
         return item % yAxisBins();
     }
 
@@ -353,7 +371,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected int xAxisBin(int item)
     {
         if (item < 0 || item >= getItemCount(0))
+        {
             throw new Error("xAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
+        }
         return item / yAxisBins();
     }
 
@@ -492,7 +512,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             this.xAxis.adjustMaximumValue(toTime);
         }
         if (toTime.getValueSI() <= fromTime.getValueSI()) // degenerate sample???
+        {
             return;
+        }
         /*-
         System.out.println(String.format("addData: fromTime=%.1f, toTime=%.1f, fromDist=%.2f, toDist=%.2f", fromTime
                 .getValueSI(), toTime.getValueSI(), car.position(fromTime).getValueSI(), car.position(toTime)
@@ -518,12 +540,18 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
         {
             if (timeBin < 0)
+            {
                 continue;
+            }
             double binEndTime = timeBin + 1;
             if (binEndTime > relativeToTime)
+            {
                 binEndTime = relativeToTime;
+            }
             if (binEndTime <= relativeFromTime)
+            {
                 continue; // no time spent in this timeBin
+            }
             double binDistanceStart =
                     (car.getPosition(
                             new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.xAxis.granularities[0],
@@ -540,12 +568,16 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             {
                 double relativeDuration = 1;
                 if (relativeFromTime > timeBin)
+                {
                     relativeDuration -= relativeFromTime - timeBin;
+                }
                 if (distanceBin == (int) Math.floor(binDistanceEnd))
                 {
                     // This GTU does not move out of this distanceBin before the binEndTime
                     if (binEndTime < timeBin + 1)
+                    {
                         relativeDuration -= timeBin + 1 - binEndTime;
+                    }
                 }
                 else
                 {

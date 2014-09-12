@@ -105,7 +105,9 @@ public class AccelerationContourPlot extends ContourPlot
             final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        {
             return;
+        }
         MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
         MutableDoubleVector.Abs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBin);
         try
@@ -130,15 +132,20 @@ public class AccelerationContourPlot extends ContourPlot
         double cumulativeTimeInSI = 0;
         double cumulativeAccelerationInSI = 0;
         if (firstTimeBin >= this.cumulativeTimes.size())
+        {
             return Double.NaN;
+        }
         try
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)
             {
                 if (timeBinIndex >= this.cumulativeTimes.size())
+                {
                     break;
+                }
                 MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
-                MutableDoubleVector.Abs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBinIndex);
+                MutableDoubleVector.Abs<AccelerationUnit> accelerationValues =
+                        this.cumulativeAccelerations.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);
@@ -153,7 +160,9 @@ public class AccelerationContourPlot extends ContourPlot
             exception.printStackTrace();
         }
         if (0 == cumulativeTimeInSI)
+        {
             return Double.NaN;
+        }
         return cumulativeAccelerationInSI / cumulativeTimeInSI;
     }
 

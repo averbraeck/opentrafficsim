@@ -171,7 +171,9 @@ public class SICoefficients
             {
                 cs = cs.substring(1);
                 if (cs.length() < 1)
+                {
                     throw new UnitException("No SI name after slash in " + coefficientString);
+                }
                 factor = -1;
             }
             boolean parsedPowerString = false;
@@ -179,13 +181,19 @@ public class SICoefficients
             {
                 String name = si.name();
                 if (!cs.startsWith(name))
+                {
                     continue;
+                }
                 int endPos = name.length();
                 if (cs.substring(endPos).startsWith("ol"))
+                {
                     continue; // Don't confuse "m" (for meter) and "mol"
+                }
                 // Found the unit name
                 if (cs.substring(endPos).startsWith("^"))
+                {
                     endPos++;
+                }
                 int value = 1;
                 int digitsSeen = 0;
                 if (cs.substring(endPos).startsWith("-"))
@@ -199,7 +207,9 @@ public class SICoefficients
                     if (digit >= '0' && digit <= '9')
                     {
                         if (0 == digitsSeen)
+                        {
                             value = 0;
+                        }
                         value = value * 10 + digit - '0';
                         endPos++;
                         digitsSeen++;
@@ -209,14 +219,18 @@ public class SICoefficients
                 }
                 Integer oldValue = coefficients.get(si);
                 if (null == oldValue)
+                {
                     oldValue = 0;
+                }
                 coefficients.put(si, oldValue + value * factor);
                 parsedPowerString = true;
                 cs = cs.substring(endPos);
                 break;
             }
             if (!parsedPowerString)
+            {
                 throw new UnitException("Not an SI unit name in \"" + coefficientString + "\" at \"" + cs + "\"");
+            }
         }
         return coefficients;
     }
@@ -230,20 +244,28 @@ public class SICoefficients
     {
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
         for (SI si : a.getCoefficientsMap().keySet())
+        {
             coefficients.put(si, a.getCoefficientsMap().get(si));
+        }
 
         for (SI si : b.getCoefficientsMap().keySet())
         {
             if (coefficients.containsKey(si))
+            {
                 coefficients.put(si, coefficients.get(si) + b.getCoefficientsMap().get(si));
+            }
             else
+            {
                 coefficients.put(si, b.getCoefficientsMap().get(si));
+            }
         }
 
         for (SI si : coefficients.keySet())
         {
             if (coefficients.get(si) == 0)
+            {
                 coefficients.remove(si);
+            }
         }
         return new SICoefficients(coefficients);
     }
@@ -257,20 +279,28 @@ public class SICoefficients
     {
         EnumMap<SI, Integer> coefficients = new EnumMap<SI, Integer>(SI.class);
         for (SI si : a.getCoefficientsMap().keySet())
+        {
             coefficients.put(si, a.getCoefficientsMap().get(si));
+        }
 
         for (SI si : b.getCoefficientsMap().keySet())
         {
             if (coefficients.containsKey(si))
+            {
                 coefficients.put(si, coefficients.get(si) - b.getCoefficientsMap().get(si));
+            }
             else
+            {
                 coefficients.put(si, -b.getCoefficientsMap().get(si));
+            }
         }
 
         for (SI si : coefficients.keySet())
         {
             if (coefficients.get(si) == 0)
+            {
                 coefficients.remove(si);
+            }
         }
         return new SICoefficients(coefficients);
     }

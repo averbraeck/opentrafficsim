@@ -133,10 +133,14 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
         // the null pointer for the reference unit here.
         if (referenceUnit == null)
+        {
             this.conversionFactorToStandardUnit = 1.0;
+        }
         else
+        {
             this.conversionFactorToStandardUnit =
                     referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
+        }
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
         this.unitSystem = unitSystem;
@@ -186,10 +190,14 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
         // the null pointer for the reference unit here.
         if (referenceUnit == null)
+        {
             this.conversionFactorToStandardUnit = 1.0;
+        }
         else
+        {
             this.conversionFactorToStandardUnit =
                     referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
+        }
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
         this.unitSystem = unitSystem;
@@ -215,7 +223,9 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private void addUnit(final Unit<U> unit) throws UnitException
     {
         if (!UNITS.containsKey(unit.getClass().getSimpleName()))
+        {
             UNITS.put(unit.getClass().getSimpleName(), new HashSet<Unit<?>>());
+        }
         UNITS.get(unit.getClass().getSimpleName()).add(unit);
 
         // resolve the SI coefficients, and normalize string
@@ -242,9 +252,13 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             @SuppressWarnings("unchecked")
             Class<Unit<?>> clazz = (Class<Unit<?>>) unit.getClass();
             if (this.getStandardUnit() == null)
+            {
                 unitMap.put(clazz, this);
+            }
             else
+            {
                 unitMap.put(clazz, this.getStandardUnit());
+            }
         }
     }
 
@@ -258,12 +272,16 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     public static <V extends Unit<V>> Set<V> getUnits(final Class<V> unitClass)
     {
         if (!initialized)
+        {
             initialize();
+        }
         Set<V> returnSet = new HashSet<V>();
         if (UNITS.containsKey(unitClass.getSimpleName()))
         {
             for (Unit<?> unit : UNITS.get(unitClass.getSimpleName()))
+            {
                 returnSet.add((V) unit);
+            }
         }
         return returnSet;
     }
@@ -278,12 +296,16 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     public Set<Unit<U>> getAllUnitsOfThisType()
     {
         if (!initialized)
+        {
             initialize();
+        }
         Set<Unit<U>> returnSet = new HashSet<Unit<U>>();
         if (UNITS.containsKey(this.getClass().getSimpleName()))
         {
             for (Unit<?> unit : UNITS.get(this.getClass().getSimpleName()))
+            {
                 returnSet.add((Unit<U>) unit);
+            }
         }
         return returnSet;
     }
@@ -378,7 +400,9 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     public static Set<Unit<?>> lookupOrCreateUnitWithSICoefficients(final String normalizedSICoefficientsString)
     {
         if (!initialized)
+        {
             initialize();
+        }
         if (SI_UNITS.containsKey(normalizedSICoefficientsString))
         {
             return new HashSet<Unit<?>>(SI_UNITS.get(normalizedSICoefficientsString).values());
@@ -396,7 +420,9 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     public static SIUnit lookupOrCreateSIUnitWithSICoefficients(final String normalizedSICoefficientsString)
     {
         if (!initialized)
+        {
             initialize();
+        }
         if (SI_UNITS.containsKey(normalizedSICoefficientsString)
                 && SI_UNITS.get(normalizedSICoefficientsString).containsKey(SIUnit.class))
         {

@@ -64,7 +64,9 @@ public class Localization
         if (this.currentLocale == null || !this.currentLocale.equals(DefaultLocale.getLocale()))
         {
             if (DefaultLocale.getLocale() == null)
+            {
                 DefaultLocale.setLocale(new Locale("en"));
+            }
             this.currentLocale = DefaultLocale.getLocale();
             Locale.setDefault(this.currentLocale);
             this.resourceBundle = ResourceBundle.getBundle(this.bundleNamePrefix, this.currentLocale);
