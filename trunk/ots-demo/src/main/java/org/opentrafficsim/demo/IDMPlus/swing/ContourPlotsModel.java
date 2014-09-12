@@ -18,8 +18,7 @@ import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.ContourPlot;
 
 /**
@@ -72,7 +71,7 @@ public class ContourPlotsModel implements OTSModelInterface
     private OTSDEVSSimulator simulator;
 
     /** the headway (inter-vehicle time) */
-    private DoubleScalarRel<TimeUnit> headway;
+    private DoubleScalar.Rel<TimeUnit> headway;
 
     /** number of cars created */
     private int carsCreated = 0;
@@ -84,13 +83,13 @@ public class ContourPlotsModel implements OTSModelInterface
     private ArrayList<Car> cars = new ArrayList<Car>();
 
     /** minimum distance */
-    private DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
+    private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
 
     /** maximum distance */
-    private DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(5000, LengthUnit.METER);
+    private DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
 
     /** the speed limit */
-    private DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
     /** the contour plots */
     private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
@@ -100,7 +99,7 @@ public class ContourPlotsModel implements OTSModelInterface
      */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> _simulator)
+            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulator) _simulator;
@@ -108,13 +107,13 @@ public class ContourPlotsModel implements OTSModelInterface
         this.carFollowingModel = new IDMPlus<Line<String>>();
 
         // 1500 [veh / hour] == 2.4s headway
-        this.headway = new DoubleScalarRel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
+        this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
 
         try
         {
-            this.simulator.scheduleEventAbs(new DoubleScalarAbs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "generateCar", null);
-            this.simulator.scheduleEventAbs(new DoubleScalarAbs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
                     "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException exception)
@@ -146,8 +145,8 @@ public class ContourPlotsModel implements OTSModelInterface
      */
     protected void generateCar()
     {
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         IDMCar car =
                 new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
                         .getSimulatorTime().get(), initialPosition, initialSpeed);
@@ -166,7 +165,7 @@ public class ContourPlotsModel implements OTSModelInterface
      * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
      */
     @Override
-    public SimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
         return this.simulator;
@@ -183,7 +182,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /**
      * @return minimumDistance
      */
-    public DoubleScalarAbs<LengthUnit> getMinimumDistance()
+    public DoubleScalar.Abs<LengthUnit> getMinimumDistance()
     {
         return this.minimumDistance;
     }
@@ -191,7 +190,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /**
      * @return maximumDistance
      */
-    public DoubleScalarAbs<LengthUnit> getMaximumDistance()
+    public DoubleScalar.Abs<LengthUnit> getMaximumDistance()
     {
         return this.maximumDistance;
     }
@@ -208,8 +207,8 @@ public class ContourPlotsModel implements OTSModelInterface
          * @param initialSpeed
          */
         public IDMCar(int id, OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
-                DoubleScalarAbs<TimeUnit> initialTime, DoubleScalarAbs<LengthUnit> initialPosition,
-                DoubleScalarRel<SpeedUnit> initialSpeed)
+                DoubleScalar.Abs<TimeUnit> initialTime, DoubleScalar.Abs<LengthUnit> initialPosition,
+                DoubleScalar.Rel<SpeedUnit> initialSpeed)
         {
             super(id, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
             try
@@ -228,7 +227,7 @@ public class ContourPlotsModel implements OTSModelInterface
         protected void move() throws RemoteException
         {
             System.out.println("move " + this.getID());
-            DoubleScalarAbs<TimeUnit> now = getSimulator().getSimulatorTime().get();
+            DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
             if (getPosition(now).getValueSI() > ContourPlotsModel.this.maximumDistance.getValueSI())
             {
                 ContourPlotsModel.this.cars.remove(this);
@@ -244,8 +243,8 @@ public class ContourPlotsModel implements OTSModelInterface
             {
                 Car block =
                         new Car(99999, null, ContourPlotsModel.this.carFollowingModel, now,
-                                new DoubleScalarAbs<LengthUnit>(4000, LengthUnit.METER),
-                                new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                new DoubleScalar.Abs<LengthUnit>(4000, LengthUnit.METER),
+                                new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);
             }
             CarFollowingModelResult cfmr =
@@ -258,7 +257,7 @@ public class ContourPlotsModel implements OTSModelInterface
 
             try
             {
-                getSimulator().scheduleEventRel(new DoubleScalarRel<TimeUnit>(0.5, TimeUnit.SECOND), this, this,
+                getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this,
                         "move", null);
             }
             catch (RemoteException | SimRuntimeException exception)
