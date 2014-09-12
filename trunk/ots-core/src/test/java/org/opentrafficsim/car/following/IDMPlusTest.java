@@ -14,8 +14,7 @@ import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -58,19 +57,19 @@ public class IDMPlusTest
         // Check a car standing still with no leaders accelerates with maximum acceleration
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
-        DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND);
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(123.456, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(123.456, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Car referenceCar = new Car(12345, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
-        DoubleScalarAbs<SpeedUnit> speedLimit = new DoubleScalarAbs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         Collection<Car> leaders = new ArrayList<Car>();
         CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.validUntil.getValueSI(), 0.0001);
         assertEquals("Acceleration should be maximum", 1.25, cfmr.acceleration.getValueSI(), 0.0001);
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
-        DoubleScalarAbs<LengthUnit> leaderPosition =
-                new DoubleScalarAbs<LengthUnit>(3 + referenceCar.length().getValueSI()
+        DoubleScalar.Abs<LengthUnit> leaderPosition =
+                new DoubleScalar.Abs<LengthUnit>(3 + referenceCar.length().getValueSI()
                         + referenceCar.getPosition(initialTime).getValueSI(), LengthUnit.METER);
         Car leaderCar = new Car(23456, simulator, null, initialTime, leaderPosition, initialSpeed);
         leaders.add(leaderCar);
@@ -78,7 +77,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.acceleration.getValueSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-                new DoubleScalarAbs<LengthUnit>(1000 + (3 + referenceCar.length().getValueSI() + referenceCar.getPosition(
+                new DoubleScalar.Abs<LengthUnit>(1000 + (3 + referenceCar.length().getValueSI() + referenceCar.getPosition(
                         initialTime).getValueSI()), LengthUnit.METER);
         // Exercise the if statement that ignores leaders that are further ahead
         Car leaderCar2 = new Car(34567, simulator, null, initialTime, leaderPosition, initialSpeed);
@@ -93,7 +92,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.acceleration.getValueSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-                new DoubleScalarAbs<LengthUnit>(-(3 + referenceCar.length().getValueSI() + referenceCar.getPosition(
+                new DoubleScalar.Abs<LengthUnit>(-(3 + referenceCar.length().getValueSI() + referenceCar.getPosition(
                         initialTime).getValueSI()), LengthUnit.METER);
         leaderCar = new Car(23456, simulator, null, initialTime, leaderPosition, initialSpeed);
         leaders.add(leaderCar);
@@ -105,7 +104,7 @@ public class IDMPlusTest
         {
             leaders.clear();
             leaderPosition =
-                    new DoubleScalarAbs<LengthUnit>(
+                    new DoubleScalar.Abs<LengthUnit>(
                             spareDistance
                                     + (3 + referenceCar.length().getValueSI() + referenceCar.getPosition(initialTime)
                                             .getValueSI()), LengthUnit.METER);
@@ -123,16 +122,16 @@ public class IDMPlusTest
         // System.out.println("");
         referenceAcceleration = Double.NEGATIVE_INFINITY;
         leaderPosition =
-                new DoubleScalarAbs<LengthUnit>(2 + 3 + referenceCar.length().getValueSI()
+                new DoubleScalar.Abs<LengthUnit>(2 + 3 + referenceCar.length().getValueSI()
                         + referenceCar.getPosition(initialTime).getValueSI(), LengthUnit.METER);
         // In IDM+ the reference car must have non-zero speed for the leader speed to have any effect
-        initialSpeed = new DoubleScalarRel<SpeedUnit>(2, SpeedUnit.METER_PER_SECOND);
+        initialSpeed = new DoubleScalar.Rel<SpeedUnit>(2, SpeedUnit.METER_PER_SECOND);
         for (int integerLeaderSpeed = 0; integerLeaderSpeed <= 40; integerLeaderSpeed++)
         {
             referenceCar = new Car(12345, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
             leaders.clear();
-            DoubleScalarRel<SpeedUnit> leaderSpeed =
-                    new DoubleScalarRel<SpeedUnit>(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
+            DoubleScalar.Rel<SpeedUnit> leaderSpeed =
+                    new DoubleScalar.Rel<SpeedUnit>(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
             leaderCar = new Car(0, simulator, null, initialTime, leaderPosition, leaderSpeed);
             leaders.add(leaderCar);
             // System.out.println("referenceCar: " + referenceCar);
@@ -147,12 +146,12 @@ public class IDMPlusTest
         assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
         // Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at the right
         // point. (In IDM+ the car oscillates a while around the final position with pretty good damping.)
-        initialPosition = new DoubleScalarAbs<LengthUnit>(100, LengthUnit.METER);
-        initialSpeed = new DoubleScalarRel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND);
+        initialPosition = new DoubleScalar.Abs<LengthUnit>(100, LengthUnit.METER);
+        initialSpeed = new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND);
         referenceCar = new Car(12345, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
         leaders.clear();
         leaderPosition =
-                new DoubleScalarAbs<LengthUnit>(100 + 3 + referenceCar.length().getValueSI()
+                new DoubleScalar.Abs<LengthUnit>(100 + 3 + referenceCar.length().getValueSI()
                         + referenceCar.getPosition(initialTime).getValueSI(), LengthUnit.METER);
         leaderCar = new Car(0, simulator, null, initialTime, leaderPosition, initialSpeed);
         leaders.add(leaderCar);

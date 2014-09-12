@@ -3,8 +3,7 @@ package org.opentrafficsim.core.dsol;
 import nl.tudelft.simulation.dsol.ModelInterface;
 
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -35,7 +34,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public interface OTSModelInterface extends
-        ModelInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>
+        ModelInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     // typed extension
 }

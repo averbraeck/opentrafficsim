@@ -1,36 +1,37 @@
 package org.opentrafficsim.core.value.vdouble.matrix;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.unit.SICoefficients;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
+import org.opentrafficsim.core.value.Absolute;
+import org.opentrafficsim.core.value.AbstractValue;
 import org.opentrafficsim.core.value.DenseData;
 import org.opentrafficsim.core.value.Format;
-import org.opentrafficsim.core.value.Matrix;
+import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.SparseData;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
-import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
-import org.opentrafficsim.core.value.vdouble.DoubleMathFunctionsImpl;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsDense;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorRel;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorRelDense;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorRelSparse;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.DoubleMatrix2D;
 import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra;
 import cern.colt.matrix.tdouble.algo.SparseDoubleAlgebra;
+import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D;
-import cern.jet.math.tdouble.DoubleFunctions;
+import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
+import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
 /**
+ * Immutable double matrix.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -50,82 +51,364 @@ import cern.jet.math.tdouble.DoubleFunctions;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 13, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> The unit for this value type
+ * @version Sep 9, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> Unit
  */
-public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implements DoubleMathFunctions,
-        DoubleMatrixFunctions<U>
+public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+        ReadOnlyDoubleMatrixFunctions<U>
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
 
-    /** the internal storage for the matrix; internally they are stored in SI units; can be dense or sparse. */
+    /** */
+    private static final long serialVersionUID = 20140909L;
+
+    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
     protected DoubleMatrix2D matrixSI;
 
     /**
-     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
-     * @param values double[][]; the 2D array to check
-     * @throws ValueException
+     * @param unit
      */
-    private static void ensureRectangular(final double[][] values) throws ValueException
-    {
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("Lengths of rows are not all the same");
-    }
-
-    /**
-     * Check that a 2D array of DoubleScalar is rectangular; i.e. all rows have the same length.
-     * @param values DoubleScalar[][]; the 2D array to check
-     * @throws ValueException
-     */
-    private static void ensureRectangular(final DoubleScalar<?>[][] values) throws ValueException
-    {
-        for (int row = 1; row < values.length; row++)
-            if (values[0].length != values[row].length)
-                throw new ValueException("lengths of rows are not all the same");
-    }
-
-    /**
-     * Check that two matrices have the same number of rows and columns.
-     * @param x DoubleMatrix; matrix to size-compare to y
-     * @param y DoubleMatrix; matrix to size-compare to x
-     * @throws ValueException
-     */
-    private static void ensureSameSize(final DoubleMatrix<?> x, final DoubleMatrix<?> y) throws ValueException
-    {
-        if (x.rows() != y.rows() || x.columns() != y.columns())
-            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
-                    x.rows(), y.columns(), y.rows()));
-    }
-
-    /**
-     * Check that a DoubleMatrix has the same size as a 2D array.
-     * @param x DoubleMatrix; matrix to size-compare to c
-     * @param c double[][]; the 2D array to size-compare to x
-     * @throws ValueException
-     */
-    private static void ensureSameSize(final DoubleMatrix<?> x, final double[][] c) throws ValueException
-    {
-        ensureRectangular(c);
-        if (x.rows() != c.length || x.columns() != c[0].length)
-            throw new ValueException(String.format("matrices have unequal sizes: %dx%d != %dx%d", x.columns(),
-                    x.rows(), c.length, c[0].length));
-    }
-
-    /**
-     * Construct the matrix and store the values in SI units.
-     * @param values a 2D array of values for the constructor
-     * @param unit the unit of the values
-     * @throws ValueException
-     */
-    public DoubleMatrix(final double[][] values, final U unit) throws ValueException
+    protected DoubleMatrix(U unit)
     {
         super(unit);
+    }
+
+    /**
+     * @param <U> Unit
+     */
+    public abstract static class Abs<U extends Unit<U>> extends DoubleMatrix<U> implements Absolute
+    {
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * Create a Abs.
+         * @param unit
+         */
+        protected Abs(U unit)
+        {
+            super(unit);
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only.
+             * @param values
+             * @param unit
+             */
+            protected Dense(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final double[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values);
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final DoubleScalar.Abs<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Dense");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
+             */
+            public MutableDoubleMatrix.Abs.Dense<U> mutable()
+            {
+                return new MutableDoubleMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.Matrix.ReadOnlyDoubleMatrixFunctions#get(int)
+             */
+            @Override
+            public DoubleScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new DoubleScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected DoubleMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new DenseDoubleMatrix2D(rows, columns);
+            }
+
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only
+             * @param values
+             * @param unit
+             */
+            protected Sparse(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * Create a Dense Relative Immutable DoubleMatrix
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final double[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values);
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final DoubleScalar.Abs<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Sparse");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
+             */
+            public MutableDoubleMatrix.Abs.Sparse<U> mutable()
+            {
+                return new MutableDoubleMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.Matrix.ReadOnlyDoubleMatrixFunctions#get(int)
+             */
+            @Override
+            public DoubleScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new DoubleScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected DoubleMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new DenseDoubleMatrix2D(rows, columns);
+            }
+        }
+
+    }
+
+    /**
+     * @param <U> Unit
+     */
+    public abstract static class Rel<U extends Unit<U>> extends DoubleMatrix<U> implements Relative
+    {
+        /** */
+        private static final long serialVersionUID = 20140905L;
+
+        /**
+         * Create a Sparse
+         * @param unit
+         */
+        protected Rel(U unit)
+        {
+            super(unit);
+        }
+
+        /**
+         * @param <U>
+         */
+        public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only.
+             * @param values
+             * @param unit
+             */
+            protected Dense(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final double[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Dense(final DoubleScalar.Rel<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Dense");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
+             */
+            public MutableDoubleMatrix.Rel.Dense<U> mutable()
+            {
+                return new MutableDoubleMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.Matrix.ReadOnlyDoubleMatrixFunctions#get(int)
+             */
+            @Override
+            public DoubleScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new DoubleScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected DoubleMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new SparseDoubleMatrix2D(rows, columns);
+            }
+
+        }
+
+        /**
+         * @param <U> Unit
+         */
+        public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
+        {
+            /** */
+            private static final long serialVersionUID = 20140905L;
+
+            /**
+             * For package internal use only
+             * @param values
+             * @param unit
+             */
+            protected Sparse(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * Create a new Sparse Relative Immutable DoubleMatrix
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final double[][] values, final U unit) throws ValueException
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
+            }
+
+            /**
+             * @param values
+             * @param unit
+             * @throws ValueException
+             */
+            public Sparse(final DoubleScalar.Rel<U>[][] values) throws ValueException
+            {
+                super(checkNonEmpty(values)[0][0].getUnit());
+                // System.out.println("Created Sparse");
+                initialize(values);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
+             */
+            public MutableDoubleMatrix.Rel.Sparse<U> mutable()
+            {
+                return new MutableDoubleMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.Matrix.ReadOnlyDoubleMatrixFunctions#get(int)
+             */
+            @Override
+            public DoubleScalar<U> get(final int row, final int column) throws ValueException
+            {
+                return new DoubleScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
+             */
+            @Override
+            protected DoubleMatrix2D createMatrix2D(int rows, int columns)
+            {
+                return new SparseDoubleMatrix2D(rows, columns);
+            }
+
+        }
+    }
+
+    /**
+     * Import the values and convert them into SI units.
+     * @param values an array of values
+     * @throws ValueException
+     */
+    protected void initialize(final double[][] values) throws ValueException
+    {
         ensureRectangular(values);
-        this.matrixSI = createMatrix2D(values.length, (values.length > 0 ? values[0].length : 0));
-        if (unit.equals(unit.getStandardUnit()))
+        this.matrixSI = createMatrix2D(values.length, 0 == values.length ? 0 : values[0].length);
+        if (this.unit.equals(this.unit.getStandardUnit()))
         {
             this.matrixSI.assign(values);
         }
@@ -135,33 +418,33 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
             {
                 for (int column = 0; column < values[row].length; column++)
                 {
-                    this.matrixSI.set(row, column, expressAsSIUnit(values[row][column]));
+                    safeSet(row, column, expressAsSIUnit(values[row][column]));
                 }
             }
         }
     }
 
     /**
-     * Construct the matrix and store the values in SI units.
-     * @param values an array of values for the constructor
+     * @param values
+     */
+    protected void initialize(final DoubleMatrix2D values)
+    {
+        this.matrixSI = values;
+    }
+
+    /**
+     * Construct the vector and store the values in SI units.
+     * @param values double[][] a 2D array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    public DoubleMatrix(final DoubleScalar<U>[][] values) throws ValueException
+    protected void initialize(final DoubleScalar<U>[][] values) throws ValueException
     {
-        super(values.length > 0 && values[0].length > 0 ? values[0][0].getUnit() : null);
-        ensureRectangular(values);
-        if (values.length == 0 || values[0].length == 0)
-        {
-            throw new ValueException(
-                    "DoubleMatrix constructor called with an empty row or column of DoubleScalar elements");
-        }
+        ensureRectangularAndNonEmpty(values);
         this.matrixSI = createMatrix2D(values.length, values[0].length);
         for (int row = 0; row < values.length; row++)
         {
-            for (int column = 0; column < values[row].length; column++)
-            {
-                this.matrixSI.set(row, column, values[row][column].getValueSI());
-            }
+            for (int column = 0; column < values[0].length; column++)
+                safeSet(row, column, values[row][column].getValueSI());
         }
     }
 
@@ -169,82 +452,69 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * This method has to be implemented by each leaf class.
      * @param rows the number of rows in the matrix
      * @param columns the number of columns in the matrix
-     * @return an instance of the right type of matrix (absolute /relative, dense / sparse, etc.).
+     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
      */
     protected abstract DoubleMatrix2D createMatrix2D(final int rows, final int columns);
 
     /**
-     * @return the Colt matrix.
-     */
-    public DoubleMatrix2D getMatrixSI()
-    {
-        return this.matrixSI;
-    }
-
-    /**
-     * @return values in SI units
+     * Create a double[][] array filled with the values in SI unit.
+     * @return double[][]; array of values in SI unit
      */
     public double[][] getValuesSI()
     {
-        return this.matrixSI.toArray();
+        return this.matrixSI.toArray(); // this makes a deep copy
     }
 
     /**
-     * @return values in original units
+     * Create a double[][] array filled with the values in the original unit.
+     * @return values in original unit
      */
     public double[][] getValuesInUnit()
     {
-        double[][] values = this.matrixSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            for (int j = 0; j < values[i].length; j++)
-                values[i][j] = expressAsSpecifiedUnit(values[i][j]);
-        return values;
+        return getValuesInUnit(this.unit);
     }
 
     /**
+     * Create a double[][] array filled with the values in the specified unit.
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
     public double[][] getValuesInUnit(final U targetUnit)
     {
         double[][] values = this.matrixSI.toArray();
-        for (int i = 0; i < values.length; i++)
-            for (int j = 0; j < values[i].length; j++)
-                values[i][j] = ValueUtil.expressAsUnit(values[i][j], targetUnit);
+        for (int row = 0; row < values.length; row++)
+            for (int column = 0; column < values[0].length; column++)
+                values[row][column] = ValueUtil.expressAsUnit(values[row][column], targetUnit);
         return values;
     }
 
     /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#rows()
+     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#rows()
      */
-    @Override
     public int rows()
     {
         return this.matrixSI.rows();
     }
 
     /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#columns()
+     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#columns()
      */
-    @Override
     public int columns()
     {
         return this.matrixSI.columns();
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#getSI(int, int)
+     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getSI(int)
      */
     public double getSI(final int row, final int column) throws ValueException
     {
-        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
-            throw new ValueException("DoubleMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
-                    + ", size=" + rows() + ", column=" + column + ", size=" + columns());
-        return this.matrixSI.get(row, column);
+        checkIndex(row, column);
+        return safeGet(row, column);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#getInUnit(int, int)
+     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int)
      */
     public double getInUnit(final int row, final int column) throws ValueException
     {
@@ -252,49 +522,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#getInUnit(int, int,
+     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int,
      *      org.opentrafficsim.core.unit.Unit)
      */
-    @Override
     public double getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
         return ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#setSI(int, int, double)
-     */
-    @Override
-    public void setSI(final int row, final int column, final double valueSI) throws ValueException
-    {
-        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
-            throw new ValueException("DoubleMatrix.get: row<0 || row>=size || column<0 || column>=size. row=" + row
-                    + ", size=" + rows() + ", column=" + column + ", size=" + columns());
-        this.matrixSI.set(row, column, valueSI);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#set(int, int,
-     *      org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
-     */
-    @Override
-    public void set(final int row, final int column, final DoubleScalar<U> value) throws ValueException
-    {
-        setSI(row, column, value.getValueSI());
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#setInUnit(int, int, double,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
-    @Override
-    public void setInUnit(final int row, final int column, final double value, final U valueUnit) throws ValueException
-    {
-        setSI(row, column, ValueUtil.expressAsSIUnit(value, valueUnit));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#zSum()
+     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#zSum()
      */
     public double zSum()
     {
@@ -302,18 +539,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#normalize()
-     */
-    public void normalize() throws ValueException
-    {
-        double sum = this.zSum();
-        if (sum == 0)
-            throw new ValueException("DoubleMatrix.normalize: zSum of the vector values == 0, cannot normalize");
-        this.divide(sum);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MatrixFunctions#cardinality()
+     * @see org.opentrafficsim.core.value.vdouble.vectormut.Vectormut#cardinality()
      */
     @Override
     public int cardinality()
@@ -322,7 +548,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#det()
+     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#det()
      */
     @Override
     public double det() throws ValueException
@@ -331,15 +557,15 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         {
             if (this instanceof SparseData)
             {
-                // System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
+                // System.out.println("calling SparseDoubleAlgebra().det(this.matrixSI)");
                 return new SparseDoubleAlgebra().det(this.matrixSI);
             }
             if (this instanceof DenseData)
             {
-                // System.out.println("calling DenseFloatAlgebra().det(this.matrixSI)");
+                // System.out.println("calling DenseDoubleAlgebra().det(this.matrixSI)");
                 return new DenseDoubleAlgebra().det(this.matrixSI);
             }
-            throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
+            throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
         }
         catch (IllegalArgumentException exception)
         {
@@ -358,274 +584,18 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
         // unequal if object is of a different type.
         if (!(obj instanceof DoubleMatrix<?>))
             return false;
-        DoubleMatrix<?> fm = (DoubleMatrix<?>) obj;
+        DoubleMatrix<?> fv = (DoubleMatrix<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fm.getUnit().getStandardUnit()))
+        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
             return false;
 
         // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fm.isAbsolute() || this.isRelative() != fm.isRelative())
+        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
             return false;
 
-        // Colt's equals also tests the number of rows and columns
-        return this.matrixSI.equals(fm.matrixSI);
-    }
-
-    /**********************************************************************************/
-    /********************************** MATH METHODS **********************************/
-    /**********************************************************************************/
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#abs()
-     */
-    @Override
-    public void abs()
-    {
-        this.matrixSI.assign(DoubleFunctions.abs);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#acos()
-     */
-    @Override
-    public void acos()
-    {
-        this.matrixSI.assign(DoubleFunctions.acos);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#asin()
-     */
-    @Override
-    public void asin()
-    {
-        this.matrixSI.assign(DoubleFunctions.asin);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#atan()
-     */
-    @Override
-    public void atan()
-    {
-        this.matrixSI.assign(DoubleFunctions.atan);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
-     */
-    @Override
-    public void cbrt()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.cbrt);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#ceil()
-     */
-    @Override
-    public void ceil()
-    {
-        this.matrixSI.assign(DoubleFunctions.ceil);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cos()
-     */
-    @Override
-    public void cos()
-    {
-        this.matrixSI.assign(DoubleFunctions.cos);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cosh()
-     */
-    @Override
-    public void cosh()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.cosh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#exp()
-     */
-    @Override
-    public void exp()
-    {
-        this.matrixSI.assign(DoubleFunctions.exp);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#expm1()
-     */
-    @Override
-    public void expm1()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.expm1);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#floor()
-     */
-    @Override
-    public void floor()
-    {
-        this.matrixSI.assign(DoubleFunctions.floor);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log()
-     */
-    @Override
-    public void log()
-    {
-        this.matrixSI.assign(DoubleFunctions.log);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log10()
-     */
-    @Override
-    public void log10()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.log10);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log1p()
-     */
-    @Override
-    public void log1p()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.log1p);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
-     */
-    @Override
-    public void pow(final double x)
-    {
-        this.matrixSI.assign(DoubleFunctions.pow(x));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#rint()
-     */
-    @Override
-    public void rint()
-    {
-        this.matrixSI.assign(DoubleFunctions.rint);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#round()
-     */
-    @Override
-    public void round()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.round);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#signum()
-     */
-    @Override
-    public void signum()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.signum);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sin()
-     */
-    @Override
-    public void sin()
-    {
-        this.matrixSI.assign(DoubleFunctions.sin);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sinh()
-     */
-    @Override
-    public void sinh()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.sinh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
-     */
-    @Override
-    public void sqrt()
-    {
-        this.matrixSI.assign(DoubleFunctions.sqrt);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tan()
-     */
-    @Override
-    public void tan()
-    {
-        this.matrixSI.assign(DoubleFunctions.tan);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tanh()
-     */
-    @Override
-    public void tanh()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.tanh);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
-     */
-    @Override
-    public void toDegrees()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.toDegrees);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
-     */
-    @Override
-    public void toRadians()
-    {
-        this.matrixSI.assign(DoubleMathFunctionsImpl.toRadians);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#inv()
-     */
-    @Override
-    public void inv()
-    {
-        this.matrixSI.assign(DoubleFunctions.inv);
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
-     */
-    @Override
-    public void multiply(final double constant)
-    {
-        this.matrixSI.assign(DoubleFunctions.mult(constant));
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
-     */
-    @Override
-    public void divide(final double constant)
-    {
-        this.matrixSI.assign(DoubleFunctions.div(constant));
+        // Colt's equals also tests the size of the vector
+        return this.matrixSI.equals(fv.matrixSI);
     }
 
     /**
@@ -638,333 +608,161 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
     }
 
     /**
-     * @param displayUnit the unit to display the matrix in.
-     * @return a printable String with the matrix contents
+     * Print this AbstractDoubleVector with the values expressed in the specified unit.
+     * @param displayUnit the unit to display the vector in.
+     * @return a printable String with the vector contents
      */
     public String toString(final U displayUnit)
     {
         StringBuffer buf = new StringBuffer();
-        // TODO: check how to always format numbers corresponding to the Locale used.
-        buf.append("[" + displayUnit.getAbbreviation() + "]");
-        for (int i = 0; i < this.matrixSI.rows(); i++)
+        if (this instanceof MutableDoubleMatrix)
         {
-            buf.append("\n");
-            for (int j = 0; j < this.matrixSI.columns(); j++)
+            buf.append("Mutable   ");
+            if (this instanceof MutableDoubleMatrix.Abs.Dense)
+                buf.append("Abs Dense  ");
+            else if (this instanceof MutableDoubleMatrix.Rel.Dense)
+                buf.append("Rel Dense  ");
+            else if (this instanceof MutableDoubleMatrix.Abs.Sparse)
+                buf.append("Abs Sparse ");
+            else if (this instanceof MutableDoubleMatrix.Rel.Sparse)
+                buf.append("Rel Sparse ");
+            else
+                buf.append("??? ");
+        }
+        else
+        {
+            buf.append("Immutable ");
+            if (this instanceof DoubleMatrix.Abs.Dense)
+                buf.append("Abs Dense  ");
+            else if (this instanceof DoubleMatrix.Rel.Dense)
+                buf.append("Rel Dense  ");
+            else if (this instanceof DoubleMatrix.Abs.Sparse)
+                buf.append("Abs Sparse ");
+            else if (this instanceof DoubleMatrix.Rel.Sparse)
+                buf.append("Rel Sparse ");
+            else
+                buf.append("??? ");
+        }
+        buf.append("[" + displayUnit.getAbbreviation() + "]");
+        for (int row = 0; row < this.matrixSI.rows(); row++)
+        {
+            buf.append("\r\n\t");
+            for (int column = 0; column < this.matrixSI.columns(); column++)
             {
-                double f = ValueUtil.expressAsUnit(this.matrixSI.get(i, j), displayUnit);
+                double f = ValueUtil.expressAsUnit(safeGet(row, column), displayUnit);
                 buf.append(" " + Format.format(f));
             }
         }
         return buf.toString();
     }
 
-    /**********************************************************************************/
-    /******************************* NON-STATIC METHODS *******************************/
-    /**********************************************************************************/
-
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
-     * is not allowed. Adding an absolute value to an existing relative value would require the result to become
-     * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param matrix the matrix to add
-     * @throws ValueException when matrices have unequal size
+     * Centralized size equality check.
+     * @param other DoubleMatrix<U>; other DoubleVector
+     * @throws ValueException when vectors have unequal size
      */
-    public void add(final DoubleMatrixRel<U> matrix) throws ValueException
+    protected void checkSize(final DoubleMatrix<?> other) throws ValueException
     {
-        ensureSameSize(this, matrix);
-        this.matrixSI.assign(matrix.matrixSI, DoubleFunctions.plus);
+        if (rows() != other.rows() || columns() != other.columns())
+            throw new ValueException("The matrices have different sizes: " + rows() + "x" + columns() + " != "
+                    + other.rows() + "x" + other.columns());
     }
 
     /**
-     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
-     * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
-     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param matrix the value to subtract
-     * @throws ValueException when matrices have unequal size
+     * Centralized size equality check.
+     * @param other double[][]; array of double
+     * @throws ValueException when vectors have unequal size
      */
-    public void subtract(final DoubleMatrixRel<U> matrix) throws ValueException
+    protected void checkSize(final double[][] other) throws ValueException
     {
-        ensureSameSize(this, matrix);
-        this.matrixSI.assign(matrix.matrixSI, DoubleFunctions.minus);
+        if (rows() != other.length || columns() != other[0].length)
+            throw new ValueException("The vector and the array have different sizes: " + rows() + " != " + other.length);
+        ensureRectangular(other);
     }
 
-    /**********************************************************************************/
-    /********************************* STATIC METHODS *********************************/
-    /**********************************************************************************/
+    /**
+     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
+     * @param values double[][]; the 2D array to check
+     * @throws ValueException
+     */
+    private static void ensureRectangular(final double[][] values) throws ValueException
+    {
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("Lengths of rows are not all the same");
+    }
 
     /**
-     * Add a matrix with absolute values x and a matrix with relative values y. The target unit will be the unit of
-     * absolute value x.
-     * @param x absolute matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when matrices have unequal size
+     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
+     * @param values DoubleScalar[][]; the 2D array to check
+     * @throws ValueException
      */
-    public static <U extends Unit<U>> DoubleMatrixAbs<U> plus(final DoubleMatrixAbs<U> x, final DoubleMatrixRel<U> y)
+    private static void ensureRectangularAndNonEmpty(final DoubleScalar<?>[][] values) throws ValueException
+    {
+        if (0 == values.length || 0 == values[0].length)
+            throw new ValueException("Cannot determine unit for DoubleMatrix from an empty array of DoubleScalar");
+        for (int row = 1; row < values.length; row++)
+            if (values[0].length != values[row].length)
+                throw new ValueException("Lengths of rows are not all the same");
+    }
+
+    /**
+     * Check that provided row and column indices are valid.
+     * @param row integer; the row value to check
+     * @param column integer; the column value to check
+     * @throws ValueException
+     */
+    protected void checkIndex(final int row, final int column) throws ValueException
+    {
+        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+            throw new ValueException("index out of range (valid range is 0.." + (this.matrixSI.rows() - 1) + ", 0.."
+                    + this.matrixSI.columns() + ", got " + row + ", " + column + ")");
+    }
+
+    /**
+     * Retrieve a value in vectorSI without checking validity of the index.
+     * @param row integer; the row where the value must be retrieved
+     * @param column integer; the column where the value must be retrieved
+     * @return double; the value stored at the indicated row and column
+     */
+    protected double safeGet(int row, int column)
+    {
+        return this.matrixSI.getQuick(row, column);
+    }
+
+    /**
+     * Modify a value in vectorSI without checking validity of the indices.
+     * @param row integer; the row where the value must be stored
+     * @param col integer; the column where the value must be stored
+     * @param valueSI double; the new value for the entry in vectorSI
+     */
+    protected void safeSet(final int row, final int column, final double valueSI)
+    {
+        this.matrixSI.setQuick(row, column, valueSI);
+    }
+
+    /**
+     * Create a deep copy of the data.
+     * @return DoubleMatrix2D; deep copy of the data
+     */
+    protected DoubleMatrix2D deepCopyOfData()
+    {
+        return this.matrixSI.copy();
+    }
+
+    /**
+     * Check that a provided array can be used to create some descendant of an AbstractDoubleMatrix.
+     * @param fsArray DoubleScalar[][]; the provided array
+     * @return DoubleScalar[][]; the provided array
+     * @throws ValueException
+     */
+    protected static <U extends Unit<U>> DoubleScalar<U>[][] checkNonEmpty(DoubleScalar<U>[][] fsArray)
             throws ValueException
     {
-        ensureSameSize(x, y);
-        DoubleMatrixAbs<U> c = x.copy();
-        c.add(y);
-        return c;
-    }
-
-    /**
-     * Add a matrix with relative values x and a matrix with absolute values y. The target unit will be the unit of
-     * absolute value y.
-     * @param x relative matrix 1
-     * @param y absolute matrix 2
-     * @param targetUnit unit in which the results will be displayed
-     * @return new Matrix with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixAbs<U> plus(final DoubleMatrixRel<U> x, final DoubleMatrixAbs<U> y)
-            throws ValueException
-    {
-        return plus(y, x);
-    }
-
-    /**
-     * Add a matrix with relative values x and a matrix with relative values y. The target unit will be the unit of
-     * relative value x.
-     * @param x relative matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements sum of x[i] and y[i]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixRel<U> plus(final DoubleMatrixRel<U> x, final DoubleMatrixRel<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        DoubleMatrixRel<U> c = x.copy();
-        c.add(y);
-        return c;
-    }
-
-    /**
-     * Subtract a matrix with relative values y from a matrix with relative values x. The result is a matrix with
-     * relative values. The target unit will be the unit of relative value x.
-     * @param x relative matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements values x[i,j] minus y[i,j]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixRel<U> minus(final DoubleMatrixRel<U> x, final DoubleMatrixRel<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        DoubleMatrixRel<U> c = x.copy();
-        c.subtract(y);
-        return c;
-    }
-
-    /**
-     * Subtract a matrix with relative values y from a matrix with absolute values x. The result is a matrix with
-     * absolute values. The target unit will be the unit of matrix x.
-     * @param x absolute matrix 1
-     * @param y relative matrix 2
-     * @return new Matrix with absolute elements: values x[i,j] minus y[i,j]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixAbs<U> minus(final DoubleMatrixAbs<U> x, final DoubleMatrixRel<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        DoubleMatrixAbs<U> c = x.copy();
-        c.subtract(y);
-        return c;
-    }
-
-    /**
-     * Subtract a matrix with absolute values y from a matrix with absolute values x. The result is a matrix with
-     * relative values. The target unit will be the unit of matrix x.
-     * @param x absolute matrix 1
-     * @param y absolute matrix 2
-     * @return new Matrix with relative elements: values x[i,j] minus y[i,j]
-     * @throws ValueException when matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixRel<U> minus(final DoubleMatrixAbs<U> x, final DoubleMatrixAbs<U> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        DoubleMatrixRel<U> c = null;
-        if (x instanceof DenseData)
-            c = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else if (x instanceof SparseData)
-            c = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.unit.getStandardUnit());
-        else
-            throw new ValueException("DoubleVector.minus - vector neither sparse nor dense");
-
-        c.matrixSI.assign(y.matrixSI, DoubleFunctions.minus);
-        c.unit = x.unit;
-
-        return c;
-    }
-
-    /**
-     * Multiply two absolute matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the multiplication with
-     * @param y the second matrix to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static DoubleMatrixAbs<SIUnit> multiply(final DoubleMatrixAbs<?> x, final DoubleMatrixAbs<?> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
-                        y.getUnit().getSICoefficients()).toString());
-
-        @SuppressWarnings("unchecked")
-        DoubleMatrixAbs<SIUnit> c = (DoubleMatrixAbs<SIUnit>) x.copy();
-        c.matrixSI.assign(y.matrixSI, DoubleFunctions.mult);
-        c.unit = targetUnit;
-        return c;
-    }
-
-    /**
-     * Multiply two relative matrices on a cell-by-cell basis, e.g. x[i,j] * y[i,j]. The result will have a new SI unit.
-     * @param x the first matrix to do the multiplication with
-     * @param y the second matrix to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static DoubleMatrixRel<SIUnit> multiply(final DoubleMatrixRel<?> x, final DoubleMatrixRel<?> y)
-            throws ValueException
-    {
-        ensureSameSize(x, y);
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(x.getUnit().getSICoefficients(),
-                        y.getUnit().getSICoefficients()).toString());
-
-        @SuppressWarnings("unchecked")
-        DoubleMatrixRel<SIUnit> c = (DoubleMatrixRel<SIUnit>) x.copy();
-        c.matrixSI.assign(y.matrixSI, DoubleFunctions.mult);
-        c.unit = targetUnit;
-        return c;
-    }
-
-    /**
-     * Multiply an absolute matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
-     * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the multiplication with
-     * @param c the dimensionless matrix with constants to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixAbs<U> multiply(final DoubleMatrixAbs<U> x, final double[][] c)
-            throws ValueException
-    {
-        ensureSameSize(x, c);
-        // TODO: more elegant implementation that does not copy the entire matrix?
-        DoubleMatrixAbs<U> result = x.copy();
-        DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
-        result.matrixSI.assign(cMatrix, DoubleFunctions.mult);
-        return result;
-    }
-
-    /**
-     * Multiply a relative matrix with units on a cell-by-cell basis with a dimensionless matrix, e.g. x[i,j] * c[i,j].
-     * The result will have the same unit as matrix x.
-     * @param x the first matrix to do the multiplication with
-     * @param c the dimensionless matrix with constants to do the multiplication with
-     * @return the multiplication of this matrix and another matrix of the same size.
-     * @throws ValueException if the two matrices have unequal size
-     */
-    public static <U extends Unit<U>> DoubleMatrixRel<U> multiply(final DoubleMatrixRel<U> x, final double[][] c)
-            throws ValueException
-    {
-        ensureSameSize(x, c);
-        // TODO: more elegant implementation that does not copy the entire matrix?
-        DoubleMatrixRel<U> result = x.copy();
-        DenseDoubleMatrix2D cMatrix = new DenseDoubleMatrix2D(c);
-        result.matrixSI.assign(cMatrix, DoubleFunctions.mult);
-        return result;
-    }
-
-    /**
-     * Convert sparse matrix to dense matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> DoubleMatrixAbsDense<U> sparseToDense(final DoubleMatrixAbsSparse<U> x)
-    {
-        DoubleMatrixAbsDense<U> v = null;
-        try
-        {
-            v = new DoubleMatrixAbsDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert sparse matrix to dense matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> DoubleMatrixRelDense<U> sparseToDense(final DoubleMatrixRelSparse<U> x)
-    {
-        DoubleMatrixRelDense<U> v = null;
-        try
-        {
-            v = new DoubleMatrixRelDense<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert dense matrix to sparse matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> DoubleMatrixAbsSparse<U> denseToSparse(final DoubleMatrixAbsDense<U> x)
-    {
-        DoubleMatrixAbsSparse<U> v = null;
-        try
-        {
-            v = new DoubleMatrixAbsSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
-    }
-
-    /**
-     * Convert dense matrix to sparse matrix.
-     * @param x the matrix to convert
-     * @return the converted matrix
-     */
-    public static <U extends Unit<U>> DoubleMatrixRelSparse<U> denseToSparse(final DoubleMatrixRelDense<U> x)
-    {
-        DoubleMatrixRelSparse<U> v = null;
-        try
-        {
-            v = new DoubleMatrixRelSparse<U>(x.getValuesSI(), x.getUnit().getStandardUnit());
-        }
-        catch (ValueException exception)
-        {
-            System.err.println("CANNOT HAPPEN");
-            // TODO fix error logging
-        }
-        v.unit = x.unit;
-        return v;
+        if (0 == fsArray.length || 0 == fsArray[0].length)
+            throw new ValueException(
+                    "Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
+        return fsArray;
     }
 
     /**
@@ -975,8 +773,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
      * @return vector x in A*x = b
      * @throws ValueException when Matrix A is neither Sparse nor Dense.
      */
-    public static DoubleVectorAbs<SIUnit> solve(final DoubleMatrixAbs<?> A, final DoubleVectorAbs<?> b)
-            throws ValueException
+    public static DoubleVector<SIUnit> solve(final DoubleMatrix<?> A, final DoubleVector<?> b) throws ValueException
     {
         // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
         SIUnit targetUnit =
@@ -984,55 +781,38 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends Matrix<U> implemen
                         A.getUnit().getSICoefficients()).toString());
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        DoubleMatrix2D A2D = A.getMatrixSI();
-        DoubleMatrix1D b1D = b.getVectorSI();
+        DoubleMatrix2D A2D = A.matrixSI;
         if (A instanceof SparseData)
         {
+            SparseDoubleMatrix1D b1D = new SparseDoubleMatrix1D(b.getValuesSI());
             DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
-            DoubleVectorAbsSparse<SIUnit> x = new DoubleVectorAbsSparse<SIUnit>(x1D.toArray(), targetUnit);
+            DoubleVector.Abs.Sparse<SIUnit> x = new DoubleVector.Abs.Sparse<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         if (A instanceof DenseData)
         {
+            DenseDoubleMatrix1D b1D = new DenseDoubleMatrix1D(b.getValuesSI());
             DoubleMatrix1D x1D = new DenseDoubleAlgebra().solve(A2D, b1D);
-            DoubleVectorAbsDense<SIUnit> x = new DoubleVectorAbsDense<SIUnit>(x1D.toArray(), targetUnit);
+            DoubleVector.Abs.Dense<SIUnit> x = new DoubleVector.Abs.Dense<SIUnit>(x1D.toArray(), targetUnit);
             return x;
         }
         throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
     /**
-     * Solve x for A*x = b. According to Colt: x; a new independent matrix; solution if A is square, least squares
-     * solution if A.rows() > A.columns(), underdetermined system solution if A.rows() < A.columns().
-     * @param A matrix A in A*x = b
-     * @param b vector b in A*x = b
-     * @return vector x in A*x = b
-     * @throws ValueException when Matrix A is neither Sparse nor Dense.
+     * Create a mutable version of this DoubleMatrix. <br />
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * @return MutableDoubleMatrix; mutable version of this DoubleMatrix
      */
-    public static DoubleVectorRel<SIUnit> solve(final DoubleMatrixRel<?> A, final DoubleVectorRel<?> b)
-            throws ValueException
-    {
-        // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
-        SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(b.getUnit().getSICoefficients(),
-                        A.getUnit().getSICoefficients()).toString());
+    public abstract MutableDoubleMatrix<U> mutable();
 
-        // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        DoubleMatrix2D A2D = A.getMatrixSI();
-        DoubleMatrix1D b1D = b.getVectorSI();
-        if (A instanceof SparseData)
-        {
-            DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
-            DoubleVectorRelSparse<SIUnit> x = new DoubleVectorRelSparse<SIUnit>(x1D.toArray(), targetUnit);
-            return x;
-        }
-        if (A instanceof DenseData)
-        {
-            DoubleMatrix1D x1D = new DenseDoubleAlgebra().solve(A2D, b1D);
-            DoubleVectorRelDense<SIUnit> x = new DoubleVectorRelDense<SIUnit>(x1D.toArray(), targetUnit);
-            return x;
-        }
-        throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
+    /**
+     * @see org.opentrafficsim.core.value.Value#copy()
+     */
+    public DoubleMatrix<U> copy()
+    {
+        return this; // That was easy!
     }
 
 }

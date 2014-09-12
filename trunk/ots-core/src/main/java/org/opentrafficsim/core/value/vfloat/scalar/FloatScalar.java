@@ -63,9 +63,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute MutableFloatScalar.
-         * @param value float; the value of the new Absolute MutableFloatScalar
-         * @param unit Unit; the unit of the new Absolute MutableFloatScalar
+         * Create a new Absolute FloatScalar.
+         * @param value float; the value of the new Absolute FloatScalar
+         * @param unit Unit; the unit of the new Absolute FloatScalar
          */
         public Abs(final float value, final U unit)
         {
@@ -126,9 +126,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative MutableFloatScalar.
-         * @param value float; the value of the new Relative MutableFloatScalar
-         * @param unit
+         * Create a new Relative FloatScalar.
+         * @param value float; the value of the new Relative FloatScalar
+         * @param unit Unit; the unit of the new Relative FloatScalar
          */
         public Rel(final float value, final U unit)
         {

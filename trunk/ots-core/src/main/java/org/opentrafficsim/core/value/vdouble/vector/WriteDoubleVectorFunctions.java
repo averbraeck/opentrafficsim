@@ -1,15 +1,16 @@
-package org.opentrafficsim.core.value.vdouble.matrix;
+package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * Methods that modify the data stored in a vector.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
+ * reserved.
  * <p>
- * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
+ * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -29,47 +30,38 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
+ * @version Sep 1, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <U> Unit of the vector
  */
-public abstract class DoubleMatrixAbs<U extends Unit<U>> extends DoubleMatrix<U> implements Absolute
+public interface WriteDoubleVectorFunctions<U extends Unit<U>>
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
+    /**
+     * @param index position to set the value in the SI unit in which it has been stored.
+     * @param valueSI the value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    void setSI(int index, double valueSI) throws ValueException;
 
     /**
-     * @param values double[][]; initial values for the new DoubleMatrixAbs
-     * @param unit Unit; the unit of the new DoubleMatrixAbs
-     * @throws ValueException 
+     * @param index position to set the value in the original unit of creation.
+     * @param value the strongly typed value to store in the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public DoubleMatrixAbs(final double[][] values, final U unit) throws ValueException
-    {
-        super(values, unit);
-    }
+    void set(int index, DoubleScalar<U> value) throws ValueException;
 
     /**
-     * @param values double[][]; initial values for the new DoubleMatrixAbs
-     * @throws ValueException
+     * @param index position to set the value in the provided unit.
+     * @param value the value to store in the cell
+     * @param valueUnit the unit of the value.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public DoubleMatrixAbs(final DoubleScalarAbs<U>[][] values) throws ValueException
-    {
-        super(values);
-    }
+    void setInUnit(int index, double value, U valueUnit) throws ValueException;
 
-    /**
-     * Create a deep copy of the matrix, independent of the original matrix.
-     * @return a deep copy of the absolute / relative, dense / sparse matrix
+    /** 
+     * normalize the vector, i.e. make the sum of all elements equal to 1.
+     * @throws ValueException if the sum of the values is zero, and normalization is not possible
      */
-    public abstract DoubleMatrixAbs<U> copy();
-
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#get(int, int)
-     */
-    @Override
-    public DoubleScalarAbs<U> get(final int row, final int column) throws ValueException
-    {
-        return new DoubleScalarAbs<U>(getInUnit(row, column, this.unit), this.unit);
-    }
+    void normalize() throws ValueException;
 
 }

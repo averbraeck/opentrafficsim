@@ -7,9 +7,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
+import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 
 /**
  * Acceleration contour plot.
@@ -51,8 +49,8 @@ public class AccelerationContourPlot extends ContourPlot
      * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
      * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public AccelerationContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
-            final DoubleScalarAbs<LengthUnit> maximumDistance)
+    public AccelerationContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
+            final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
                 standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
@@ -62,10 +60,10 @@ public class AccelerationContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes;
+    private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
 
     /** Storage for the total acceleration executed in each cell. */
-    private ArrayList<DoubleVectorAbs<AccelerationUnit>> cumulativeAccelerations;
+    private ArrayList<MutableDoubleVector.Abs<AccelerationUnit>> cumulativeAccelerations;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
@@ -84,17 +82,17 @@ public class AccelerationContourPlot extends ContourPlot
     {
         if (null == this.cumulativeTimes)
         {
-            this.cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
-            this.cumulativeAccelerations = new ArrayList<DoubleVectorAbs<AccelerationUnit>>();
+            this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
+            this.cumulativeAccelerations = new ArrayList<MutableDoubleVector.Abs<AccelerationUnit>>();
         }
         int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
-            this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
                     TimeUnit.SECOND));
-            this.cumulativeAccelerations.add(new DoubleVectorAbsSparse<AccelerationUnit>(new double[this.yAxis
+            this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Sparse<AccelerationUnit>(new double[this.yAxis
                     .getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
         }
     }
@@ -108,8 +106,8 @@ public class AccelerationContourPlot extends ContourPlot
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
-        DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
-        DoubleVectorAbs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBin);
+        MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
+        MutableDoubleVector.Abs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBin);
         try
         {
             timeValues.setSI(distanceBin, timeValues.getSI(distanceBin) + duration);
@@ -139,8 +137,8 @@ public class AccelerationContourPlot extends ContourPlot
             {
                 if (timeBinIndex >= this.cumulativeTimes.size())
                     break;
-                DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
-                DoubleVectorAbs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBinIndex);
+                MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
+                MutableDoubleVector.Abs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);

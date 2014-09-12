@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
+import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 
 /**
  * Flow contour plot.
@@ -49,8 +47,8 @@ public class FlowContourPlot extends ContourPlot
      * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
      * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public FlowContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
-            final DoubleScalarAbs<LengthUnit> maximumDistance)
+    public FlowContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
+            final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
                 standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
@@ -60,7 +58,7 @@ public class FlowContourPlot extends ContourPlot
     }
 
     /** Storage for the total length traveled in each cell. */
-    private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths;
+    private ArrayList<MutableDoubleVector.Abs<LengthUnit>> cumulativeLengths;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
@@ -78,12 +76,12 @@ public class FlowContourPlot extends ContourPlot
     public void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeLengths)
-            this.cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
+            this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
         final int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeLengths.size())
-            this.cumulativeLengths.add(new DoubleVectorAbsSparse<LengthUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
                     LengthUnit.METER));
     }
 
@@ -97,9 +95,9 @@ public class FlowContourPlot extends ContourPlot
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
         while (timeBin >= this.cumulativeLengths.size())
-            this.cumulativeLengths.add(new DoubleVectorAbsSparse<LengthUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
                     LengthUnit.METER));
-        DoubleVectorAbs<LengthUnit> values = this.cumulativeLengths.get(timeBin);
+        MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBin);
         try
         {
             values.setSI(distanceBin, values.getSI(distanceBin) + distanceCovered);
@@ -127,7 +125,7 @@ public class FlowContourPlot extends ContourPlot
             {
                 if (timeBinIndex >= this.cumulativeLengths.size())
                     break;
-                DoubleVectorAbs<LengthUnit> values = this.cumulativeLengths.get(timeBinIndex);
+                MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                     cumulativeLengthInSI += values.getSI(distanceBinIndex);
             }

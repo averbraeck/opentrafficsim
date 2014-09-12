@@ -6,8 +6,7 @@ import nl.tudelft.simulation.dsol.experiment.Experiment;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -37,14 +36,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends Replication<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>
+public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     /**
      * @param context
      * @param experiment
      */
     public OTSReplication(Context context,
-            Experiment<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> experiment)
+            Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
     {
         super(context, experiment);
     }
@@ -56,8 +55,8 @@ public class OTSReplication extends Replication<DoubleScalarAbs<TimeUnit>, Doubl
      * @param runLength
      * @param model
      */
-    public OTSReplication(String id, OTSSimTimeDouble startTime, DoubleScalarRel<TimeUnit> warmupPeriod,
-            DoubleScalarRel<TimeUnit> runLength, OTSModelInterface model)
+    public OTSReplication(String id, OTSSimTimeDouble startTime, DoubleScalar.Rel<TimeUnit> warmupPeriod,
+            DoubleScalar.Rel<TimeUnit> runLength, OTSModelInterface model)
     {
         super(id, startTime, warmupPeriod, runLength, model);
     }

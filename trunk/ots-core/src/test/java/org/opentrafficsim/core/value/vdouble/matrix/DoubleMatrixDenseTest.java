@@ -2,8 +2,7 @@ package org.opentrafficsim.core.value.vdouble.matrix;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -30,50 +29,50 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jul 1, 2014 <br>
+ * @version Jun 26, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class DoubleMatrixDenseTest extends DoubleMatrixTest
 {
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(double[][],
-     *      org.opentrafficsim.core.unit.Unit)
+     * @throws ValueException 
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(double[][], org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrixAbs<U> createDoubleMatrixAbs(double[][] in, U u) throws ValueException
+    protected <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(double[][] in, U u) throws ValueException
     {
-        return new DoubleMatrixAbsDense<U>(in, u);
+        return new DoubleMatrix.Abs.Dense<U>(in, u);
     }
 
     /**
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs[][])
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrixAbs<U> createDoubleMatrixAbs(DoubleScalarAbs<U>[][] in)
+    protected <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(DoubleScalar.Abs<U>[][] in)
             throws ValueException
     {
-        return new DoubleMatrixAbsDense<U>(in);
+        return new DoubleMatrix.Abs.Dense<U>(in);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(double[][],
-     *      org.opentrafficsim.core.unit.Unit)
+     * @throws ValueException 
+     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(double[][], org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrixRel<U> createDoubleMatrixRel(double[][] in, U u) throws ValueException
+    protected <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(double[][] in, U u) throws ValueException
     {
-        return new DoubleMatrixRelDense<U>(in, u);
+        return new DoubleMatrix.Rel.Dense<U>(in, u);
     }
 
     /**
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel[][])
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrixRel<U> createDoubleMatrixRel(DoubleScalarRel<U>[][] in)
+    protected <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(DoubleScalar.Rel<U>[][] in)
             throws ValueException
     {
-        return new DoubleMatrixRelDense<U>(in);
+        return new DoubleMatrix.Rel.Dense<U>(in);
     }
 
 }

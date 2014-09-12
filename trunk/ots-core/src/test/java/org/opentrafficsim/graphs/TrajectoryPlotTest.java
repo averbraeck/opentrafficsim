@@ -21,8 +21,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
@@ -55,7 +54,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 public class TrajectoryPlotTest
 {
     /** Sample interval for the TrajectoryPlot */
-    DoubleScalarRel<TimeUnit> sampleInterval = new DoubleScalarRel<TimeUnit>(0.25, TimeUnit.SECOND);
+    DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.25, TimeUnit.SECOND);
 
     /**
      * Test the TrajectoryPlot
@@ -63,8 +62,8 @@ public class TrajectoryPlotTest
     @Test
     public void TrajectoryTest()
     {
-        DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(1234, LengthUnit.METER);
-        DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(12345, LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(1234, LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(12345, LengthUnit.METER);
 
         TrajectoryPlot tp = new TrajectoryPlot("Trajectory", this.sampleInterval, minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != tp);
@@ -72,24 +71,24 @@ public class TrajectoryPlotTest
         for (int i = -10; i <= 10; i++)
             assertEquals("SeriesKey(" + i + ") should return " + i, i, tp.getSeriesKey(i));
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
-        DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(100, TimeUnit.SECOND);
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(2000, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(2000, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Create a car running 50 km.h
         Car car = new Car(1, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 500 seconds
-        DoubleScalarAbs<TimeUnit> endTime =
-                new DoubleScalarAbs<TimeUnit>(initialTime.getValueSI() + 400, TimeUnit.SECOND);
-        car.setState(new CarFollowingModelResult(new DoubleScalarAbs<AccelerationUnit>(0.05,
+        DoubleScalar.Abs<TimeUnit> endTime =
+                new DoubleScalar.Abs<TimeUnit>(initialTime.getValueSI() + 400, TimeUnit.SECOND);
+        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
         //System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
-        initialTime = new DoubleScalarAbs<TimeUnit>(150, TimeUnit.SECOND);
+        initialTime = new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND);
         Car secondCar = new Car(2, null, null, initialTime, initialPosition, initialSpeed);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
-        secondCar.setState(new CarFollowingModelResult(new DoubleScalarAbs<AccelerationUnit>(0.03,
+        secondCar.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
         //System.out.println("Second car end position " + car.getPosition(secondCar.getNextEvaluationTime()));
         tp.addData(secondCar);
@@ -151,24 +150,24 @@ public class TrajectoryPlotTest
      */
     private void verifyTrajectory(Car car, int series, TrajectoryPlot tp)
     {
-        DoubleScalarAbs<TimeUnit> initialTime = car.getLastEvaluationTime();
-        DoubleScalarRel<TimeUnit> duration =
-                DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime());
+        DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
+        DoubleScalar.Rel<TimeUnit> duration =
+                MutableDoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
         int expectedNumberOfSamples = (int) (duration.getValueSI() / this.sampleInterval.getValueSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
         for (int sample = 0; sample < expectedNumberOfSamples; sample++)
         {
-            DoubleScalarRel<TimeUnit> deltaTime =
-                    new DoubleScalarRel<TimeUnit>(this.sampleInterval.getValueSI() * sample, TimeUnit.SECOND);
-            DoubleScalarAbs<TimeUnit> sampleTime = DoubleScalar.plus(initialTime, deltaTime);
+            DoubleScalar.Rel<TimeUnit> deltaTime =
+                    new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getValueSI() * sample, TimeUnit.SECOND);
+            DoubleScalar.Abs<TimeUnit> sampleTime = MutableDoubleScalar.plus(initialTime, deltaTime).immutable();
             double sampledTime = tp.getXValue(series, sample);
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getValueSI(), sampledTime,
                     0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getValueSI(), sampledTime,
                     0.0001);
-            DoubleScalarAbs<LengthUnit> actualPosition = car.getPosition(sampleTime);
+            DoubleScalar.Abs<LengthUnit> actualPosition = car.getPosition(sampleTime);
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getValueSI(),
                     sampledPosition, 0.0001);

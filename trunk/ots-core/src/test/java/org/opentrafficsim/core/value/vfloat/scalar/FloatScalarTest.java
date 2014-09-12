@@ -12,7 +12,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueUtil;
 
 /**
  * <p>
@@ -406,14 +405,14 @@ public class FloatScalarTest
         FloatScalar.Rel<LengthUnit> leftRel = new FloatScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         FloatScalar.Rel<SpeedUnit> rightRel = new FloatScalar.Rel<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
         FloatScalar.Rel<SIUnit> ratioRel = MutableFloatScalar.divide(leftRel, rightRel);
-        unitString = ratio.getUnit().getAbbreviation();
+        unitString = ratioRel.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
             unitString = unitString.substring(0, unitString.length() - 1);
         if (unitString.startsWith("!"))
             unitString = unitString.substring(1);
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
-                ratio.getValueSI(), 0.0001);
+                ratioRel.getValueSI(), 0.0001);
     }
 
     /**
