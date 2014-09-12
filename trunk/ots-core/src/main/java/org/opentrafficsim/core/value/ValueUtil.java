@@ -43,8 +43,10 @@ public class ValueUtil
     public static double expressAsSIUnit(final double value, final Unit<?> unit)
     {
         if (unit instanceof OffsetUnit<?>)
+        {
             return (value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit())
                     * unit.getConversionFactorToStandardUnit();
+        }
         return value * unit.getConversionFactorToStandardUnit();
     }
 
@@ -56,8 +58,10 @@ public class ValueUtil
     public static double expressAsUnit(final double siValue, final Unit<?> targetUnit)
     {
         if (targetUnit instanceof OffsetUnit<?>)
-            return siValue / targetUnit.getConversionFactorToStandardUnit() + ((OffsetUnit<?>) targetUnit)
-                    .getOffsetToStandardUnit();
+        {
+            return siValue / targetUnit.getConversionFactorToStandardUnit()
+                    + ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit();
+        }
         return siValue / targetUnit.getConversionFactorToStandardUnit();
     }
 

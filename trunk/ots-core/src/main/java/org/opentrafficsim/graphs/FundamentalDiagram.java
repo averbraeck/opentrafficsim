@@ -94,12 +94,13 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     // TODO we need a linear density unit (1/m, 1/km). Now badly abusing MassUnit.KILOGRAM.
     /** Definition of the density axis. */
-    Axis densityAxis = new Axis(new DoubleScalar.Abs<MassUnit>(0, MassUnit.KILOGRAM), new DoubleScalar.Abs<MassUnit>(200,
-            MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+    Axis densityAxis = new Axis(new DoubleScalar.Abs<MassUnit>(0, MassUnit.KILOGRAM), new DoubleScalar.Abs<MassUnit>(
+            200, MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /** Definition of the speed axis. */
-    Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(
-            180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
+    Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+            new DoubleScalar.Abs<SpeedUnit>(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed",
+            "speed %.0f km/h");
 
     /** Definition of the flow axis. */
     Axis flowAxis = new Axis(new DoubleScalar.Abs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR,
@@ -465,13 +466,21 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         public double getValue(final Axis axis)
         {
             if (axis == FundamentalDiagram.this.densityAxis)
+            {
                 return this.flow * 3600 / FundamentalDiagram.this.aggregationTime.getValueSI() / this.harmonicMeanSpeed;
+            }
             else if (axis == FundamentalDiagram.this.flowAxis)
+            {
                 return this.flow * 3600 / FundamentalDiagram.this.aggregationTime.getValueSI();
+            }
             else if (axis == FundamentalDiagram.this.speedAxis)
+            {
                 return this.harmonicMeanSpeed * 3600 / 1000;
+            }
             else
+            {
                 throw new Error("Sample.getValue: Can not identify axis");
+            }
         }
 
         /**
@@ -482,7 +491,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         {
             double sumReciprocalSpeeds = 0;
             if (this.flow > 0)
+            {
                 sumReciprocalSpeeds = this.flow / this.harmonicMeanSpeed;
+            }
             this.flow += 1;
             sumReciprocalSpeeds += 1d / speed.getValueSI();
             this.harmonicMeanSpeed = this.flow / sumReciprocalSpeeds;
@@ -503,22 +514,42 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             for (String field : fields)
             {
                 if (field.equalsIgnoreCase(this.densityAxis.shortName))
+                {
                     if (field == fields[0])
+                    {
                         this.yAxis = this.densityAxis;
+                    }
                     else
+                    {
                         this.xAxis = this.densityAxis;
+                    }
+                }
                 else if (field.equalsIgnoreCase(this.flowAxis.shortName))
+                {
                     if (field == fields[0])
+                    {
                         this.yAxis = this.flowAxis;
+                    }
                     else
+                    {
                         this.xAxis = this.flowAxis;
+                    }
+                }
                 else if (field.equalsIgnoreCase(this.speedAxis.shortName))
+                {
                     if (field == fields[0])
+                    {
                         this.yAxis = this.speedAxis;
+                    }
                     else
+                    {
                         this.xAxis = this.speedAxis;
+                    }
+                }
                 else
+                {
                     throw new Error("Cannot find axis name: " + field);
+                }
             }
             reGraph();
         }

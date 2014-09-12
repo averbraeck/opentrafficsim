@@ -69,7 +69,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     {
         float sum = zSum();
         if (0 == sum)
+        {
             throw new ValueException("zSum is 0; cannot normalize");
+        }
         checkCopyOnWrite();
         for (int i = 0; i < this.vectorSI.size(); i++)
         {
@@ -440,9 +442,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     public FloatScalar<U> get(final int index) throws ValueException
     {
         if (this instanceof MutableFloatVector.Abs)
+        {
             return new FloatScalar.Abs<U>(getInUnit(index), this.unit);
+        }
         else if (this instanceof MutableFloatVector.Rel)
+        {
             return new FloatScalar.Rel<U>(getInUnit(index), this.unit);
+        }
         throw new Error("Cannot figure out subtype of this");
     }
 

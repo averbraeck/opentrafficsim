@@ -304,16 +304,22 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     {
         // unequal if object is of a different type.
         if (!(obj instanceof DoubleScalar<?>))
+        {
             return false;
+        }
         DoubleScalar<?> fs = (DoubleScalar<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
+        {
             return false;
+        }
 
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
+        {
             return false;
+        }
 
         return this.valueSI == fs.valueSI;
     }

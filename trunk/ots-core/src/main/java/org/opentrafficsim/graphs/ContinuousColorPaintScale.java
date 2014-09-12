@@ -59,9 +59,13 @@ public class ContinuousColorPaintScale implements PaintScale
     {
         this.format = format;
         if (bounds.length < 2)
+        {
             throw new Error("bounds must have >= 2 entries");
+        }
         if (bounds.length != boundColors.length)
+        {
             throw new Error("bounds must have same length as boundColors");
+        }
         this.bounds = new double[bounds.length];
         this.boundColors = new Color[bounds.length];
         // Store the bounds and boundColors in order of increasing bound value.
@@ -73,13 +77,17 @@ public class ContinuousColorPaintScale implements PaintScale
             int bestIndex = -1;
             int index;
             for (index = 0; index < bounds.length; index++)
+            {
                 if (bounds[index] < currentLowest && (nextBound == 0 || bounds[index] > this.bounds[nextBound - 1]))
                 {
                     bestIndex = index;
                     currentLowest = bounds[index];
                 }
+            }
             if (bestIndex < 0)
+            {
                 throw new Error("duplicate value in bounds");
+            }
             this.bounds[nextBound] = bounds[bestIndex];
             this.boundColors[nextBound] = boundColors[bestIndex];
         }
@@ -108,9 +116,13 @@ public class ContinuousColorPaintScale implements PaintScale
         final double mix = low * (1 - ratio) + high * ratio;
         int result = (int) mix;
         if (result < 0)
+        {
             result = 0;
+        }
         if (result > 255)
+        {
             result = 255;
+        }
         return result;
     }
 
@@ -122,10 +134,16 @@ public class ContinuousColorPaintScale implements PaintScale
     {
         int bucket;
         for (bucket = 0; bucket < this.bounds.length - 1; bucket++)
+        {
             if (value < this.bounds[bucket + 1])
+            {
                 break;
+            }
+        }
         if (bucket >= this.bounds.length - 1)
+        {
             bucket = this.bounds.length - 2;
+        }
         final double ratio = (value - this.bounds[bucket]) / (this.bounds[bucket + 1] - this.bounds[bucket]);
         Color mix =
                 new Color(

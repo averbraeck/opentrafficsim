@@ -47,14 +47,16 @@ public class OTSDEVSSimulator extends
     /** the cached context that can be used for animation and statistics for this simulator */
     private Context cachedContext = null;
 
-   /**
+    /**
      * TODO: to be moved to DEVSSimulator!
      * @see org.opentrafficsim.core.dsol.OTSSimulatorInterface#getContext()
      */
     public Context getContext() throws NamingException
     {
         if (this.cachedContext == null)
-            this.cachedContext = (new InitialContext()).createSubcontext(String.valueOf(this.hashCode()));
+        {
+            this.cachedContext = new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
+        }
         return this.cachedContext;
     }
 }

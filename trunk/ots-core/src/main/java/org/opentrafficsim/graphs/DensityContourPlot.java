@@ -77,7 +77,9 @@ public class DensityContourPlot extends ContourPlot
     public void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeTimes)
+        {
             this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
+        }
         final int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
@@ -94,7 +96,9 @@ public class DensityContourPlot extends ContourPlot
             final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        {
             return;
+        }
         MutableDoubleVector.Abs<TimeUnit> values = this.cumulativeTimes.get(timeBin);
         try
         {
@@ -116,7 +120,9 @@ public class DensityContourPlot extends ContourPlot
     {
         double cumulativeTimeInSI = 0;
         if (null == this.cumulativeTimes)
+        {
             return Double.NaN;
+        }
         try
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)

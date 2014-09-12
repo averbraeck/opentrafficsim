@@ -444,7 +444,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         for (int row = 0; row < values.length; row++)
         {
             for (int column = 0; column < values[0].length; column++)
+            {
                 safeSet(row, column, values[row][column].getValueSI());
+            }
         }
     }
 
@@ -483,8 +485,12 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     {
         double[][] values = this.matrixSI.toArray();
         for (int row = 0; row < values.length; row++)
+        {
             for (int column = 0; column < values[0].length; column++)
+            {
                 values[row][column] = ValueUtil.expressAsUnit(values[row][column], targetUnit);
+            }
+        }
         return values;
     }
 
@@ -570,7 +576,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         catch (IllegalArgumentException exception)
         {
             if (!exception.getMessage().startsWith("Matrix must be square"))
+            {
                 exception.printStackTrace();
+            }
             throw new ValueException(exception.getMessage()); // probably Matrix must be square
         }
     }
@@ -583,16 +591,22 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     {
         // unequal if object is of a different type.
         if (!(obj instanceof DoubleMatrix<?>))
+        {
             return false;
+        }
         DoubleMatrix<?> fv = (DoubleMatrix<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
+        {
             return false;
+        }
 
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
+        {
             return false;
+        }
 
         // Colt's equals also tests the size of the vector
         return this.matrixSI.equals(fv.matrixSI);
@@ -619,29 +633,49 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         {
             buf.append("Mutable   ");
             if (this instanceof MutableDoubleMatrix.Abs.Dense)
+            {
                 buf.append("Abs Dense  ");
+            }
             else if (this instanceof MutableDoubleMatrix.Rel.Dense)
+            {
                 buf.append("Rel Dense  ");
+            }
             else if (this instanceof MutableDoubleMatrix.Abs.Sparse)
+            {
                 buf.append("Abs Sparse ");
+            }
             else if (this instanceof MutableDoubleMatrix.Rel.Sparse)
+            {
                 buf.append("Rel Sparse ");
+            }
             else
+            {
                 buf.append("??? ");
+            }
         }
         else
         {
             buf.append("Immutable ");
             if (this instanceof DoubleMatrix.Abs.Dense)
+            {
                 buf.append("Abs Dense  ");
+            }
             else if (this instanceof DoubleMatrix.Rel.Dense)
+            {
                 buf.append("Rel Dense  ");
+            }
             else if (this instanceof DoubleMatrix.Abs.Sparse)
+            {
                 buf.append("Abs Sparse ");
+            }
             else if (this instanceof DoubleMatrix.Rel.Sparse)
+            {
                 buf.append("Rel Sparse ");
+            }
             else
+            {
                 buf.append("??? ");
+            }
         }
         buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int row = 0; row < this.matrixSI.rows(); row++)
@@ -664,8 +698,10 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     protected void checkSize(final DoubleMatrix<?> other) throws ValueException
     {
         if (rows() != other.rows() || columns() != other.columns())
+        {
             throw new ValueException("The matrices have different sizes: " + rows() + "x" + columns() + " != "
                     + other.rows() + "x" + other.columns());
+        }
     }
 
     /**
@@ -676,7 +712,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     protected void checkSize(final double[][] other) throws ValueException
     {
         if (rows() != other.length || columns() != other[0].length)
+        {
             throw new ValueException("The vector and the array have different sizes: " + rows() + " != " + other.length);
+        }
         ensureRectangular(other);
     }
 
@@ -688,8 +726,12 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     private static void ensureRectangular(final double[][] values) throws ValueException
     {
         for (int row = 1; row < values.length; row++)
+        {
             if (values[0].length != values[row].length)
+            {
                 throw new ValueException("Lengths of rows are not all the same");
+            }
+        }
     }
 
     /**
@@ -700,10 +742,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     private static void ensureRectangularAndNonEmpty(final DoubleScalar<?>[][] values) throws ValueException
     {
         if (0 == values.length || 0 == values[0].length)
+        {
             throw new ValueException("Cannot determine unit for DoubleMatrix from an empty array of DoubleScalar");
+        }
         for (int row = 1; row < values.length; row++)
+        {
             if (values[0].length != values[row].length)
+            {
                 throw new ValueException("Lengths of rows are not all the same");
+            }
+        }
     }
 
     /**
@@ -715,8 +763,10 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     protected void checkIndex(final int row, final int column) throws ValueException
     {
         if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+        {
             throw new ValueException("index out of range (valid range is 0.." + (this.matrixSI.rows() - 1) + ", 0.."
                     + this.matrixSI.columns() + ", got " + row + ", " + column + ")");
+        }
     }
 
     /**
@@ -760,8 +810,10 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             throws ValueException
     {
         if (0 == fsArray.length || 0 == fsArray[0].length)
+        {
             throw new ValueException(
                     "Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
+        }
         return fsArray;
     }
 

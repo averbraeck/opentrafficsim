@@ -467,7 +467,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     {
         float[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
+        {
             values[i] = (float) ValueUtil.expressAsUnit(values[i], targetUnit);
+        }
         return values;
     }
 
@@ -527,16 +529,22 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     {
         // unequal if object is of a different type.
         if (!(obj instanceof FloatVector<?>))
+        {
             return false;
+        }
         FloatVector<?> fv = (FloatVector<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
+        {
             return false;
+        }
 
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
+        {
             return false;
+        }
 
         // Colt's equals also tests the size of the vector
         return this.vectorSI.equals(fv.vectorSI);
@@ -563,29 +571,49 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         {
             buf.append("Mutable   ");
             if (this instanceof MutableFloatVector.Abs.Dense)
+            {
                 buf.append("Abs Dense  ");
+            }
             else if (this instanceof MutableFloatVector.Rel.Dense)
+            {
                 buf.append("Rel Dense  ");
+            }
             else if (this instanceof MutableFloatVector.Abs.Sparse)
+            {
                 buf.append("Abs Sparse ");
+            }
             else if (this instanceof MutableFloatVector.Rel.Sparse)
+            {
                 buf.append("Rel Sparse ");
+            }
             else
+            {
                 buf.append("??? ");
+            }
         }
         else
         {
             buf.append("Immutable ");
             if (this instanceof FloatVector.Abs.Dense)
+            {
                 buf.append("Abs Dense  ");
+            }
             else if (this instanceof FloatVector.Rel.Dense)
+            {
                 buf.append("Rel Dense  ");
+            }
             else if (this instanceof FloatVector.Abs.Sparse)
+            {
                 buf.append("Abs Sparse ");
+            }
             else if (this instanceof FloatVector.Rel.Sparse)
+            {
                 buf.append("Rel Sparse ");
+            }
             else
+            {
                 buf.append("??? ");
+            }
         }
         buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.vectorSI.size(); i++)
@@ -604,7 +632,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     protected void checkSize(final FloatVector<?> other) throws ValueException
     {
         if (size() != other.size())
+        {
             throw new ValueException("The vectors have different sizes: " + size() + " != " + other.size());
+        }
     }
 
     /**
@@ -615,7 +645,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     protected void checkSize(final float[] other) throws ValueException
     {
         if (size() != other.length)
+        {
             throw new ValueException("The vector and the array have different sizes: " + size() + " != " + other.length);
+        }
     }
 
     /**
@@ -626,8 +658,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     protected void checkIndex(final int index) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
+        {
             throw new ValueException("index out of range (valid range is 0.." + (this.vectorSI.size() - 1) + ", got "
                     + index + ")");
+        }
     }
 
     /**
@@ -668,8 +702,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(FloatScalar<U>[] fsArray) throws ValueException
     {
         if (0 == fsArray.length)
+        {
             throw new ValueException(
                     "Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
+        }
         return fsArray;
     }
 

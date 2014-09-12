@@ -224,7 +224,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     private void notifyListeners(final DatasetChangeEvent event)
     {
         for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        {
             dcl.datasetChanged(event);
+        }
     }
 
     /**
@@ -265,15 +267,21 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
+        {
             if (t.currentEndTime.getValueSI() == startTime.getValueSI()
                     && t.currentEndPosition.getValueSI() == startPosition.getValueSI())
             {
                 if (null != carTrajectory)
+                {
                     System.err.println("Whoops; we've got another match");
+                }
                 carTrajectory = t;
             }
+        }
         if (null == carTrajectory)
+        {
             this.trajectories.add(carTrajectory = new Trajectory());
+        }
         carTrajectory.addSegment(car);
     }
 
@@ -338,20 +346,30 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                                 TimeUnit.SECOND);
                 DoubleScalar.Abs<LengthUnit> position = car.getPosition(sampleTime);
                 if (position.getValueSI() < TrajectoryPlot.this.minimumPosition.getValueSI())
+                {
                     continue;
+                }
                 if (position.getValueSI() > TrajectoryPlot.this.maximumPosition.getValueSI())
+                {
                     continue;
+                }
                 if (this.positions.size() == 0)
+                {
                     this.firstSample = sample;
+                }
                 while (sample - startSample > this.positions.size())
+                {
                     this.positions.add(null); // insert nulls as place holders for unsampled data (because vehicle was
                                               // temporarily out of range?)
+                }
                 this.positions.add(position.getValueSI());
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition = car.getPosition(this.currentEndTime);
             if (car.getNextEvaluationTime().getValueSI() > TrajectoryPlot.this.maximumTime.getValueSI())
+            {
                 TrajectoryPlot.this.maximumTime = car.getNextEvaluationTime();
+            }
         }
 
         /**
@@ -408,7 +426,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     public int indexOf(final Comparable seriesKey)
     {
         if (seriesKey instanceof Integer)
+        {
             return (Integer) seriesKey;
+        }
         return -1;
     }
 
@@ -474,7 +494,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     {
         double v = getXValue(series, item);
         if (Double.isNaN(v))
+        {
             return null;
+        }
         return v;
     }
 
@@ -495,7 +517,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     {
         double v = getYValue(series, item);
         if (Double.isNaN(v))
+        {
             return null;
+        }
         return v;
     }
 

@@ -426,7 +426,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
          * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
          */
         @Override
-        public DoubleScalar.Rel<U> get(int index) throws ValueException
+        public DoubleScalar.Rel<U> get(final int index) throws ValueException
         {
             return new DoubleScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -440,9 +440,13 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     public DoubleScalar<U> get(final int index) throws ValueException
     {
         if (this instanceof MutableDoubleVector.Abs)
+        {
             return new DoubleScalar.Abs<U>(getInUnit(index), this.unit);
+        }
         else if (this instanceof MutableDoubleVector.Rel)
+        {
             return new DoubleScalar.Rel<U>(getInUnit(index), this.unit);
+        }
         throw new Error("Cannot figure out subtype of this");
     }
 
