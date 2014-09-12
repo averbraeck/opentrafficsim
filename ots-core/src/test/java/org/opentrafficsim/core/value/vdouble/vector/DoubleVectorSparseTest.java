@@ -2,8 +2,7 @@ package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -30,49 +29,48 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 24, 2014 <br>
+ * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class DoubleVectorSparseTest extends DoubleVectorTest
 {
+
     /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorAbs(double[],
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVector(double[],
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleVectorAbs<U> createDoubleVectorAbs(double[] in, U u)
+    protected <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(double[] in, U u)
     {
-        return new DoubleVectorAbsSparse<U>(in, u);
+        return new DoubleVector.Abs.Sparse<U>(in, u);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs[])
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs[])
      */
     @Override
-    protected <U extends Unit<U>> DoubleVectorAbs<U> createDoubleVectorAbs(DoubleScalarAbs<U>[] in)
-            throws ValueException
+    protected <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(DoubleScalar.Abs<U>[] in) throws ValueException
     {
-        return new DoubleVectorAbsSparse<U>(in);
+        return new DoubleVector.Abs.Sparse<U>(in);
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorRel(double[],
+     * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVector(double[],
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleVectorRel<U> createDoubleVectorRel(double[] in, U u)
+    protected <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(double[] in, U u)
     {
-        return new DoubleVectorRelSparse<U>(in, u);
+        return new DoubleVector.Rel.Sparse<U>(in, u);
     }
 
     /**
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorRel(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel[])
      */
     @Override
-    protected <U extends Unit<U>> DoubleVectorRel<U> createDoubleVectorRel(DoubleScalarRel<U>[] in)
-            throws ValueException
+    protected <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(DoubleScalar.Rel<U>[] in) throws ValueException
     {
-        return new DoubleVectorRelSparse<U>(in);
+        return new DoubleVector.Rel.Sparse<U>(in);
     }
 
 }

@@ -33,7 +33,6 @@ import org.jfree.data.xy.XYZDataset;
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
 
 /**
  * Common code for a contour plot. <br />
@@ -95,11 +94,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected static final int standardInitialDistanceGranularityIndex = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final DoubleScalarAbs<TimeUnit> initialLowerTimeBound = new DoubleScalarAbs<TimeUnit>(0,
+    protected static final DoubleScalar.Abs<TimeUnit> initialLowerTimeBound = new DoubleScalar.Abs<TimeUnit>(0,
             TimeUnit.SECOND);
 
     /** Initial upper bound for the time scale. */
-    protected static final DoubleScalarAbs<TimeUnit> initialUpperTimeBound = new DoubleScalarAbs<TimeUnit>(300,
+    protected static final DoubleScalar.Abs<TimeUnit> initialUpperTimeBound = new DoubleScalar.Abs<TimeUnit>(300,
             TimeUnit.SECOND);
 
     /**
@@ -485,8 +484,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     public void addData(final Car car)
     {
-        final DoubleScalarAbs<TimeUnit> fromTime = car.getLastEvaluationTime();
-        final DoubleScalarAbs<TimeUnit> toTime = car.getNextEvaluationTime();
+        final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
+        final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();
         if (toTime.getValueSI() > this.xAxis.getMaximumValue().getValueSI())
         {
             extendXRange(toTime);
@@ -527,12 +526,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 continue; // no time spent in this timeBin
             double binDistanceStart =
                     (car.getPosition(
-                            new DoubleScalarAbs<TimeUnit>(relativeFromTime * this.xAxis.granularities[0],
+                            new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.xAxis.granularities[0],
                                     TimeUnit.SECOND)).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                             / this.yAxis.granularities[0];
             double binDistanceEnd =
                     (car.getPosition(
-                            new DoubleScalarAbs<TimeUnit>(binEndTime * this.xAxis.granularities[0], TimeUnit.SECOND))
+                            new DoubleScalar.Abs<TimeUnit>(binEndTime * this.xAxis.granularities[0], TimeUnit.SECOND))
                             .getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                             / this.yAxis.granularities[0];
 

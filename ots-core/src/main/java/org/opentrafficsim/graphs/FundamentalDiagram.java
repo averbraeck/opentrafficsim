@@ -37,8 +37,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.MassUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow">
@@ -82,29 +81,29 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     final String caption;
 
     /** Position of this Fundamental Diagram. */
-    final DoubleScalarAbs<LengthUnit> position;
+    final DoubleScalar.Abs<LengthUnit> position;
 
     /** Area to show status information. */
     protected final JLabel statusLabel;
 
     /** Sample duration of the detector that generates this Fundamental Diagram. */
-    protected final DoubleScalarRel<TimeUnit> aggregationTime;
+    protected final DoubleScalar.Rel<TimeUnit> aggregationTime;
 
     /** Storage for the Samples; one for each lane covered by the detector. */
     private ArrayList<ArrayList<Sample>> sampleSets;
 
     // TODO we need a linear density unit (1/m, 1/km). Now badly abusing MassUnit.KILOGRAM.
     /** Definition of the density axis. */
-    Axis densityAxis = new Axis(new DoubleScalarAbs<MassUnit>(0, MassUnit.KILOGRAM), new DoubleScalarAbs<MassUnit>(200,
+    Axis densityAxis = new Axis(new DoubleScalar.Abs<MassUnit>(0, MassUnit.KILOGRAM), new DoubleScalar.Abs<MassUnit>(200,
             MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /** Definition of the speed axis. */
-    Axis speedAxis = new Axis(new DoubleScalarAbs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalarAbs<SpeedUnit>(
+    Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(
             180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /** Definition of the flow axis. */
-    Axis flowAxis = new Axis(new DoubleScalarAbs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR,
-            "FrequencyUnit.PerHour", "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalarAbs<FrequencyUnit>(3000d,
+    Axis flowAxis = new Axis(new DoubleScalar.Abs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR,
+            "FrequencyUnit.PerHour", "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalar.Abs<FrequencyUnit>(3000d,
             FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
@@ -129,7 +128,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param position DoubleScalarAbs&lt;LengthUnit&gt;; position of the detector (FIXME: should be a LOT more general)
      */
     public FundamentalDiagram(final String caption, final int numberOfLanes,
-            final DoubleScalarRel<TimeUnit> aggregationTime, final DoubleScalarAbs<LengthUnit> position)
+            final DoubleScalar.Rel<TimeUnit> aggregationTime, final DoubleScalar.Abs<LengthUnit> position)
     {
         if (numberOfLanes <= 0)
             throw new Error("Number of lanes must be > 0 (got " + numberOfLanes + ")");
@@ -140,7 +139,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         for (int i = 0; i < numberOfLanes; i++)
             this.sampleSets.add(new ArrayList<Sample>());
         this.caption = caption;
-        this.position = new DoubleScalarAbs<LengthUnit>(position);
+        this.position = new DoubleScalar.Abs<LengthUnit>(position);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
@@ -197,9 +196,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Retrieve the position of the detector.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position of the detector
      */
-    public DoubleScalarAbs<LengthUnit> getPosition()
+    public DoubleScalar.Abs<LengthUnit> getPosition()
     {
-        return new DoubleScalarAbs<LengthUnit>(this.position);
+        return new DoubleScalar.Abs<LengthUnit>(this.position);
     }
 
     /**
@@ -230,7 +229,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param car Car; the car that passes FIXME replace Car by GTU
      * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
      */
-    public void addData(final int lane, final Car car, final DoubleScalarAbs<TimeUnit> detectionTime)
+    public void addData(final int lane, final Car car, final DoubleScalar.Abs<TimeUnit> detectionTime)
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
@@ -477,9 +476,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /**
          * Add one Car detection to this Sample.
-         * @param speed DoubleScalarRel&lt;SpeedUnit&gt;; the detected speed
+         * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the detected speed
          */
-        public void addData(DoubleScalarRel<SpeedUnit> speed)
+        public void addData(DoubleScalar.Rel<SpeedUnit> speed)
         {
             double sumReciprocalSpeeds = 0;
             if (this.flow > 0)

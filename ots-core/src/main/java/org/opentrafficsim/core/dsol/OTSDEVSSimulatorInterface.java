@@ -3,8 +3,7 @@ package org.opentrafficsim.core.dsol;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -39,7 +38,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public interface OTSDEVSSimulatorInterface extends
-        DEVSSimulatorInterface<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>,
+        DEVSSimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>,
         OTSSimulatorInterface
 {
     // typed extension

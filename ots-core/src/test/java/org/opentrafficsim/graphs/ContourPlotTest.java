@@ -22,8 +22,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * Test the non-GUI part of the ContourPlot class.
@@ -57,10 +56,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
 public class ContourPlotTest
 {
     /** Lower bound of test distance range */
-    static DoubleScalarAbs<LengthUnit> minimumDistance = new DoubleScalarAbs<LengthUnit>(1234, LengthUnit.METER);
+    static DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(1234, LengthUnit.METER);
 
     /** Upper bound of test distance range */
-    static DoubleScalarAbs<LengthUnit> maximumDistance = new DoubleScalarAbs<LengthUnit>(12345, LengthUnit.METER);
+    static DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(12345, LengthUnit.METER);
 
     /**
      * Test the AccelerationContourPlot
@@ -133,13 +132,13 @@ public class ContourPlotTest
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
         int expectedXBins =
-                (int) Math.ceil((DoubleScalar.minus(ContourPlot.initialUpperTimeBound,
+                (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.initialUpperTimeBound,
                         ContourPlot.initialLowerTimeBound).getValueSI())
                         / ContourPlot.standardTimeGranularities[ContourPlot.standardInitialTimeGranularityIndex]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins =
                 (int) Math
-                        .ceil((DoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
+                        .ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
                                 / ContourPlot.standardDistanceGranularities[ContourPlot.standardInitialDistanceGranularityIndex]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
@@ -153,12 +152,12 @@ public class ContourPlotTest
                 cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + distanceGranularity));
                 cp.reGraph();
                 expectedXBins =
-                        (int) Math.ceil((DoubleScalar.minus(ContourPlot.initialUpperTimeBound,
+                        (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.initialUpperTimeBound,
                                 ContourPlot.initialLowerTimeBound).getValueSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins =
-                        (int) Math.ceil((DoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
+                        (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
                                 / distanceGranularity);
                 yBins = cp.yAxisBins();
                 assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
@@ -275,14 +274,14 @@ public class ContourPlotTest
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
-        DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(100, TimeUnit.SECOND);
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(20, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(20, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Create a car running 50 km.h
         Car car = new Car(0, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car run at constant speed for one minute
-        car.setState(new CarFollowingModelResult(new DoubleScalarAbs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalarAbs<TimeUnit>(initialTime.getValueSI() + 60,
+        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(initialTime.getValueSI() + 60,
                 TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
@@ -320,8 +319,8 @@ public class ContourPlotTest
                         0.0000);
         }
         // Make the car run at constant speed for another minute
-        car.setState(new CarFollowingModelResult(new DoubleScalarAbs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalarAbs<TimeUnit>(car.getNextEvaluationTime()
+        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
                 .getValueSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
@@ -355,11 +354,11 @@ public class ContourPlotTest
                     && x <= car.getNextEvaluationTime().getValueSI())
             {
                 // the car MAY have hit contributed to this cell
-                DoubleScalarAbs<TimeUnit> cellStartTime =
-                        new DoubleScalarAbs<TimeUnit>(Math.max(car.getLastEvaluationTime().getValueSI(), x),
+                DoubleScalar.Abs<TimeUnit> cellStartTime =
+                        new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getValueSI(), x),
                                 TimeUnit.SECOND);
-                DoubleScalarAbs<TimeUnit> cellEndTime =
-                        new DoubleScalarAbs<TimeUnit>(Math.min(car.getNextEvaluationTime().getValueSI(), x
+                DoubleScalar.Abs<TimeUnit> cellEndTime =
+                        new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getValueSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
                 if (car.getPosition(cellStartTime).getValueSI() <= y + useDistanceGranularity
                         && car.getPosition(cellEndTime).getValueSI() >= y)
@@ -395,8 +394,8 @@ public class ContourPlotTest
             }
         }
         // Make the car run at constant speed for five more minutes
-        car.setState(new CarFollowingModelResult(new DoubleScalarAbs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalarAbs<TimeUnit>(car.getNextEvaluationTime()
+        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
                 .getValueSI() + 300, TimeUnit.SECOND), 0));
         cp.addData(car);
         // Check that the time range has expanded
@@ -409,7 +408,7 @@ public class ContourPlotTest
             if (xValue > observedHighestTime)
                 observedHighestTime = xValue;
         }
-        DoubleScalarAbs<TimeUnit> carEndTime = car.getNextEvaluationTime();
+        DoubleScalar.Abs<TimeUnit> carEndTime = car.getNextEvaluationTime();
         double expectedHighestTime = Math.floor(carEndTime.getValueSI() / useTimeGranularity) * useTimeGranularity;
         assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime,
                 0.0001);

@@ -6,7 +6,7 @@ import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Abstract car following model.
@@ -47,7 +47,7 @@ public interface CarFollowingModel
      * @return CarFollowingModelResult; the result of application of the car following model
      */
     CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
-            final DoubleScalarAbs<SpeedUnit> speedLimit);
+            final DoubleScalar.Abs<SpeedUnit> speedLimit);
     
     /**
      * Compute the acceleration and lane change.
@@ -66,7 +66,7 @@ public interface CarFollowingModel
      */
     CarFollowingModelResult computeLaneChangeAndAcceleration(final Car car, final Collection<Car> sameLaneCars,
             final Collection<Car> preferredLaneCars, final Collection<Car> nonPreferredLaneCars,
-            final DoubleScalarAbs<SpeedUnit> speedLimit, double preferredLaneRouteIncentive,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit, double preferredLaneRouteIncentive,
             double nonPreferredLaneRouteIncentive);
     
     /**
@@ -101,10 +101,10 @@ public interface CarFollowingModel
     class CarFollowingModelResult
     {
         /** Acceleration that will be maintained during the current time slot. */
-        public final DoubleScalarAbs<AccelerationUnit> acceleration;
+        public final DoubleScalar.Abs<AccelerationUnit> acceleration;
 
         /** Time when the current time slot ends. */
-        public final DoubleScalarAbs<TimeUnit> validUntil;
+        public final DoubleScalar.Abs<TimeUnit> validUntil;
 
         /**
          * Lane change; 0: stay in current lane; -1 merge onto adjacent overtaking lane; +1 merge towards the default
@@ -119,8 +119,8 @@ public interface CarFollowingModel
          * @param laneChange Integer; the lane determined change; 0: stay in current lane; -1 merge onto adjacent
          *            overtaking lane; +1 merge towards the default lane
          */
-        public CarFollowingModelResult(final DoubleScalarAbs<AccelerationUnit> acceleration,
-                final DoubleScalarAbs<TimeUnit> validUntil, final int laneChange)
+        public CarFollowingModelResult(final DoubleScalar.Abs<AccelerationUnit> acceleration,
+                final DoubleScalar.Abs<TimeUnit> validUntil, final int laneChange)
         {
             this.acceleration = acceleration;
             this.validUntil = validUntil;

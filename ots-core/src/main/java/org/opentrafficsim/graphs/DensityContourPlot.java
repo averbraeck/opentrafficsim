@@ -6,9 +6,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
+import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 
 /**
  * Density contour plot.
@@ -50,8 +48,8 @@ public class DensityContourPlot extends ContourPlot
      * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
      * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public DensityContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
-            final DoubleScalarAbs<LengthUnit> maximumDistance)
+    public DensityContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
+            final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
                 standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
@@ -61,7 +59,7 @@ public class DensityContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes;
+    private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
@@ -79,12 +77,12 @@ public class DensityContourPlot extends ContourPlot
     public void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeTimes)
-            this.cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
+            this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
         final int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
-            this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
                     TimeUnit.SECOND));
     }
 
@@ -97,7 +95,7 @@ public class DensityContourPlot extends ContourPlot
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
-        DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBin);
+        MutableDoubleVector.Abs<TimeUnit> values = this.cumulativeTimes.get(timeBin);
         try
         {
             values.setSI(distanceBin, values.getSI(distanceBin) + duration);
@@ -123,7 +121,7 @@ public class DensityContourPlot extends ContourPlot
         {
             for (int timeBinIndex = firstTimeBin; timeBinIndex < endTimeBin; timeBinIndex++)
             {
-                DoubleVectorAbs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
+                MutableDoubleVector.Abs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                     cumulativeTimeInSI += values.getSI(distanceBinIndex);
             }

@@ -28,8 +28,7 @@ import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
@@ -65,16 +64,16 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     private static final long serialVersionUID = 20140724L;
 
     /** Sample interval of this TrajectoryPlot. */
-    protected final DoubleScalarRel<TimeUnit> sampleInterval;
+    protected final DoubleScalar.Rel<TimeUnit> sampleInterval;
 
     /** Minimum position on this TrajectoryPlot. */
-    protected final DoubleScalarAbs<LengthUnit> minimumPosition;
+    protected final DoubleScalar.Abs<LengthUnit> minimumPosition;
 
     /** Maximum position on this TrajectoryPlot. */
-    protected final DoubleScalarAbs<LengthUnit> maximumPosition;
+    protected final DoubleScalar.Abs<LengthUnit> maximumPosition;
 
     /** Maximum of the time axis. */
-    protected DoubleScalarAbs<TimeUnit> maximumTime = new DoubleScalarAbs<TimeUnit>(300, TimeUnit.SECOND);
+    protected DoubleScalar.Abs<TimeUnit> maximumTime = new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND);
 
     /** The ChartPanel for this TrajectoryPlot. */
     protected final JFreeChart chartPanel;
@@ -95,8 +94,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      * @param minimumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the minimum position sampled by this TrajectoryPlot
      * @param maximumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the maximum position sampled by this TrajectoryPlot
      */
-    public TrajectoryPlot(final String caption, final DoubleScalarRel<TimeUnit> sampleInterval,
-            final DoubleScalarAbs<LengthUnit> minimumPosition, final DoubleScalarAbs<LengthUnit> maximumPosition)
+    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval,
+            final DoubleScalar.Abs<LengthUnit> minimumPosition, final DoubleScalar.Abs<LengthUnit> maximumPosition)
     {
         this.sampleInterval = sampleInterval;
         this.minimumPosition = minimumPosition;
@@ -114,7 +113,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         this.chartPanel.getXYPlot().setDomainAxis(xAxis);
         this.chartPanel.getXYPlot().setRangeAxis(yAxis);
-        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition)
+        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(), MutableDoubleScalar.minus(maximumPosition, minimumPosition)
                 .getValueSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
@@ -261,8 +260,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      */
     public void addData(final Car car)
     {
-        final DoubleScalarAbs<TimeUnit> startTime = car.getLastEvaluationTime();
-        final DoubleScalarAbs<LengthUnit> startPosition = car.getPosition(startTime);
+        final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
+        final DoubleScalar.Abs<LengthUnit> startPosition = car.getPosition(startTime);
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
@@ -309,10 +308,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     class Trajectory
     {
         /** Time of (current) end of trajectory. */
-        DoubleScalarAbs<TimeUnit> currentEndTime;
+        DoubleScalar.Abs<TimeUnit> currentEndTime;
 
         /** Position of (current) end of trajectory. */
-        DoubleScalarAbs<LengthUnit> currentEndPosition;
+        DoubleScalar.Abs<LengthUnit> currentEndPosition;
 
         /** Storage for the position of the car. */
         ArrayList<Double> positions = new ArrayList<Double>();
@@ -334,10 +333,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                             / TrajectoryPlot.this.sampleInterval.getValueSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
-                DoubleScalarAbs<TimeUnit> sampleTime =
-                        new DoubleScalarAbs<TimeUnit>(sample * TrajectoryPlot.this.sampleInterval.getValueSI(),
+                DoubleScalar.Abs<TimeUnit> sampleTime =
+                        new DoubleScalar.Abs<TimeUnit>(sample * TrajectoryPlot.this.sampleInterval.getValueSI(),
                                 TimeUnit.SECOND);
-                DoubleScalarAbs<LengthUnit> position = car.getPosition(sampleTime);
+                DoubleScalar.Abs<LengthUnit> position = car.getPosition(sampleTime);
                 if (position.getValueSI() < TrajectoryPlot.this.minimumPosition.getValueSI())
                     continue;
                 if (position.getValueSI() > TrajectoryPlot.this.maximumPosition.getValueSI())

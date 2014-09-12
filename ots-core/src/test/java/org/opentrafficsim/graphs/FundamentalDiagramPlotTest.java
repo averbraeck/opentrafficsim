@@ -18,8 +18,7 @@ import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -58,8 +57,8 @@ public class FundamentalDiagramPlotTest
     @Test
     public void FundamentalDiagramTest()
     {
-        DoubleScalarRel<TimeUnit> aggregationTime = new DoubleScalarRel<TimeUnit>(30, TimeUnit.SECOND);
-        DoubleScalarAbs<LengthUnit> position = new DoubleScalarAbs<LengthUnit>(123, LengthUnit.METER);
+        DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
         FundamentalDiagram fd;
         for (int numberOfLanes = -2; numberOfLanes <= 0; numberOfLanes++)
         {
@@ -76,7 +75,7 @@ public class FundamentalDiagramPlotTest
         try
         {
             fd =
-                    new FundamentalDiagram("Fundamental Diagram", 1, new DoubleScalarRel<TimeUnit>(0, TimeUnit.SECOND),
+                    new FundamentalDiagram("Fundamental Diagram", 1, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND),
                             position);
             fail("Bad number of lanes should have thrown an Error");
         }
@@ -118,12 +117,12 @@ public class FundamentalDiagramPlotTest
             assertTrue("No data should result in NaN", Double.isNaN(value));
             ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
             ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
-            DoubleScalarRel<SpeedUnit> speed = new DoubleScalarRel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-            DoubleScalarAbs<TimeUnit> time = new DoubleScalarAbs<TimeUnit>(123, TimeUnit.SECOND);
+            DoubleScalar.Rel<SpeedUnit> speed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar.Abs<TimeUnit> time = new DoubleScalar.Abs<TimeUnit>(123, TimeUnit.SECOND);
             int bucket = (int) Math.floor(time.getValueSI() / aggregationTime.getValueSI());
             for (int lane = 0; lane < numberOfLanes; lane++)
             {
-                Car car = new Car(1 + lane, null, null, time, new DoubleScalarAbs<LengthUnit>(23, LengthUnit.METER), speed);
+                Car car = new Car(1 + lane, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
                 fd.addData(lane, car, time);
                 for (int readBackLane = 0; readBackLane < numberOfLanes; readBackLane++)
                 {
@@ -185,8 +184,8 @@ public class FundamentalDiagramPlotTest
                 }
             }
             // Check that harmonic mean speed is computed
-            speed = new DoubleScalarRel<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-            Car car = new Car(1234, null, null, time, new DoubleScalarAbs<LengthUnit>(23, LengthUnit.METER), speed);
+            speed = new DoubleScalar.Rel<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+            Car car = new Car(1234, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
             fd.addData(0, car, time);
             fd.actionPerformed(setXToSpeed);
             value = fd.getYValue(0, bucket);
@@ -267,8 +266,8 @@ public class FundamentalDiagramPlotTest
     @Test
     public void testHints()
     {
-        DoubleScalarRel<TimeUnit> aggregationTime = new DoubleScalarRel<TimeUnit>(30, TimeUnit.SECOND);
-        DoubleScalarAbs<LengthUnit> position = new DoubleScalarAbs<LengthUnit>(123, LengthUnit.METER);
+        DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", 1, aggregationTime, position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;

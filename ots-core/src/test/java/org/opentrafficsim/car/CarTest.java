@@ -6,8 +6,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -46,9 +45,9 @@ public class CarTest
     @Test
     public void carTest()
     {
-        DoubleScalarAbs<TimeUnit> initialTime = new DoubleScalarAbs<TimeUnit>(0, TimeUnit.SECOND);
-        DoubleScalarAbs<LengthUnit> initialPosition = new DoubleScalarAbs<LengthUnit>(12, LengthUnit.METER);
-        DoubleScalarRel<SpeedUnit> initialSpeed = new DoubleScalarRel<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(12, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         Car referenceCar = new Car(12345, null, null, initialTime, initialPosition, initialSpeed);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getID());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getValueSI(), referenceCar.getPosition(initialTime).getValueSI(), 0.0001);

@@ -6,9 +6,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbs;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVectorAbsSparse;
+import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 
 /**
  * Speed contour plot.
@@ -47,11 +45,11 @@ public class SpeedContourPlot extends ContourPlot
     /**
      * Create a new SpeedContourPlot.
      * @param caption String; text to show above the SpeedContourPlot
-     * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
-     * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
+     * @param minimumDistance DoubleScalar.Abs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
+     * @param maximumDistance DoubleScalar.Abs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public SpeedContourPlot(final String caption, final DoubleScalarAbs<LengthUnit> minimumDistance,
-            final DoubleScalarAbs<LengthUnit> maximumDistance)
+    public SpeedContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
+            final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
                 standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
@@ -61,10 +59,10 @@ public class SpeedContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<DoubleVectorAbs<TimeUnit>> cumulativeTimes;
+    private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
 
     /** Storage for the total length traveled in each cell. */
-    private ArrayList<DoubleVectorAbs<LengthUnit>> cumulativeLengths;
+    private ArrayList<MutableDoubleVector.Abs<LengthUnit>> cumulativeLengths;
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
@@ -83,17 +81,17 @@ public class SpeedContourPlot extends ContourPlot
     {
         if (null == this.cumulativeTimes)
         {
-            this.cumulativeTimes = new ArrayList<DoubleVectorAbs<TimeUnit>>();
-            this.cumulativeLengths = new ArrayList<DoubleVectorAbs<LengthUnit>>();
+            this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
+            this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
         }
         int highestBinNeeded =
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
-            this.cumulativeTimes.add(new DoubleVectorAbsSparse<TimeUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
                     TimeUnit.SECOND));
-            this.cumulativeLengths.add(new DoubleVectorAbsSparse<LengthUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
                     LengthUnit.METER));
         }
     }
@@ -107,8 +105,8 @@ public class SpeedContourPlot extends ContourPlot
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
             return;
-        DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
-        DoubleVectorAbs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBin);
+        MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
+        MutableDoubleVector.Abs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBin);
         try
         {
             timeValues.setSI(distanceBin, timeValues.getSI(distanceBin) + duration);
@@ -138,8 +136,8 @@ public class SpeedContourPlot extends ContourPlot
             {
                 if (timeBinIndex >= this.cumulativeTimes.size())
                     break;
-                DoubleVectorAbs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
-                DoubleVectorAbs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBinIndex);
+                MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
+                MutableDoubleVector.Abs<LengthUnit> lengthValues = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);

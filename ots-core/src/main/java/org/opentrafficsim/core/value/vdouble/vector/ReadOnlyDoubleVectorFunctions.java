@@ -1,9 +1,8 @@
-package org.opentrafficsim.core.value.vdouble.matrix;
+package org.opentrafficsim.core.value.vdouble.vector;
 
 import org.opentrafficsim.core.unit.Unit;
-import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -29,47 +28,54 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
  * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
  * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
  * of this software, even if advised of the possibility of such damage.
- * @version Jun 18, 2014 <br>
+ * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <U> the unit
+ * @param <U> Unit of the vector
  */
-public abstract class DoubleMatrixRel<U extends Unit<U>> extends DoubleMatrix<U> implements Relative
+public interface ReadOnlyDoubleVectorFunctions<U extends Unit<U>>
 {
-    /** */
-    private static final long serialVersionUID = 20140618L;
+    /**
+     * @return the size of the vector as an int.
+     */
+    int size();
+    
+    /**
+     * @return the number of cells having non-zero values; ignores tolerance.
+     */
+    int cardinality();
+    
+    /**
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
+     */
+    double getSI(int index) throws ValueException;
 
     /**
-     * @param values double[][]; initial values for the new DoubleMatrixRel
-     * @param unit Unit; the unit of the new DoubleBatrixRel
-     * @throws ValueException 
+     * @param index position to get the value for in the original unit of creation.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public DoubleMatrixRel(final double[][] values, final U unit) throws ValueException
-    {
-        super(values, unit);
-    }
+    double getInUnit(int index) throws ValueException;
 
     /**
-     * @param values double[][]; initial values for the new DoubleMatrixRel
-     * @throws ValueException
+     * @param index position to get the value for in the SI unit in which it has been stored.
+     * @param targetUnit the unit for the result.
+     * @return value at position index.
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public DoubleMatrixRel(final DoubleScalarRel<U>[][] values) throws ValueException
-    {
-        super(values);
-    }
+    double getInUnit(int index, U targetUnit) throws ValueException;
 
     /**
-     * Create a deep copy of the matrix, independent of the original matrix.
-     * @return a deep copy of the absolute / relative, dense / sparse matrix
+     * @param index index position to get the value that has been stored.
+     * @return a strongly typed value from the cell
+     * @throws ValueException if index < 0 or index >= vector.size().
      */
-    public abstract DoubleMatrixRel<U> copy();
+    DoubleScalar<U> get(int index) throws ValueException;
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixFunctions#get(int, int)
+     * @return sum of all values of the vector.
      */
-    @Override
-    public DoubleScalarRel<U> get(final int row, final int column) throws ValueException
-    {
-        return new DoubleScalarRel<U>(getInUnit(row, column, this.unit), this.unit);
-    }
-
+    double zSum();
+    
 }
