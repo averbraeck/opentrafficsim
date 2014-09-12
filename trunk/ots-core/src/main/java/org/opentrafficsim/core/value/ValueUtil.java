@@ -43,7 +43,7 @@ public class ValueUtil
     public static double expressAsSIUnit(final double value, final Unit<?> unit)
     {
         if (unit instanceof OffsetUnit<?>)
-            return value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit()
+            return (value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit())
                     * unit.getConversionFactorToStandardUnit();
         return value * unit.getConversionFactorToStandardUnit();
     }
