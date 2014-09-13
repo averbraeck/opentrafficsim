@@ -1,9 +1,5 @@
 package org.opentrafficsim.core.dsol;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -43,20 +39,4 @@ public class OTSDEVSSimulator extends
 {
     /** */
     private static final long serialVersionUID = 20140815L;
-
-    /** the cached context that can be used for animation and statistics for this simulator */
-    private Context cachedContext = null;
-
-    /**
-     * TODO: to be moved to DEVSSimulator!
-     * @see org.opentrafficsim.core.dsol.OTSSimulatorInterface#getContext()
-     */
-    public Context getContext() throws NamingException
-    {
-        if (this.cachedContext == null)
-        {
-            this.cachedContext = new InitialContext().createSubcontext(String.valueOf(this.hashCode()));
-        }
-        return this.cachedContext;
-    }
 }
