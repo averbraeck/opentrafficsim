@@ -54,6 +54,9 @@
 		<osmosis.version>0.43.1</osmosis.version>
 		<jfreechart.version>1.0.17</jfreechart.version>
 		<reflections.version>0.9.9-RC1</reflections.version>
+		<xml-apis-version>1.4.01</xml-apis-version>
+		<apache-poi-version>3.8</apache-poi-version>
+		<jgrapht-version>0.9.0</jgrapht-version>
 
 		<maven.compiler.version>3.1</maven.compiler.version>
 		<maven.site.version>3.4</maven.site.version>
@@ -65,6 +68,7 @@
 		<maven.surefire.version>2.17</maven.surefire.version>
 		<maven.surefire-report.version>2.17</maven.surefire-report.version>
 		<maven.failsafe.version>2.17</maven.failsafe.version>
+		<maven.cobertura.version>2.6</maven.cobertura.version>
 		<maven.jacoco.version>0.7.1.201405082137</maven.jacoco.version>
 		<maven.findbugs.version>2.5.4</maven.findbugs.version>
 		<maven.project-info-reports.version>2.7</maven.project-info-reports.version>
@@ -247,10 +251,22 @@
 				</dependencies>
 			</plugin>
 
-			<!-- plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>cobertura-maven-plugin</artifactId> 
-				<version>2.6</version> <executions> <execution> <goals> <goal>instrument</goal> 
-				</goals> </execution> </executions> <configuration> <argLine>-XX:MaxPermSize=4096m 
-				-Xmx4096m</argLine> </configuration> </plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${maven.cobertura.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>instrument</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<argLine>-XX:MaxPermSize=4096m
+						-Xmx4096m</argLine>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -471,11 +487,11 @@
 			</plugin>
 
 			<!-- Cobertura test coverage report -->
-			<!-- plugin -->
-			<!-- groupId>org.codehaus.mojo</groupId -->
-			<!-- artifactId>cobertura-maven-plugin</artifactId -->
-			<!-- version>2.6</version -->
-			<!-- /plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${maven.cobertura.version}</version>
+			</plugin>
 
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -628,21 +644,73 @@
 				<artifactId>dsol-swing</artifactId>
 				<version>${dsol-version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>dsol</groupId>
 				<artifactId>dsol-fx</artifactId>
 				<version>${dsol-version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>dsol</groupId>
 				<artifactId>dsol-base</artifactId>
 				<version>${dsol-version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>dsol</groupId>
 				<artifactId>dsol-web</artifactId>
 				<version>${dsol-version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>${xml-apis-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-shapefile</artifactId>
+				<version>${geotools.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-swing</artifactId>
+				<version>${geotools.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-epsg-hsql</artifactId>
+				<version>${geotools.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.8</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${apache-poi-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jgrapht</groupId>
+				<artifactId>jgrapht-core</artifactId>
+				<version>${jgrapht-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jgrapht</groupId>
+				<artifactId>jgrapht-ext</artifactId>
+				<version>${jgrapht-version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
