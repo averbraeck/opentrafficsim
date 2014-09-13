@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.dsol;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -40,11 +37,4 @@ public interface OTSSimulatorInterface extends
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     // typed extension
-
-    /**
-     * TODO: to be moved to DEVSSimulator!
-     * @return the context specific to the simulator
-     * @throws NamingException
-     */
-    Context getContext() throws NamingException;
 }

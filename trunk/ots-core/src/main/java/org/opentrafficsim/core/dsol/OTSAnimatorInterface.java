@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.dsol;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 
 /**
@@ -36,11 +33,4 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 public interface OTSAnimatorInterface extends AnimatorInterface
 {
     // typed extension
-
-    /**
-     * TODO: to be moved to DEVSSimulator!
-     * @return the context specific to the simulator
-     * @throws NamingException
-     */
-    Context getContext() throws NamingException;
 }
