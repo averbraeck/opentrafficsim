@@ -1,6 +1,21 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.awt.geom.Path2D;
+import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * A link contains the following information:
@@ -203,7 +218,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ShpLink
+public class ShpLink implements LocatableInterface
 {
     /** the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ... */
     private final Geometry geometry;
@@ -244,6 +259,9 @@ public class ShpLink
     /** CAPACITYAB class java.lang.Double 8600.0 */
     private final double capacity;
 
+    /** the lines for the animation, relative to the centroid */
+    private Set<Path2D> lines = null;
+
     /**
      * @param geometry
      * @param nr
@@ -277,6 +295,76 @@ public class ShpLink
         this.typeWeg = typeWeg;
         this.speed = speed;
         this.capacity = capacity;
+
+        Coordinate[] cc = this.geometry.getCoordinates();
+        if (cc.length == 0)
+            System.out.println("cc.length = 0 for " + nr + " (" + name + ")");
+        else
+        {
+            if (Math.abs(cc[0].x - nodeA.getX()) > 0.001 && Math.abs(cc[0].x - nodeB.getX()) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - nodeA.getX()) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - nodeB.getX()) > 0.001)
+                System.out.println("x coordinate non-match for " + nr + " (" + name + "); cc[0].x=" + cc[0].x
+                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + nodeA.getX() + ", nodeB.x="
+                        + nodeB.getX());
+        }
+    }
+
+    /**
+     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
+     */
+    @Override
+    public DirectedPoint getLocation() throws RemoteException
+    {
+        Point c = this.geometry.getCentroid();
+        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
+    }
+
+    /**
+     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
+     */
+    @Override
+    public Bounds getBounds() throws RemoteException
+    {
+        DirectedPoint c = getLocation();
+        Envelope envelope = this.geometry.getEnvelopeInternal();
+        return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
+                envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
+    }
+
+    /**
+     * @return polygon
+     * @throws RemoteException
+     */
+    public Set<Path2D> getLines() throws RemoteException
+    {
+        // create the polygon if it did not exist before
+        if (this.lines == null)
+        {
+            double dx = this.getLocation().getX();
+            double dy = this.getLocation().getY();
+            this.lines = new HashSet<Path2D>();
+            for (int i = 0; i < this.geometry.getNumGeometries(); i++)
+            {
+                Path2D line = new Path2D.Double();
+                Geometry g = this.geometry.getGeometryN(i);
+                boolean start = true;
+                for (Coordinate c : g.getCoordinates())
+                {
+                    if (start)
+                    {
+                        line.moveTo(c.x - dx, dy - c.y);
+                        start = false;
+                    }
+                    else
+                    {
+                        line.lineTo(c.x - dx, dy - c.y);
+                    }
+                }
+                this.lines.add(line);
+            }
+        }
+        return this.lines;
     }
 
     /**

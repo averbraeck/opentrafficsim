@@ -2,18 +2,15 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
 
-import nl.tudelft.simulation.animation.AnimationPanel;
-import nl.tudelft.simulation.animation.GisRenderable2D;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
@@ -25,8 +22,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -63,7 +59,7 @@ public class NTMTestApplication extends DSOLApplication
      * @param panel
      */
     public NTMTestApplication(String title,
-            DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
+            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -83,6 +79,7 @@ public class NTMTestApplication extends DSOLApplication
         NTMModel model = new NTMModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
 
+        /*-
         try
         {
             String absolutePath =
@@ -97,22 +94,24 @@ public class NTMTestApplication extends DSOLApplication
         {
             throw new SimRuntimeException("map.xml not found", e);
         }
+        */
 
         OTSReplication replication =
-                new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalarAbs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                        new DoubleScalarRel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalarRel<TimeUnit>(1800.0,
+                new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        
-        DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel =
-                new DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+
+        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
+                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
+                        simulator);
         addInfoTab(panel);
-        
+
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, simulator);
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
-        
+
         // tell the animation panel to update its statistics
         // TODO: should be done automatically in DSOL!
         animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
@@ -124,7 +123,7 @@ public class NTMTestApplication extends DSOLApplication
      * @param panel
      */
     private static void addInfoTab(
-            final DSOLPanel<DoubleScalarAbs<TimeUnit>, DoubleScalarRel<TimeUnit>, OTSSimTimeDouble> panel)
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
         String helpSource = "/" + NTMModel.class.getPackage().getName().replace('.', '/') + "/html/ntm.html";
