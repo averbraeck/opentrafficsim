@@ -149,6 +149,7 @@ public class ShapeFileReader
         SimpleFeatureSource featureSourceAreas = storeAreas.getFeatureSource();
         SimpleFeatureCollection featureCollectionAreas = featureSourceAreas.getFeatures();
         SimpleFeatureIterator iterator = featureCollectionAreas.features();
+        long newNr = 100000000L;
         try
         {
             while (iterator.hasNext())
@@ -167,10 +168,16 @@ public class ShapeFileReader
                 Point centroid = centroids.get(centroidNr);
                 if (centroid == null)
                 {
-                    System.out.println("Centroid with number " + centroidNr + " not found for area" + name);
+                    System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" + name
+                            + ")");
                 }
                 else
                 {
+                    if (areas.containsKey(nr))
+                    {
+                        System.out.println("Area number " + nr + "(" + name + ") already exists. Number not unique!");
+                        nr = newNr++;
+                    }
                     Area area = new Area(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
                     areas.put(nr, area);
                 }
@@ -223,12 +230,12 @@ public class ShapeFileReader
             {
                 SimpleFeature feature = iterator.next();
 
-                Geometry geometry = (Geometry) feature.getAttribute("the_geom");
+                Point point = (Point) feature.getAttribute("the_geom");
                 long nr = (long) feature.getAttribute("NODENR");
                 double x = (double) feature.getAttribute("X");
                 double y = (double) feature.getAttribute("Y");
 
-                ShpNode node = new ShpNode(geometry, nr, x, y);
+                ShpNode node = new ShpNode(point, nr, x, y);
                 nodes.put(nr, node);
             }
         }
@@ -304,7 +311,7 @@ public class ShapeFileReader
 
                 ShpNode nodeA = nodes.get(lNodeA);
                 ShpNode nodeB = nodes.get(lNodeB);
-
+                
                 if (nodeA == null || nodeB == null)
                 {
                     System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr=" + nr

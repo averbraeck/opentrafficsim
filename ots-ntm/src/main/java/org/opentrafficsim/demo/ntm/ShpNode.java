@@ -1,6 +1,15 @@
 package org.opentrafficsim.demo.ntm;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.rmi.RemoteException;
+
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * A node contains the following information:
@@ -66,10 +75,10 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ShpNode
+public class ShpNode implements LocatableInterface
 {
     /** the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650) */
-    private final Geometry geometry;
+    private final Point point;
 
     /** NODENR class java.lang.Long 18 */
     private final long nr;
@@ -81,26 +90,44 @@ public class ShpNode
     private final double y;
 
     /**
-     * @param geometry
+     * @param point
      * @param nr
      * @param x
      * @param y
      */
-    public ShpNode(Geometry geometry, long nr, double x, double y)
+    public ShpNode(Point point, long nr, double x, double y)
     {
         super();
-        this.geometry = geometry;
+        this.point = point;
         this.nr = nr;
         this.x = x;
         this.y = y;
     }
 
     /**
-     * @return geometry
+     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
      */
-    public Geometry getGeometry()
+    @Override
+    public DirectedPoint getLocation() throws RemoteException
     {
-        return this.geometry;
+        return new DirectedPoint(new double[]{this.x, this.y, 0.0d});
+    }
+
+    /**
+     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
+     */
+    @Override
+    public Bounds getBounds() throws RemoteException
+    {
+        return new BoundingBox(new Point3d(-1.0d, -1.0d, 0.0d), new Point3d(1.0d, 1.0d, 0.0d));
+    }
+
+    /**
+     * @return point
+     */
+    public Point getPoint()
+    {
+        return this.point;
     }
 
     /**

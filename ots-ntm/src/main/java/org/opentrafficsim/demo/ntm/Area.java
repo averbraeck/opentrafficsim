@@ -1,8 +1,19 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.awt.geom.Path2D;
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
@@ -52,7 +63,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Area
+public class Area implements LocatableInterface
 {
     /** the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ... */
     private final Geometry geometry;
@@ -81,6 +92,9 @@ public class Area
     /** touching areas */
     private final Set<Area> touchingAreas = new HashSet<>();
 
+    /** polygon for drawing relative to centroid */
+    private Set<Path2D> polygons = null;
+
     /**
      * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
      * @param nr AREANR class java.lang.Long 15127
@@ -103,6 +117,64 @@ public class Area
         this.regio = regio;
         this.dhb = dhb;
         this.centroid = centroid;
+    }
+
+    /**
+     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
+     */
+    @Override
+    public DirectedPoint getLocation() throws RemoteException
+    {
+        Point c = this.geometry.getCentroid();
+        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
+    }
+
+    /**
+     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
+     */
+    @Override
+    public Bounds getBounds() throws RemoteException
+    {
+        DirectedPoint d = getLocation();
+        Envelope envelope = this.geometry.getEnvelopeInternal();
+        return new BoundingBox(new Point3d(envelope.getMinX() - d.x, d.y - envelope.getMinY(), 0.0d), new Point3d(
+                envelope.getMaxX() - d.x, d.y - envelope.getMaxY(), 0.0d));
+    }
+
+    /**
+     * @return polygon
+     * @throws RemoteException
+     */
+    public Set<Path2D> getPolygons() throws RemoteException
+    {
+        // create the polygon if it did not exist before
+        if (this.polygons == null)
+        {
+            double dx = this.getLocation().getX();
+            double dy = this.getLocation().getY();
+            this.polygons = new HashSet<Path2D>();
+            for (int i = 0; i < this.geometry.getNumGeometries(); i++)
+            {
+                Path2D polygon = new Path2D.Double();
+                Geometry g = this.geometry.getGeometryN(i);
+                boolean start = true;
+                for (Coordinate c : g.getCoordinates())
+                {
+                    if (start)
+                    {
+                        polygon.moveTo(c.x - dx, dy - c.y);
+                        start = false;
+                    }
+                    else
+                    {
+                        polygon.lineTo(c.x - dx, dy - c.y);
+                    }
+                }
+                polygon.closePath();
+                this.polygons.add(polygon);
+            }
+        }
+        return this.polygons;
     }
 
     /**
@@ -175,7 +247,7 @@ public class Area
     @Override
     public String toString()
     {
-        return "Area [nr=" + this.nr + ", name=" + this.name + ", gemeente=" + this.gemeente + "]";
+        return "Area [nr=" + this.nr + "]";
     }
 
     /**
