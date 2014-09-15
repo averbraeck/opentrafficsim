@@ -269,10 +269,10 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     /**
      * Determine by what distance the front of this Car is ahead or behind the front an other Car. <br />
      * Positive values indicate that this Car is ahead, negative values indicate behind.
-     * @param otherCar
+     * @param otherCar Car; the car to which the headway must be returned
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
      */
-    public DoubleScalar.Rel<LengthUnit> headway(Car otherCar)
+    public DoubleScalar.Rel<LengthUnit> headway(final Car otherCar)
     {
         DoubleScalar.Abs<TimeUnit> when = this.simulator.getSimulatorTime().get();
         return MutableDoubleScalar.minus(positionOfFront(when), otherCar.positionOfFront(when)).immutable();

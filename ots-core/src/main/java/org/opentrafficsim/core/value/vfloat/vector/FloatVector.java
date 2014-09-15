@@ -54,9 +54,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     protected FloatMatrix1D vectorSI;
 
     /**
-     * @param unit
+     * Create a new FloatVector.
+     * @param unit Unit; the unit of the new FloatVector
      */
-    protected FloatVector(U unit)
+    protected FloatVector(final U unit)
     {
         super(unit);
         // System.out.println("Created FloatVector");
@@ -74,10 +75,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Dense.
-         * @param unit
+         * Create a new Absolute Immutable FloatVector.
+         * @param unit Unit; the unit of the new FloatVector
          */
-        Abs(U unit)
+        Abs(final U unit)
         {
             super(unit);
         }
@@ -92,8 +93,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; the values of the entries in the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             protected Dense(final FloatMatrix1D values, final U unit)
             {
@@ -103,8 +104,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @param values
-             * @param unit
+             * Create a new Absolute Dense Immutable FloatVector.
+             * @param values float[]; the values of the entries in the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             public Dense(final float[] values, final U unit)
             {
@@ -114,9 +116,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Absolute Dense Immutable FloatVector.
+             * @param values FloatScalar.Abs[]; the values of the entries of the new FloatVector
+             * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
             {
@@ -126,8 +128,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Make a mutable version.
-             * @return Absolute Dense MutableFloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
             public MutableFloatVector.Abs.Dense<U> mutable()
             {
@@ -135,7 +136,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
             protected FloatMatrix1D createMatrix1D(final int size)
@@ -155,8 +156,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * For package internal use only
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; the values for the entries of the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             protected Sparse(final FloatMatrix1D values, final U unit)
             {
@@ -166,9 +167,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Create a Dense Relative Immutable FloatVector
-             * @param values
-             * @param unit
+             * Create a Relative Sparse Immutable FloatVector
+             * @param values float[]; the values for the entries of the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             public Sparse(final float[] values, final U unit)
             {
@@ -178,9 +179,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a Relative Sparse Immutable FloatVector.
+             * @param values FloatScalar.Abs[]; the values for the entries of the new FloatVector
+             * @throws ValueException when values contains zero entries 
              */
             public Sparse(final FloatScalar.Abs<U>[] values) throws ValueException
             {
@@ -190,8 +191,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Create a mutable version.
-             * @return Dense Relative Mutable FloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
             public MutableFloatVector.Abs.Sparse<U> mutable()
             {
@@ -199,7 +199,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
             protected FloatMatrix1D createMatrix1D(final int size)
@@ -229,10 +229,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Rel
-         * @param unit
+         * Create a new Relative Immutable FloatVector
+         * @param unit Unit; the unit of the new FloatVector
          */
-        Rel(U unit)
+        Rel(final U unit)
         {
             super(unit);
         }
@@ -247,8 +247,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; the values of the entries of the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             protected Dense(final FloatMatrix1D values, final U unit)
             {
@@ -258,8 +258,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @param values
-             * @param unit
+             * Create a new Relative Dense Immutable FloatVector
+             * @param values float[]; the values for the entries of the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             public Dense(final float[] values, final U unit)
             {
@@ -269,9 +270,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Relative Dense Immutable FloatVector.
+             * @param values FloatScalar.Rel[]; the values for the entries of the new FloatVector
+             * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Rel<U>[] values) throws ValueException
             {
@@ -281,8 +282,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Construct a mutable version containing the same data.
-             * @return Dense Absolute MutableFloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
             public MutableFloatVector.Rel.Dense<U> mutable()
             {
@@ -290,7 +290,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
             protected FloatMatrix1D createMatrix1D(final int size)
@@ -310,8 +310,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * For package internal use only
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; the values for the entries of the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             protected Sparse(final FloatMatrix1D values, final U unit)
             {
@@ -321,9 +321,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Create a new Sparse Relative Immutable FloatVector
-             * @param values
-             * @param unit
+             * Create a new Relative Sparse Immutable FloatVector
+             * @param values float[]; the values of the entries of the new FloatVector
+             * @param unit Unit; the unit of the new FloatVector
              */
             public Sparse(final float[] values, final U unit)
             {
@@ -333,9 +333,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Relative Sparse Immutable FloatVector.
+             * @param values FloatScalar.Rel; the values of the entries of the new FloatVector
+             * @throws ValueException when values has zero entries
              */
             public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
             {
@@ -345,8 +345,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Construct a mutable version.
-             * @return Sparse Relative Mutable FloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
             public MutableFloatVector.Rel.Sparse<U> mutable()
             {
@@ -354,7 +353,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
             protected FloatMatrix1D createMatrix1D(final int size)
@@ -393,7 +392,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Import the values and convert them into SI units.
-     * @param values an array of values
+     * @param values float[]; an array of values
      */
     protected void initialize(final float[] values)
     {
@@ -412,7 +411,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * @param values
+     * Import the values from an existing FloatMatrix1D. This makes a shallow copy.
+     * @param values FloatMatrix1D; the values
      */
     protected void initialize(final FloatMatrix1D values)
     {
@@ -473,6 +473,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return values;
     }
 
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#size()
+     */
     public int size()
     {
         return (int) this.vectorSI.size();
@@ -513,7 +516,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vfloat.vectormut.Vectormut#cardinality()
+     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#cardinality()
      */
     @Override
     public int cardinality()
@@ -560,7 +563,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Print this AbstractFloatVector with the values expressed in the specified unit.
+     * Print this FloatVector with the values expressed in the specified unit.
      * @param displayUnit the unit to display the vector in.
      * @return a printable String with the vector contents
      */
@@ -694,12 +697,13 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Check that a provided array can be used to create some descendant of an AbstractFloatVector.
+     * Check that a provided array can be used to create some descendant of an FloatVector.
      * @param fsArray FloatScalar[]; the provided array
      * @return FloatScalar[]; the provided array
-     * @throws ValueException
+     * @throws ValueException when the proved array has length equal to 0
      */
-    protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(FloatScalar<U>[] fsArray) throws ValueException
+    protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray)
+            throws ValueException
     {
         if (0 == fsArray.length)
         {

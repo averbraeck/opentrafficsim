@@ -52,10 +52,10 @@ public class AccelerationContourPlot extends ContourPlot
     public AccelerationContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
             final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
-                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
-                minimumDistance, maximumDistance, standardDistanceGranularities,
-                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"), -5d,
+        super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
+                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, STANDARDDISTANCEGRANULARITIES,
+                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), -5d,
                 0d, 3d, "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 

@@ -132,13 +132,19 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             final DoubleScalar.Rel<TimeUnit> aggregationTime, final DoubleScalar.Abs<LengthUnit> position)
     {
         if (numberOfLanes <= 0)
+        {
             throw new Error("Number of lanes must be > 0 (got " + numberOfLanes + ")");
+        }
         if (aggregationTime.getValueSI() <= 0)
+        {
             throw new Error("Aggregation time must be > 0 (got " + aggregationTime + ")");
+        }
         this.aggregationTime = aggregationTime;
         this.sampleSets = new ArrayList<ArrayList<Sample>>(numberOfLanes);
         for (int i = 0; i < numberOfLanes; i++)
+        {
             this.sampleSets.add(new ArrayList<Sample>());
+        }
         this.caption = caption;
         this.position = new DoubleScalar.Abs<LengthUnit>(position);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
@@ -237,7 +243,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         final int timeBin = (int) Math.floor(detectionTime.getValueSI() / this.aggregationTime.getValueSI());
         // Extend storage if needed
         while (timeBin >= laneData.size())
+        {
             laneData.add(new Sample());
+        }
         Sample sample = laneData.get(timeBin);
         sample.addData(car.getVelocity(detectionTime));
     }
@@ -276,7 +284,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private void notifyListeners(final DatasetChangeEvent event)
     {
         for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        {
             dcl.datasetChanged(event);
+        }
     }
 
     /**
@@ -305,7 +315,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     public int indexOf(final Comparable seriesKey)
     {
         if (seriesKey instanceof Integer)
+        {
             return (Integer) seriesKey;
+        }
         return -1;
     }
 
@@ -373,10 +385,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private Double getSample(final int lane, final int item, final Axis axis)
     {
         if (lane < 0 || lane >= this.sampleSets.size() || item < 0)
+        {
             return Double.NaN;
+        }
         ArrayList<Sample> laneDetections = this.sampleSets.get(lane);
         if (item >= laneDetections.size())
+        {
             return Double.NaN;
+        }
         double result = laneDetections.get(item).getValue(axis);
         /*-
         System.out.println(String.format("getSample(lane=%d, item=%d, axis=%s) returns %f", lane, item, axis.name,
@@ -487,7 +503,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * Add one Car detection to this Sample.
          * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the detected speed
          */
-        public void addData(DoubleScalar.Rel<SpeedUnit> speed)
+        public void addData(final DoubleScalar.Rel<SpeedUnit> speed)
         {
             double sumReciprocalSpeeds = 0;
             if (this.flow > 0)
@@ -504,7 +520,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
-    public void actionPerformed(ActionEvent actionEvent)
+    public void actionPerformed(final ActionEvent actionEvent)
     {
         final String command = actionEvent.getActionCommand();
         // System.out.println("command is \"" + command + "\"");
@@ -554,7 +570,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             reGraph();
         }
         else
+        {
             throw new Error("Unknown ActionEvent");
+        }
     }
 
 }

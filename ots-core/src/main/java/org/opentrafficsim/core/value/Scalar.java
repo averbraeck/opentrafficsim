@@ -52,6 +52,7 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     /**
      * @see org.opentrafficsim.core.value.Value#getUnit()
      */
+    @Override
     public U getUnit()
     {
         return this.unit;
@@ -60,6 +61,7 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     /**
      * @see org.opentrafficsim.core.value.Value#expressAsSIUnit(double)
      */
+    @Override
     public double expressAsSIUnit(final double value)
     {
         return ValueUtil.expressAsSIUnit(value, this.unit);
@@ -77,6 +79,7 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     /**
      * @see org.opentrafficsim.core.value.Value#isAbsolute()
      */
+    @Override
     public boolean isAbsolute()
     {
         return this instanceof Absolute;
@@ -85,6 +88,7 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     /**
      * @see org.opentrafficsim.core.value.Value#isRelative()
      */
+    @Override
     public boolean isRelative()
     {
         return this instanceof Relative;

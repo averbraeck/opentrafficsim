@@ -132,28 +132,28 @@ public class ContourPlotTest
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
         int expectedXBins =
-                (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.initialUpperTimeBound,
-                        ContourPlot.initialLowerTimeBound).getValueSI())
-                        / ContourPlot.standardTimeGranularities[ContourPlot.standardInitialTimeGranularityIndex]);
+                (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
+                        ContourPlot.INITIALLOWERTIMEBOUND).getValueSI())
+                        / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins =
                 (int) Math
                         .ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
-                                / ContourPlot.standardDistanceGranularities[ContourPlot.standardInitialDistanceGranularityIndex]);
+                                / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
         assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
         // Vary the x granularity
-        for (double timeGranularity : ContourPlot.standardTimeGranularities)
+        for (double timeGranularity : ContourPlot.STANDARDTIMEGRANULARITIES)
         {
             cp.actionPerformed(new ActionEvent(cp, 0, "setTimeGranularity " + timeGranularity));
-            for (double distanceGranularity : ContourPlot.standardDistanceGranularities)
+            for (double distanceGranularity : ContourPlot.STANDARDDISTANCEGRANULARITIES)
             {
                 cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + distanceGranularity));
                 cp.reGraph();
                 expectedXBins =
-                        (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.initialUpperTimeBound,
-                                ContourPlot.initialLowerTimeBound).getValueSI()) / timeGranularity);
+                        (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
+                                ContourPlot.INITIALLOWERTIMEBOUND).getValueSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins =
@@ -166,10 +166,10 @@ public class ContourPlotTest
                 for (int item = 0; item < bins; item++)
                 {
                     double x = cp.getXValue(0, item);
-                    assertTrue("X should be >= " + ContourPlot.initialLowerTimeBound,
-                            x >= ContourPlot.initialLowerTimeBound.getValueSI());
-                    assertTrue("X should be <= " + ContourPlot.initialUpperTimeBound,
-                            x <= ContourPlot.initialUpperTimeBound.getValueSI());
+                    assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
+                            x >= ContourPlot.INITIALLOWERTIMEBOUND.getValueSI());
+                    assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
+                            x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
                     Number alternateX = cp.getX(0, item);
                     assertEquals("getXValue and getX should return things that have the same value", x,
                             alternateX.doubleValue(), 0.000001);
@@ -270,7 +270,7 @@ public class ContourPlotTest
         final double useTimeGranularity = 30; // [s]
         cp.actionPerformed(new ActionEvent(cp, 0, "setTimeGranularity " + useTimeGranularity));
         final double useDistanceGranularity =
-                ContourPlot.standardDistanceGranularities[ContourPlot.standardDistanceGranularities.length - 1];
+                ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDDISTANCEGRANULARITIES.length - 1];
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
@@ -293,10 +293,10 @@ public class ContourPlotTest
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
-            assertTrue("X should be >= " + ContourPlot.initialLowerTimeBound,
-                    x >= ContourPlot.initialLowerTimeBound.getValueSI());
-            assertTrue("X should be <= " + ContourPlot.initialUpperTimeBound,
-                    x <= ContourPlot.initialUpperTimeBound.getValueSI());
+            assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
+                    x >= ContourPlot.INITIALLOWERTIMEBOUND.getValueSI());
+            assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
+                    x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
             Number alternateX = cp.getX(0, item);
             assertEquals("getXValue and getX should return things that have the same value", x,
                     alternateX.doubleValue(), 0.000001);
@@ -330,10 +330,10 @@ public class ContourPlotTest
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
-            assertTrue("X should be >= " + ContourPlot.initialLowerTimeBound,
-                    x >= ContourPlot.initialLowerTimeBound.getValueSI());
-            assertTrue("X should be <= " + ContourPlot.initialUpperTimeBound,
-                    x <= ContourPlot.initialUpperTimeBound.getValueSI());
+            assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
+                    x >= ContourPlot.INITIALLOWERTIMEBOUND.getValueSI());
+            assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
+                    x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
             Number alternateX = cp.getX(0, item);
             assertEquals("getXValue and getX should return things that have the same value", x,
                     alternateX.doubleValue(), 0.000001);

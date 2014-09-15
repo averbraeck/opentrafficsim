@@ -215,7 +215,9 @@ public class SICoefficients
                         digitsSeen++;
                     }
                     else
+                    {
                         break;
+                    }
                 }
                 Integer oldValue = coefficients.get(si);
                 if (null == oldValue)

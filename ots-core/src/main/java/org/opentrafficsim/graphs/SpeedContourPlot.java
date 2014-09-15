@@ -51,10 +51,10 @@ public class SpeedContourPlot extends ContourPlot
     public SpeedContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
             final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
-                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
-                minimumDistance, maximumDistance, standardDistanceGranularities,
-                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"), 0d,
+        super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
+                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, STANDARDDISTANCEGRANULARITIES,
+                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), 0d,
                 40d, 150d, "speed %.1f km/h", "%.1f km/h", 20d);
     }
 

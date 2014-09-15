@@ -384,7 +384,9 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     public static Set<Unit<?>> lookupUnitWithSICoefficients(final String normalizedSICoefficientsString)
     {
         if (!initialized)
+        {
             initialize();
+        }
         if (SI_UNITS.containsKey(normalizedSICoefficientsString))
         {
             return new HashSet<Unit<?>>(SI_UNITS.get(normalizedSICoefficientsString).values());

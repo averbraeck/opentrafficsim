@@ -38,16 +38,19 @@ import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit
  */
-public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScalar<U> implements
-        DoubleMathFunctions
+public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScalar<U> implements DoubleMathFunctions
 {
+
+    // FIXME The compareTo methods look wrong because they don't check for object, nor for Absolute vs. Relative.
+
     /** */
     private static final long serialVersionUID = 20140905L;
 
     /**
-     * @param unit
+     * Create a new MutableDoubleScalar.
+     * @param unit Unit; the unit of the new MutableDoubleScalar
      */
-    public MutableDoubleScalar(U unit)
+    public MutableDoubleScalar(final U unit)
     {
         super(unit);
     }
@@ -74,7 +77,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /**
          * Create a new Absolute MutableDoubleScalar from an existing immutable one.
-         * @param value Absolute DoubleScalar; the reference
+         * @param value DoubleScalar.Abs; the reference
          */
         public Abs(final DoubleScalar.Abs<U> value)
         {
@@ -82,10 +85,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
             // System.out.println("Created Abs");
             initialize(value);
         }
-        
+
         /**
          * Create a new Absolute MutableDoubleScalar from an existing one.
-         * @param value
+         * @param value MutableDoubleScalar.Abs; the existing Absolute MutableDoubleScalar
          */
         public Abs(final MutableDoubleScalar.Abs<U> value)
         {
@@ -95,8 +98,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create an immutable version of this DoubleScalar
-         * @return Absolute DoubleScalar
+         * @see org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar#immutable()
          */
         @Override
         public DoubleScalar.Abs<U> immutable()
@@ -105,8 +107,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create a mutable version.
-         * @return Absolute MutableDoubleScalar
+         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
          */
         @Override
         public MutableDoubleScalar.Abs<U> mutable()
@@ -127,7 +128,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(Abs<U> o)
+        public int compareTo(final Abs<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
@@ -168,7 +169,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /**
          * Create a new Absolute MutableDoubleScalar from an existing one.
-         * @param value
+         * @param value DoubleScalar.Rel; the reference
          */
         public Rel(final MutableDoubleScalar.Rel<U> value)
         {
@@ -178,8 +179,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create an immutable version.
-         * @return Relative ImmutableDoubleScalar
+         * @see org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar#immutable()
          */
         @Override
         public DoubleScalar.Rel<U> immutable()
@@ -188,8 +188,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create a mutable version.
-         * @return Relative MutableDoubleScalar
+         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
          */
         @Override
         public MutableDoubleScalar.Rel<U> mutable()
@@ -210,7 +209,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(Rel<U> o)
+        public int compareTo(final Rel<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
@@ -315,7 +314,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @return the sum of the values as a relative value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> plus(final U targetUnit, final DoubleScalar.Rel<U>... valuesRel)
+    public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> plus(final U targetUnit,
+            final DoubleScalar.Rel<U>... valuesRel)
     {
         MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(0.0f, targetUnit);
         for (DoubleScalar.Rel<U> v : valuesRel)
@@ -384,7 +384,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueAbs2 value 2
      * @return the product of the two absolute values as an absolute value
      */
-    public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> valueAbs1, final DoubleScalar.Abs<?> valueAbs2)
+    public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> valueAbs1,
+            final DoubleScalar.Abs<?> valueAbs2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
@@ -398,7 +399,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueRel2 value 2
      * @return the product of the two relative values as a relative value
      */
-    public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> valueRel1, final DoubleScalar.Rel<?> valueRel2)
+    public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> valueRel1,
+            final DoubleScalar.Rel<?> valueRel2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
@@ -412,7 +414,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueAbs2 value 2
      * @return the division of the two absolute values as an absolute value
      */
-    public static DoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> valueAbs1, final DoubleScalar.Abs<?> valueAbs2)
+    public static DoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> valueAbs1,
+            final DoubleScalar.Abs<?> valueAbs2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
@@ -426,14 +429,15 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueRel2 value 2
      * @return the division of the two two relative values as a relative value
      */
-    public static DoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> valueRel1, final DoubleScalar.Rel<?> valueRel2)
+    public static DoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> valueRel1,
+            final DoubleScalar.Rel<?> valueRel2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
                         valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
         return new DoubleScalar.Rel<SIUnit>(valueRel1.valueSI / valueRel2.valueSI, targetUnit);
     }
-    
+
     /**********************************************************************************/
     /********************************** MATH METHODS **********************************/
     /**********************************************************************************/

@@ -146,11 +146,13 @@ class Axis
     public void setCurrentGranularity(final double newGranularity)
     {
         for (double g : this.granularities)
+        {
             if (g == newGranularity)
             {
                 this.currentGranularity = newGranularity;
                 return;
             }
+        }
         throw new Error("Illegal granularity " + newGranularity);
     }
 

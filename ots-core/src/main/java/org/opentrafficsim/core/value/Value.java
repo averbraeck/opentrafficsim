@@ -59,5 +59,5 @@ public interface Value<U extends Unit<U>>
     /**
      * @return a copy of the object
      */
-    public abstract Value<U> copy();
+    Value<U> copy();
 }
