@@ -33,13 +33,15 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class Vector<U extends Unit<U>> extends AbstractValue<U> implements Serializable, MathFunctions, VectorFunctions
+public abstract class Vector<U extends Unit<U>> extends AbstractValue<U> implements Serializable, MathFunctions,
+        VectorFunctions
 {
     /** */
     private static final long serialVersionUID = 20140615L;
 
     /**
-     * @param unit the unit of the value
+     * Create a new Vector.
+     * @param unit Unit; the unit of the new Vector
      */
     public Vector(final U unit)
     {

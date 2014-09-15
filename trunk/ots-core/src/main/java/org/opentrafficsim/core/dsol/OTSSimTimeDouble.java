@@ -48,7 +48,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     /**
      * @param time
      */
-    public OTSSimTimeDouble(DoubleScalar.Abs<TimeUnit> time)
+    public OTSSimTimeDouble(final DoubleScalar.Abs<TimeUnit> time)
     {
         super(time);
     }
@@ -57,7 +57,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#add(java.lang.Number)
      */
     @Override
-    public void add(DoubleScalar.Rel<TimeUnit> simTime)
+    public void add(final DoubleScalar.Rel<TimeUnit> simTime)
     {
         this.time.add(simTime);
     }
@@ -66,7 +66,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#subtract(java.lang.Number)
      */
     @Override
-    public void subtract(DoubleScalar.Rel<TimeUnit> simTime)
+    public void subtract(final DoubleScalar.Rel<TimeUnit> simTime)
     {
         this.time.subtract(simTime);
     }
@@ -75,7 +75,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#compareTo(nl.tudelft.simulation.dsol.simtime.SimTime)
      */
     @Override
-    public int compareTo(OTSSimTimeDouble simTime)
+    public int compareTo(final OTSSimTimeDouble simTime)
     {
         return this.time.immutable().compareTo(simTime.get());
     }
@@ -103,7 +103,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#set(java.lang.Comparable)
      */
     @Override
-    public void set(DoubleScalar.Abs<TimeUnit> value)
+    public void set(final DoubleScalar.Abs<TimeUnit> value)
     {
         this.time = value.mutable();
     }
@@ -121,7 +121,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#minus(nl.tudelft.simulation.dsol.simtime.SimTime)
      */
     @Override
-    public DoubleScalar.Rel<TimeUnit> minus(OTSSimTimeDouble absoluteTime)
+    public DoubleScalar.Rel<TimeUnit> minus(final OTSSimTimeDouble absoluteTime)
     {
         DoubleScalar.Rel<TimeUnit> rel = MutableDoubleScalar.minus(this.time.immutable(), absoluteTime.get()).immutable();
         return rel;

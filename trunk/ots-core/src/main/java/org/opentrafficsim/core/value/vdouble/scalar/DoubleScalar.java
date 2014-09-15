@@ -44,9 +44,10 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param unit
+     * Create a new Immutable DoubleScalar.
+     * @param unit Unit; the unit of the new DoubleScalar
      */
-    public DoubleScalar(U unit)
+    public DoubleScalar(final U unit)
     {
         super(unit);
     }
@@ -97,8 +98,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create an mutable version of this DoubleScalar
-         * @return Absolute MutableDoubleScalar
+         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
          */
         @Override
         public MutableDoubleScalar.Abs<U> mutable()
@@ -119,7 +119,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(Abs<U> o)
+        public int compareTo(final Abs<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
@@ -169,8 +169,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a mutable version.
-         * @return Relative MutableDoubleScalar
+         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
          */
         @Override
         public MutableDoubleScalar.Rel<U> mutable()
@@ -191,7 +190,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(Rel<U> o)
+        public int compareTo(final Rel<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
@@ -202,7 +201,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * Initialize the valueSI field (performing conversion to the SI standard unit if needed).
      * @param value double; the value in the unit of this DoubleScalar
      */
-    protected void initialize(double value)
+    protected void initialize(final double value)
     {
         if (this.unit.equals(this.unit.getStandardUnit()))
         {
@@ -219,7 +218,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * necessary.
      * @param value DoubleScalar; the value to use for initialization
      */
-    protected void initialize(DoubleScalar<U> value)
+    protected void initialize(final DoubleScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -336,6 +335,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * @see org.opentrafficsim.core.value.Value#copy()
      */
+    @Override
     public abstract DoubleScalar<U> copy();
 
 }

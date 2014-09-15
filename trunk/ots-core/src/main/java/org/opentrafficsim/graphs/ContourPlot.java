@@ -82,23 +82,23 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected final Axis yAxis;
 
     /** Time granularity values. */
-    protected static final double[] standardTimeGranularities = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
+    protected static final double[] STANDARDTIMEGRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
     /** Index of the initial time granularity in standardTimeGranularites. */
-    protected static final int standardInitialTimeGranularityIndex = 3;
+    protected static final int STANDARDINITIALTIMEGRANULARITYINDEX = 3;
 
     /** Distance granularity values. */
-    protected static final double[] standardDistanceGranularities = {10, 20, 50, 100, 200, 500, 1000};
+    protected static final double[] STANDARDDISTANCEGRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};
 
     /** Index of the initial distance granularity in standardTimeGranularites. */
-    protected static final int standardInitialDistanceGranularityIndex = 3;
+    protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final DoubleScalar.Abs<TimeUnit> initialLowerTimeBound = new DoubleScalar.Abs<TimeUnit>(0,
+    protected static final DoubleScalar.Abs<TimeUnit> INITIALLOWERTIMEBOUND = new DoubleScalar.Abs<TimeUnit>(0,
             TimeUnit.SECOND);
 
     /** Initial upper bound for the time scale. */
-    protected static final DoubleScalar.Abs<TimeUnit> initialUpperTimeBound = new DoubleScalar.Abs<TimeUnit>(300,
+    protected static final DoubleScalar.Abs<TimeUnit> INITIALUPPERTIMEBOUND = new DoubleScalar.Abs<TimeUnit>(300,
             TimeUnit.SECOND);
 
     /**
@@ -221,6 +221,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param valueFormat String; format string used to render the value under the mouse in the status bar
      * @param dataset XYZDataset with the values to render
      * @param boundaries double[]; array of three boundary values corresponding to Red, Yellow and Green
+     * @param legendFormat String; the format string for captions in the legend
      * @param legendStep value difference for successive colors in the legend. The first legend value displayed is equal
      *            to the lowest value in boundaries.
      * @return JFreeChart; the new XYBlockChart
@@ -323,7 +324,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     private void notifyListeners(final DatasetChangeEvent event)
     {
         for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        {
             dcl.datasetChanged(event);
+        }
     }
 
     /** List of parties interested in changes of this ContourPlot. */
@@ -353,7 +356,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param item Integer; the item
      * @return Integer; the bin number along the y axis of the item
      */
-    protected int yAxisBin(int item)
+    protected int yAxisBin(final int item)
     {
         if (item < 0 || item >= getItemCount(0))
         {
@@ -368,7 +371,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param item Integer; the item
      * @return Integer; the bin number along the x axis of the item
      */
-    protected int xAxisBin(int item)
+    protected int xAxisBin(final int item)
     {
         if (item < 0 || item >= getItemCount(0))
         {

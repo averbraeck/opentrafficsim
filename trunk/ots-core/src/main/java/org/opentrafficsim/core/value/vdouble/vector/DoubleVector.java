@@ -50,13 +50,17 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyDoubleVectorFunctions<U>
 {
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
+    /**
+     * The internal storage for the vector; internally the values are stored in SI units; storage can be dense or
+     * sparse.
+     */
     protected DoubleMatrix1D vectorSI;
 
     /**
-     * @param unit
+     * Create a new Immutable DoubleVector.
+     * @param unit Unit; the unit of the new DoubleVector
      */
-    protected DoubleVector(U unit)
+    protected DoubleVector(final U unit)
     {
         super(unit);
         // System.out.println("Created DoubleVector");
@@ -74,10 +78,10 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Dense.
-         * @param unit
+         * Create a new Absolute DoubleVector.
+         * @param unit Unit; the unit of the new DoubleVector
          */
-        Abs(U unit)
+        Abs(final U unit)
         {
             super(unit);
         }
@@ -92,8 +96,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values DoubleMatrix1D; the values for the entries in the new DoubleVector
+             * @param unit Unit; the unit of the new DoubleVector
              */
             protected Dense(final DoubleMatrix1D values, final U unit)
             {
@@ -103,8 +107,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * @param values
-             * @param unit
+             * Create a new Absolute Dense Immutable DoubleVector.
+             * @param values double[]; the values for the entries in the new DoubleVector
+             * @param unit Unit; the unit of the values for the new DoubleVector
              */
             public Dense(final double[] values, final U unit)
             {
@@ -114,9 +119,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Absolute Dense Immutable DoubleVector
+             * @param values DoubleScalar.Abs[]; the values for the entries in the new DoubleVector
+             * @throws ValueException when values has zero entries
              */
             public Dense(final DoubleScalar.Abs<U>[] values) throws ValueException
             {
@@ -126,16 +131,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Make a mutable version.
-             * @return Absolute Dense MutableDoubleVector
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
+            @Override
             public MutableDoubleVector.Abs.Dense<U> mutable()
             {
                 return new MutableDoubleVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.AbstractDoubleVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
             protected DoubleMatrix1D createMatrix1D(final int size)
@@ -154,9 +159,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only
-             * @param values
-             * @param unit
+             * For package internal use only.
+             * @param values DoubleMatrix1D; the values for entries of the new DoubleVector
+             * @param unit Unit; the unit of the new DoubleVector
              */
             protected Sparse(final DoubleMatrix1D values, final U unit)
             {
@@ -166,9 +171,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a Dense Relative Immutable DoubleVector
-             * @param values
-             * @param unit
+             * Create a Relative Sparse Immutable DoubleVector.
+             * @param values double[]; values for the entries of the new DoubleVector
+             * @param unit Unit; the unit of the values for the new DoubleVector
              */
             public Sparse(final double[] values, final U unit)
             {
@@ -178,9 +183,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a Relative Sparse Immutable DoubleVector.
+             * @param values DoubleScalar.Abs[]; values for the entries of the new DoubleVector
+             * @throws ValueException when values has zero entries
              */
             public Sparse(final DoubleScalar.Abs<U>[] values) throws ValueException
             {
@@ -190,16 +195,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a mutable version.
-             * @return Dense Relative Mutable DoubleVector
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
+            @Override
             public MutableDoubleVector.Abs.Sparse<U> mutable()
             {
                 return new MutableDoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.AbstractDoubleVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
             protected DoubleMatrix1D createMatrix1D(final int size)
@@ -210,6 +215,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         }
 
         /**
+         * 
          * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
          */
         @Override
@@ -229,10 +235,10 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Rel
-         * @param unit
+         * Create a new Relative DoubleVector.
+         * @param unit Unit; the unit of the new DoubleVector
          */
-        Rel(U unit)
+        Rel(final U unit)
         {
             super(unit);
         }
@@ -247,8 +253,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values DoubleMatrix1D; the values for the entries in the new DoubleVector
+             * @param unit Unit; the unit of the new DoubleVector
              */
             protected Dense(final DoubleMatrix1D values, final U unit)
             {
@@ -258,8 +264,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * @param values
-             * @param unit
+             * Create a new Relative Dense Immutable DoubleVector.
+             * @param values double[]; values for the entries of the new DoubleVector
+             * @param unit Unit; the unit of the values for the new DoubleVector
              */
             public Dense(final double[] values, final U unit)
             {
@@ -269,9 +276,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Relative Dense Immutable DoubleVector.
+             * @param values DoubleScalarRel; values for the entries of the new DoubleVector
+             * @throws ValueException when values has zero entries
              */
             public Dense(final DoubleScalar.Rel<U>[] values) throws ValueException
             {
@@ -281,16 +288,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Construct a mutable version containing the same data.
-             * @return Dense Absolute MutableDoubleVector
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
+            @Override
             public MutableDoubleVector.Rel.Dense<U> mutable()
             {
                 return new MutableDoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.AbstractDoubleVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
             protected DoubleMatrix1D createMatrix1D(final int size)
@@ -309,9 +316,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only
-             * @param values
-             * @param unit
+             * For package internal use only.
+             * @param values DoubleMatrix1D; the values for the entries of the new DoubleVector
+             * @param unit Unit; the unit of the new DoubleVector
              */
             protected Sparse(final DoubleMatrix1D values, final U unit)
             {
@@ -321,9 +328,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Sparse Relative Immutable DoubleVector
-             * @param values
-             * @param unit
+             * Create a new Relative Sparse Immutable DoubleVector
+             * @param values double[]; the values for the entries of the new DoubleVector
+             * @param unit Unit; the unit of the values for the new DoubleVector
              */
             public Sparse(final double[] values, final U unit)
             {
@@ -333,9 +340,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Relative Sparse Immutable DoubleVector.
+             * @param values DoubleScalar.Rel[]; the values for the entries of the new DoubleVector
+             * @throws ValueException when values contains zero entries
              */
             public Sparse(final DoubleScalar.Rel<U>[] values) throws ValueException
             {
@@ -345,16 +352,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Construct a mutable version.
-             * @return Sparse Relative Mutable DoubleVector
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
+            @Override
             public MutableDoubleVector.Rel.Sparse<U> mutable()
             {
                 return new MutableDoubleVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.AbstractDoubleVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
             protected DoubleMatrix1D createMatrix1D(final int size)
@@ -386,14 +393,15 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * @see org.opentrafficsim.core.value.Value#copy()
      */
+    @Override
     public DoubleVector<U> copy()
     {
         return this; // That was easy!
     }
 
     /**
-     * Import the values and convert them into SI units.
-     * @param values an array of values
+     * Construct the vector, import the values and convert them into SI units.
+     * @param values double[]; the values to import and convert
      */
     protected void initialize(final double[] values)
     {
@@ -412,7 +420,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * @param values
+     * Import the values from a DoubleMatrix1D. Makes a shallow copy.
+     * @param values DoubleMatrix1D; the values to import
      */
     protected void initialize(final DoubleMatrix1D values)
     {
@@ -467,10 +476,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     {
         double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
+        {
             values[i] = ValueUtil.expressAsUnit(values[i], targetUnit);
+        }
         return values;
     }
 
+    /**
+     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#size()
+     */
+    @Override
     public int size()
     {
         return (int) this.vectorSI.size();
@@ -479,6 +494,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getSI(int)
      */
+    @Override
     public double getSI(final int index) throws ValueException
     {
         checkIndex(index);
@@ -488,6 +504,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int)
      */
+    @Override
     public double getInUnit(final int index) throws ValueException
     {
         return expressAsSpecifiedUnit(getSI(index));
@@ -497,6 +514,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int,
      *      org.opentrafficsim.core.unit.Unit)
      */
+    @Override
     public double getInUnit(final int index, final U targetUnit) throws ValueException
     {
         return ValueUtil.expressAsUnit(getSI(index), targetUnit);
@@ -505,13 +523,14 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#zSum()
      */
+    @Override
     public double zSum()
     {
         return this.vectorSI.zSum();
     }
 
     /**
-     * @see org.opentrafficsim.core.value.vdouble.vectormut.Vectormut#cardinality()
+     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#cardinality()
      */
     @Override
     public int cardinality()
@@ -527,16 +546,22 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     {
         // unequal if object is of a different type.
         if (!(obj instanceof DoubleVector<?>))
+        {
             return false;
+        }
         DoubleVector<?> fv = (DoubleVector<?>) obj;
 
         // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
         if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
+        {
             return false;
+        }
 
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
+        {
             return false;
+        }
 
         // Colt's equals also tests the size of the vector
         return this.vectorSI.equals(fv.vectorSI);
@@ -563,29 +588,49 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         {
             buf.append("Mutable   ");
             if (this instanceof MutableDoubleVector.Abs.Dense)
+            {
                 buf.append("Abs Dense  ");
+            }
             else if (this instanceof MutableDoubleVector.Rel.Dense)
+            {
                 buf.append("Rel Dense  ");
+            }
             else if (this instanceof MutableDoubleVector.Abs.Sparse)
+            {
                 buf.append("Abs Sparse ");
+            }
             else if (this instanceof MutableDoubleVector.Rel.Sparse)
+            {
                 buf.append("Rel Sparse ");
+            }
             else
+            {
                 buf.append("??? ");
+            }
         }
         else
         {
             buf.append("Immutable ");
             if (this instanceof DoubleVector.Abs.Dense)
+            {
                 buf.append("Abs Dense  ");
+            }
             else if (this instanceof DoubleVector.Rel.Dense)
+            {
                 buf.append("Rel Dense  ");
+            }
             else if (this instanceof DoubleVector.Abs.Sparse)
+            {
                 buf.append("Abs Sparse ");
+            }
             else if (this instanceof DoubleVector.Rel.Sparse)
+            {
                 buf.append("Rel Sparse ");
+            }
             else
+            {
                 buf.append("??? ");
+            }
         }
         buf.append("[" + displayUnit.getAbbreviation() + "]");
         for (int i = 0; i < this.vectorSI.size(); i++)
@@ -604,7 +649,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     protected void checkSize(final DoubleVector<?> other) throws ValueException
     {
         if (size() != other.size())
+        {
             throw new ValueException("The vectors have different sizes: " + size() + " != " + other.size());
+        }
     }
 
     /**
@@ -615,19 +662,23 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     protected void checkSize(final double[] other) throws ValueException
     {
         if (size() != other.length)
+        {
             throw new ValueException("The vector and the array have different sizes: " + size() + " != " + other.length);
+        }
     }
 
     /**
      * Check that a provided index is valid.
      * @param index integer; the value to check
-     * @throws ValueException
+     * @throws ValueException when the index is out of range
      */
     protected void checkIndex(final int index) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
+        {
             throw new ValueException("index out of range (valid range is 0.." + (this.vectorSI.size() - 1) + ", got "
                     + index + ")");
+        }
     }
 
     /**
@@ -663,13 +714,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Check that a provided array can be used to create some descendant of an AbstractDoubleVector.
      * @param fsArray DoubleScalar[]; the provided array
      * @return DoubleScalar[]; the provided array
-     * @throws ValueException
+     * @throws ValueException if the array has zero length
      */
-    protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(DoubleScalar<U>[] fsArray) throws ValueException
+    protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] fsArray)
+            throws ValueException
     {
         if (0 == fsArray.length)
+        {
             throw new ValueException(
                     "Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
+        }
         return fsArray;
     }
 

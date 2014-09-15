@@ -73,7 +73,9 @@ abstract class PointerHandler implements MouseListener, MouseMotionListener
                     plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
         }
         else
+        {
             updateHint(Double.NaN, Double.NaN);
+        }
     }
 
     /**

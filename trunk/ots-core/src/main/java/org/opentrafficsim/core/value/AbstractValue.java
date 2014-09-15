@@ -41,8 +41,7 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     private static final long serialVersionUID = 20140615L;
 
     /** the unit of the value. */
-    protected U unit;
-    // FIXME: should be final, but that requires lots of changes elsewhere
+    protected final U unit;
 
     /**
      * @param unit the unit of the value
@@ -55,6 +54,7 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     /**
      * @see org.opentrafficsim.core.value.Value#getUnit()
      */
+    @Override
     public U getUnit()
     {
         return this.unit;
@@ -63,6 +63,7 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     /**
      * @see org.opentrafficsim.core.value.Value#expressAsSIUnit(double)
      */
+    @Override
     public double expressAsSIUnit(final double value)
     {
         return ValueUtil.expressAsSIUnit(value, this.unit);
@@ -80,6 +81,7 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     /**
      * @see org.opentrafficsim.core.value.Value#isAbsolute()
      */
+    @Override
     public boolean isAbsolute()
     {
         return this instanceof Absolute;
@@ -88,6 +90,7 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     /**
      * @see org.opentrafficsim.core.value.Value#isRelative()
      */
+    @Override
     public boolean isRelative()
     {
         return this instanceof Relative;

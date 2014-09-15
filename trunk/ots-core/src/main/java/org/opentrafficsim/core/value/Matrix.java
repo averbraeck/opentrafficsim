@@ -33,7 +33,8 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class Matrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable, MathFunctions, MatrixFunctions
+public abstract class Matrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable, MathFunctions,
+        MatrixFunctions
 {
     /** */
     private static final long serialVersionUID = 20140615L;

@@ -54,9 +54,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     private static final long serialVersionUID = 20130903L;
 
     /**
-     * @param unit
+     * Create a new MutableFloatVector.
+     * @param unit Unit; the unit of the new MutableFloatVector
      */
-    protected MutableFloatVector(U unit)
+    protected MutableFloatVector(final U unit)
     {
         super(unit);
         // System.out.println("Created MutableFloatVector");
@@ -65,6 +66,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /** If set, any modification of the data must be preceded by replacing the data with a local copy */
     boolean copyOnWrite = false;
 
+    /**
+     * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#normalize()
+     */
     public void normalize() throws ValueException
     {
         float sum = zSum();
@@ -88,10 +92,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create an Abs.
-         * @param unit
+         * Create a new Absolute MutableFloatVector.
+         * @param unit Unit; the unit of the new MutableFloatVector
          */
-        protected Abs(U unit)
+        protected Abs(final U unit)
         {
             super(unit);
         }
@@ -105,9 +109,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only
-             * @param values
-             * @param unit
+             * For package internal use only.
+             * @param values FloatMatrix1D; the initial values of the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             protected Dense(final FloatMatrix1D values, final U unit)
             {
@@ -118,9 +122,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Absolute Dense Mutable FloatVector
-             * @param values
-             * @param unit
+             * Create a new Absolute Dense MutableFloatVector.
+             * @param values float[]; the initial values of the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the values of the new MutableFloatVector
              */
             public Dense(final float[] values, final U unit)
             {
@@ -130,9 +134,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Absolute Dense MutableFloatVector.
+             * @param values FloatScalar.Abs[]; the initial values of the entries of the new MutableFloatVector
+             * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
             {
@@ -142,8 +146,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create an immutable version
-             * @return Dense Absolute Immutable FloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
             public FloatVector.Abs.Dense<U> immutable()
             {
@@ -161,10 +164,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
-            protected FloatMatrix1D createMatrix1D(int size)
+            protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
             }
@@ -181,44 +184,44 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; the initial values for the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             protected Sparse(final FloatMatrix1D values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Rel");
+                // System.out.println("Created Sparse");
                 this.copyOnWrite = true;
                 initialize(values); // shallow copy
             }
 
             /**
-             * Create a new Dense Relative Mutable FloatVector.
-             * @param values
-             * @param unit
+             * Create a new Relative Sparse MutableFloatVector.
+             * @param values float[]; the initial values for the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             public Sparse(final float[] values, final U unit)
             {
                 super(unit);
-                // System.out.println("Created Rel");
+                // System.out.println("Created Sparse");
                 initialize(values);
             }
 
             /**
-             * @param values
+             * Create a new Relative Sparse MutableFloatVector.
+             * @param values FloatScalar.Rel[]; the initial values for the
              * @param unit
              * @throws ValueException
              */
             public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
-                // System.out.println("Created Rel");
+                // System.out.println("Created Sparse");
                 initialize(values);
             }
 
             /**
-             * Create an immutable version.
-             * @return Absolute Dense Immutable FloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
             public FloatVector.Abs.Sparse<U> immutable()
             {
@@ -236,10 +239,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
-            protected FloatMatrix1D createMatrix1D(int size)
+            protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
             }
@@ -250,7 +253,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
          * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
          */
         @Override
-        public FloatScalar.Abs<U> get(int index) throws ValueException
+        public FloatScalar.Abs<U> get(final int index) throws ValueException
         {
             return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -266,10 +269,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Relative.
+         * Create a Relative MutableFloatVector.
          * @param unit
          */
-        protected Rel(U unit)
+        protected Rel(final U unit)
         {
             super(unit);
         }
@@ -284,8 +287,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; initial values for the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             protected Dense(final FloatMatrix1D values, final U unit)
             {
@@ -296,9 +299,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a Sparse Absolute Mutable FloatVector.
-             * @param values
-             * @param unit
+             * Create a new Relative Dense MutableFloatVector.
+             * @param values float[]; the initial values for the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             public Dense(final float[] values, final U unit)
             {
@@ -308,9 +311,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Relative Dense MutableFloatVector.
+             * @param values FloatScalar.Abs[]; the initial values for the entries of the new MutableFloatVector
+             * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
             {
@@ -320,8 +323,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create an immutable version.
-             * @return Sparse Absolute Immutable FloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
             public FloatVector.Rel.Dense<U> immutable()
             {
@@ -339,10 +341,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
-            protected FloatMatrix1D createMatrix1D(int size)
+            protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
             }
@@ -359,8 +361,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values
-             * @param unit
+             * @param values FloatMatrix1D; the initial values for the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             protected Sparse(final FloatMatrix1D values, final U unit)
             {
@@ -371,9 +373,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Sparse Mutable FloatVector.
-             * @param values
-             * @param unit
+             * Create a new Relative Sparse MutableFloatVector.
+             * @param values float[]; the initial values for the entries of the new MutableFloatVector
+             * @param unit Unit; the unit of the new MutableFloatVector
              */
             public Sparse(final float[] values, final U unit)
             {
@@ -383,9 +385,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @param values
-             * @param unit
-             * @throws ValueException
+             * Create a new Relative Sparse MutableFloatVector.
+             * @param values FloatScalar.Rel[]; initial values for the entries of the new MutableFloatVector 
+             * @throws ValueException when values has zero entries
              */
             public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
             {
@@ -395,8 +397,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create an immutable version.
-             * @return Sparse Relative Immutable FloatVector
+             * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
             public FloatVector.Rel.Sparse<U> immutable()
             {
@@ -414,10 +415,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.AbstractFloatVector#createMatrix1D(int)
+             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
-            protected FloatMatrix1D createMatrix1D(int size)
+            protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
             }
@@ -428,28 +429,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
          * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
          */
         @Override
-        public FloatScalar.Rel<U> get(int index) throws ValueException
+        public FloatScalar.Rel<U> get(final int index) throws ValueException
         {
             return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
         }
 
-    }
-
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
-     */
-    @Override
-    public FloatScalar<U> get(final int index) throws ValueException
-    {
-        if (this instanceof MutableFloatVector.Abs)
-        {
-            return new FloatScalar.Abs<U>(getInUnit(index), this.unit);
-        }
-        else if (this instanceof MutableFloatVector.Rel)
-        {
-            return new FloatScalar.Rel<U>(getInUnit(index), this.unit);
-        }
-        throw new Error("Cannot figure out subtype of this");
     }
 
     /**
@@ -461,6 +445,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * @see org.opentrafficsim.core.value.Value#copy()
      */
+    @Override
     public MutableFloatVector<U> copy()
     {
         return immutable().mutable(); // Almost as simple as the copy in FloatVector
@@ -778,23 +763,25 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      * @param increment FloatVector; contains the amounts by which to increment the corresponding entries in this
      *            MutableFloatVector
      * @return this
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    private MutableFloatVector<U> incrementValueByValue(FloatVector<U> increment) throws ValueException
+    private MutableFloatVector<U> incrementValueByValue(final FloatVector<U> increment) throws ValueException
     {
         checkSizeAndCopyOnWrite(increment);
         for (int index = this.size(); --index >= 0;)
+        {
             safeSet(index, safeGet(index) + increment.safeGet(index));
+        }
         return this;
     }
 
     /**
-     * Increment the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector
-     * @param rel
+     * Increment the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector.
+     * @param rel FloatVector.Rel; the Relative FloatVector
      * @return this
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    public MutableFloatVector<U> incrementBy(FloatVector.Rel<U> rel) throws ValueException
+    public MutableFloatVector<U> incrementBy(final FloatVector.Rel<U> rel) throws ValueException
     {
         return incrementValueByValue(rel);
     }
@@ -804,34 +791,36 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      * @param decrement FloatVector; contains the amounts by which to decrement the corresponding entries in this
      *            MutableFloatVector
      * @return this
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    private MutableFloatVector<U> decrementValueByValue(FloatVector<U> decrement) throws ValueException
+    private MutableFloatVector<U> decrementValueByValue(final FloatVector<U> decrement) throws ValueException
     {
         checkSizeAndCopyOnWrite(decrement);
         for (int index = this.size(); --index >= 0;)
+        {
             safeSet(index, safeGet(index) - decrement.safeGet(index));
+        }
         return this;
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector
-     * @param rel
+     * Decrement the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector.
+     * @param rel FloatVector.Rel; the Relative FloatVector
      * @return this
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    public MutableFloatVector<U> decrementBy(FloatVector.Rel<U> rel) throws ValueException
+    public MutableFloatVector<U> decrementBy(final FloatVector.Rel<U> rel) throws ValueException
     {
         return decrementValueByValue(rel);
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Absolute FloatVector
-     * @param abs
+     * Decrement the entries in this MutableFloatVector by the corresponding values in a Absolute FloatVector.
+     * @param abs FloatVector.Abs; the Absolute FloatVector
      * @return this
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    public MutableFloatVector<U> decrementBy(FloatVector.Abs<U> abs) throws ValueException
+    public MutableFloatVector<U> decrementBy(final FloatVector.Abs<U> abs) throws ValueException
     {
         return decrementValueByValue(abs);
     }
@@ -840,35 +829,39 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      * Scale the values in this MutableFloatVector by the corresponding values in a FloatVector.
      * @param factor FloatVector; contains the values by which to scale the corresponding entries in this
      *            MutableFloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    public void scaleValueByValue(FloatVector<?> factor) throws ValueException
+    public void scaleValueByValue(final FloatVector<?> factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int index = this.size(); --index >= 0;)
+        {
             safeSet(index, safeGet(index) * factor.safeGet(index));
+        }
     }
 
     /**
      * Scale the values in this MutableFloatVector by the corresponding values in a float array.
      * @param factor float[]; contains the values by which to scale the corresponding entries in this MutableFloatVector
      * @return this
-     * @throws ValueException
+     * @throws ValueException when the vector and the array do not have the same size
      */
-    public MutableFloatVector<U> scaleValueByValue(float[] factor) throws ValueException
+    public MutableFloatVector<U> scaleValueByValue(final float[] factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int index = this.size(); --index >= 0;)
+        {
             safeSet(index, safeGet(index) * factor[index]);
+        }
         return this;
     }
 
     /**
      * Check sizes and copy the data if the copyOnWrite flag is set.
-     * @param other AbstractFloatVector; partner for the size check
-     * @throws ValueException
+     * @param other FloatVector; partner for the size check
+     * @throws ValueException when the vectors do not have the same size
      */
-    private void checkSizeAndCopyOnWrite(FloatVector<?> other) throws ValueException
+    private void checkSizeAndCopyOnWrite(final FloatVector<?> other) throws ValueException
     {
         checkSize(other);
         checkCopyOnWrite();
@@ -877,33 +870,33 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * Check sizes and copy the data if the copyOnWrite flag is set.
      * @param other float[]; partner for the size check
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    private void checkSizeAndCopyOnWrite(float[] other) throws ValueException
+    private void checkSizeAndCopyOnWrite(final float[] other) throws ValueException
     {
         checkSize(other);
         checkCopyOnWrite();
     }
 
     /**
-     * Add two FloatVectors entry by entry
+     * Add two FloatVectors entry by entry.
      * @param left Absolute Dense FloatVector
      * @param right Relative FloatVector
      * @return new Absolute Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Dense<U> left,// tweede
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Dense<U> left,
             final FloatVector.Rel<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Dense<U>) left.mutable().incrementBy(right);
     }
 
     /**
-     * Add two FloatVectors entry by entry
+     * Add two FloatVectors entry by entry.
      * @param left Absolute Sparse FloatVector
      * @param right Relative Dense FloatVector
      * @return new Absolute Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Sparse<U> left,
             final FloatVector.Rel.Dense<U> right) throws ValueException
@@ -912,11 +905,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Add two FloatVectors entry by entry
+     * Add two FloatVectors entry by entry.
      * @param left Absolute Sparse FloatVector
      * @param right Relative FloatVector
      * @return new Absolute Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> plus(final FloatVector.Abs.Sparse<U> left,
             final FloatVector.Rel.Sparse<U> right) throws ValueException
@@ -925,24 +918,24 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Add two FloatVectors entry by entry
+     * Add two FloatVectors entry by entry.
      * @param left Relative Dense FloatVector
      * @param right Relative FloatVector
      * @return new Absolute Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
-    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> plus(final FloatVector.Rel.Dense<U> left,// eerste
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> plus(final FloatVector.Rel.Dense<U> left,
             final FloatVector.Rel<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Dense<U>) left.mutable().incrementBy(right);
     }
 
     /**
-     * Add two FloatVectors entry by entry
+     * Add two FloatVectors entry by entry.
      * @param left Relative Sparse FloatVector
      * @param right Relative FloatVector
      * @return new Relative Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> plus(final FloatVector.Rel.Sparse<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -951,11 +944,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry
+     * Subtract two FloatVectors entry by entry.
      * @param left Absolute Dense FloatVector
      * @param right Absolute FloatVector
      * @return new Relative Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
             final FloatVector.Abs<U> right) throws ValueException
@@ -965,11 +958,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry
+     * Subtract two FloatVectors entry by entry.
      * @param left Absolute Sparse FloatVector
      * @param right Absolute FloatVector
      * @return new Relative Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
             final FloatVector.Abs<U> right) throws ValueException
@@ -979,11 +972,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry
+     * Subtract two FloatVectors entry by entry.
      * @param left Absolute Dense FloatVector
      * @param right Relative FloatVector
      * @return new Relative Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -992,11 +985,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry
+     * Subtract two FloatVectors entry by entry.
      * @param left Absolute Sparse FloatVector
      * @param right Relative FloatVector
      * @return new Absolute Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -1005,11 +998,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry
+     * Subtract two FloatVectors entry by entry.
      * @param left Relative Dense FloatVector
      * @param right Relative FloatVector
      * @return new Relative Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Rel.Dense<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -1018,11 +1011,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry
+     * Subtract two FloatVectors entry by entry.
      * @param left Relative Sparse FloatVector
      * @param right Relative FloatVector
      * @return new Relative Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Rel.Sparse<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -1031,11 +1024,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply two FloatVectors entry by entry
+     * Multiply two FloatVectors entry by entry.
      * @param left Absolute Dense FloatVector
      * @param right Absolute FloatVector
      * @return new Absolute Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Dense<SIUnit> times(final FloatVector.Abs.Dense<?> left,
             final FloatVector.Abs<?> right) throws ValueException
@@ -1050,11 +1043,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply two FloatVectors entry by entry
+     * Multiply two FloatVectors entry by entry.
      * @param left Relative Dense FloatVector
      * @param right Relative FloatVector
      * @return new Relative Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left,
             final FloatVector.Rel<?> right) throws ValueException
@@ -1069,11 +1062,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply two FloatVectors entry by entry
+     * Multiply two FloatVectors entry by entry.
      * @param left Absolute Sparse FloatVector
      * @param right Absolute FloatVector
      * @return new XAbsolute Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Sparse<SIUnit> times(final FloatVector.Abs.Sparse<?> left,
             final FloatVector.Abs<?> right) throws ValueException
@@ -1088,11 +1081,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply two FloatVectors entry by entry
+     * Multiply two FloatVectors entry by entry.
      * @param left Relative Sparse FloatVector
      * @param right Relative FloatVector
      * @return new Relative Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Rel.Sparse<SIUnit> times(final FloatVector.Rel.Sparse<?> left,
             final FloatVector.Rel<?> right) throws ValueException
@@ -1109,9 +1102,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
      * @param left Absolute Dense FloatVector
-     * @param right float[]
+     * @param right float[]; the float array
      * @return new Dense Absolute Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> times(final FloatVector.Abs.Dense<U> left,
             final float[] right) throws ValueException
@@ -1122,9 +1115,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
      * @param left Relative Dense FloatVector
-     * @param right float[]
+     * @param right float[]; the float array
      * @return new Relative Dense Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> times(final FloatVector.Rel.Dense<U> left,
             final float[] right) throws ValueException
@@ -1135,9 +1128,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
      * @param left Absolute Sparse FloatVector
-     * @param right float[]
+     * @param right float[]; the float array
      * @return new Absolute Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> times(final FloatVector.Abs.Sparse<U> left,
             final float[] right) throws ValueException
@@ -1148,9 +1141,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * Multiply the values in a FloatVector by the corresponding values in a float array.
      * @param left Relative Sparse FloatVector
-     * @param right float[]
+     * @param right float[]; the float array
      * @return new Relative Sparse Mutable FloatVector
-     * @throws ValueException
+     * @throws ValueException when the vector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> times(final FloatVector.Rel.Sparse<U> left,
             final float[] right) throws ValueException
@@ -1163,7 +1156,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      * @param dense DenseFloatMatrix1D
      * @return SparseFloatMatrix1D
      */
-    private static FloatMatrix1D makeSparse(FloatMatrix1D dense)
+    private static FloatMatrix1D makeSparse(final FloatMatrix1D dense)
     {
         FloatMatrix1D result = new SparseFloatMatrix1D((int) dense.size());
         result.assign(dense);
@@ -1171,7 +1164,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Sparse version of this Dense FloatVector. <br />
+     * Create a Sparse version of this Dense FloatVector.
      * @param in FloatVector.Abs.Dense the Dense FloatVector
      * @return MutableFloatVector.Abs.Sparse
      */
@@ -1181,7 +1174,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Sparse version of this Dense FloatVector. <br />
+     * Create a Sparse version of this Dense FloatVector.
      * @param in FloatVector.Rel.Dense the Dense FloatVector
      * @return MutableFloatVector.Rel.Sparse
      */
@@ -1192,10 +1185,10 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Make the Dense equivalent of a SparseFloatMatrix1D.
-     * @param dense DenseFloatMatrix1D
+     * @param sparse SparseFloatMatrix1D
      * @return DenseFloatMatrix1D
      */
-    private static FloatMatrix1D makeDense(FloatMatrix1D sparse)
+    private static FloatMatrix1D makeDense(final FloatMatrix1D sparse)
     {
         FloatMatrix1D result = new SparseFloatMatrix1D((int) sparse.size());
         result.assign(sparse);
@@ -1203,7 +1196,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Dense version of this Sparse FloatVector. <br />
+     * Create a Dense version of this Sparse FloatVector.
      * @param in FloatVector.Abs.Dense the Dense FloatVector
      * @return MutableFloatVector.Abs.Sparse
      */
@@ -1213,7 +1206,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Dense version of this Sparse FloatVector. <br />
+     * Create a Dense version of this Sparse FloatVector.
      * @param in FloatVector.Rel.Dense the Dense FloatVector
      * @return MutableFloatVector.Rel.Sparse
      */

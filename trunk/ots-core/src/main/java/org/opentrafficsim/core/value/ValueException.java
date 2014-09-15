@@ -50,7 +50,8 @@ public class ValueException extends Exception
     }
 
     /**
-     * @param cause
+     * Create a new ValueException.
+     * @param cause Throwable; the cause of this ValueException
      */
     public ValueException(final Throwable cause)
     {

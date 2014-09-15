@@ -50,10 +50,10 @@ public class FlowContourPlot extends ContourPlot
     public FlowContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
             final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
-                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
-                minimumDistance, maximumDistance, standardDistanceGranularities,
-                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"),
+        super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
+                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, STANDARDDISTANCEGRANULARITIES,
+                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"),
                 2500d, 1500d, 0d, "flow %.0f veh/h", "%.0f veh/h", 500d);
     }
 
@@ -139,7 +139,9 @@ public class FlowContourPlot extends ContourPlot
                 }
                 MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
+                {
                     cumulativeLengthInSI += values.getSI(distanceBinIndex);
+                }
             }
         }
         catch (ValueException exception)

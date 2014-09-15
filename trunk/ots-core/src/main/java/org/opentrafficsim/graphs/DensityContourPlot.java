@@ -51,10 +51,10 @@ public class DensityContourPlot extends ContourPlot
     public DensityContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
             final DoubleScalar.Abs<LengthUnit> maximumDistance)
     {
-        super(caption, new Axis(initialLowerTimeBound, initialUpperTimeBound, standardTimeGranularities,
-                standardTimeGranularities[standardInitialTimeGranularityIndex], "", "Time", "%.0fs"), new Axis(
-                minimumDistance, maximumDistance, standardDistanceGranularities,
-                standardDistanceGranularities[standardInitialDistanceGranularityIndex], "", "Distance", "%.0fm"), 120d,
+        super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
+                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(
+                minimumDistance, maximumDistance, STANDARDDISTANCEGRANULARITIES,
+                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), 120d,
                 10d, 0d, "density %.1f veh/km", "%.1f veh/km", 20d);
     }
 
@@ -84,8 +84,10 @@ public class DensityContourPlot extends ContourPlot
                 (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
                         / this.xAxis.granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
+        {
             this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
                     TimeUnit.SECOND));
+        }
     }
 
     /**
@@ -129,7 +131,9 @@ public class DensityContourPlot extends ContourPlot
             {
                 MutableDoubleVector.Abs<TimeUnit> values = this.cumulativeTimes.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
+                {
                     cumulativeTimeInSI += values.getSI(distanceBinIndex);
+                }
             }
         }
         catch (ValueException exception)

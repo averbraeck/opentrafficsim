@@ -5,7 +5,6 @@ import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 
@@ -38,16 +37,16 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit
  */
-public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<U> implements
-        FloatMathFunctions
+public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<U> implements FloatMathFunctions
 {
     /** */
     private static final long serialVersionUID = 20140905L;
 
     /**
-     * @param unit
+     * Create a new MutableFloatScalar.
+     * @param unit Unit; the unit of the new MutableFloatScalar
      */
-    public MutableFloatScalar(U unit)
+    public MutableFloatScalar(final U unit)
     {
         super(unit);
     }
@@ -74,7 +73,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
         /**
          * Create a new Absolute MutableFloatScalar from an existing immutable one.
-         * @param value Absolute FloatScalar; the reference
+         * @param value FloatScalar.Abs; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
         {
@@ -82,7 +81,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
             // System.out.println("Created Abs");
             initialize(value);
         }
-        
+
         /**
          * Create a new Absolute MutableFloatScalar from an existing one.
          * @param value
@@ -95,8 +94,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create an immutable version of this FloatScalar
-         * @return Absolute FloatScalar
+         * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#immutable()
          */
         @Override
         public FloatScalar.Abs<U> immutable()
@@ -105,8 +103,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a mutable version.
-         * @return Absolute MutableFloatScalar
+         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
          */
         @Override
         public MutableFloatScalar.Abs<U> mutable()
@@ -136,7 +133,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         /**
          * Create a new Relative MutableFloatScalar.
          * @param value float; the value of the new Relative MutableFloatScalar
-         * @param unit
+         * @param unit Unit; the unit of the new MutableFloatScalar
          */
         public Rel(final float value, final U unit)
         {
@@ -146,9 +143,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * @param value
-         * @param unit
-         * @throws ValueException
+         * Create a new Relative MutableFloatScalar from an existing immutable one.
+         * @param value FloatScalar.Rel; the reference
          */
         public Rel(final FloatScalar.Rel<U> value)
         {
@@ -158,8 +154,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a new Absolute MutableFloatScalar from an existing one.
-         * @param value
+         * Create a new Relative MutableFloatScalar from an existing one.
+         * @param value MutableFloatScalar.Rel; the reference
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
         {
@@ -169,8 +165,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create an immutable version.
-         * @return Relative ImmutableFloatScalar
+         * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#immutable()
          */
         @Override
         public FloatScalar.Rel<U> immutable()
@@ -179,8 +174,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a mutable version.
-         * @return Relative MutableFloatScalar
+         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
          */
         @Override
         public MutableFloatScalar.Rel<U> mutable()
@@ -297,7 +291,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @return the sum of the values as a relative value
      */
     @SafeVarargs
-    public static <U extends Unit<U>> MutableFloatScalar.Rel<U> plus(final U targetUnit, final FloatScalar.Rel<U>... valuesRel)
+    public static <U extends Unit<U>> MutableFloatScalar.Rel<U> plus(final U targetUnit,
+            final FloatScalar.Rel<U>... valuesRel)
     {
         MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(0.0f, targetUnit);
         for (FloatScalar.Rel<U> v : valuesRel)
@@ -366,7 +361,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueAbs2 value 2
      * @return the product of the two absolute values as an absolute value
      */
-    public static MutableFloatScalar.Abs<SIUnit> multiply(final FloatScalar.Abs<?> valueAbs1, final FloatScalar.Abs<?> valueAbs2)
+    public static MutableFloatScalar.Abs<SIUnit> multiply(final FloatScalar.Abs<?> valueAbs1,
+            final FloatScalar.Abs<?> valueAbs2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
@@ -380,7 +376,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueRel2 value 2
      * @return the product of the two relative values as a relative value
      */
-    public static MutableFloatScalar.Rel<SIUnit> multiply(final FloatScalar.Rel<?> valueRel1, final FloatScalar.Rel<?> valueRel2)
+    public static MutableFloatScalar.Rel<SIUnit> multiply(final FloatScalar.Rel<?> valueRel1,
+            final FloatScalar.Rel<?> valueRel2)
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
@@ -415,7 +412,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
                         valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
         return new FloatScalar.Rel<SIUnit>(valueRel1.valueSI / valueRel2.valueSI, targetUnit);
     }
-    
+
     /**********************************************************************************/
     /********************************** MATH METHODS **********************************/
     /**********************************************************************************/

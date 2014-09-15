@@ -44,9 +44,10 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     private static final long serialVersionUID = 20140618L;
 
     /**
-     * @param unit
+     * Create a new FloatScalar.
+     * @param unit Unit; the unit of the new FloatScalar
      */
-    public FloatScalar(U unit)
+    public FloatScalar(final U unit)
     {
         super(unit);
     }
@@ -63,7 +64,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute FloatScalar.
+         * Create a new Absolute Immutable FloatScalar.
          * @param value float; the value of the new Absolute FloatScalar
          * @param unit Unit; the unit of the new Absolute FloatScalar
          */
@@ -75,7 +76,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Absolute FloatScalar from an existing one.
+         * Create a new Absolute Immutable FloatScalar from an existing one.
          * @param value Absolute FloatScalar; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
@@ -86,7 +87,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Absolute FloatScalar from an existing Absolute MutableFloatScalar.
+         * Create a new Absolute Immutable FloatScalar from an existing Absolute MutableFloatScalar.
          * @param value Absolute MutableFloatScalar; the reference
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
@@ -97,8 +98,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create an mutable version of this FloatScalar
-         * @return Absolute MutableFloatScalar
+         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
          */
         @Override
         public MutableFloatScalar.Abs<U> mutable()
@@ -126,7 +126,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative FloatScalar.
+         * Create a new Relative Immutable FloatScalar.
          * @param value float; the value of the new Relative FloatScalar
          * @param unit Unit; the unit of the new Relative FloatScalar
          */
@@ -138,7 +138,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Relative FloatScalar from an existing one.
+         * Create a new Relative Immutable FloatScalar from an existing one.
          * @param value Relative FloatScalar; the reference
          */
         public Rel(final FloatScalar.Rel<U> value)
@@ -149,7 +149,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Relative FloatScalar from an existing Relative MutableFloatScalar.
+         * Create a new Relative Immutable FloatScalar from an existing Relative MutableFloatScalar.
          * @param value Relative MutableFloatScalar; the reference
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
@@ -160,8 +160,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a mutable version.
-         * @return Relative MutableFloatScalar
+         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
          */
         @Override
         public MutableFloatScalar.Rel<U> mutable()
@@ -184,7 +183,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * Initialize the valueSI field (performing conversion to the SI standard unit if needed).
      * @param value float; the value in the unit of this FloatScalar
      */
-    protected void initialize(float value)
+    protected void initialize(final float value)
     {
         if (this.unit.equals(this.unit.getStandardUnit()))
         {
@@ -201,12 +200,13 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * necessary.
      * @param value FloatScalar; the value to use for initialization
      */
-    protected void initialize(FloatScalar<U> value)
+    protected void initialize(final FloatScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
 
     /**
+     * Retrieve the value in the underlying SI unit.
      * @return value in SI units
      */
     public float getValueSI()
@@ -215,6 +215,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
+     * Retrieve the value in the original unit.
      * @return value in original units
      */
     public float getValueInUnit()
