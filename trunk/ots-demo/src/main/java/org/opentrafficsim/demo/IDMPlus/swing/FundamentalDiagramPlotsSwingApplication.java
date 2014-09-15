@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -135,8 +136,16 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
         URL page = ContourPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
-            HTMLPanel htmlPanel = new HTMLPanel(page);
-            panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
+            HTMLPanel htmlPanel;
+            try
+            {
+                htmlPanel = new HTMLPanel(page);
+                panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
+            }
+            catch (IOException exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 }
