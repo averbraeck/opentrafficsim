@@ -55,8 +55,8 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 public class ContourPlotsSwingApplication extends DSOLApplication
 {
     /**
-     * @param title
-     * @param panel
+     * @param title String
+     * @param panel DSOLPanel
      */
     public ContourPlotsSwingApplication(final String title,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
@@ -90,8 +90,9 @@ public class ContourPlotsSwingApplication extends DSOLApplication
     }
 
     /**
-     * make the stand-alone plots for the model and put them in the statistics panel.
-     * @param model the model.
+     * Make the stand-alone plots for the model and put them in the statistics panel.
+     * @param model ContourPlotsModel; the model.
+     * @param panel DSOLPanel
      */
     private static void makePlots(final ContourPlotsModel model,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)

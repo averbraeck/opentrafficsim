@@ -160,7 +160,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
         return this.fundamentalDiagrams;
     }
 
-    /** Inner class IDMCar */
+    /** Inner class IDMCar. */
     protected class IDMCar extends Car
     {
         /**
@@ -171,7 +171,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
          * @param initialPosition
          * @param initialSpeed
          */
-        public IDMCar(final int id, final OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
+        public IDMCar(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
                 final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
                 final DoubleScalar.Rel<SpeedUnit> initialSpeed)
         {
@@ -235,7 +235,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
         /**
          * @param idmCar
          */
-        private void addToFundamentalDiagramPlots(IDMCar idmCar)
+        private void addToFundamentalDiagramPlots(final IDMCar idmCar)
         {
             DoubleScalar.Abs<TimeUnit> lowerBound = idmCar.getLastEvaluationTime();
             DoubleScalar.Abs<TimeUnit> upperBound = idmCar.getNextEvaluationTime();
