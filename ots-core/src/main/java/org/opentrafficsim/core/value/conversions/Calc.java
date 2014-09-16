@@ -37,6 +37,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class Calc
 {
     /**
+     * This class should never be instantiated.
+     */
+    private Calc()
+    {
+        // Prevent instantiation of this class
+    }
+
+    /**
      * Distance is speed times time. <br />
      * s(t) = v * t
      * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the speed

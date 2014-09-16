@@ -32,6 +32,14 @@ import cern.colt.function.tfloat.FloatFunction;
 public class FloatMathFunctionsImpl
 {
     /**
+     * This class should never be instantiated.
+     */
+    private FloatMathFunctionsImpl()
+    {
+        // Prevent instantiation of this class
+    }
+
+    /**
      * Function that returns <tt>Math.cbrt(a)</tt>.
      */
     public static final FloatFunction cbrt = new FloatFunction()
