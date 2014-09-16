@@ -58,8 +58,8 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      * @param title
      * @param panel
      */
-    public ContourPlotsSwingApplication(String title,
-            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    public ContourPlotsSwingApplication(final String title,
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -68,12 +68,12 @@ public class ContourPlotsSwingApplication extends DSOLApplication
     private static final long serialVersionUID = 20140819L;
 
     /**
-     * @param args
+     * @param args String[]; the command line argument (ignored)
      * @throws SimRuntimeException
      * @throws RemoteException
      */
     @SuppressWarnings("unused")
-    public static void main(String[] args) throws SimRuntimeException, RemoteException
+    public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         ContourPlotsModel model = new ContourPlotsModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();

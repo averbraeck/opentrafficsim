@@ -55,8 +55,16 @@ import org.opentrafficsim.graphs.FundamentalDiagram;
  * @version Aug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramPlot
+public final class FundamentalDiagramPlot
 {
+    /**
+     * This class should never be instantiated.
+     */
+    private FundamentalDiagramPlot()
+    {
+        // Prevent instantiation of this class
+    }
+
     /**
      * Main for stand alone running.
      * @param args String[]; the program arguments (not used)
@@ -130,13 +138,16 @@ public class FundamentalDiagramPlot
                     }
                     Collection<Car> leaders = new ArrayList<Car>();
                     if (carIndex < cars.size() - 1)
+                    {
                         leaders.add(cars.get(carIndex + 1));
+                    }
                     if (thisTick >= 300 && thisTick < 500)
                     {
                         // Add a stationary car at 4000m to simulate an opening bridge
                         Car block =
-                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(4000,
-                                        LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(
+                                        4000, LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0,
+                                        SpeedUnit.KM_PER_HOUR));
                         leaders.add(block);
                     }
                     CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
@@ -158,9 +169,13 @@ public class FundamentalDiagramPlot
                                             (lowerBound.getValueSI() + upperBound.getValueSI()) / 2, TimeUnit.SECOND);
                             DoubleScalar.Abs<LengthUnit> position = car.getPosition(passingTime);
                             if (position.getValueSI() > detectorLocation.getValueSI())
+                            {
                                 lowerBound = passingTime;
+                            }
                             else
+                            {
                                 upperBound = passingTime;
+                            }
                         }
                         fd.addData(0, car, passingTime);
                     }

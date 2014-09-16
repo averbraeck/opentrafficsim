@@ -55,31 +55,31 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** */
     private static final long serialVersionUID = 20140820L;
 
-    /** the simulator */
+    /** the simulator. */
     private OTSDEVSSimulator simulator;
 
-    /** the headway (inter-vehicle time) */
+    /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
 
-    /** number of cars created */
+    /** number of cars created. */
     private int carsCreated = 0;
 
-    /** the car following model, e.g. IDM Plus */
+    /** the car following model, e.g. IDM Plus. */
     protected CarFollowingModel carFollowingModel;
 
-    /** cars in the model */
+    /** cars in the model. */
     private ArrayList<Car> cars = new ArrayList<Car>();
 
-    /** minimum distance */
+    /** minimum distance. */
     private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
 
-    /** maximum distance */
+    /** maximum distance. */
     private DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
 
-    /** the speed limit */
+    /** the speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-    /** the fundamental diagram plots */
+    /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
 
     /**
@@ -87,7 +87,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
      */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulator) _simulator;
@@ -137,7 +137,9 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     {
         // Notify the Fundamental Diagram plots that the underlying data has changed
         for (FundamentalDiagram fd : this.fundamentalDiagrams)
+        {
             fd.reGraph();
+        }
     }
 
     /**
@@ -169,9 +171,9 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
          * @param initialPosition
          * @param initialSpeed
          */
-        public IDMCar(int id, OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
-                DoubleScalar.Abs<TimeUnit> initialTime, DoubleScalar.Abs<LengthUnit> initialPosition,
-                DoubleScalar.Rel<SpeedUnit> initialSpeed)
+        public IDMCar(final int id, final OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
+                final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
+                final DoubleScalar.Rel<SpeedUnit> initialSpeed)
         {
             super(id, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
             try
@@ -199,8 +201,9 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
             Collection<Car> leaders = new ArrayList<Car>();
             int carIndex = FundamentalDiagramPlotsModel.this.cars.indexOf(this);
             if (carIndex < FundamentalDiagramPlotsModel.this.cars.size() - 1)
+            {
                 leaders.add(FundamentalDiagramPlotsModel.this.cars.get(carIndex + 1));
-
+            }
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getValueSI() >= 300 && now.getValueSI() < 500)
             {
@@ -254,9 +257,13 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
                                         TimeUnit.SECOND);
                         DoubleScalar.Abs<LengthUnit> position = idmCar.getPosition(passingTime);
                         if (position.getValueSI() > detectorPosition.getValueSI())
+                        {
                             lowerBound = passingTime;
+                        }
                         else
+                        {
                             upperBound = passingTime;
+                        }
                     }
                     fd.addData(0, idmCar, passingTime);
                 }

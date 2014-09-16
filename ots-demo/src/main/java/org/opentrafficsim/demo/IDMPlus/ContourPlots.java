@@ -25,15 +25,16 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
  * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
  * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>.
- * <br /> Output is a set of block charts:
+ * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br />
+ * Output is a set of block charts:
  * <ul>
  * <li>Traffic density</li>
  * <li>Speed</li>
  * <li>Flow</li>
  * <li>Acceleration</li>
  * </ul>
- * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical axis.
+ * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical
+ * axis.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -61,8 +62,16 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  * @version Aug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlots
+public final class ContourPlots
 {
+    /**
+     * This class should never be instantiated.
+     */
+    private ContourPlots()
+    {
+        // Prevent instantiation of this class
+    }
+
     /**
      * Main for stand alone running.
      * @param args String[]; the program arguments (not used)
@@ -155,20 +164,25 @@ public class ContourPlots
                     }
                     Collection<Car> leaders = new ArrayList<Car>();
                     if (carIndex < cars.size() - 1)
+                    {
                         leaders.add(cars.get(carIndex + 1));
+                    }
                     if (thisTick >= 300 && thisTick < 500)
                     {
                         // Add a stationary car at 4000m to simulate an opening bridge
                         Car block =
-                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(4000,
-                                        LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(
+                                        4000, LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0,
+                                        SpeedUnit.KM_PER_HOUR));
                         leaders.add(block);
                     }
                     CarFollowingModelResult cfmr = carFollowingModel.computeAcceleration(car, leaders, speedLimit);
                     car.setState(cfmr);
                     // Add the movement of this Car to the contour plots
                     for (ContourPlot contourPlot : contourPlots)
+                    {
                         contourPlot.addData(car);
+                    }
                 }
                 nextMoveTick += tick;
             }
@@ -176,7 +190,9 @@ public class ContourPlots
         }
         // Notify the contour plots that the underlying data has changed
         for (ContourPlot contourPlot : contourPlots)
+        {
             contourPlot.reGraph();
+        }
     }
 
 }
