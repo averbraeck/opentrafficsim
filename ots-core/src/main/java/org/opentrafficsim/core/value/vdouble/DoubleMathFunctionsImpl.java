@@ -32,6 +32,14 @@ import cern.colt.function.tdouble.DoubleFunction;
 public class DoubleMathFunctionsImpl
 {
     /**
+     * This class should never be instantiated.
+     */
+    private DoubleMathFunctionsImpl()
+    {
+        // Prevent instantiation of this class
+    }
+
+    /**
      * Function that returns <tt>Math.cbrt(a)</tt>.
      */
     public static final DoubleFunction cbrt = new DoubleFunction()
