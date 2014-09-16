@@ -34,7 +34,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Calc
+public final class Calc
 {
     /**
      * This class should never be instantiated.

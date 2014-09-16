@@ -60,7 +60,7 @@ public class ValueException extends Exception
 
     /**
      * @param message String; description of the problem
-     * @param cause Throwable
+     * @param cause Throwable; the cause of the ValueException
      */
     public ValueException(final String message, final Throwable cause)
     {
@@ -71,8 +71,8 @@ public class ValueException extends Exception
      * Generate a ValueException.
      * @param message String; description of the problem
      * @param cause Throwable
-     * @param enableSuppression
-     * @param writableStackTrace
+     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
      */
     public ValueException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

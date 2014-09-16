@@ -33,7 +33,7 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ValueUtil
+public final class ValueUtil
 {
 
     /**
