@@ -35,6 +35,15 @@ import org.opentrafficsim.core.unit.Unit;
  */
 public class ValueUtil
 {
+
+    /**
+     * This class should never be instantiated.
+     */
+    private ValueUtil()
+    {
+        // Prevent instantiation of this class
+    }
+
     /**
      * @param value the value to convert into SI units
      * @param unit the unit belonging to the value

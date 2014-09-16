@@ -3,8 +3,8 @@ package org.opentrafficsim.core.value;
 /**
  * Format a floating point number in a reasonable way. <br />
  * I've experienced problems with the %g conversions that caused array bounds violations. Those versions of the JRE that
- * do <b>not</b> throw such Exceptions use one digit less than specified in the %g conversions. TODO: check how to
- * always format numbers corresponding to the Locale used.
+ * do <b>not</b> throw such Exceptions use one digit less than specified in the %g conversions. <br >
+ * TODO: check how to always format numbers corresponding to the Locale used.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.
@@ -32,13 +32,21 @@ package org.opentrafficsim.core.value;
  * @version Jul 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Format
+final public class Format
 {
     /** Default total width of formatted value. */
-    public static final int defaultSize = 9;
+    public static final int DEFAULTSIZE = 9;
 
     /** Default number of fraction digits. */
-    public static final int defaultPrecision = 3;
+    public static final int DEFAULTPRECISION = 3;
+
+    /**
+     * This class should never be instantiated.
+     */
+    private Format()
+    {
+        // Prevent instantiation of this class
+    }
 
     /**
      * Build a format string.
@@ -76,7 +84,7 @@ public class Format
      */
     public static String format(final float value, final int size)
     {
-        return Format.format(value, size, Format.defaultPrecision);
+        return Format.format(value, size, Format.DEFAULTPRECISION);
     }
 
     /**
@@ -86,7 +94,7 @@ public class Format
      */
     public static String format(final float value)
     {
-        return format(value, Format.defaultSize, Format.defaultPrecision);
+        return format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);
     }
 
     /**
@@ -113,7 +121,7 @@ public class Format
      */
     public static String format(final double value, final int size)
     {
-        return Format.format(value, size, Format.defaultPrecision);
+        return Format.format(value, size, Format.DEFAULTPRECISION);
     }
 
     /**
@@ -123,7 +131,7 @@ public class Format
      */
     public static String format(final double value)
     {
-        return format(value, Format.defaultSize, Format.defaultPrecision);
+        return format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);
     }
 
 }
