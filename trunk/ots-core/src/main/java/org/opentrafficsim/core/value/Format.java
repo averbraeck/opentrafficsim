@@ -32,7 +32,7 @@ package org.opentrafficsim.core.value;
  * @version Jul 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-final public class Format
+public final class Format
 {
     /** Default total width of formatted value. */
     public static final int DEFAULTSIZE = 9;
