@@ -332,6 +332,7 @@ public abstract class DoubleVectorTest
         mfv.abs();
         MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.abs(f);
@@ -341,6 +342,7 @@ public abstract class DoubleVectorTest
         mfv.acos();
         MathTester.tester(in3, "acos", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.acos(f);
@@ -350,6 +352,7 @@ public abstract class DoubleVectorTest
         mfv.asin();
         MathTester.tester(in3, "asin", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.asin(f);
@@ -359,6 +362,7 @@ public abstract class DoubleVectorTest
         mfv.atan();
         MathTester.tester(in3, "atan", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.atan(f);
@@ -368,6 +372,7 @@ public abstract class DoubleVectorTest
         mfv.cbrt();
         MathTester.tester(in3, "cbrt", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.cbrt(f);
@@ -377,6 +382,7 @@ public abstract class DoubleVectorTest
         mfv.ceil();
         MathTester.tester(in3, "ceil", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.ceil(f);
@@ -386,6 +392,7 @@ public abstract class DoubleVectorTest
         mfv.cos();
         MathTester.tester(in3, "cos", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.cos(f);
@@ -395,6 +402,7 @@ public abstract class DoubleVectorTest
         mfv.cosh();
         MathTester.tester(in3, "cosh", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.cosh(f);
@@ -404,6 +412,7 @@ public abstract class DoubleVectorTest
         mfv.exp();
         MathTester.tester(in3, "exp", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.exp(f);
@@ -413,6 +422,7 @@ public abstract class DoubleVectorTest
         mfv.expm1();
         MathTester.tester(in3, "expm1", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.expm1(f);
@@ -422,6 +432,7 @@ public abstract class DoubleVectorTest
         mfv.floor();
         MathTester.tester(in3, "floor", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.floor(f);
@@ -431,6 +442,7 @@ public abstract class DoubleVectorTest
         mfv.log();
         MathTester.tester(in3, "log", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.log(f);
@@ -440,6 +452,7 @@ public abstract class DoubleVectorTest
         mfv.log10();
         MathTester.tester(in3, "log10", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.log10(f);
@@ -449,6 +462,7 @@ public abstract class DoubleVectorTest
         mfv.log1p();
         MathTester.tester(in3, "log1p", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.log1p(f);
@@ -461,6 +475,7 @@ public abstract class DoubleVectorTest
             final double myPower = power;
             MathTester.tester(in3, "pow(" + power + ")", mfv.getValuesSI(), 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(final double f)
                 {
                     return Math.pow(f, myPower);
@@ -471,6 +486,7 @@ public abstract class DoubleVectorTest
         mfv.rint();
         MathTester.tester(in3, "rint", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.rint(f);
@@ -480,6 +496,7 @@ public abstract class DoubleVectorTest
         mfv.round();
         MathTester.tester(in3, "round", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.round(f);
@@ -489,6 +506,7 @@ public abstract class DoubleVectorTest
         mfv.signum();
         MathTester.tester(in3, "signum", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.signum(f);
@@ -498,6 +516,7 @@ public abstract class DoubleVectorTest
         mfv.sin();
         MathTester.tester(in3, "sin", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.sin(f);
@@ -507,6 +526,7 @@ public abstract class DoubleVectorTest
         mfv.sinh();
         MathTester.tester(in3, "sinh", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.sinh(f);
@@ -516,6 +536,7 @@ public abstract class DoubleVectorTest
         mfv.sqrt();
         MathTester.tester(in3, "sqrt", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.sqrt(f);
@@ -525,6 +546,7 @@ public abstract class DoubleVectorTest
         mfv.tan();
         MathTester.tester(in3, "tan", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.tan(f);
@@ -534,6 +556,7 @@ public abstract class DoubleVectorTest
         mfv.tanh();
         MathTester.tester(in3, "tanh", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.tanh(f);
@@ -543,6 +566,7 @@ public abstract class DoubleVectorTest
         mfv.toDegrees();
         MathTester.tester(in3, "toDegrees", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.toDegrees(f);
@@ -552,6 +576,7 @@ public abstract class DoubleVectorTest
         mfv.toRadians();
         MathTester.tester(in3, "toRadians", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.toRadians(f);
@@ -561,6 +586,7 @@ public abstract class DoubleVectorTest
         mfv.inv();
         MathTester.tester(in3, "inv", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return 1.0 / f;
@@ -573,6 +599,7 @@ public abstract class DoubleVectorTest
             final double myFactor = factor;
             MathTester.tester(in3, "multiply(" + factor + ")", mfv.getValuesSI(), 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(final double f)
                 {
                     return myFactor * f;

@@ -461,7 +461,9 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     @Override
     public MutableDoubleMatrix<U> copy()
     {
-        return immutable().mutable(); // Almost as simple as the copy in DoubleMatrix
+        return immutable().mutable();
+        // FIXME: This may cause both the original and the copy to be deep copied later
+        // Maybe it is better to make a deep copy now?
     }
 
     /**

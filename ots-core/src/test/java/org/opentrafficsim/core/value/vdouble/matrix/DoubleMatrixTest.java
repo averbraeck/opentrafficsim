@@ -347,10 +347,10 @@ public abstract class DoubleMatrixTest
     {
         double[][] in = buildArray(12, 3, false, 0);
         LengthUnit u = LengthUnit.FOOT;
-        DoubleMatrix<LengthUnit> fm = safeCreateDoubleMatrix(in, u, absolute);
-        assertEquals("DoubleMatrix should have 12 rows", 12, fm.rows());
-        assertEquals("DoubleMatrix should have 3 columns", 3, fm.columns());
-        double[][] out = fm.getValuesInUnit();
+        DoubleMatrix<LengthUnit> dm = safeCreateDoubleMatrix(in, u, absolute);
+        assertEquals("DoubleMatrix should have 12 rows", 12, dm.rows());
+        assertEquals("DoubleMatrix should have 3 columns", 3, dm.columns());
+        double[][] out = dm.getValuesInUnit();
         for (int i = 0; i < in.length; i++)
             for (int j = 0; j < in[i].length; j++)
             {
@@ -359,25 +359,25 @@ public abstract class DoubleMatrixTest
                 try
                 {
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
-                            fm.getInUnit(i, j), 0.001);
+                            dm.getInUnit(i, j), 0.001);
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
-                            fm.getSI(i, j) / (12 * 0.0254), 0.001);
+                            dm.getSI(i, j) / (12 * 0.0254), 0.001);
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
-                            fm.getInUnit(i, j, LengthUnit.MILE) * 1609.34 / (12 * 0.0254), 0.1);
+                            dm.getInUnit(i, j, LengthUnit.MILE) * 1609.34 / (12 * 0.0254), 0.1);
                 }
                 catch (ValueException exception)
                 {
                     fail("Get should not throw exceptions for legal values of the index");
                 }
             }
-        String output = fm.toString(LengthUnit.MILLIMETER);
+        String output = dm.toString(LengthUnit.MILLIMETER);
         String[] lines = output.split("[\n]");
         assertEquals("Number of lines should be number of rows + 1", in.length + 1, lines.length);
         assertTrue("first line should contain unit in brackers", lines[0].contains("[mm]"));
         for (int i = 1; i < lines.length; i++)
         {
             String[] fields = lines[i].trim().split("[ ]+");
-            assertEquals("Number of fields should be number of columns", fm.columns(), fields.length);
+            assertEquals("Number of fields should be number of columns", dm.columns(), fields.length);
             for (int j = 0; j < fields.length; j++)
             {
                 double expectedValue = in[i - 1][j] * (12 * 0.0254) * 1000;
@@ -385,14 +385,14 @@ public abstract class DoubleMatrixTest
                 assertEquals("Field " + j + " should contain \"" + expected + "\"", expected, fields[j]);
             }
         }
-        output = fm.toString();
+        output = dm.toString();
         lines = output.split("[\n]");
         assertEquals("Number of lines should be number of rows + 1", in.length + 1, lines.length);
         assertTrue("first line should contain unit in brackers", lines[0].contains("[ft]"));
         for (int i = 1; i < lines.length; i++)
         {
             String[] fields = lines[i].trim().split("[ ]+");
-            assertEquals("Number of fields should be number of columns", fm.columns(), fields.length);
+            assertEquals("Number of fields should be number of columns", dm.columns(), fields.length);
             for (int j = 0; j < fields.length; j++)
             {
                 double expectedValue = in[i - 1][j];
@@ -401,14 +401,14 @@ public abstract class DoubleMatrixTest
             }
         }
 
-        double[][] valuesInUnit = fm.getValuesInUnit();
+        double[][] valuesInUnit = dm.getValuesInUnit();
         assertTrue("valuesInUnit should not be null", null != valuesInUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInUnit.length);
         for (int i = 0; i < in.length; i++)
             for (int j = 0; j < in[i].length; j++)
                 assertEquals("Contents of valuesInUnit should be equal to input", in[i][j], valuesInUnit[i][j], 0.001);
         LengthUnit outputUnit = LengthUnit.DEKAMETER;
-        double[][] valuesInOtherUnit = fm.getValuesInUnit(outputUnit);
+        double[][] valuesInOtherUnit = dm.getValuesInUnit(outputUnit);
         assertTrue("valuesInUnit should not be null", null != valuesInOtherUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInOtherUnit.length);
         for (int i = 0; i < in.length; i++)
@@ -417,7 +417,7 @@ public abstract class DoubleMatrixTest
                         valuesInOtherUnit[i][j], 0.0001);
         try
         {
-            fm.getInUnit(-1, 0);
+            dm.getInUnit(-1, 0);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -426,7 +426,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(in.length, 0);
+            dm.getInUnit(in.length, 0);
             fail("Using a index that is too hig should throw a ValueException");
         }
         catch (ValueException exception)
@@ -435,7 +435,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(0, -1);
+            dm.getInUnit(0, -1);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -444,7 +444,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(0, in[0].length);
+            dm.getInUnit(0, in[0].length);
             fail("Using a index that is too hig should throw a ValueException");
         }
         catch (ValueException exception)
@@ -453,7 +453,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getSI(-1, 0);
+            dm.getSI(-1, 0);
             fail("Using a bad index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -462,7 +462,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getSI(in.length, 0);
+            dm.getSI(in.length, 0);
             fail("Using a index that is too hig should throw a ValueException");
         }
         catch (ValueException exception)
@@ -471,7 +471,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getSI(0, -1);
+            dm.getSI(0, -1);
             fail("Using a bad index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -480,7 +480,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getSI(0, in[0].length);
+            dm.getSI(0, in[0].length);
             fail("Using a index that is too hig should throw a ValueException");
         }
         catch (ValueException exception)
@@ -489,7 +489,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(-1, 0, LengthUnit.MILE);
+            dm.getInUnit(-1, 0, LengthUnit.MILE);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -498,7 +498,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(in.length, 0, LengthUnit.MILE);
+            dm.getInUnit(in.length, 0, LengthUnit.MILE);
             fail("Using an index that is too big should throw a ValueException");
         }
         catch (ValueException exception)
@@ -507,7 +507,7 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(0, -1, LengthUnit.MILE);
+            dm.getInUnit(0, -1, LengthUnit.MILE);
             fail("Using a negative index should throw a ValueException");
         }
         catch (ValueException exception)
@@ -516,14 +516,14 @@ public abstract class DoubleMatrixTest
         }
         try
         {
-            fm.getInUnit(0, in[0].length, LengthUnit.MILE);
+            dm.getInUnit(0, in[0].length, LengthUnit.MILE);
             fail("Using an index that is too big should throw a ValueException");
         }
         catch (ValueException exception)
         {
             // ignore
         }
-        MutableDoubleMatrix<LengthUnit> mfm = fm.mutable();
+        MutableDoubleMatrix<LengthUnit> mfm = dm.mutable();
         try
         {
             mfm.setSI(-1, 0, 12345f);
@@ -560,16 +560,16 @@ public abstract class DoubleMatrixTest
         {
             // ignore
         }
-        out = fm.getValuesSI();
+        out = dm.getValuesSI();
         assertTrue("getValuesSI does not return null", null != out);
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
             for (int j = 0; j < in[i].length; j++)
                 assertEquals("Values in DoubleMatrix should be equivalent values in meters", in[i][j], out[i][j]
                         / (12 * 0.0254), 0.001);
-        LengthUnit uOut = fm.getUnit();
+        LengthUnit uOut = dm.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
-        DoubleMatrix<LengthUnit> copy = fm.copy();
+        DoubleMatrix<LengthUnit> copy = (DoubleMatrix<LengthUnit>) dm.copy();
         assertEquals("copy should have 12 rows", 12, copy.rows());
         assertEquals("copy should have 3 columns", 3, copy.columns());
         double[][] copyOut = copy.getValuesSI();
@@ -577,7 +577,7 @@ public abstract class DoubleMatrixTest
             for (int j = 0; j < in[i].length; j++)
                 assertEquals("Values in copy of DoubleMatrix should be equivalent values in meters", in[i][j],
                         copyOut[i][j] / (12 * 0.0254), 0.001);
-        copyOut = fm.getValuesInUnit();
+        copyOut = dm.getValuesInUnit();
         for (int i = 0; i < in.length; i++)
             for (int j = 0; j < in[i].length; j++)
                 assertEquals("Values in copy of DoubleMatrix in unit should be equal to input values", in[i][j],
@@ -587,7 +587,7 @@ public abstract class DoubleMatrixTest
         {
             mcopy.setSI(0, 0, 12345f);
             assertEquals("value should be altered", 12345f, mcopy.getSI(0, 0), 0.01);
-            assertEquals("original value should not be altered", out[0][0], fm.getSI(0, 0), 0.001);
+            assertEquals("original value should not be altered", out[0][0], dm.getSI(0, 0), 0.001);
             DoubleScalar<LengthUnit> value = mcopy.get(1, 0);
             assertTrue("value cannot be null", null != value);
             assertEquals("value should be same as SI value", mcopy.getSI(1, 0), value.getValueSI(), 0.0001);
@@ -612,7 +612,7 @@ public abstract class DoubleMatrixTest
             for (int j = 0; j < in[i].length; j++)
                 sum += in[i][j];
         sum *= (12 * 0.0254); // convert to meters
-        assertEquals("zsum should be sum of the values", sum, fm.zSum(), 0.01);
+        assertEquals("zsum should be sum of the values", sum, dm.zSum(), 0.01);
         try
         {
             mfm.normalize();
@@ -624,7 +624,7 @@ public abstract class DoubleMatrixTest
         {
             fail("Unexpected exception");
         }
-        assertEquals("Cardinality should be 35", 35, fm.cardinality());
+        assertEquals("Cardinality should be 35", 35, dm.cardinality());
         double[][] in2 = {{1f, -1f, 0f}};
         mfm = safeCreateDoubleMatrix(in2, u, absolute).mutable();
         assertEquals("Cardinality should be 2", 2, mfm.cardinality());
@@ -676,27 +676,27 @@ public abstract class DoubleMatrixTest
         assertTrue("DoubleMatrix should be equal to repaired copy of itself", mfm.equals(mcopy));
         if (absolute)
         {
-            double[][] values = fm.getValuesInUnit();
+            double[][] values = dm.getValuesInUnit();
             DoubleMatrix<LengthUnit> fmr = null;
             try
             {
-                fmr = createDoubleMatrix(values, fm.getUnit(), false);
+                fmr = createDoubleMatrix(values, dm.getUnit(), false);
                 for (int i = 0; i < in2.length; i++)
                     for (int j = 0; j < in2[i].length; j++)
-                        assertEquals("Values should be equal", fm.getSI(i, j), fmr.getSI(i, j), 0.00001);
+                        assertEquals("Values should be equal", dm.getSI(i, j), fmr.getSI(i, j), 0.00001);
             }
             catch (ValueException exception)
             {
                 fail("Unexpected exception");
             }
-            assertEquals("fm and fmr should have same unit", fm.getUnit(), fmr.getUnit());
-            assertFalse("fm and fmr should not be equal", fm.equals(fmr));
-            assertFalse("fmr and fm should not be equal", fmr.equals(fm));
+            assertEquals("fm and fmr should have same unit", dm.getUnit(), fmr.getUnit());
+            assertFalse("fm and fmr should not be equal", dm.equals(fmr));
+            assertFalse("fmr and fm should not be equal", fmr.equals(dm));
         }
         double[][] inNonRect = buildArray(4, 5, true, 0);
         try
         {
-            fm = createDoubleMatrix(inNonRect, LengthUnit.METER, absolute);
+            dm = createDoubleMatrix(inNonRect, LengthUnit.METER, absolute);
             fail("Non rectangular input data should have thrown a ValueException");
         }
         catch (ValueException exception1)
@@ -710,6 +710,7 @@ public abstract class DoubleMatrixTest
         mfm.abs();
         MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.abs(f);
@@ -719,6 +720,7 @@ public abstract class DoubleMatrixTest
         mfm.acos();
         MathTester.tester(in3, "acos", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.acos(f);
@@ -728,6 +730,7 @@ public abstract class DoubleMatrixTest
         mfm.asin();
         MathTester.tester(in3, "asin", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.asin(f);
@@ -737,6 +740,7 @@ public abstract class DoubleMatrixTest
         mfm.atan();
         MathTester.tester(in3, "atan", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.atan(f);
@@ -746,6 +750,7 @@ public abstract class DoubleMatrixTest
         mfm.cbrt();
         MathTester.tester(in3, "cbrt", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.cbrt(f);
@@ -755,6 +760,7 @@ public abstract class DoubleMatrixTest
         mfm.ceil();
         MathTester.tester(in3, "ceil", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.ceil(f);
@@ -764,6 +770,7 @@ public abstract class DoubleMatrixTest
         mfm.cos();
         MathTester.tester(in3, "cos", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.cos(f);
@@ -773,6 +780,7 @@ public abstract class DoubleMatrixTest
         mfm.cosh();
         MathTester.tester(in3, "cosh", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.cosh(f);
@@ -782,6 +790,7 @@ public abstract class DoubleMatrixTest
         mfm.exp();
         MathTester.tester(in3, "exp", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.exp(f);
@@ -791,6 +800,7 @@ public abstract class DoubleMatrixTest
         mfm.expm1();
         MathTester.tester(in3, "expm1", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.expm1(f);
@@ -800,6 +810,7 @@ public abstract class DoubleMatrixTest
         mfm.floor();
         MathTester.tester(in3, "floor", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.floor(f);
@@ -809,6 +820,7 @@ public abstract class DoubleMatrixTest
         mfm.log();
         MathTester.tester(in3, "log", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.log(f);
@@ -818,6 +830,7 @@ public abstract class DoubleMatrixTest
         mfm.log10();
         MathTester.tester(in3, "log10", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.log10(f);
@@ -827,6 +840,7 @@ public abstract class DoubleMatrixTest
         mfm.log1p();
         MathTester.tester(in3, "log1p", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.log1p(f);
@@ -839,6 +853,7 @@ public abstract class DoubleMatrixTest
             final double myPower = power;
             MathTester.tester(in3, "pow(" + power + ")", mfm.getValuesSI(), 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(final double f)
                 {
                     return Math.pow(f, myPower);
@@ -849,6 +864,7 @@ public abstract class DoubleMatrixTest
         mfm.rint();
         MathTester.tester(in3, "rint", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.rint(f);
@@ -858,6 +874,7 @@ public abstract class DoubleMatrixTest
         mfm.round();
         MathTester.tester(in3, "round", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.round(f);
@@ -867,6 +884,7 @@ public abstract class DoubleMatrixTest
         mfm.signum();
         MathTester.tester(in3, "signum", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.signum(f);
@@ -876,6 +894,7 @@ public abstract class DoubleMatrixTest
         mfm.sin();
         MathTester.tester(in3, "sin", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.sin(f);
@@ -885,6 +904,7 @@ public abstract class DoubleMatrixTest
         mfm.sinh();
         MathTester.tester(in3, "sinh", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.sinh(f);
@@ -894,6 +914,7 @@ public abstract class DoubleMatrixTest
         mfm.sqrt();
         MathTester.tester(in3, "sqrt", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.sqrt(f);
@@ -903,6 +924,7 @@ public abstract class DoubleMatrixTest
         mfm.tan();
         MathTester.tester(in3, "tan", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.tan(f);
@@ -912,6 +934,7 @@ public abstract class DoubleMatrixTest
         mfm.tanh();
         MathTester.tester(in3, "tanh", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.tanh(f);
@@ -921,6 +944,7 @@ public abstract class DoubleMatrixTest
         mfm.toDegrees();
         MathTester.tester(in3, "toDegrees", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.toDegrees(f);
@@ -930,6 +954,7 @@ public abstract class DoubleMatrixTest
         mfm.toRadians();
         MathTester.tester(in3, "toRadians", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return Math.toRadians(f);
@@ -939,6 +964,7 @@ public abstract class DoubleMatrixTest
         mfm.inv();
         MathTester.tester(in3, "inv", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
+            @Override
             public double function(double f)
             {
                 return 1.0 / f;
@@ -974,6 +1000,7 @@ public abstract class DoubleMatrixTest
             final double myFactor = factor;
             MathTester.tester(in3, "multiply(" + factor + ")", mfm.getValuesSI(), 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(final double f)
                 {
                     return myFactor * f;
@@ -987,6 +1014,7 @@ public abstract class DoubleMatrixTest
             final double myDivisor = divisor;
             MathTester.tester(in3, "divide(" + divisor + ")", mfm.getValuesSI(), 0.1, new DoubleToDouble()
             {
+                @Override
                 public double function(final double f)
                 {
                     return f / myDivisor;
@@ -1304,20 +1332,20 @@ public abstract class DoubleMatrixTest
                 fail("Unexpected ValueException");
             }
         }
-        if (fm instanceof DenseData)
+        if (dm instanceof DenseData)
         {
             MutableDoubleMatrix<LengthUnit> fm2 = null;
-            if (fm instanceof Absolute)
-                fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Abs.Dense<LengthUnit>) fm);
+            if (dm instanceof Absolute)
+                fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Abs.Dense<LengthUnit>) dm);
             else
-                fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Rel.Dense<LengthUnit>) fm);
-            assertTrue("dense version is  equal to sparse version", fm.equals(fm2));
-            assertEquals("unit should be same", fm.getUnit(), fm2.getUnit());
+                fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Rel.Dense<LengthUnit>) dm);
+            assertTrue("dense version is  equal to sparse version", dm.equals(fm2));
+            assertEquals("unit should be same", dm.getUnit(), fm2.getUnit());
             try
             {
-                for (int i = 0; i < fm.rows(); i++)
-                    for (int j = 0; j < fm.columns(); j++)
-                        assertEquals("Values should be equal", fm.getSI(i, j), fm2.getSI(i, j), 0.0001);
+                for (int i = 0; i < dm.rows(); i++)
+                    for (int j = 0; j < dm.columns(); j++)
+                        assertEquals("Values should be equal", dm.getSI(i, j), fm2.getSI(i, j), 0.0001);
             }
             catch (ValueException exception)
             {
@@ -1328,17 +1356,17 @@ public abstract class DoubleMatrixTest
         // fm instanceof SparseData
         {
             MutableDoubleMatrix<LengthUnit> fm2 = null;
-            if (fm instanceof Absolute)
-                fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Abs.Sparse<LengthUnit>) fm);
+            if (dm instanceof Absolute)
+                fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Abs.Sparse<LengthUnit>) dm);
             else
-                fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Rel.Sparse<LengthUnit>) fm);
-            assertTrue("dense version is equal to sparse version", fm.equals(fm2));
-            assertEquals("unit should be same", fm.getUnit(), fm2.getUnit());
+                fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Rel.Sparse<LengthUnit>) dm);
+            assertTrue("dense version is equal to sparse version", dm.equals(fm2));
+            assertEquals("unit should be same", dm.getUnit(), fm2.getUnit());
             try
             {
-                for (int i = 0; i < fm.rows(); i++)
-                    for (int j = 0; j < fm.columns(); j++)
-                        assertEquals("Values should be equal", fm.getSI(i, j), fm2.getSI(i, j), 0.0001);
+                for (int i = 0; i < dm.rows(); i++)
+                    for (int j = 0; j < dm.columns(); j++)
+                        assertEquals("Values should be equal", dm.getSI(i, j), fm2.getSI(i, j), 0.0001);
             }
             catch (ValueException exception)
             {

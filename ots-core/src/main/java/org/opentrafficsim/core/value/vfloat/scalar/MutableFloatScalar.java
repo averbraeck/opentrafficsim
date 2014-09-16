@@ -54,7 +54,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @param <U> Unit
      */
-    public static class Abs<U extends Unit<U>> extends MutableFloatScalar<U> implements Absolute
+    public static class Abs<U extends Unit<U>> extends MutableFloatScalar<U> implements Absolute, Comparable<Abs<U>>
     {
         /** */
         private static final long serialVersionUID = 20140905L;
@@ -112,7 +112,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#copy()
+         * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
         public MutableFloatScalar.Abs<U> copy()
@@ -120,12 +120,21 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
             return new MutableFloatScalar.Abs<U>(this);
         }
 
+        /**
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(final Abs<U> o)
+        {
+            return new Float(this.valueSI).compareTo(o.valueSI);
+        }
+        
     }
 
     /**
      * @param <U> Unit
      */
-    public static class Rel<U extends Unit<U>> extends MutableFloatScalar<U> implements Relative
+    public static class Rel<U extends Unit<U>> extends MutableFloatScalar<U> implements Relative, Comparable<Rel<U>>
     {
         /** */
         private static final long serialVersionUID = 20140905L;
@@ -183,12 +192,21 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#copy()
+         * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
         public MutableFloatScalar.Rel<U> copy()
         {
             return new MutableFloatScalar.Rel<U>(this);
+        }
+        
+        /**
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(final Rel<U> o)
+        {
+            return new Float(this.valueSI).compareTo(o.valueSI);
         }
 
     }
@@ -688,8 +706,4 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         this.valueSI /= constant;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.Value#copy()
-     */
-    public abstract MutableFloatScalar<U> copy();
 }

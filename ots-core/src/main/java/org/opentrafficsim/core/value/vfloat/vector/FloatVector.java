@@ -130,6 +130,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Abs.Dense<U> mutable()
             {
                 return new MutableFloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
@@ -142,6 +143,15 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatVector.Abs.Dense<U> copy()
+            {
+                return this;
             }
 
         }
@@ -193,6 +203,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Abs.Sparse<U> mutable()
             {
                 return new MutableFloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
@@ -205,6 +216,15 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatVector.Abs.Sparse<U> copy()
+            {
+                return this;
             }
 
         }
@@ -284,6 +304,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Rel.Dense<U> mutable()
             {
                 return new MutableFloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
@@ -296,6 +317,15 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatVector.Rel.Dense<U> copy()
+            {
+                return this;
             }
 
         }
@@ -347,6 +377,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Rel.Sparse<U> mutable()
             {
                 return new MutableFloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
@@ -359,6 +390,15 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             protected FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatVector.Rel.Sparse<U> copy()
+            {
+                return this;
             }
 
         }
@@ -381,14 +421,6 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @return MutableFloatVector; mutable version of this FloatVector
      */
     public abstract MutableFloatVector<U> mutable();
-
-    /**
-     * @see org.opentrafficsim.core.value.Value#copy()
-     */
-    public FloatVector<U> copy()
-    {
-        return this; // That was easy!
-    }
 
     /**
      * Import the values and convert them into SI units.
@@ -476,6 +508,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#size()
      */
+    @Override
     public int size()
     {
         return (int) this.vectorSI.size();
@@ -484,6 +517,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getSI(int)
      */
+    @Override
     public float getSI(final int index) throws ValueException
     {
         checkIndex(index);
@@ -493,6 +527,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int)
      */
+    @Override
     public float getInUnit(final int index) throws ValueException
     {
         return (float) expressAsSpecifiedUnit(getSI(index));
@@ -502,6 +537,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int,
      *      org.opentrafficsim.core.unit.Unit)
      */
+    @Override
     public float getInUnit(final int index, final U targetUnit) throws ValueException
     {
         return (float) ValueUtil.expressAsUnit(getSI(index), targetUnit);
@@ -510,6 +546,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#zSum()
      */
+    @Override
     public float zSum()
     {
         return this.vectorSI.zSum();
@@ -522,35 +559,6 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     public int cardinality()
     {
         return this.vectorSI.cardinality();
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof FloatVector<?>))
-        {
-            return false;
-        }
-        FloatVector<?> fv = (FloatVector<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
-        {
-            return false;
-        }
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
-        {
-            return false;
-        }
-
-        // Colt's equals also tests the size of the vector
-        return this.vectorSI.equals(fv.vectorSI);
     }
 
     /**
@@ -711,6 +719,47 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                     "Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
         }
         return fsArray;
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.vectorSI.hashCode();
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof FloatVector))
+            return false;
+        FloatVector<?> other = (FloatVector<?>) obj;
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
+        {
+            return false;
+        }
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
+        {
+            return false;
+        }
+        // Colt's equals also tests the size of the vector
+        if (!this.vectorSI.equals(other.vectorSI))
+            return false;
+        return true;
     }
 
 }

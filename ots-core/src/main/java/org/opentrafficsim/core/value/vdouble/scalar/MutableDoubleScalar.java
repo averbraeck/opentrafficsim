@@ -116,7 +116,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar#copy()
+         * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
         public MutableDoubleScalar.Abs<U> copy()
@@ -197,7 +197,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar#copy()
+         * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
         public MutableDoubleScalar.Rel<U> copy()
@@ -712,9 +712,4 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     {
         this.valueSI /= constant;
     }
-
-    /**
-     * @see org.opentrafficsim.core.value.Value#copy()
-     */
-    public abstract MutableDoubleScalar<U> copy();
 }

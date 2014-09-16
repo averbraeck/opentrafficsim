@@ -226,6 +226,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             /**
              * @see org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector#immutable()
              */
+            @Override
             public DoubleVector.Abs.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
@@ -235,6 +236,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             /**
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
+            @Override
             public MutableDoubleVector.Abs.Sparse<U> mutable()
             {
                 this.copyOnWrite = true;
@@ -455,7 +457,9 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     @Override
     public MutableDoubleVector<U> copy()
     {
-        return immutable().mutable(); // Almost as simple as the copy in DoubleVector
+        return immutable().mutable();
+        // FIXME: This may cause both the original and the copy to be deep copied later
+        // Maybe it is better to make a deep copy now?
     }
 
     /**

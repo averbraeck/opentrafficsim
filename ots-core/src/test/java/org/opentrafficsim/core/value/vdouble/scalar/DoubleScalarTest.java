@@ -79,8 +79,13 @@ public class DoubleScalarTest
         assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
         assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
         DoubleScalar.Abs<LengthUnit> copy = lengthFS.copy();
+        assertEquals("compareTo should return 0", 0, copy.compareTo(lengthFS));
+        DoubleScalar.Abs<LengthUnit> bigger = new DoubleScalar.Abs<LengthUnit>(lengthFS.getValueInUnit() + 100, lengthFS.getUnit());
+        assertEquals("compareTo should return 1", 1, bigger.compareTo(lengthFS));
+        assertEquals("compareTo should return -1", -1, lengthFS.compareTo(bigger));
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
         assertTrue("copy should be equal to original", copy.equals(lengthFS));
+        assertEquals("copy should have same hashcode as original", copy.hashCode(), lengthFS.hashCode());
         assertTrue("original should be equal to copy", lengthFS.equals(copy));
         assertTrue("original should be equal to itself", lengthFS.equals(lengthFS));
 
@@ -96,22 +101,30 @@ public class DoubleScalarTest
         assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getValueSI(), 0.0005);
         assertEquals("Value in Foot", 1f, m.getValueInUnit(LengthUnit.FOOT), 0.0001);
         assertTrue("mutable version should be equal to original", m.equals(lengthFS));
+        assertEquals("mutable version should have same hashCode as original", m.hashCode(), lengthFS.hashCode());
         MutableDoubleScalar.Abs<LengthUnit> mm = m.copy();
         DoubleScalar.Abs<LengthUnit> imm = m.immutable();
+        assertEquals("compareTo should return 0", 0, m.compareTo(mm));
+        assertEquals("compareTo should return 0", 0, mm.compareTo(m));
         // Modify the mutable
         m.setSI(m.getValueSI() + 1);
         assertFalse("modified version should NOT be equal to original", m.equals(lengthFS));
+        assertTrue("HashCode of modified version should not be equal to hashCode of original", m.hashCode() != lengthFS.hashCode());
         assertEquals("original should have the original value", value, lengthFS.getValueInUnit(), 0.0001);
         assertEquals("copy of mutable version should have the original value", value, mm.getValueInUnit(), 0.0001);
         assertEquals("immutable variant of mutable version should have the original value", value,
                 imm.getValueInUnit(), 0.0001);
+        assertEquals("compareTo should return 1", 1, m.compareTo(mm));
+        assertEquals("compareTo should return -1", -1, mm.compareTo(m));
         // undo change
         m.setSI(lengthFS.getValueSI());
         assertTrue("restored mutable version should be equal to original", m.equals(lengthFS));
+        assertEquals("restored mutable version should have same hashCode as original", m.hashCode(), lengthFS.hashCode());
         DoubleScalar.Abs<LengthUnit> differentUnit =
                 new DoubleScalar.Abs<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
         assertTrue("doubleScalar with different unit, but same SI value and also absolute should be equal",
                 lengthFS.equals(differentUnit));
+        assertEquals("doubleScalar with different unit, but same SI value should have same hashCode", lengthFS.hashCode(), differentUnit.hashCode());
         DoubleScalar.Rel<LengthUnit> differentUnitRel =
                 new DoubleScalar.Rel<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
         assertFalse("doubleScalar with different unit, but same SI value but not also absolute should NOT be equal",
@@ -123,10 +136,11 @@ public class DoubleScalarTest
                 lengthFS.intValue(), 0.0001);
         assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getValueSI()),
                 lengthFS.longValue(), 0.0001);
-        assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(),
+        assertEquals("floatValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.floatValue(),
                 0.0001);
         assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(),
                 0.0001);
+        assertFalse("equals to null should return false", lengthFS.equals(null));
     }
 
     /**
@@ -165,8 +179,13 @@ public class DoubleScalarTest
         assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
         assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
         DoubleScalar.Rel<LengthUnit> copy = lengthFS.copy();
+        assertEquals("compareTo should return 0", 0, copy.compareTo(lengthFS));
+        DoubleScalar.Rel<LengthUnit> bigger = new DoubleScalar.Rel<LengthUnit>(lengthFS.getValueInUnit() + 100, lengthFS.getUnit());
+        assertEquals("compareTo should return 1", 1, bigger.compareTo(lengthFS));
+        assertEquals("compareTo should return -1", -1, lengthFS.compareTo(bigger));
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
         assertTrue("copy should be equal to original", copy.equals(lengthFS));
+        assertEquals("HashCode of copy should be equals to hashCode of original", copy.hashCode(), lengthFS.hashCode());
         assertTrue("original should be equal to copy", lengthFS.equals(copy));
         assertTrue("original should be equal to itself", lengthFS.equals(lengthFS));
 
@@ -182,8 +201,11 @@ public class DoubleScalarTest
         assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getValueSI(), 0.0005);
         assertEquals("Value in Foot", 1f, m.getValueInUnit(LengthUnit.FOOT), 0.0001);
         assertTrue("mutable version should be equal to original", m.equals(lengthFS));
+        assertEquals("HashCode of mutable version should be equal to hash code of original", m.hashCode(), lengthFS.hashCode());
         MutableDoubleScalar.Rel<LengthUnit> mm = m.copy();
         DoubleScalar.Rel<LengthUnit> imm = m.immutable();
+        assertEquals("compareTo should return 0", 0, m.compareTo(mm));
+        assertEquals("compareTo should return 0", 0, mm.compareTo(m));
         // Modify the mutable
         m.setSI(m.getValueSI() + 1);
         assertFalse("modified version should NOT be equal to original", m.equals(lengthFS));
@@ -191,13 +213,17 @@ public class DoubleScalarTest
         assertEquals("copy of mutable version should have the original value", value, mm.getValueInUnit(), 0.0001);
         assertEquals("immutable variant of mutable version should have the original value", value,
                 imm.getValueInUnit(), 0.0001);
+        assertEquals("compareTo should return 1", 1, m.compareTo(mm));
+        assertEquals("compareTo should return -1", -1, mm.compareTo(m));
         // undo change
         m.setSI(lengthFS.getValueSI());
         assertTrue("restored mutable version should be equal to original", m.equals(lengthFS));
+        assertEquals("HashCode of restored mutable version should be equal to hash code of original", m.hashCode(), lengthFS.hashCode());
         DoubleScalar.Rel<LengthUnit> differentUnit =
                 new DoubleScalar.Rel<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
         assertTrue("doubleScalar with different unit, but same SI value and also absolute should be equal",
                 lengthFS.equals(differentUnit));
+        assertEquals("hashCode of doubleScalar with different unit, but same SI value should be same", lengthFS.hashCode(), differentUnit.hashCode());
         DoubleScalar.Abs<LengthUnit> differentUnitAbs =
                 new DoubleScalar.Abs<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
         assertFalse("doubleScalar with different unit, but same SI value but not also absolute should NOT be equal",
@@ -209,10 +235,11 @@ public class DoubleScalarTest
                 lengthFS.intValue(), 0.0001);
         assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getValueSI()),
                 lengthFS.longValue(), 0.0001);
-        assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(),
+        assertEquals("floatValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.floatValue(),
                 0.0001);
         assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(),
                 0.0001);
+        assertFalse("equals to null should return false", lengthFS.equals(null));
     }
 
     /**
@@ -261,6 +288,7 @@ public class DoubleScalarTest
         MutableDoubleScalar.Abs<TemperatureUnit> mmabs = mabs.mutable();
         assertEquals("duplicate has same value", mabs.getValueSI(), mmabs.getValueSI(), 0.0001);
         assertTrue("duplicate is equal to original", mmabs.equals(mabs));
+        assertEquals("hashCode of duplicate should be equal to hashcode of original", mmabs.hashCode(), mabs.hashCode());
 
         // The code below disclosed a bug in ValueUtil.expressAsSIUnit
         mmabs.setInUnit(123, TemperatureUnit.DEGREE_FAHRENHEIT);
@@ -430,6 +458,7 @@ public class DoubleScalarTest
             fs.abs();
             MathTester.tester(inputValue, "abs", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.abs(f);
@@ -439,6 +468,7 @@ public class DoubleScalarTest
             fs.acos();
             MathTester.tester(inputValue, "acos", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.acos(f);
@@ -448,6 +478,7 @@ public class DoubleScalarTest
             fs.asin();
             MathTester.tester(inputValue, "asin", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.asin(f);
@@ -457,6 +488,7 @@ public class DoubleScalarTest
             fs.atan();
             MathTester.tester(inputValue, "atan", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.atan(f);
@@ -466,6 +498,7 @@ public class DoubleScalarTest
             fs.cbrt();
             MathTester.tester(inputValue, "cbrt", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.cbrt(f);
@@ -475,6 +508,7 @@ public class DoubleScalarTest
             fs.ceil();
             MathTester.tester(inputValue, "ceil", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.ceil(f);
@@ -484,6 +518,7 @@ public class DoubleScalarTest
             fs.cos();
             MathTester.tester(inputValue, "cos", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.cos(f);
@@ -493,6 +528,7 @@ public class DoubleScalarTest
             fs.cosh();
             MathTester.tester(inputValue, "cosh", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.cosh(f);
@@ -502,6 +538,7 @@ public class DoubleScalarTest
             fs.exp();
             MathTester.tester(inputValue, "exp", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.exp(f);
@@ -511,6 +548,7 @@ public class DoubleScalarTest
             fs.expm1();
             MathTester.tester(inputValue, "expm1", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.expm1(f);
@@ -520,6 +558,7 @@ public class DoubleScalarTest
             fs.floor();
             MathTester.tester(inputValue, "floor", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.floor(f);
@@ -529,6 +568,7 @@ public class DoubleScalarTest
             fs.log();
             MathTester.tester(inputValue, "log", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.log(f);
@@ -538,6 +578,7 @@ public class DoubleScalarTest
             fs.log10();
             MathTester.tester(inputValue, "log10", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.log10(f);
@@ -547,6 +588,7 @@ public class DoubleScalarTest
             fs.log1p();
             MathTester.tester(inputValue, "log10", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.log1p(f);
@@ -556,6 +598,7 @@ public class DoubleScalarTest
             fs.rint();
             MathTester.tester(inputValue, "rint", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.rint(f);
@@ -565,6 +608,7 @@ public class DoubleScalarTest
             fs.round();
             MathTester.tester(inputValue, "round", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.round(f);
@@ -574,6 +618,7 @@ public class DoubleScalarTest
             fs.signum();
             MathTester.tester(inputValue, "signum", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.signum(f);
@@ -583,6 +628,7 @@ public class DoubleScalarTest
             fs.sin();
             MathTester.tester(inputValue, "sin", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.sin(f);
@@ -592,6 +638,7 @@ public class DoubleScalarTest
             fs.sinh();
             MathTester.tester(inputValue, "sinh", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.sinh(f);
@@ -601,6 +648,7 @@ public class DoubleScalarTest
             fs.sqrt();
             MathTester.tester(inputValue, "sqrt", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.sqrt(f);
@@ -610,6 +658,7 @@ public class DoubleScalarTest
             fs.tan();
             MathTester.tester(inputValue, "tan", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.tan(f);
@@ -619,6 +668,7 @@ public class DoubleScalarTest
             fs.tanh();
             MathTester.tester(inputValue, "tanh", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.tanh(f);
@@ -628,6 +678,7 @@ public class DoubleScalarTest
             fs.toDegrees();
             MathTester.tester(inputValue, "toDegrees", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.toDegrees(f);
@@ -637,6 +688,7 @@ public class DoubleScalarTest
             fs.toRadians();
             MathTester.tester(inputValue, "toRadians", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return Math.toRadians(f);
@@ -646,6 +698,7 @@ public class DoubleScalarTest
             fs.inv();
             MathTester.tester(inputValue, "inv", fs, 0.001, new DoubleToDouble()
             {
+                @Override
                 public double function(double f)
                 {
                     return 1 / f;
@@ -658,6 +711,7 @@ public class DoubleScalarTest
                 fs.pow(exponent);
                 MathTester.tester(inputValue, "pow(" + exponent + ")", fs, 0.001, new DoubleToDouble()
                 {
+                    @Override
                     public double function(double f)
                     {
                         return Math.pow(f, exponent);
@@ -671,6 +725,7 @@ public class DoubleScalarTest
                 fs.multiply(constant);
                 MathTester.tester(inputValue, "multiply by " + constant, fs, 0.001, new DoubleToDouble()
                 {
+                    @Override
                     public double function(double f)
                     {
                         return f * constant;
@@ -680,6 +735,7 @@ public class DoubleScalarTest
                 fs.divide(constant);
                 MathTester.tester(inputValue, "divide by " + constant, fs, 0.001, new DoubleToDouble()
                 {
+                    @Override
                     public double function(double f)
                     {
                         return f / constant;

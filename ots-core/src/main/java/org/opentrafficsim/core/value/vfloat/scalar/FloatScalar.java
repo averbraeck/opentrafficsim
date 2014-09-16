@@ -58,7 +58,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * @param <U> Unit
      */
-    public static class Abs<U extends Unit<U>> extends FloatScalar<U> implements Absolute
+    public static class Abs<U extends Unit<U>> extends FloatScalar<U> implements Absolute, Comparable<Abs<U>>
     {
         /** */
         private static final long serialVersionUID = 20140905L;
@@ -107,12 +107,21 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#copy()
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(final Abs<U> o)
+        {
+            return new Float(this.valueSI).compareTo(o.valueSI);
+        }
+
+        /**
+         * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
         public FloatScalar.Abs<U> copy()
         {
-            return this; // that was easy!
+            return this;
         }
 
     }
@@ -120,7 +129,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * @param <U> Unit
      */
-    public static class Rel<U extends Unit<U>> extends FloatScalar<U> implements Relative
+    public static class Rel<U extends Unit<U>> extends FloatScalar<U> implements Relative, Comparable<Rel<U>>
     {
         /** */
         private static final long serialVersionUID = 20140905L;
@@ -155,7 +164,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         public Rel(final MutableFloatScalar.Rel<U> value)
         {
             super(value.getUnit());
-            // System.out.println("Created Abs");
+            // System.out.println("Created Rel");
             initialize(value);
         }
 
@@ -169,15 +178,31 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#copy()
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(final Rel<U> o)
+        {
+            return new Float(this.valueSI).compareTo(o.valueSI);
+        }
+
+        /**
+         * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
         public FloatScalar.Rel<U> copy()
         {
-            return this; // that was easy!
+            return this;
         }
 
     }
+
+    /**
+     * Create a mutable version of this FloatScalar. <br />
+     * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
+     * @return MutableFloatScalar; mutable version of this FloatScalar
+     */
+    public abstract MutableFloatScalar<U> mutable();
 
     /**
      * Initialize the valueSI field (performing conversion to the SI standard unit if needed).
@@ -273,41 +298,6 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Create a mutable version of this FloatScalar. <br />
-     * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableFloatScalar; mutable version of this FloatScalar
-     */
-    public abstract MutableFloatScalar<U> mutable();
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof FloatScalar<?>))
-        {
-            return false;
-        }
-        FloatScalar<?> fs = (FloatScalar<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
-        {
-            return false;
-        }
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
-        {
-            return false;
-        }
-
-        return this.valueSI == fs.valueSI;
-    }
-
-    /**
      * @see java.lang.Object#toString()
      */
     @Override
@@ -317,8 +307,43 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * @see org.opentrafficsim.core.value.Value#copy()
+     * @see java.lang.Object#hashCode()
      */
-    public abstract FloatScalar<U> copy();
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Float.floatToIntBits(this.valueSI);
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof FloatScalar))
+            return false;
+        FloatScalar<?> other = (FloatScalar<?>) obj;
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
+        {
+            return false;
+        }
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
+        {
+            return false;
+        }
+        if (Float.floatToIntBits(this.valueSI) != Float.floatToIntBits(other.valueSI))
+            return false;
+        return true;
+    }
 
 }

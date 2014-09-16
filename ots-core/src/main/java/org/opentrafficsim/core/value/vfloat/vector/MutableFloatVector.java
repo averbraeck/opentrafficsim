@@ -69,6 +69,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /**
      * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#normalize()
      */
+    @Override
     public void normalize() throws ValueException
     {
         float sum = zSum();
@@ -148,6 +149,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
+            @Override
             public FloatVector.Abs.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
@@ -157,6 +159,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Abs.Dense<U> mutable()
             {
                 this.copyOnWrite = true;
@@ -223,6 +226,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
+            @Override
             public FloatVector.Abs.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
@@ -232,6 +236,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Abs.Sparse<U> mutable()
             {
                 this.copyOnWrite = true;
@@ -325,6 +330,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
+            @Override
             public FloatVector.Rel.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
@@ -334,6 +340,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Rel.Dense<U> mutable()
             {
                 this.copyOnWrite = true;
@@ -399,6 +406,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.MutableFloatVector#immutable()
              */
+            @Override
             public FloatVector.Rel.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
@@ -408,6 +416,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             /**
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
+            @Override
             public MutableFloatVector.Rel.Sparse<U> mutable()
             {
                 this.copyOnWrite = true;
@@ -448,7 +457,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     @Override
     public MutableFloatVector<U> copy()
     {
-        return immutable().mutable(); // Almost as simple as the copy in FloatVector
+        return immutable().mutable();
+        // FIXME: This may cause both the original and the copy to be deep copied later
+        // Maybe it is better to make a deep copy now?
     }
 
     /**
