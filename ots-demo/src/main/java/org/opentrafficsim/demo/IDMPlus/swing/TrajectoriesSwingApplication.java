@@ -54,8 +54,8 @@ public class TrajectoriesSwingApplication extends DSOLApplication
     private static final long serialVersionUID = 20140820L;
 
     /**
-     * @param title
-     * @param panel
+     * @param title String
+     * @param panel DSOLPanel
      */
     public TrajectoriesSwingApplication(final String title,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
@@ -64,7 +64,7 @@ public class TrajectoriesSwingApplication extends DSOLApplication
     }
 
     /**
-     * @param args
+     * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException
      * @throws RemoteException
      */

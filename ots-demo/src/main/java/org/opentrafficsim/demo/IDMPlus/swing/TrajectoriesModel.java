@@ -151,9 +151,9 @@ public class TrajectoriesModel implements OTSModelInterface
          * @param initialPosition
          * @param initialSpeed
          */
-        public IDMCar(int id, OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
-                DoubleScalar.Abs<TimeUnit> initialTime, DoubleScalar.Abs<LengthUnit> initialPosition,
-                DoubleScalar.Rel<SpeedUnit> initialSpeed)
+        public IDMCar(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
+                final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
+                final DoubleScalar.Rel<SpeedUnit> initialSpeed)
         {
             super(id, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
             try
@@ -215,15 +215,15 @@ public class TrajectoriesModel implements OTSModelInterface
     }
 
     /**
-     * @param idmCar
+     * @param idmCar IDMCar
      */
-    private void addToTrajectoryPlot(IDMCar idmCar)
+    private void addToTrajectoryPlot(final IDMCar idmCar)
     {
         this.trajectoryPlot.addData(idmCar);
     }
 
     /**
-     * Notify the contour plots that the underlying data has changed
+     * Notify the contour plots that the underlying data has changed.
      */
     protected void drawGraph()
     {
@@ -247,9 +247,9 @@ public class TrajectoriesModel implements OTSModelInterface
     }
 
     /**
-     * @param trajectoryPlot
+     * @param trajectoryPlot TrajectoryPlot
      */
-    public void setTrajectories(TrajectoryPlot trajectoryPlot)
+    public void setTrajectories(final TrajectoryPlot trajectoryPlot)
     {
         this.trajectoryPlot = trajectoryPlot;
     }

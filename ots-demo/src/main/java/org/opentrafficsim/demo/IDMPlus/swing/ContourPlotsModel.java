@@ -134,7 +134,7 @@ public class ContourPlotsModel implements OTSModelInterface
     }
 
     /**
-     * Notify the contour plots that the underlying data has changed
+     * Notify the contour plots that the underlying data has changed.
      */
     protected void drawGraphs()
     {
@@ -210,9 +210,9 @@ public class ContourPlotsModel implements OTSModelInterface
          * @param initialPosition
          * @param initialSpeed
          */
-        public IDMCar(int id, OTSDEVSSimulator simulator, CarFollowingModel carFollowingModel,
-                DoubleScalar.Abs<TimeUnit> initialTime, DoubleScalar.Abs<LengthUnit> initialPosition,
-                DoubleScalar.Rel<SpeedUnit> initialSpeed)
+        public IDMCar(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
+                final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
+                final DoubleScalar.Rel<SpeedUnit> initialSpeed)
         {
             super(id, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
             try

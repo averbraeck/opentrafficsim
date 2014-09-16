@@ -38,15 +38,19 @@ public class SparseMatrixProblem
      * Execute the demo.
      * @param args String[]; not used
      */
-    public static void main(String args[])
+    public static void main(final String[] args)
     {
         float[][] values = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
         Float determinant = null;
 
         FloatMatrix2D floatMatrix2D = new SparseFloatMatrix2D(values.length, values[0].length);
         for (int row = 0; row < values.length; row++)
+        {
             for (int column = 0; column < values[row].length; column++)
+            {
                 floatMatrix2D.set(row, column, values[row][column]);
+            }
+        }
         System.out.println("matrix: " + floatMatrix2D.toString());
         System.out.println("calling SparseFloatAlgebra().det(this.matrixSI)");
         try

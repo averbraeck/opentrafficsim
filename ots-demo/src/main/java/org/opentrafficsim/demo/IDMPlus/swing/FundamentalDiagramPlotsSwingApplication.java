@@ -57,8 +57,8 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
     private static final long serialVersionUID = 20140820L;
 
     /**
-     * @param title
-     * @param panel
+     * @param title String
+     * @param panel DSOLPanel
      */
     public FundamentalDiagramPlotsSwingApplication(final String title,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
@@ -81,12 +81,12 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
     }
 
     /**
-     * @param args
+     * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException
      * @throws RemoteException
      */
     @SuppressWarnings("unused")
-    public static void main(String[] args) throws SimRuntimeException, RemoteException
+    public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
@@ -105,7 +105,8 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
 
     /**
      * make the stand-alone plots for the model and put them in the statistics panel.
-     * @param model the model.
+     * @param model FundamentalDiagramPlotsModel; the model.
+     * @param panel DSOLPanel
      */
     private static void makePlots(final FundamentalDiagramPlotsModel model,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
