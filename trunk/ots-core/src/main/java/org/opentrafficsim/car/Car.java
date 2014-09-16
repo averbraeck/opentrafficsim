@@ -80,12 +80,12 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
 
     /**
      * Create a new Car.
-     * @param id
-     * @param simulator
-     * @param carFollowingModel
-     * @param initialTime
-     * @param initialPosition
-     * @param initialSpeed
+     * @param id integer; the id of the new Car
+     * @param simulator OTSDEVSSimulator
+     * @param carFollowingModel CarFollowingModel; the car following model used by the new Car
+     * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the first evaluation time of the new Car
+     * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial position of the new Car
+     * @param initialSpeed DoubleScalar.Rel&lt;SpeedUnit&gt;; the initial speed of the new Car
      */
     public Car(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
             final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
@@ -211,6 +211,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         return new DoubleScalar.Abs<TimeUnit>(this.lastEvaluationTime);
     }
 
+    @Override
     public String toString()
     {
         return toString(this.simulator.getSimulatorTime().get());

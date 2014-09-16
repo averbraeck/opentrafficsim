@@ -148,6 +148,15 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 return new DenseDoubleMatrix1D(size);
             }
 
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public DoubleVector.Abs.Dense<U> copy()
+            {
+                return this;
+            }
+
         }
 
         /**
@@ -210,6 +219,15 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             protected DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new DenseDoubleMatrix1D(size);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public DoubleVector.Abs.Sparse<U> copy()
+            {
+                return this;
             }
 
         }
@@ -305,6 +323,15 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 return new SparseDoubleMatrix1D(size);
             }
 
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public DoubleVector.Rel.Dense<U> copy()
+            {
+                return this;
+            }
+
         }
 
         /**
@@ -369,6 +396,15 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 return new SparseDoubleMatrix1D(size);
             }
 
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public DoubleVector.Rel.Sparse<U> copy()
+            {
+                return this;
+            }
+
         }
 
         /**
@@ -389,15 +425,6 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @return MutableDoubleVector; mutable version of this DoubleVector
      */
     public abstract MutableDoubleVector<U> mutable();
-
-    /**
-     * @see org.opentrafficsim.core.value.Value#copy()
-     */
-    @Override
-    public DoubleVector<U> copy()
-    {
-        return this; // That was easy!
-    }
 
     /**
      * Construct the vector, import the values and convert them into SI units.
@@ -536,35 +563,6 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     public int cardinality()
     {
         return this.vectorSI.cardinality();
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof DoubleVector<?>))
-        {
-            return false;
-        }
-        DoubleVector<?> fv = (DoubleVector<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
-        {
-            return false;
-        }
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
-        {
-            return false;
-        }
-
-        // Colt's equals also tests the size of the vector
-        return this.vectorSI.equals(fv.vectorSI);
     }
 
     /**
@@ -725,6 +723,47 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                     "Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
         }
         return fsArray;
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.vectorSI.hashCode();
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof DoubleVector))
+            return false;
+        DoubleVector<?> other = (DoubleVector<?>) obj;
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
+        {
+            return false;
+        }
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
+        {
+            return false;
+        }
+        // Colt's equals also tests the size of the vector
+        if (!this.vectorSI.equals(other.vectorSI))
+            return false;
+        return true;
     }
 
 }

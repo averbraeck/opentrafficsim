@@ -107,21 +107,21 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#copy()
-         */
-        @Override
-        public DoubleScalar.Abs<U> copy()
-        {
-            return this; // that was easy!
-        }
-
-        /**
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
         public int compareTo(final Abs<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
+        }
+
+        /**
+         * @see org.opentrafficsim.core.value.Value#copy()
+         */
+        @Override
+        public DoubleScalar.Abs<U> copy()
+        {
+            return this;
         }
 
     }
@@ -178,15 +178,6 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#copy()
-         */
-        @Override
-        public DoubleScalar.Rel<U> copy()
-        {
-            return this; // that was easy!
-        }
-
-        /**
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
@@ -195,7 +186,23 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
 
+        /**
+         * @see org.opentrafficsim.core.value.Value#copy()
+         */
+        @Override
+        public DoubleScalar.Rel<U> copy()
+        {
+            return this;
+        }
+
     }
+
+    /**
+     * Create a mutable version of this DoubleScalar. <br />
+     * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
+     * @return MutableDoubleScalar; mutable version of this DoubleScalar
+     */
+    public abstract MutableDoubleScalar<U> mutable();
 
     /**
      * Initialize the valueSI field (performing conversion to the SI standard unit if needed).
@@ -289,41 +296,6 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Create a mutable version of this DoubleScalar. <br />
-     * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableDoubleScalar; mutable version of this DoubleScalar
-     */
-    public abstract MutableDoubleScalar<U> mutable();
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof DoubleScalar<?>))
-        {
-            return false;
-        }
-        DoubleScalar<?> fs = (DoubleScalar<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fs.getUnit().getStandardUnit()))
-        {
-            return false;
-        }
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fs.isAbsolute() || this.isRelative() != fs.isRelative())
-        {
-            return false;
-        }
-
-        return this.valueSI == fs.valueSI;
-    }
-
-    /**
      * @see java.lang.Object#toString()
      */
     @Override
@@ -333,9 +305,45 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * @see org.opentrafficsim.core.value.Value#copy()
+     * @see java.lang.Object#hashCode()
      */
     @Override
-    public abstract DoubleScalar<U> copy();
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(this.valueSI);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof DoubleScalar))
+            return false;
+        DoubleScalar<?> other = (DoubleScalar<?>) obj;
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
+        {
+            return false;
+        }
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
+        {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.valueSI) != Double.doubleToLongBits(other.valueSI))
+            return false;
+        return true;
+    }
 
 }

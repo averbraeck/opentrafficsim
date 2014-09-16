@@ -569,7 +569,7 @@ public abstract class FloatMatrixTest
                         / (12 * 0.0254), 0.001);
         LengthUnit uOut = fm.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
-        FloatMatrix<LengthUnit> copy = fm.copy();
+        FloatMatrix<LengthUnit> copy = (FloatMatrix<LengthUnit>) fm.copy();
         assertEquals("copy should have 12 rows", 12, copy.rows());
         assertEquals("copy should have 3 columns", 3, copy.columns());
         float[][] copyOut = copy.getValuesSI();
@@ -710,6 +710,7 @@ public abstract class FloatMatrixTest
         mfm.abs();
         MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return Math.abs(f);
@@ -719,6 +720,7 @@ public abstract class FloatMatrixTest
         mfm.acos();
         MathTester.tester(in3, "acos", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.acos(f);
@@ -728,6 +730,7 @@ public abstract class FloatMatrixTest
         mfm.asin();
         MathTester.tester(in3, "asin", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.asin(f);
@@ -737,6 +740,7 @@ public abstract class FloatMatrixTest
         mfm.atan();
         MathTester.tester(in3, "atan", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.atan(f);
@@ -746,6 +750,7 @@ public abstract class FloatMatrixTest
         mfm.cbrt();
         MathTester.tester(in3, "cbrt", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.cbrt(f);
@@ -755,6 +760,7 @@ public abstract class FloatMatrixTest
         mfm.ceil();
         MathTester.tester(in3, "ceil", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.ceil(f);
@@ -764,6 +770,7 @@ public abstract class FloatMatrixTest
         mfm.cos();
         MathTester.tester(in3, "cos", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.cos(f);
@@ -773,6 +780,7 @@ public abstract class FloatMatrixTest
         mfm.cosh();
         MathTester.tester(in3, "cosh", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.cosh(f);
@@ -782,6 +790,7 @@ public abstract class FloatMatrixTest
         mfm.exp();
         MathTester.tester(in3, "exp", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.exp(f);
@@ -791,6 +800,7 @@ public abstract class FloatMatrixTest
         mfm.expm1();
         MathTester.tester(in3, "expm1", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.expm1(f);
@@ -800,6 +810,7 @@ public abstract class FloatMatrixTest
         mfm.floor();
         MathTester.tester(in3, "floor", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.floor(f);
@@ -809,6 +820,7 @@ public abstract class FloatMatrixTest
         mfm.log();
         MathTester.tester(in3, "log", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.log(f);
@@ -818,6 +830,7 @@ public abstract class FloatMatrixTest
         mfm.log10();
         MathTester.tester(in3, "log10", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.log10(f);
@@ -827,6 +840,7 @@ public abstract class FloatMatrixTest
         mfm.log1p();
         MathTester.tester(in3, "log1p", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.log1p(f);
@@ -839,6 +853,7 @@ public abstract class FloatMatrixTest
             final float myPower = power;
             MathTester.tester(in3, "pow(" + power + ")", mfm.getValuesSI(), 0.001, new FloatToFloat()
             {
+                @Override
                 public float function(final float f)
                 {
                     return (float) Math.pow(f, myPower);
@@ -849,6 +864,7 @@ public abstract class FloatMatrixTest
         mfm.rint();
         MathTester.tester(in3, "rint", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.rint(f);
@@ -858,6 +874,7 @@ public abstract class FloatMatrixTest
         mfm.round();
         MathTester.tester(in3, "round", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return Math.round(f);
@@ -867,6 +884,7 @@ public abstract class FloatMatrixTest
         mfm.signum();
         MathTester.tester(in3, "signum", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return Math.signum(f);
@@ -876,6 +894,7 @@ public abstract class FloatMatrixTest
         mfm.sin();
         MathTester.tester(in3, "sin", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.sin(f);
@@ -885,6 +904,7 @@ public abstract class FloatMatrixTest
         mfm.sinh();
         MathTester.tester(in3, "sinh", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.sinh(f);
@@ -894,6 +914,7 @@ public abstract class FloatMatrixTest
         mfm.sqrt();
         MathTester.tester(in3, "sqrt", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.sqrt(f);
@@ -903,6 +924,7 @@ public abstract class FloatMatrixTest
         mfm.tan();
         MathTester.tester(in3, "tan", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.tan(f);
@@ -912,6 +934,7 @@ public abstract class FloatMatrixTest
         mfm.tanh();
         MathTester.tester(in3, "tanh", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.tanh(f);
@@ -921,6 +944,7 @@ public abstract class FloatMatrixTest
         mfm.toDegrees();
         MathTester.tester(in3, "toDegrees", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.toDegrees(f);
@@ -930,6 +954,7 @@ public abstract class FloatMatrixTest
         mfm.toRadians();
         MathTester.tester(in3, "toRadians", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) Math.toRadians(f);
@@ -939,6 +964,7 @@ public abstract class FloatMatrixTest
         mfm.inv();
         MathTester.tester(in3, "inv", mfm.getValuesSI(), 0.001, new FloatToFloat()
         {
+            @Override
             public float function(float f)
             {
                 return (float) (1.0 / f);
@@ -974,6 +1000,7 @@ public abstract class FloatMatrixTest
             final float myFactor = factor;
             MathTester.tester(in3, "multiply(" + factor + ")", mfm.getValuesSI(), 0.001, new FloatToFloat()
             {
+                @Override
                 public float function(final float f)
                 {
                     return myFactor * f;
@@ -987,6 +1014,7 @@ public abstract class FloatMatrixTest
             final float myDivisor = divisor;
             MathTester.tester(in3, "divide(" + divisor + ")", mfm.getValuesSI(), 0.1, new FloatToFloat()
             {
+                @Override
                 public float function(final float f)
                 {
                     return f / myDivisor;

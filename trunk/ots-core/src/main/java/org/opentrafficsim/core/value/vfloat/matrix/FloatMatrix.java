@@ -154,6 +154,15 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 return new DenseFloatMatrix2D(rows, columns);
             }
 
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatMatrix.Abs.Dense<U> copy()
+            {
+                return this;
+            }
+
         }
 
         /**
@@ -217,6 +226,15 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
+            }
+
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatMatrix.Abs.Sparse<U> copy()
+            {
+                return this;
             }
         }
 
@@ -311,6 +329,15 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 return new SparseFloatMatrix2D(rows, columns);
             }
 
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatMatrix.Rel.Dense<U> copy()
+            {
+                return this;
+            }
+
         }
 
         /**
@@ -376,6 +403,15 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 return new SparseFloatMatrix2D(rows, columns);
             }
 
+            /**
+             * @see org.opentrafficsim.core.value.Value#copy()
+             */
+            @Override
+            public FloatMatrix.Rel.Sparse<U> copy()
+            {
+                return this;
+            }
+
         }
 
         /**
@@ -388,6 +424,14 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         }
 
     }
+
+    /**
+     * Create a mutable version of this FloatMatrix. <br />
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * @return MutableFloatMatrix; mutable version of this FloatMatrix
+     */
+    public abstract MutableFloatMatrix<U> mutable();
 
     /**
      * Import the values and convert them into SI units.
@@ -578,35 +622,6 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             }
             throw new ValueException(exception.getMessage()); // probably Matrix must be square
         }
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        // unequal if object is of a different type.
-        if (!(obj instanceof FloatMatrix<?>))
-        {
-            return false;
-        }
-        FloatMatrix<?> fv = (FloatMatrix<?>) obj;
-
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
-        if (!this.getUnit().getStandardUnit().equals(fv.getUnit().getStandardUnit()))
-        {
-            return false;
-        }
-
-        // unequal if one is absolute and the other is relative
-        if (this.isAbsolute() != fv.isAbsolute() || this.isRelative() != fv.isRelative())
-        {
-            return false;
-        }
-
-        // Colt's equals also tests the size of the vector
-        return this.matrixSI.equals(fv.matrixSI);
     }
 
     /**
@@ -849,20 +864,44 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Create a mutable version of this FloatMatrix. <br />
-     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
-     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
-     * @return MutableFloatMatrix; mutable version of this FloatMatrix
-     */
-    public abstract MutableFloatMatrix<U> mutable();
-
-    /**
-     * @see org.opentrafficsim.core.value.Value#copy()
+     * @see java.lang.Object#hashCode()
      */
     @Override
-    public FloatMatrix<U> copy()
+    public int hashCode()
     {
-        return this; // That was easy!
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.matrixSI.hashCode();
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof FloatMatrix))
+            return false;
+        FloatMatrix<?> other = (FloatMatrix<?>) obj;
+        // unequal if one is absolute and the other is relative
+        if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
+        {
+            return false;
+        }
+        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
+        {
+            return false;
+        }
+        // Colt's equals also tests the size of the vector
+        if (!this.matrixSI.equals(other.matrixSI))
+            return false;
+        return true;
     }
 
 }
