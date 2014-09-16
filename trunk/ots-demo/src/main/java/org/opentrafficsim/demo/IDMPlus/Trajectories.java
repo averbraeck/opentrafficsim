@@ -50,8 +50,16 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
  * @version Aug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Trajectories
+public final class Trajectories
 {
+    /**
+     * This class should never be instantiated.
+     */
+    private Trajectories()
+    {
+        // Prevent instantiation of this class
+    }
+
     /**
      * Main for stand alone running.
      * @param args String[]; the program arguments (not used)
@@ -119,7 +127,9 @@ public class Trajectories
                     }
                     Collection<Car> leaders = new ArrayList<Car>();
                     if (carIndex < cars.size() - 1)
+                    {
                         leaders.add(cars.get(carIndex + 1));
+                    }
                     if (thisTick >= 300 && thisTick < 500)
                     {
                         // Add a stationary car at 4000m to simulate an opening bridge

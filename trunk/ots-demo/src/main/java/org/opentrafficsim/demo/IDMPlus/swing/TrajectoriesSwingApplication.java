@@ -57,8 +57,8 @@ public class TrajectoriesSwingApplication extends DSOLApplication
      * @param title
      * @param panel
      */
-    public TrajectoriesSwingApplication(String title,
-            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    public TrajectoriesSwingApplication(final String title,
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -69,7 +69,7 @@ public class TrajectoriesSwingApplication extends DSOLApplication
      * @throws RemoteException
      */
     @SuppressWarnings("unused")
-    public static void main(String[] args) throws SimRuntimeException, RemoteException
+    public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         TrajectoriesModel model = new TrajectoriesModel();
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();

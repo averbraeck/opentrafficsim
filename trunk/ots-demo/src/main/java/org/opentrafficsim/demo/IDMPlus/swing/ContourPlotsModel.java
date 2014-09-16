@@ -67,31 +67,31 @@ public class ContourPlotsModel implements OTSModelInterface
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** the simulator */
+    /** the simulator. */
     private OTSDEVSSimulator simulator;
 
-    /** the headway (inter-vehicle time) */
+    /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
 
-    /** number of cars created */
+    /** number of cars created. */
     private int carsCreated = 0;
 
-    /** the car following model, e.g. IDM Plus */
+    /** the car following model, e.g. IDM Plus. */
     protected CarFollowingModel carFollowingModel;
 
-    /** cars in the model */
+    /** cars in the model. */
     private ArrayList<Car> cars = new ArrayList<Car>();
 
-    /** minimum distance */
+    /** minimum distance. */
     private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
 
-    /** maximum distance */
+    /** maximum distance. */
     private DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
 
-    /** the speed limit */
+    /** the speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-    /** the contour plots */
+    /** the contour plots. */
     private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
 
     /**
@@ -99,7 +99,7 @@ public class ContourPlotsModel implements OTSModelInterface
      */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulator) _simulator;
@@ -128,7 +128,9 @@ public class ContourPlotsModel implements OTSModelInterface
     protected void addToContourPlots(final Car car)
     {
         for (ContourPlot contourPlot : this.contourPlots)
+        {
             contourPlot.addData(car);
+        }
     }
 
     /**
@@ -137,7 +139,9 @@ public class ContourPlotsModel implements OTSModelInterface
     protected void drawGraphs()
     {
         for (ContourPlot contourPlot : this.contourPlots)
+        {
             contourPlot.reGraph();
+        }
     }
 
     /**
@@ -195,7 +199,7 @@ public class ContourPlotsModel implements OTSModelInterface
         return this.maximumDistance;
     }
 
-    /** Inner class IDMCar */
+    /** Inner class IDMCar. */
     protected class IDMCar extends Car
     {
         /**
@@ -236,8 +240,9 @@ public class ContourPlotsModel implements OTSModelInterface
             Collection<Car> leaders = new ArrayList<Car>();
             int carIndex = ContourPlotsModel.this.cars.indexOf(this);
             if (carIndex < ContourPlotsModel.this.cars.size() - 1)
+            {
                 leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
-
+            }
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getValueSI() >= 300 && now.getValueSI() < 500)
             {

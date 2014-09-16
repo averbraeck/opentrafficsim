@@ -54,31 +54,31 @@ public class TrajectoriesModel implements OTSModelInterface
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** the simulator */
+    /** the simulator. */
     private OTSDEVSSimulator simulator;
 
-    /** the headway (inter-vehicle time) */
+    /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
 
-    /** number of cars created */
+    /** number of cars created. */
     private int carsCreated = 0;
 
-    /** the car following model, e.g. IDM Plus */
+    /** the car following model, e.g. IDM Plus. */
     protected CarFollowingModel carFollowingModel;
 
-    /** cars in the model */
+    /** cars in the model. */
     private ArrayList<Car> cars = new ArrayList<Car>();
 
-    /** minimum distance */
+    /** minimum distance. */
     private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
 
-    /** maximum distance */
+    /** maximum distance. */
     private DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
 
-    /** the speed limit */
+    /** the speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-    /** the trajectory plot */
+    /** the trajectory plot. */
     private TrajectoryPlot trajectoryPlot;
 
     /**
@@ -86,7 +86,7 @@ public class TrajectoriesModel implements OTSModelInterface
      */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulator) _simulator;
@@ -140,7 +140,7 @@ public class TrajectoriesModel implements OTSModelInterface
         return this.simulator;
     }
 
-    /** Inner class IDMCar */
+    /** Inner class IDMCar. */
     protected class IDMCar extends Car
     {
         /**
@@ -181,8 +181,9 @@ public class TrajectoriesModel implements OTSModelInterface
             Collection<Car> leaders = new ArrayList<Car>();
             int carIndex = TrajectoriesModel.this.cars.indexOf(this);
             if (carIndex < TrajectoriesModel.this.cars.size() - 1)
+            {
                 leaders.add(TrajectoriesModel.this.cars.get(carIndex + 1));
-
+            }
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getValueSI() >= 300 && now.getValueSI() < 500)
             {
@@ -246,7 +247,7 @@ public class TrajectoriesModel implements OTSModelInterface
     }
 
     /**
-     * @param trajectoryPlot 
+     * @param trajectoryPlot
      */
     public void setTrajectories(TrajectoryPlot trajectoryPlot)
     {

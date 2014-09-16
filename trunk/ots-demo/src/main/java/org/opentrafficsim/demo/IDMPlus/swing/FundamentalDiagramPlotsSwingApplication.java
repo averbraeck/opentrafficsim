@@ -60,16 +60,16 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
      * @param title
      * @param panel
      */
-    public FundamentalDiagramPlotsSwingApplication(String title,
-            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    public FundamentalDiagramPlotsSwingApplication(final String title,
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
 
-    /** the car following model, e.g. IDM Plus */
+    /** the car following model, e.g. IDM Plus. */
     protected CarFollowingModel carFollowingModel;
 
-    /** the fundamental diagram plots */
+    /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagramPlots = new ArrayList<FundamentalDiagram>();
 
     /**
@@ -96,7 +96,8 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
                                 TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
+                        simulator);
         makePlots(model, panel);
         addInfoTab(panel);
         new FundamentalDiagramPlotsSwingApplication("IDM-plus model - Fundamental Diagrams", panel);
@@ -114,7 +115,8 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
         panel.getTabbedPane().addTab("statistics", charts);
         for (int plotNumber = 0; plotNumber < 10; plotNumber++)
         {
-            DoubleScalar.Abs<LengthUnit> detectorLocation = new DoubleScalar.Abs<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
+            DoubleScalar.Abs<LengthUnit> detectorLocation =
+                    new DoubleScalar.Abs<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
             FundamentalDiagram fd =
                     new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
                             new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
