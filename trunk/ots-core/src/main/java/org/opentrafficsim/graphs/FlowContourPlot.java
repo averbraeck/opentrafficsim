@@ -67,9 +67,7 @@ public class FlowContourPlot extends ContourPlot
         return "flow";
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourPlot#extendXRange(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void extendXRange(final DoubleScalar<?> newUpperLimit)
     {

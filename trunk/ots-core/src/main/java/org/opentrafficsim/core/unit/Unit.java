@@ -11,9 +11,9 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 import org.reflections.Reflections;
 
 /**
- * All units are internally <u>stored</u> relative to a standard unit with conversion factor. This means that e.g., a
+ * All units are internally <i>stored</i> relative to a standard unit with conversion factor. This means that e.g., a
  * meter is stored with conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This means
- * that if we want to display a meter as kilometers, we have to <u>divide</u> by the conversion factor.
+ * that if we want to display a meter as kilometers, we have to <i>divide</i> by the conversion factor.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
@@ -62,14 +62,14 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     private SICoefficients siCoefficients;
 
     /** static map of all defined coefficient strings, to avoid double creation and allow lookup. */
-    private static Map<String, SICoefficients> SI_COEFFICIENTS = new HashMap<String, SICoefficients>();
+    private static final Map<String, SICoefficients> SI_COEFFICIENTS = new HashMap<String, SICoefficients>();
 
     /** static map of all defined coefficient strings, mapped to the existing units. */
-    private static Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS =
+    private static final Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS =
             new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
 
     /** a static map of all defined units. */
-    private static Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
+    private static final Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
 
     /** localization information. */
     private static Localization localization = new Localization("localeunit");
@@ -125,7 +125,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
-     * @throws UnitException
+     * @throws UnitException when unit cannot be added to the list of units.
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
             final double conversionFactorToReferenceUnit) throws UnitException
@@ -170,7 +170,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             {
                 throw new Error(ue);
             }
-            // TODO complain wherever we can
+            // TODO: complain wherever we can
         }
     }
 
@@ -211,7 +211,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             {
                 throw new Error(ue);
             }
-            // TODO complain wherever we can
+            // TODO: complain wherever we can
         }
     }
 
@@ -219,6 +219,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * Add a unit to the overview collection of existing units, and resolve the coefficients.
      * @param unit the unit to add. It will be stored in a set belonging to the simple class name String, e.g.
      *            "ForceUnit".
+     * @throws UnitException when parsing or normalizing the SI coefficient string fails.
      */
     private void addUnit(final Unit<U> unit) throws UnitException
     {
@@ -264,6 +265,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
 
     /**
      * Return a set of defined units for a given unit type.
+     * @param <V> the unit type to use in this method.
      * @param unitClass the class for which the units are requested, e.g. ForceUnit.class
      * @return the set of defined units belonging to the provided class. The empty set will be returned in case the unit
      *         type does not have any units.

@@ -68,9 +68,7 @@ public class DensityContourPlot extends ContourPlot
         return "density";
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourDataset#extendXRange(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void extendXRange(final DoubleScalar<?> newUpperLimit)
     {

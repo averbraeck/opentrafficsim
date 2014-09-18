@@ -71,9 +71,7 @@ public class SpeedContourPlot extends ContourPlot
         return "speed";
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourPlot#extendXRange(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
-     */
+    /** {@inheritDoc} */
     @Override
     public void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
