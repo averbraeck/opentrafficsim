@@ -41,7 +41,7 @@ public class DoubleMatrixSparseTest extends DoubleMatrixTest
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(double[][], org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(double[][] in, U u) throws ValueException
+    protected final <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(final double[][] in, final U u) throws ValueException
     {
         return new DoubleMatrix.Abs.Sparse<U>(in, u);
     }
@@ -50,7 +50,7 @@ public class DoubleMatrixSparseTest extends DoubleMatrixTest
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs[][])
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(DoubleScalar.Abs<U>[][] in)
+    protected final <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(final DoubleScalar.Abs<U>[][] in)
             throws ValueException
     {
         return new DoubleMatrix.Abs.Sparse<U>(in);
@@ -61,7 +61,7 @@ public class DoubleMatrixSparseTest extends DoubleMatrixTest
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(double[][], org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(double[][] in, U u) throws ValueException
+    protected final <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(final double[][] in, final U u) throws ValueException
     {
         return new DoubleMatrix.Rel.Sparse<U>(in, u);
     }
@@ -70,7 +70,7 @@ public class DoubleMatrixSparseTest extends DoubleMatrixTest
      * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel[][])
      */
     @Override
-    protected <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(DoubleScalar.Rel<U>[][] in)
+    protected final <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(final DoubleScalar.Rel<U>[][] in)
             throws ValueException
     {
         return new DoubleMatrix.Rel.Sparse<U>(in);

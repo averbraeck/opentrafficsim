@@ -57,10 +57,10 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 public abstract class DoubleMatrixTest
 {
     /**
-     * Test DoubleMatrixAbs and DoubleMatrixRel creators that take a double[][] and a Unit as arguments
+     * Test DoubleMatrixAbs and DoubleMatrixRel creators that take a double[][] and a Unit as arguments.
      */
     @Test
-    public void doubleMatrixTwoArgs()
+    public final void doubleMatrixTwoArgs()
     {
         doubleMatrixTwoArgs(true); // test absolute version
         doubleMatrixTwoArgs(false); // test relative version
@@ -74,14 +74,16 @@ public abstract class DoubleMatrixTest
      * @param expectAbsolute boolean; if true; the DoubleMatrix should be Absolute; otherwise it should be Relative
      * @param expectDense boolean; if true; the DoubleMatrix should be Dense; otherwise it should be Sparse
      */
-    private static void checkContentsAndType(DoubleMatrix<?> fm, double[][] reference, double precision,
-            boolean expectAbsolute, boolean expectDense)
+    private static void checkContentsAndType(final DoubleMatrix<?> fm, final double[][] reference, final double precision,
+            final boolean expectAbsolute, final boolean expectDense)
     {
         assertTrue("DoubleMatrix argument should not be null", null != fm);
         assertEquals("Number of rows should match", fm.rows(), reference.length);
         assertEquals("Number of columns should match", fm.columns(), reference[0].length);
         for (int row = 0; row < fm.rows(); row++)
+        {
             for (int column = 0; column < fm.columns(); column++)
+            {
                 try
                 {
                     assertEquals("Value should match", reference[row][column], fm.getInUnit(row, column), precision);
@@ -90,14 +92,24 @@ public abstract class DoubleMatrixTest
                 {
                     fail("Unexpected exception");
                 }
+            }
+        }
         if (expectAbsolute)
+        {
             assertTrue("DoubleMatrix argument should be Absolute", fm instanceof Absolute);
+        }
         else
+        {
             assertTrue("DoubleMatrix argument should be Relative", fm instanceof Relative);
+        }
         if (expectDense)
+        {
             assertTrue("DoubleMatrix argument should be Dense", fm instanceof DenseData);
+        }
         else
+        {
             assertTrue("DoubleMatrix argument should be Sparse", fm instanceof SparseData);
+        }
         MutableDoubleMatrix<?> mutableVersion = fm.mutable();
         try
         {
@@ -109,7 +121,9 @@ public abstract class DoubleMatrixTest
             fail("Unexpected exception");
         }
         for (int row = 0; row < fm.rows(); row++)
+        {
             for (int column = 0; column < fm.columns(); column++)
+            {
                 try
                 {
                     assertEquals("Value should still match", reference[row][column], fm.getInUnit(row, column),
@@ -119,6 +133,8 @@ public abstract class DoubleMatrixTest
                 {
                     fail("Unexpected exception");
                 }
+            }
+        }
         if (fm instanceof MutableDoubleMatrix)
         {
             MutableDoubleMatrix<?> mfm = (MutableDoubleMatrix<?>) fm;
@@ -138,11 +154,11 @@ public abstract class DoubleMatrixTest
     }
 
     /**
-     * Check that the four creators of MutableDoubleMatrix work
+     * Check that the four creators of MutableDoubleMatrix work.
      */
     @SuppressWarnings({"static-method", "unused"})
     @Test
-    public void mutableDoubleMatrixCreators()
+    public final void mutableDoubleMatrixCreators()
     {
         double[][] data = buildArray(5, 7, false, 0);
         try
@@ -327,7 +343,7 @@ public abstract class DoubleMatrixTest
      * @param offset Double; number to add to each entry
      * @return double[][]; 2D array of double
      */
-    private static double[][] buildArray(int rows, int cols, boolean badRow, double offset)
+    private static double[][] buildArray(final int rows, final int cols, final boolean badRow, final double offset)
     {
         double[][] result = new double[rows][];
         int badRowIndex = badRow ? rows - 1 : -1;
@@ -335,7 +351,9 @@ public abstract class DoubleMatrixTest
         {
             result[row] = new double[row == badRowIndex ? cols + 1 : cols];
             for (int col = 0; col < result[row].length; col++)
+            {
                 result[row][col] = row * 1000 + col + offset;
+            }
         }
         return result;
     }
@@ -343,7 +361,7 @@ public abstract class DoubleMatrixTest
     /**
      * Test the DoubleMatrixAbs that takes a double[][] and a Unit as arguments and some methods.
      */
-    private void doubleMatrixTwoArgs(Boolean absolute)
+    private void doubleMatrixTwoArgs(final Boolean absolute)
     {
         double[][] in = buildArray(12, 3, false, 0);
         LengthUnit u = LengthUnit.FOOT;
@@ -352,6 +370,7 @@ public abstract class DoubleMatrixTest
         assertEquals("DoubleMatrix should have 3 columns", 3, dm.columns());
         double[][] out = dm.getValuesInUnit();
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
             {
                 assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j], out[i][j],
@@ -370,6 +389,7 @@ public abstract class DoubleMatrixTest
                     fail("Get should not throw exceptions for legal values of the index");
                 }
             }
+        }
         String output = dm.toString(LengthUnit.MILLIMETER);
         String[] lines = output.split("[\n]");
         assertEquals("Number of lines should be number of rows + 1", in.length + 1, lines.length);
@@ -405,16 +425,24 @@ public abstract class DoubleMatrixTest
         assertTrue("valuesInUnit should not be null", null != valuesInUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInUnit.length);
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
+            {
                 assertEquals("Contents of valuesInUnit should be equal to input", in[i][j], valuesInUnit[i][j], 0.001);
+            }
+        }
         LengthUnit outputUnit = LengthUnit.DEKAMETER;
         double[][] valuesInOtherUnit = dm.getValuesInUnit(outputUnit);
         assertTrue("valuesInUnit should not be null", null != valuesInOtherUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInOtherUnit.length);
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
+            {
                 assertEquals("Contents of valuesInUnit should be equal to input", in[i][j] * (12 * 0.0254) / 10,
                         valuesInOtherUnit[i][j], 0.0001);
+            }
+        }
         try
         {
             dm.getInUnit(-1, 0);
@@ -564,9 +592,13 @@ public abstract class DoubleMatrixTest
         assertTrue("getValuesSI does not return null", null != out);
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
+            {
                 assertEquals("Values in DoubleMatrix should be equivalent values in meters", in[i][j], out[i][j]
                         / (12 * 0.0254), 0.001);
+            }
+        }
         LengthUnit uOut = dm.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
         DoubleMatrix<LengthUnit> copy = (DoubleMatrix<LengthUnit>) dm.copy();
@@ -574,14 +606,22 @@ public abstract class DoubleMatrixTest
         assertEquals("copy should have 3 columns", 3, copy.columns());
         double[][] copyOut = copy.getValuesSI();
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
+            {
                 assertEquals("Values in copy of DoubleMatrix should be equivalent values in meters", in[i][j],
                         copyOut[i][j] / (12 * 0.0254), 0.001);
+            }
+        }
         copyOut = dm.getValuesInUnit();
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
+            {
                 assertEquals("Values in copy of DoubleMatrix in unit should be equal to input values", in[i][j],
                         copyOut[i][j], 0.001);
+            }
+        }
         MutableDoubleMatrix<LengthUnit> mcopy = copy.mutable();
         try
         {
@@ -609,16 +649,24 @@ public abstract class DoubleMatrixTest
         }
         double sum = 0;
         for (int i = 0; i < in.length; i++)
+        {
             for (int j = 0; j < in[i].length; j++)
+            {
                 sum += in[i][j];
+            }
+        }
         sum *= (12 * 0.0254); // convert to meters
         assertEquals("zsum should be sum of the values", sum, dm.zSum(), 0.01);
         try
         {
             mfm.normalize();
             for (int i = 0; i < in.length; i++)
+            {
                 for (int j = 0; j < in[i].length; j++)
+                {
                     assertEquals("Unexpected normalized value", in[i][j] * (12 * 0.0254) / sum, mfm.getSI(i, j), 0.0001);
+                }
+            }
         }
         catch (ValueException exception)
         {
@@ -682,8 +730,12 @@ public abstract class DoubleMatrixTest
             {
                 fmr = createDoubleMatrix(values, dm.getUnit(), false);
                 for (int i = 0; i < in2.length; i++)
+                {
                     for (int j = 0; j < in2[i].length; j++)
+                    {
                         assertEquals("Values should be equal", dm.getSI(i, j), fmr.getSI(i, j), 0.00001);
+                    }
+                }
             }
             catch (ValueException exception)
             {
@@ -711,7 +763,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.abs(f);
             }
@@ -721,7 +773,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "acos", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.acos(f);
             }
@@ -731,7 +783,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "asin", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.asin(f);
             }
@@ -741,7 +793,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "atan", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.atan(f);
             }
@@ -751,7 +803,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "cbrt", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.cbrt(f);
             }
@@ -761,7 +813,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "ceil", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.ceil(f);
             }
@@ -771,7 +823,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "cos", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.cos(f);
             }
@@ -781,7 +833,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "cosh", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.cosh(f);
             }
@@ -791,7 +843,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "exp", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.exp(f);
             }
@@ -801,7 +853,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "expm1", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.expm1(f);
             }
@@ -811,7 +863,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "floor", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.floor(f);
             }
@@ -821,7 +873,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "log", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.log(f);
             }
@@ -831,7 +883,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "log10", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.log10(f);
             }
@@ -841,7 +893,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "log1p", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.log1p(f);
             }
@@ -865,7 +917,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "rint", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.rint(f);
             }
@@ -875,7 +927,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "round", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.round(f);
             }
@@ -885,7 +937,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "signum", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.signum(f);
             }
@@ -895,7 +947,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "sin", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.sin(f);
             }
@@ -905,7 +957,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "sinh", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.sinh(f);
             }
@@ -915,7 +967,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "sqrt", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.sqrt(f);
             }
@@ -925,7 +977,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "tan", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.tan(f);
             }
@@ -935,7 +987,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "tanh", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.tanh(f);
             }
@@ -945,7 +997,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "toDegrees", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.toDegrees(f);
             }
@@ -955,7 +1007,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "toRadians", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.toRadians(f);
             }
@@ -965,7 +1017,7 @@ public abstract class DoubleMatrixTest
         MathTester.tester(in3, "inv", mfm.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return 1.0 / f;
             }
@@ -1033,24 +1085,34 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm1 instanceof DenseData)
+                {
                     plus =
                             MutableDoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
+                }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
+                    {
                         plus =
                                 MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
+                    }
                     else if (fm2 instanceof SparseData)
+                    {
                         plus =
                                 MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    }
                     else
+                    {
                         fail("Error in test; unexpected type");
+                    }
                 }
                 else
+                {
                     fail("Error in test; unexpected type");
+                }
                 fail("Adding DoubleMatrices of unequal size should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -1060,24 +1122,34 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm1 instanceof DenseData)
+                {
                     plus =
                             MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
+                }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
+                    {
                         plus =
                                 MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
+                    }
                     else if (fm2 instanceof SparseData)
+                    {
                         plus =
                                 MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    }
                     else
+                    {
                         fail("Error in test; unexpected type");
+                    }
                 }
                 else
+                {
                     fail("Error in test; unexpected type");
+                }
                 fail("Subtracting DoubleMatrices of unequal size should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -1088,24 +1160,34 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm1 instanceof DenseData)
+                {
                     plus =
                             MutableDoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
+                }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
+                    {
                         plus =
                                 MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
+                    }
                     else if (fm2 instanceof SparseData)
+                    {
                         plus =
                                 MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    }
                     else
+                    {
                         fail("Error in test; unexpected type");
+                    }
                 }
                 else
+                {
                     fail("Error in test; unexpected type");
+                }
                 fail("Adding DoubleMatrices of unequal size should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -1115,24 +1197,34 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm1 instanceof DenseData)
+                {
                     minus =
                             MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
+                }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
+                    {
                         minus =
                                 MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
+                    }
                     else if (fm2 instanceof SparseData)
+                    {
                         minus =
                                 MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
+                    }
                     else
+                    {
                         fail("Error in test; unexpected type");
+                    }
                 }
                 else
+                {
                     fail("Error in test; unexpected type");
+                }
                 fail("Subtracting DoubleMatrices of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -1173,10 +1265,14 @@ public abstract class DoubleMatrixTest
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
+                    {
                         fail("Error in test; unexpected type");
+                    }
                 }
                 else
+                {
                     fail("Error in test; unexpected type");
+                }
             }
             catch (ValueException exception)
             {
@@ -1191,13 +1287,21 @@ public abstract class DoubleMatrixTest
             try
             {
                 for (int i = 0; i < in3.length; i++)
+                {
                     for (int j = 0; j < in[i].length; j++)
+                    {
                         assertEquals("value of element should be sum of contributing elements", in3[i][j] + in5[i][j],
                                 plus.getSI(i, j), 0.00001);
+                    }
+                }
                 for (int i = 0; i < in3.length; i++)
+                {
                     for (int j = 0; j < in[i].length; j++)
+                    {
                         assertEquals("value of element should be sum of contributing elements", in3[i][j] - in5[i][j],
                                 minus.getSI(i, j), 0.00001);
+                    }
+                }
             }
             catch (ValueException exception)
             {
@@ -1216,7 +1320,9 @@ public abstract class DoubleMatrixTest
                 assertTrue("result should be Sparse", minus instanceof SparseData);
             }
             else
+            {
                 fail("fm1 neither Dense nor Sparse");
+            }
 
         }
         else
@@ -1229,15 +1335,21 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm1 instanceof DenseData)
+                {
                     multiply =
                             MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
+                }
                 else if (fm1 instanceof SparseData)
+                {
                     multiply =
                             MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
+                }
                 else
+                {
                     fail("Error in test; unanticipated type");
+                }
                 fail("Multiplying DoubleMatrices of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -1249,15 +1361,21 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm1 instanceof DenseData)
+                {
                     multiply =
                             MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
+                }
                 else if (fm1 instanceof SparseData)
+                {
                     multiply =
                             MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
+                }
                 else
+                {
                     fail("Error in test; unanticipated type");
+                }
             }
             catch (ValueException exception)
             {
@@ -1269,9 +1387,13 @@ public abstract class DoubleMatrixTest
             try
             {
                 for (int i = 0; i < in3.length; i++)
+                {
                     for (int j = 0; j < in3[i].length; j++)
+                    {
                         assertEquals("value of element should be sum of contributing elements", in3[i][j] * in5[i][j],
                                 multiply.getSI(i, j), 0.00001);
+                    }
+                }
             }
             catch (ValueException exception)
             {
@@ -1287,7 +1409,9 @@ public abstract class DoubleMatrixTest
                 assertTrue("result should be Sparse", multiply instanceof SparseData);
             }
             else
+            {
                 fail("Error in test; failed to account for some combination of dens and sparse");
+            }
             // System.out.println("Result of multiply has unit " + multiply);
             assertEquals("Result of multiplication should be in square meters", "m2", multiply.getUnit()
                     .getSICoefficientsString());
@@ -1296,15 +1420,21 @@ public abstract class DoubleMatrixTest
             try
             {
                 if (fm2 instanceof DenseData)
+                {
                     multiplyReverse =
                             MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm2,
                                     (DoubleMatrix.Rel.Dense<LengthUnit>) fm1);
+                }
                 else if (fm2 instanceof SparseData)
+                {
                     multiplyReverse =
                             MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm2,
                                     (DoubleMatrix.Rel.Sparse<LengthUnit>) fm1);
+                }
                 else
+                {
                     fail("Error in test; unanticipated type");
+                }
             }
             catch (ValueException exception)
             {
@@ -1316,7 +1446,7 @@ public abstract class DoubleMatrixTest
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
             try
             {
-                double in6[][] = {{1, 2, 3}, {4, 5, 6}};
+                double[][] in6 = {{1, 2, 3}, {4, 5, 6}};
                 MutableDoubleMatrix<LengthUnit> original =
                         safeCreateDoubleMatrix(in6, LengthUnit.METER, absolute).mutable();
                 DoubleMatrix<LengthUnit> duplicate = original.copy();
@@ -1336,16 +1466,24 @@ public abstract class DoubleMatrixTest
         {
             MutableDoubleMatrix<LengthUnit> fm2 = null;
             if (dm instanceof Absolute)
+            {
                 fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Abs.Dense<LengthUnit>) dm);
+            }
             else
+            {
                 fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Rel.Dense<LengthUnit>) dm);
+            }
             assertTrue("dense version is  equal to sparse version", dm.equals(fm2));
             assertEquals("unit should be same", dm.getUnit(), fm2.getUnit());
             try
             {
                 for (int i = 0; i < dm.rows(); i++)
+                {
                     for (int j = 0; j < dm.columns(); j++)
+                    {
                         assertEquals("Values should be equal", dm.getSI(i, j), fm2.getSI(i, j), 0.0001);
+                    }
+                }
             }
             catch (ValueException exception)
             {
@@ -1357,16 +1495,24 @@ public abstract class DoubleMatrixTest
         {
             MutableDoubleMatrix<LengthUnit> fm2 = null;
             if (dm instanceof Absolute)
+            {
                 fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Abs.Sparse<LengthUnit>) dm);
+            }
             else
+            {
                 fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Rel.Sparse<LengthUnit>) dm);
+            }
             assertTrue("dense version is equal to sparse version", dm.equals(fm2));
             assertEquals("unit should be same", dm.getUnit(), fm2.getUnit());
             try
             {
                 for (int i = 0; i < dm.rows(); i++)
+                {
                     for (int j = 0; j < dm.columns(); j++)
+                    {
                         assertEquals("Values should be equal", dm.getSI(i, j), fm2.getSI(i, j), 0.0001);
+                    }
+                }
             }
             catch (ValueException exception)
             {
@@ -1411,9 +1557,13 @@ public abstract class DoubleMatrixTest
         try
         {
             for (int i = 0; i < left.length; i++)
+            {
                 for (int j = 0; j < left[0].length; j++)
+                {
                     assertEquals("Values should now be sum of input values", left[i][j] + right[i][j],
                             leftMatrix.getSI(i, j), 0.001);
+                }
+            }
         }
         catch (ValueException exception)
         {
@@ -1455,9 +1605,13 @@ public abstract class DoubleMatrixTest
         try
         {
             for (int i = 0; i < left.length; i++)
+            {
                 for (int j = 0; j < left[0].length; j++)
+                {
                     assertEquals("Values should now be difference of input values", left[i][j] - right[i][j],
                             leftMatrix.getSI(i, j), 0.001);
+                }
+            }
         }
         catch (ValueException exception)
         {
@@ -1542,10 +1696,11 @@ public abstract class DoubleMatrixTest
          * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the
          *            corresponding value in resultValues
          */
-        public static void tester(final double[][] inputValues, String operation, final double[][] resultValues,
+        public static void tester(final double[][] inputValues, final String operation, final double[][] resultValues,
                 final double precision, final DoubleToDouble function)
         {
             for (int i = 0; i < inputValues.length; i++)
+            {
                 for (int j = 0; j < inputValues[i].length; j++)
                 {
                     double result = function.function(inputValues[i][j]);
@@ -1555,10 +1710,11 @@ public abstract class DoubleMatrixTest
                     // System.out.println(description);
                     assertEquals(description, result, resultValues[i][j], precision);
                 }
+            }
         }
 
         /**
-         * Function that takes a double value and returns a double value
+         * Function that takes a double value and returns a double value.
          * @param in double value
          * @return double value
          */
@@ -1566,20 +1722,20 @@ public abstract class DoubleMatrixTest
     }
 
     /**
-     * Test DoubleMatrixAbs and DoubleMatrixRel creators that take an array of DoubleScalar as argument
+     * Test DoubleMatrixAbs and DoubleMatrixRel creators that take an array of DoubleScalar as argument.
      */
     @Test
-    public void doubleMatrixOneArg()
+    public final void doubleMatrixOneArg()
     {
         doubleMatrixOneArg(true); // test absolute version
         doubleMatrixOneArg(false); // test relative version
     }
 
     /**
-     * Test the DoubleMatrixAbs and DoubleMatrixRel that takes a DoubleScalar*<U>[] as argument
+     * Test the DoubleMatrixAbs and DoubleMatrixRel that takes a DoubleScalar*<U>[] as argument.
      */
     @SuppressWarnings("unchecked")
-    private void doubleMatrixOneArg(Boolean absolute)
+    private void doubleMatrixOneArg(final Boolean absolute)
     {
         DoubleMatrix<LengthUnit> fm = null;
         DoubleScalar.Abs<LengthUnit>[][] inAbs = new DoubleScalar.Abs[0][0];
@@ -1587,9 +1743,13 @@ public abstract class DoubleMatrixTest
         try
         {
             if (absolute)
+            {
                 fm = createDoubleMatrixAbs(inAbs);
+            }
             else
+            {
                 fm = createDoubleMatrixRel(inRel);
+            }
             fail("Should have thrown an exception");
         }
         catch (ValueException ve)
@@ -1601,9 +1761,13 @@ public abstract class DoubleMatrixTest
         try
         {
             if (absolute)
+            {
                 fm = createDoubleMatrixAbs(inAbs);
+            }
             else
+            {
                 fm = createDoubleMatrixRel(inRel);
+            }
             fail("Should have thrown an exception");
         }
         catch (ValueException ve)
@@ -1615,9 +1779,13 @@ public abstract class DoubleMatrixTest
         try
         {
             if (absolute)
+            {
                 fm = createDoubleMatrixAbs(inAbs);
+            }
             else
+            {
                 fm = createDoubleMatrixRel(inRel);
+            }
             fail("Should have thrown an exception");
         }
         catch (ValueException ve)
@@ -1631,9 +1799,13 @@ public abstract class DoubleMatrixTest
         try
         {
             if (absolute)
+            {
                 fm = createDoubleMatrixAbs(inAbs);
+            }
             else
+            {
                 fm = createDoubleMatrixRel(inRel);
+            }
         }
         catch (ValueException exception)
         {
@@ -1653,7 +1825,9 @@ public abstract class DoubleMatrixTest
                 {
                     inv4[i] = new DoubleScalar.Abs[in4[i].length];
                     for (int j = 0; j < in4[i].length; j++)
+                    {
                         inv4[i][j] = new DoubleScalar.Abs<LengthUnit>(in4[i][j], LengthUnit.FOOT);
+                    }
                 }
                 fm = createDoubleMatrixAbs(inv4);
             }
@@ -1664,7 +1838,9 @@ public abstract class DoubleMatrixTest
                 {
                     inv4[i] = new DoubleScalar.Rel[in4[i].length];
                     for (int j = 0; j < in4[i].length; j++)
+                    {
                         inv4[i][j] = new DoubleScalar.Rel<LengthUnit>(in4[i][j], LengthUnit.FOOT);
+                    }
                 }
                 fm = createDoubleMatrixRel(inv4);
             }
@@ -1680,7 +1856,7 @@ public abstract class DoubleMatrixTest
      * Test adding and subtracting DoubleMatrixRel.
      */
     @Test
-    public void relRel()
+    public final void relRel()
     {
         double[][] in1 = buildArray(2, 4, false, 0);
         double[][] in2 = buildArray(2, 4, false, 0);
@@ -1700,13 +1876,19 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 sum = MutableDoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 sum =
                         MutableDoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -1718,22 +1900,32 @@ public abstract class DoubleMatrixTest
         assertEquals("Type of result should be type of inputs", u, sum.getUnit());
         double[][] sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the sum of the contributing elements", in1[i][j] + in2[i][j],
                         sumValues[i][j], 0.0001);
+            }
+        }
         MutableDoubleMatrix.Rel<MassUnit> difference = null;
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticiapted type");
+            }
         }
         catch (ValueException exception1)
         {
@@ -1745,9 +1937,13 @@ public abstract class DoubleMatrixTest
         assertEquals("Type of result should be type of inputs", u, difference.getUnit());
         double[][] differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
+            }
+        }
         double[][] in3 = buildArray(2, 3, false, 0);
         DoubleMatrix.Rel<MassUnit> fm3 = null;
         try
@@ -1761,13 +1957,19 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 sum = MutableDoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 sum =
                         MutableDoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm3);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             fail("Adding DoubleMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1777,13 +1979,19 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference = MutableDoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm3);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             fail("Subtracting DoubleMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1802,13 +2010,19 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 sum = MutableDoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 sum =
                         MutableDoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -1821,11 +2035,13 @@ public abstract class DoubleMatrixTest
         assertFalse("Type of result should be different of type of second input", u2 == sum.getUnit());
         sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
             {
                 assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i][j]
                         * 0.45359 + in2[i][j] * 0.028350, sumValues[i][j] * 0.45359, 0.001);
             }
+        }
         try
         {
             fm2 = createDoubleMatrixRel(in2, u2);
@@ -1837,13 +2053,19 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference = MutableDoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -1856,16 +2078,20 @@ public abstract class DoubleMatrixTest
         assertFalse("Type of result should be different of type of second input", u2 == difference.getUnit());
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
                         in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.001);
+            }
+        }
     }
 
     /**
      * Test adding, subtracting and multiplication of DoubleMatrixAbs.
      */
     @Test
-    public void absAbs()
+    public final void absAbs()
     {
         double[][] in1 = buildArray(2, 4, false, 0);
         double[][] in2 = buildArray(2, 4, false, 0);
@@ -1885,15 +2111,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception1)
         {
@@ -1905,9 +2137,13 @@ public abstract class DoubleMatrixTest
         assertEquals("Type of result should be type of inputs", u, difference.getUnit());
         double[][] differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
+            }
+        }
         double[][] in3 = buildArray(2, 3, false, 0);
         DoubleMatrix<MassUnit> fm3 = null;
         try
@@ -1921,15 +2157,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm3);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm3);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             fail("Subtracting DoubleMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1948,15 +2190,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -1969,21 +2217,31 @@ public abstract class DoubleMatrixTest
         assertFalse("Type of result should be different of type of second input", u2 == difference.getUnit());
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
                         in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.01);
+            }
+        }
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm2,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm1);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm2,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm1);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -1996,9 +2254,13 @@ public abstract class DoubleMatrixTest
         assertFalse("Type of result should be different of type of second input", u == difference.getUnit());
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[i].length; j++)
+            {
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
                         in2[i][j] * 0.028350 - in1[i][j] * 0.45359, differenceValues[i][j] * 0.028350, 0.02);
+            }
+        }
         LengthUnit u4 = LengthUnit.INCH;
         ForceUnit u5 = ForceUnit.POUND_FORCE;
         DoubleMatrix.Abs<LengthUnit> fm4 = null;
@@ -2017,15 +2279,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm4 instanceof DenseData)
+            {
                 product =
                         MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) fm4,
                                 (DoubleMatrix.Abs.Dense<ForceUnit>) fm5);
+            }
             else if (fm4 instanceof SparseData)
+            {
                 product =
                         MutableDoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) fm4,
                                 (DoubleMatrix.Abs.Sparse<ForceUnit>) fm5);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -2050,7 +2318,9 @@ public abstract class DoubleMatrixTest
         // System.out.println("matches: " + matches);
         assertTrue("Result is an EnergyUnit", matches.contains(resultUnit.getStandardUnit()));
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[i].length; j++)
+            {
                 try
                 {
                     assertEquals("Value in product should be product of contributing values",
@@ -2060,24 +2330,36 @@ public abstract class DoubleMatrixTest
                 {
                     fail("Unexpected ValueException");
                 }
+            }
+        }
         try
         {
             DoubleMatrix.Abs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double rhs[][] = {{1, 2, 3}, {4, 5, 6}};
+            double[][] rhs = {{1, 2, 3}, {4, 5, 6}};
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
+            {
                 result = MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+            }
             else if (lhs instanceof SparseData)
+            {
                 result = MutableDoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             assertTrue("Result should not be null", null != result);
             assertEquals("Result should have 2 rows", 2, result.rows());
             assertEquals("Result should have 3 columns", 3, result.columns());
             for (int row = 0; row < 2; row++)
+            {
                 for (int column = 0; column < 3; column++)
+                {
                     assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
                             .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+                }
+            }
         }
         catch (ValueException exception)
         {
@@ -2086,21 +2368,31 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Rel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double rhs[][] = {{1, 2, 3}, {4, 5, 6}};
+            double[][] rhs = {{1, 2, 3}, {4, 5, 6}};
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
+            {
                 result = MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+            }
             else if (lhs instanceof SparseData)
+            {
                 result = MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             assertTrue("Result should not be null", null != result);
             assertEquals("Result should have 2 rows", 2, result.rows());
             assertEquals("Result should have 3 columns", 3, result.columns());
             for (int row = 0; row < 2; row++)
+            {
                 for (int column = 0; column < 3; column++)
+                {
                     assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
                             .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+                }
+            }
         }
         catch (ValueException exception)
         {
@@ -2109,13 +2401,19 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Abs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            double[][] rhs = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
             if (lhs instanceof DenseData)
+            {
                 MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+            }
             else if (lhs instanceof SparseData)
+            {
                 MutableDoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             fail("Should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -2125,13 +2423,19 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Rel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double rhs[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            double[][] rhs = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
             if (lhs instanceof DenseData)
+            {
                 MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+            }
             else if (lhs instanceof SparseData)
+            {
                 MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
 
             fail("Should have thrown a ValueException");
         }
@@ -2143,10 +2447,10 @@ public abstract class DoubleMatrixTest
     }
 
     /**
-     * Test adding, subtracting of absolute and relative matrix
+     * Test adding, subtracting of absolute and relative matrix.
      */
     @Test
-    public void absRel()
+    public final void absRel()
     {
         double[][] in1 = buildArray(2, 4, false, 0);
         double[][] in2 = buildArray(2, 4, false, 10);
@@ -2166,15 +2470,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception1)
         {
@@ -2186,9 +2496,13 @@ public abstract class DoubleMatrixTest
         assertEquals("Type of result should be type of inputs", u, difference.getUnit());
         double[][] differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
                         - in2[i][j], differenceValues[i][j], 0.0001);
+            }
+        }
         double[][] in3 = buildArray(2, 3, false, 0);
         DoubleMatrix<MassUnit> fm3 = null;
         try
@@ -2202,15 +2516,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm3);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm3);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
             fail("Subtracting DoubleMatrices of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -2229,15 +2549,21 @@ public abstract class DoubleMatrixTest
         try
         {
             if (fm1 instanceof DenseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm2);
+            }
             else if (fm1 instanceof SparseData)
+            {
                 difference =
                         MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
+            }
             else
+            {
                 fail("Error in test; unanticipated type");
+            }
         }
         catch (ValueException exception)
         {
@@ -2250,25 +2576,33 @@ public abstract class DoubleMatrixTest
         assertFalse("Type of result should be different of type of second input", u2 == difference.getUnit());
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             for (int j = 0; j < in1[0].length; j++)
+            {
                 assertEquals("Each element should equal the weighted difference of the contributing elements",
                         in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.002);
+            }
+        }
     }
 
     /**
-     * Test the solve methods
+     * Test the solve methods.
      */
     @Test
-    public void solver()
+    public final void solver()
     {
         double[][] a = {{1, 2, 3}, {5, 6, 7}, {9, 10, 15}};
         double[] b = {4, 8, 12};
         DoubleMatrix<LengthUnit> aMatrix = safeCreateDoubleMatrix(a, LengthUnit.METER, true);
         DoubleVector<ForceUnit> bVector = null;
         if (aMatrix instanceof SparseData)
+        {
             bVector = new DoubleVector.Abs.Sparse<ForceUnit>(b, ForceUnit.NEWTON);
+        }
         else
+        {
             bVector = new DoubleVector.Abs.Dense<ForceUnit>(b, ForceUnit.NEWTON);
+        }
         try
         {
             DoubleVector<SIUnit> result = null;
@@ -2282,7 +2616,9 @@ public abstract class DoubleMatrixTest
                             // (DoubleVectorAbs<ForceUnit>) bVector);
                 }
                 else if (aMatrix instanceof Relative)
+                {
                     result = DoubleMatrix.solve(aMatrix, bVector);
+                }
             }
             else
             {
@@ -2309,7 +2645,7 @@ public abstract class DoubleMatrixTest
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void doubleMatrixRel2()
+    public final void doubleMatrixRel2()
     {
         DoubleMatrix<LengthUnit> fsa = null;
         DoubleScalar.Rel<LengthUnit>[][] in = new DoubleScalar.Rel[0][0];
@@ -2339,13 +2675,14 @@ public abstract class DoubleMatrixTest
     }
 
     /**
-     * Version of createDoubleMatrix for use with guaranteed rectangular data
+     * Version of createDoubleMatrix for use with guaranteed rectangular data.
      * @param in double[][] with values MUST BE RECTANGULAR
      * @param u Unit; type for the new DoubleMatrix
      * @param absolute Boolean; true to create a DoubleMatrixAbs; false to create a DoubleMatrixRel
      * @return DoubleMatrix
+     * @param <U> Unit; the unit
      */
-    private <U extends Unit<U>> DoubleMatrix<U> safeCreateDoubleMatrix(double[][] in, U u, boolean absolute)
+    private <U extends Unit<U>> DoubleMatrix<U> safeCreateDoubleMatrix(final double[][] in, final U u, final boolean absolute)
     {
         DoubleMatrix<U> result = null;
         try
@@ -2360,28 +2697,34 @@ public abstract class DoubleMatrixTest
     }
 
     /**
-     * Create a DoubleMatrixAbs or a DoubleMatrixRel from an array of double values and Unit
+     * Create a DoubleMatrixAbs or a DoubleMatrixRel from an array of double values and Unit.
      * @param in double[][] with values
      * @param u Unit; type for the new DoubleMatrix
      * @param absolute Boolean; true to create a DoubleMatrixAbs; false to create a DoubleMatrixRel
      * @return DoubleMatrix
-     * @throws ValueException
+     * @throws ValueException when in is not rectangular
+     * @param <U> Unit; the unit
      */
-    private <U extends Unit<U>> DoubleMatrix<U> createDoubleMatrix(double[][] in, U u, boolean absolute)
+    private <U extends Unit<U>> DoubleMatrix<U> createDoubleMatrix(final double[][] in, final U u, final boolean absolute)
             throws ValueException
     {
         if (absolute)
+        {
             return createDoubleMatrixAbs(in, u);
+        }
         else
+        {
             return createDoubleMatrixRel(in, u);
+        }
     }
 
     /**
      * Create a new DoubleMatrix.Abs from an array of double values and Unit.
      * @param in double[][] with values
      * @param u Unit; type for the new DoubleMatrixAbs
-     * @return
+     * @return DoubleMatrix.Abs
      * @throws ValueException when the array is not rectangular
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(double[][] in, U u)
             throws ValueException;
@@ -2389,8 +2732,9 @@ public abstract class DoubleMatrixTest
     /**
      * Create a new DoubleMatrix.Abs from an array of DoubleScalarAbs values.
      * @param in DoubleScalar.Abs[][]; the values
-     * @return
+     * @return DoubleMatrix.Abs
      * @throws ValueException when the array is empty or not rectangular
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(DoubleScalar.Abs<U>[][] in)
             throws ValueException;
@@ -2399,8 +2743,9 @@ public abstract class DoubleMatrixTest
      * Create a new DoubleMatrix.Rel from an array of double values and Unit.
      * @param in double[][] with values
      * @param u Unit; type for the new DoubleMatrixRel
-     * @return
+     * @return DoubleMatrix.Rel
      * @throws ValueException when the array is not rectangular
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(double[][] in, U u)
             throws ValueException;
@@ -2408,8 +2753,9 @@ public abstract class DoubleMatrixTest
     /**
      * Create a new DoubleMatrix.Rel from an array of DoubleScalarRel values.
      * @param in DoubleScalar.Rel[][]; the values
-     * @return
+     * @return DoubleMatrix.Rel
      * @throws ValueException when the array is empty or not rectangular
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(DoubleScalar.Rel<U>[][] in)
             throws ValueException;

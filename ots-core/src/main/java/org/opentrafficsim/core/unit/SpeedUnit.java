@@ -46,24 +46,34 @@ public class SpeedUnit extends Unit<SpeedUnit>
     private final TimeUnit timeUnit;
 
     /** m/s. */
-    public static final SpeedUnit METER_PER_SECOND = new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND,
-            "SpeedUnit.meter_per_second", "SpeedUnit.m/s", SI_DERIVED);
+    public static final SpeedUnit METER_PER_SECOND;
 
     /** km/h. */
-    public static final SpeedUnit KM_PER_HOUR = new SpeedUnit(LengthUnit.KILOMETER, TimeUnit.HOUR,
-            "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h", SI_DERIVED);
+    public static final SpeedUnit KM_PER_HOUR;
 
     /** mile/h. */
-    public static final SpeedUnit MILE_PER_HOUR = new SpeedUnit(LengthUnit.MILE, TimeUnit.HOUR,
-            "SpeedUnit.mile_per_hour", "SpeedUnit.mph", IMPERIAL);
+    public static final SpeedUnit MILE_PER_HOUR;
 
     /** ft/s. */
-    public static final SpeedUnit FOOT_PER_SECOND = new SpeedUnit(LengthUnit.FOOT, TimeUnit.SECOND,
-            "SpeedUnit.foot_per_second", "SpeedUnit.fps", IMPERIAL);
+    public static final SpeedUnit FOOT_PER_SECOND;
 
     /** knot. */
-    public static final SpeedUnit KNOT = new SpeedUnit(LengthUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot",
-            "SpeedUnit.kt", IMPERIAL);
+    public static final SpeedUnit KNOT;
+
+    static
+    {
+        METER_PER_SECOND =
+                new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s",
+                        SI_DERIVED);
+        KM_PER_HOUR =
+                new SpeedUnit(LengthUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h",
+                        SI_DERIVED);
+        MILE_PER_HOUR =
+                new SpeedUnit(LengthUnit.MILE, TimeUnit.HOUR, "SpeedUnit.mile_per_hour", "SpeedUnit.mph", IMPERIAL);
+        FOOT_PER_SECOND =
+                new SpeedUnit(LengthUnit.FOOT, TimeUnit.SECOND, "SpeedUnit.foot_per_second", "SpeedUnit.fps", IMPERIAL);
+        KNOT = new SpeedUnit(LengthUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot", "SpeedUnit.kt", IMPERIAL);
+    }
 
     /**
      * Build a speed unit from a length unit and a time unit.
@@ -102,7 +112,7 @@ public class SpeedUnit extends Unit<SpeedUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -110,7 +120,7 @@ public class SpeedUnit extends Unit<SpeedUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -119,7 +129,7 @@ public class SpeedUnit extends Unit<SpeedUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public SpeedUnit getStandardUnit()
+    public final SpeedUnit getStandardUnit()
     {
         return METER_PER_SECOND;
     }
@@ -128,7 +138,7 @@ public class SpeedUnit extends Unit<SpeedUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "m/s";
     }

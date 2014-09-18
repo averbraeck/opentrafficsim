@@ -39,29 +39,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class ElectricalCurrentUnitTest extends AbstractUnitTest<ElectricalCurrentUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(ElectricalCurrentUnit.AMPERE, "ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.AMPERE, 1, 0.00000001, "ampere", "A");
         checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.MILLIAMPERE, 0.001, 0.000000001, "milliampere", "mA");

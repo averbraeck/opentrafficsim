@@ -404,7 +404,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
      */
     @Override
-    public int getSeriesCount()
+    public final int getSeriesCount()
     {
         return this.trajectories.size();
     }
@@ -413,7 +413,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
      */
     @Override
-    public Comparable<Integer> getSeriesKey(final int series)
+    public final Comparable<Integer> getSeriesKey(final int series)
     {
         return series;
     }
@@ -423,7 +423,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public int indexOf(final Comparable seriesKey)
+    public final int indexOf(final Comparable seriesKey)
     {
         if (seriesKey instanceof Integer)
         {

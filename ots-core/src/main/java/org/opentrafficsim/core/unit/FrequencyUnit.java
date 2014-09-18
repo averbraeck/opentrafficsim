@@ -42,28 +42,32 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     private final TimeUnit timeUnit;
 
     /** hertz. */
-    public static final FrequencyUnit HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz",
-            "FrequencyUnit.Hz", SI_DERIVED);
+    public static final FrequencyUnit HERTZ;
 
     /** kilohertz. */
-    public static final FrequencyUnit KILOHERTZ = new FrequencyUnit("FrequencyUnit.kilohertz", "FrequencyUnit.kHz",
-            SI_DERIVED, HERTZ, 1000.0);
+    public static final FrequencyUnit KILOHERTZ;
 
     /** megahertz. */
-    public static final FrequencyUnit MEGAHERTZ = new FrequencyUnit("FrequencyUnit.megahertz", "FrequencyUnit.MHz",
-            SI_DERIVED, HERTZ, 1.0E6);
+    public static final FrequencyUnit MEGAHERTZ;
 
     /** gigahertz. */
-    public static final FrequencyUnit GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz",
-            SI_DERIVED, HERTZ, 1.0E9);
+    public static final FrequencyUnit GIGAHERTZ;
 
     /** terahertz. */
-    public static final FrequencyUnit TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz",
-            SI_DERIVED, HERTZ, 1.0E12);
+    public static final FrequencyUnit TERAHERTZ;
 
     /** revolutions per minute = 1/60 Hz. */
-    public static final FrequencyUnit RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute",
-            "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
+    public static final FrequencyUnit RPM;
+
+    static
+    {
+        HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz", "FrequencyUnit.Hz", SI_DERIVED);
+        KILOHERTZ = new FrequencyUnit("FrequencyUnit.kilohertz", "FrequencyUnit.kHz", SI_DERIVED, HERTZ, 1000.0);
+        MEGAHERTZ = new FrequencyUnit("FrequencyUnit.megahertz", "FrequencyUnit.MHz", SI_DERIVED, HERTZ, 1.0E6);
+        GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz", SI_DERIVED, HERTZ, 1.0E9);
+        TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz", SI_DERIVED, HERTZ, 1.0E12);
+        RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute", "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
+    }
 
     /**
      * Define frequency unit based on time. You can define unit like "per second" (Hertz) here.
@@ -98,7 +102,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -107,7 +111,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public FrequencyUnit getStandardUnit()
+    public final FrequencyUnit getStandardUnit()
     {
         return HERTZ;
     }
@@ -116,7 +120,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "s-1";
     }

@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class MassUnitTest extends AbstractUnitTest<MassUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(MassUnit.KILOGRAM, "MassUnit.kilogram", "MassUnit.kg");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(MassUnit.KILOGRAM, 1, 0.00000001, "kilogram", "kg");
         checkUnitRatioNameAndAbbreviation(MassUnit.GRAM, 0.001, 0.000000001, "gram", "g");
@@ -80,14 +80,14 @@ public class MassUnitTest extends AbstractUnitTest<MassUnit>
     }
 
     /**
-     * Verify that we can create our own mass unit
+     * Verify that we can create our own mass unit.
      */
     @Test
-    public void createMassUnit()
+    public final void createMassUnit()
     {
         MassUnit myMU =
-                new MassUnit(UnitLocalizationsTest.doNotCheckPrefix + "MassUnit.Person",
-                        UnitLocalizationsTest.doNotCheckPrefix + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
+                new MassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.Person",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
         assertTrue("Can create a new MassUnit", null != myMU);
         checkUnitRatioNameAndAbbreviation(myMU, 80, 1, "!Person!", "!pn!");
     }

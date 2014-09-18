@@ -29,7 +29,7 @@ import cern.colt.function.tdouble.DoubleFunction;
  * @version Jun 18, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class DoubleMathFunctionsImpl
+public final class DoubleMathFunctionsImpl
 {
     /**
      * This class should never be instantiated.
@@ -45,7 +45,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction cbrt = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.cbrt(a);
         }
@@ -57,7 +57,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction cosh = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.cosh(a);
         }
@@ -69,7 +69,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction expm1 = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.expm1(a);
         }
@@ -81,7 +81,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction log10 = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.log10(a);
         }
@@ -93,7 +93,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction log1p = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.log1p(a);
         }
@@ -105,7 +105,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction round = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.round(a);
         }
@@ -117,7 +117,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction signum = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.signum(a);
         }
@@ -129,7 +129,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction sinh = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.sinh(a);
         }
@@ -141,7 +141,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction tanh = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.tanh(a);
         }
@@ -153,7 +153,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction toDegrees = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.toDegrees(a);
         }
@@ -165,7 +165,7 @@ public class DoubleMathFunctionsImpl
     public static final DoubleFunction toRadians = new DoubleFunction()
     {
         @Override
-        public final double apply(final double a)
+        public double apply(final double a)
         {
             return Math.toRadians(a);
         }

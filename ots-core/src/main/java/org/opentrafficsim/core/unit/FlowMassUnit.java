@@ -45,12 +45,20 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     private final TimeUnit timeUnit;
 
     /** kg/s. */
-    public static final FlowMassUnit KILOGRAM_PER_SECOND = new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND,
-            "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s", SI_DERIVED);
+    public static final FlowMassUnit KILOGRAM_PER_SECOND;
 
     /** lb/s. */
-    public static final FlowMassUnit POUND_PER_SECOND = new FlowMassUnit(MassUnit.POUND, TimeUnit.SECOND,
-            "FlowMassUnit.pound_per_second", "FlowMassUnit.lb/s", IMPERIAL);
+    public static final FlowMassUnit POUND_PER_SECOND;
+
+    static
+    {
+        KILOGRAM_PER_SECOND =
+                new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND, "FlowMassUnit.kilogram_per_second",
+                        "FlowMassUnit.kg/s", SI_DERIVED);
+        POUND_PER_SECOND =
+                new FlowMassUnit(MassUnit.POUND, TimeUnit.SECOND, "FlowMassUnit.pound_per_second", "FlowMassUnit.lb/s",
+                        IMPERIAL);
+    }
 
     /**
      * Create a flow-massunit based on mass and time.
@@ -89,7 +97,7 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -97,7 +105,7 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -106,7 +114,7 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public FlowMassUnit getStandardUnit()
+    public final FlowMassUnit getStandardUnit()
     {
         return KILOGRAM_PER_SECOND;
     }
@@ -115,7 +123,7 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kg/s";
     }

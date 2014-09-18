@@ -39,30 +39,30 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class AccelerationUnitTest extends AbstractUnitTest<AccelerationUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(AccelerationUnit.INCH_PER_SECOND_2, "AccelerationUnit.inch_per_second_squared",
                 "AccelerationUnit.in/s^2");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.METER_PER_SECOND_2, 1, 0.00000001,
                 "meter per second squared", "m/s^2");
@@ -87,10 +87,10 @@ public class AccelerationUnitTest extends AbstractUnitTest<AccelerationUnit>
     }
 
     /**
-     * Check that g is about 9.8 m/s/s
+     * Check that g is about 9.8 m/s/s.
      */
     @Test
-    public void gravityConstant()
+    public final void gravityConstant()
     {
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.STANDARD_GRAVITY, 9.8, 0.02, "standard gravity", "g");
     }

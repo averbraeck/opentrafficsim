@@ -46,21 +46,22 @@ import org.reflections.Reflections;
  */
 public class UnitLocalizationsTest
 {
-    /** Prefix keys of units made during testing with this string */
-    public final static String doNotCheckPrefix = "~~~~DONOTCHECK";
+    /** Prefix keys of units made during testing with this string. */
+    public static final String DONOTCHECKPREFIX = "~~~~DONOTCHECK";
 
     /**
-     * Check that all defined units have all localizations
+     * Check that all defined units have all localizations.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    public void checkDefinedUnits()
+    public final void checkDefinedUnits()
     {
         final String head = "localeunit";
         Set<String> usedKeys = new HashSet<String>();
         ArrayList<String> errors = new ArrayList<String>();
-        List<String> localeNames = AvailableLocalizations.availableLocalizations(head, 
-                this.getClass().getResource("").getPath() + "../../../../");
+        List<String> localeNames =
+                AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath()
+                        + "../../../../");
         for (String localeName : localeNames)
         {
             // System.out.println("Checking internationalization to " + localeName);
@@ -81,16 +82,34 @@ public class UnitLocalizationsTest
                     String abbreviationKey = u.getAbbreviationKey();
                     assertTrue("Abbreviation key must be non-null", null != abbreviationKey);
                     assertTrue("Abbreviation key must be non-empty", abbreviationKey.length() > 0);
-                    if (nameKey.startsWith(doNotCheckPrefix))
+                    if (nameKey.startsWith(DONOTCHECKPREFIX))
+                    {
                         continue;
+                    }
                     if (nameKey.equals("SIUnit.m2"))
-                        continue;       // FIXME: Vector and Matrix tests make these and then cause this test to fail
+                     {
+                        continue; // FIXME: Vector and Matrix tests make these and then cause this test to fail
+                    }
                     if (nameKey.equals("SIUnit.kg.m2/s2"))
-                        continue;       // FIXME: Vector and Matrix tests make these and then cause this test to fail
+                     {
+                        continue; // FIXME: Vector and Matrix tests make these and then cause this test to fail
+                    }
                     if (nameKey.equals("SIUnit.s"))
-                        continue;       // FIXME: Scalar tests make these and then cause this test to fail
-                    if (abbreviationKey.startsWith(doNotCheckPrefix))
+                     {
+                        continue; // FIXME: Scalar tests make these and then cause this test to fail
+                    }
+                    if (nameKey.equals("SIUnit.kg2.m4/s6/A2"))
+                    {
                         continue;
+                    }
+                    if (nameKey.equals("SIUnit.1/A"))
+                    {
+                        continue;
+                    }
+                    if (abbreviationKey.startsWith(DONOTCHECKPREFIX))
+                    {
+                        continue;
+                    }
                     usedKeys.add(nameKey);
                     usedKeys.add(abbreviationKey);
                     String name = u.getName();
@@ -100,10 +119,14 @@ public class UnitLocalizationsTest
                     // System.out.println("nameKey " + nameKey + "->" + name + " abbreviationKey " + abbreviationKey
                     // + "->" + abbreviation);
                     if (abbreviation.startsWith("!") && abbreviation.endsWith("!"))
+                    {
                         errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
                                 localeName));
+                    }
                     if (name.startsWith("!") && name.endsWith("!"))
+                    {
                         errors.add(String.format("Missing translation for name %s to %s", nameKey, localeName));
+                    }
                 }
             }
         }
@@ -111,10 +134,13 @@ public class UnitLocalizationsTest
         {
             Properties properties = new Properties();
             String middlePart = "";
-            if (! localeName.equals("en"))
+            if (!localeName.equals("en"))
+            {
                 middlePart = "_" + localeName;
-                
-            String path = this.getClass().getResource("").getPath() + "../../../../" + head + middlePart + ".properties";
+            }
+
+            String path =
+                    this.getClass().getResource("").getPath() + "../../../../" + head + middlePart + ".properties";
             try
             {
                 FileInputStream fileInput = new FileInputStream(path);
@@ -127,19 +153,25 @@ public class UnitLocalizationsTest
             }
             ResourceBundle.clearCache();
             Set<String> unusedKeys = new HashSet<String>();
-            for (Object key : properties.keySet()) {
+            for (Object key : properties.keySet())
+            {
                 String keyString = (String) key;
                 if (usedKeys.contains(keyString))
+                {
                     continue;
+                }
                 unusedKeys.add(keyString);
             }
-            for (String unusedKey : unusedKeys) {
+            for (String unusedKey : unusedKeys)
+            {
                 errors.add(String.format("Unused key %s for locale %s", unusedKey, localeName));
             }
         }
         for (String s : errors)
+        {
             System.out.println(s);
+        }
         assertTrue("There should be no errors in UnitLocalizations", errors.isEmpty());
     }
-    
+
 }

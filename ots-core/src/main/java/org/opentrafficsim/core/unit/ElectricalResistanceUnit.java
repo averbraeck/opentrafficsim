@@ -50,21 +50,33 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     private final TimeUnit timeUnit;
 
     /** Ohm. */
-    public static final ElectricalResistanceUnit OHM = new ElectricalResistanceUnit(MassUnit.KILOGRAM,
-            LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalResistanceUnit.ohm_(name)",
-            "ElectricalResistanceUnit.ohm", SI_DERIVED);
+    public static final ElectricalResistanceUnit OHM;
 
     /** milli-ohm. */
-    public static final ElectricalResistanceUnit MILLIOHM = new ElectricalResistanceUnit(
-            "ElectricalResistanceUnit.milli_ohm", "ElectricalResistanceUnit.m_ohm", SI_DERIVED, OHM, 0.001);
+    public static final ElectricalResistanceUnit MILLIOHM;
 
     /** kilo-ohm. */
-    public static final ElectricalResistanceUnit KILOOHM = new ElectricalResistanceUnit(
-            "ElectricalResistanceUnit.kilo_ohm", "ElectricalResistanceUnit.k_ohm", SI_DERIVED, OHM, 1000.0);
+    public static final ElectricalResistanceUnit KILOOHM;
 
     /** mega-ohm. */
-    public static final ElectricalResistanceUnit MEGAOHM = new ElectricalResistanceUnit(
-            "ElectricalResistanceUnit.mega_ohm", "ElectricalResistanceUnit.M_ohm", SI_DERIVED, OHM, 1.06);
+    public static final ElectricalResistanceUnit MEGAOHM;
+
+    static
+    {
+        OHM =
+                new ElectricalResistanceUnit(MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE,
+                        TimeUnit.SECOND, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm",
+                        SI_DERIVED);
+        MILLIOHM =
+                new ElectricalResistanceUnit("ElectricalResistanceUnit.milli_ohm", "ElectricalResistanceUnit.m_ohm",
+                        SI_DERIVED, OHM, 0.001);
+        KILOOHM =
+                new ElectricalResistanceUnit("ElectricalResistanceUnit.kilo_ohm", "ElectricalResistanceUnit.k_ohm",
+                        SI_DERIVED, OHM, 1000.0);
+        MEGAOHM =
+                new ElectricalResistanceUnit("ElectricalResistanceUnit.mega_ohm", "ElectricalResistanceUnit.M_ohm",
+                        SI_DERIVED, OHM, 1.06);
+    }
 
     /**
      * @param massUnit the unit of mass for the electrical resistance unit, e.g., kilogram
@@ -132,7 +144,7 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -140,7 +152,7 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -148,7 +160,7 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     /**
      * @return electricalCurrentUnit
      */
-    public ElectricalCurrentUnit getElectricalCurrentUnit()
+    public final ElectricalCurrentUnit getElectricalCurrentUnit()
     {
         return this.electricalCurrentUnit;
     }
@@ -156,7 +168,7 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -165,7 +177,7 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public ElectricalResistanceUnit getStandardUnit()
+    public final ElectricalResistanceUnit getStandardUnit()
     {
         return OHM;
     }
@@ -174,7 +186,7 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kg.m2.s-3.A-2";
     }

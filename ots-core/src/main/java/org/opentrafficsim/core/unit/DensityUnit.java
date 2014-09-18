@@ -44,12 +44,20 @@ public class DensityUnit extends Unit<DensityUnit>
     private final LengthUnit lengthUnit;
 
     /** kg/m^3. */
-    public static final DensityUnit KG_PER_METER_3 = new DensityUnit(MassUnit.KILOGRAM, LengthUnit.METER,
-            "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3", SI_DERIVED);
+    public static final DensityUnit KG_PER_METER_3;
 
     /** g/cm^3. */
-    public static final DensityUnit GRAM_PER_CENTIMETER_3 = new DensityUnit(MassUnit.GRAM, LengthUnit.CENTIMETER,
-            "DensityUnit.gram_per_cubic_centimeter", "DensityUnit.g/cm^3", SI_DERIVED);
+    public static final DensityUnit GRAM_PER_CENTIMETER_3;
+
+    static
+    {
+        KG_PER_METER_3 =
+                new DensityUnit(MassUnit.KILOGRAM, LengthUnit.METER, "DensityUnit.kilogram_per_cubic_meter",
+                        "DensityUnit.kg/m^3", SI_DERIVED);
+        GRAM_PER_CENTIMETER_3 =
+                new DensityUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, "DensityUnit.gram_per_cubic_centimeter",
+                        "DensityUnit.g/cm^3", SI_DERIVED);
+    }
 
     /**
      * Define density units based on mass and length. You can define units like kg/m^3 here.
@@ -87,7 +95,7 @@ public class DensityUnit extends Unit<DensityUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -95,7 +103,7 @@ public class DensityUnit extends Unit<DensityUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -104,7 +112,7 @@ public class DensityUnit extends Unit<DensityUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public DensityUnit getStandardUnit()
+    public final DensityUnit getStandardUnit()
     {
         return KG_PER_METER_3;
     }
@@ -113,7 +121,7 @@ public class DensityUnit extends Unit<DensityUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kg/m3";
     }

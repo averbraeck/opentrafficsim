@@ -55,26 +55,26 @@ public class NetworkException extends Exception
     }
 
     /**
-     * @param message
+     * @param message String
      */
-    public NetworkException(String message)
+    public NetworkException(final String message)
     {
         super(message);
     }
 
     /**
-     * @param cause
+     * @param cause Throwable
      */
-    public NetworkException(Throwable cause)
+    public NetworkException(final Throwable cause)
     {
         super(cause);
     }
 
     /**
-     * @param message
-     * @param cause
+     * @param message String
+     * @param cause Throwable
      */
-    public NetworkException(String message, Throwable cause)
+    public NetworkException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -85,7 +85,7 @@ public class NetworkException extends Exception
      * @param enableSuppression
      * @param writableStackTrace
      */
-    public NetworkException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+    public NetworkException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }

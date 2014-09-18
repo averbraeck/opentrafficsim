@@ -103,7 +103,7 @@ public class SICoefficients
     /**
      * @return coefficientsMap
      */
-    public EnumMap<SI, Integer> getCoefficientsMap()
+    public final EnumMap<SI, Integer> getCoefficientsMap()
     {
         return this.coefficientsMap;
     }

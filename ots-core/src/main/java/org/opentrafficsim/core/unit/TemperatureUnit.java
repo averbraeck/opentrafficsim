@@ -41,24 +41,33 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
     private static final long serialVersionUID = 20140605L;
 
     /** Kelvin. */
-    public static final TemperatureUnit KELVIN = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K",
-            SI_BASE, 1.0, 0.0);
+    public static final TemperatureUnit KELVIN;
 
     /** Degree Celsius. */
-    public static final TemperatureUnit DEGREE_CELSIUS = new TemperatureUnit("TemperatureUnit.degree_Celsius",
-            "TemperatureUnit.dgC", SI_DERIVED, 1.0, -273.15);
+    public static final TemperatureUnit DEGREE_CELSIUS;
 
     /** Degree Fahrenheit. */
-    public static final TemperatureUnit DEGREE_FAHRENHEIT = new TemperatureUnit("TemperatureUnit.degree_Fahrenheit",
-            "TemperatureUnit.dgF", IMPERIAL, 5.0 / 9.0, -459.67);
+    public static final TemperatureUnit DEGREE_FAHRENHEIT;
 
     /** Degree Rankine. */
-    public static final TemperatureUnit DEGREE_RANKINE = new TemperatureUnit("TemperatureUnit.degree_Rankine",
-            "TemperatureUnit.dgR", OTHER, 5.0 / 9.0, 0.0);
+    public static final TemperatureUnit DEGREE_RANKINE;
 
     /** Degree Reaumur. */
-    public static final TemperatureUnit DEGREE_REAUMUR = new TemperatureUnit("TemperatureUnit.degree_Reaumur",
-            "TemperatureUnit.dgRe", OTHER, 4.0 / 5.0, -273.15);
+    public static final TemperatureUnit DEGREE_REAUMUR;
+
+    static
+    {
+        KELVIN = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K", SI_BASE, 1.0, 0.0);
+        DEGREE_CELSIUS =
+                new TemperatureUnit("TemperatureUnit.degree_Celsius", "TemperatureUnit.dgC", SI_DERIVED, 1.0, -273.15);
+        DEGREE_FAHRENHEIT =
+                new TemperatureUnit("TemperatureUnit.degree_Fahrenheit", "TemperatureUnit.dgF", IMPERIAL, 5.0 / 9.0,
+                        -459.67);
+        DEGREE_RANKINE =
+                new TemperatureUnit("TemperatureUnit.degree_Rankine", "TemperatureUnit.dgR", OTHER, 5.0 / 9.0, 0.0);
+        DEGREE_REAUMUR =
+                new TemperatureUnit("TemperatureUnit.degree_Reaumur", "TemperatureUnit.dgRe", OTHER, 4.0 / 5.0, -273.15);
+    }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
@@ -93,7 +102,7 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public TemperatureUnit getStandardUnit()
+    public final TemperatureUnit getStandardUnit()
     {
         return KELVIN;
     }
@@ -102,7 +111,7 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "K";
     }

@@ -41,29 +41,29 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 public class PressureUnitTest extends AbstractUnitTest<PressureUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(PressureUnit.PASCAL, "PressureUnit.pascal", "PressureUnit.Pa");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(PressureUnit.PASCAL, 1, 0.00000001, "pascal", "Pa");
         checkUnitRatioNameAndAbbreviation(PressureUnit.ATMOSPHERE_STANDARD, 101325, 0.5, "atmosphere (standard)", "atm");
@@ -94,14 +94,14 @@ public class PressureUnitTest extends AbstractUnitTest<PressureUnit>
     }
 
     /**
-     * Verify that we can create our own pressure unit
+     * Verify that we can create our own pressure unit.
      */
     @Test
-    public void createPressureUnit()
+    public final void createPressureUnit()
     {
         PressureUnit myPU =
-                new PressureUnit(UnitLocalizationsTest.doNotCheckPrefix + "PressureUnit.HealthyHumanHeart",
-                        UnitLocalizationsTest.doNotCheckPrefix + "PressureUnit.hhhp", UnitSystem.OTHER,
+                new PressureUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "PressureUnit.HealthyHumanHeart",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "PressureUnit.hhhp", UnitSystem.OTHER,
                         PressureUnit.MILLIMETER_MERCURY, 106);
         assertTrue("Can create a new PowerUnit", null != myPU);
         checkUnitRatioNameAndAbbreviation(myPU, 14132.1711, 0.01, "!HealthyHumanHeart!", "!hhhp!");

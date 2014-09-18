@@ -41,29 +41,29 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 public class TemperatureUnitTest extends AbstractOffsetUnitTest<TemperatureUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(TemperatureUnit.KELVIN, "TemperatureUnit.kelvin", "TemperatureUnit.K");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.KELVIN, 1, 0, 0.00000001, "kelvin", "K");
         checkUnitRatioOffsetNameAndAbbreviation(TemperatureUnit.DEGREE_CELSIUS, 1, -273.15, 0.000001, "degree Celsius",
@@ -84,14 +84,14 @@ public class TemperatureUnitTest extends AbstractOffsetUnitTest<TemperatureUnit>
     }
 
     /**
-     * Verify that we can create our own temperature unit; i.c. Newton
+     * Verify that we can create our own temperature unit; i.c. Newton.
      */
     @Test
-    public void createTemperatureUnit()
+    public final void createTemperatureUnit()
     {
         TemperatureUnit myTU =
-                new TemperatureUnit(UnitLocalizationsTest.doNotCheckPrefix + "TemperatureUnit.Newton",
-                        UnitLocalizationsTest.doNotCheckPrefix + "TemperatureUnit.N", UnitSystem.OTHER, 3.0, -273.15);
+                new TemperatureUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "TemperatureUnit.Newton",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "TemperatureUnit.N", UnitSystem.OTHER, 3.0, -273.15);
         assertTrue("Can create a new TemperatureUnit", null != myTU);
         checkUnitRatioOffsetNameAndAbbreviation(myTU, 3, -273.15, 0.0001, "!Newton!", "!N!");
     }

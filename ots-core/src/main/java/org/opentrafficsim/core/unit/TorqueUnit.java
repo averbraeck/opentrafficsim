@@ -49,20 +49,32 @@ public class TorqueUnit extends Unit<TorqueUnit>
     private final TimeUnit timeUnit;
 
     /** Newton meter. */
-    public static final TorqueUnit NEWTON_METER = new TorqueUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
-            "TorqueUnit.Newton_meter", "TorqueUnit.N.m", SI_DERIVED);
+    public static final TorqueUnit NEWTON_METER;
 
     /** meter kilogram-force. */
-    public static final TorqueUnit METER_KILOGRAM_FORCE = new TorqueUnit(ForceUnit.KILOGRAM_FORCE, LengthUnit.METER,
-            "TorqueUnit.meter_kilogram-force", "TorqueUnit.m.kgf", OTHER);
+    public static final TorqueUnit METER_KILOGRAM_FORCE;
 
     /** foot pound-force. */
-    public static final TorqueUnit FOOT_POUND_FORCE = new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.FOOT,
-            "TorqueUnit.foot_pound-force", "TorqueUnit.ft.lbf", IMPERIAL);
+    public static final TorqueUnit FOOT_POUND_FORCE;
 
     /** inch pound-force. */
-    public static final TorqueUnit INCH_POUND_FORCE = new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.INCH,
-            "TorqueUnit.inch_pound-force", "TorqueUnit.in.lbf", IMPERIAL);
+    public static final TorqueUnit INCH_POUND_FORCE;
+
+    static
+    {
+        NEWTON_METER =
+                new TorqueUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "TorqueUnit.Newton_meter",
+                        "TorqueUnit.N.m", SI_DERIVED);
+        METER_KILOGRAM_FORCE =
+                new TorqueUnit(ForceUnit.KILOGRAM_FORCE, LengthUnit.METER, "TorqueUnit.meter_kilogram-force",
+                        "TorqueUnit.m.kgf", OTHER);
+        FOOT_POUND_FORCE =
+                new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.FOOT, "TorqueUnit.foot_pound-force",
+                        "TorqueUnit.ft.lbf", IMPERIAL);
+        INCH_POUND_FORCE =
+                new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.INCH, "TorqueUnit.inch_pound-force",
+                        "TorqueUnit.in.lbf", IMPERIAL);
+    }
 
     /**
      * Create a torque unit from mass, length and time units.
@@ -123,7 +135,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -131,7 +143,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -139,7 +151,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -148,7 +160,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public TorqueUnit getStandardUnit()
+    public final TorqueUnit getStandardUnit()
     {
         return NEWTON_METER;
     }
@@ -157,7 +169,7 @@ public class TorqueUnit extends Unit<TorqueUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kgm2/s2";
     }

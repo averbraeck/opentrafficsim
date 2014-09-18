@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class TimeUnitTest extends AbstractUnitTest<TimeUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(TimeUnit.SECOND, "TimeUnit.second", "TimeUnit.s");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(TimeUnit.SECOND, 1, 0.00000001, "second", "s");
         checkUnitRatioNameAndAbbreviation(TimeUnit.HOUR, 3600, 0.0005, "hour", "h");
@@ -79,14 +79,14 @@ public class TimeUnitTest extends AbstractUnitTest<TimeUnit>
     }
 
     /**
-     * Verify that we can create our own length unit
+     * Verify that we can create our own length unit.
      */
     @Test
-    public void createLengthUnit()
+    public final void createLengthUnit()
     {
         TimeUnit myTU =
-                new TimeUnit(UnitLocalizationsTest.doNotCheckPrefix + "TimeUnit.Fortnight",
-                        UnitLocalizationsTest.doNotCheckPrefix + "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
+                new TimeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "TimeUnit.Fortnight",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
         assertTrue("Can create a new TimeUnit", null != myTU);
         checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
     }

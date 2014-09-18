@@ -51,32 +51,50 @@ public class ForceUnit extends Unit<ForceUnit>
     private final TimeUnit timeUnit;
 
     /** Newton. */
-    public static final ForceUnit NEWTON = new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
-            "ForceUnit.newton", "ForceUnit.N", SI_DERIVED);
+    public static final ForceUnit NEWTON;
 
     /** Dyne. */
-    public static final ForceUnit DYNE = new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND,
-            "ForceUnit.dyne", "ForceUnit.dyn", CGS);
+    public static final ForceUnit DYNE;
 
     /** kilogram-force. */
-    public static final ForceUnit KILOGRAM_FORCE = new ForceUnit(MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY,
-            "ForceUnit.kilogram-force", "ForceUnit.kgf", OTHER);
+    public static final ForceUnit KILOGRAM_FORCE;
 
     /** ounce-force. */
-    public static final ForceUnit OUNCE_FORCE = new ForceUnit(MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY,
-            "ForceUnit.ounce-force", "ForceUnit.ozf", IMPERIAL);
+    public static final ForceUnit OUNCE_FORCE;
 
     /** pound-force. */
-    public static final ForceUnit POUND_FORCE = new ForceUnit(MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY,
-            "ForceUnit.pound-force", "ForceUnit.lbf", IMPERIAL);
+    public static final ForceUnit POUND_FORCE;
 
     /** ton-force. */
-    public static final ForceUnit TON_FORCE = new ForceUnit(MassUnit.TON_SHORT, AccelerationUnit.STANDARD_GRAVITY,
-            "ForceUnit.ton-force", "ForceUnit.tnf", IMPERIAL);
+    public static final ForceUnit TON_FORCE;
 
     /** sthene. */
-    public static final ForceUnit STHENE = new ForceUnit(MassUnit.TON_METRIC, AccelerationUnit.METER_PER_SECOND_2,
-            "ForceUnit.sthene", "ForceUnit.sn", MTS);
+    public static final ForceUnit STHENE;
+
+    static
+    {
+        NEWTON =
+                new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton", "ForceUnit.N",
+                        SI_DERIVED);
+        DYNE =
+                new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND, "ForceUnit.dyne", "ForceUnit.dyn",
+                        CGS);
+        KILOGRAM_FORCE =
+                new ForceUnit(MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.kilogram-force",
+                        "ForceUnit.kgf", OTHER);
+        OUNCE_FORCE =
+                new ForceUnit(MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ounce-force",
+                        "ForceUnit.ozf", IMPERIAL);
+        POUND_FORCE =
+                new ForceUnit(MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.pound-force",
+                        "ForceUnit.lbf", IMPERIAL);
+        TON_FORCE =
+                new ForceUnit(MassUnit.TON_SHORT, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ton-force",
+                        "ForceUnit.tnf", IMPERIAL);
+        STHENE =
+                new ForceUnit(MassUnit.TON_METRIC, AccelerationUnit.METER_PER_SECOND_2, "ForceUnit.sthene",
+                        "ForceUnit.sn", MTS);
+    }
 
     /**
      * Build a standard unit.
@@ -136,7 +154,7 @@ public class ForceUnit extends Unit<ForceUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -144,7 +162,7 @@ public class ForceUnit extends Unit<ForceUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -152,7 +170,7 @@ public class ForceUnit extends Unit<ForceUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -161,7 +179,7 @@ public class ForceUnit extends Unit<ForceUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public ForceUnit getStandardUnit()
+    public final ForceUnit getStandardUnit()
     {
         return NEWTON;
     }
@@ -170,7 +188,7 @@ public class ForceUnit extends Unit<ForceUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kgm/s2";
     }

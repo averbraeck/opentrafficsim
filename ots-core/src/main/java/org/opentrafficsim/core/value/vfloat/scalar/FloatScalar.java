@@ -172,7 +172,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
          * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
          */
         @Override
-        public MutableFloatScalar.Rel<U> mutable()
+        public final MutableFloatScalar.Rel<U> mutable()
         {
             return new MutableFloatScalar.Rel<U>(this);
         }
@@ -181,7 +181,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(final Rel<U> o)
+        public final int compareTo(final Rel<U> o)
         {
             return new Float(this.valueSI).compareTo(o.valueSI);
         }
@@ -190,7 +190,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
          * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
-        public FloatScalar.Rel<U> copy()
+        public final FloatScalar.Rel<U> copy()
         {
             return this;
         }
@@ -208,7 +208,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * Initialize the valueSI field (performing conversion to the SI standard unit if needed).
      * @param value float; the value in the unit of this FloatScalar
      */
-    protected void initialize(final float value)
+    protected final void initialize(final float value)
     {
         if (this.unit.equals(this.unit.getStandardUnit()))
         {
@@ -225,7 +225,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * necessary.
      * @param value FloatScalar; the value to use for initialization
      */
-    protected void initialize(final FloatScalar<U> value)
+    protected final void initialize(final FloatScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -234,7 +234,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * Retrieve the value in the underlying SI unit.
      * @return value in SI units
      */
-    public float getValueSI()
+    public final float getValueSI()
     {
         return this.valueSI;
     }
@@ -243,7 +243,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * Retrieve the value in the original unit.
      * @return value in original units
      */
-    public float getValueInUnit()
+    public final float getValueInUnit()
     {
         return (float) expressAsSpecifiedUnit(this.valueSI);
     }
@@ -252,7 +252,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @param targetUnit the unit to convert the value to
      * @return value in specific target unit
      */
-    public float getValueInUnit(final U targetUnit)
+    public final float getValueInUnit(final U targetUnit)
     {
         return (float) ValueUtil.expressAsUnit(this.valueSI, targetUnit);
     }
@@ -274,7 +274,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#longValue()
      */
     @Override
-    public long longValue()
+    public final long longValue()
     {
         return Math.round(this.valueSI);
     }
@@ -283,7 +283,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#floatValue()
      */
     @Override
-    public float floatValue()
+    public final float floatValue()
     {
         return this.valueSI;
     }
@@ -292,7 +292,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#doubleValue()
      */
     @Override
-    public double doubleValue()
+    public final double doubleValue()
     {
         return this.valueSI;
     }
@@ -301,7 +301,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
     }
@@ -310,7 +310,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -322,14 +322,20 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (!(obj instanceof FloatScalar))
+        {
             return false;
+        }
         FloatScalar<?> other = (FloatScalar<?>) obj;
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
@@ -342,7 +348,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
             return false;
         }
         if (Float.floatToIntBits(this.valueSI) != Float.floatToIntBits(other.valueSI))
+        {
             return false;
+        }
         return true;
     }
 

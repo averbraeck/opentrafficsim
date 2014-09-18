@@ -84,7 +84,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
         /**
          * Create a new Absolute MutableFloatScalar from an existing one.
-         * @param value
+         * @param value MutableFloatScalar.Abs; the reference
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
         {
@@ -195,7 +195,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
          * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
-        public MutableFloatScalar.Rel<U> copy()
+        public final MutableFloatScalar.Rel<U> copy()
         {
             return new MutableFloatScalar.Rel<U>(this);
         }
@@ -204,7 +204,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(final Rel<U> o)
+        public final int compareTo(final Rel<U> o)
         {
             return new Float(this.valueSI).compareTo(o.valueSI);
         }
@@ -221,7 +221,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @param valueSI the value to store in the cell
      */
-    void setSI(final float valueSI)
+    final void setSI(final float valueSI)
     {
         this.valueSI = valueSI;
     }
@@ -229,7 +229,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @param value the strongly typed value to store in the cell
      */
-    void set(final FloatScalar<U> value)
+    final void set(final FloatScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -237,7 +237,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @param value the strongly typed value to store in the cell
      */
-    void set(final MutableFloatScalar<U> value)
+    final void set(final MutableFloatScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -246,7 +246,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param value the value to store in the cell
      * @param valueUnit the unit of the value.
      */
-    void setInUnit(final float value, final U valueUnit)
+    final void setInUnit(final float value, final U valueUnit)
     {
         this.valueSI = (float) ValueUtil.expressAsSIUnit(value, valueUnit);
     }
@@ -261,7 +261,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * absolute, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to add
      */
-    public void add(final FloatScalar.Rel<U> value)
+    public final void add(final FloatScalar.Rel<U> value)
     {
         this.valueSI += value.getValueSI();
     }
@@ -272,7 +272,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to subtract
      */
-    public void subtract(final FloatScalar.Rel<U> value)
+    public final void subtract(final FloatScalar.Rel<U> value)
     {
         this.valueSI -= value.getValueSI();
     }
@@ -288,6 +288,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to add to the absolute value
      * @return the sum of the values as an absolute value
+     * @param <U> Unit; the unit of the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> plus(final FloatScalar.Abs<U> valueAbs,
@@ -307,6 +308,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param targetUnit the unit of the sum
      * @param valuesRel zero or more values to add
      * @return the sum of the values as a relative value
+     * @param <U> Unit; the unitof the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> plus(final U targetUnit,
@@ -327,6 +329,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to subtract from the absolute value
      * @return the resulting value as an absolute value
+     * @param <U> Unit; the unitof the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> minus(final FloatScalar.Abs<U> valueAbs,
@@ -347,6 +350,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueRel the relative base value
      * @param valuesRel zero or more values to subtract from the first value
      * @return the resulting value as a relative value
+     * @param <U> Unit; the unitof the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Rel<U> valueRel,
@@ -366,6 +370,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @return the difference of the two absolute values as a relative value
+     * @param <U> Unit; the unitof the parameters and the result
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Abs<U> valueAbs1,
             final FloatScalar.Abs<U> valueAbs2)
@@ -439,7 +444,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#abs()
      */
     @Override
-    public void abs()
+    public final void abs()
     {
         this.valueSI = Math.abs(this.valueSI);
     }
@@ -448,7 +453,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#acos()
      */
     @Override
-    public void acos()
+    public final void acos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.acos(this.valueSI);
@@ -458,7 +463,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#asin()
      */
     @Override
-    public void asin()
+    public final void asin()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.asin(this.valueSI);
@@ -468,7 +473,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#atan()
      */
     @Override
-    public void atan()
+    public final void atan()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.atan(this.valueSI);
@@ -478,7 +483,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
      */
     @Override
-    public void cbrt()
+    public final void cbrt()
     {
         // TODO: dimension for all SI coefficients / 3.
         this.valueSI = (float) Math.cbrt(this.valueSI);
@@ -488,7 +493,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#ceil()
      */
     @Override
-    public void ceil()
+    public final void ceil()
     {
         this.valueSI = (float) Math.ceil(this.valueSI);
     }
@@ -497,7 +502,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#cos()
      */
     @Override
-    public void cos()
+    public final void cos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.cos(this.valueSI);
@@ -507,7 +512,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#cosh()
      */
     @Override
-    public void cosh()
+    public final void cosh()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.cosh(this.valueSI);
@@ -517,7 +522,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#exp()
      */
     @Override
-    public void exp()
+    public final void exp()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = (float) Math.exp(this.valueSI);
@@ -526,9 +531,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#expm1()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void expm1()
+    @Override
+    public final void expm1()
     {
         this.valueSI = (float) Math.expm1(this.valueSI);
     }
@@ -537,7 +543,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#floor()
      */
     @Override
-    public void floor()
+    public final void floor()
     {
         this.valueSI = (float) Math.floor(this.valueSI);
     }
@@ -545,9 +551,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#log()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void log()
+    @Override
+    public final void log()
     {
         this.valueSI = (float) Math.log(this.valueSI);
     }
@@ -555,9 +562,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#log10()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void log10()
+    @Override
+    public final void log10()
     {
         this.valueSI = (float) Math.log10(this.valueSI);
     }
@@ -565,9 +573,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#log1p()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void log1p()
+    @Override
+    public final void log1p()
     {
         this.valueSI = (float) Math.log1p(this.valueSI);
     }
@@ -575,9 +584,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
-    @Override
+    
     // TODO: SI unit with coefficients * x.
-    public void pow(final double x)
+    @Override
+    public final void pow(final double x)
     {
         this.valueSI = (float) Math.pow(this.valueSI, x);
     }
@@ -586,7 +596,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#rint()
      */
     @Override
-    public void rint()
+    public final void rint()
     {
         this.valueSI = (float) Math.rint(this.valueSI);
     }
@@ -595,7 +605,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#round()
      */
     @Override
-    public void round()
+    public final void round()
     {
         this.valueSI = Math.round(this.valueSI);
     }
@@ -603,9 +613,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#signum()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void signum()
+    @Override
+    public final void signum()
     {
         this.valueSI = Math.signum(this.valueSI);
     }
@@ -613,9 +624,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#sin()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void sin()
+    @Override
+    public final void sin()
     {
         this.valueSI = (float) Math.sin(this.valueSI);
     }
@@ -623,9 +635,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#sinh()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void sinh()
+    @Override
+    public final void sinh()
     {
         this.valueSI = (float) Math.sinh(this.valueSI);
     }
@@ -633,9 +646,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
      */
-    @Override
+    
     // TODO: unit coefficients / 2.
-    public void sqrt()
+    @Override
+    public final void sqrt()
     {
         this.valueSI = (float) Math.sqrt(this.valueSI);
     }
@@ -643,9 +657,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#tan()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void tan()
+    @Override
+    public final void tan()
     {
         this.valueSI = (float) Math.tan(this.valueSI);
     }
@@ -653,9 +668,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#tanh()
      */
-    @Override
+    
     // TODO: dimensionless result (SIUnit.ONE).
-    public void tanh()
+    @Override
+    public final void tanh()
     {
         this.valueSI = (float) Math.tanh(this.valueSI);
     }
@@ -664,7 +680,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
      */
     @Override
-    public void toDegrees()
+    public final void toDegrees()
     {
         this.valueSI = (float) Math.toDegrees(this.valueSI);
     }
@@ -673,7 +689,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
      */
     @Override
-    public void toRadians()
+    public final void toRadians()
     {
         this.valueSI = (float) Math.toRadians(this.valueSI);
     }
@@ -681,9 +697,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#inv()
      */
-    @Override
+    
     // TODO: negate all coefficients in the Unit.
-    public void inv()
+    @Override
+    public final void inv()
     {
         this.valueSI = 1.0f / this.valueSI;
     }
@@ -692,7 +709,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
      */
     @Override
-    public void multiply(final float constant)
+    public final void multiply(final float constant)
     {
         this.valueSI *= constant;
     }
@@ -701,7 +718,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
      */
     @Override
-    public void divide(final float constant)
+    public final void divide(final float constant)
     {
         this.valueSI /= constant;
     }

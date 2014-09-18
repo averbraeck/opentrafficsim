@@ -101,7 +101,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
          */
         @Override
-        public MutableDoubleScalar.Abs<U> mutable()
+        public final MutableDoubleScalar.Abs<U> mutable()
         {
             return new MutableDoubleScalar.Abs<U>(this);
         }
@@ -110,7 +110,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(final Abs<U> o)
+        public final int compareTo(final Abs<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
@@ -119,7 +119,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
-        public DoubleScalar.Abs<U> copy()
+        public final DoubleScalar.Abs<U> copy()
         {
             return this;
         }
@@ -172,7 +172,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
          */
         @Override
-        public MutableDoubleScalar.Rel<U> mutable()
+        public final MutableDoubleScalar.Rel<U> mutable()
         {
             return new MutableDoubleScalar.Rel<U>(this);
         }
@@ -181,7 +181,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         @Override
-        public int compareTo(final Rel<U> o)
+        public final int compareTo(final Rel<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
@@ -190,7 +190,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
          * @see org.opentrafficsim.core.value.Value#copy()
          */
         @Override
-        public DoubleScalar.Rel<U> copy()
+        public final DoubleScalar.Rel<U> copy()
         {
             return this;
         }
@@ -208,7 +208,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * Initialize the valueSI field (performing conversion to the SI standard unit if needed).
      * @param value double; the value in the unit of this DoubleScalar
      */
-    protected void initialize(final double value)
+    protected final void initialize(final double value)
     {
         if (this.unit.equals(this.unit.getStandardUnit()))
         {
@@ -225,7 +225,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * necessary.
      * @param value DoubleScalar; the value to use for initialization
      */
-    protected void initialize(final DoubleScalar<U> value)
+    protected final void initialize(final DoubleScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -233,7 +233,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * @return value in SI units
      */
-    public double getValueSI()
+    public final double getValueSI()
     {
         return this.valueSI;
     }
@@ -241,7 +241,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * @return value in original units
      */
-    public double getValueInUnit()
+    public final double getValueInUnit()
     {
         return expressAsSpecifiedUnit(this.valueSI);
     }
@@ -250,7 +250,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @param targetUnit the unit to convert the value to
      * @return value in specific target unit
      */
-    public double getValueInUnit(final U targetUnit)
+    public final double getValueInUnit(final U targetUnit)
     {
         return ValueUtil.expressAsUnit(this.valueSI, targetUnit);
     }
@@ -263,7 +263,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#intValue()
      */
     @Override
-    public int intValue()
+    public final int intValue()
     {
         return (int) Math.round(this.valueSI);
     }
@@ -272,7 +272,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#longValue()
      */
     @Override
-    public long longValue()
+    public final long longValue()
     {
         return Math.round(this.valueSI);
     }
@@ -281,7 +281,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#floatValue()
      */
     @Override
-    public float floatValue()
+    public final float floatValue()
     {
         return (float) this.valueSI;
     }
@@ -290,7 +290,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Number#doubleValue()
      */
     @Override
-    public double doubleValue()
+    public final double doubleValue()
     {
         return this.valueSI;
     }
@@ -299,7 +299,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
     }
@@ -308,7 +308,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -322,14 +322,20 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (!(obj instanceof DoubleScalar))
+        {
             return false;
+        }
         DoubleScalar<?> other = (DoubleScalar<?>) obj;
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
@@ -342,7 +348,9 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
             return false;
         }
         if (Double.doubleToLongBits(this.valueSI) != Double.doubleToLongBits(other.valueSI))
+        {
             return false;
+        }
         return true;
     }
 

@@ -53,14 +53,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  */
 public class TrajectoryPlotTest
 {
-    /** Sample interval for the TrajectoryPlot */
+    /** Sample interval for the TrajectoryPlot. */
     DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.25, TimeUnit.SECOND);
 
     /**
-     * Test the TrajectoryPlot
+     * Test the TrajectoryPlot.
      */
     @Test
-    public void TrajectoryTest()
+    public final void trajectoryTest()
     {
         DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(1234, LengthUnit.METER);
         DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(12345, LengthUnit.METER);
@@ -69,7 +69,9 @@ public class TrajectoryPlotTest
         assertTrue("newly created DensityContourPlot should not be null", null != tp);
         assertEquals("Number of trajectories should initially be 0", 0, tp.getSeriesCount());
         for (int i = -10; i <= 10; i++)
+        {
             assertEquals("SeriesKey(" + i + ") should return " + i, i, tp.getSeriesKey(i));
+        }
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(2000, LengthUnit.METER);
@@ -100,41 +102,75 @@ public class TrajectoryPlotTest
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
         for (Component c0 : tp.getComponents())
+        {
             for (Component c1 : ((Container) c0).getComponents())
+            {
                 if (c1 instanceof Container)
+                {
                     for (Component c2 : ((Container) c1).getComponents())
                     {
                         //System.out.println("c2 is " + c2);
                         if (c2 instanceof Container)
+                        {
                             for (Component c3 : ((Container) c2).getComponents())
                             {
                                 //System.out.println("c3 is " + c3);
                                 if (c3 instanceof JLabel)
+                                {
                                     if (null == hintPanel)
+                                    {
                                         hintPanel = (JLabel) c3;
+                                    }
                                     else
+                                    {
                                         fail("There should be only one JPanel in a ContourPlot");
+                                    }
+                                }
                                 if (c3 instanceof ChartPanel)
+                                {
                                     if (null == chartPanel)
+                                    {
                                         chartPanel = (ChartPanel) c3;
+                                    }
                                     else
+                                    {
                                         fail("There should be only one ChartPanel in a ContourPlot");
+                                    }
+                                }
                             }
+                        }
                     }
+                }
+            }
+        }
         if (null == hintPanel)
+        {
             fail("Could not find a JLabel in ContourPlot");
+        }
         if (null == chartPanel)
+        {
             fail("Could not find a ChartPanel in ContourPlot");
+        }
         assertEquals("Initially the text should be a single space", " ", hintPanel.getText());
         PointerHandler ph = null;
         for (MouseListener ml : chartPanel.getMouseListeners())
+        {
             if (ml instanceof PointerHandler)
+            {
                 if (null == ph)
+                {
                     ph = (PointerHandler) ml;
+                }
                 else
+                {
                     fail("There should be only one PointerHandler on the chartPanel");
+                }
+            }
+        }
         if (null == ph)
+        {
             fail("Could not find the PointerHandler for the chartPanel");
+        }
         ph.updateHint(1, 2);
         //System.out.println("Hint text is now " + hintPanel.getText());
         assertFalse("Hint should not be a single space", " ".equals(hintPanel.getText()));
@@ -148,7 +184,7 @@ public class TrajectoryPlotTest
      * @param series Integer; the series in the TrajectoryPlot that should correspond to the car
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
      */
-    private void verifyTrajectory(Car car, int series, TrajectoryPlot tp)
+    private void verifyTrajectory(final Car car, final int series, final TrajectoryPlot tp)
     {
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =

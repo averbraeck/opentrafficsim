@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class DensityUnitTest extends AbstractUnitTest<DensityUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(DensityUnit.KG_PER_METER_3, "DensityUnit.kilogram_per_cubic_meter", "DensityUnit.kg/m^3");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001, "kilogram per cubic meter",
                 "kg/m^3");
@@ -75,14 +75,14 @@ public class DensityUnitTest extends AbstractUnitTest<DensityUnit>
     }
     
     /**
-     * Verify that we can create our own density unit
+     * Verify that we can create our own density unit.
      */
     @Test
-    public void createDensityUnit()
+    public final void createDensityUnit()
     {
         DensityUnit myDU =
-                new DensityUnit(UnitLocalizationsTest.doNotCheckPrefix + "DensityUnit.DensityUnit",
-                        UnitLocalizationsTest.doNotCheckPrefix + "DensityUnit.SPCF", SI_DERIVED, DensityUnit.KG_PER_METER_3, 515.317882);
+                new DensityUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "DensityUnit.DensityUnit",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "DensityUnit.SPCF", SI_DERIVED, DensityUnit.KG_PER_METER_3, 515.317882);
         assertTrue("Can create a new DensityUnit", null != myDU);
         checkUnitRatioNameAndAbbreviation(myDU, 515.3, 0.1, "!DensityUnit!", "!SPCF!");
     }

@@ -40,7 +40,7 @@ public class DoubleVectorDenseTest extends DoubleVectorTest
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(double[] in, U u)
+    protected final <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(final double[] in, final U u)
     {
         return new DoubleVector.Abs.Dense<U>(in, u);
     }
@@ -49,7 +49,7 @@ public class DoubleVectorDenseTest extends DoubleVectorTest
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs[])
      */
     @Override
-    protected <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(DoubleScalar.Abs<U>[] in) throws ValueException
+    protected final <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(final DoubleScalar.Abs<U>[] in) throws ValueException
     {
         return new DoubleVector.Abs.Dense<U>(in);
     }
@@ -59,7 +59,7 @@ public class DoubleVectorDenseTest extends DoubleVectorTest
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(double[] in, U u)
+    protected final <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(final double[] in, final U u)
     {
         return new DoubleVector.Rel.Dense<U>(in, u);
     }
@@ -68,7 +68,7 @@ public class DoubleVectorDenseTest extends DoubleVectorTest
      * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVectorTest#createDoubleVectorRel(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel[])
      */
     @Override
-    protected <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(DoubleScalar.Rel<U>[] in) throws ValueException
+    protected final <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(final DoubleScalar.Rel<U>[] in) throws ValueException
     {
         return new DoubleVector.Rel.Dense<U>(in);
     }

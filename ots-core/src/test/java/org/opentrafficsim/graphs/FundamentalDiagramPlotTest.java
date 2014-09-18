@@ -51,11 +51,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class FundamentalDiagramPlotTest
 {
     /**
-     * Test the FundamentalDiagram
+     * Test the FundamentalDiagram.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void FundamentalDiagramTest()
+    public final void fundamentalDiagramTest()
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
@@ -136,7 +136,9 @@ public class FundamentalDiagramPlotTest
                             assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
                         }
                         else
+                        {
                             assertTrue("Data should be NaN", Double.isNaN(value));
+                        }
                         value = fd.getX(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
@@ -144,7 +146,9 @@ public class FundamentalDiagramPlotTest
                             assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
                         }
                         else
+                        {
                             assertTrue("Data should be NaN", Double.isNaN(value));
+                        }
                         shouldHaveData = readBackLane <= lane && sample <= bucket;
                         value = fd.getYValue(readBackLane, sample);
                         if (shouldHaveData)
@@ -153,7 +157,9 @@ public class FundamentalDiagramPlotTest
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
+                        {
                             assertTrue("Data should be NaN", Double.isNaN(value));
+                        }
                         value = fd.getY(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
@@ -161,7 +167,9 @@ public class FundamentalDiagramPlotTest
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
+                        {
                             assertTrue("Data should be NaN", Double.isNaN(value));
+                        }
                         fd.actionPerformed(setXToSpeed);
                         value = fd.getYValue(readBackLane, sample);
                         if (shouldHaveData)
@@ -170,7 +178,9 @@ public class FundamentalDiagramPlotTest
                             assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
                         }
                         else
+                        {
                             assertTrue("Data should be NaN", Double.isNaN(value));
+                        }
                         value = fd.getY(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
@@ -178,7 +188,9 @@ public class FundamentalDiagramPlotTest
                             assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
                         }
                         else
+                        {
                             assertTrue("Data should be NaN", Double.isNaN(value));
+                        }
                         fd.actionPerformed(resetAxis);
                     }
                 }
@@ -260,11 +272,11 @@ public class FundamentalDiagramPlotTest
     }
     
     /**
-     * Test the updateHint method in the PointerHandler
+     * Test the updateHint method in the PointerHandler.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void testHints()
+    public final void testHints()
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
@@ -273,41 +285,75 @@ public class FundamentalDiagramPlotTest
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
         for (Component c0 : fd.getComponents())
+        {
             for (Component c1 : ((Container) c0).getComponents())
+            {
                 if (c1 instanceof Container)
+                {
                     for (Component c2 : ((Container) c1).getComponents())
                     {
                         //System.out.println("c2 is " + c2);
                         if (c2 instanceof Container)
+                        {
                             for (Component c3 : ((Container) c2).getComponents())
                             {
                                 //System.out.println("c3 is " + c3);
                                 if (c3 instanceof JLabel)
+                                {
                                     if (null == hintPanel)
+                                    {
                                         hintPanel = (JLabel) c3;
+                                    }
                                     else
+                                    {
                                         fail("There should be only one JPanel in a FundamentalDiagram");
+                                    }
+                                }
                                 if (c3 instanceof ChartPanel)
+                                {
                                     if (null == chartPanel)
+                                    {
                                         chartPanel = (ChartPanel) c3;
+                                    }
                                     else
+                                    {
                                         fail("There should be only one ChartPanel in a FundamentalDiagram");
+                                    }
+                                }
                             }
+                        }
                     }
+                }
+            }
+        }
         if (null == hintPanel)
+        {
             fail("Could not find a JLabel in FundamentalDiagram");
+        }
         if (null == chartPanel)
+        {
             fail("Could not find a ChartPanel in FundamentalDiagram");
+        }
         assertEquals("Initially the text should be a single space", " ", hintPanel.getText());
         PointerHandler ph = null;
         for (MouseListener ml : chartPanel.getMouseListeners())
+        {
             if (ml instanceof PointerHandler)
+            {
                 if (null == ph)
+                {
                     ph = (PointerHandler) ml;
+                }
                 else
+                {
                     fail("There should be only one PointerHandler on the chartPanel");
+                }
+            }
+        }
         if (null == ph)
+        {
             fail("Could not find the PointerHandler for the chartPanel");
+        }
         ph.updateHint(1, 2);
         //System.out.println("Hint text is now " + hintPanel.getText());
         assertFalse("Hint should not be a single space", " ".equals(hintPanel.getText()));

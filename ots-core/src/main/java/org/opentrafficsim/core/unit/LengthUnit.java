@@ -40,48 +40,56 @@ public class LengthUnit extends Unit<LengthUnit>
     private static final long serialVersionUID = 20140607L;
 
     /** meter. */
-    public static final LengthUnit METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", SI_BASE);
+    public static final LengthUnit METER;
 
     /** millimeter. */
-    public static final LengthUnit MILLIMETER = new LengthUnit("LengthUnit.millimeter", "LengthUnit.mm", SI_BASE,
-            METER, 0.001);
+    public static final LengthUnit MILLIMETER;
 
     /** centimeter. */
-    public static final LengthUnit CENTIMETER = new LengthUnit("LengthUnit.centimeter", "LengthUnit.cm", SI_BASE,
-            METER, 0.01);
+    public static final LengthUnit CENTIMETER;
 
     /** decimeter. */
-    public static final LengthUnit DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", SI_BASE, METER,
-            0.1);
+    public static final LengthUnit DECIMETER;
 
     /** decameter. */
-    public static final LengthUnit DEKAMETER = new LengthUnit("LengthUnit.dekameter", "LengthUnit.dam", SI_BASE, METER,
-            10.0);
+    public static final LengthUnit DEKAMETER;
 
     /** hectometer. */
-    public static final LengthUnit HECTOMETER = new LengthUnit("LengthUnit.hectometer", "LengthUnit.hm", SI_BASE,
-            METER, 100.0);
+    public static final LengthUnit HECTOMETER;
 
     /** kilometer. */
-    public static final LengthUnit KILOMETER = new LengthUnit("LengthUnit.kilometer", "LengthUnit.km", SI_BASE, METER,
-            1000.0);
+    public static final LengthUnit KILOMETER;
 
     /** foot (international) = 0.3048 m = 1/3 yd = 12 inches. */
-    public static final LengthUnit FOOT = new LengthUnit("LengthUnit.foot", "LengthUnit.ft", IMPERIAL, METER, 0.3048);
+    public static final LengthUnit FOOT;
 
     /** inch (international) = 2.54 cm = 1/36 yd = 1/12 ft. */
-    public static final LengthUnit INCH =
-            new LengthUnit("LengthUnit.inch", "LengthUnit.in", IMPERIAL, FOOT, 1.0 / 12.0);
+    public static final LengthUnit INCH;
 
     /** mile (international) = 5280 ft = 1760 yd. */
-    public static final LengthUnit MILE = new LengthUnit("LengthUnit.mile", "LengthUnit.mi", IMPERIAL, FOOT, 5280.0);
+    public static final LengthUnit MILE;
 
     /** nautical mile (international) = 1852 m. */
-    public static final LengthUnit NAUTICAL_MILE = new LengthUnit("LengthUnit.nauticalMile", "LengthUnit.NM", IMPERIAL,
-            METER, 1852.0);
+    public static final LengthUnit NAUTICAL_MILE;
 
     /** yard (international) = 0.9144 m = 3 ft = 36 in. */
-    public static final LengthUnit YARD = new LengthUnit("LengthUnit.yard", "LengthUnit.yd", IMPERIAL, FOOT, 3.0);
+    public static final LengthUnit YARD;
+
+    static
+    {
+        METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", SI_BASE);
+        MILLIMETER = new LengthUnit("LengthUnit.millimeter", "LengthUnit.mm", SI_BASE, METER, 0.001);
+        CENTIMETER = new LengthUnit("LengthUnit.centimeter", "LengthUnit.cm", SI_BASE, METER, 0.01);
+        DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", SI_BASE, METER, 0.1);
+        DEKAMETER = new LengthUnit("LengthUnit.dekameter", "LengthUnit.dam", SI_BASE, METER, 10.0);
+        HECTOMETER = new LengthUnit("LengthUnit.hectometer", "LengthUnit.hm", SI_BASE, METER, 100.0);
+        KILOMETER = new LengthUnit("LengthUnit.kilometer", "LengthUnit.km", SI_BASE, METER, 1000.0);
+        FOOT = new LengthUnit("LengthUnit.foot", "LengthUnit.ft", IMPERIAL, METER, 0.3048);
+        INCH = new LengthUnit("LengthUnit.inch", "LengthUnit.in", IMPERIAL, FOOT, 1.0 / 12.0);
+        MILE = new LengthUnit("LengthUnit.mile", "LengthUnit.mi", IMPERIAL, FOOT, 5280.0);
+        NAUTICAL_MILE = new LengthUnit("LengthUnit.nauticalMile", "LengthUnit.NM", IMPERIAL, METER, 1852.0);
+        YARD = new LengthUnit("LengthUnit.yard", "LengthUnit.yd", IMPERIAL, FOOT, 3.0);
+    }
 
     /**
      * Build a standard unit.
@@ -109,20 +117,16 @@ public class LengthUnit extends Unit<LengthUnit>
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
-    public LengthUnit getStandardUnit()
+    public final LengthUnit getStandardUnit()
     {
         return METER;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "m";
     }

@@ -40,32 +40,48 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
     private static final long serialVersionUID = 20140607L;
 
     /** Ampere. */
-    public static final ElectricalCurrentUnit AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere",
-            "ElectricalCurrentUnit.A", SI_BASE);
+    public static final ElectricalCurrentUnit AMPERE;
 
     /** nanoampere. */
-    public static final ElectricalCurrentUnit NANOAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", SI_BASE, AMPERE, 1.0E-9);
+    public static final ElectricalCurrentUnit NANOAMPERE;
 
     /** microampere. */
-    public static final ElectricalCurrentUnit MICROAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.microampere", "ElectricalCurrentUnit.muA", SI_BASE, AMPERE, 1.0E-6);
+    public static final ElectricalCurrentUnit MICROAMPERE;
 
     /** milliampere. */
-    public static final ElectricalCurrentUnit MILLIAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", SI_BASE, AMPERE, 0.001);
+    public static final ElectricalCurrentUnit MILLIAMPERE;
 
     /** kiloampere. */
-    public static final ElectricalCurrentUnit KILOAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.kiloampere", "ElectricalCurrentUnit.kA", SI_BASE, AMPERE, 1000.0);
+    public static final ElectricalCurrentUnit KILOAMPERE;
 
     /** statampere (GCS ESU). */
-    public static final ElectricalCurrentUnit STATAMPERE = new ElectricalCurrentUnit(
-            "ElectricalCurrentUnit.statampere", "ElectricalCurrentUnit.statA", CGS_ESU, AMPERE, 3.335641E-10);
+    public static final ElectricalCurrentUnit STATAMPERE;
 
     /** abampere (GCS EMU). */
-    public static final ElectricalCurrentUnit ABAMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.abampere",
-            "ElectricalCurrentUnit.abA", CGS_EMU, AMPERE, 10.0);
+    public static final ElectricalCurrentUnit ABAMPERE;
+
+    static
+    {
+        AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A", SI_BASE);
+        NANOAMPERE =
+                new ElectricalCurrentUnit("ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", SI_BASE,
+                        AMPERE, 1.0E-9);
+        MICROAMPERE =
+                new ElectricalCurrentUnit("ElectricalCurrentUnit.microampere", "ElectricalCurrentUnit.muA", SI_BASE,
+                        AMPERE, 1.0E-6);
+        MILLIAMPERE =
+                new ElectricalCurrentUnit("ElectricalCurrentUnit.milliampere", "ElectricalCurrentUnit.mA", SI_BASE,
+                        AMPERE, 0.001);
+        KILOAMPERE =
+                new ElectricalCurrentUnit("ElectricalCurrentUnit.kiloampere", "ElectricalCurrentUnit.kA", SI_BASE,
+                        AMPERE, 1000.0);
+        STATAMPERE =
+                new ElectricalCurrentUnit("ElectricalCurrentUnit.statampere", "ElectricalCurrentUnit.statA", CGS_ESU,
+                        AMPERE, 3.335641E-10);
+        ABAMPERE =
+                new ElectricalCurrentUnit("ElectricalCurrentUnit.abampere", "ElectricalCurrentUnit.abA", CGS_EMU,
+                        AMPERE, 10.0);
+    }
 
     /**
      * @param nameKey the key to the locale file for the long name of the unit
@@ -95,7 +111,7 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public ElectricalCurrentUnit getStandardUnit()
+    public final ElectricalCurrentUnit getStandardUnit()
     {
         return AMPERE;
     }
@@ -104,7 +120,7 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "A";
     }

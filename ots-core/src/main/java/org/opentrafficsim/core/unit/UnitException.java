@@ -46,7 +46,7 @@ public class UnitException extends Exception
     /**
      * @param message String
      * @param cause Throwable
-     * @param enableSuppression bpp;am 
+     * @param enableSuppression bpp;am
      * @param writableStackTrace boolean
      */
     public UnitException(final String message, final Throwable cause, final boolean enableSuppression,

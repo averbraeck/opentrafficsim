@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class FrequencyUnitTest extends AbstractUnitTest<FrequencyUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(FrequencyUnit.HERTZ, "FrequencyUnit.Hertz", "FrequencyUnit.Hz");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(FrequencyUnit.HERTZ, 1, 0.000001, "Hertz", "Hz");
         checkUnitRatioNameAndAbbreviation(FrequencyUnit.KILOHERTZ, 1000, 0.0001, "kilohertz", "kHz");
@@ -77,14 +77,14 @@ public class FrequencyUnitTest extends AbstractUnitTest<FrequencyUnit>
     }
 
     /**
-     * Verify that we can create our own Frequency unit
+     * Verify that we can create our own Frequency unit.
      */
     @Test
-    public void createFrequencyUnitt()
+    public final void createFrequencyUnitt()
     {
         FrequencyUnit myFU =
-                new FrequencyUnit(UnitLocalizationsTest.doNotCheckPrefix + "FrequencyUnit.MiddleA",
-                        UnitLocalizationsTest.doNotCheckPrefix + "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
+                new FrequencyUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "FrequencyUnit.MiddleA",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "FrequencyUnit.MA", OTHER, FrequencyUnit.KILOHERTZ, 0.440);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 440, 0.0001, "!MiddleA!", "!MA!");
     }

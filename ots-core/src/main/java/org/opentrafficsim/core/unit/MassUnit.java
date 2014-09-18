@@ -43,40 +43,48 @@ public class MassUnit extends Unit<MassUnit>
     private static final long serialVersionUID = 20140607L;
 
     /** kilogram. */
-    public static final MassUnit KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
+    public static final MassUnit KILOGRAM;
 
     /** gram. */
-    public static final MassUnit GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", SI_BASE, KILOGRAM, 0.001);
+    public static final MassUnit GRAM;
 
     /** pound. */
-    public static final MassUnit POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", IMPERIAL, KILOGRAM, 0.45359237);
+    public static final MassUnit POUND;
 
     /** pound. */
-    public static final MassUnit OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", IMPERIAL, POUND, 1.0 / 16.0);
+    public static final MassUnit OUNCE;
 
     /** long ton = 2240 lb. */
-    public static final MassUnit TON_LONG = new MassUnit("MassUnit.long_ton", "MassUnit.long_tn", IMPERIAL, POUND,
-            2240.0);
+    public static final MassUnit TON_LONG;
 
     /** short ton = 2000 lb. */
-    public static final MassUnit TON_SHORT = new MassUnit("MassUnit.short_ton", "MassUnit.sh_tn", US_CUSTOMARY, POUND,
-            2000.0);
+    public static final MassUnit TON_SHORT;
 
     /** metric ton = 1000 kg. */
-    public static final MassUnit TON_METRIC = new MassUnit("MassUnit.metric_ton", "MassUnit.t", SI_ACCEPTED, KILOGRAM,
-            1000.0);
+    public static final MassUnit TON_METRIC;
 
     /** metric ton = 1000 kg. */
-    public static final MassUnit TONNE =
-            new MassUnit("MassUnit.tonne_(mts)", "MassUnit.t_(mts)", MTS, KILOGRAM, 1000.0);
+    public static final MassUnit TONNE;
 
     /** electronvolt via E=mc^2. */
-    public static final MassUnit ELECTRONVOLT = new MassUnit("MassUnit.electronvolt", "MassUnit.eV", SI_ACCEPTED,
-            KILOGRAM, 1.78266184539E-36);
+    public static final MassUnit ELECTRONVOLT;
 
     /** dalton. */
-    public static final MassUnit DALTON = new MassUnit("MassUnit.dalton", "MassUnit.Da", SI_ACCEPTED, KILOGRAM,
-            1.6605388628E-27);
+    public static final MassUnit DALTON;
+
+    static
+    {
+        KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
+        GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", SI_BASE, KILOGRAM, 0.001);
+        POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", IMPERIAL, KILOGRAM, 0.45359237);
+        OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", IMPERIAL, POUND, 1.0 / 16.0);
+        TON_LONG = new MassUnit("MassUnit.long_ton", "MassUnit.long_tn", IMPERIAL, POUND, 2240.0);
+        TON_SHORT = new MassUnit("MassUnit.short_ton", "MassUnit.sh_tn", US_CUSTOMARY, POUND, 2000.0);
+        TON_METRIC = new MassUnit("MassUnit.metric_ton", "MassUnit.t", SI_ACCEPTED, KILOGRAM, 1000.0);
+        TONNE = new MassUnit("MassUnit.tonne_(mts)", "MassUnit.t_(mts)", MTS, KILOGRAM, 1000.0);
+        ELECTRONVOLT = new MassUnit("MassUnit.electronvolt", "MassUnit.eV", SI_ACCEPTED, KILOGRAM, 1.78266184539E-36);
+        DALTON = new MassUnit("MassUnit.dalton", "MassUnit.Da", SI_ACCEPTED, KILOGRAM, 1.6605388628E-27);
+    }
 
     /**
      * Build a standard unit.
@@ -108,7 +116,7 @@ public class MassUnit extends Unit<MassUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public MassUnit getStandardUnit()
+    public final MassUnit getStandardUnit()
     {
         return KILOGRAM;
     }
@@ -117,7 +125,7 @@ public class MassUnit extends Unit<MassUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kg";
     }
