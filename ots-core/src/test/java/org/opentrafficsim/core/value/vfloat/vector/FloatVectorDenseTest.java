@@ -45,9 +45,7 @@ public class FloatVectorDenseTest extends FloatVectorTest
         return new FloatVector.Abs.Dense<U>(in, u);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[])
-     */
+    /** {@inheritDoc} */
     @Override
     protected final <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(final FloatScalar.Abs<U>[] in) throws ValueException
     {
@@ -64,9 +62,7 @@ public class FloatVectorDenseTest extends FloatVectorTest
         return new FloatVector.Rel.Dense<U>(in, u);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[])
-     */
+    /** {@inheritDoc} */
     @Override
     protected final <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(final FloatScalar.Rel<U>[] in) throws ValueException
     {

@@ -45,9 +45,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
         return new FloatMatrix.Abs.Dense<U>(in, u);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[][])
-     */
+    /** {@inheritDoc} */
     @Override
     protected final <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(final FloatScalar.Abs<U>[][] in)
             throws ValueException
@@ -65,9 +63,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
         return new FloatMatrix.Rel.Dense<U>(in, u);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[][])
-     */
+    /** {@inheritDoc} */
     @Override
     protected final <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(final FloatScalar.Rel<U>[][] in)
             throws ValueException

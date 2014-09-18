@@ -46,9 +46,7 @@ public class DoubleMatrixSparseTest extends DoubleMatrixTest
         return new DoubleMatrix.Abs.Sparse<U>(in, u);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixAbs(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs[][])
-     */
+    /** {@inheritDoc} */
     @Override
     protected final <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(final DoubleScalar.Abs<U>[][] in)
             throws ValueException
@@ -66,9 +64,7 @@ public class DoubleMatrixSparseTest extends DoubleMatrixTest
         return new DoubleMatrix.Rel.Sparse<U>(in, u);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixTest#createDoubleMatrixRel(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarRel[][])
-     */
+    /** {@inheritDoc} */
     @Override
     protected final <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(final DoubleScalar.Rel<U>[][] in)
             throws ValueException
