@@ -263,9 +263,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         return chart;
     }
 
-    /**
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {
@@ -332,9 +330,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int getSeriesCount()
     {
@@ -389,27 +385,21 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         return this.xAxis.getAggregatedBinCount();
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getItemCount(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final int getItemCount(final int series)
     {
         return yAxisBins() * xAxisBins();
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getX(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getXValue(final int series, final int item)
     {
@@ -419,72 +409,56 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         return result;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getY(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getYValue(final int series, final int item)
     {
         return this.yAxis.getValue(yAxisBin(item));
     }
 
-    /**
-     * @see org.jfree.data.xy.XYZDataset#getZ(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Number getZ(final int series, final int item)
     {
         return getZValue(series, item);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#getGroup()
-     */
+    /** {@inheritDoc} */
     @Override
     public final DatasetGroup getGroup()
     {
         return null;
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setGroup(final DatasetGroup group)
     {
         // ignore
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#indexOf(java.lang.Comparable)
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public final int indexOf(final Comparable seriesKey)
@@ -492,9 +466,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         return 0;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getDomainOrder()
-     */
+    /** {@inheritDoc} */
     @Override
     public final DomainOrder getDomainOrder()
     {
@@ -624,9 +596,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     public abstract void incrementBinData(int timeBin, int distanceBin, double duration, double distanceCovered,
             double acceleration);
 
-    /**
-     * @see org.jfree.data.xy.XYZDataset#getZValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getZValue(final int series, final int item)
     {

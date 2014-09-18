@@ -505,18 +505,14 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return values;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#size()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int size()
     {
         return (int) this.vectorSI.size();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getSI(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final float getSI(final int index) throws ValueException
     {
@@ -524,9 +520,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return safeGet(index);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final float getInUnit(final int index) throws ValueException
     {
@@ -543,27 +537,21 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return (float) ValueUtil.expressAsUnit(getSI(index), targetUnit);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#zSum()
-     */
+    /** {@inheritDoc} */
     @Override
     public final float zSum()
     {
         return this.vectorSI.zSum();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#cardinality()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int cardinality()
     {
         return this.vectorSI.cardinality();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -722,9 +710,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return fsArray;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -734,9 +720,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

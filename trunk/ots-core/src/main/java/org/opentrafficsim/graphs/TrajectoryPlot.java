@@ -245,9 +245,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         valueAxis.centerRange(range / 2);
     }
 
-    /**
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void actionPerformed(final ActionEvent e)
     {
@@ -400,27 +398,21 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         }
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int getSeriesCount()
     {
         return this.trajectories.size();
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Comparable<Integer> getSeriesKey(final int series)
     {
         return series;
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#indexOf(java.lang.Comparable)
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public final int indexOf(final Comparable seriesKey)
@@ -432,63 +424,49 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         return -1;
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
-     */
+    /** {@inheritDoc} */
     @Override
     public void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#getGroup()
-     */
+    /** {@inheritDoc} */
     @Override
     public DatasetGroup getGroup()
     {
         return this.datasetGroup;
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setGroup(final DatasetGroup group)
     {
         this.datasetGroup = group;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getDomainOrder()
-     */
+    /** {@inheritDoc} */
     @Override
     public DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getItemCount(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public int getItemCount(final int series)
     {
         return this.trajectories.get(series).size();
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getX(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public Number getX(final int series, final int item)
     {
@@ -500,18 +478,14 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         return v;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public double getXValue(final int series, final int item)
     {
         return this.trajectories.get(series).getTime(item);
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getY(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public Number getY(final int series, final int item)
     {
@@ -523,9 +497,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         return v;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public double getYValue(final int series, final int item)
     {

@@ -107,18 +107,14 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final FrequencyUnit getStandardUnit()
     {
         return HERTZ;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

@@ -107,18 +107,14 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final ElectricalCurrentUnit getStandardUnit()
     {
         return AMPERE;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

@@ -93,9 +93,7 @@ public class ContinuousColorPaintScale implements PaintScale
         }
     }
 
-    /**
-     * @see org.jfree.chart.renderer.PaintScale#getLowerBound()
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getLowerBound()
     {
@@ -126,9 +124,7 @@ public class ContinuousColorPaintScale implements PaintScale
         return result;
     }
 
-    /**
-     * @see org.jfree.chart.renderer.PaintScale#getPaint(double)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Paint getPaint(final double value)
     {
@@ -154,9 +150,7 @@ public class ContinuousColorPaintScale implements PaintScale
         return mix;
     }
 
-    /**
-     * @see org.jfree.chart.renderer.PaintScale#getUpperBound()
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getUpperBound()
     {

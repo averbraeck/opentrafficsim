@@ -434,9 +434,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         return unit;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

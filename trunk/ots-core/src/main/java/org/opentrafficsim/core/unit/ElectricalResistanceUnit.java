@@ -173,18 +173,14 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final ElectricalResistanceUnit getStandardUnit()
     {
         return OHM;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

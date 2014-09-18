@@ -153,18 +153,14 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final ElectricalChargeUnit getStandardUnit()
     {
         return COULOMB;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

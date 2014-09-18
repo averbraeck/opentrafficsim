@@ -176,18 +176,14 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final AccelerationUnit getStandardUnit()
     {
         return METER_PER_SECOND_2;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

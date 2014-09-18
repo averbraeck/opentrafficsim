@@ -50,18 +50,14 @@ public class Line<ID> implements Edge<ID>
         this.length = length;
     }
 
-    /**
-     * @see org.opentrafficsim.core.location.Edge#getID()
-     */
+    /** {@inheritDoc} */
     @Override
     public ID getID()
     {
         return this.id;
     }
 
-    /**
-     * @see org.opentrafficsim.core.location.Edge#getLength()
-     */
+    /** {@inheritDoc} */
     @Override
     public DoubleScalar.Rel<LengthUnit> getLength()
     {

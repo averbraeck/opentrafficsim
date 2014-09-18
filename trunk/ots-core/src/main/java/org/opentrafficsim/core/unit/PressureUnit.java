@@ -221,18 +221,14 @@ public class PressureUnit extends Unit<PressureUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final PressureUnit getStandardUnit()
     {
         return PASCAL;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

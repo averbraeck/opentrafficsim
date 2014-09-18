@@ -166,9 +166,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         return MutableDoubleScalar.minus(getPosition(when), this.length).immutable();
     }
 
-    /**
-     * @see org.opentrafficsim.core.gtu.GTU#getID()
-     */
+    /** {@inheritDoc} */
     @Override
     public final Integer getID()
     {
@@ -184,18 +182,14 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         return this.simulator;
     }
 
-    /**
-     * @see org.opentrafficsim.core.gtu.GTU#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public LocationRelative<Line<String>> getLocation()
     {
         return null; // FIXME: STUB
     }
 
-    /**
-     * @see org.opentrafficsim.core.gtu.GTU#getVelocity()
-     */
+    /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<SpeedUnit> getVelocity()
     {
