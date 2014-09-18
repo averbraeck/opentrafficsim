@@ -62,18 +62,14 @@ public class Node implements LocatableInterface
         this.area = area;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
         return new DirectedPoint(new double[]{this.centroid.getX(), this.centroid.getY(), 0.0d});
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
-     */
+    /** {@inheritDoc} */
     @Override
     public Bounds getBounds() throws RemoteException
     {
@@ -88,9 +84,7 @@ public class Node implements LocatableInterface
         return this.centroid;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -105,9 +99,7 @@ public class Node implements LocatableInterface
         return this.area;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -118,9 +110,7 @@ public class Node implements LocatableInterface
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj)
     {
