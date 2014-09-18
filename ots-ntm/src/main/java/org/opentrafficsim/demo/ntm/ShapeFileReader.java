@@ -15,6 +15,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
@@ -118,7 +119,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<Long, Area> ReadAreas(final String shapeFileName, final Map<Long, Point> centroids)
+    public static Map<Long, Area> ReadAreas(final String shapeFileName, final Map<Long, ShpNode> centroids)
             throws IOException
     {
         /*-
@@ -150,6 +151,7 @@ public class ShapeFileReader
         SimpleFeatureCollection featureCollectionAreas = featureSourceAreas.getFeatures();
         SimpleFeatureIterator iterator = featureCollectionAreas.features();
         long newNr = 100000000L;
+        int totalConnectedAreas = 0;
         try
         {
             while (iterator.hasNext())
@@ -164,12 +166,13 @@ public class ShapeFileReader
                 String gebied = (String) feature.getAttribute("GEBIEDSNAA");
                 String regio = (String) feature.getAttribute("REGIO");
                 double dhb = (double) feature.getAttribute("DHB");
-
-                Point centroid = centroids.get(centroidNr);
+                // search for areas within the centroids (from the "points") 
+                ShpNode centroid = centroids.get(centroidNr);
                 if (centroid == null)
                 {
-                    System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" + name
-                            + ")");
+                //System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" + name
+                //            + ")");
+                    totalConnectedAreas++;        
                 }
                 else
                 {
@@ -178,10 +181,11 @@ public class ShapeFileReader
                         System.out.println("Area number " + nr + "(" + name + ") already exists. Number not unique!");
                         nr = newNr++;
                     }
-                    Area area = new Area(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
+                    Area area = new Area(geometry, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint());
                     areas.put(nr, area);
                 }
             }
+            System.out.println("Number of unconnected areas " + totalConnectedAreas);
         }
         catch (Exception problem)
         {
@@ -201,7 +205,7 @@ public class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<Long, ShpNode> ReadNodes(final String shapeFileName) throws IOException
+    public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean returnCentroid, boolean allCentroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650)
@@ -229,14 +233,27 @@ public class ShapeFileReader
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
-
                 Point point = (Point) feature.getAttribute("the_geom");
-                long nr = (long) feature.getAttribute("NODENR");
-                double x = (double) feature.getAttribute("X");
-                double y = (double) feature.getAttribute("Y");
-
-                ShpNode node = new ShpNode(point, nr, x, y);
-                nodes.put(nr, node);
+                String number = String.valueOf(feature.getAttribute(numberType));
+                if (returnCentroid)  {
+                   if (number.substring(0, 1).equals("C") || allCentroids) {
+                        Long nr = InspectNodeCentroid(number);
+                        double x = (double) feature.getAttribute("X");
+                        double y = (double) feature.getAttribute("Y");
+                        ShpNode node = new ShpNode(point, nr, x, y);
+                        nodes.put(nr, node);
+                        continue;
+                    }
+                }
+                else   {
+                    if (!number.substring(0, 1).equals("C")) {
+                        Long nr = (long) Long.parseLong(number);
+                        double x = (double) feature.getAttribute("X");
+                        double y = (double) feature.getAttribute("Y");        
+                        ShpNode node = new ShpNode(point, nr, x, y);
+                        nodes.put(nr, node);
+                    }
+                }
             }
         }
         catch (Exception problem)
@@ -252,13 +269,27 @@ public class ShapeFileReader
         return nodes;
     }
 
+    
+    public static Long InspectNodeCentroid(String number) {  
+    	Long nr = (long) 0;
+	    if (number.substring(0, 1).equals("C")) {
+	        number = number.substring(1);
+	        nr = (long) Long.parseLong(number);
+	    }
+	    else {
+	    	nr = Long.parseLong(number);
+	    }
+		return nr;
+    }
     /**
      * @param shapeFileName the nodes shapefile to read
      * @param nodes the map of nodes to retrieve start and end node
+     * @param centroids the centroids to check start and end Node
+     * @return 
      * @return map of (shape file) links with linknr as the key
      * @throws IOException on error
      */
-    public static Map<Long, ShpLink> ReadLinks(final String shapeFileName, Map<Long, ShpNode> nodes) throws IOException
+    public static void ReadLinks(final String shapeFileName, Map<Long, ShpLink> links, Map<Long, ShpLink> connectors, Map<Long, ShpNode> nodes, Map<Long, ShpNode> centroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -283,9 +314,6 @@ public class ShapeFileReader
         else
             url = ShapeFileReader.class.getResource(shapeFileName);
         ShapefileDataStore storeLinks = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
-
-        Map<Long, ShpLink> links = new HashMap<>();
-
         SimpleFeatureSource featureSourceLinks = storeLinks.getFeatureSource();
         SimpleFeatureCollection featureCollectionLinks = featureSourceLinks.getFeatures();
         SimpleFeatureIterator iterator = featureCollectionLinks.features();
@@ -296,35 +324,96 @@ public class ShapeFileReader
                 SimpleFeature feature = iterator.next();
 
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
-                long nr = (long) feature.getAttribute("LINKNR");
-                String name = (String) feature.getAttribute("NAME");
-                short direction = (short) (long) feature.getAttribute("DIRECTION");
-                double length = (double) feature.getAttribute("LENGTH");
-                long lNodeA = (long) feature.getAttribute("ANODE");
-                long lNodeB = (long) feature.getAttribute("BNODE");
+                String temp = String.valueOf(feature.getAttribute("LINKNR"));
+                long nr = Long.parseLong(temp);
+                String name = String.valueOf(feature.getAttribute("NAME"));
+                temp = String.valueOf(feature.getAttribute("DIRECTION"));
+                short direction = (short) Long.parseLong(temp);
+                temp = String.valueOf(feature.getAttribute("LENGTH"));
+                double length = Double.parseDouble(temp);
+                temp = String.valueOf(feature.getAttribute("ANODE"));
+                Long lNodeA = InspectNodeCentroid(temp);
+                temp = String.valueOf(feature.getAttribute("BNODE"));
+                long lNodeB = InspectNodeCentroid(temp);
                 String linkTag = (String) feature.getAttribute("LINKTAG");
                 String wegtype = (String) feature.getAttribute("WEGTYPEAB");
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
-                double speed = (double) feature.getAttribute("SPEEDAB");
-                double capacity = (double) feature.getAttribute("CAPACITYAB");
+                temp = String.valueOf(feature.getAttribute("SPEEDAB"));
+                double speed = Double.parseDouble(temp);
+                temp = String.valueOf(feature.getAttribute("CAPACITYAB"));
+                double capacity = Double.parseDouble(temp);
 
+                // create the link or connector to a centroid....
+                ShpNode centroidA = centroids.get(lNodeA);
+                ShpNode centroidB = centroids.get(lNodeB);
                 ShpNode nodeA = nodes.get(lNodeA);
                 ShpNode nodeB = nodes.get(lNodeB);
-                
-                if (nodeA == null || nodeB == null)
+                boolean nodeACentroid = false; 
+                boolean nodeBCentroid = false; 
+
+                if (centroidA == null && centroidB == null)  // all normal links....
                 {
-                    System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr=" + nr
-                            + ", name=" + name);
+                    if (nodeA != null && nodeB != null ) // should not happen
+                    {
+                    	ShpLink link =
+                                new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
+                                        typeWegVak, typeWeg, speed, capacity);
+                        	links.put(nr, link);
+                    }
+                    else {
+                		System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr=" + nr
+                                + ", name=" + name);
+                    }
                 }
-                else
-                {
-                    ShpLink link =
-                            new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
-                                    typeWegVak, typeWeg, speed, capacity);
-                    links.put(nr, link);
+                else {  // possibly a link that connects to a centroid
+                	// but first test the geometry of the node/centroid: is it a node or is it a centroid?
+                    if (centroidA != null) {
+                        if (testGeometry(geometry.getCoordinates()[0], centroidA.getPoint()))  
+                        {
+                        	nodeACentroid = true;
+                        }
+                    }
+                    if (centroidB != null) {
+                        if (testGeometry(geometry.getCoordinates()[geometry.getCoordinates().length - 1], centroidA.getPoint()))  
+                        {
+                        	nodeBCentroid = true;
+                        }
+                    }
+	                if (nodeACentroid && nodeBCentroid) // should not happen
+	                    {
+	                    System.out.println("Strange connector!!!: both Centroids lNodeA= " + centroidA + " or lNodeB= " + centroidB + " connected to linknr=" + nr
+	                            + ", name=" + name);
+	                    }
+	                else if (nodeACentroid)  
+	                    {
+	                        ShpLink link =
+	                                new ShpLink(geometry, nr, name, direction, length, centroidA, nodeB, linkTag, wegtype,
+	                                        typeWegVak, typeWeg, speed, capacity);
+	                        connectors.put(nr, link);
+	
+	                    }
+	                else if (nodeBCentroid)
+	                {
+	                    ShpLink link =
+	                            new ShpLink(geometry, nr, name, direction, length, nodeA, centroidB, linkTag, wegtype,
+	                                    typeWegVak, typeWeg, speed, capacity);
+	                    connectors.put(nr, link);
+	
+	                }
+	                else
+                    {
+                    	ShpLink link =
+                                new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
+                                        typeWegVak, typeWeg, speed, capacity);
+                        	links.put(nr, link);
+                    }	
                 }
+
+
+
             }
+
         }
         catch (Exception problem)
         {
@@ -336,9 +425,22 @@ public class ShapeFileReader
             storeLinks.dispose();
         }
 
-        return links;
     }
 
+    
+    /**
+     * @param geometry
+     * @param centroid 
+     * @return if TRUE: the points match geographically 
+     */
+    public static boolean testGeometry(Coordinate coordinate, Point centroid)   {
+        boolean geomEqual = false;
+        if (Math.abs(coordinate.x - centroid.getX()) < 1)
+            if (Math.abs(coordinate.y - centroid.getY()) < 1)
+                geomEqual = true;
+        return geomEqual;
+    }
+    
     /**
      * @param shapeFileName the areas shapefile to read
      * @throws IOException

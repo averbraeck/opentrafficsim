@@ -130,16 +130,16 @@ public class NTMTestApplication extends DSOLApplication
         URL page = NTMModel.class.getResource(helpSource);
         if (page != null)
         {
-            HTMLPanel htmlPanel;
+            HTMLPanel htmlPanel = null;
             try
             {
                 htmlPanel = new HTMLPanel(page);
-                panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
             }
             catch (IOException exception)
             {
                 exception.printStackTrace();
             }
+            panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
         }
     }
 }

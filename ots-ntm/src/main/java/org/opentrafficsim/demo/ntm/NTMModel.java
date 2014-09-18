@@ -73,11 +73,16 @@ public class NTMModel implements OTSModelInterface
     /** nodes from shape file */
     private Map<java.lang.Long, ShpNode> shpNodes;
 
+    /** conectors from shape file */
+    private Map<java.lang.Long, ShpLink> shpConnectors;
+    
     /** links from shape file */
     private Map<java.lang.Long, ShpLink> shpLinks;
 
     /** the centroids */
-    private Map<java.lang.Long, Point> centroids;
+    private Map<java.lang.Long, ShpNode> centroids;
+    
+    private TripDemand tripDemand;
 
     /** graph containing the original network */
     SimpleWeightedGraph<Node, LinkEdge> linkGraph = new SimpleWeightedGraph<Node, LinkEdge>(LinkEdge.class);
@@ -100,11 +105,21 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // read the shape files
-            this.centroids = ShapeFileReader.ReadCentroids("/gis/centroids.shp");
+        	// public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean returnCentroid, boolean allCentroids)
+        	// if returnCentroid: true: return centroids; 
+        	//                    false: return nodes
+        	// if allCentroids:   true: we are reading a file with only centroids
+        	//                    false: mixed centroids (number starts with "C") and nodes        	
+        	this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
             this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
-            this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp");
+            this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
+      /*    this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
+            this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
+            this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
+            */
 
-            // make all the centroids also a node.
+            
+/*            // make all the centroids also a node.
             for (java.lang.Long nr : this.centroids.keySet())
             {
                 if (this.shpNodes.containsKey(nr))
@@ -113,16 +128,22 @@ public class NTMModel implements OTSModelInterface
                 }
                 else
                 {
-                    Point p = this.centroids.get(nr);
+                    Point p = this.centroids.get(nr).getPoint();
                     this.shpNodes.put(nr, new ShpNode(p, nr, p.getX(), p.getY()));
-                }
-            }
-
-            this.shpLinks = ShapeFileReader.ReadLinks("/gis/links.shp", this.shpNodes);
+                }            
+                ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
+            }*/
+            this.shpLinks = new  HashMap<>();
+            this.shpConnectors = new  HashMap<>();
+            ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
+            //ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
 
             // build the higher level map and the graph
             buildGraph();
 
+        	this.tripDemand = CsvFileReader.ReadTrafficDemand("/gis/cordonmatrix_pa_os.txt");
+        	
+            
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
             {
@@ -198,7 +219,7 @@ public class NTMModel implements OTSModelInterface
             Link link = new Link(n1, n2, shpLink.getName());
             LinkEdge linkEdge = new LinkEdge(link);
             this.linkGraph.addEdge(n1, n2, linkEdge);
-            this.linkGraph.setEdgeWeight(linkEdge, 1.0); // shpLink.getGeometry().getLength());
+            this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLength()); // shpLink.getGeometry().getLength());
             linkMap.put(shpLink.getNr(), linkEdge);
         }
 
