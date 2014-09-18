@@ -52,33 +52,50 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     private final TimeUnit timeUnit;
 
     /** Volt. */
-    public static final ElectricalPotentialUnit VOLT = new ElectricalPotentialUnit(MassUnit.KILOGRAM, LengthUnit.METER,
-            ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V",
-            SI_DERIVED);
+    public static final ElectricalPotentialUnit VOLT;
 
     /** microvolt. */
-    public static final ElectricalPotentialUnit MICROVOLT = new ElectricalPotentialUnit(
-            "ElectricalPotentialUnit.microvolt", "ElectricalPotentialUnit.muV", SI_DERIVED, VOLT, 1.0E-6);
+    public static final ElectricalPotentialUnit MICROVOLT;
 
     /** millivolt. */
-    public static final ElectricalPotentialUnit MILLIVOLT = new ElectricalPotentialUnit(
-            "ElectricalPotentialUnit.millivolt", "ElectricalPotentialUnit.mV", SI_DERIVED, VOLT, 0.001);
+    public static final ElectricalPotentialUnit MILLIVOLT;
 
     /** kilovolt. */
-    public static final ElectricalPotentialUnit KILOVOLT = new ElectricalPotentialUnit(
-            "ElectricalPotentialUnit.kilovolt", "ElectricalPotentialUnit.kV", SI_DERIVED, VOLT, 1000.0);
+    public static final ElectricalPotentialUnit KILOVOLT;
 
     /** megavolt. */
-    public static final ElectricalPotentialUnit MEGAVOLT = new ElectricalPotentialUnit(
-            "ElectricalPotentialUnit.megavolt", "ElectricalPotentialUnit.MV", SI_DERIVED, VOLT, 1.0E6);
+    public static final ElectricalPotentialUnit MEGAVOLT;
 
     /** statvolt. */
-    public static final ElectricalPotentialUnit STATVOLT = new ElectricalPotentialUnit(
-            "ElectricalPotentialUnit.statvolt", "ElectricalPotentialUnit.statV", CGS_ESU, VOLT, 299.792458);
+    public static final ElectricalPotentialUnit STATVOLT;
 
     /** abvolt. */
-    public static final ElectricalPotentialUnit ABVOLT = new ElectricalPotentialUnit("ElectricalPotentialUnit.abvolt",
-            "ElectricalPotentialUnit.abV", CGS_EMU, VOLT, 1.0E-8);
+    public static final ElectricalPotentialUnit ABVOLT;
+
+    static
+    {
+        VOLT =
+                new ElectricalPotentialUnit(MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE,
+                        TimeUnit.SECOND, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V", SI_DERIVED);
+        MICROVOLT =
+                new ElectricalPotentialUnit("ElectricalPotentialUnit.microvolt", "ElectricalPotentialUnit.muV",
+                        SI_DERIVED, VOLT, 1.0E-6);
+        MILLIVOLT =
+                new ElectricalPotentialUnit("ElectricalPotentialUnit.millivolt", "ElectricalPotentialUnit.mV",
+                        SI_DERIVED, VOLT, 0.001);
+        KILOVOLT =
+                new ElectricalPotentialUnit("ElectricalPotentialUnit.kilovolt", "ElectricalPotentialUnit.kV",
+                        SI_DERIVED, VOLT, 1000.0);
+        MEGAVOLT =
+                new ElectricalPotentialUnit("ElectricalPotentialUnit.megavolt", "ElectricalPotentialUnit.MV",
+                        SI_DERIVED, VOLT, 1.0E6);
+        STATVOLT =
+                new ElectricalPotentialUnit("ElectricalPotentialUnit.statvolt", "ElectricalPotentialUnit.statV",
+                        CGS_ESU, VOLT, 299.792458);
+        ABVOLT =
+                new ElectricalPotentialUnit("ElectricalPotentialUnit.abvolt", "ElectricalPotentialUnit.abV", CGS_EMU,
+                        VOLT, 1.0E-8);
+    }
 
     /**
      * @param massUnit the unit of mass for the electrical potential difference (voltage) unit, e.g., kilogram
@@ -145,7 +162,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -153,7 +170,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -161,7 +178,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     /**
      * @return electricalCurrentUnit
      */
-    public ElectricalCurrentUnit getElectricalCurrentUnit()
+    public final ElectricalCurrentUnit getElectricalCurrentUnit()
     {
         return this.electricalCurrentUnit;
     }
@@ -169,7 +186,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -178,7 +195,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public ElectricalPotentialUnit getStandardUnit()
+    public final ElectricalPotentialUnit getStandardUnit()
     {
         return VOLT;
     }
@@ -187,7 +204,7 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kg.m2.s-3.A-1";
     }

@@ -5,7 +5,6 @@ import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Relative;
-import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
 
@@ -146,7 +145,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         /**
          * Create a new Relative MutableDoubleScalar.
          * @param value double; the value of the new Relative MutableDoubleScalar
-         * @param unit
+         * @param unit Unit of the new Relative MutableDoubleScalar
          */
         public Rel(final double value, final U unit)
         {
@@ -156,9 +155,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * @param value
-         * @param unit
-         * @throws ValueException
+         * Create a new Relative MutableDoubleScalar.
+         * @param value DoubleScalar.Rel; the value of the new Relative MutableDoubleScalar
          */
         public Rel(final DoubleScalar.Rel<U> value)
         {
@@ -226,7 +224,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @param valueSI the value to store in the cell
      */
-    void setSI(final double valueSI)
+    final void setSI(final double valueSI)
     {
         this.valueSI = valueSI;
     }
@@ -234,7 +232,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @param value the strongly typed value to store in the cell
      */
-    void set(final DoubleScalar<U> value)
+    final void set(final DoubleScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -242,7 +240,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @param value the strongly typed value to store in the cell
      */
-    void set(final MutableDoubleScalar<U> value)
+    final void set(final MutableDoubleScalar<U> value)
     {
         this.valueSI = value.valueSI;
     }
@@ -251,7 +249,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param value the value to store in the cell
      * @param valueUnit the unit of the value.
      */
-    void setInUnit(final double value, final U valueUnit)
+    final void setInUnit(final double value, final U valueUnit)
     {
         this.valueSI = ValueUtil.expressAsSIUnit(value, valueUnit);
     }
@@ -266,7 +264,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * absolute, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to add
      */
-    public void add(final DoubleScalar.Rel<U> value)
+    public final void add(final DoubleScalar.Rel<U> value)
     {
         this.valueSI += value.getValueSI();
     }
@@ -277,7 +275,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to subtract
      */
-    public void subtract(final DoubleScalar.Rel<U> value)
+    public final void subtract(final DoubleScalar.Rel<U> value)
     {
         this.valueSI -= value.getValueSI();
     }
@@ -293,6 +291,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to add to the absolute value
      * @return the sum of the values as an absolute value
+     * @param <U> Unit; the unit
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> plus(final DoubleScalar.Abs<U> valueAbs,
@@ -312,6 +311,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param targetUnit the unit of the sum
      * @param valuesRel zero or more values to add
      * @return the sum of the values as a relative value
+     * @param <U> Unit; the unit
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> plus(final U targetUnit,
@@ -332,6 +332,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to subtract from the absolute value
      * @return the resulting value as an absolute value
+     * @param <U> Unit; the unit
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> minus(final DoubleScalar.Abs<U> valueAbs,
@@ -352,6 +353,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueRel the relative base value
      * @param valuesRel zero or more values to subtract from the first value
      * @return the resulting value as a relative value
+     * @param <U> Unit; the unit
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Rel<U> valueRel,
@@ -370,6 +372,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * will be the unit of the first argument.
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
+     * @param <U> Unit; the unit
      * @return the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Abs<U> valueAbs1,
@@ -446,7 +449,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#abs()
      */
     @Override
-    public void abs()
+    public final void abs()
     {
         this.valueSI = Math.abs(this.valueSI);
     }
@@ -455,7 +458,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#acos()
      */
     @Override
-    public void acos()
+    public final void acos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = Math.acos(this.valueSI);
@@ -465,7 +468,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#asin()
      */
     @Override
-    public void asin()
+    public final void asin()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = Math.asin(this.valueSI);
@@ -475,7 +478,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#atan()
      */
     @Override
-    public void atan()
+    public final void atan()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = Math.atan(this.valueSI);
@@ -485,7 +488,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
      */
     @Override
-    public void cbrt()
+    public final void cbrt()
     {
         // TODO: dimension for all SI coefficients / 3.
         this.valueSI = Math.cbrt(this.valueSI);
@@ -495,7 +498,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#ceil()
      */
     @Override
-    public void ceil()
+    public final void ceil()
     {
         this.valueSI = Math.ceil(this.valueSI);
     }
@@ -504,7 +507,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#cos()
      */
     @Override
-    public void cos()
+    public final void cos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = Math.cos(this.valueSI);
@@ -514,7 +517,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#cosh()
      */
     @Override
-    public void cosh()
+    public final void cosh()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = Math.cosh(this.valueSI);
@@ -524,7 +527,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#exp()
      */
     @Override
-    public void exp()
+    public final void exp()
     {
         // TODO: dimensionless result (SIUnit.ONE).
         this.valueSI = Math.exp(this.valueSI);
@@ -533,9 +536,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#expm1()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void expm1()
+    @Override
+    public final void expm1()
     {
         this.valueSI = Math.expm1(this.valueSI);
     }
@@ -544,7 +548,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#floor()
      */
     @Override
-    public void floor()
+    public final void floor()
     {
         this.valueSI = Math.floor(this.valueSI);
     }
@@ -552,9 +556,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#log()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void log()
+    @Override
+    public final void log()
     {
         this.valueSI = Math.log(this.valueSI);
     }
@@ -562,9 +567,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#log10()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void log10()
+    @Override
+    public final void log10()
     {
         this.valueSI = Math.log10(this.valueSI);
     }
@@ -572,9 +578,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#log1p()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void log1p()
+    @Override
+    public final void log1p()
     {
         this.valueSI = Math.log1p(this.valueSI);
     }
@@ -582,9 +589,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
-    @Override
+
     // TODO: SI unit with coefficients * x.
-    public void pow(final double x)
+    @Override
+    public final void pow(final double x)
     {
         this.valueSI = Math.pow(this.valueSI, x);
     }
@@ -593,7 +601,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#rint()
      */
     @Override
-    public void rint()
+    public final void rint()
     {
         this.valueSI = Math.rint(this.valueSI);
     }
@@ -602,7 +610,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#round()
      */
     @Override
-    public void round()
+    public final void round()
     {
         this.valueSI = Math.round(this.valueSI);
     }
@@ -610,9 +618,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#signum()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void signum()
+    @Override
+    public final void signum()
     {
         this.valueSI = Math.signum(this.valueSI);
     }
@@ -620,9 +629,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#sin()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void sin()
+    @Override
+    public final void sin()
     {
         this.valueSI = Math.sin(this.valueSI);
     }
@@ -630,9 +640,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#sinh()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void sinh()
+    @Override
+    public final void sinh()
     {
         this.valueSI = Math.sinh(this.valueSI);
     }
@@ -640,9 +651,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
      */
-    @Override
+
     // TODO: unit coefficients / 2.
-    public void sqrt()
+    @Override
+    public final void sqrt()
     {
         this.valueSI = Math.sqrt(this.valueSI);
     }
@@ -650,9 +662,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#tan()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void tan()
+    @Override
+    public final void tan()
     {
         this.valueSI = Math.tan(this.valueSI);
     }
@@ -660,9 +673,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#tanh()
      */
-    @Override
+
     // TODO: dimensionless result (SIUnit.ONE).
-    public void tanh()
+    @Override
+    public final void tanh()
     {
         this.valueSI = Math.tanh(this.valueSI);
     }
@@ -671,7 +685,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
      */
     @Override
-    public void toDegrees()
+    public final void toDegrees()
     {
         this.valueSI = Math.toDegrees(this.valueSI);
     }
@@ -680,7 +694,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
      */
     @Override
-    public void toRadians()
+    public final void toRadians()
     {
         this.valueSI = Math.toRadians(this.valueSI);
     }
@@ -688,9 +702,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * @see org.opentrafficsim.core.value.MathFunctions#inv()
      */
-    @Override
+
     // TODO: negate all coefficients in the Unit.
-    public void inv()
+    @Override
+    public final void inv()
     {
         this.valueSI = 1.0f / this.valueSI;
     }
@@ -699,7 +714,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
     @Override
-    public void multiply(final double constant)
+    public final void multiply(final double constant)
     {
         this.valueSI *= constant;
     }
@@ -708,7 +723,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
      */
     @Override
-    public void divide(final double constant)
+    public final void divide(final double constant)
     {
         this.valueSI /= constant;
     }

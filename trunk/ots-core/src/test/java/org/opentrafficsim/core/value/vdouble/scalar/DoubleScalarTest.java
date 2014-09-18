@@ -44,11 +44,11 @@ import org.opentrafficsim.core.value.Relative;
 public class DoubleScalarTest
 {
     /**
-     * Test creator, verify the various fields in the created objects, test conversions to other units
+     * Test creator, verify the various fields in the created objects, test conversions to other units.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void basicsNonMutableAbs()
+    public final void basicsNonMutableAbs()
     {
         TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
         double value = 38.0f;
@@ -144,11 +144,11 @@ public class DoubleScalarTest
     }
 
     /**
-     * Test creator, verify the various fields in the created objects, test conversions to other units
+     * Test creator, verify the various fields in the created objects, test conversions to other units.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void basicsNonMutableRel()
+    public final void basicsNonMutableRel()
     {
         TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
         double value = 38.0f;
@@ -243,11 +243,11 @@ public class DoubleScalarTest
     }
 
     /**
-     * Test creator, verify the various fields in the created objects, test conversions to other units
+     * Test creator, verify the various fields in the created objects, test conversions to other units.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void basicsMutable()
+    public final void basicsMutable()
     {
         TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
         double value = 38.0f;
@@ -302,7 +302,7 @@ public class DoubleScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void testCopyAbs()
+    public final void testCopyAbs()
     {
         MutableDoubleScalar.Abs<TemperatureUnit> value =
                 new MutableDoubleScalar.Abs<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
@@ -321,7 +321,7 @@ public class DoubleScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void testCopyRel()
+    public final void testCopyRel()
     {
         MutableDoubleScalar.Rel<TemperatureUnit> value =
                 new MutableDoubleScalar.Rel<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
@@ -340,7 +340,7 @@ public class DoubleScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void simpleArithmetic()
+    public final void simpleArithmetic()
     {
         double leftValue = 123.456f;
         double rightValue = 21.098f;
@@ -415,7 +415,7 @@ public class DoubleScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void divide()
+    public final void divide()
     {
         double leftValue = 123.456f;
         double rightValue = 21.098f;
@@ -424,9 +424,13 @@ public class DoubleScalarTest
         DoubleScalar.Abs<SIUnit> ratio = MutableDoubleScalar.divide(leftAbs, rightAbs);
         String unitString = ratio.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
+        {
             unitString = unitString.substring(0, unitString.length() - 1);
+        }
         if (unitString.startsWith("!"))
+        {
             unitString = unitString.substring(1);
+        }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
                 ratio.getValueSI(), 0.0001);
@@ -435,20 +439,24 @@ public class DoubleScalarTest
         DoubleScalar.Rel<SIUnit> ratioRel = MutableDoubleScalar.divide(leftRel, rightRel);
         unitString = ratioRel.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
+        {
             unitString = unitString.substring(0, unitString.length() - 1);
+        }
         if (unitString.startsWith("!"))
+        {
             unitString = unitString.substring(1);
+        }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
                 ratioRel.getValueSI(), 0.0001);
     }
 
     /**
-     * Test the math operations
+     * Test the math operations.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void mathMethods()
+    public final void mathMethods()
     {
         double[] inputValues = {-10f, -2f, -1f, -0.5f, -0.1f, 0f, 0.1f, 0.5f, 1f, 2f, 10f};
         for (double inputValue : inputValues)
@@ -459,7 +467,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "abs", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.abs(f);
                 }
@@ -469,7 +477,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "acos", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.acos(f);
                 }
@@ -479,7 +487,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "asin", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.asin(f);
                 }
@@ -489,7 +497,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "atan", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.atan(f);
                 }
@@ -499,7 +507,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "cbrt", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.cbrt(f);
                 }
@@ -509,7 +517,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "ceil", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.ceil(f);
                 }
@@ -519,7 +527,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "cos", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.cos(f);
                 }
@@ -529,7 +537,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "cosh", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.cosh(f);
                 }
@@ -539,7 +547,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "exp", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.exp(f);
                 }
@@ -549,7 +557,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "expm1", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.expm1(f);
                 }
@@ -559,7 +567,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "floor", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.floor(f);
                 }
@@ -569,7 +577,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "log", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.log(f);
                 }
@@ -579,7 +587,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "log10", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.log10(f);
                 }
@@ -589,7 +597,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "log10", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.log1p(f);
                 }
@@ -599,7 +607,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "rint", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.rint(f);
                 }
@@ -609,7 +617,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "round", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.round(f);
                 }
@@ -619,7 +627,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "signum", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.signum(f);
                 }
@@ -629,7 +637,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "sin", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.sin(f);
                 }
@@ -639,7 +647,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "sinh", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.sinh(f);
                 }
@@ -649,7 +657,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "sqrt", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.sqrt(f);
                 }
@@ -659,7 +667,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "tan", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.tan(f);
                 }
@@ -669,7 +677,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "tanh", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.tanh(f);
                 }
@@ -679,7 +687,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "toDegrees", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.toDegrees(f);
                 }
@@ -689,7 +697,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "toRadians", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return Math.toRadians(f);
                 }
@@ -699,7 +707,7 @@ public class DoubleScalarTest
             MathTester.tester(inputValue, "inv", fs, 0.001, new DoubleToDouble()
             {
                 @Override
-                public double function(double f)
+                public double function(final double f)
                 {
                     return 1 / f;
                 }
@@ -712,7 +720,7 @@ public class DoubleScalarTest
                 MathTester.tester(inputValue, "pow(" + exponent + ")", fs, 0.001, new DoubleToDouble()
                 {
                     @Override
-                    public double function(double f)
+                    public double function(final double f)
                     {
                         return Math.pow(f, exponent);
                     }
@@ -726,7 +734,7 @@ public class DoubleScalarTest
                 MathTester.tester(inputValue, "multiply by " + constant, fs, 0.001, new DoubleToDouble()
                 {
                     @Override
-                    public double function(double f)
+                    public double function(final double f)
                     {
                         return f * constant;
                     }
@@ -736,7 +744,7 @@ public class DoubleScalarTest
                 MathTester.tester(inputValue, "divide by " + constant, fs, 0.001, new DoubleToDouble()
                 {
                     @Override
-                    public double function(double f)
+                    public double function(final double f)
                     {
                         return f / constant;
                     }
@@ -822,7 +830,7 @@ public class DoubleScalarTest
          * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the
          *            corresponding value in resultValues
          */
-        public static void tester(final double inputValue, String operation, final MutableDoubleScalar<?> actualResult,
+        public static void tester(final double inputValue, final String operation, final MutableDoubleScalar<?> actualResult,
                 final double precision, final DoubleToDouble function)
         {
             double expectedResult = function.function(inputValue);
@@ -835,7 +843,7 @@ public class DoubleScalarTest
         }
 
         /**
-         * Function that takes a double value and returns a double value
+         * Function that takes a double value and returns a double value.
          * @param in double value
          * @return double value
          */

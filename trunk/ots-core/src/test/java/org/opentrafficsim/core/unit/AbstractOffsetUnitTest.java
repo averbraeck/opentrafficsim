@@ -34,15 +34,17 @@ import static org.junit.Assert.assertEquals;
 public class AbstractOffsetUnitTest<OU extends OffsetUnit<OU>> extends AbstractUnitTest<OU>
 {
     /**
-     * Verify one length conversion factor to standard unit and the localization of the name and abbreviation
-     * @param u Unit to check
+     * Verify one length conversion factor to standard unit and the localization of the name and abbreviation.
+     * @param ou Unit to check
      * @param expectedRatio Double; expected ratio
+     * @param expectedOffset Double; expected offset
      * @param precision Double; precision of verification
      * @param expectedName String; expected name in the resources
      * @param expectedAbbreviation String; expected abbreviation in the resources
      */
-    protected void checkUnitRatioOffsetNameAndAbbreviation(OU ou, double expectedRatio, double expectedOffset,
-            double precision, String expectedName, String expectedAbbreviation)
+    protected final void checkUnitRatioOffsetNameAndAbbreviation(final OU ou, final double expectedRatio,
+            final double expectedOffset, final double precision, final String expectedName,
+            final String expectedAbbreviation)
     {
         assertEquals(String.format("zero %s is about %f reference unit", ou.getNameKey(), expectedOffset),
                 expectedOffset, ou.getOffsetToStandardUnit(), precision);
@@ -58,7 +60,7 @@ public class AbstractOffsetUnitTest<OU extends OffsetUnit<OU>> extends AbstractU
      * @param toUnit U; the unit to convert to
      * @return offset to convert a value from fromUnit to toUnit
      */
-    public double getOffsetTo(OU fromUnit, OU toUnit)
+    public final double getOffsetTo(final OU fromUnit, final OU toUnit)
     {
         double fromOffset = fromUnit.getOffsetToStandardUnit();
         double fromFactor = fromUnit.getConversionFactorToStandardUnit();

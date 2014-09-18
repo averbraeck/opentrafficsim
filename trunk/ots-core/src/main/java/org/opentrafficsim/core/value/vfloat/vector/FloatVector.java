@@ -131,7 +131,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
             @Override
-            public MutableFloatVector.Abs.Dense<U> mutable()
+            public final MutableFloatVector.Abs.Dense<U> mutable()
             {
                 return new MutableFloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
@@ -140,7 +140,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
-            protected FloatMatrix1D createMatrix1D(final int size)
+            protected final FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
             }
@@ -149,7 +149,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public FloatVector.Abs.Dense<U> copy()
+            public final FloatVector.Abs.Dense<U> copy()
             {
                 return this;
             }
@@ -165,7 +165,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only
+             * For package internal use only.
              * @param values FloatMatrix1D; the values for the entries of the new FloatVector
              * @param unit Unit; the unit of the new FloatVector
              */
@@ -177,7 +177,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Create a Relative Sparse Immutable FloatVector
+             * Create a Relative Sparse Immutable FloatVector.
              * @param values float[]; the values for the entries of the new FloatVector
              * @param unit Unit; the unit of the new FloatVector
              */
@@ -249,7 +249,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative Immutable FloatVector
+         * Create a new Relative Immutable FloatVector.
          * @param unit Unit; the unit of the new FloatVector
          */
         Rel(final U unit)
@@ -278,7 +278,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Create a new Relative Dense Immutable FloatVector
+             * Create a new Relative Dense Immutable FloatVector.
              * @param values float[]; the values for the entries of the new FloatVector
              * @param unit Unit; the unit of the new FloatVector
              */
@@ -339,7 +339,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only
+             * For package internal use only.
              * @param values FloatMatrix1D; the values for the entries of the new FloatVector
              * @param unit Unit; the unit of the new FloatVector
              */
@@ -351,7 +351,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
 
             /**
-             * Create a new Relative Sparse Immutable FloatVector
+             * Create a new Relative Sparse Immutable FloatVector.
              * @param values float[]; the values of the entries of the new FloatVector
              * @param unit Unit; the unit of the new FloatVector
              */
@@ -378,7 +378,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
              */
             @Override
-            public MutableFloatVector.Rel.Sparse<U> mutable()
+            public final MutableFloatVector.Rel.Sparse<U> mutable()
             {
                 return new MutableFloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
@@ -387,7 +387,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
              */
             @Override
-            protected FloatMatrix1D createMatrix1D(final int size)
+            protected final FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
             }
@@ -396,7 +396,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public FloatVector.Rel.Sparse<U> copy()
+            public final FloatVector.Rel.Sparse<U> copy()
             {
                 return this;
             }
@@ -407,7 +407,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
          * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
          */
         @Override
-        public FloatScalar.Rel<U> get(final int index) throws ValueException
+        public final FloatScalar.Rel<U> get(final int index) throws ValueException
         {
             return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -426,7 +426,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Import the values and convert them into SI units.
      * @param values float[]; an array of values
      */
-    protected void initialize(final float[] values)
+    protected final void initialize(final float[] values)
     {
         this.vectorSI = createMatrix1D(values.length);
         if (this.unit.equals(this.unit.getStandardUnit()))
@@ -446,7 +446,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Import the values from an existing FloatMatrix1D. This makes a shallow copy.
      * @param values FloatMatrix1D; the values
      */
-    protected void initialize(final FloatMatrix1D values)
+    protected final void initialize(final FloatMatrix1D values)
     {
         this.vectorSI = values;
     }
@@ -456,7 +456,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    protected void initialize(final FloatScalar<U>[] values) throws ValueException
+    protected final void initialize(final FloatScalar<U>[] values) throws ValueException
     {
         this.vectorSI = createMatrix1D(values.length);
         for (int index = 0; index < values.length; index++)
@@ -476,7 +476,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create a float[] array filled with the values in SI unit.
      * @return float[]; array of values in SI unit
      */
-    public float[] getValuesSI()
+    public final float[] getValuesSI()
     {
         return this.vectorSI.toArray(); // this makes a deep copy
     }
@@ -485,7 +485,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create a float[] array filled with the values in the original unit.
      * @return values in original unit
      */
-    public float[] getValuesInUnit()
+    public final float[] getValuesInUnit()
     {
         return getValuesInUnit(this.unit);
     }
@@ -495,7 +495,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public float[] getValuesInUnit(final U targetUnit)
+    public final float[] getValuesInUnit(final U targetUnit)
     {
         float[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
@@ -509,7 +509,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#size()
      */
     @Override
-    public int size()
+    public final int size()
     {
         return (int) this.vectorSI.size();
     }
@@ -518,7 +518,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getSI(int)
      */
     @Override
-    public float getSI(final int index) throws ValueException
+    public final float getSI(final int index) throws ValueException
     {
         checkIndex(index);
         return safeGet(index);
@@ -528,7 +528,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int)
      */
     @Override
-    public float getInUnit(final int index) throws ValueException
+    public final float getInUnit(final int index) throws ValueException
     {
         return (float) expressAsSpecifiedUnit(getSI(index));
     }
@@ -538,7 +538,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public float getInUnit(final int index, final U targetUnit) throws ValueException
+    public final float getInUnit(final int index, final U targetUnit) throws ValueException
     {
         return (float) ValueUtil.expressAsUnit(getSI(index), targetUnit);
     }
@@ -547,7 +547,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#zSum()
      */
     @Override
-    public float zSum()
+    public final float zSum()
     {
         return this.vectorSI.zSum();
     }
@@ -556,7 +556,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#cardinality()
      */
     @Override
-    public int cardinality()
+    public final int cardinality()
     {
         return this.vectorSI.cardinality();
     }
@@ -565,7 +565,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return toString(this.unit);
     }
@@ -575,7 +575,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param displayUnit the unit to display the vector in.
      * @return a printable String with the vector contents
      */
-    public String toString(final U displayUnit)
+    public final String toString(final U displayUnit)
     {
         StringBuffer buf = new StringBuffer();
         if (this instanceof MutableFloatVector)
@@ -640,7 +640,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param other FloatVector<U>; other FloatVector
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final FloatVector<?> other) throws ValueException
+    protected final void checkSize(final FloatVector<?> other) throws ValueException
     {
         if (size() != other.size())
         {
@@ -653,7 +653,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param other float[]; array of float
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final float[] other) throws ValueException
+    protected final void checkSize(final float[] other) throws ValueException
     {
         if (size() != other.length)
         {
@@ -664,9 +664,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * Check that a provided index is valid.
      * @param index integer; the value to check
-     * @throws ValueException
+     * @throws ValueException when index is invalid
      */
-    protected void checkIndex(final int index) throws ValueException
+    protected final void checkIndex(final int index) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
         {
@@ -680,7 +680,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param index integer; the index
      * @return float; the value stored at that index
      */
-    protected float safeGet(final int index)
+    protected final float safeGet(final int index)
     {
         return this.vectorSI.getQuick(index);
     }
@@ -690,7 +690,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param index integer; the index
      * @param valueSI float; the new value for the entry in vectorSI
      */
-    protected void safeSet(final int index, final float valueSI)
+    protected final void safeSet(final int index, final float valueSI)
     {
         this.vectorSI.setQuick(index, valueSI);
     }
@@ -699,7 +699,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create a deep copy of the data.
      * @return FloatMatrix1D; deep copy of the data
      */
-    protected FloatMatrix1D deepCopyOfData()
+    protected final FloatMatrix1D deepCopyOfData()
     {
         return this.vectorSI.copy();
     }
@@ -709,6 +709,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param fsArray FloatScalar[]; the provided array
      * @return FloatScalar[]; the provided array
      * @throws ValueException when the proved array has length equal to 0
+     * @param <U> Unit; the unit of the FloatScalar array
      */
     protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray)
             throws ValueException
@@ -725,7 +726,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -737,14 +738,20 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (!(obj instanceof FloatVector))
+        {
             return false;
+        }
         FloatVector<?> other = (FloatVector<?>) obj;
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
@@ -758,7 +765,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         }
         // Colt's equals also tests the size of the vector
         if (!this.vectorSI.equals(other.vectorSI))
+        {
             return false;
+        }
         return true;
     }
 

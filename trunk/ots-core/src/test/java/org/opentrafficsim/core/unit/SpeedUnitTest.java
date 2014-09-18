@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class SpeedUnitTest extends AbstractUnitTest<SpeedUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(SpeedUnit.METER_PER_SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(SpeedUnit.METER_PER_SECOND, 1, 0.00000001, "meter per second", "m/s");
         checkUnitRatioNameAndAbbreviation(SpeedUnit.KM_PER_HOUR, 0.277778, 0.000001, "kilometer per hour", "km/h");
@@ -79,14 +79,14 @@ public class SpeedUnitTest extends AbstractUnitTest<SpeedUnit>
     }
 
     /**
-     * Verify that we can create our own speed unit
+     * Verify that we can create our own speed unit.
      */
     @Test
-    public void createSpeedUnit()
+    public final void createSpeedUnit()
     {
         SpeedUnit mySU =
-                new SpeedUnit(UnitLocalizationsTest.doNotCheckPrefix + "SpeedUnit.Sprinter",
-                        UnitLocalizationsTest.doNotCheckPrefix + "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
+                new SpeedUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "SpeedUnit.Sprinter",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
         assertTrue("Can create a new PowerUnit", null != mySU);
         checkUnitRatioNameAndAbbreviation(mySU, 13.3333, 0.0001, "!Sprinter!", "!sprtr!");
     }

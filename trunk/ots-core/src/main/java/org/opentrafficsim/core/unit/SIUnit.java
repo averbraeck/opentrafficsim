@@ -48,7 +48,7 @@ public class SIUnit extends Unit<SIUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public SIUnit getStandardUnit()
+    public final SIUnit getStandardUnit()
     {
         return this;
     }
@@ -57,7 +57,7 @@ public class SIUnit extends Unit<SIUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return this.getAbbreviationKey().replace("SIUnit.", "");
     }

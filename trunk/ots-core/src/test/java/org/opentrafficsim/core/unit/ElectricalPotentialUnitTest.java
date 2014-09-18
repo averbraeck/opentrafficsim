@@ -42,29 +42,29 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 public class ElectricalPotentialUnitTest extends AbstractUnitTest<ElectricalPotentialUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(ElectricalPotentialUnit.VOLT, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.VOLT, 1, 0.00000001, "volt", "V");
         checkUnitRatioNameAndAbbreviation(ElectricalPotentialUnit.MILLIVOLT, 0.001, 0.00000000001, "millivolt", "mV");
@@ -75,23 +75,23 @@ public class ElectricalPotentialUnitTest extends AbstractUnitTest<ElectricalPote
     }
 
     /**
-     * Verify that we can create our own electrical potential unit
+     * Verify that we can create our own electrical potential unit.
      */
     @Test
-    public void createElectricalPotentialUnit()
+    public final void createElectricalPotentialUnit()
     {
         ElectricalPotentialUnit myEPU =
                 new ElectricalPotentialUnit(
-                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalPotentialUnit.NanoVolt",
-                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalPotentialUnit.NanoV", SI_DERIVED,
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ElectricalPotentialUnit.NanoVolt",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ElectricalPotentialUnit.NanoV", SI_DERIVED,
                         ElectricalPotentialUnit.VOLT, 1e-9);
         assertTrue("Can create a new ElectricalPotentialUnit", null != myEPU);
         checkUnitRatioNameAndAbbreviation(myEPU, 1e-9, 0.1, "!NanoVolt!", "!NanoV!");
 
         myEPU =
                 new ElectricalPotentialUnit(PowerUnit.FOOT_POUND_FORCE_PER_HOUR, ElectricalCurrentUnit.MICROAMPERE,
-                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalPotentialUnit.fpfph/microA",
-                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalPotentialUnit.fpfph/uA",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ElectricalPotentialUnit.fpfph/microA",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ElectricalPotentialUnit.fpfph/uA",
                         UnitSystem.IMPERIAL);
         assertTrue("Can create a new ElectricalPotentialUnit", null != myEPU);
         checkUnitRatioNameAndAbbreviation(myEPU, 376.6, 0.1, "!fpfph/microA!", "!fpfph/uA!");

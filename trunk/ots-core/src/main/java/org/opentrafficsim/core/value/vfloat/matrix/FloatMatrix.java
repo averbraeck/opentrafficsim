@@ -140,7 +140,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
              */
             @Override
-            public MutableFloatMatrix.Abs.Dense<U> mutable()
+            public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
                 return new MutableFloatMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
             }
@@ -149,7 +149,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
             }
@@ -158,7 +158,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public FloatMatrix.Abs.Dense<U> copy()
+            public final FloatMatrix.Abs.Dense<U> copy()
             {
                 return this;
             }
@@ -223,7 +223,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
             }
@@ -232,7 +232,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public FloatMatrix.Abs.Sparse<U> copy()
+            public final FloatMatrix.Abs.Sparse<U> copy()
             {
                 return this;
             }
@@ -242,7 +242,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
          * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
          */
         @Override
-        public FloatScalar<U> get(final int row, final int column) throws ValueException
+        public final FloatScalar<U> get(final int row, final int column) throws ValueException
         {
             return new FloatScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
         }
@@ -389,7 +389,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
              */
             @Override
-            public MutableFloatMatrix.Rel.Sparse<U> mutable()
+            public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
                 return new MutableFloatMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
             }
@@ -398,7 +398,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseFloatMatrix2D(rows, columns);
             }
@@ -407,7 +407,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public FloatMatrix.Rel.Sparse<U> copy()
+            public final FloatMatrix.Rel.Sparse<U> copy()
             {
                 return this;
             }
@@ -418,7 +418,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
          * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
          */
         @Override
-        public FloatScalar<U> get(final int row, final int column) throws ValueException
+        public final FloatScalar<U> get(final int row, final int column) throws ValueException
         {
             return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
         }
@@ -438,7 +438,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param values an array of values
      * @throws ValueException when values is not rectangular
      */
-    protected void initialize(final float[][] values) throws ValueException
+    protected final void initialize(final float[][] values) throws ValueException
     {
         ensureRectangular(values);
         this.matrixSI = createMatrix2D(values.length, 0 == values.length ? 0 : values[0].length);
@@ -462,7 +462,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * Import the values (which are already in SI units). This method makes a shallow copy.
      * @param values FloatMatrix2D; the values to import
      */
-    protected void initialize(final FloatMatrix2D values)
+    protected final void initialize(final FloatMatrix2D values)
     {
         this.matrixSI = values;
     }
@@ -472,7 +472,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param values float[][] a 2D array of values for the constructor
      * @throws ValueException when array with zero elements is offered
      */
-    protected void initialize(final FloatScalar<U>[][] values) throws ValueException
+    protected final void initialize(final FloatScalar<U>[][] values) throws ValueException
     {
         ensureRectangularAndNonEmpty(values);
         this.matrixSI = createMatrix2D(values.length, values[0].length);
@@ -497,7 +497,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * Create a float[][] array filled with the values in SI unit.
      * @return float[][]; array of values in SI unit
      */
-    public float[][] getValuesSI()
+    public final float[][] getValuesSI()
     {
         return this.matrixSI.toArray(); // this makes a deep copy
     }
@@ -506,7 +506,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * Create a float[][] array filled with the values in the original unit.
      * @return values in original unit
      */
-    public float[][] getValuesInUnit()
+    public final float[][] getValuesInUnit()
     {
         return getValuesInUnit(this.unit);
     }
@@ -516,7 +516,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public float[][] getValuesInUnit(final U targetUnit)
+    public final float[][] getValuesInUnit(final U targetUnit)
     {
         float[][] values = this.matrixSI.toArray();
         for (int row = 0; row < values.length; row++)
@@ -533,7 +533,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#rows()
      */
     @Override
-    public int rows()
+    public final int rows()
     {
         return this.matrixSI.rows();
     }
@@ -542,7 +542,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#columns()
      */
     @Override
-    public int columns()
+    public final int columns()
     {
         return this.matrixSI.columns();
     }
@@ -551,7 +551,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getSI(int)
      */
     @Override
-    public float getSI(final int row, final int column) throws ValueException
+    public final float getSI(final int row, final int column) throws ValueException
     {
         checkIndex(row, column);
         return safeGet(row, column);
@@ -561,7 +561,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int)
      */
     @Override
-    public float getInUnit(final int row, final int column) throws ValueException
+    public final float getInUnit(final int row, final int column) throws ValueException
     {
         return (float) expressAsSpecifiedUnit(getSI(row, column));
     }
@@ -571,7 +571,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public float getInUnit(final int row, final int column, final U targetUnit) throws ValueException
+    public final float getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
         return (float) ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
@@ -580,7 +580,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#zSum()
      */
     @Override
-    public float zSum()
+    public final float zSum()
     {
         return this.matrixSI.zSum();
     }
@@ -589,7 +589,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#cardinality()
      */
     @Override
-    public int cardinality()
+    public final int cardinality()
     {
         return this.matrixSI.cardinality();
     }
@@ -598,7 +598,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#det()
      */
     @Override
-    public float det() throws ValueException
+    public final float det() throws ValueException
     {
         try
         {
@@ -628,7 +628,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return toString(this.unit);
     }
@@ -638,7 +638,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param displayUnit the unit to display the vector in.
      * @return a printable String with the vector contents
      */
-    public String toString(final U displayUnit)
+    public final String toString(final U displayUnit)
     {
         StringBuffer buf = new StringBuffer();
         if (this instanceof MutableFloatMatrix)
@@ -707,7 +707,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param other FloatMatrix<U>; other FloatVector
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final FloatMatrix<?> other) throws ValueException
+    protected final void checkSize(final FloatMatrix<?> other) throws ValueException
     {
         if (rows() != other.rows() || columns() != other.columns())
         {
@@ -721,7 +721,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param other float[][]; array of float
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final float[][] other) throws ValueException
+    protected final void checkSize(final float[][] other) throws ValueException
     {
         if (rows() != other.length || columns() != other[0].length)
         {
@@ -772,7 +772,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param column integer; the column value to check
      * @throws ValueException when row or column is invalid
      */
-    protected void checkIndex(final int row, final int column) throws ValueException
+    protected final void checkIndex(final int row, final int column) throws ValueException
     {
         if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
         {
@@ -787,7 +787,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param column integer; the column where the value must be retrieved
      * @return float; the value stored at the indicated row and column
      */
-    protected float safeGet(final int row, final int column)
+    protected final float safeGet(final int row, final int column)
     {
         return this.matrixSI.getQuick(row, column);
     }
@@ -798,7 +798,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param column integer; the column where the value must be stored
      * @param valueSI float; the new value for the entry in vectorSI
      */
-    protected void safeSet(final int row, final int column, final float valueSI)
+    protected final void safeSet(final int row, final int column, final float valueSI)
     {
         this.matrixSI.setQuick(row, column, valueSI);
     }
@@ -807,7 +807,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * Create a deep copy of the data.
      * @return FloatMatrix2D; deep copy of the data
      */
-    protected FloatMatrix2D deepCopyOfData()
+    protected final FloatMatrix2D deepCopyOfData()
     {
         return this.matrixSI.copy();
     }
@@ -817,6 +817,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @param fsArray FloatScalar[][]; the provided array
      * @return FloatScalar[][]; the provided array
      * @throws ValueException when the array has zero entries
+     * @param <U> Unit; the unit
      */
     protected static <U extends Unit<U>> FloatScalar<U>[][] checkNonEmpty(final FloatScalar<U>[][] fsArray)
             throws ValueException
@@ -867,7 +868,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -879,14 +880,20 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (!(obj instanceof FloatMatrix))
+        {
             return false;
+        }
         FloatMatrix<?> other = (FloatMatrix<?>) obj;
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
@@ -900,7 +907,9 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         }
         // Colt's equals also tests the size of the vector
         if (!this.matrixSI.equals(other.matrixSI))
+        {
             return false;
+        }
         return true;
     }
 

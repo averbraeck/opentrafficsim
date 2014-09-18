@@ -41,29 +41,29 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 public class ForceUnitTest extends AbstractUnitTest<ForceUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(ForceUnit.NEWTON, "ForceUnit.newton", "ForceUnit.N");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(ForceUnit.NEWTON, 1, 0.000001, "newton", "N");
         checkUnitRatioNameAndAbbreviation(ForceUnit.DYNE, 0.00001, 0.000000001, "dyne", "dyn");
@@ -75,14 +75,14 @@ public class ForceUnitTest extends AbstractUnitTest<ForceUnit>
     }
 
     /**
-     * Verify that we can create our own Force unit
+     * Verify that we can create our own Force unit.
      */
     @Test
-    public void createForceUnit()
+    public final void createForceUnit()
     {
         ForceUnit myFU =
-                new ForceUnit(UnitLocalizationsTest.doNotCheckPrefix + "ForceUnit.AntForce",
-                        UnitLocalizationsTest.doNotCheckPrefix + "ForceUnit.af", UnitSystem.OTHER,
+                new ForceUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "ForceUnit.AntForce",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ForceUnit.af", UnitSystem.OTHER,
                         ForceUnit.KILOGRAM_FORCE, 0.002);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 0.002 * 9.8, 0.0001, "!AntForce!", "!af!");

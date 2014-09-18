@@ -48,42 +48,62 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
     private final TimeUnit timeUnit;
 
     /** Coulomb = A.s. */
-    public static final ElectricalChargeUnit COULOMB = new ElectricalChargeUnit(ElectricalCurrentUnit.AMPERE,
-            TimeUnit.SECOND, "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C", SI_DERIVED);
+    public static final ElectricalChargeUnit COULOMB;
 
     /** milliampere hour. */
-    public static final ElectricalChargeUnit MILLIAMPERE_HOUR = new ElectricalChargeUnit(
-            ElectricalCurrentUnit.MILLIAMPERE, TimeUnit.HOUR, "ElectricalChargeUnit.milliampere_hour",
-            "ElectricalChargeUnit.mAh", SI_DERIVED);
+    public static final ElectricalChargeUnit MILLIAMPERE_HOUR;
 
     /** Faraday. */
-    public static final ElectricalChargeUnit FARADAY = new ElectricalChargeUnit("ElectricalChargeUnit.faraday",
-            "ElectricalChargeUnit.F", OTHER, COULOMB, 96485.3383);
+    public static final ElectricalChargeUnit FARADAY;
 
     /** atomic unit of charge. */
-    public static final ElectricalChargeUnit ATOMIC_UNIT = new ElectricalChargeUnit(
-            "ElectricalChargeUnit.atomic_unit_of_charge", "ElectricalChargeUnit.e", SI_ACCEPTED, COULOMB,
-            1.6021765314E-19);
+    public static final ElectricalChargeUnit ATOMIC_UNIT;
 
     /** statcoulomb (CGS ESU). */
-    public static final ElectricalChargeUnit STATCOULOMB = new ElectricalChargeUnit("ElectricalChargeUnit.statcoulomb",
-            "ElectricalChargeUnit.statC", CGS_ESU, COULOMB, 3.335641E-10);
+    public static final ElectricalChargeUnit STATCOULOMB;
 
     /** franklin (CGS ESU). */
-    public static final ElectricalChargeUnit FRANKLIN = new ElectricalChargeUnit("ElectricalChargeUnit.franklin",
-            "ElectricalChargeUnit.Fr", CGS_ESU, STATCOULOMB, 1.0);
+    public static final ElectricalChargeUnit FRANKLIN;
 
     /** esu (CGS ESU). */
-    public static final ElectricalChargeUnit ESU = new ElectricalChargeUnit("ElectricalChargeUnit.electrostatic_unit",
-            "ElectricalChargeUnit.esu", CGS_ESU, STATCOULOMB, 1.0);
+    public static final ElectricalChargeUnit ESU;
 
     /** abcoulomb (CGS EMU). */
-    public static final ElectricalChargeUnit ABCOULOMB = new ElectricalChargeUnit("ElectricalChargeUnit.abcoulomb",
-            "ElectricalChargeUnit.abC", CGS_EMU, COULOMB, 10.0);
+    public static final ElectricalChargeUnit ABCOULOMB;
 
     /** emu (CGS EMU). */
-    public static final ElectricalChargeUnit EMU = new ElectricalChargeUnit(
-            "ElectricalChargeUnit.electromagnetic_unit", "ElectricalChargeUnit.emu", CGS_EMU, ABCOULOMB, 1.0);
+    public static final ElectricalChargeUnit EMU;
+
+    static
+    {
+        COULOMB =
+                new ElectricalChargeUnit(ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalChargeUnit.coulomb",
+                        "ElectricalChargeUnit.C", SI_DERIVED);
+        MILLIAMPERE_HOUR =
+                new ElectricalChargeUnit(ElectricalCurrentUnit.MILLIAMPERE, TimeUnit.HOUR,
+                        "ElectricalChargeUnit.milliampere_hour", "ElectricalChargeUnit.mAh", SI_DERIVED);
+        FARADAY =
+                new ElectricalChargeUnit("ElectricalChargeUnit.faraday", "ElectricalChargeUnit.F", OTHER, COULOMB,
+                        96485.3383);
+        ATOMIC_UNIT =
+                new ElectricalChargeUnit("ElectricalChargeUnit.atomic_unit_of_charge", "ElectricalChargeUnit.e",
+                        SI_ACCEPTED, COULOMB, 1.6021765314E-19);
+        STATCOULOMB =
+                new ElectricalChargeUnit("ElectricalChargeUnit.statcoulomb", "ElectricalChargeUnit.statC", CGS_ESU,
+                        COULOMB, 3.335641E-10);
+        FRANKLIN =
+                new ElectricalChargeUnit("ElectricalChargeUnit.franklin", "ElectricalChargeUnit.Fr", CGS_ESU,
+                        STATCOULOMB, 1.0);
+        ESU =
+                new ElectricalChargeUnit("ElectricalChargeUnit.electrostatic_unit", "ElectricalChargeUnit.esu",
+                        CGS_ESU, STATCOULOMB, 1.0);
+        ABCOULOMB =
+                new ElectricalChargeUnit("ElectricalChargeUnit.abcoulomb", "ElectricalChargeUnit.abC", CGS_EMU,
+                        COULOMB, 10.0);
+        EMU =
+                new ElectricalChargeUnit("ElectricalChargeUnit.electromagnetic_unit", "ElectricalChargeUnit.emu",
+                        CGS_EMU, ABCOULOMB, 1.0);
+    }
 
     /**
      * @param electricalCurrentUnit the unit of electrical current for the electrical charge unit, e.g., meter
@@ -120,7 +140,7 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
     /**
      * @return electricalCurrentUnit
      */
-    public ElectricalCurrentUnit getElectricalCurrentUnit()
+    public final ElectricalCurrentUnit getElectricalCurrentUnit()
     {
         return this.electricalCurrentUnit;
     }
@@ -128,7 +148,7 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -137,7 +157,7 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public ElectricalChargeUnit getStandardUnit()
+    public final ElectricalChargeUnit getStandardUnit()
     {
         return COULOMB;
     }
@@ -146,7 +166,7 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "sA";
     }

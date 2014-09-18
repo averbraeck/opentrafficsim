@@ -40,7 +40,7 @@ public class FloatVectorSparseTest extends FloatVectorTest
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(float[] in, U u)
+    protected final <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(final float[] in, final U u)
     {
         return new FloatVector.Abs.Sparse<U>(in, u);
     }
@@ -49,7 +49,7 @@ public class FloatVectorSparseTest extends FloatVectorTest
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalar.Abs[])
      */
     @Override
-    protected <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(FloatScalar.Abs<U>[] in) throws ValueException
+    protected final <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(final FloatScalar.Abs<U>[] in) throws ValueException
     {
         return new FloatVector.Abs.Sparse<U>(in);
     }
@@ -59,7 +59,7 @@ public class FloatVectorSparseTest extends FloatVectorTest
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(float[] in, U u)
+    protected final <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(final float[] in, final U u)
     {
         return new FloatVector.Rel.Sparse<U>(in, u);
     }
@@ -68,7 +68,7 @@ public class FloatVectorSparseTest extends FloatVectorTest
      * @see org.opentrafficsim.core.value.vfloat.vector.FloatVectorTest#createFloatVectorRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[])
      */
     @Override
-    protected <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(FloatScalar.Rel<U>[] in) throws ValueException
+    protected final <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(final FloatScalar.Rel<U>[] in) throws ValueException
     {
         return new FloatVector.Rel.Sparse<U>(in);
     }

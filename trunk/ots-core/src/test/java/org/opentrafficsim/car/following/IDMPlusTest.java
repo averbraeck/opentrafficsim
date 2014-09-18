@@ -48,11 +48,11 @@ public class IDMPlusTest
 {
 
     /**
-     * Test IDMPlus
+     * Test IDMPlus.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void computeAcceleration()
+    public final void computeAcceleration()
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();

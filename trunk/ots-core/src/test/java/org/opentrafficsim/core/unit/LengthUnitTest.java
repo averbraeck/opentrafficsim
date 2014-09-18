@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(LengthUnit.METER, "LengthUnit.meter", "LengthUnit.m");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(LengthUnit.METER, 1, 0.00000001, "meter", "m");
         checkUnitRatioNameAndAbbreviation(LengthUnit.MILE, 1609, 0.5, "mile", "mi");
@@ -86,14 +86,14 @@ public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
     }
 
     /**
-     * Verify that we can create our own length unit
+     * Verify that we can create our own length unit.
      */
     @Test
-    public void createLengthUnit()
+    public final void createLengthUnit()
     {
         LengthUnit myLU =
-                new LengthUnit(UnitLocalizationsTest.doNotCheckPrefix + "LengthUnit.Furlong",
-                        UnitLocalizationsTest.doNotCheckPrefix + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
+                new LengthUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.Furlong",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
         assertTrue("Can create a new LengthUnit", null != myLU);
         checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
     }

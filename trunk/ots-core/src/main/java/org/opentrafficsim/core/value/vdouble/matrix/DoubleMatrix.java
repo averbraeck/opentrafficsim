@@ -139,7 +139,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
              */
             @Override
-            public MutableDoubleMatrix.Abs.Dense<U> mutable()
+            public final MutableDoubleMatrix.Abs.Dense<U> mutable()
             {
                 return new MutableDoubleMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
             }
@@ -148,7 +148,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected DoubleMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseDoubleMatrix2D(rows, columns);
             }
@@ -157,7 +157,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleMatrix.Abs.Dense<U> copy()
+            public final DoubleMatrix.Abs.Dense<U> copy()
             {
                 return this;
             }
@@ -222,7 +222,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected DoubleMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseDoubleMatrix2D(rows, columns);
             }
@@ -231,7 +231,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleMatrix.Abs.Sparse<U> copy()
+            public final DoubleMatrix.Abs.Sparse<U> copy()
             {
                 return this;
             }
@@ -241,7 +241,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
          * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#get(int, int)
          */
         @Override
-        public DoubleScalar<U> get(final int row, final int column) throws ValueException
+        public final DoubleScalar<U> get(final int row, final int column) throws ValueException
         {
             return new DoubleScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
         }
@@ -314,7 +314,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
              */
             @Override
-            public MutableDoubleMatrix.Rel.Dense<U> mutable()
+            public final MutableDoubleMatrix.Rel.Dense<U> mutable()
             {
                 return new MutableDoubleMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
             }
@@ -323,7 +323,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected DoubleMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseDoubleMatrix2D(rows, columns);
             }
@@ -332,7 +332,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleMatrix.Rel.Dense<U> copy()
+            public final DoubleMatrix.Rel.Dense<U> copy()
             {
                 return this;
             }
@@ -388,7 +388,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrix#mutable()
              */
             @Override
-            public MutableDoubleMatrix.Rel.Sparse<U> mutable()
+            public final MutableDoubleMatrix.Rel.Sparse<U> mutable()
             {
                 return new MutableDoubleMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
             }
@@ -397,7 +397,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.matrix.AbstractDoubleMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected DoubleMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseDoubleMatrix2D(rows, columns);
             }
@@ -406,7 +406,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleMatrix.Rel.Sparse<U> copy()
+            public final DoubleMatrix.Rel.Sparse<U> copy()
             {
                 return this;
             }
@@ -417,7 +417,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
          * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#get(int, int)
          */
         @Override
-        public DoubleScalar<U> get(final int row, final int column) throws ValueException
+        public final DoubleScalar<U> get(final int row, final int column) throws ValueException
         {
             return new DoubleScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
         }
@@ -437,7 +437,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param values an array of values
      * @throws ValueException
      */
-    protected void initialize(final double[][] values) throws ValueException
+    protected final void initialize(final double[][] values) throws ValueException
     {
         ensureRectangular(values);
         this.matrixSI = createMatrix2D(values.length, 0 == values.length ? 0 : values[0].length);
@@ -460,7 +460,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * @param values
      */
-    protected void initialize(final DoubleMatrix2D values)
+    protected final void initialize(final DoubleMatrix2D values)
     {
         this.matrixSI = values;
     }
@@ -470,7 +470,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param values double[][] a 2D array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    protected void initialize(final DoubleScalar<U>[][] values) throws ValueException
+    protected final void initialize(final DoubleScalar<U>[][] values) throws ValueException
     {
         ensureRectangularAndNonEmpty(values);
         this.matrixSI = createMatrix2D(values.length, values[0].length);
@@ -495,7 +495,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * Create a double[][] array filled with the values in SI unit.
      * @return double[][]; array of values in SI unit
      */
-    public double[][] getValuesSI()
+    public final double[][] getValuesSI()
     {
         return this.matrixSI.toArray(); // this makes a deep copy
     }
@@ -504,7 +504,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * Create a double[][] array filled with the values in the original unit.
      * @return values in original unit
      */
-    public double[][] getValuesInUnit()
+    public final double[][] getValuesInUnit()
     {
         return getValuesInUnit(this.unit);
     }
@@ -514,7 +514,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public double[][] getValuesInUnit(final U targetUnit)
+    public final double[][] getValuesInUnit(final U targetUnit)
     {
         double[][] values = this.matrixSI.toArray();
         for (int row = 0; row < values.length; row++)
@@ -531,7 +531,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#rows()
      */
     @Override
-    public int rows()
+    public final int rows()
     {
         return this.matrixSI.rows();
     }
@@ -540,7 +540,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#columns()
      */
     @Override
-    public int columns()
+    public final int columns()
     {
         return this.matrixSI.columns();
     }
@@ -549,7 +549,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getSI(int)
      */
     @Override
-    public double getSI(final int row, final int column) throws ValueException
+    public final double getSI(final int row, final int column) throws ValueException
     {
         checkIndex(row, column);
         return safeGet(row, column);
@@ -559,7 +559,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int)
      */
     @Override
-    public double getInUnit(final int row, final int column) throws ValueException
+    public final double getInUnit(final int row, final int column) throws ValueException
     {
         return expressAsSpecifiedUnit(getSI(row, column));
     }
@@ -569,7 +569,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public double getInUnit(final int row, final int column, final U targetUnit) throws ValueException
+    public final double getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {
         return ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
@@ -578,7 +578,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#zSum()
      */
     @Override
-    public double zSum()
+    public final double zSum()
     {
         return this.matrixSI.zSum();
     }
@@ -587,7 +587,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#cardinality()
      */
     @Override
-    public int cardinality()
+    public final int cardinality()
     {
         return this.matrixSI.cardinality();
     }
@@ -596,7 +596,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#det()
      */
     @Override
-    public double det() throws ValueException
+    public final double det() throws ValueException
     {
         try
         {
@@ -626,7 +626,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return toString(this.unit);
     }
@@ -636,7 +636,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param displayUnit the unit to display the vector in.
      * @return a printable String with the vector contents
      */
-    public String toString(final U displayUnit)
+    public final String toString(final U displayUnit)
     {
         StringBuffer buf = new StringBuffer();
         if (this instanceof MutableDoubleMatrix)
@@ -705,7 +705,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param other DoubleMatrix<U>; other DoubleVector
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final DoubleMatrix<?> other) throws ValueException
+    protected final void checkSize(final DoubleMatrix<?> other) throws ValueException
     {
         if (rows() != other.rows() || columns() != other.columns())
         {
@@ -719,7 +719,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param other double[][]; array of double
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final double[][] other) throws ValueException
+    protected final void checkSize(final double[][] other) throws ValueException
     {
         if (rows() != other.length || columns() != other[0].length)
         {
@@ -731,7 +731,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
      * @param values double[][]; the 2D array to check
-     * @throws ValueException
+     * @throws ValueException when values is not rectangular
      */
     private static void ensureRectangular(final double[][] values) throws ValueException
     {
@@ -747,7 +747,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
      * @param values DoubleScalar[][]; the 2D array to check
-     * @throws ValueException
+     * @throws ValueException when values is not rectangular
      */
     private static void ensureRectangularAndNonEmpty(final DoubleScalar<?>[][] values) throws ValueException
     {
@@ -770,7 +770,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param column integer; the column value to check
      * @throws ValueException when row or column has an invalid value
      */
-    protected void checkIndex(final int row, final int column) throws ValueException
+    protected final void checkIndex(final int row, final int column) throws ValueException
     {
         if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
         {
@@ -785,7 +785,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param column integer; the column where the value must be retrieved
      * @return double; the value stored at the indicated row and column
      */
-    protected double safeGet(final int row, final int column)
+    protected final double safeGet(final int row, final int column)
     {
         return this.matrixSI.getQuick(row, column);
     }
@@ -796,7 +796,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param column integer; the column where the value must be stored
      * @param valueSI double; the new value for the entry in vectorSI
      */
-    protected void safeSet(final int row, final int column, final double valueSI)
+    protected final void safeSet(final int row, final int column, final double valueSI)
     {
         this.matrixSI.setQuick(row, column, valueSI);
     }
@@ -805,7 +805,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * Create a deep copy of the data.
      * @return DoubleMatrix2D; deep copy of the data
      */
-    protected DoubleMatrix2D deepCopyOfData()
+    protected final DoubleMatrix2D deepCopyOfData()
     {
         return this.matrixSI.copy();
     }
@@ -815,6 +815,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @param fsArray DoubleScalar[][]; the provided array
      * @return DoubleScalar[][]; the provided array
      * @throws ValueException when the provided array has zero entries
+     * @param <U> Unit; the unit
      */
     protected static <U extends Unit<U>> DoubleScalar<U>[][] checkNonEmpty(final DoubleScalar<U>[][] fsArray)
             throws ValueException
@@ -865,7 +866,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -877,14 +878,20 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (!(obj instanceof DoubleMatrix))
+        {
             return false;
+        }
         DoubleMatrix<?> other = (DoubleMatrix<?>) obj;
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
@@ -898,7 +905,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         }
         // Colt's equals also tests the size of the vector
         if (!this.matrixSI.equals(other.matrixSI))
+        {
             return false;
+        }
         return true;
     }
 

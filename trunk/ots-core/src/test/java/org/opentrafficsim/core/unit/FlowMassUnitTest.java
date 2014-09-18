@@ -41,29 +41,29 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 public class FlowMassUnitTest extends AbstractUnitTest<FlowMassUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(FlowMassUnit.KILOGRAM_PER_SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(FlowMassUnit.KILOGRAM_PER_SECOND, 1, 0.000001, "kilogram per second", "kg/s");
         checkUnitRatioNameAndAbbreviation(FlowMassUnit.POUND_PER_SECOND, 0.453592, 0.0001, "pound per second", "lb/s");
@@ -75,14 +75,14 @@ public class FlowMassUnitTest extends AbstractUnitTest<FlowMassUnit>
     }
 
     /**
-     * Verify that we can create our own FlowMass unit
+     * Verify that we can create our own FlowMass unit.
      */
     @Test
-    public void createFlowMassUnit()
+    public final void createFlowMassUnit()
     {
         FlowMassUnit myFMU =
-                new FlowMassUnit(UnitLocalizationsTest.doNotCheckPrefix + "FlowMassUnit.WaterDropsPerHour",
-                        UnitLocalizationsTest.doNotCheckPrefix + "FlowMassUnit.wdpu", UnitSystem.OTHER,
+                new FlowMassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowMassUnit.WaterDropsPerHour",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowMassUnit.wdpu", UnitSystem.OTHER,
                         FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
         assertTrue("Can create a new FlowMassUnit", null != myFMU);
         checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");

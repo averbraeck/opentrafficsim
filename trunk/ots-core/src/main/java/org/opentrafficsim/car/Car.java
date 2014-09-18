@@ -107,7 +107,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when time for which the speed must be returned
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the speed at the specified time
      */
-    public DoubleScalar.Rel<SpeedUnit> getVelocity(final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Rel<SpeedUnit> getVelocity(final DoubleScalar.Abs<TimeUnit> when)
     {
         DoubleScalar.Rel<TimeUnit> dT = MutableDoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         return MutableDoubleScalar.plus(SpeedUnit.METER_PER_SECOND, this.speed,
@@ -120,7 +120,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when time for which the position must be returned.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
      */
-    public DoubleScalar.Abs<LengthUnit> getPosition(final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Abs<LengthUnit> getPosition(final DoubleScalar.Abs<TimeUnit> when)
     {
         DoubleScalar.Rel<TimeUnit> dT = MutableDoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         // System.out.println("dT is " + dT);
@@ -132,7 +132,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Return the maximum speed that this Car can drive on a horizontal, straight road.
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the maximum driving speed
      */
-    public DoubleScalar.Rel<SpeedUnit> vMax()
+    public final DoubleScalar.Rel<SpeedUnit> vMax()
     {
         return new DoubleScalar.Rel<SpeedUnit>(this.vMax);
     }
@@ -141,7 +141,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Return the length of this Car.
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the length of this Car
      */
-    public DoubleScalar.Rel<LengthUnit> length()
+    public final DoubleScalar.Rel<LengthUnit> length()
     {
         return new DoubleScalar.Rel<LengthUnit>(this.length);
     }
@@ -151,7 +151,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when time for which the position must be returned.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
      */
-    public DoubleScalar.Abs<LengthUnit> positionOfFront(final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Abs<LengthUnit> positionOfFront(final DoubleScalar.Abs<TimeUnit> when)
     {
         return getPosition(when);
     }
@@ -161,7 +161,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when time for which the position must be returned.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
      */
-    public DoubleScalar.Abs<LengthUnit> positionOfRear(final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Abs<LengthUnit> positionOfRear(final DoubleScalar.Abs<TimeUnit> when)
     {
         return MutableDoubleScalar.minus(getPosition(when), this.length).immutable();
     }
@@ -170,7 +170,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @see org.opentrafficsim.core.gtu.GTU#getID()
      */
     @Override
-    public Integer getID()
+    public final Integer getID()
     {
         return this.id;
     }
@@ -179,7 +179,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Retrieve the simulator of this Car.
      * @return OTSDEVSSimulatorInterface; the simulator of this Car
      */
-    public OTSDEVSSimulator getSimulator()
+    public final OTSDEVSSimulator getSimulator()
     {
         return this.simulator;
     }
@@ -197,7 +197,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @see org.opentrafficsim.core.gtu.GTU#getVelocity()
      */
     @Override
-    public DoubleScalar.Rel<SpeedUnit> getVelocity()
+    public final DoubleScalar.Rel<SpeedUnit> getVelocity()
     {
         return getVelocity(this.simulator.getSimulatorTime().get());
     }
@@ -206,13 +206,13 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Return the last evaluation time.
      * @return DoubleScalarAbs&lt;TimeUnit&gt;; the time of last evaluation
      */
-    public DoubleScalar.Abs<TimeUnit> getLastEvaluationTime()
+    public final DoubleScalar.Abs<TimeUnit> getLastEvaluationTime()
     {
         return new DoubleScalar.Abs<TimeUnit>(this.lastEvaluationTime);
     }
 
     @Override
-    public String toString()
+    public final String toString()
     {
         return toString(this.simulator.getSimulatorTime().get());
     }
@@ -222,7 +222,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when DoubleScalarAbs&lt;TimeUnit&gt;; the time
      * @return String; description of this Car at the specified time
      */
-    public String toString(final DoubleScalar.Abs<TimeUnit> when)
+    public final String toString(final DoubleScalar.Abs<TimeUnit> when)
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.id,
@@ -233,7 +233,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     /**
      * @return DoubleScalarAbs&lt;TimeUnit&gt;; the time of next evaluation.
      */
-    public DoubleScalar.Abs<TimeUnit> getNextEvaluationTime()
+    public final DoubleScalar.Abs<TimeUnit> getNextEvaluationTime()
     {
         return new DoubleScalar.Abs<TimeUnit>(this.nextEvaluationTime);
     }
@@ -242,7 +242,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Set the new state.
      * @param cfmr CarFollowingModelResult; the new state of this Car
      */
-    public void setState(final CarFollowingModelResult cfmr)
+    public final void setState(final CarFollowingModelResult cfmr)
     {
         // System.out.println("Moving car from " + position(this.lastEvaluationTime) + " to " +
         // position(this.nextEvaluationTime));
@@ -261,7 +261,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param when DoubleScalarAbs&lt;TimeUnit&gt;; the time for which the acceleration must be returned
      * @return DoubleScalarAbs&lt;AccelerationUnit&gt;; the acceleration at the given time
      */
-    public DoubleScalar.Abs<AccelerationUnit> getAcceleration(final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Abs<AccelerationUnit> getAcceleration(final DoubleScalar.Abs<TimeUnit> when)
     {
         // Currently the acceleration is independent of when; it is constant during the evaluation interval
         return new DoubleScalar.Abs<AccelerationUnit>(this.acceleration);
@@ -273,7 +273,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param otherCar Car; the car to which the headway must be returned
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
      */
-    public DoubleScalar.Rel<LengthUnit> headway(final Car otherCar)
+    public final DoubleScalar.Rel<LengthUnit> headway(final Car otherCar)
     {
         DoubleScalar.Abs<TimeUnit> when = this.simulator.getSimulatorTime().get();
         return MutableDoubleScalar.minus(positionOfFront(when), otherCar.positionOfFront(when)).immutable();

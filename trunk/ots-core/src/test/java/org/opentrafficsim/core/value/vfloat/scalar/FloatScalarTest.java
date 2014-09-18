@@ -44,11 +44,11 @@ import org.opentrafficsim.core.value.Relative;
 public class FloatScalarTest
 {
     /**
-     * Test creator, verify the various fields in the created objects, test conversions to other units
+     * Test creator, verify the various fields in the created objects, test conversions to other units.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void basicsNonMutableAbs()
+    public final void basicsNonMutableAbs()
     {
         TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
         float value = 38.0f;
@@ -144,11 +144,11 @@ public class FloatScalarTest
     }
 
     /**
-     * Test creator, verify the various fields in the created objects, test conversions to other units
+     * Test creator, verify the various fields in the created objects, test conversions to other units.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void basicsNonMutableRel()
+    public final void basicsNonMutableRel()
     {
         TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
         float value = 38.0f;
@@ -243,11 +243,11 @@ public class FloatScalarTest
     }
 
     /**
-     * Test creator, verify the various fields in the created objects, test conversions to other units
+     * Test creator, verify the various fields in the created objects, test conversions to other units.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void basicsMutable()
+    public final void basicsMutable()
     {
         TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
         float value = 38.0f;
@@ -302,7 +302,7 @@ public class FloatScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void testCopyAbs()
+    public final void testCopyAbs()
     {
         MutableFloatScalar.Abs<TemperatureUnit> value =
                 new MutableFloatScalar.Abs<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
@@ -321,7 +321,7 @@ public class FloatScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void testCopyRel()
+    public final void testCopyRel()
     {
         MutableFloatScalar.Rel<TemperatureUnit> value =
                 new MutableFloatScalar.Rel<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
@@ -340,7 +340,7 @@ public class FloatScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void simpleArithmetic()
+    public final void simpleArithmetic()
     {
         float leftValue = 123.456f;
         float rightValue = 21.098f;
@@ -415,7 +415,7 @@ public class FloatScalarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void divide()
+    public final void divide()
     {
         float leftValue = 123.456f;
         float rightValue = 21.098f;
@@ -424,9 +424,13 @@ public class FloatScalarTest
         FloatScalar.Abs<SIUnit> ratio = MutableFloatScalar.divide(leftAbs, rightAbs);
         String unitString = ratio.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
+        {
             unitString = unitString.substring(0, unitString.length() - 1);
+        }
         if (unitString.startsWith("!"))
+        {
             unitString = unitString.substring(1);
+        }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
                 ratio.getValueSI(), 0.0001);
@@ -435,20 +439,24 @@ public class FloatScalarTest
         FloatScalar.Rel<SIUnit> ratioRel = MutableFloatScalar.divide(leftRel, rightRel);
         unitString = ratioRel.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
+        {
             unitString = unitString.substring(0, unitString.length() - 1);
+        }
         if (unitString.startsWith("!"))
+        {
             unitString = unitString.substring(1);
+        }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
                 ratioRel.getValueSI(), 0.0001);
     }
 
     /**
-     * Test the math operations
+     * Test the math operations.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void mathMethods()
+    public final void mathMethods()
     {
         float[] inputValues = {-10f, -2f, -1f, -0.5f, -0.1f, 0f, 0.1f, 0.5f, 1f, 2f, 10f};
         for (float inputValue : inputValues)
@@ -459,7 +467,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "abs", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return Math.abs(f);
                 }
@@ -469,7 +477,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "acos", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.acos(f);
                 }
@@ -479,7 +487,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "asin", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.asin(f);
                 }
@@ -489,7 +497,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "atan", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.atan(f);
                 }
@@ -499,7 +507,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "cbrt", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.cbrt(f);
                 }
@@ -509,7 +517,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "ceil", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.ceil(f);
                 }
@@ -519,7 +527,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "cos", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.cos(f);
                 }
@@ -529,7 +537,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "cosh", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.cosh(f);
                 }
@@ -539,7 +547,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "exp", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.exp(f);
                 }
@@ -549,7 +557,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "expm1", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.expm1(f);
                 }
@@ -559,7 +567,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "floor", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.floor(f);
                 }
@@ -569,7 +577,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "log", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.log(f);
                 }
@@ -579,7 +587,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "log10", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.log10(f);
                 }
@@ -589,7 +597,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "log10", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.log1p(f);
                 }
@@ -599,7 +607,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "rint", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.rint(f);
                 }
@@ -609,7 +617,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "round", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return Math.round(f);
                 }
@@ -619,7 +627,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "signum", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return Math.signum(f);
                 }
@@ -629,7 +637,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "sin", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.sin(f);
                 }
@@ -639,7 +647,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "sinh", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.sinh(f);
                 }
@@ -649,7 +657,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "sqrt", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.sqrt(f);
                 }
@@ -659,7 +667,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "tan", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.tan(f);
                 }
@@ -669,7 +677,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "tanh", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.tanh(f);
                 }
@@ -679,7 +687,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "toDegrees", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.toDegrees(f);
                 }
@@ -689,7 +697,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "toRadians", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return (float) Math.toRadians(f);
                 }
@@ -699,7 +707,7 @@ public class FloatScalarTest
             MathTester.tester(inputValue, "inv", fs, 0.001, new FloatToFloat()
             {
                 @Override
-                public float function(float f)
+                public float function(final float f)
                 {
                     return 1 / f;
                 }
@@ -712,7 +720,7 @@ public class FloatScalarTest
                 MathTester.tester(inputValue, "pow(" + exponent + ")", fs, 0.001, new FloatToFloat()
                 {
                     @Override
-                    public float function(float f)
+                    public float function(final float f)
                     {
                         return (float) Math.pow(f, exponent);
                     }
@@ -726,7 +734,7 @@ public class FloatScalarTest
                 MathTester.tester(inputValue, "multiply by " + constant, fs, 0.001, new FloatToFloat()
                 {
                     @Override
-                    public float function(float f)
+                    public float function(final float f)
                     {
                         return f * constant;
                     }
@@ -736,7 +744,7 @@ public class FloatScalarTest
                 MathTester.tester(inputValue, "divide by " + constant, fs, 0.001, new FloatToFloat()
                 {
                     @Override
-                    public float function(float f)
+                    public float function(final float f)
                     {
                         return f / constant;
                     }
@@ -822,7 +830,7 @@ public class FloatScalarTest
          * @param function FloatToFloat encapsulating function that converts one value in inputValues to the
          *            corresponding value in resultValues
          */
-        public static void tester(final float inputValue, String operation, final MutableFloatScalar<?> actualResult,
+        public static void tester(final float inputValue, final String operation, final MutableFloatScalar<?> actualResult,
                 final double precision, final FloatToFloat function)
         {
             float expectedResult = function.function(inputValue);
@@ -835,7 +843,7 @@ public class FloatScalarTest
         }
 
         /**
-         * Function that takes a float value and returns a float value
+         * Function that takes a float value and returns a float value.
          * @param in float value
          * @return float value
          */

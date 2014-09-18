@@ -63,14 +63,14 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
         // System.out.println("Created MutableDoubleVector");
     }
 
-    /** If set, any modification of the data must be preceded by replacing the data with a local copy */
+    /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
     boolean copyOnWrite = false;
 
     /**
      * @see org.opentrafficsim.core.value.vdouble.vector.WriteDoubleVectorFunctions#normalize()
      */
     @Override
-    public void normalize() throws ValueException
+    public final void normalize() throws ValueException
     {
         double sum = zSum();
         if (0 == sum)
@@ -110,7 +110,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only
+             * For package internal use only.
              * @param values DoubleMatrix1D; the initial values for the entries of the new MutableDoubleMatrix
              * @param unit Unit; the unit of the new MutableDoubleMatrix
              */
@@ -123,7 +123,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             }
 
             /**
-             * Create a new Absolute Dense MutableDoubleVector
+             * Create a new Absolute Dense MutableDoubleVector.
              * @param values double[]; the initial values for the entries of the new MutableDoubleVector
              * @param unit Unit; the unit of the values for the new MutableDoubleVector
              */
@@ -227,7 +227,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
              * @see org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector#immutable()
              */
             @Override
-            public DoubleVector.Abs.Sparse<U> immutable()
+            public final DoubleVector.Abs.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
                 return new DoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
@@ -237,7 +237,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
             @Override
-            public MutableDoubleVector.Abs.Sparse<U> mutable()
+            public final MutableDoubleVector.Abs.Sparse<U> mutable()
             {
                 this.copyOnWrite = true;
                 return new MutableDoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
@@ -247,7 +247,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
-            protected DoubleMatrix1D createMatrix1D(final int size)
+            protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new DenseDoubleMatrix1D(size);
             }
@@ -258,7 +258,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
          * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
          */
         @Override
-        public DoubleScalar.Abs<U> get(final int index) throws ValueException
+        public final DoubleScalar.Abs<U> get(final int index) throws ValueException
         {
             return new DoubleScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -331,7 +331,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
              * @see org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector#immutable()
              */
             @Override
-            public DoubleVector.Rel.Dense<U> immutable()
+            public final DoubleVector.Rel.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
                 return new DoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
@@ -341,7 +341,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
             @Override
-            public MutableDoubleVector.Rel.Dense<U> mutable()
+            public final MutableDoubleVector.Rel.Dense<U> mutable()
             {
                 this.copyOnWrite = true;
                 return new MutableDoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
@@ -351,7 +351,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
-            protected DoubleMatrix1D createMatrix1D(final int size)
+            protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new SparseDoubleMatrix1D(size);
             }
@@ -465,7 +465,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     /**
      * Check the copyOnWrite flag and, if it is set make a deep copy of the data and clear the flag.
      */
-    protected void checkCopyOnWrite()
+    protected final void checkCopyOnWrite()
     {
         if (this.copyOnWrite)
         {
@@ -479,7 +479,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.vdouble.vector.WriteDoubleVectorFunctions#setSI(int, double)
      */
     @Override
-    public void setSI(final int index, final double valueSI) throws ValueException
+    public final void setSI(final int index, final double valueSI) throws ValueException
     {
         checkIndex(index);
         checkCopyOnWrite();
@@ -491,7 +491,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      *      org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
      */
     @Override
-    public void set(final int index, final DoubleScalar<U> value) throws ValueException
+    public final void set(final int index, final DoubleScalar<U> value) throws ValueException
     {
         setSI(index, value.getValueSI());
     }
@@ -501,7 +501,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public void setInUnit(final int index, final double value, final U valueUnit) throws ValueException
+    public final void setInUnit(final int index, final double value, final U valueUnit) throws ValueException
     {
         // TODO: creating a DoubleScalarAbs along the way may not be the most efficient way to do this...
         setSI(index, new DoubleScalar.Abs<U>(value, valueUnit).getValueSI());
@@ -511,7 +511,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * Execute a function on a cell by cell basis.
      * @param f cern.colt.function.tdouble.DoubleFunction; the function to apply
      */
-    public void assign(final cern.colt.function.tdouble.DoubleFunction f)
+    public final void assign(final cern.colt.function.tdouble.DoubleFunction f)
     {
         checkCopyOnWrite();
         this.vectorSI.assign(f);
@@ -521,7 +521,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#abs()
      */
     @Override
-    public void abs()
+    public final void abs()
     {
         assign(DoubleFunctions.abs);
     }
@@ -530,7 +530,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#acos()
      */
     @Override
-    public void acos()
+    public final void acos()
     {
         assign(DoubleFunctions.acos);
     }
@@ -539,7 +539,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#asin()
      */
     @Override
-    public void asin()
+    public final void asin()
     {
         assign(DoubleFunctions.asin);
     }
@@ -548,7 +548,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#atan()
      */
     @Override
-    public void atan()
+    public final void atan()
     {
         assign(DoubleFunctions.atan);
     }
@@ -557,7 +557,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
      */
     @Override
-    public void cbrt()
+    public final void cbrt()
     {
         assign(DoubleMathFunctionsImpl.cbrt);
     }
@@ -566,7 +566,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#ceil()
      */
     @Override
-    public void ceil()
+    public final void ceil()
     {
         assign(DoubleFunctions.ceil);
     }
@@ -575,7 +575,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#cos()
      */
     @Override
-    public void cos()
+    public final void cos()
     {
         assign(DoubleFunctions.cos);
     }
@@ -584,7 +584,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#cosh()
      */
     @Override
-    public void cosh()
+    public final void cosh()
     {
         assign(DoubleMathFunctionsImpl.cosh);
     }
@@ -593,7 +593,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#exp()
      */
     @Override
-    public void exp()
+    public final void exp()
     {
         assign(DoubleFunctions.exp);
     }
@@ -602,7 +602,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#expm1()
      */
     @Override
-    public void expm1()
+    public final void expm1()
     {
         assign(DoubleMathFunctionsImpl.expm1);
     }
@@ -611,7 +611,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#floor()
      */
     @Override
-    public void floor()
+    public final void floor()
     {
         assign(DoubleFunctions.floor);
     }
@@ -620,7 +620,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#log()
      */
     @Override
-    public void log()
+    public final void log()
     {
         assign(DoubleFunctions.log);
     }
@@ -629,7 +629,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#log10()
      */
     @Override
-    public void log10()
+    public final void log10()
     {
         assign(DoubleMathFunctionsImpl.log10);
     }
@@ -638,7 +638,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#log1p()
      */
     @Override
-    public void log1p()
+    public final void log1p()
     {
         assign(DoubleMathFunctionsImpl.log1p);
     }
@@ -647,7 +647,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(final double x)
+    public final void pow(final double x)
     {
         assign(DoubleFunctions.pow(x));
     }
@@ -656,7 +656,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#rint()
      */
     @Override
-    public void rint()
+    public final void rint()
     {
         assign(DoubleFunctions.rint);
     }
@@ -665,7 +665,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#round()
      */
     @Override
-    public void round()
+    public final void round()
     {
         assign(DoubleMathFunctionsImpl.round);
     }
@@ -674,7 +674,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#signum()
      */
     @Override
-    public void signum()
+    public final void signum()
     {
         assign(DoubleMathFunctionsImpl.signum);
     }
@@ -683,7 +683,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#sin()
      */
     @Override
-    public void sin()
+    public final void sin()
     {
         assign(DoubleFunctions.sin);
     }
@@ -692,7 +692,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#sinh()
      */
     @Override
-    public void sinh()
+    public final void sinh()
     {
         assign(DoubleMathFunctionsImpl.sinh);
     }
@@ -701,7 +701,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
      */
     @Override
-    public void sqrt()
+    public final void sqrt()
     {
         assign(DoubleFunctions.sqrt);
     }
@@ -710,7 +710,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#tan()
      */
     @Override
-    public void tan()
+    public final void tan()
     {
         assign(DoubleFunctions.tan);
     }
@@ -719,7 +719,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#tanh()
      */
     @Override
-    public void tanh()
+    public final void tanh()
     {
         assign(DoubleMathFunctionsImpl.tanh);
     }
@@ -728,7 +728,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
      */
     @Override
-    public void toDegrees()
+    public final void toDegrees()
     {
         assign(DoubleMathFunctionsImpl.toDegrees);
     }
@@ -737,7 +737,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
      */
     @Override
-    public void toRadians()
+    public final void toRadians()
     {
         assign(DoubleMathFunctionsImpl.toRadians);
     }
@@ -746,7 +746,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.MathFunctions#inv()
      */
     @Override
-    public void inv()
+    public final void inv()
     {
         assign(DoubleFunctions.inv);
     }
@@ -755,7 +755,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#multiply(double)
      */
     @Override
-    public void multiply(final double constant)
+    public final void multiply(final double constant)
     {
         assign(DoubleFunctions.mult(constant));
     }
@@ -764,7 +764,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @see org.opentrafficsim.core.value.vdouble.DoubleMathFunctions#divide(double)
      */
     @Override
-    public void divide(final double constant)
+    public final void divide(final double constant)
     {
         assign(DoubleFunctions.div(constant));
     }
@@ -792,7 +792,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @return this
      * @throws ValueException when the vectors do not have the same size
      */
-    public MutableDoubleVector<U> incrementBy(final DoubleVector.Rel<U> rel) throws ValueException
+    public final MutableDoubleVector<U> incrementBy(final DoubleVector.Rel<U> rel) throws ValueException
     {
         return incrementValueByValue(rel);
     }
@@ -820,7 +820,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @return this
      * @throws ValueException when the vectors do not have the same size
      */
-    public MutableDoubleVector<U> decrementBy(final DoubleVector.Rel<U> rel) throws ValueException
+    public final MutableDoubleVector<U> decrementBy(final DoubleVector.Rel<U> rel) throws ValueException
     {
         return decrementValueByValue(rel);
     }
@@ -831,7 +831,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @return this
      * @throws ValueException when the vectors do not have the same size
      */
-    public MutableDoubleVector<U> decrementBy(final DoubleVector.Abs<U> abs) throws ValueException
+    public final MutableDoubleVector<U> decrementBy(final DoubleVector.Abs<U> abs) throws ValueException
     {
         return decrementValueByValue(abs);
     }
@@ -842,7 +842,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      *            MutableDoubleVector
      * @throws ValueException when the vectors do not have the same size
      */
-    public void scaleValueByValue(final DoubleVector<?> factor) throws ValueException
+    public final void scaleValueByValue(final DoubleVector<?> factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int index = this.size(); --index >= 0;)
@@ -858,7 +858,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @return this
      * @throws ValueException when the vectors do not have the same size
      */
-    public MutableDoubleVector<U> scaleValueByValue(final double[] factor) throws ValueException
+    public final MutableDoubleVector<U> scaleValueByValue(final double[] factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int index = this.size(); --index >= 0;)
@@ -896,6 +896,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Absolute Dense Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> plus(final DoubleVector.Abs.Dense<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -909,6 +910,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative Dense DoubleVector
      * @return new Absolute Dense Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> plus(final DoubleVector.Abs.Sparse<U> left,
             final DoubleVector.Rel.Dense<U> right) throws ValueException
@@ -922,6 +924,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Absolute Sparse Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Sparse<U> plus(final DoubleVector.Abs.Sparse<U> left,
             final DoubleVector.Rel.Sparse<U> right) throws ValueException
@@ -935,6 +938,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Absolute Dense Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> plus(final DoubleVector.Rel.Dense<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -948,6 +952,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Relative Sparse Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Sparse<U> plus(final DoubleVector.Rel.Sparse<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -961,6 +966,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Absolute DoubleVector
      * @return new Relative Dense Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> minus(final DoubleVector.Abs.Dense<U> left,
             final DoubleVector.Abs<U> right) throws ValueException
@@ -975,6 +981,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Absolute DoubleVector
      * @return new Relative Sparse Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Sparse<U> minus(final DoubleVector.Abs.Sparse<U> left,
             final DoubleVector.Abs<U> right) throws ValueException
@@ -989,6 +996,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Relative Dense Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> minus(final DoubleVector.Abs.Dense<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -1002,6 +1010,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Absolute Sparse Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Sparse<U> minus(final DoubleVector.Abs.Sparse<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -1015,6 +1024,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Relative Dense Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> minus(final DoubleVector.Rel.Dense<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -1028,6 +1038,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right Relative DoubleVector
      * @return new Relative Sparse Mutable DoubleVector
      * @throws ValueException when the vectors do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Sparse<U> minus(final DoubleVector.Rel.Sparse<U> left,
             final DoubleVector.Rel<U> right) throws ValueException
@@ -1117,6 +1128,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right double[]; the double array
      * @return new Dense Absolute Mutable DoubleVector
      * @throws ValueException when the DoubleVector and the array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> times(final DoubleVector.Abs.Dense<U> left,
             final double[] right) throws ValueException
@@ -1130,6 +1142,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right double[]; the double array
      * @return new Relative Dense Mutable DoubleVector
      * @throws ValueException when the DoubleVector and the array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> times(final DoubleVector.Rel.Dense<U> left,
             final double[] right) throws ValueException
@@ -1143,6 +1156,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right double[]; the double array
      * @return new Absolute Sparse Mutable DoubleVector
      * @throws ValueException when the DoubleVector and the array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Sparse<U> times(final DoubleVector.Abs.Sparse<U> left,
             final double[] right) throws ValueException
@@ -1156,6 +1170,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * @param right double[]; the double array
      * @return new Relative Sparse Mutable DoubleVector
      * @throws ValueException when the DoubleVector and the array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Sparse<U> times(final DoubleVector.Rel.Sparse<U> left,
             final double[] right) throws ValueException
@@ -1179,6 +1194,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * Create a Sparse version of this Dense DoubleVector. <br />
      * @param in DoubleVector.Abs.Dense the Dense DoubleVector
      * @return MutableDoubleVector.Abs.Sparse
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Sparse<U> denseToSparse(final DoubleVector.Abs.Dense<U> in)
     {
@@ -1189,6 +1205,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * Create a Sparse version of this Dense DoubleVector. <br />
      * @param in DoubleVector.Rel.Dense the Dense DoubleVector
      * @return MutableDoubleVector.Rel.Sparse
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Sparse<U> denseToSparse(final DoubleVector.Rel.Dense<U> in)
     {
@@ -1211,6 +1228,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * Create a Dense version of this Sparse DoubleVector. <br />
      * @param in DoubleVector.Abs.Dense the Dense DoubleVector
      * @return MutableDoubleVector.Abs.Sparse
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> sparseToDense(final DoubleVector.Abs.Sparse<U> in)
     {
@@ -1221,6 +1239,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * Create a Dense version of this Sparse DoubleVector. <br />
      * @param in DoubleVector.Rel.Dense the Dense DoubleVector
      * @return MutableDoubleVector.Rel.Sparse
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> sparseToDense(final DoubleVector.Rel.Sparse<U> in)
     {

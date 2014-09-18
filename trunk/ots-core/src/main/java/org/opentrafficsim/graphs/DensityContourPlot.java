@@ -65,7 +65,7 @@ public class DensityContourPlot extends ContourPlot
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
      */
     @Override
-    public Comparable<String> getSeriesKey(final int series)
+    public final Comparable<String> getSeriesKey(final int series)
     {
         return "density";
     }
@@ -74,7 +74,7 @@ public class DensityContourPlot extends ContourPlot
      * @see org.opentrafficsim.graphs.ContourDataset#extendXRange(org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar)
      */
     @Override
-    public void extendXRange(final DoubleScalar<?> newUpperLimit)
+    public final void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeTimes)
         {
@@ -94,7 +94,7 @@ public class DensityContourPlot extends ContourPlot
      * @see org.opentrafficsim.graphs.ContourDataset#incrementBinData(int, int, double, double, double)
      */
     @Override
-    public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
+    public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
@@ -117,7 +117,7 @@ public class DensityContourPlot extends ContourPlot
      * @see org.opentrafficsim.graphs.ContourDataset#computeZValue(int, int, int, int)
      */
     @Override
-    public double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
+    public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
             final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;

@@ -125,7 +125,7 @@ public class SpeedContourPlot extends ContourPlot
      * @see org.opentrafficsim.graphs.ContourPlot#computeZValue(int, int, int, int)
      */
     @Override
-    public double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
+    public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
             final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;

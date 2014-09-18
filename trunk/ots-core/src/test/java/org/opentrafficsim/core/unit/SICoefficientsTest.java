@@ -41,8 +41,9 @@ public class SICoefficientsTest
      * prevent the need to rewrite all parser tests, this wrapper will catch those error and assume null when they
      * occur.
      * @param inputString String; the coefficientString to parse
+     * @param expectedResult String; the expected output
      */
-    private static void parseString(String inputString, final String expectedResult)
+    private static void parseString(final String inputString, final String expectedResult)
     {
         SICoefficients result = null;
         try
@@ -64,7 +65,7 @@ public class SICoefficientsTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public void parser()
+    public final void parser()
     {
         parseString("", "1");
         parseString("1", "1");
@@ -93,12 +94,12 @@ public class SICoefficientsTest
     }
 
     /**
-     * Execute one multiplication test
+     * Execute one multiplication test.
      * @param leftString String; coefficientString of first operand
      * @param rightString String; coefficientString of second operand
      * @param expectedResult String; coefficientString of the expected result
      */
-    private static void multiplyTest(String leftString, String rightString, String expectedResult)
+    private static void multiplyTest(final String leftString, final String rightString, final String expectedResult)
     {
         try
         {
@@ -115,11 +116,11 @@ public class SICoefficientsTest
     }
 
     /**
-     * Test the multiply method
+     * Test the multiply method.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void multiply()
+    public final void multiply()
     {
         multiplyTest("1", "1", "1");
         multiplyTest("A", "K", "A.K");
@@ -132,12 +133,12 @@ public class SICoefficientsTest
     }
 
     /**
-     * Execute one division test
+     * Execute one division test.
      * @param leftString String; coefficientString of dividend
      * @param rightString String; coefficientString of divisor
      * @param expectedResult String; coefficientString of the expected result
      */
-    private static void divideTest(String leftString, String rightString, String expectedResult)
+    private static void divideTest(final String leftString, final String rightString, final String expectedResult)
     {
         try
         {
@@ -154,11 +155,11 @@ public class SICoefficientsTest
     }
 
     /**
-     * Test the divide method
+     * Test the divide method.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void divide()
+    public final void divide()
     {
         divideTest("1", "1", "1");
         divideTest("A", "1", "A");

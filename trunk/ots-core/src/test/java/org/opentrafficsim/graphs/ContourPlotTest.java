@@ -55,18 +55,18 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  */
 public class ContourPlotTest
 {
-    /** Lower bound of test distance range */
+    /** Lower bound of test distance range. */
     static DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(1234, LengthUnit.METER);
 
-    /** Upper bound of test distance range */
+    /** Upper bound of test distance range. */
     static DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(12345, LengthUnit.METER);
 
     /**
-     * Test the AccelerationContourPlot
+     * Test the AccelerationContourPlot.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void accelerationContourTest()
+    public final void accelerationContourTest()
     {
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", minimumDistance, maximumDistance);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
@@ -75,11 +75,11 @@ public class ContourPlotTest
     }
 
     /**
-     * Test the DensityContourPlot
+     * Test the DensityContourPlot.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void densityContourTest()
+    public final void densityContourTest()
     {
         DensityContourPlot dcp = new DensityContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
@@ -88,11 +88,11 @@ public class ContourPlotTest
     }
 
     /**
-     * Test the FlowContourPlot
+     * Test the FlowContourPlot.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void flowContourTest()
+    public final void flowContourTest()
     {
         FlowContourPlot fcp = new FlowContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
@@ -101,11 +101,11 @@ public class ContourPlotTest
     }
 
     /**
-     * Test the SpeedContourPlot
+     * Test the SpeedContourPlot.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void speedContourTest()
+    public final void speedContourTest()
     {
         SpeedContourPlot scp = new SpeedContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
@@ -122,7 +122,7 @@ public class ContourPlotTest
      *            has travelled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the
      *            value expected when no car has passed
      */
-    public static void standardContourTests(ContourPlot cp, double expectedZValue, double expectedZValueWithTraffic)
+    public static void standardContourTests(final ContourPlot cp, final double expectedZValue, final double expectedZValueWithTraffic)
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -181,15 +181,23 @@ public class ContourPlotTest
                             alternateY.doubleValue(), 0.000001);
                     double z = cp.getZValue(0, item);
                     if (Double.isNaN(expectedZValue))
+                    {
                         assertTrue("Z value should be NaN", Double.isNaN(z));
+                    }
                     else
+                    {
                         assertEquals("Z value should be " + expectedZValue, expectedZValue, z, 0.0001);
+                    }
                     Number alternateZ = cp.getZ(0, item);
                     if (Double.isNaN(expectedZValue))
+                    {
                         assertTrue("Alternate Z value should be NaN", Double.isNaN(alternateZ.doubleValue()));
+                    }
                     else
+                    {
                         assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue,
                                 alternateZ.doubleValue(), 0.0000);
+                    }
                 }
                 try
                 {
@@ -308,15 +316,23 @@ public class ContourPlotTest
                     alternateY.doubleValue(), 0.000001);
             double z = cp.getZValue(0, item);
             if (Double.isNaN(expectedZValue))
+            {
                 assertTrue("Z value should be NaN", Double.isNaN(z));
+            }
             else
+            {
                 assertEquals("Z value should be " + expectedZValue, expectedZValue, z, 0.0001);
+            }
             Number alternateZ = cp.getZ(0, item);
             if (Double.isNaN(expectedZValue))
+            {
                 assertTrue("Alternate Z value should be NaN", Double.isNaN(alternateZ.doubleValue()));
+            }
             else
+            {
                 assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
                         0.0000);
+            }
         }
         // Make the car run at constant speed for another minute
         car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
@@ -362,7 +378,9 @@ public class ContourPlotTest
                                 + useTimeGranularity), TimeUnit.SECOND);
                 if (car.getPosition(cellStartTime).getValueSI() <= y + useDistanceGranularity
                         && car.getPosition(cellEndTime).getValueSI() >= y)
+                {
                     hit = true;
+                }
             }
             // System.out.println(String.format("hit=%s, t=%.3f, x=%.3f z=%f, exp=%.3f", hit, x, y, z, expectedZValue));
             Number alternateZ = cp.getZ(0, item);
@@ -377,20 +395,30 @@ public class ContourPlotTest
                 else
                 {
                     if (Double.isNaN(expectedZValue))
+                    {
                         assertFalse("Z value should not be NaN", Double.isNaN(z));
+                    }
                 }
             }
             else
             {
                 if (Double.isNaN(expectedZValue))
+                {
                     assertTrue("Z value should be NaN", Double.isNaN(z));
+                }
                 else
+                {
                     assertEquals("Z value should be " + expectedZValue, expectedZValue, z, 0.0001);
+                }
                 if (Double.isNaN(expectedZValue))
+                {
                     assertTrue("Alternate Z value should be NaN", Double.isNaN(alternateZ.doubleValue()));
+                }
                 else
+                {
                     assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue,
                             alternateZ.doubleValue(), 0.0000);
+                }
             }
         }
         // Make the car run at constant speed for five more minutes
@@ -406,7 +434,9 @@ public class ContourPlotTest
         {
             double xValue = cp.getXValue(0, bin);
             if (xValue > observedHighestTime)
+            {
                 observedHighestTime = xValue;
+            }
         }
         DoubleScalar.Abs<TimeUnit> carEndTime = car.getNextEvaluationTime();
         double expectedHighestTime = Math.floor(carEndTime.getValueSI() / useTimeGranularity) * useTimeGranularity;
@@ -417,41 +447,75 @@ public class ContourPlotTest
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
         for (Component c0 : cp.getComponents())
+        {
             for (Component c1 : ((Container) c0).getComponents())
+            {
                 if (c1 instanceof Container)
+                {
                     for (Component c2 : ((Container) c1).getComponents())
                     {
                         //System.out.println("c2 is " + c2);
                         if (c2 instanceof Container)
+                        {
                             for (Component c3 : ((Container) c2).getComponents())
                             {
                                 //System.out.println("c3 is " + c3);
                                 if (c3 instanceof JLabel)
+                                {
                                     if (null == hintPanel)
+                                    {
                                         hintPanel = (JLabel) c3;
+                                    }
                                     else
+                                    {
                                         fail("There should be only one JPanel in a ContourPlot");
+                                    }
+                                }
                                 if (c3 instanceof ChartPanel)
+                                {
                                     if (null == chartPanel)
+                                    {
                                         chartPanel = (ChartPanel) c3;
+                                    }
                                     else
+                                    {
                                         fail("There should be only one ChartPanel in a ContourPlot");
+                                    }
+                                }
                             }
+                        }
                     }
+                }
+            }
+        }
         if (null == hintPanel)
+        {
             fail("Could not find a JLabel in ContourPlot");
+        }
         if (null == chartPanel)
+        {
             fail("Could not find a ChartPanel in ContourPlot");
+        }
         assertEquals("Initially the text should be a single space", " ", hintPanel.getText());
         PointerHandler ph = null;
         for (MouseListener ml : chartPanel.getMouseListeners())
+        {
             if (ml instanceof PointerHandler)
+            {
                 if (null == ph)
+                {
                     ph = (PointerHandler) ml;
+                }
                 else
+                {
                     fail("There should be only one PointerHandler on the chartPanel");
+                }
+            }
+        }
         if (null == ph)
+        {
             fail("Could not find the PointerHandler for the chartPanel");
+        }
         ph.updateHint(1, 2);
         //System.out.println("Hint text is now " + hintPanel.getText());
         assertFalse("Hint should not be a single space", " ".equals(hintPanel.getText()));

@@ -53,10 +53,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public abstract class DoubleVectorTest
 {
     /**
-     * Test DoubleVectorAbs and DoubleVectorRel creators that take a double[] and a Unit as arguments
+     * Test DoubleVectorAbs and DoubleVectorRel creators that take a double[] and a Unit as arguments.
      */
     @Test
-    public void doubleVectorTwoArgs()
+    public final void doubleVectorTwoArgs()
     {
         doubleVectorTwoArgs(true); // test absolute version
         doubleVectorTwoArgs(false); // rest relative version
@@ -65,11 +65,13 @@ public abstract class DoubleVectorTest
     /**
      * Test the DoubleVectorAbs that takes a double[] and a Unit as arguments and some methods.
      */
-    private void doubleVectorTwoArgs(Boolean absolute)
+    private void doubleVectorTwoArgs(final Boolean absolute)
     {
         double[] in = new double[12];
         for (int i = 0; i < in.length; i++)
+        {
             in[i] = i / 3f;
+        }
         LengthUnit u = LengthUnit.FOOT;
         DoubleVector<LengthUnit> fv = createDoubleVector(in, u, absolute);
         // System.out.println("fv: " + fv);
@@ -125,14 +127,18 @@ public abstract class DoubleVectorTest
         assertTrue("valuesInUnit should not be null", null != valuesInUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInUnit.length);
         for (int i = 0; i < in.length; i++)
+        {
             assertEquals("Contents of valuesInUnit should be equal to input", in[i], valuesInUnit[i], 0.0001);
+        }
         LengthUnit outputUnit = LengthUnit.DEKAMETER;
         double[] valuesInOtherUnit = fv.getValuesInUnit(outputUnit);
         assertTrue("valuesInUnit should not be null", null != valuesInOtherUnit);
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInOtherUnit.length);
         for (int i = 0; i < in.length; i++)
+        {
             assertEquals("Contents of valuesInUnit should be equal to input", in[i] * (12 * 0.0254) / 10,
                     valuesInOtherUnit[i], 0.0001);
+        }
         try
         {
             fv.getInUnit(-1);
@@ -211,14 +217,18 @@ public abstract class DoubleVectorTest
         assertTrue("getValuesSI does not return null", null != out);
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
+        {
             assertEquals("Values in DoubleVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
                     0.0001);
+        }
         out = mfv.getValuesSI();
         assertTrue("getValuesSI does not return null", null != out);
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
+        {
             assertEquals("Values in DoubleVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
                     0.0001);
+        }
         LengthUnit uOut = fv.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
         try
@@ -247,7 +257,9 @@ public abstract class DoubleVectorTest
         }
         double sum = 0;
         for (int i = 0; i < in.length; i++)
+        {
             sum += in[i];
+        }
         sum *= (12 * 0.0254); // convert to meters
         assertEquals("zsum should be sum of the values", sum, fv.zSum(), 0.001);
         mfv = fv.mutable(); // undo edits to mfv
@@ -255,7 +267,9 @@ public abstract class DoubleVectorTest
         {
             mfv.normalize();
             for (int i = 0; i < in.length; i++)
+            {
                 assertEquals("Expected normalized value", in[i] * (12 * 0.0254) / sum, mfv.getSI(i), 0.0001);
+            }
         }
         catch (ValueException exception)
         {
@@ -317,7 +331,9 @@ public abstract class DoubleVectorTest
             try
             {
                 for (int i = 0; i < in2.length; i++)
+                {
                     assertEquals("Values should be equal", fv.getSI(i), fvr.getSI(i), 0.00001);
+                }
             }
             catch (ValueException exception)
             {
@@ -333,7 +349,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.abs(f);
             }
@@ -343,7 +359,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "acos", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.acos(f);
             }
@@ -353,7 +369,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "asin", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.asin(f);
             }
@@ -363,7 +379,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "atan", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.atan(f);
             }
@@ -373,7 +389,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "cbrt", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.cbrt(f);
             }
@@ -383,7 +399,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "ceil", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.ceil(f);
             }
@@ -393,7 +409,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "cos", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.cos(f);
             }
@@ -403,7 +419,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "cosh", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.cosh(f);
             }
@@ -413,7 +429,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "exp", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.exp(f);
             }
@@ -423,7 +439,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "expm1", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.expm1(f);
             }
@@ -433,7 +449,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "floor", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.floor(f);
             }
@@ -443,7 +459,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "log", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.log(f);
             }
@@ -453,7 +469,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "log10", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.log10(f);
             }
@@ -463,7 +479,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "log1p", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.log1p(f);
             }
@@ -487,7 +503,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "rint", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.rint(f);
             }
@@ -497,7 +513,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "round", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.round(f);
             }
@@ -507,7 +523,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "signum", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.signum(f);
             }
@@ -517,7 +533,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "sin", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.sin(f);
             }
@@ -527,7 +543,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "sinh", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.sinh(f);
             }
@@ -537,7 +553,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "sqrt", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.sqrt(f);
             }
@@ -547,7 +563,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "tan", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.tan(f);
             }
@@ -557,7 +573,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "tanh", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.tanh(f);
             }
@@ -567,7 +583,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "toDegrees", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.toDegrees(f);
             }
@@ -577,7 +593,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "toRadians", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return Math.toRadians(f);
             }
@@ -587,7 +603,7 @@ public abstract class DoubleVectorTest
         MathTester.tester(in3, "inv", mfv.getValuesSI(), 0.001, new DoubleToDouble()
         {
             @Override
-            public double function(double f)
+            public double function(final double f)
             {
                 return 1.0 / f;
             }
@@ -616,15 +632,21 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
+                {
                     plus =
                             MutableDoubleVector.plus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
+                }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
+                {
                     plus =
                             MutableDoubleVector.plus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
+                }
                 else
+                {
                     fail("Error in test: cannot figure out type of fvAbsolute");
+                }
                 fail("Adding DoubleVectors of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -634,15 +656,21 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
+                {
                     minus =
                             MutableDoubleVector.minus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
+                }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
+                {
                     minus =
                             MutableDoubleVector.minus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
+                }
                 else
+                {
                     fail("Error in test: cannot figure out type of fvAbsolute");
+                }
                 fail("Subtracting DoubleVectors of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -654,25 +682,37 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
+                {
                     plus =
                             MutableDoubleVector.plus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
+                }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
+                {
                     plus =
                             MutableDoubleVector.plus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
+                }
                 else
+                {
                     fail("Error in test: cannot figure out type of fvAbsolute");
+                }
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
+                {
                     minus =
                             MutableDoubleVector.minus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
+                }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
+                {
                     minus =
                             MutableDoubleVector.minus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
+                }
                 else
+                {
                     fail("Error in test: cannot figure out type of fvAbsolute");
+                }
             }
             catch (ValueException exception)
             {
@@ -685,11 +725,15 @@ public abstract class DoubleVectorTest
             try
             {
                 for (int i = 0; i < in3.length; i++)
+                {
                     assertEquals("value of element should be sum of contributing elements", in3[i] + in5[i],
                             plus.getSI(i), 0.00001);
+                }
                 for (int i = 0; i < in3.length; i++)
+                {
                     assertEquals("value of element should be sum of contributing elements", in3[i] - in5[i],
                             minus.getSI(i), 0.00001);
+                }
             }
             catch (ValueException exception)
             {
@@ -708,12 +752,15 @@ public abstract class DoubleVectorTest
                 assertTrue("result should be Sparse", minus instanceof MutableDoubleVector.Abs.Sparse);
             }
             else
+            {
                 fail("fv1 neither Dense nor Sparse");
+            }
 
             try
             {
-                double in6[] = {1, 2, 3};
-                MutableDoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute).mutable();
+                double[] in6 = {1, 2, 3};
+                MutableDoubleVector<LengthUnit> original =
+                        createDoubleVector(in6, LengthUnit.METER, absolute).mutable();
                 MutableDoubleVector<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
                 assertTrue("Duplicate should be equal to original", duplicate.equals(original));
@@ -737,10 +784,16 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
-                    product = MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
-                else if (fv1 instanceof DoubleVector.Rel.Sparse)
+                {
                     product =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
+                            MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
+                }
+                else if (fv1 instanceof DoubleVector.Rel.Sparse)
+                {
+                    product =
+                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1,
+                                    (DoubleVector.Rel.Sparse<?>) fv2);
+                }
                 fail("Multiplying DoubleVectors of unequal length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -752,10 +805,16 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
-                    product = MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
-                else if (fv1 instanceof DoubleVector.Rel.Sparse)
+                {
                     product =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
+                            MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
+                }
+                else if (fv1 instanceof DoubleVector.Rel.Sparse)
+                {
+                    product =
+                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1,
+                                    (DoubleVector.Rel.Sparse<?>) fv2);
+                }
             }
             catch (ValueException exception)
             {
@@ -766,8 +825,10 @@ public abstract class DoubleVectorTest
             try
             {
                 for (int i = 0; i < in3.length; i++)
+                {
                     assertEquals("value of element should be sum of contributing elements", in3[i] * in5[i],
                             product.getSI(i), 0.00001);
+                }
             }
             catch (ValueException exception)
             {
@@ -785,7 +846,9 @@ public abstract class DoubleVectorTest
                         || product instanceof MutableDoubleVector.Rel.Sparse);
             }
             else
+            {
                 fail("fv1 neither Dense nor Sparse");
+            }
             // System.out.println("Result of multiply has unit " + multiply);
             assertEquals("Result of multiplication should be in square meters", "m2", product.getUnit()
                     .getSICoefficientsString());
@@ -794,11 +857,16 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
+                {
                     multiplyReverse =
                             MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv2, (DoubleVector.Rel.Dense<?>) fv1);
+                }
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
+                {
                     multiplyReverse =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv2, (DoubleVector.Rel.Sparse<?>) fv1);
+                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv2,
+                                    (DoubleVector.Rel.Sparse<?>) fv1);
+                }
             }
             catch (ValueException exception)
             {
@@ -810,7 +878,7 @@ public abstract class DoubleVectorTest
             assertTrue("result of a * b should be equal to result of b * a", product.equals(multiplyReverse));
             try
             {
-                double in6[] = {1, 2, 3};
+                double[] in6 = {1, 2, 3};
                 DoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute);
                 MutableDoubleVector<LengthUnit> duplicate = original.mutable();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -834,9 +902,13 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv instanceof DoubleVector.Abs.Dense)
+                {
                     MutableDoubleVector.times((DoubleVector.Abs.Dense<LengthUnit>) fv, factorsTooShort);
+                }
                 else if (fv instanceof DoubleVector.Abs.Sparse)
+                {
                     MutableDoubleVector.times((DoubleVector.Abs.Sparse<LengthUnit>) fv, factorsTooShort);
+                }
                 fail("Multiplication array of wrong length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -857,8 +929,10 @@ public abstract class DoubleVectorTest
             try
             {
                 for (int i = 0; i < in.length; i++)
+                {
                     assertEquals("values in fv2 should be product of contributing values", in[i] * (12 * 0.0254)
                             * factorsCorrectLength[i], fv2.getSI(i), 0.0001);
+                }
             }
             catch (ValueException exception)
             {
@@ -873,9 +947,13 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv instanceof DoubleVector.Rel.Dense)
+                {
                     MutableDoubleVector.times((DoubleVector.Rel.Dense<LengthUnit>) fv, factorsTooShort);
+                }
                 else if (fv instanceof DoubleVector.Rel.Sparse)
+                {
                     MutableDoubleVector.times((DoubleVector.Rel.Sparse<LengthUnit>) fv, factorsTooShort);
+                }
                 fail("Multiplication array of wrong length should have thrown a ValueException");
             }
             catch (ValueException exception)
@@ -885,9 +963,13 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv instanceof DoubleVector.Rel.Dense)
+                {
                     fv2 = MutableDoubleVector.times((DoubleVector.Rel.Dense<LengthUnit>) fv, factorsCorrectLength);
+                }
                 else if (fv instanceof DoubleVector.Rel.Sparse)
+                {
                     fv2 = MutableDoubleVector.times((DoubleVector.Rel.Sparse<LengthUnit>) fv, factorsCorrectLength);
+                }
             }
             catch (ValueException exception)
             {
@@ -896,8 +978,10 @@ public abstract class DoubleVectorTest
             try
             {
                 for (int i = 0; i < in.length; i++)
+                {
                     assertEquals("values in fv2 should be product of contributing values", in[i] * (12 * 0.0254)
                             * factorsCorrectLength[i], fv2.getSI(i), 0.0001);
+                }
             }
             catch (ValueException exception)
             {
@@ -909,9 +993,13 @@ public abstract class DoubleVectorTest
         {
             MutableDoubleVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)
+            {
                 fv2 = MutableDoubleVector.denseToSparse((DoubleVector.Abs.Dense<LengthUnit>) fv);
+            }
             else
+            {
                 fv2 = MutableDoubleVector.denseToSparse((DoubleVector.Rel.Dense<LengthUnit>) fv);
+            }
             // System.out.println("fv:  " + fv);
             // System.out.println("fv2: " + fv2);
             assertTrue("dense version is equal to sparse version", fv.equals(fv2));
@@ -919,7 +1007,9 @@ public abstract class DoubleVectorTest
             try
             {
                 for (int i = 0; i < fv.size(); i++)
+                {
                     assertEquals("Values should be equal", fv.getSI(i), fv2.getSI(i), 0.0001);
+                }
             }
             catch (ValueException exception)
             {
@@ -931,15 +1021,21 @@ public abstract class DoubleVectorTest
         {
             MutableDoubleVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)
+            {
                 fv2 = MutableDoubleVector.sparseToDense((DoubleVector.Abs.Sparse<LengthUnit>) fv);
+            }
             else
+            {
                 fv2 = MutableDoubleVector.sparseToDense((DoubleVector.Rel.Sparse<LengthUnit>) fv);
+            }
             assertTrue("dense version is  equal to sparse version", fv.equals(fv2));
             assertEquals("unit should be same", fv.getUnit(), fv2.getUnit());
             try
             {
                 for (int i = 0; i < fv.size(); i++)
+                {
                     assertEquals("Values should be equal", fv.getSI(i), fv2.getSI(i), 0.0001);
+                }
             }
             catch (ValueException exception)
             {
@@ -1025,7 +1121,7 @@ public abstract class DoubleVectorTest
          * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the
          *            corresponding value in resultValues
          */
-        public static void tester(final double[] inputValues, String operation, final double[] resultValues,
+        public static void tester(final double[] inputValues, final String operation, final double[] resultValues,
                 final double precision, final DoubleToDouble function)
         {
             for (int i = 0; i < inputValues.length; i++)
@@ -1040,7 +1136,7 @@ public abstract class DoubleVectorTest
         }
 
         /**
-         * Function that takes a double value and returns a double value
+         * Function that takes a double value and returns a double value.
          * @param in double value
          * @return double value
          */
@@ -1048,20 +1144,20 @@ public abstract class DoubleVectorTest
     }
 
     /**
-     * Test DoubleVectorAbs and DoubleVectorRel creators that take an array of DoubleScalar as argument
+     * Test DoubleVectorAbs and DoubleVectorRel creators that take an array of DoubleScalar as argument.
      */
     @Test
-    public void doubleVectorOneArg()
+    public final void doubleVectorOneArg()
     {
         doubleVectorOneArg(true); // test absolute version
         doubleVectorOneArg(false); // test relative version
     }
 
     /**
-     * Test the DoubleVectorAbs and DoubleVectorRel that takes a DoubleScalar*<U>[] as argument
+     * Test the DoubleVectorAbs and DoubleVectorRel that takes a DoubleScalar*<U>[] as argument.
      */
     @SuppressWarnings("unchecked")
-    private void doubleVectorOneArg(Boolean absolute)
+    private void doubleVectorOneArg(final Boolean absolute)
     {
         DoubleVector<LengthUnit> fv = null;
         DoubleScalar.Abs<LengthUnit>[] inAbs = new DoubleScalar.Abs[0];
@@ -1069,9 +1165,13 @@ public abstract class DoubleVectorTest
         try
         {
             if (absolute)
+            {
                 fv = createDoubleVectorAbs(inAbs);
+            }
             else
+            {
                 fv = createDoubleVectorRel(inRel);
+            }
             fail("Should have thrown an exception");
         }
         catch (ValueException ve)
@@ -1085,9 +1185,13 @@ public abstract class DoubleVectorTest
         try
         {
             if (absolute)
+            {
                 fv = createDoubleVectorAbs(inAbs);
+            }
             else
+            {
                 fv = createDoubleVectorRel(inRel);
+            }
         }
         catch (ValueException exception)
         {
@@ -1114,15 +1218,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
+            {
                 sum =
                         MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv2);
+            }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
+            {
                 sum =
                         MutableDoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception)
         {
@@ -1133,21 +1243,29 @@ public abstract class DoubleVectorTest
         assertEquals("Type of result should be type of inputs", u, sum.getUnit());
         double[] sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i],
                     sumValues[i], 0.0001);
+        }
         MutableDoubleVector<MassUnit> difference = null;
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv2);
+            }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception1)
         {
@@ -1158,22 +1276,30 @@ public abstract class DoubleVectorTest
         assertEquals("Type of result should be type of inputs", u, difference.getUnit());
         double[] differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
+        }
         double[] in3 = {110f, 120f, 130f};
         DoubleVector<MassUnit> fv3 = createDoubleVectorRel(in3, u);
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
+            {
                 sum =
                         MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv3);
+            }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
+            {
                 sum =
                         MutableDoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv3);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
             fail("Adding DoubleVectors of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1183,15 +1309,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv3);
+            }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv3);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
             fail("Subtracting DoubleVectors of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1203,15 +1335,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
+            {
                 sum =
                         MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv2);
+            }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
+            {
                 sum =
                         MutableDoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception)
         {
@@ -1231,15 +1369,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv2);
+            }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception)
         {
@@ -1261,7 +1405,7 @@ public abstract class DoubleVectorTest
      * Test adding and subtracting DoubleVectorAbs.
      */
     @Test
-    public void absAbs()
+    public final void absAbs()
     {
         double[] in1 = {10f, 20f, 30f, 40f};
         double[] in2 = {110f, 220f, 330f, 440f};
@@ -1274,15 +1418,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Abs.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv2);
+            }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv2);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception1)
         {
@@ -1294,22 +1444,30 @@ public abstract class DoubleVectorTest
         assertEquals("Type of result should be type of inputs", u, difference.getUnit());
         double[] differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
+        {
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
+        }
         double[] in3 = {110f, 120f, 130f};
         DoubleVector<MassUnit> fv3 = createDoubleVectorAbs(in3, u);
         try
         {
             if (fv1 instanceof DoubleVector.Abs.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv3);
+            }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv3);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
             fail("Subtracting DoubleVectors of unequal size should have thrown a ValueException");
         }
         catch (ValueException exception)
@@ -1321,15 +1479,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Abs.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv2);
+            }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv2);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception)
         {
@@ -1348,15 +1512,21 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv1 instanceof DoubleVector.Abs.Dense)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv2,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv1);
+            }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
+            {
                 difference =
                         MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv2,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv1);
+            }
             else
+            {
                 fail("Error in test: unhandled type of DoubleVector");
+            }
         }
         catch (ValueException exception)
         {
@@ -1385,11 +1555,17 @@ public abstract class DoubleVectorTest
         try
         {
             if (fv4 instanceof DoubleVector.Abs.Dense)
+            {
                 product = MutableDoubleVector.times((DoubleVector.Abs.Dense<?>) fv4, (DoubleVector.Abs.Dense<?>) fv5);
+            }
             else if (fv4 instanceof DoubleVector.Abs.Sparse)
+            {
                 product = MutableDoubleVector.times((DoubleVector.Abs.Sparse<?>) fv4, (DoubleVector.Abs.Sparse<?>) fv5);
+            }
             else
+            {
                 fail("Error in test: unhandled type");
+            }
         }
         catch (ValueException exception)
         {
@@ -1433,7 +1609,7 @@ public abstract class DoubleVectorTest
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void doubleVectorRel2()
+    public final void doubleVectorRel2()
     {
         DoubleVector<LengthUnit> fsa = null;
         DoubleScalar.Rel<LengthUnit>[] in = new DoubleScalar.Rel[0];
@@ -1463,33 +1639,40 @@ public abstract class DoubleVectorTest
     }
 
     /**
-     * Create a DoubleVectorAbs or a DoubleVectorRel from an array of double values and Unit
+     * Create a DoubleVectorAbs or a DoubleVectorRel from an array of double values and Unit.
      * @param in double[] with values
      * @param u Unit; type for the new DoubleVector
      * @param absolute Boolean; true to create a DoubleVectorAbs; false to create a DoubleVectorRel
      * @return DoubleVector
+     * @param <U> Unit; the unit
      */
-    private <U extends Unit<U>> DoubleVector<U> createDoubleVector(double[] in, U u, boolean absolute)
+    private <U extends Unit<U>> DoubleVector<U> createDoubleVector(final double[] in, final U u, final boolean absolute)
     {
         if (absolute)
+        {
             return createDoubleVectorAbs(in, u);
+        }
         else
+        {
             return createDoubleVectorRel(in, u);
+        }
     }
 
     /**
      * Create a new DoubleVectorAbs from an array of double values and Unit.
      * @param in double[] with values
      * @param u Unit; type for the new DoubleVectorAbs
-     * @return
+     * @return DoubleVector.Abs
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(double[] in, U u);
 
     /**
      * Create a new DoubleVectorAbs from an array of DoubleScalarAbs values.
      * @param in DoubleScalar.Abs[]; the values
-     * @return
+     * @return DoubleVector.Abs
      * @throws ValueException when the array is empty
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleVector.Abs<U> createDoubleVectorAbs(DoubleScalar.Abs<U>[] in)
             throws ValueException;
@@ -1498,15 +1681,17 @@ public abstract class DoubleVectorTest
      * Create a new DoubleVector.*.Rel from an array of double values and Unit.
      * @param in double[] with values
      * @param u Unit; type for the new DoubleVectorRel
-     * @return
+     * @return DoubleVector.Rel
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(double[] in, U u);
 
     /**
      * Create a new DoubleVector.*.Rel from an array of DoubleScalarRel values.
      * @param in DoubleScalar.Abs[]; the values
-     * @return
+     * @return DoubleVector.Rel
      * @throws ValueException when the array is empty
+     * @param <U> Unit; the unit
      */
     protected abstract <U extends Unit<U>> DoubleVector.Rel<U> createDoubleVectorRel(DoubleScalar.Rel<U>[] in)
             throws ValueException;

@@ -41,7 +41,7 @@ public class OTSDEVSAnimator extends
     private static final long serialVersionUID = 20140909L;
     
     /**
-     * Constructor
+     * Create a new OTSDEVSAnimator..
      */
     public OTSDEVSAnimator()
     {

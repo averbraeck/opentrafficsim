@@ -119,7 +119,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Absolute Dense Immutable DoubleVector
+             * Create a new Absolute Dense Immutable DoubleVector.
              * @param values DoubleScalar.Abs[]; the values for the entries in the new DoubleVector
              * @throws ValueException when values has zero entries
              */
@@ -134,7 +134,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
             @Override
-            public MutableDoubleVector.Abs.Dense<U> mutable()
+            public final MutableDoubleVector.Abs.Dense<U> mutable()
             {
                 return new MutableDoubleVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
@@ -143,7 +143,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
-            protected DoubleMatrix1D createMatrix1D(final int size)
+            protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new DenseDoubleMatrix1D(size);
             }
@@ -152,7 +152,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleVector.Abs.Dense<U> copy()
+            public final DoubleVector.Abs.Dense<U> copy()
             {
                 return this;
             }
@@ -216,7 +216,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
-            protected DoubleMatrix1D createMatrix1D(final int size)
+            protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new DenseDoubleMatrix1D(size);
             }
@@ -225,7 +225,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleVector.Abs.Sparse<U> copy()
+            public final DoubleVector.Abs.Sparse<U> copy()
             {
                 return this;
             }
@@ -237,7 +237,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
          * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
          */
         @Override
-        public DoubleScalar.Abs<U> get(final int index) throws ValueException
+        public final DoubleScalar.Abs<U> get(final int index) throws ValueException
         {
             return new DoubleScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -318,7 +318,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
-            protected DoubleMatrix1D createMatrix1D(final int size)
+            protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new SparseDoubleMatrix1D(size);
             }
@@ -327,7 +327,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleVector.Rel.Dense<U> copy()
+            public final DoubleVector.Rel.Dense<U> copy()
             {
                 return this;
             }
@@ -355,7 +355,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Relative Sparse Immutable DoubleVector
+             * Create a new Relative Sparse Immutable DoubleVector.
              * @param values double[]; the values for the entries of the new DoubleVector
              * @param unit Unit; the unit of the values for the new DoubleVector
              */
@@ -382,7 +382,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
              */
             @Override
-            public MutableDoubleVector.Rel.Sparse<U> mutable()
+            public final MutableDoubleVector.Rel.Sparse<U> mutable()
             {
                 return new MutableDoubleVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
@@ -391,7 +391,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
              */
             @Override
-            protected DoubleMatrix1D createMatrix1D(final int size)
+            protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new SparseDoubleMatrix1D(size);
             }
@@ -400,7 +400,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
              * @see org.opentrafficsim.core.value.Value#copy()
              */
             @Override
-            public DoubleVector.Rel.Sparse<U> copy()
+            public final DoubleVector.Rel.Sparse<U> copy()
             {
                 return this;
             }
@@ -411,7 +411,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
          * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
          */
         @Override
-        public DoubleScalar.Rel<U> get(final int index) throws ValueException
+        public final DoubleScalar.Rel<U> get(final int index) throws ValueException
         {
             return new DoubleScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -430,7 +430,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Construct the vector, import the values and convert them into SI units.
      * @param values double[]; the values to import and convert
      */
-    protected void initialize(final double[] values)
+    protected final void initialize(final double[] values)
     {
         this.vectorSI = createMatrix1D(values.length);
         if (this.unit.equals(this.unit.getStandardUnit()))
@@ -450,7 +450,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Import the values from a DoubleMatrix1D. Makes a shallow copy.
      * @param values DoubleMatrix1D; the values to import
      */
-    protected void initialize(final DoubleMatrix1D values)
+    protected final void initialize(final DoubleMatrix1D values)
     {
         this.vectorSI = values;
     }
@@ -460,7 +460,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param values an array of values for the constructor
      * @throws ValueException exception thrown when array with zero elements is offered
      */
-    protected void initialize(final DoubleScalar<U>[] values) throws ValueException
+    protected final void initialize(final DoubleScalar<U>[] values) throws ValueException
     {
         this.vectorSI = createMatrix1D(values.length);
         for (int index = 0; index < values.length; index++)
@@ -480,7 +480,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Create a double[] array filled with the values in SI unit.
      * @return double[]; array of values in SI unit
      */
-    public double[] getValuesSI()
+    public final double[] getValuesSI()
     {
         return this.vectorSI.toArray(); // this makes a deep copy
     }
@@ -489,7 +489,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Create a double[] array filled with the values in the original unit.
      * @return values in original unit
      */
-    public double[] getValuesInUnit()
+    public final double[] getValuesInUnit()
     {
         return getValuesInUnit(this.unit);
     }
@@ -499,7 +499,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param targetUnit the unit to convert the values to
      * @return values in specific target unit
      */
-    public double[] getValuesInUnit(final U targetUnit)
+    public final double[] getValuesInUnit(final U targetUnit)
     {
         double[] values = this.vectorSI.toArray();
         for (int i = 0; i < values.length; i++)
@@ -513,7 +513,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#size()
      */
     @Override
-    public int size()
+    public final int size()
     {
         return (int) this.vectorSI.size();
     }
@@ -522,7 +522,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getSI(int)
      */
     @Override
-    public double getSI(final int index) throws ValueException
+    public final double getSI(final int index) throws ValueException
     {
         checkIndex(index);
         return safeGet(index);
@@ -532,7 +532,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int)
      */
     @Override
-    public double getInUnit(final int index) throws ValueException
+    public final double getInUnit(final int index) throws ValueException
     {
         return expressAsSpecifiedUnit(getSI(index));
     }
@@ -542,7 +542,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public double getInUnit(final int index, final U targetUnit) throws ValueException
+    public final double getInUnit(final int index, final U targetUnit) throws ValueException
     {
         return ValueUtil.expressAsUnit(getSI(index), targetUnit);
     }
@@ -551,7 +551,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#zSum()
      */
     @Override
-    public double zSum()
+    public final double zSum()
     {
         return this.vectorSI.zSum();
     }
@@ -560,7 +560,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#cardinality()
      */
     @Override
-    public int cardinality()
+    public final int cardinality()
     {
         return this.vectorSI.cardinality();
     }
@@ -569,7 +569,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return toString(this.unit);
     }
@@ -579,7 +579,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param displayUnit the unit to display the vector in.
      * @return a printable String with the vector contents
      */
-    public String toString(final U displayUnit)
+    public final String toString(final U displayUnit)
     {
         StringBuffer buf = new StringBuffer();
         if (this instanceof MutableDoubleVector)
@@ -644,7 +644,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param other DoubleVector<U>; other DoubleVector
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final DoubleVector<?> other) throws ValueException
+    protected final void checkSize(final DoubleVector<?> other) throws ValueException
     {
         if (size() != other.size())
         {
@@ -657,7 +657,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param other double[]; array of double
      * @throws ValueException when vectors have unequal size
      */
-    protected void checkSize(final double[] other) throws ValueException
+    protected final void checkSize(final double[] other) throws ValueException
     {
         if (size() != other.length)
         {
@@ -670,7 +670,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param index integer; the value to check
      * @throws ValueException when the index is out of range
      */
-    protected void checkIndex(final int index) throws ValueException
+    protected final void checkIndex(final int index) throws ValueException
     {
         if (index < 0 || index >= this.vectorSI.size())
         {
@@ -684,7 +684,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param index integer; the index
      * @return double; the value stored at that index
      */
-    protected double safeGet(final int index)
+    protected final double safeGet(final int index)
     {
         return this.vectorSI.getQuick(index);
     }
@@ -694,7 +694,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param index integer; the index
      * @param valueSI double; the new value for the entry in vectorSI
      */
-    protected void safeSet(final int index, final double valueSI)
+    protected final void safeSet(final int index, final double valueSI)
     {
         this.vectorSI.setQuick(index, valueSI);
     }
@@ -703,7 +703,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Create a deep copy of the data.
      * @return DoubleMatrix1D; deep copy of the data
      */
-    protected DoubleMatrix1D deepCopyOfData()
+    protected final DoubleMatrix1D deepCopyOfData()
     {
         return this.vectorSI.copy();
     }
@@ -713,6 +713,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param fsArray DoubleScalar[]; the provided array
      * @return DoubleScalar[]; the provided array
      * @throws ValueException if the array has zero length
+     * @param <U> Unit; the unit
      */
     protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] fsArray)
             throws ValueException
@@ -729,7 +730,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -741,14 +742,20 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (!(obj instanceof DoubleVector))
+        {
             return false;
+        }
         DoubleVector<?> other = (DoubleVector<?>) obj;
         // unequal if one is absolute and the other is relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
@@ -762,7 +769,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         }
         // Colt's equals also tests the size of the vector
         if (!this.vectorSI.equals(other.vectorSI))
+        {
             return false;
+        }
         return true;
     }
 

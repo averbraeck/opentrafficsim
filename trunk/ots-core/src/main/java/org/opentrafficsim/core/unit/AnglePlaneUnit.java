@@ -41,32 +41,46 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     private static final long serialVersionUID = 20140607L;
 
     /** radian. */
-    public static final AnglePlaneUnit RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad",
-            SI_DERIVED);
+    public static final AnglePlaneUnit RADIAN;
 
     /** degree. */
-    public static final AnglePlaneUnit DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg",
-            SI_ACCEPTED, RADIAN, Math.PI / 180.0);
+    public static final AnglePlaneUnit DEGREE;
 
     /** arcminute. */
-    public static final AnglePlaneUnit ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute",
-            "AnglePlaneUnit.arcmin", SI_ACCEPTED, DEGREE, 1.0 / 60.0);
+    public static final AnglePlaneUnit ARCMINUTE;
 
     /** arcsecond. */
-    public static final AnglePlaneUnit ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.arcsecond",
-            "AnglePlaneUnit.arcsec", SI_ACCEPTED, DEGREE, 1.0 / 3600.0);
+    public static final AnglePlaneUnit ARCSECOND;
 
     /** grad. */
-    public static final AnglePlaneUnit GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad",
-            OTHER, RADIAN, 2.0 * Math.PI / 400.0);
+    public static final AnglePlaneUnit GRAD;
 
     /** centesimal arcminute. */
-    public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute",
-            "AnglePlaneUnit.centesimal_arcmin", OTHER, GRAD, 1.0 / 100.0);
+    public static final AnglePlaneUnit CENTESIMAL_ARCMINUTE;
 
     /** centesimal arcsecond. */
-    public static final AnglePlaneUnit CENTESIMAL_ARCSECOND = new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond",
-            "AnglePlaneUnit.centesimal_arcsec", OTHER, GRAD, 1.0 / 10000.0);
+    public static final AnglePlaneUnit CENTESIMAL_ARCSECOND;
+
+    static
+    {
+        RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", SI_DERIVED);
+        DEGREE =
+                new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg", SI_ACCEPTED, RADIAN, Math.PI / 180.0);
+        ARCMINUTE =
+                new AnglePlaneUnit("AnglePlaneUnit.arcminute", "AnglePlaneUnit.arcmin", SI_ACCEPTED, DEGREE, 1.0 / 60.0);
+        ARCSECOND =
+                new AnglePlaneUnit("AnglePlaneUnit.arcsecond", "AnglePlaneUnit.arcsec", SI_ACCEPTED, DEGREE,
+                        1.0 / 3600.0);
+        GRAD =
+                new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad", OTHER, RADIAN,
+                        2.0 * Math.PI / 400.0);
+        CENTESIMAL_ARCMINUTE =
+                new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute", "AnglePlaneUnit.centesimal_arcmin", OTHER,
+                        GRAD, 1.0 / 100.0);
+        CENTESIMAL_ARCSECOND =
+                new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond", "AnglePlaneUnit.centesimal_arcsec", OTHER,
+                        GRAD, 1.0 / 10000.0);
+    }
 
     /**
      * @Build a standard unit.
@@ -98,7 +112,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public AnglePlaneUnit getStandardUnit()
+    public final AnglePlaneUnit getStandardUnit()
     {
         return RADIAN;
     }
@@ -107,7 +121,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "";
     }

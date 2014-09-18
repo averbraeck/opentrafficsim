@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class ElectricalResistanceUnitTest extends AbstractUnitTest<ElectricalResistanceUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(ElectricalResistanceUnit.OHM, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.OHM, 1, 0.00000001, "ohm", "\u03A9");
         checkUnitRatioNameAndAbbreviation(ElectricalResistanceUnit.MILLIOHM, 0.001, 0.00000000001, "milliohm",
@@ -75,14 +75,14 @@ public class ElectricalResistanceUnitTest extends AbstractUnitTest<ElectricalRes
     }
     
     /**
-     * Verify that we can create our own electrical resistance unit
+     * Verify that we can create our own electrical resistance unit.
      */
     @Test
-    public void createElectricalResistanceUnit()
+    public final void createElectricalResistanceUnit()
     {
         ElectricalResistanceUnit myERU =
-                new ElectricalResistanceUnit(UnitLocalizationsTest.doNotCheckPrefix + "ElectricalResistanceUnit.GigaOhm",
-                        UnitLocalizationsTest.doNotCheckPrefix + "ElectricalResistanceUnit.GOhm", SI_DERIVED, ElectricalResistanceUnit.OHM, 1e9);
+                new ElectricalResistanceUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "ElectricalResistanceUnit.GigaOhm",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ElectricalResistanceUnit.GOhm", SI_DERIVED, ElectricalResistanceUnit.OHM, 1e9);
         assertTrue("Can create a new ElectricalResistanceUnit", null != myERU);
         checkUnitRatioNameAndAbbreviation(myERU, 1e9, 0.1, "!GigaOhm!", "!GOhm!");
     }

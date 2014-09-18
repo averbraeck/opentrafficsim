@@ -79,14 +79,20 @@ public class UnitSystemLocalizationsTest
                 String name = us.getName();
                 String abbreviation = us.getAbbreviation();
                 if (abbreviation.startsWith("!") && abbreviation.endsWith("!"))
+                {
                     errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
                             localeName));
+                }
                 if (name.startsWith("!") && name.endsWith("!"))
+                {
                     errors.add(String.format("Missing translation for name %s to %s", nameKey, localeName));
+                }
             }
         }
         for (String s : errors)
+        {
             System.out.println(s);
+        }
         assertTrue("There should be no errors in UnitSystemLocalizations", errors.isEmpty());
     }
 }

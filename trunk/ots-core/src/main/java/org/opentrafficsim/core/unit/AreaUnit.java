@@ -43,45 +43,54 @@ public class AreaUnit extends Unit<AreaUnit>
     private final LengthUnit lengthUnit;
 
     /** m^2. */
-    public static final AreaUnit SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2",
-            SI_DERIVED);
+    public static final AreaUnit SQUARE_METER;
 
     /** km^2. */
-    public static final AreaUnit SQUARE_KM = new AreaUnit(LengthUnit.KILOMETER, "AreaUnit.square_kilometer",
-            "AreaUnit.km^2", SI_DERIVED);
+    public static final AreaUnit SQUARE_KM;
 
     /** cm^2. */
-    public static final AreaUnit SQUARE_CENTIMETER = new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter",
-            "AreaUnit.cm^2", SI_DERIVED);
+    public static final AreaUnit SQUARE_CENTIMETER;
 
     /** cm^2. */
-    public static final AreaUnit SQUARE_MILLIMETER = new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter",
-            "AreaUnit.mm^2", SI_DERIVED);
+    public static final AreaUnit SQUARE_MILLIMETER;
 
     /** are. */
-    public static final AreaUnit ARE = new AreaUnit("AreaUnit.are", "AreaUnit.a", OTHER, SQUARE_METER, 100.0);
+    public static final AreaUnit ARE;
 
     /** hectare. */
-    public static final AreaUnit HECTARE = new AreaUnit("AreaUnit.hectare", "AreaUnit.ha", OTHER, ARE, 100.0);
+    public static final AreaUnit HECTARE;
 
     /** mile^2. */
-    public static final AreaUnit SQUARE_MILE = new AreaUnit(LengthUnit.MILE, "AreaUnit.square_mile", "AreaUnit.mi^2",
-            IMPERIAL);
+    public static final AreaUnit SQUARE_MILE;
 
     /** ft^2. */
-    public static final AreaUnit SQUARE_FOOT = new AreaUnit(LengthUnit.FOOT, "AreaUnit.square_foot", "AreaUnit.ft^2",
-            IMPERIAL);
+    public static final AreaUnit SQUARE_FOOT;
 
     /** in^2. */
-    public static final AreaUnit SQUARE_INCH = new AreaUnit(LengthUnit.INCH, "AreaUnit.square_inch", "AreaUnit.in^2",
-            IMPERIAL);
+    public static final AreaUnit SQUARE_INCH;
 
     /** yd^2. */
-    public static final AreaUnit SQUARE_YARD = new AreaUnit(LengthUnit.YARD, "AreaUnit.square_yard", "AreaUnit.yd^2",
-            IMPERIAL);
+    public static final AreaUnit SQUARE_YARD;
 
     /** acre (international). */
-    public static final AreaUnit ACRE = new AreaUnit("AreaUnit.acre", "AreaUnit.ac", IMPERIAL, SQUARE_YARD, 4840.0);
+    public static final AreaUnit ACRE;
+
+    static
+    {
+        SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2", SI_DERIVED);
+        SQUARE_KM = new AreaUnit(LengthUnit.KILOMETER, "AreaUnit.square_kilometer", "AreaUnit.km^2", SI_DERIVED);
+        SQUARE_CENTIMETER =
+                new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter", "AreaUnit.cm^2", SI_DERIVED);
+        SQUARE_MILLIMETER =
+                new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter", "AreaUnit.mm^2", SI_DERIVED);
+        ARE = new AreaUnit("AreaUnit.are", "AreaUnit.a", OTHER, SQUARE_METER, 100.0);
+        HECTARE = new AreaUnit("AreaUnit.hectare", "AreaUnit.ha", OTHER, ARE, 100.0);
+        SQUARE_MILE = new AreaUnit(LengthUnit.MILE, "AreaUnit.square_mile", "AreaUnit.mi^2", IMPERIAL);
+        SQUARE_FOOT = new AreaUnit(LengthUnit.FOOT, "AreaUnit.square_foot", "AreaUnit.ft^2", IMPERIAL);
+        SQUARE_INCH = new AreaUnit(LengthUnit.INCH, "AreaUnit.square_inch", "AreaUnit.in^2", IMPERIAL);
+        SQUARE_YARD = new AreaUnit(LengthUnit.YARD, "AreaUnit.square_yard", "AreaUnit.yd^2", IMPERIAL);
+        ACRE = new AreaUnit("AreaUnit.acre", "AreaUnit.ac", IMPERIAL, SQUARE_YARD, 4840.0);
+    }
 
     /**
      * Define area unit based on length.
@@ -117,7 +126,7 @@ public class AreaUnit extends Unit<AreaUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -126,7 +135,7 @@ public class AreaUnit extends Unit<AreaUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public AreaUnit getStandardUnit()
+    public final AreaUnit getStandardUnit()
     {
         return SQUARE_METER;
     }
@@ -135,7 +144,7 @@ public class AreaUnit extends Unit<AreaUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "m2";
     }

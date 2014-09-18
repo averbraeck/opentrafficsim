@@ -33,8 +33,16 @@ import java.util.List;
  * @version Jun 11, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AvailableLocalizations
+public final class AvailableLocalizations
 {
+    /**
+     * This class should never be instantiated.
+     */
+    private AvailableLocalizations()
+    {
+        // no instantiation
+    }
+
     /**
      * Build a list of locale names that are available for a given prefix.
      * @param prefix String; the prefix of the localization file names
@@ -48,7 +56,7 @@ public class AvailableLocalizations
         File[] propertiesFiles = new File(path).listFiles(new FileFilter()
         {
             @Override
-            public boolean accept(File pathname)
+            public boolean accept(final File pathname)
             {
                 String name = pathname.getName();
                 return name.endsWith(tail) && name.startsWith(prefix + "_");

@@ -55,7 +55,7 @@ public class ContinuousColorPaintScale implements PaintScale
      *            2)
      * @param boundColors Color[] array of the colors to use at the boundary values (must have same size as bounds)
      */
-    ContinuousColorPaintScale(final String format, final double bounds[], final Color boundColors[])
+    ContinuousColorPaintScale(final String format, final double[] bounds, final Color[] boundColors)
     {
         this.format = format;
         if (bounds.length < 2)
@@ -97,7 +97,7 @@ public class ContinuousColorPaintScale implements PaintScale
      * @see org.jfree.chart.renderer.PaintScale#getLowerBound()
      */
     @Override
-    public double getLowerBound()
+    public final double getLowerBound()
     {
         return this.bounds[0];
     }
@@ -130,7 +130,7 @@ public class ContinuousColorPaintScale implements PaintScale
      * @see org.jfree.chart.renderer.PaintScale#getPaint(double)
      */
     @Override
-    public Paint getPaint(final double value)
+    public final Paint getPaint(final double value)
     {
         int bucket;
         for (bucket = 0; bucket < this.bounds.length - 1; bucket++)
@@ -158,7 +158,7 @@ public class ContinuousColorPaintScale implements PaintScale
      * @see org.jfree.chart.renderer.PaintScale#getUpperBound()
      */
     @Override
-    public double getUpperBound()
+    public final double getUpperBound()
     {
         return this.bounds[this.bounds.length - 1];
     }

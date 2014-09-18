@@ -39,8 +39,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     /**
-     * @param context
-     * @param experiment
+     * @param context Context
+     * @param experiment Experiment
      */
     public OTSReplication(final Context context,
             final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
@@ -49,11 +49,12 @@ public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, Doub
     }
 
     /**
-     * @param id
-     * @param startTime
-     * @param warmupPeriod
-     * @param runLength
-     * @param model
+     * Create a new OTSReplication.
+     * @param id String; id of the new OTSReplication
+     * @param startTime OTSSimTimeDouble; the start time of the new OTSReplication
+     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warmup period of the new OTSReplication
+     * @param runLength DoubleScalarRel&lt;TimeUnit&gt;; the run length of the new OTSReplication
+     * @param model OTSModelInterface; the model
      */
     public OTSReplication(final String id, final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model)

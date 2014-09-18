@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class AngleSolidUnitTest extends AbstractUnitTest<AngleSolidUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(AngleSolidUnit.STERADIAN, "AngleSolidUnit.steradian", "AngleSolidUnit.sr");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(AngleSolidUnit.STERADIAN, 1, 0.0000001, "steradian", "sr");
         checkUnitRatioNameAndAbbreviation(AngleSolidUnit.SQUARE_DEGREE, 1.0 / 3283, 0.0005, "square degree", "sq.deg");
@@ -75,14 +75,14 @@ public class AngleSolidUnitTest extends AbstractUnitTest<AngleSolidUnit>
     }
 
     /**
-     * Verify that we can create our own angle unit
+     * Verify that we can create our own angle unit.
      */
     @Test
-    public void createAngleUnit()
+    public final void createAngleUnit()
     {
         AngleSolidUnit myAPU =
-                new AngleSolidUnit(UnitLocalizationsTest.doNotCheckPrefix + "AngleSolidUnit.point",
-                        UnitLocalizationsTest.doNotCheckPrefix + "AngleSolidUnit.pt", OTHER, AngleSolidUnit.STERADIAN,
+                new AngleSolidUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "AngleSolidUnit.point",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "AngleSolidUnit.pt", OTHER, AngleSolidUnit.STERADIAN,
                         0.19634954085);
         assertTrue("Can create a new TimeUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");

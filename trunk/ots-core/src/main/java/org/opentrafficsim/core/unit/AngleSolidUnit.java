@@ -38,12 +38,18 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
     private static final long serialVersionUID = 20140607L;
 
     /** steradian. */
-    public static final AngleSolidUnit STERADIAN = new AngleSolidUnit("AngleSolidUnit.steradian", "AngleSolidUnit.sr",
-            SI_DERIVED);
+    public static final AngleSolidUnit STERADIAN;
 
     /** square degree. */
-    public static final AngleSolidUnit SQUARE_DEGREE = new AngleSolidUnit("AngleSolidUnit.square_degree",
-            "AngleSolidUnit.sq_deg", SI_DERIVED, STERADIAN, (Math.PI / 180.0) * (Math.PI / 180.0));
+    public static final AngleSolidUnit SQUARE_DEGREE;
+
+    static
+    {
+        STERADIAN = new AngleSolidUnit("AngleSolidUnit.steradian", "AngleSolidUnit.sr", SI_DERIVED);
+        SQUARE_DEGREE =
+                new AngleSolidUnit("AngleSolidUnit.square_degree", "AngleSolidUnit.sq_deg", SI_DERIVED, STERADIAN,
+                        (Math.PI / 180.0) * (Math.PI / 180.0));
+    }
 
     /**
      * Build a standard unit.
@@ -75,7 +81,7 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public AngleSolidUnit getStandardUnit()
+    public final AngleSolidUnit getStandardUnit()
     {
         return STERADIAN;
     }
@@ -84,7 +90,7 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "";
     }

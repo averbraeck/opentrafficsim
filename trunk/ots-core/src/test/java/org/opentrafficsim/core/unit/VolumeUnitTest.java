@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class VolumeUnitTest extends AbstractUnitTest<VolumeUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(VolumeUnit.CUBIC_METER, "VolumeUnit.cubic_meter", "VolumeUnit.m^3");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_METER, 1, 0.00000001, "cubic meter", "m^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_DECIMETER, 0.001, 0.0000000001, "cubic decimeter", "dm^3");
@@ -93,14 +93,14 @@ public class VolumeUnitTest extends AbstractUnitTest<VolumeUnit>
     }
 
     /**
-     * Verify that we can create our own power unit
+     * Verify that we can create our own power unit.
      */
     @Test
-    public void createVolumeUnit()
+    public final void createVolumeUnit()
     {
         VolumeUnit myVU =
-                new VolumeUnit(UnitLocalizationsTest.doNotCheckPrefix + "VolumeUnit.Barrel",
-                        UnitLocalizationsTest.doNotCheckPrefix + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
+                new VolumeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "VolumeUnit.Barrel",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
         assertTrue("Can create a new VolumeUnit", null != myVU);
         checkUnitRatioNameAndAbbreviation(myVU, 0.119240471, 0.000001, "!Barrel!", "!brl!");
     }

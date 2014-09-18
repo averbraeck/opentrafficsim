@@ -41,29 +41,29 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(AnglePlaneUnit.RADIAN, "AnglePlaneUnit.radian", "AnglePlaneUnit.rad");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.DEGREE, 2 * Math.PI / 360, 0.000001, "degree", "\u00b0");
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.ARCMINUTE, 2 * Math.PI / 360 / 60, 0.0001, "arcminute", "\'");
@@ -81,14 +81,14 @@ public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
     }
 
     /**
-     * Verify that we can create our own angle unit
+     * Verify that we can create our own angle unit.
      */
     @Test
-    public void createAngleUnit()
+    public final void createAngleUnit()
     {
         AnglePlaneUnit myAPU =
-                new AnglePlaneUnit(UnitLocalizationsTest.doNotCheckPrefix + "AnglePlaneUnit.point",
-                        UnitLocalizationsTest.doNotCheckPrefix + "AnglePlaneUnit.pt", OTHER, AnglePlaneUnit.RADIAN,
+                new AnglePlaneUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "AnglePlaneUnit.point",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "AnglePlaneUnit.pt", OTHER, AnglePlaneUnit.RADIAN,
                         0.19634954085);
         assertTrue("Can create a new AngleUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");

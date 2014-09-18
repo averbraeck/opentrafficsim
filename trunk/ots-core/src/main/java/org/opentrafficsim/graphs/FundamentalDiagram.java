@@ -264,7 +264,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Redraw this TrajectoryGraph (after the underlying data has been changed, or to change axes).
      */
-    public void reGraph()
+    public final void reGraph()
     {
         NumberAxis numberAxis = new NumberAxis();
         configureAxis(numberAxis, this.xAxis);
@@ -293,7 +293,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
      */
     @Override
-    public int getSeriesCount()
+    public final int getSeriesCount()
     {
         return this.sampleSets.size();
     }
@@ -302,7 +302,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
      */
     @Override
-    public Comparable<Integer> getSeriesKey(final int series)
+    public final Comparable<Integer> getSeriesKey(final int series)
     {
         return series;
     }
@@ -312,7 +312,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public int indexOf(final Comparable seriesKey)
+    public final int indexOf(final Comparable seriesKey)
     {
         if (seriesKey instanceof Integer)
         {
@@ -325,7 +325,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void addChangeListener(final DatasetChangeListener listener)
+    public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
@@ -334,7 +334,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void removeChangeListener(final DatasetChangeListener listener)
+    public final void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
@@ -343,7 +343,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.general.Dataset#getGroup()
      */
     @Override
-    public DatasetGroup getGroup()
+    public final DatasetGroup getGroup()
     {
         return this.datasetGroup;
     }
@@ -352,7 +352,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
      */
     @Override
-    public void setGroup(final DatasetGroup group)
+    public final void setGroup(final DatasetGroup group)
     {
         this.datasetGroup = group;
     }
@@ -361,7 +361,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.xy.XYDataset#getDomainOrder()
      */
     @Override
-    public DomainOrder getDomainOrder()
+    public final DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
@@ -370,7 +370,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @see org.jfree.data.xy.XYDataset#getItemCount(int)
      */
     @Override
-    public int getItemCount(final int series)
+    public final int getItemCount(final int series)
     {
         return this.sampleSets.get(series).size();
     }

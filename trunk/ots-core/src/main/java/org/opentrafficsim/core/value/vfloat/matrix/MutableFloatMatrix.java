@@ -62,14 +62,14 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         super(unit);
     }
 
-    /** If set, any modification of the data must be preceded by replacing the data with a local copy */
+    /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
     boolean copyOnWrite = false;
 
     /**
      * @see org.opentrafficsim.core.value.vfloat.matrix.WriteFloatMatrixFunctions#normalize()
      */
     @Override
-    public void normalize() throws ValueException
+    public final void normalize() throws ValueException
     {
         float sum = zSum();
         if (0 == sum)
@@ -125,7 +125,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             }
 
             /**
-             * Create a new Absolute Dense MutableFloatMatrix
+             * Create a new Absolute Dense MutableFloatMatrix.
              * @param values float[][]; the initial values of the new MutableFloatMatrix
              * @param unit Unit; the unit of the new MutableFloatMatrix
              * @throws ValueException when values is not rectangular
@@ -138,7 +138,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             }
 
             /**
-             * Create a new Absolute Dense MutableFloatMatrix
+             * Create a new Absolute Dense MutableFloatMatrix.
              * @param values FloatScalar.Abs[][]; the initial values of the entries of the new MutableFloatMatrix
              * @throws ValueException when values is not rectangular
              */
@@ -230,7 +230,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
              * @see org.opentrafficsim.core.value.vfloat.matrix.MutableFloatMatrix#immutable()
              */
             @Override
-            public FloatMatrix.Abs.Sparse<U> immutable()
+            public final FloatMatrix.Abs.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
                 return new FloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
@@ -240,7 +240,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
              */
             @Override
-            public MutableFloatMatrix.Abs.Sparse<U> mutable()
+            public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
                 this.copyOnWrite = true;
                 return new MutableFloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
@@ -250,7 +250,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
              * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
              */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
             }
@@ -261,7 +261,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
          * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
          */
         @Override
-        public FloatScalar.Abs<U> get(final int row, final int column) throws ValueException
+        public final FloatScalar.Abs<U> get(final int row, final int column) throws ValueException
         {
             return new FloatScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
         }
@@ -468,7 +468,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     /**
      * Check the copyOnWrite flag and, if it is set make a deep copy of the data and clear the flag.
      */
-    protected void checkCopyOnWrite()
+    protected final void checkCopyOnWrite()
     {
         if (this.copyOnWrite)
         {
@@ -482,7 +482,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.vfloat.matrix.WriteFloatMatrixFunctions#setSI(int, int, float)
      */
     @Override
-    public void setSI(final int row, final int column, final float valueSI) throws ValueException
+    public final void setSI(final int row, final int column, final float valueSI) throws ValueException
     {
         checkIndex(row, column);
         checkCopyOnWrite();
@@ -494,7 +494,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
      */
     @Override
-    public void set(final int row, final int column, final FloatScalar<U> value) throws ValueException
+    public final void set(final int row, final int column, final FloatScalar<U> value) throws ValueException
     {
         setSI(row, column, value.getValueSI());
     }
@@ -504,7 +504,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      *      org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    public void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
+    public final void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
     {
         // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do this...
         setSI(row, column, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());
@@ -514,7 +514,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * Execute a function on a cell by cell basis.
      * @param f cern.colt.function.tfloat.FloatFunction; the function to apply
      */
-    public void assign(final cern.colt.function.tfloat.FloatFunction f)
+    public final void assign(final cern.colt.function.tfloat.FloatFunction f)
     {
         checkCopyOnWrite();
         this.matrixSI.assign(f);
@@ -524,7 +524,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#abs()
      */
     @Override
-    public void abs()
+    public final void abs()
     {
         assign(FloatFunctions.abs);
     }
@@ -533,7 +533,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#acos()
      */
     @Override
-    public void acos()
+    public final void acos()
     {
         assign(FloatFunctions.acos);
     }
@@ -542,7 +542,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#asin()
      */
     @Override
-    public void asin()
+    public final void asin()
     {
         assign(FloatFunctions.asin);
     }
@@ -551,7 +551,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#atan()
      */
     @Override
-    public void atan()
+    public final void atan()
     {
         assign(FloatFunctions.atan);
     }
@@ -560,7 +560,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
      */
     @Override
-    public void cbrt()
+    public final void cbrt()
     {
         assign(FloatMathFunctionsImpl.cbrt);
     }
@@ -569,7 +569,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#ceil()
      */
     @Override
-    public void ceil()
+    public final void ceil()
     {
         assign(FloatFunctions.ceil);
     }
@@ -578,7 +578,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#cos()
      */
     @Override
-    public void cos()
+    public final void cos()
     {
         assign(FloatFunctions.cos);
     }
@@ -587,7 +587,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#cosh()
      */
     @Override
-    public void cosh()
+    public final void cosh()
     {
         assign(FloatMathFunctionsImpl.cosh);
     }
@@ -596,7 +596,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#exp()
      */
     @Override
-    public void exp()
+    public final void exp()
     {
         assign(FloatFunctions.exp);
     }
@@ -605,7 +605,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#expm1()
      */
     @Override
-    public void expm1()
+    public final void expm1()
     {
         assign(FloatMathFunctionsImpl.expm1);
     }
@@ -614,7 +614,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#floor()
      */
     @Override
-    public void floor()
+    public final void floor()
     {
         assign(FloatFunctions.floor);
     }
@@ -623,7 +623,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#log()
      */
     @Override
-    public void log()
+    public final void log()
     {
         assign(FloatFunctions.log);
     }
@@ -632,7 +632,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#log10()
      */
     @Override
-    public void log10()
+    public final void log10()
     {
         assign(FloatMathFunctionsImpl.log10);
     }
@@ -641,7 +641,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#log1p()
      */
     @Override
-    public void log1p()
+    public final void log1p()
     {
         assign(FloatMathFunctionsImpl.log1p);
     }
@@ -650,7 +650,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
      */
     @Override
-    public void pow(final double x)
+    public final void pow(final double x)
     {
         assign(FloatFunctions.pow((float) x));
     }
@@ -659,7 +659,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#rint()
      */
     @Override
-    public void rint()
+    public final void rint()
     {
         assign(FloatFunctions.rint);
     }
@@ -668,7 +668,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#round()
      */
     @Override
-    public void round()
+    public final void round()
     {
         assign(FloatMathFunctionsImpl.round);
     }
@@ -677,7 +677,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#signum()
      */
     @Override
-    public void signum()
+    public final void signum()
     {
         assign(FloatMathFunctionsImpl.signum);
     }
@@ -686,7 +686,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#sin()
      */
     @Override
-    public void sin()
+    public final void sin()
     {
         assign(FloatFunctions.sin);
     }
@@ -695,7 +695,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#sinh()
      */
     @Override
-    public void sinh()
+    public final void sinh()
     {
         assign(FloatMathFunctionsImpl.sinh);
     }
@@ -704,7 +704,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
      */
     @Override
-    public void sqrt()
+    public final void sqrt()
     {
         assign(FloatFunctions.sqrt);
     }
@@ -713,7 +713,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#tan()
      */
     @Override
-    public void tan()
+    public final void tan()
     {
         assign(FloatFunctions.tan);
     }
@@ -722,7 +722,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#tanh()
      */
     @Override
-    public void tanh()
+    public final void tanh()
     {
         assign(FloatMathFunctionsImpl.tanh);
     }
@@ -731,7 +731,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
      */
     @Override
-    public void toDegrees()
+    public final void toDegrees()
     {
         assign(FloatMathFunctionsImpl.toDegrees);
     }
@@ -740,7 +740,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
      */
     @Override
-    public void toRadians()
+    public final void toRadians()
     {
         assign(FloatMathFunctionsImpl.toRadians);
     }
@@ -749,7 +749,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.MathFunctions#inv()
      */
     @Override
-    public void inv()
+    public final void inv()
     {
         assign(FloatFunctions.inv);
     }
@@ -758,7 +758,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
      */
     @Override
-    public void multiply(final float constant)
+    public final void multiply(final float constant)
     {
         assign(FloatFunctions.mult(constant));
     }
@@ -767,7 +767,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
      */
     @Override
-    public void divide(final float constant)
+    public final void divide(final float constant)
     {
         assign(FloatFunctions.div(constant));
     }
@@ -798,7 +798,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @return this
      * @throws ValueException if the matrices do not have the same size
      */
-    public MutableFloatMatrix<U> incrementBy(final FloatMatrix.Rel<U> rel) throws ValueException
+    public final MutableFloatMatrix<U> incrementBy(final FloatMatrix.Rel<U> rel) throws ValueException
     {
         return incrementValueByValue(rel);
     }
@@ -829,7 +829,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @return this
      * @throws ValueException if the matrices do not have the same size
      */
-    public MutableFloatMatrix<U> decrementBy(final FloatMatrix.Rel<U> rel) throws ValueException
+    public final MutableFloatMatrix<U> decrementBy(final FloatMatrix.Rel<U> rel) throws ValueException
     {
         return decrementValueByValue(rel);
     }
@@ -840,7 +840,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @return this
      * @throws ValueException if the matrices do not have the same size
      */
-    public MutableFloatMatrix<U> decrementBy(final FloatMatrix.Abs<U> abs) throws ValueException
+    public final MutableFloatMatrix<U> decrementBy(final FloatMatrix.Abs<U> abs) throws ValueException
     {
         return decrementValueByValue(abs);
     }
@@ -851,7 +851,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      *            MutableFloatMatrix
      * @throws ValueException if the matrices do not have the same size
      */
-    public void scaleValueByValue(final FloatMatrix<?> factor) throws ValueException
+    public final void scaleValueByValue(final FloatMatrix<?> factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int row = this.rows(); --row >= 0;)
@@ -870,7 +870,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @return this
      * @throws ValueException if the matrix and the array do not have the same size
      */
-    public MutableFloatMatrix<U> scaleValueByValue(final float[][] factor) throws ValueException
+    public final MutableFloatMatrix<U> scaleValueByValue(final float[][] factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
         for (int row = this.rows(); --row >= 0;)
@@ -897,7 +897,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     /**
      * Check sizes and copy the data if the copyOnWrite flag is set.
      * @param other float[][]; partner for the size check
-     * @throws ValueException
+     * @throws ValueException when the size of other does not match the size of this
      */
     private void checkSizeAndCopyOnWrite(final float[][] other) throws ValueException
     {
@@ -911,6 +911,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative FloatMatrix
      * @return new Absolute Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> plus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -924,6 +925,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Sparse FloatMatrix
      * @return new Absolute Sparse Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> plus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Rel.Sparse<U> right) throws ValueException
@@ -937,6 +939,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Dense FloatMatrix
      * @return new Absolute Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> plus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -950,6 +953,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative FloatMatrix
      * @return new Absolute Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> plus(final FloatMatrix.Rel.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -963,6 +967,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Sparse FloatMatrix
      * @return new Relative Sparse Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> plus(final FloatMatrix.Rel.Sparse<U> left,
             final FloatMatrix.Rel.Sparse<U> right) throws ValueException
@@ -976,6 +981,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Dense FloatMatrix
      * @return new Relative Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> plus(final FloatMatrix.Rel.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -989,6 +995,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Absolute FloatMatrix
      * @return new Relative Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Abs<U> right) throws ValueException
@@ -1003,6 +1010,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Absolute Sparse FloatMatrix
      * @return new Relative Sparse Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Abs.Sparse<U> right) throws ValueException
@@ -1016,6 +1024,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param left Absolute Sparse FloatMatrix
      * @param right Absolute Dense FloatMatrix
      * @return new Relative Dense Mutable FloatMatrix
+     * @param <U> Unit; the unit
      * @throws ValueException if the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Abs.Sparse<U> left,
@@ -1031,6 +1040,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative FloatMatrix
      * @return new Absolute Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> minus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -1044,6 +1054,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Sparse FloatMatrix
      * @return new Absolute Sparse Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Rel.Sparse<U> right) throws ValueException
@@ -1057,6 +1068,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Dense FloatMatrix
      * @return new Absolute Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -1070,6 +1082,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative FloatMatrix
      * @return new Relative Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Rel.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -1083,6 +1096,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Sparse FloatMatrix
      * @return new Relative Sparse Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> minus(final FloatMatrix.Rel.Sparse<U> left,
             final FloatMatrix.Rel.Sparse<U> right) throws ValueException
@@ -1096,6 +1110,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right Relative Dense FloatMatrix
      * @return new Relative Dense Mutable FloatMatrix
      * @throws ValueException if the matrices do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Rel.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -1185,6 +1200,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right float[][]; the float array
      * @return new Absolute Dense Mutable FloatMatrix
      * @throws ValueException if the matrix and the float array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> times(final FloatMatrix.Abs.Dense<U> left,
             final float[][] right) throws ValueException
@@ -1198,6 +1214,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right float[][]; the float array
      * @return new Relative Dense Mutable FloatMatrix
      * @throws ValueException if the matrix and the float array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> times(final FloatMatrix.Rel.Dense<U> left,
             final float[][] right) throws ValueException
@@ -1211,6 +1228,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right float[][]; the float array
      * @return new Sparse Absolute Mutable FloatMatrix
      * @throws ValueException if the matrix and the float array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> times(final FloatMatrix.Abs.Sparse<U> left,
             final float[][] right) throws ValueException
@@ -1224,6 +1242,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * @param right float[][]; the float array
      * @return new Relative Sparse Mutable FloatMatrix
      * @throws ValueException if the matrix and the float array do not have the same size
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> times(final FloatMatrix.Rel.Sparse<U> left,
             final float[][] right) throws ValueException
@@ -1247,6 +1266,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * Create a Sparse version of this Dense FloatMatrix.
      * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
      * @return MutableFloatMatrix.Sparse.Abs
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> denseToSparse(final FloatMatrix.Abs.Dense<U> in)
     {
@@ -1257,6 +1277,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * Create a Sparse version of this Dense FloatMatrix.
      * @param in FloatMatrix.Rel.Dense the Dense FloatMatrix
      * @return MutableFloatMatrix.Abs.Sparse
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> denseToSparse(final FloatMatrix.Rel.Dense<U> in)
     {
@@ -1279,6 +1300,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * Create a Dense version of this Sparse FloatMatrix.
      * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
      * @return MutableFloatMatrix.Abs.Sparse
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> sparseToDense(final FloatMatrix.Abs.Sparse<U> in)
     {
@@ -1289,6 +1311,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      * Create a Dense version of this Sparse FloatMatrix.
      * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
      * @return MutableFloatMatrix.Abs.Dense
+     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> sparseToDense(final FloatMatrix.Rel.Sparse<U> in)
     {

@@ -75,7 +75,7 @@ public abstract class OffsetUnit<U extends Unit<U>> extends Unit<U>
     /**
      * @return offset to the standard unit. E.g., -273.15 to go from degrees Celsius to Kelvin
      */
-    public double getOffsetToStandardUnit()
+    public final double getOffsetToStandardUnit()
     {
         return this.offsetToStandardUnit;
     }

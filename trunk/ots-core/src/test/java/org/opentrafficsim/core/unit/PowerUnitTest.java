@@ -41,29 +41,29 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 public class PowerUnitTest extends AbstractUnitTest<PowerUnit>
 {
     /**
-     * Set the locale to "en" so we know what texts should be retrieved from the resources
+     * Set the locale to "en" so we know what texts should be retrieved from the resources.
      */
     @SuppressWarnings("static-method")
     @Before
-    public void setup()
+    public final void setup()
     {
         DefaultLocale.setLocale(new Locale("en"));
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(PowerUnit.WATT, "PowerUnit.watt", "PowerUnit.W");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(PowerUnit.WATT, 1, 0.00000001, "watt", "W");
         checkUnitRatioNameAndAbbreviation(PowerUnit.FOOT_POUND_FORCE_PER_HOUR, 0.00037661608333, 0.0000000001,
@@ -88,14 +88,14 @@ public class PowerUnitTest extends AbstractUnitTest<PowerUnit>
     }
 
     /**
-     * Verify that we can create our own power unit
+     * Verify that we can create our own power unit.
      */
     @Test
-    public void createPowerUnitUnit()
+    public final void createPowerUnitUnit()
     {
         PowerUnit myMU =
-                new PowerUnit(UnitLocalizationsTest.doNotCheckPrefix + "PowerUnit.Person",
-                        UnitLocalizationsTest.doNotCheckPrefix + "PowerUnit.pnp", UnitSystem.OTHER, PowerUnit.WATT, 250);
+                new PowerUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "PowerUnit.Person",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "PowerUnit.pnp", UnitSystem.OTHER, PowerUnit.WATT, 250);
         assertTrue("Can create a new PowerUnit", null != myMU);
         checkUnitRatioNameAndAbbreviation(myMU, 250, 1, "!Person!", "!pnp!");
     }

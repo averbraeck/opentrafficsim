@@ -126,7 +126,7 @@ public class IDMPlus<Line> implements CarFollowingModel
      *      java.util.Set, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs)
      */
     @Override
-    public CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
+    public final CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
             final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = car.getNextEvaluationTime();
@@ -198,7 +198,7 @@ public class IDMPlus<Line> implements CarFollowingModel
      *      java.util.Collection, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs, double, double)
      */
     @Override
-    public CarFollowingModelResult computeLaneChangeAndAcceleration(final Car car, final Collection<Car> sameLaneCars,
+    public final CarFollowingModelResult computeLaneChangeAndAcceleration(final Car car, final Collection<Car> sameLaneCars,
             final Collection<Car> preferredLaneCars, final Collection<Car> nonPreferredLaneCars,
             final DoubleScalar.Abs<SpeedUnit> speedLimit, final double preferredLaneRouteIncentive,
             final double nonPreferredLaneRouteIncentive)

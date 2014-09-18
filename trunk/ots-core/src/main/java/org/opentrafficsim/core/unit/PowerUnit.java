@@ -51,44 +51,60 @@ public class PowerUnit extends Unit<PowerUnit>
     private final TimeUnit timeUnit;
 
     /** watt. */
-    public static final PowerUnit WATT = new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND,
-            "PowerUnit.watt", "PowerUnit.W", SI_DERIVED);
+    public static final PowerUnit WATT;
 
     /** kilowatt. */
-    public static final PowerUnit KILOWATT = new PowerUnit("PowerUnit.kilowatt", "PowerUnit.kW", SI_DERIVED, WATT,
-            1000.0);
+    public static final PowerUnit KILOWATT;
 
     /** megawatt. */
-    public static final PowerUnit MEGAWATT = new PowerUnit("PowerUnit.megawatt", "PowerUnit.MW", SI_DERIVED, WATT,
-            1.0E6);
+    public static final PowerUnit MEGAWATT;
 
     /** gigawatt. */
-    public static final PowerUnit GIGAWATT = new PowerUnit("PowerUnit.gigawatt", "PowerUnit.GW", SI_DERIVED, WATT,
-            1.0E9);
+    public static final PowerUnit GIGAWATT;
 
     /** foot-pound-force per hour. */
-    public static final PowerUnit FOOT_POUND_FORCE_PER_HOUR = new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
-            TimeUnit.HOUR, "PowerUnit.foot_pound-force_per_hour", "PowerUnit.ft.lbf/h", IMPERIAL);
+    public static final PowerUnit FOOT_POUND_FORCE_PER_HOUR;
 
     /** foot-pound-force per minute. */
-    public static final PowerUnit FOOT_POUND_FORCE_PER_MINUTE = new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
-            TimeUnit.MINUTE, "PowerUnit.foot_pound-force_per_minute", "PowerUnit.ft.lbf/min", IMPERIAL);
+    public static final PowerUnit FOOT_POUND_FORCE_PER_MINUTE;
 
     /** foot-pound-force per second. */
-    public static final PowerUnit FOOT_POUND_FORCE_PER_SECOND = new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE,
-            TimeUnit.SECOND, "PowerUnit.foot_pound-force_per_second", "PowerUnit.ft.lbf/s", IMPERIAL);
+    public static final PowerUnit FOOT_POUND_FORCE_PER_SECOND;
 
     /** horsepower (metric). */
-    public static final PowerUnit HORSEPOWER_METRIC = new PowerUnit("PowerUnit.horsepower_(metric)", "PowerUnit.hp",
-            OTHER, WATT, 735.49875);
+    public static final PowerUnit HORSEPOWER_METRIC;
 
     /** sthene-meter per second. */
-    public static final PowerUnit STHENE_METER_PER_SECOND = new PowerUnit(LengthUnit.METER, ForceUnit.STHENE,
-            TimeUnit.SECOND, "PowerUnit.sthene-meter_per_second", "PowerUnit.sn.m/s", MTS);
+    public static final PowerUnit STHENE_METER_PER_SECOND;
 
     /** erg per second. */
-    public static final PowerUnit ERG_PER_SECOND = new PowerUnit(LengthUnit.CENTIMETER, ForceUnit.DYNE,
-            TimeUnit.SECOND, "PowerUnit.erg_per_second", "PowerUnit.erg/s", CGS);
+    public static final PowerUnit ERG_PER_SECOND;
+
+    static
+    {
+        WATT =
+                new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PowerUnit.watt", "PowerUnit.W",
+                        SI_DERIVED);
+        KILOWATT = new PowerUnit("PowerUnit.kilowatt", "PowerUnit.kW", SI_DERIVED, WATT, 1000.0);
+        MEGAWATT = new PowerUnit("PowerUnit.megawatt", "PowerUnit.MW", SI_DERIVED, WATT, 1.0E6);
+        GIGAWATT = new PowerUnit("PowerUnit.gigawatt", "PowerUnit.GW", SI_DERIVED, WATT, 1.0E9);
+        FOOT_POUND_FORCE_PER_HOUR =
+                new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.HOUR,
+                        "PowerUnit.foot_pound-force_per_hour", "PowerUnit.ft.lbf/h", IMPERIAL);
+        FOOT_POUND_FORCE_PER_MINUTE =
+                new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.MINUTE,
+                        "PowerUnit.foot_pound-force_per_minute", "PowerUnit.ft.lbf/min", IMPERIAL);
+        FOOT_POUND_FORCE_PER_SECOND =
+                new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.SECOND,
+                        "PowerUnit.foot_pound-force_per_second", "PowerUnit.ft.lbf/s", IMPERIAL);
+        HORSEPOWER_METRIC = new PowerUnit("PowerUnit.horsepower_(metric)", "PowerUnit.hp", OTHER, WATT, 735.49875);
+        STHENE_METER_PER_SECOND =
+                new PowerUnit(LengthUnit.METER, ForceUnit.STHENE, TimeUnit.SECOND, "PowerUnit.sthene-meter_per_second",
+                        "PowerUnit.sn.m/s", MTS);
+        ERG_PER_SECOND =
+                new PowerUnit(LengthUnit.CENTIMETER, ForceUnit.DYNE, TimeUnit.SECOND, "PowerUnit.erg_per_second",
+                        "PowerUnit.erg/s", CGS);
+    }
 
     /**
      * @param massUnit the unit of mass for the power unit, e.g., kilogram
@@ -147,7 +163,7 @@ public class PowerUnit extends Unit<PowerUnit>
     /**
      * @return massUnit
      */
-    public MassUnit getMassUnit()
+    public final MassUnit getMassUnit()
     {
         return this.massUnit;
     }
@@ -155,7 +171,7 @@ public class PowerUnit extends Unit<PowerUnit>
     /**
      * @return lengthUnit
      */
-    public LengthUnit getLengthUnit()
+    public final LengthUnit getLengthUnit()
     {
         return this.lengthUnit;
     }
@@ -163,7 +179,7 @@ public class PowerUnit extends Unit<PowerUnit>
     /**
      * @return timeUnit
      */
-    public TimeUnit getTimeUnit()
+    public final TimeUnit getTimeUnit()
     {
         return this.timeUnit;
     }
@@ -172,7 +188,7 @@ public class PowerUnit extends Unit<PowerUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public PowerUnit getStandardUnit()
+    public final PowerUnit getStandardUnit()
     {
         return WATT;
     }
@@ -181,7 +197,7 @@ public class PowerUnit extends Unit<PowerUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "kgm2/s3";
     }

@@ -293,7 +293,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      */
     // TODO: call static method from the instance method? The two are now too similar.
     @SuppressWarnings("unchecked")
-    public Set<Unit<U>> getAllUnitsOfThisType()
+    public final Set<Unit<U>> getAllUnitsOfThisType()
     {
         if (!initialized)
         {
@@ -313,7 +313,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return name, e.g. meters per second
      */
-    public String getName()
+    public final String getName()
     {
         return localization.getString(this.nameKey);
     }
@@ -321,7 +321,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return name key, e.g. TimeUnit.MetersPerSecond
      */
-    public String getNameKey()
+    public final String getNameKey()
     {
         return this.nameKey;
     }
@@ -329,7 +329,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return abbreviation, e.g., m/s
      */
-    public String getAbbreviation()
+    public final String getAbbreviation()
     {
         return localization.getString(this.abbreviationKey);
     }
@@ -337,7 +337,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return abbreviation key, e.g. TimeUnit.m/s
      */
-    public String getAbbreviationKey()
+    public final String getAbbreviationKey()
     {
         return this.abbreviationKey;
     }
@@ -345,7 +345,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return conversionFactorToStandardUnit. Multiply by this number to convert to the standard (e.g., SI) unit
      */
-    public double getConversionFactorToStandardUnit()
+    public final double getConversionFactorToStandardUnit()
     {
         return this.conversionFactorToStandardUnit;
     }
@@ -353,7 +353,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return unitSystem, e.g. SI or Imperial
      */
-    public UnitSystem getUnitSystem()
+    public final UnitSystem getUnitSystem()
     {
         return this.unitSystem;
     }
@@ -372,7 +372,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     /**
      * @return the SI coefficients
      */
-    public SICoefficients getSICoefficients()
+    public final SICoefficients getSICoefficients()
     {
         return this.siCoefficients;
     }
@@ -438,7 +438,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public final String toString()
     {
         return getAbbreviation();
     }

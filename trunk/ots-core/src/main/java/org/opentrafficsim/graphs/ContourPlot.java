@@ -267,7 +267,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
-    public void actionPerformed(final ActionEvent actionEvent)
+    public final void actionPerformed(final ActionEvent actionEvent)
     {
         final String command = actionEvent.getActionCommand();
         // System.out.println("command is \"" + command + "\"");
@@ -307,7 +307,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     /**
      * Redraw this ContourGraph (after the underlying data, or a granularity setting has been changed).
      */
-    public void reGraph()
+    public final void reGraph()
     {
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
         final XYPlot plot = this.chartPanel.getChart().getXYPlot();
@@ -319,7 +319,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /**
      * Notify interested parties of an event affecting this ContourPlot.
-     * @param event
+     * @param event DatasetChangedEvent
      */
     private void notifyListeners(final DatasetChangeEvent event)
     {
@@ -330,13 +330,13 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /** List of parties interested in changes of this ContourPlot. */
-    transient EventListenerList listenerList = new EventListenerList();
+    private transient EventListenerList listenerList = new EventListenerList();
 
     /**
      * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
      */
     @Override
-    public int getSeriesCount()
+    public final int getSeriesCount()
     {
         return 1;
     }
@@ -345,7 +345,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * Retrieve the number of cells to use along the distance axis.
      * @return Integer; the number of cells to use along the distance axis
      */
-    protected int yAxisBins()
+    protected final int yAxisBins()
     {
         return this.yAxis.getAggregatedBinCount();
     }
@@ -356,7 +356,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param item Integer; the item
      * @return Integer; the bin number along the y axis of the item
      */
-    protected int yAxisBin(final int item)
+    protected final int yAxisBin(final int item)
     {
         if (item < 0 || item >= getItemCount(0))
         {
@@ -371,7 +371,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param item Integer; the item
      * @return Integer; the bin number along the x axis of the item
      */
-    protected int xAxisBin(final int item)
+    protected final int xAxisBin(final int item)
     {
         if (item < 0 || item >= getItemCount(0))
         {
@@ -384,7 +384,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * Retrieve the number of cells to use along the time axis.
      * @return Integer; the number of cells to use along the time axis
      */
-    protected int xAxisBins()
+    protected final int xAxisBins()
     {
         return this.xAxis.getAggregatedBinCount();
     }
@@ -393,7 +393,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYDataset#getItemCount(int)
      */
     @Override
-    public int getItemCount(final int series)
+    public final int getItemCount(final int series)
     {
         return yAxisBins() * xAxisBins();
     }
@@ -402,7 +402,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYDataset#getX(int, int)
      */
     @Override
-    public Number getX(final int series, final int item)
+    public final Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
@@ -411,7 +411,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
      */
     @Override
-    public double getXValue(final int series, final int item)
+    public final double getXValue(final int series, final int item)
     {
         double result = this.xAxis.getValue(xAxisBin(item));
         // System.out.println(String.format("XValue(%d, %d) -> %.3f, binCount=%d", series, item, result,
@@ -423,7 +423,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYDataset#getY(int, int)
      */
     @Override
-    public Number getY(final int series, final int item)
+    public final Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
@@ -432,7 +432,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
      */
     @Override
-    public double getYValue(final int series, final int item)
+    public final double getYValue(final int series, final int item)
     {
         return this.yAxis.getValue(yAxisBin(item));
     }
@@ -441,7 +441,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYZDataset#getZ(int, int)
      */
     @Override
-    public Number getZ(final int series, final int item)
+    public final Number getZ(final int series, final int item)
     {
         return getZValue(series, item);
     }
@@ -450,7 +450,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void addChangeListener(final DatasetChangeListener listener)
+    public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
@@ -459,7 +459,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
      */
     @Override
-    public void removeChangeListener(final DatasetChangeListener listener)
+    public final void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
@@ -468,7 +468,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.general.Dataset#getGroup()
      */
     @Override
-    public DatasetGroup getGroup()
+    public final DatasetGroup getGroup()
     {
         return null;
     }
@@ -487,7 +487,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public int indexOf(final Comparable seriesKey)
+    public final int indexOf(final Comparable seriesKey)
     {
         return 0;
     }
@@ -496,7 +496,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYDataset#getDomainOrder()
      */
     @Override
-    public DomainOrder getDomainOrder()
+    public final DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
@@ -505,7 +505,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled TODO: replace Car by GTU
      */
-    public void addData(final Car car)
+    public final void addData(final Car car)
     {
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();
@@ -628,7 +628,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @see org.jfree.data.xy.XYZDataset#getZValue(int, int)
      */
     @Override
-    public double getZValue(final int series, final int item)
+    public final double getZValue(final int series, final int item)
     {
         final int timeBinGroup = xAxisBin(item);
         final int distanceBinGroup = yAxisBin(item);

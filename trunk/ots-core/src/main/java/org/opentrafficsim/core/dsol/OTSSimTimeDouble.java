@@ -42,7 +42,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** value represents the value in milliseconds */
+    /** value represents the value in milliseconds. */
     private MutableDoubleScalar.Abs<TimeUnit> time;
 
     /**
@@ -57,7 +57,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#add(java.lang.Number)
      */
     @Override
-    public void add(final DoubleScalar.Rel<TimeUnit> simTime)
+    public final void add(final DoubleScalar.Rel<TimeUnit> simTime)
     {
         this.time.add(simTime);
     }
@@ -66,7 +66,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#subtract(java.lang.Number)
      */
     @Override
-    public void subtract(final DoubleScalar.Rel<TimeUnit> simTime)
+    public final void subtract(final DoubleScalar.Rel<TimeUnit> simTime)
     {
         this.time.subtract(simTime);
     }
@@ -75,7 +75,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#compareTo(nl.tudelft.simulation.dsol.simtime.SimTime)
      */
     @Override
-    public int compareTo(final OTSSimTimeDouble simTime)
+    public final int compareTo(final OTSSimTimeDouble simTime)
     {
         return this.time.immutable().compareTo(simTime.get());
     }
@@ -84,7 +84,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
      * @see nl.tudelft.simulation.dsol.simtime.SimTime#setZero()
      */
     @Override
-    public OTSSimTimeDouble setZero()
+    public final OTSSimTimeDouble setZero()
     {
         // TODO: this.time.setZero();
         return this;

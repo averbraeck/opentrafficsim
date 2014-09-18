@@ -51,20 +51,20 @@ public class FlowVolumeUnitTest extends AbstractUnitTest<FlowVolumeUnit>
     }
 
     /**
-     * Verify the result of some get*Key methods
+     * Verify the result of some get*Key methods.
      */
     @Test
-    public void keys()
+    public final void keys()
     {
         checkKeys(FlowVolumeUnit.CUBIC_METER_PER_SECOND, "FlowVolumeUnit.cubic_meter_per_second",
                 "FlowVolumeUnit.m^3/s");
     }
 
     /**
-     * Verify conversion factors, English names and abbreviations
+     * Verify conversion factors, English names and abbreviations.
      */
     @Test
-    public void conversions()
+    public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(FlowVolumeUnit.CUBIC_METER_PER_SECOND, 1, 0.000001, "cubic meter per second",
                 "m^3/s");
@@ -80,14 +80,14 @@ public class FlowVolumeUnitTest extends AbstractUnitTest<FlowVolumeUnit>
     }
 
     /**
-     * Verify that we can create our own FlowVolume unit
+     * Verify that we can create our own FlowVolume unit.
      */
     @Test
-    public void createFLowVolumeUnit()
+    public final void createFLowVolumeUnit()
     {
         FlowVolumeUnit myFVU =
-                new FlowVolumeUnit(UnitLocalizationsTest.doNotCheckPrefix + "FlowVolumeUnit.TrucksPerHour",
-                        UnitLocalizationsTest.doNotCheckPrefix + "FlowVolumeUnit.tph", UnitSystem.OTHER,
+                new FlowVolumeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowVolumeUnit.TrucksPerHour",
+                        UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowVolumeUnit.tph", UnitSystem.OTHER,
                         FlowVolumeUnit.CUBIC_METER_PER_HOUR, 100);
         assertTrue("Can create a new FlowMassUnit", null != myFVU);
         checkUnitRatioNameAndAbbreviation(myFVU, 100. / 3600, 0.0001, "!TrucksPerHour!", "!tph!");

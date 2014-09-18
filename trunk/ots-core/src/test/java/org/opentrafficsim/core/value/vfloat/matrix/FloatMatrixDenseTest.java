@@ -40,7 +40,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixAbs(float[][], org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(float[][] in, U u) throws ValueException
+    protected final <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(final float[][] in, final U u) throws ValueException
     {
         return new FloatMatrix.Abs.Dense<U>(in, u);
     }
@@ -49,7 +49,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixAbs(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarAbs[][])
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(FloatScalar.Abs<U>[][] in)
+    protected final <U extends Unit<U>> FloatMatrix.Abs<U> createFloatMatrixAbs(final FloatScalar.Abs<U>[][] in)
             throws ValueException
     {
         return new FloatMatrix.Abs.Dense<U>(in);
@@ -60,7 +60,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixRel(float[][], org.opentrafficsim.core.unit.Unit)
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(float[][] in, U u) throws ValueException
+    protected final <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(final float[][] in, final U u) throws ValueException
     {
         return new FloatMatrix.Rel.Dense<U>(in, u);
     }
@@ -69,7 +69,7 @@ public class FloatMatrixDenseTest extends FloatMatrixTest
      * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrixTest#createFloatMatrixRel(org.opentrafficsim.core.value.vfloat.scalar.FloatScalarRel[][])
      */
     @Override
-    protected <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(FloatScalar.Rel<U>[][] in)
+    protected final <U extends Unit<U>> FloatMatrix.Rel<U> createFloatMatrixRel(final FloatScalar.Rel<U>[][] in)
             throws ValueException
     {
         return new FloatMatrix.Rel.Dense<U>(in);

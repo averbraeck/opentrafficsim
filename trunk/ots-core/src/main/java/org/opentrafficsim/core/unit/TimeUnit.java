@@ -40,23 +40,32 @@ public class TimeUnit extends Unit<TimeUnit>
     private static final long serialVersionUID = 20140607L;
 
     /** second. */
-    public static final TimeUnit SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
+    public static final TimeUnit SECOND;
 
     /** millisecond. */
-    public static final TimeUnit MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND,
-            0.001);
+    public static final TimeUnit MILLISECOND;
 
     /** minute. */
-    public static final TimeUnit MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SI_ACCEPTED, SECOND, 60.0);
+    public static final TimeUnit MINUTE;
 
     /** hour. */
-    public static final TimeUnit HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", SI_ACCEPTED, MINUTE, 60.0);
+    public static final TimeUnit HOUR;
 
     /** day. */
-    public static final TimeUnit DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", SI_ACCEPTED, HOUR, 24.0);
+    public static final TimeUnit DAY;
 
     /** week. */
-    public static final TimeUnit WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", OTHER, DAY, 7.0);
+    public static final TimeUnit WEEK;
+
+    static
+    {
+        SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
+        MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND, 0.001);
+        MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SI_ACCEPTED, SECOND, 60.0);
+        HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", SI_ACCEPTED, MINUTE, 60.0);
+        DAY = new TimeUnit("TimeUnit.day", "TimeUnit.d", SI_ACCEPTED, HOUR, 24.0);
+        WEEK = new TimeUnit("TimeUnit.week", "TimeUnit.w", OTHER, DAY, 7.0);
+    }
 
     /**
      * Build a standard unit.
@@ -88,7 +97,7 @@ public class TimeUnit extends Unit<TimeUnit>
      * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
      */
     @Override
-    public TimeUnit getStandardUnit()
+    public final TimeUnit getStandardUnit()
     {
         return SECOND;
     }
@@ -97,7 +106,7 @@ public class TimeUnit extends Unit<TimeUnit>
      * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
      */
     @Override
-    public String getSICoefficientsString()
+    public final String getSICoefficientsString()
     {
         return "s";
     }
