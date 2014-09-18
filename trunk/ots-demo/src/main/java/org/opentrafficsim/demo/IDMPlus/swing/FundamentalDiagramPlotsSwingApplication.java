@@ -75,7 +75,7 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
     /**
      * @return fundamentalDiagramPlots
      */
-    public ArrayList<FundamentalDiagram> getFundamentalDiagramPlots()
+    public final ArrayList<FundamentalDiagram> getFundamentalDiagramPlots()
     {
         return this.fundamentalDiagramPlots;
     }
