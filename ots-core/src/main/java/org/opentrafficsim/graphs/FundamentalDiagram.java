@@ -289,27 +289,21 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         }
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesCount()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int getSeriesCount()
     {
         return this.sampleSets.size();
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Comparable<Integer> getSeriesKey(final int series)
     {
         return series;
     }
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#indexOf(java.lang.Comparable)
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public final int indexOf(final Comparable seriesKey)
@@ -321,54 +315,42 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         return -1;
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#addChangeListener(org.jfree.data.general.DatasetChangeListener)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#removeChangeListener(org.jfree.data.general.DatasetChangeListener)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#getGroup()
-     */
+    /** {@inheritDoc} */
     @Override
     public final DatasetGroup getGroup()
     {
         return this.datasetGroup;
     }
 
-    /**
-     * @see org.jfree.data.general.Dataset#setGroup(org.jfree.data.general.DatasetGroup)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void setGroup(final DatasetGroup group)
     {
         this.datasetGroup = group;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getDomainOrder()
-     */
+    /** {@inheritDoc} */
     @Override
     public final DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getItemCount(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final int getItemCount(final int series)
     {
@@ -401,36 +383,28 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         return result;
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getX(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public double getXValue(final int series, final int item)
     {
         return getSample(series, item, this.xAxis);
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getY(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
 
-    /**
-     * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public double getYValue(final int series, final int item)
     {
@@ -516,9 +490,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         }
     }
 
-    /**
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void actionPerformed(final ActionEvent actionEvent)
     {

@@ -51,18 +51,14 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
         this.unit = unit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.Value#getUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public U getUnit()
     {
         return this.unit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.Value#expressAsSIUnit(double)
-     */
+    /** {@inheritDoc} */
     @Override
     public double expressAsSIUnit(final double value)
     {
@@ -78,18 +74,14 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
         return ValueUtil.expressAsUnit(value, this.unit);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.Value#isAbsolute()
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isAbsolute()
     {
         return this instanceof Absolute;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.Value#isRelative()
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isRelative()
     {

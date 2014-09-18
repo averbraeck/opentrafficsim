@@ -166,18 +166,14 @@ public class VolumeUnit extends Unit<VolumeUnit>
         return this.lengthUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final VolumeUnit getStandardUnit()
     {
         return CUBIC_METER;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

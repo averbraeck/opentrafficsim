@@ -529,27 +529,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         return values;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#rows()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int rows()
     {
         return this.matrixSI.rows();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#columns()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int columns()
     {
         return this.matrixSI.columns();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getSI(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final float getSI(final int row, final int column) throws ValueException
     {
@@ -557,9 +551,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         return safeGet(row, column);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final float getInUnit(final int row, final int column) throws ValueException
     {
@@ -576,27 +568,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         return (float) ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#zSum()
-     */
+    /** {@inheritDoc} */
     @Override
     public final float zSum()
     {
         return this.matrixSI.zSum();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#cardinality()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int cardinality()
     {
         return this.matrixSI.cardinality();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#det()
-     */
+    /** {@inheritDoc} */
     @Override
     public final float det() throws ValueException
     {
@@ -624,9 +610,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         }
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -864,9 +848,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -876,9 +858,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

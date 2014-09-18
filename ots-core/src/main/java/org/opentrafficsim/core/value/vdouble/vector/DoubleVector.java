@@ -509,18 +509,14 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return values;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#size()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int size()
     {
         return (int) this.vectorSI.size();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getSI(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getSI(final int index) throws ValueException
     {
@@ -528,9 +524,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return safeGet(index);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getInUnit(final int index) throws ValueException
     {
@@ -547,27 +541,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return ValueUtil.expressAsUnit(getSI(index), targetUnit);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#zSum()
-     */
+    /** {@inheritDoc} */
     @Override
     public final double zSum()
     {
         return this.vectorSI.zSum();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#cardinality()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int cardinality()
     {
         return this.vectorSI.cardinality();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -726,9 +714,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return fsArray;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -738,9 +724,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

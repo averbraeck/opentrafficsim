@@ -261,54 +261,42 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /******************************** NUMBER METHODS **********************************/
     /**********************************************************************************/
 
-    /**
-     * @see java.lang.Number#intValue()
-     */
+    /** {@inheritDoc} */
     @Override
     public int intValue()
     {
         return Math.round(this.valueSI);
     }
 
-    /**
-     * @see java.lang.Number#longValue()
-     */
+    /** {@inheritDoc} */
     @Override
     public final long longValue()
     {
         return Math.round(this.valueSI);
     }
 
-    /**
-     * @see java.lang.Number#floatValue()
-     */
+    /** {@inheritDoc} */
     @Override
     public final float floatValue()
     {
         return this.valueSI;
     }
 
-    /**
-     * @see java.lang.Number#doubleValue()
-     */
+    /** {@inheritDoc} */
     @Override
     public final double doubleValue()
     {
         return this.valueSI;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -318,9 +306,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

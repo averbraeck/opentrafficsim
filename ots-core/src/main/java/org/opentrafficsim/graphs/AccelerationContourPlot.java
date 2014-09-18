@@ -65,9 +65,7 @@ public class AccelerationContourPlot extends ContourPlot
     /** Storage for the total acceleration executed in each cell. */
     private ArrayList<MutableDoubleVector.Abs<AccelerationUnit>> cumulativeAccelerations;
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Comparable<String> getSeriesKey(final int series)
     {
@@ -97,9 +95,7 @@ public class AccelerationContourPlot extends ContourPlot
         }
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double, double)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
@@ -122,9 +118,7 @@ public class AccelerationContourPlot extends ContourPlot
         }
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourPlot#computeZValue(int, int, int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
             final int endDistanceBin)

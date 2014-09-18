@@ -43,9 +43,7 @@ public class SICoefficients
         this.coefficientsMap = coefficients;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

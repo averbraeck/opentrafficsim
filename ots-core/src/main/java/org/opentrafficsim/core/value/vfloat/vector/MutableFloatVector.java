@@ -66,9 +66,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
     boolean copyOnWrite = false;
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#normalize()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void normalize() throws ValueException
     {
@@ -450,9 +448,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      */
     public abstract FloatVector<U> immutable();
 
-    /**
-     * @see org.opentrafficsim.core.value.Value#copy()
-     */
+    /** {@inheritDoc} */
     @Override
     public MutableFloatVector<U> copy()
     {
@@ -474,9 +470,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         }
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.WriteFloatVectorFunctions#setSI(int, float)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void setSI(final int index, final float valueSI) throws ValueException
     {
@@ -516,252 +510,196 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         this.vectorSI.assign(f);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#abs()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void abs()
     {
         assign(FloatFunctions.abs);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#acos()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void acos()
     {
         assign(FloatFunctions.acos);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#asin()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void asin()
     {
         assign(FloatFunctions.asin);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#atan()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void atan()
     {
         assign(FloatFunctions.atan);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cbrt()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void cbrt()
     {
         assign(FloatMathFunctionsImpl.cbrt);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#ceil()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void ceil()
     {
         assign(FloatFunctions.ceil);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cos()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void cos()
     {
         assign(FloatFunctions.cos);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#cosh()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void cosh()
     {
         assign(FloatMathFunctionsImpl.cosh);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#exp()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void exp()
     {
         assign(FloatFunctions.exp);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#expm1()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void expm1()
     {
         assign(FloatMathFunctionsImpl.expm1);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#floor()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void floor()
     {
         assign(FloatFunctions.floor);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void log()
     {
         assign(FloatFunctions.log);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log10()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void log10()
     {
         assign(FloatMathFunctionsImpl.log10);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#log1p()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void log1p()
     {
         assign(FloatMathFunctionsImpl.log1p);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#pow(double)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void pow(final double x)
     {
         assign(FloatFunctions.pow((float) x));
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#rint()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void rint()
     {
         assign(FloatFunctions.rint);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#round()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void round()
     {
         assign(FloatMathFunctionsImpl.round);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#signum()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void signum()
     {
         assign(FloatMathFunctionsImpl.signum);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sin()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void sin()
     {
         assign(FloatFunctions.sin);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sinh()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void sinh()
     {
         assign(FloatMathFunctionsImpl.sinh);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#sqrt()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void sqrt()
     {
         assign(FloatFunctions.sqrt);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tan()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void tan()
     {
         assign(FloatFunctions.tan);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#tanh()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void tanh()
     {
         assign(FloatMathFunctionsImpl.tanh);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toDegrees()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void toDegrees()
     {
         assign(FloatMathFunctionsImpl.toDegrees);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#toRadians()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void toRadians()
     {
         assign(FloatMathFunctionsImpl.toRadians);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.MathFunctions#inv()
-     */
+    /** {@inheritDoc} */
     @Override
     public final void inv()
     {
         assign(FloatFunctions.inv);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#multiply(float)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void multiply(final float constant)
     {
         assign(FloatFunctions.mult(constant));
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.FloatMathFunctions#divide(float)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void divide(final float constant)
     {

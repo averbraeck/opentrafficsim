@@ -131,18 +131,14 @@ public class AreaUnit extends Unit<AreaUnit>
         return this.lengthUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final AreaUnit getStandardUnit()
     {
         return SQUARE_METER;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

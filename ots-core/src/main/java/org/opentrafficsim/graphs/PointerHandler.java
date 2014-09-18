@@ -40,18 +40,14 @@ import org.jfree.chart.plot.XYPlot;
  */
 abstract class PointerHandler implements MouseListener, MouseMotionListener
 {
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(final MouseEvent e)
     {
         // No action
     }
 
-    /**
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mouseMoved(final MouseEvent mouseEvent)
     {
@@ -86,45 +82,35 @@ abstract class PointerHandler implements MouseListener, MouseMotionListener
      */
     abstract void updateHint(double domainValue, double rangeValue);
 
-    /**
-     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mouseClicked(final MouseEvent e)
     {
         // No action
     }
 
-    /**
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(final MouseEvent e)
     {
         // No action
     }
 
-    /**
-     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(final MouseEvent e)
     {
         // No action
     }
 
-    /**
-     * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mouseEntered(final MouseEvent e)
     {
         // No action
     }
 
-    /**
-     * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-     */
+    /** {@inheritDoc} */
     @Override
     public void mouseExited(final MouseEvent mouseEvent)
     {

@@ -191,18 +191,14 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final ElectricalPotentialUnit getStandardUnit()
     {
         return VOLT;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

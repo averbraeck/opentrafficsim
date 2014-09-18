@@ -527,27 +527,21 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         return values;
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#rows()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int rows()
     {
         return this.matrixSI.rows();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#columns()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int columns()
     {
         return this.matrixSI.columns();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getSI(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getSI(final int row, final int column) throws ValueException
     {
@@ -555,9 +549,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         return safeGet(row, column);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getInUnit(final int row, final int column) throws ValueException
     {
@@ -574,27 +566,21 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         return ValueUtil.expressAsUnit(getSI(row, column), targetUnit);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#zSum()
-     */
+    /** {@inheritDoc} */
     @Override
     public final double zSum()
     {
         return this.matrixSI.zSum();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#cardinality()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int cardinality()
     {
         return this.matrixSI.cardinality();
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.matrix.ReadOnlyDoubleMatrixFunctions#det()
-     */
+    /** {@inheritDoc} */
     @Override
     public final double det() throws ValueException
     {
@@ -622,9 +608,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         }
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -862,9 +846,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -874,9 +856,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

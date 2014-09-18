@@ -53,36 +53,28 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
         super(time);
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#add(java.lang.Number)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void add(final DoubleScalar.Rel<TimeUnit> simTime)
     {
         this.time.add(simTime);
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#subtract(java.lang.Number)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void subtract(final DoubleScalar.Rel<TimeUnit> simTime)
     {
         this.time.subtract(simTime);
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#compareTo(nl.tudelft.simulation.dsol.simtime.SimTime)
-     */
+    /** {@inheritDoc} */
     @Override
     public final int compareTo(final OTSSimTimeDouble simTime)
     {
         return this.time.immutable().compareTo(simTime.get());
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#setZero()
-     */
+    /** {@inheritDoc} */
     @Override
     public final OTSSimTimeDouble setZero()
     {
@@ -90,36 +82,28 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
         return this;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#copy()
-     */
+    /** {@inheritDoc} */
     @Override
     public OTSSimTimeDouble copy()
     {
         return new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(this.time.getValueInUnit(), this.time.getUnit()));
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#set(java.lang.Comparable)
-     */
+    /** {@inheritDoc} */
     @Override
     public void set(final DoubleScalar.Abs<TimeUnit> value)
     {
         this.time = value.mutable();
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#get()
-     */
+    /** {@inheritDoc} */
     @Override
     public DoubleScalar.Abs<TimeUnit> get()
     {
         return this.time.immutable();
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.simtime.SimTime#minus(nl.tudelft.simulation.dsol.simtime.SimTime)
-     */
+    /** {@inheritDoc} */
     @Override
     public DoubleScalar.Rel<TimeUnit> minus(final OTSSimTimeDouble absoluteTime)
     {

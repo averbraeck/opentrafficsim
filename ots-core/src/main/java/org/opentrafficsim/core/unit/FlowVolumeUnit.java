@@ -214,18 +214,14 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
         return this.timeUnit;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final FlowVolumeUnit getStandardUnit()
     {
         return CUBIC_METER_PER_SECOND;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {

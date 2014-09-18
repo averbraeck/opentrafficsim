@@ -60,9 +60,7 @@ public class FlowContourPlot extends ContourPlot
     /** Storage for the total length traveled in each cell. */
     private ArrayList<MutableDoubleVector.Abs<LengthUnit>> cumulativeLengths;
 
-    /**
-     * @see org.jfree.data.general.SeriesDataset#getSeriesKey(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final Comparable<String> getSeriesKey(final int series)
     {
@@ -89,9 +87,7 @@ public class FlowContourPlot extends ContourPlot
         }
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourPlot#incrementBinData(int, int, double, double, double)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
@@ -117,9 +113,7 @@ public class FlowContourPlot extends ContourPlot
         }
     }
 
-    /**
-     * @see org.opentrafficsim.graphs.ContourPlot#computeZValue(int, int, int, int)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
             final int endDistanceBin)

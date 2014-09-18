@@ -44,18 +44,14 @@ public class SIUnit extends Unit<SIUnit>
         super(siCoefficientString, siCoefficientString, UnitSystem.SI_DERIVED, true);
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getStandardUnit()
-     */
+    /** {@inheritDoc} */
     @Override
     public final SIUnit getStandardUnit()
     {
         return this;
     }
 
-    /**
-     * @see org.opentrafficsim.core.unit.Unit#getSICoefficientsString()
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getSICoefficientsString()
     {
