@@ -81,9 +81,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /** the trajectory plot. */
     private TrajectoryPlot trajectoryPlot;
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
@@ -130,9 +128,7 @@ public class TrajectoriesModel implements OTSModelInterface
         }
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
-     */
+    /** {@inheritDoc} */
     @Override
     public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
