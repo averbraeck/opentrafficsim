@@ -1,9 +1,10 @@
-package org.opentrafficsim.demo.ntm;
+package org.opentrafficsim.demo.ntm.trafficdemand;
 
 import java.util.ArrayList;
 
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * Describes the division the departure of trips within a period over 
@@ -86,7 +87,7 @@ public class DepartureTimeCurve
             }
             else if (segmentIn.timeSinceMidnight.getValueInUnit() >= startSimulationTimeSinceMidnight.getValueInUnit() + durationOfSimulation.getValueInUnit())  {
                 @SuppressWarnings("static-access")
-                DoubleScalar.Rel<TimeUnit> timeToEnd = segmentIn.timeSinceMidnight.minus(durationOfSimulation);
+                DoubleScalar.Rel<TimeUnit> timeToEnd = MutableDoubleScalar.Rel.minus(segmentIn.timeSinceMidnight,durationOfSimulation);
                 double share  = timeToEnd.getValueSI() / prevSegment.getDuration().getValueSI();
                 double newShare = share * prevSegment.getShareOfDemand();                    
                 ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(startSimulationTimeSinceMidnight, timeToEnd, newShare);
@@ -97,7 +98,7 @@ public class DepartureTimeCurve
             else  {
                 if (segmentIn.timeSinceMidnight.getValueInUnit() >= startSimulationTimeSinceMidnight.getValueInUnit() && firstTry) {
                     firstTry = false;
-                    DoubleScalar.Rel<TimeUnit> timeSinceStart = DoubleScalar.minus(segmentIn.timeSinceMidnight, startSimulationTimeSinceMidnight);
+                    DoubleScalar.Rel<TimeUnit> timeSinceStart = MutableDoubleScalar..minus(segmentIn.timeSinceMidnight, startSimulationTimeSinceMidnight);
                     double share  = timeSinceStart.getValueSI() / prevSegment.getDuration().getValueSI();
                     double newShare = share * prevSegment.getShareOfDemand();                    
                     ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(startSimulationTimeSinceMidnight, timeSinceStart, newShare);

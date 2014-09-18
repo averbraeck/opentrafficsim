@@ -1,10 +1,8 @@
-package org.opentrafficsim.demo.ntm;
+package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import java.util.Calendar;
+import java.util.Map;
 
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-
+import org.opentrafficsim.demo.ntm.TripInfo;
 
 /**
  * <p>
@@ -47,75 +45,89 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class ShareTripDemandByTimeSegmentOfDay
+public class TripDemand
 {
-    
-    /** startTime of the segment in Calendar Time*/
-    DoubleScalar.Abs<TimeUnit> timeSinceMidnight; 
 
     /** */
-    DoubleScalar.Rel<TimeUnit> duration;
+    Map<Long, Map<Long, TripInfo>> tripDemand;
     
-    /** */
-    double shareOfDemand;
+
     /**
-     * @param timeSinceMidnight 
-     * @param duration
-     * @param shareOfDemand 
+     * @param tripDemand
      */
-    
-    public ShareTripDemandByTimeSegmentOfDay(DoubleScalar.Abs<TimeUnit> timeSinceMidnight, 
-            DoubleScalar.Rel<TimeUnit> duration, double shareOfDemand)
+    public TripDemand(Map<Long, Map<Long, TripInfo>> tripDemand)
     {
-        this.timeSinceMidnight = timeSinceMidnight;
-        this.duration = duration;
-        this.shareOfDemand = shareOfDemand;
-    }
-    
-    /**
-     * @return shareOfDemand
-     */
-    public double getShareOfDemand()
-    {
-        return this.shareOfDemand;
+        super();
+        this.tripDemand = tripDemand;
     }
 
     /**
-     * @param shareOfDemand set shareOfDemand
+     * @return tripDemand
      */
-    public void setShareOfDemand(double shareOfDemand)
+    public Map<Long, Map<Long, TripInfo>> getTripDemand()
     {
-        this.shareOfDemand = shareOfDemand;
+        return this.tripDemand;
     }
 
     /**
-     * @return timeSinceMidnight
+     * @param tripDemand set tripDemand
      */
-    public DoubleScalar.Abs<TimeUnit> getTimeSinceMidnight()
+    public void setTripDemand(Map<Long, Map<Long, TripInfo>> tripDemand)
     {
-        return this.timeSinceMidnight;
+        this.tripDemand = tripDemand;
     }
+
+
     /**
-     * @param timeSinceMidnight set timeSinceMidnight
+     * @param origin 
+     * @param destination 
+     * @return mapDestinations  a hashmap with destination as key and tripInfo as values
      */
-    public void setTimeSinceMidnight(DoubleScalar.Abs<TimeUnit> timeSinceMidnight)
+    public Map<Long, TripInfo> getTripDemand_Origin_AllDestinations (Long origin, Long destination)
     {
-        this.timeSinceMidnight = timeSinceMidnight;
+        Map<Long, Map<Long, TripInfo>> demand = this.getTripDemand();
+        Map<Long, TripInfo> mapDestinations = demand.get(origin);
+        return mapDestinations;
     }
+
     /**
-     * @return duration
+     * @param origin 
+     * @param destination 
+     * @return tripInfo by OD pair
      */
-    public DoubleScalar.Rel<TimeUnit> getDuration()
+    public TripInfo getTripDemand_Origin_Destination (Long origin, Long destination)
     {
-        return this.duration;
+        Map<Long, Map<Long, TripInfo>> demand = this.getTripDemand();
+        Map<Long, TripInfo> map = demand.get(origin);
+        TripInfo tripInfo = map.get(destination);
+        return tripInfo;
     }
-    /**
-     * @param duration set duration
-     */
-    public void setDuration(DoubleScalar.Rel<TimeUnit> duration)
-    {
-        this.duration = duration;
-    }
- 
-    
+
+
+    /*    *//**
+     * @param originSize
+     * @param destinationSize
+     * @param trips
+     * @return a hashmap with Trips info by origin and destination
+     *//*
+    public Map<Long, Map<Long, TripInfo>> createTripDemand (long originSize, long destinationSize, double[][] trips) {
+        Map<Integer, Map<Integer, TripInfo>> originMap = new HashMap<Integer, Map<Integer, TripInfo>>();  
+        for (long i = 0; i < originSize; i++)  {
+            Map<Long, TripInfo> destinationMap = new HashMap<Long, TripInfo>();
+            double sumTrips = 0;
+            for (long j = 0; j < destinationSize; j++)  {
+                if (trips[i][j] > 0) {
+                    TripInfo trip = new TripInfo(trips[i][j]); 
+                    sumTrips += trips[i][j];
+                    destinationMap.put(j, trip);
+                }
+            }
+            if (sumTrips > 0)  {
+                originMap.put(i, destinationMap);
+            }
+        }
+        return originMap;        
+    }*/
+
+
 }

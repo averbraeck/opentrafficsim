@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.opentrafficsim.demo.ntm.animation.LinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
+import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -82,6 +84,7 @@ public class NTMModel implements OTSModelInterface
     /** the centroids */
     private Map<java.lang.Long, ShpNode> centroids;
     
+    /** the demand of trips by Origin and Destination */
     private TripDemand tripDemand;
 
     /** graph containing the original network */
@@ -104,6 +107,9 @@ public class NTMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
         {
+            // read TrafficDemand   /src/main/resources
+            this.tripDemand = CsvFileReader.CsvReader("/gis/cordonmatrix_pa_os.txt", ";");
+            System.out.println(new File(".").getCanonicalPath());
             // read the shape files
         	// public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean returnCentroid, boolean allCentroids)
         	// if returnCentroid: true: return centroids; 
@@ -111,28 +117,13 @@ public class NTMModel implements OTSModelInterface
         	// if allCentroids:   true: we are reading a file with only centroids
         	//                    false: mixed centroids (number starts with "C") and nodes        	
         	this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
-            this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
+        	this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
             this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
       /*    this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
             this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
             this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
             */
 
-            
-/*            // make all the centroids also a node.
-            for (java.lang.Long nr : this.centroids.keySet())
-            {
-                if (this.shpNodes.containsKey(nr))
-                {
-                    System.out.println("Centroid nr " + nr + " equals existing node number");
-                }
-                else
-                {
-                    Point p = this.centroids.get(nr).getPoint();
-                    this.shpNodes.put(nr, new ShpNode(p, nr, p.getX(), p.getY()));
-                }            
-                ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
-            }*/
             this.shpLinks = new  HashMap<>();
             this.shpConnectors = new  HashMap<>();
             ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
@@ -140,9 +131,6 @@ public class NTMModel implements OTSModelInterface
 
             // build the higher level map and the graph
             buildGraph();
-
-        	this.tripDemand = CsvFileReader.ReadTrafficDemand("/gis/cordonmatrix_pa_os.txt");
-        	
             
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)

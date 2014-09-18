@@ -1,26 +1,9 @@
-package org.opentrafficsim.demo.ntm;
+package org.opentrafficsim.demo.ntm.fundamentaldiagrams;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * 
- *  * A Network Fundamental diagram shows the network production as a function of network density 
- * (number of cars in a CELL). An example (PieceWiseLinear) is shown below:
- * 
- * <pre>
- *   production
- *      |      
- *    Y |      _____________________ 
- *      |     /                      \
- *      |    /                        \ 
- *      |   /                          \  
- *      |  /                            \   
- *      | /                              \ 
- *      |/________________________________\__________ density (number of vehicles)
- *            ^                     ^ 
- *         accCritica     accCritical2    accJam
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
  * Delft, the Netherlands. All rights reserved.
@@ -61,20 +44,79 @@ import java.util.ArrayList;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class NetworkFundamentalDiagram
-
+public abstract class FundamentalDiagram<ID>
 {
+    /** */
+    private ID id;
+
+
+    /** carProduction: numbers of Cars produced from this CELL  */
+    private double carProduction;
+        
+
+    /** currentSpeed: average current speed of Cars in this CELL  */
+    private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+    
+    /** 
+     * freeSpeed: average free speed of cars in Network element (lane, link, network zone)
+     * */
+    private DoubleScalar.Abs<SpeedUnit> freeSpeed;
+    
+    
     /**
      * @param id
-     * @param xyPairs 
-     * @param accumulatedCars
-     * @return 
      */
-    public static double PieceWiseLinear(ArrayList<Point2D> xyPairs,  
-            double accumulatedCars)           
+    public FundamentalDiagram(ID id)
     {
-        return LinearFunctionLibrary.createPieceWiseLinear(xyPairs, accumulatedCars); 
-        
+        this.id = id;
     }
 
+    /**
+     * @return id
+     */
+    public ID getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * @return carProduction
+     */
+    public double getCarProduction()
+    {
+        return this.carProduction;
+    }
+
+    /**
+     * @param carProduction set carProduction
+     */
+    public void setCarProduction(double carProduction)
+    {
+        this.carProduction = carProduction;
+    }
+    
+    /**
+     * @return currentSpeed
+     */
+    public DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    {
+        return this.currentSpeed;
+    }
+
+    /**
+     * @return freeSpeed
+     */
+    public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
+    {
+        return this.freeSpeed;
+    }
+
+    /**
+     * @param freeSpeed set freeSpeed
+     */
+    public void setFreeSpeed(DoubleScalar.Abs<SpeedUnit> freeSpeed)
+    {
+        this.freeSpeed = freeSpeed;
+    }
+    
 }
