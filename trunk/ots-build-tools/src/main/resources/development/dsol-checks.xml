@@ -159,8 +159,8 @@
 		<!-- Checks for Size Violations. -->
 		<!-- See http://checkstyle.sf.net/config_sizes.html -->
 		<module name="LineLength">
-			<property name="max" value="120" />
-			<property name="severity" value="warning" />
+			<property name="max" value="128" />
+			<property name="severity" value="info" />
 		</module>
 		<module name="MethodLength">
 			<property name="severity" value="info" />
@@ -224,13 +224,15 @@
 		</module>
 		<module name="LeftCurly">
 			<property name="option" value="nl" />
-			<property name="maxLineLength" value="120" />
+			<property name="maxLineLength" value="128" />
 			<property name="severity" value="warning" />
 		</module>
 		<module name="NeedBraces">
 			<property name="severity" value="warning" />
 		</module>
 		<module name="RightCurly">
+			<property name="option" value="alone" />
+			<property name="tokens" value="LITERAL_TRY, LITERAL_CATCH, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE" />
 			<property name="severity" value="warning" />
 		</module>
 
@@ -248,6 +250,8 @@
 		</module>
 		<module name="HiddenField">
 			<property name="severity" value="warning" />
+			<property name="ignoreConstructorParameter" value="true"/>
+			<property name="ignoreSetter" value="true"/>
 		</module>
 		<module name="IllegalInstantiation">
 			<property name="severity" value="warning" />
