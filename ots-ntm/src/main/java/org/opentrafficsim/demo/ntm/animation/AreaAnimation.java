@@ -54,9 +54,7 @@ public class AreaAnimation extends Renderable2D
         super(source, simulator);
     }
 
-    /**
-     * @see nl.tudelft.simulation.animation.Renderable2D#paint(java.awt.Graphics2D, java.awt.image.ImageObserver)
-     */
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
     {
