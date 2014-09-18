@@ -1,7 +1,10 @@
-package org.opentrafficsim.demo.ntm;
+package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Calendar;
+
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 
 /**
  * <p>
@@ -44,91 +47,75 @@ import java.util.Map;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class TripDemand
+public class ShareTripDemandByTimeSegmentOfDay
 {
+    
+    /** startTime of the segment in Calendar Time*/
+    DoubleScalar.Abs<TimeUnit> timeSinceMidnight; 
 
     /** */
-    Map<Integer, Map<Integer, TripInfo>> tripDemand;
-
+    DoubleScalar.Rel<TimeUnit> duration;
+    
+    /** */
+    double shareOfDemand;
     /**
-     * @param originZone 
-     * @param destinationZone 
-     * @param trips 
+     * @param timeSinceMidnight 
+     * @param duration
+     * @param shareOfDemand 
      */
-    public TripDemand(double[][] trips)
+    
+    public ShareTripDemandByTimeSegmentOfDay(DoubleScalar.Abs<TimeUnit> timeSinceMidnight, 
+            DoubleScalar.Rel<TimeUnit> duration, double shareOfDemand)
     {
-        int originSize = trips[0].length;
-        int destinationSize = trips[1].length;
-        this.tripDemand = createTripDemand(originSize, destinationSize, trips);
+        this.timeSinceMidnight = timeSinceMidnight;
+        this.duration = duration;
+        this.shareOfDemand = shareOfDemand;
     }
-
+    
     /**
-     * @param originSize
-     * @param destinationSize
-     * @param trips
-     * @return a hashmap with Trips info by origin and destination
+     * @return shareOfDemand
      */
-    public Map<Integer, Map<Integer, TripInfo>> createTripDemand (int originSize, int destinationSize, double[][] trips) {
-        Map<Integer, Map<Integer, TripInfo>> originMap = new HashMap<Integer, Map<Integer, TripInfo>>();  
-        for (int i = 0; i < originSize; i++)  {
-            Map<Integer, TripInfo> destinationMap = new HashMap<Integer, TripInfo>();
-            double sumTrips = 0;
-            for (int j = 0; j < destinationSize; j++)  {
-                if (trips[i][j] > 0) {
-                    TripInfo trip = new TripInfo(trips[i][j]); 
-                    sumTrips += trips[i][j];
-                    destinationMap.put(j, trip);
-                }
-            }
-            if (sumTrips > 0)  {
-                originMap.put(i, destinationMap);
-            }
-        }
-        return originMap;        
-    }
-
-    /**
-     * @return tripDemand
-     */
-    public Map<Integer, Map<Integer, TripInfo>> getTripDemand()
+    public double getShareOfDemand()
     {
-        return this.tripDemand;
+        return this.shareOfDemand;
     }
 
     /**
-     * @param tripDemand set tripDemand
+     * @param shareOfDemand set shareOfDemand
      */
-    public void setTripDemand(Map<Integer, Map<Integer, TripInfo>> tripDemand)
+    public void setShareOfDemand(double shareOfDemand)
     {
-        this.tripDemand = tripDemand;
-    }
-
-
-    /**
-     * @param origin 
-     * @param destination 
-     * @return mapDestinations
-     */
-    public Map<Integer, TripInfo> getTripDemand_Origin_AllDestinations (Integer origin, Integer destination)
-    {
-        Map<Integer, Map<Integer, TripInfo>> demand = this.getTripDemand();
-        Map<Integer, TripInfo> mapDestinations = demand.get(origin);
-        return mapDestinations;
+        this.shareOfDemand = shareOfDemand;
     }
 
     /**
-     * @param origin 
-     * @param destination 
-     * @return tripInfo
+     * @return timeSinceMidnight
      */
-    public TripInfo getTripDemand_Origin_Destination (Integer origin, Integer destination)
+    public DoubleScalar.Abs<TimeUnit> getTimeSinceMidnight()
     {
-        Map<Integer, Map<Integer, TripInfo>> demand = this.getTripDemand();
-        Map<Integer, TripInfo> map = demand.get(origin);
-        TripInfo tripInfo = map.get(destination);
-        return tripInfo;
+        return this.timeSinceMidnight;
     }
-
-
+    /**
+     * @param timeSinceMidnight set timeSinceMidnight
+     */
+    public void setTimeSinceMidnight(DoubleScalar.Abs<TimeUnit> timeSinceMidnight)
+    {
+        this.timeSinceMidnight = timeSinceMidnight;
+    }
+    /**
+     * @return duration
+     */
+    public DoubleScalar.Rel<TimeUnit> getDuration()
+    {
+        return this.duration;
+    }
+    /**
+     * @param duration set duration
+     */
+    public void setDuration(DoubleScalar.Rel<TimeUnit> duration)
+    {
+        this.duration = duration;
+    }
+ 
     
 }
