@@ -94,9 +94,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /** the contour plots. */
     private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
-     */
+    /** {@inheritDoc} */
     @Override
     public void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
@@ -166,9 +164,7 @@ public class ContourPlotsModel implements OTSModelInterface
         }
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
-     */
+    /** {@inheritDoc} */
     @Override
     public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException

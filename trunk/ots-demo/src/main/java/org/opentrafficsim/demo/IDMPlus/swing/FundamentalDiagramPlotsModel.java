@@ -82,9 +82,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
-     */
+    /** {@inheritDoc} */
     @Override
     public void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
@@ -142,9 +140,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
         }
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
-     */
+    /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
