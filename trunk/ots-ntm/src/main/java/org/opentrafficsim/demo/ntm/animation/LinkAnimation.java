@@ -63,9 +63,7 @@ public class LinkAnimation extends Renderable2D
         this.width = width;
     }
 
-    /**
-     * @see nl.tudelft.simulation.animation.Renderable2D#paint(java.awt.Graphics2D, java.awt.image.ImageObserver)
-     */
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
     {

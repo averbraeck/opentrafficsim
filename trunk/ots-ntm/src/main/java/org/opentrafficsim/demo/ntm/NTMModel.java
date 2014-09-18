@@ -96,9 +96,7 @@ public class NTMModel implements OTSModelInterface
     /** debug information? */
     private static boolean DEBUG = true;
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
-     */
+    /** {@inheritDoc} */
     @Override
     public void constructModel(
             SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
