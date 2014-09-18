@@ -85,11 +85,11 @@ public class TrajectoriesModel implements OTSModelInterface
      * @see nl.tudelft.simulation.dsol.ModelInterface#constructModel(nl.tudelft.simulation.dsol.simulators.SimulatorInterface)
      */
     @Override
-    public void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+    public final void constructModel(
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
-        this.simulator = (OTSDEVSSimulator) _simulator;
+        this.simulator = (OTSDEVSSimulator) simulator;
 
         this.carFollowingModel = new IDMPlus<Line<String>>();
 
@@ -112,7 +112,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      */
-    protected void generateCar()
+    protected final void generateCar()
     {
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -134,7 +134,7 @@ public class TrajectoriesModel implements OTSModelInterface
      * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
      */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
         return this.simulator;
@@ -144,12 +144,13 @@ public class TrajectoriesModel implements OTSModelInterface
     protected class IDMCar extends Car
     {
         /**
-         * @param id
-         * @param simulator
-         * @param carFollowingModel
-         * @param initialTime
-         * @param initialPosition
-         * @param initialSpeed
+         * Create a new IDMCar.
+         * @param id integer; the id of the new IDMCar
+         * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
+         * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
+         * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
+         * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial position of the new IDMCar
+         * @param initialSpeed DoubleScalar.Rel&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          */
         public IDMCar(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
                 final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
@@ -169,7 +170,7 @@ public class TrajectoriesModel implements OTSModelInterface
         /**
          * @throws RemoteException
          */
-        protected void move() throws RemoteException
+        protected final void move() throws RemoteException
         {
             System.out.println("move " + this.getID());
             DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
@@ -225,7 +226,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /**
      * Notify the contour plots that the underlying data has changed.
      */
-    protected void drawGraph()
+    protected final void drawGraph()
     {
         this.trajectoryPlot.reGraph();
     }
@@ -233,7 +234,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /**
      * @return minimum distance of the simulation
      */
-    public DoubleScalar.Abs<LengthUnit> getMinimumDistance()
+    public final DoubleScalar.Abs<LengthUnit> getMinimumDistance()
     {
         return this.minimumDistance;
     }
@@ -241,7 +242,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /**
      * @return maximum distance of the simulation
      */
-    public DoubleScalar.Abs<LengthUnit> getMaximumDistance()
+    public final DoubleScalar.Abs<LengthUnit> getMaximumDistance()
     {
         return this.maximumDistance;
     }
@@ -249,7 +250,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /**
      * @param trajectoryPlot TrajectoryPlot
      */
-    public void setTrajectories(final TrajectoryPlot trajectoryPlot)
+    public final void setTrajectories(final TrajectoryPlot trajectoryPlot)
     {
         this.trajectoryPlot = trajectoryPlot;
     }

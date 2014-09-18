@@ -87,10 +87,10 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
      */
     @Override
     public void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
-        this.simulator = (OTSDEVSSimulator) _simulator;
+        this.simulator = (OTSDEVSSimulator) simulator;
 
         this.carFollowingModel = new IDMPlus<Line<String>>();
 
@@ -155,7 +155,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     /**
      * @return fundamentalDiagramPlots
      */
-    public ArrayList<FundamentalDiagram> getFundamentalDiagrams()
+    public final ArrayList<FundamentalDiagram> getFundamentalDiagrams()
     {
         return this.fundamentalDiagrams;
     }
@@ -164,12 +164,13 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     protected class IDMCar extends Car
     {
         /**
-         * @param id
-         * @param simulator
-         * @param carFollowingModel
-         * @param initialTime
-         * @param initialPosition
-         * @param initialSpeed
+         * Create a new IDMCar.
+         * @param id integer; the id of the new IDMCar
+         * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
+         * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
+         * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
+         * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial position of the new IDMCar
+         * @param initialSpeed DoubleScalar.Rel&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          */
         public IDMCar(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
                 final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
@@ -189,7 +190,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
         /**
          * @throws RemoteException
          */
-        protected void move() throws RemoteException
+        protected final void move() throws RemoteException
         {
             System.out.println("move " + this.getID());
             DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
@@ -233,7 +234,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
         }
 
         /**
-         * @param idmCar
+         * @param idmCar IDMCar
          */
         private void addToFundamentalDiagramPlots(final IDMCar idmCar)
         {
