@@ -104,18 +104,14 @@ public class ShpNode implements LocatableInterface
         this.y = y;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
         return new DirectedPoint(new double[]{this.x, this.y, 0.0d});
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
-     */
+    /** {@inheritDoc} */
     @Override
     public Bounds getBounds() throws RemoteException
     {

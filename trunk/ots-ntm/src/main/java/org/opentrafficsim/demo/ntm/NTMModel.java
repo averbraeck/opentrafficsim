@@ -356,9 +356,7 @@ public class NTMModel implements OTSModelInterface
         }
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.ModelInterface#getSimulator()
-     */
+    /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException

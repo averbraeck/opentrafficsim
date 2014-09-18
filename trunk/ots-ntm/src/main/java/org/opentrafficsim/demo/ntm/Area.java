@@ -119,9 +119,7 @@ public class Area implements LocatableInterface
         this.centroid = centroid;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
@@ -129,9 +127,7 @@ public class Area implements LocatableInterface
         return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
-     */
+    /** {@inheritDoc} */
     @Override
     public Bounds getBounds() throws RemoteException
     {
@@ -241,9 +237,7 @@ public class Area implements LocatableInterface
         return this.geometry;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

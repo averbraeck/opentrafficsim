@@ -70,18 +70,14 @@ public class Link implements LocatableInterface
         this.name = name;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
         return new DirectedPoint(new double[]{this.nodeA.getCentroid().getX(), this.nodeA.getCentroid().getY(), 0.0d});
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
-     */
+    /** {@inheritDoc} */
     @Override
     public Bounds getBounds() throws RemoteException
     {
