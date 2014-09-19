@@ -464,7 +464,8 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /** {@inheritDoc} */
     @Override
-    public final void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
+    public final void setInUnit(final int row, final int column, final float value, final U valueUnit)
+            throws ValueException
     {
         // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do this...
         setSI(row, column, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());

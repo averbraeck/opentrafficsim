@@ -206,7 +206,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
 
             /** {@inheritDoc} */
             @Override
-            public MutableDoubleMatrix.Abs.Sparse<U> mutable()
+            public final MutableDoubleMatrix.Abs.Sparse<U> mutable()
             {
                 return new MutableDoubleMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
             }
