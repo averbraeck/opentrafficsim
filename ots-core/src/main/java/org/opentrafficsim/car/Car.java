@@ -274,5 +274,14 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     }
 
     // TODO: we need something like headway that returns the lateral offset in lanes or meters
+    
+    /**
+     * Retrieve the CarFollowingModel of this Car.
+     * @return CarFollowingModel
+     */
+    public final CarFollowingModel getCarFollowingModel()
+    {
+        return this.carFollowingModel;
+    }
 
 }
