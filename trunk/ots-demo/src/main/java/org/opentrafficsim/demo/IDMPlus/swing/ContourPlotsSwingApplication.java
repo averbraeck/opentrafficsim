@@ -125,7 +125,7 @@ public class ContourPlotsSwingApplication extends DSOLApplication
     }
 
     /**
-     * @param panel
+     * @param panel DSOLPanel
      */
     private static void addInfoTab(
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)

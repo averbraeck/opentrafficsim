@@ -88,6 +88,7 @@ public class TrajectoriesSwingApplication extends DSOLApplication
     /**
      * make the stand-alone plot for the model and put it in the statistics panel.
      * @param model the model.
+     * @param panel DSOLPanel
      */
     private static void makePlot(final TrajectoriesModel model,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
@@ -100,12 +101,12 @@ public class TrajectoriesSwingApplication extends DSOLApplication
                         model.getMaximumDistance());
         tp.setTitle("Density Contour Graph");
         tp.setExtendedState(MAXIMIZED_BOTH);
-        model.setTrajectories(tp);
+        model.setTrajectoryPlot(tp);
         charts.setCell(tp.getContentPane(), 0, 0);
     }
 
     /**
-     * @param panel
+     * @param panel DSOLPanel
      */
     private static void addInfoTab(
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)

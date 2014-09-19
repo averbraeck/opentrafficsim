@@ -96,7 +96,7 @@ public class ContourPlotsModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
+    public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
