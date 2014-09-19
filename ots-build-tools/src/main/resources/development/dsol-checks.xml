@@ -51,6 +51,8 @@
 	<!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
 	<module name="NewlineAtEndOfFile">
 		<property name="severity" value="warning" />
+		<property name="fileExtensions" value="java, xml, xsd, html, apt"/>
+		<property name="lineSeparator" value="crlf"/>
 	</module>
 
 	<!-- Checks that property files contain the same keys. -->
@@ -137,6 +139,7 @@
 		</module>
 		<module name="TypeName">
 			<property name="severity" value="warning" />
+			<property name="format" value="^[A-Z][a-zA-Z0-9_]*$"/>
 		</module>
 
 
@@ -216,6 +219,7 @@
 
 		<!-- Checks for blocks. You know, those {}'s -->
 		<!-- See http://checkstyle.sf.net/config_blocks.html -->
+		<!-- AV: changed LeftCurly and RightCurly options -->
 		<module name="AvoidNestedBlocks">
 			<property name="severity" value="warning" />
 		</module>
