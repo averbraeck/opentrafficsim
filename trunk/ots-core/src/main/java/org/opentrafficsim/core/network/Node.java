@@ -2,7 +2,6 @@ package org.opentrafficsim.core.network;
 
 //import java.util.Set;
 
-
 /**
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
@@ -32,55 +31,54 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> 
+ * @param <ID>
  */
 public class Node<ID>
 {
 
-    /**id */
+    /** id */
     private final ID id;
-    
-    /** nodeName*/
+
+    /** nodeName */
     private final String nodeName;
-    
+
     /**
      * Construction of a Node
-     * @param id 
-     * @param nodeName 
+     * @param id
+     * @param nodeName
      * @param ID of the Node ID
      * @param name of the Node
      */
-    
+
     public Node(final ID id, String nodeName)
     {
-        this.id=id;
+        this.id = id;
         this.nodeName = nodeName;
 
-        
     }
-    
+
     /**
      * @param id
      */
-    public Node(final ID id){
-        this(id,"");
+    public Node(final ID id)
+    {
+        this(id, "");
     }
+
     /**
      * @return nodeName
      */
-   public  String  getNodeName()
+    public String getNodeName()
     {
         return this.nodeName;
     }
-   /**
-    * @return id
-    */
-   public ID getNodeID()
-   {
-       return this.id;
-   }
 
-
-
+    /**
+     * @return id
+     */
+    public ID getNodeID()
+    {
+        return this.id;
+    }
 
 }

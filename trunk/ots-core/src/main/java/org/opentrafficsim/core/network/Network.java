@@ -88,7 +88,7 @@ import java.util.Set;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> the ID type of the network.
- * @param <L> 
+ * @param <L>
  */
 public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serializable
 {
@@ -100,8 +100,8 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
 
     /** Node of which this network is an expansion */
     private Node<?> expansionOfNode = null;
-    
-    /** HashSet of Nodes*/
+
+    /** HashSet of Nodes */
     private Set<Node<?>> nodeSet = new HashSet<Node<?>>();
 
     /**
@@ -111,9 +111,8 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     public Network(final ID id)
     {
         super();
-        this.id = id ;
+        this.id = id;
     }
-
 
     /**
      * Construction of a network with an initial set of links.
@@ -169,7 +168,6 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         return this.id;
     }
 
-
     /**
      * @return nodeSet
      */
@@ -178,7 +176,6 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         return this.nodeSet;
     }
 
-
     /**
      * @param nodeSet set nodeSet
      */
@@ -186,114 +183,137 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     {
         this.nodeSet = nodeSet;
     }
-    
-  /**
- * @param node
- * @return true or false
- */
+
+    /**
+     * @param node
+     * @return true or false
+     */
     public boolean isInNetwork(Node<?> node)
     {
-       
-        if (this.nodeSet.contains(node)){ return true;}
-        else{
-            for(Node<?> n:this.nodeSet){
-                if (n instanceof ExpansionNode ){
-                 if (((ExpansionNode<?>) n).getNetwork().isInNetwork(node)){
-                     return true;    
-                 }
+
+        if (this.nodeSet.contains(node))
+        {
+            return true;
+        }
+        else
+        {
+            for (Node<?> n : this.nodeSet)
+            {
+                if (n instanceof ExpansionNode)
+                {
+                    if (((ExpansionNode<?>) n).getNetwork().isInNetwork(node))
+                    {
+                        return true;
+                    }
                 }
-             }
-          }
-        
-        return false; 
-      }
-    
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param addThis
      * @return true or false
-     * @throws NetworkException 
+     * @throws NetworkException
      */
-    public boolean addNode(Node<?> addThis) throws NetworkException{
+    public boolean addNode(Node<?> addThis) throws NetworkException
+    {
         if (isInNetwork(addThis))
-        {           
-         throw new NetworkException("Adding Node " + addThis.getNodeID().toString() + ". Node "
-                  + addThis.getNodeName().toString() + " is  already in the Set");
-               }
-        else{
-          this.nodeSet.add(addThis);
-          return true;
-        } 
-        
-    } 
-    
+        {
+            throw new NetworkException("Adding Node " + addThis.getNodeID().toString() + ". Node "
+                    + addThis.getNodeName().toString() + " is  already in the Set");
+        }
+        else
+        {
+            this.nodeSet.add(addThis);
+            return true;
+        }
+
+    }
+
     /**
      * @param node
      * @return boolean
      */
-    public boolean isInNetworkLevel(Node<?> node){
-        if ( this.nodeSet.contains(node)){return true;}
-        else {return false;}
+    public boolean isInNetworkLevel(Node<?> node)
+    {
+        if (this.nodeSet.contains(node))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    
+
     /**
      * @param node
      * @return network
      * @throws NetworkException
      */
-    public Network<?,?> getSubNetworkConsistNode (Node<?> node) throws NetworkException{
-        if (isInNetwork (node)) 
+    public Network<?, ?> getSubNetworkConsistNode(Node<?> node) throws NetworkException
+    {
+        if (isInNetwork(node))
         {
-            if (isInNetworkLevel(node)) {return this;}
-            else{
-                for(Node<?> n:this.nodeSet){
-                   if (n instanceof ExpansionNode ){
-                      if (((ExpansionNode<?>) n).getNetwork().isInNetworkLevel(node)){
-                            return getSubNetworkConsistNode(node);   
-                       }  
+            if (isInNetworkLevel(node))
+            {
+                return this;
+            }
+            else
+            {
+                for (Node<?> n : this.nodeSet)
+                {
+                    if (n instanceof ExpansionNode)
+                    {
+                        if (((ExpansionNode<?>) n).getNetwork().isInNetworkLevel(node))
+                        {
+                            return getSubNetworkConsistNode(node);
+                        }
                     }
-                 }       
+                }
             }
         }
-        else{ 
-            throw new NetworkException("The network does not contain the Node"+node.getNodeID().toString() +".");
+        else
+        {
+            throw new NetworkException("The network does not contain the Node" + node.getNodeID().toString() + ".");
         }
         return null;
     }
-    
+
     /**
      * @param deleteThis
      * @return boolean
      * @throws NetworkException
      */
-    public boolean deleteNode(Node<?> deleteThis) throws NetworkException{
+    public boolean deleteNode(Node<?> deleteThis) throws NetworkException
+    {
         if (isInNetwork(deleteThis))
         {
-            if (isInNetworkLevel(deleteThis)){
-            this.nodeSet.remove(deleteThis);
-            return true;
+            if (isInNetworkLevel(deleteThis))
+            {
+                this.nodeSet.remove(deleteThis);
+                return true;
             }
-            else{
-                Network<?,?> n=getSubNetworkConsistNode(deleteThis);
+            else
+            {
+                Network<?, ?> n = getSubNetworkConsistNode(deleteThis);
                 n.remove(deleteThis);
                 return true;
             }
-        }else{
-            throw new NetworkException("Deleting"+deleteThis.getNodeID().toString()+"is failed. Possible cause:"
+        }
+        else
+        {
+            throw new NetworkException("Deleting" + deleteThis.getNodeID().toString() + "is failed. Possible cause:"
                     + " node is not a member of the given Network");
         }
     }
-    
-  /*  public boolean expandNode(Node<?> node) throws NetworkException{
-        if (expansionOfNode == null){
-            throw new NetworkException("This Node"+node.getNodeID().toString()+"is not able to expand.")
-        }
-        else{
-            
-        }
-    }
-    
-    public boolean collapseToNode(Network<?,?> node){
-        
-    }*/
-     
+
+    /*
+     * public boolean expandNode(Node<?> node) throws NetworkException{ if (expansionOfNode == null){ throw new
+     * NetworkException("This Node"+node.getNodeID().toString()+"is not able to expand.") } else{ } } public boolean
+     * collapseToNode(Network<?,?> node){ }
+     */
+
 } // End of class
