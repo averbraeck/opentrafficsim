@@ -1,9 +1,7 @@
 package org.opentrafficsim.core.network;
 
-
 //import org.jgrapht.*;
 //import org.jgrapht.graph.*; 
-
 
 /**
  * <p>
@@ -34,84 +32,82 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> 
+ * @param <ID>
  */
 public class Link<ID>
 {
 
-    
-    /**id */
+    /** id */
     private final ID id;
-    
-    /**beginNode */
+
+    /** beginNode */
     private final Node<?> beginNode;
+
     /** */
     private final Node<?> endNode;
-    
-    /**linkLength */
+
+    /** linkLength */
     private final double linkLength;
-    /**linkCapacity */
+
+    /** linkCapacity */
     private double linkCapacity;
-    /**linkeResistance */
+
+    /** linkeResistance */
     private double linkResistance;
-    
+
     /**
      * Construction of a link.
      * @param id the Link id.
-     * @param beginNode 
-     * @param endNode 
-     * @param linkLength 
-     * @param linkCapacity 
-     * @param linkResistance 
+     * @param beginNode
+     * @param endNode
+     * @param linkLength
+     * @param linkCapacity
+     * @param linkResistance
      */
-    
-    public Link(final ID id, Node<?> beginNode, Node<?> endNode, double linkLength, double linkCapacity, double linkResistance)
+
+    public Link(final ID id, Node<?> beginNode, Node<?> endNode, double linkLength, double linkCapacity,
+            double linkResistance)
     {
-        this.id=id;
+        this.id = id;
         this.beginNode = beginNode;
         this.endNode = endNode;
         this.linkLength = linkLength;
         this.setLinkCapacity(linkCapacity);
         this.setLinkResistance(linkResistance);
-        
+
     }
-    
-    
+
     /**
      * @return linkLength
      */
-     public double getLenght()
+    public double getLenght()
     {
         return this.getLinkLength();
     }
-     
-     
-     /**
-      * @return id
-      */
-     public ID getId()
-     {
-       return this.id;  
-     }
-     
-     
-     /**
-      * @return linkCapacity
-      */
-     public double getCapacity()
-     {
-         return this.getLinkCapacity();
-     }
-     
-     
-     /**
-      * @return linkResistance
-      */
-     public double getResistance()
-     {
-         return this.getLinkResistance();
-     }
 
+    /**
+     * @return id
+     */
+    public ID getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * @return linkCapacity
+     */
+    public double getCapacity()
+    {
+        return this.getLinkCapacity();
+    }
+
+    /**
+     * @return linkResistance
+     */
+    public double getResistance()
+    {
+        return this.getLinkResistance();
+    }
 
     /**
      * @return beginNode
@@ -121,7 +117,6 @@ public class Link<ID>
         return this.beginNode;
     }
 
-
     /**
      * @return endNode
      */
@@ -129,7 +124,6 @@ public class Link<ID>
     {
         return this.endNode;
     }
-
 
     /**
      * @return linkLength
@@ -139,7 +133,6 @@ public class Link<ID>
         return this.linkLength;
     }
 
-
     /**
      * @return linkCapacity
      */
@@ -147,7 +140,6 @@ public class Link<ID>
     {
         return this.linkCapacity;
     }
-
 
     /**
      * @param linkCapacity set linkCapacity
@@ -157,7 +149,6 @@ public class Link<ID>
         this.linkCapacity = linkCapacity;
     }
 
-
     /**
      * @return linkResistance
      */
@@ -166,7 +157,6 @@ public class Link<ID>
         return this.linkResistance;
     }
 
-
     /**
      * @param linkResistance set linkResistance
      */
@@ -174,9 +164,5 @@ public class Link<ID>
     {
         this.linkResistance = linkResistance;
     }
-
-
-    
-    
 
 }
