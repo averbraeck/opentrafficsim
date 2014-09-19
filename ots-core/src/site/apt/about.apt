@@ -1,11 +1,13 @@
-OpenTrafficSim aims to bring traffic simulation to a new level by
+OpenTrafficSim aims to bring traffic simulation to a new level
 
-    Combining micro-simulation, macro-simulation and meta-simulation in a single environment
-    Combining all traffic modes (private car, buses, trains, bicycles, pedestrians, airlines, etc.) in a single simulator
+    OpenTrafficSim combines micro-simulation, macro-simulation and meta-simulation in a single environment.
 
-Open source
+    OpenTrafficSim combines all traffic modes (private cars, buses, trains, bicycles, pedestrians, airlines, etc.) in a single simulator.
 
-Everything in OpenTrafficSim shall have a BSD, Apache, MIT, or similar open source license ensuring that
+OpenTrafficSim shall have a BSD, Apache, MIT, or similar open source license
 
-    OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever)
-    OpenTrafficSim may be extended, evolved into anything else for any purpose
+    Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT.
+
+    OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    OpenTrafficSim may be extended, evolved by anyone into anything else for any purpose.

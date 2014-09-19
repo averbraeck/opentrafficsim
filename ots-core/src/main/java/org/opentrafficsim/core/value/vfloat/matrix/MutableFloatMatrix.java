@@ -1204,7 +1204,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     /**
      * Create a Dense version of this Sparse FloatMatrix.
      * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
-     * @return MutableFloatMatrix.Abs.Sparse
+     * @return MutableFloatMatrix.Abs.Dense
      * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> sparseToDense(final FloatMatrix.Abs.Sparse<U> in)
