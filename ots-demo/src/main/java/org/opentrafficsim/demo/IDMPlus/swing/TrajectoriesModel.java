@@ -246,7 +246,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /**
      * @param trajectoryPlot TrajectoryPlot
      */
-    public final void setTrajectories(final TrajectoryPlot trajectoryPlot)
+    public final void setTrajectoryPlot(final TrajectoryPlot trajectoryPlot)
     {
         this.trajectoryPlot = trajectoryPlot;
     }

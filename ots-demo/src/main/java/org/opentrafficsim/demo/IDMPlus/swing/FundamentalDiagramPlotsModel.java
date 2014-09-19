@@ -84,7 +84,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
+    public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
@@ -111,7 +111,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     /**
      * Method to generate cars that schedules itself till end of run.
      */
-    protected void generateCar()
+    protected final void generateCar()
     {
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         IDMCar car =
@@ -131,7 +131,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     /**
      * 
      */
-    protected void drawGraphs()
+    protected final void drawGraphs()
     {
         // Notify the Fundamental Diagram plots that the underlying data has changed
         for (FundamentalDiagram fd : this.fundamentalDiagrams)
@@ -142,7 +142,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
         return null;
