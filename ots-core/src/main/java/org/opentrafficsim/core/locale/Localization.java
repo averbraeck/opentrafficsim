@@ -59,7 +59,7 @@ public class Localization
      * @param key the key for the locale in the properties file
      * @return localized string, or, if a translation could not be found return the key surrounded by exclamation marks
      */
-    public String getString(final String key)
+    public final String getString(final String key)
     {
         if (this.currentLocale == null || !this.currentLocale.equals(DefaultLocale.getLocale()))
         {

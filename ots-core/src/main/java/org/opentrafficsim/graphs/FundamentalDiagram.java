@@ -114,7 +114,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     Axis yAxis;
 
     /** List of parties interested in changes of this ContourPlot. */
-    transient EventListenerList listenerList = new EventListenerList();
+    private transient EventListenerList listenerList = new EventListenerList();
 
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
@@ -203,7 +203,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Retrieve the position of the detector.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position of the detector
      */
-    public DoubleScalar.Abs<LengthUnit> getPosition()
+    public final DoubleScalar.Abs<LengthUnit> getPosition()
     {
         return new DoubleScalar.Abs<LengthUnit>(this.position);
     }
@@ -216,6 +216,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param yAxisToSelect Axis; the Axis that will become Y-axis when this item is clicked
      * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new
      *            JRadioButtonMenuItem will <b>not</b> be selected
+     * @return JRatioButtonMenuItem; the newly added item
      */
     private JRadioButtonMenuItem addMenuItem(final JMenu subMenu, final ButtonGroup group, final Axis xAxisToSelect,
             final Axis yAxisToSelect, final boolean selected)
@@ -236,7 +237,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param car Car; the car that passes FIXME replace Car by GTU
      * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
      */
-    public void addData(final int lane, final Car car, final DoubleScalar.Abs<TimeUnit> detectionTime)
+    public final void addData(final int lane, final Car car, final DoubleScalar.Abs<TimeUnit> detectionTime)
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
@@ -279,7 +280,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event
+     * @param event DatasetChangedEvent
      */
     private void notifyListeners(final DatasetChangeEvent event)
     {
@@ -385,28 +386,28 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** {@inheritDoc} */
     @Override
-    public Number getX(final int series, final int item)
+    public final Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getXValue(final int series, final int item)
+    public final double getXValue(final int series, final int item)
     {
         return getSample(series, item, this.xAxis);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Number getY(final int series, final int item)
+    public final Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getYValue(final int series, final int item)
+    public final double getYValue(final int series, final int item)
     {
         return getSample(series, item, this.yAxis);
     }
@@ -492,7 +493,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** {@inheritDoc} */
     @Override
-    public void actionPerformed(final ActionEvent actionEvent)
+    public final void actionPerformed(final ActionEvent actionEvent)
     {
         final String command = actionEvent.getActionCommand();
         // System.out.println("command is \"" + command + "\"");

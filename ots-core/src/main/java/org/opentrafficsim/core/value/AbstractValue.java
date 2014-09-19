@@ -53,14 +53,14 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
 
     /** {@inheritDoc} */
     @Override
-    public U getUnit()
+    public final U getUnit()
     {
         return this.unit;
     }
 
     /** {@inheritDoc} */
     @Override
-    public double expressAsSIUnit(final double value)
+    public final double expressAsSIUnit(final double value)
     {
         return ValueUtil.expressAsSIUnit(value, this.unit);
     }
@@ -69,21 +69,21 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
      * @param value the value to convert in the specified unit for this scalar
      * @return the value in the unit as specified for this scalar
      */
-    protected double expressAsSpecifiedUnit(final double value)
+    protected final double expressAsSpecifiedUnit(final double value)
     {
         return ValueUtil.expressAsUnit(value, this.unit);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isAbsolute()
+    public final boolean isAbsolute()
     {
         return this instanceof Absolute;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isRelative()
+    public final boolean isRelative()
     {
         return this instanceof Relative;
     }

@@ -66,14 +66,14 @@ public class SpeedContourPlot extends ContourPlot
 
     /** {@inheritDoc} */
     @Override
-    public Comparable<String> getSeriesKey(final int series)
+    public final Comparable<String> getSeriesKey(final int series)
     {
         return "speed";
     }
 
     /** {@inheritDoc} */
     @Override
-    public void extendXRange(final DoubleScalar<?> newUpperLimit)
+    public final void extendXRange(final DoubleScalar<?> newUpperLimit)
     {
         if (null == this.cumulativeTimes)
         {
@@ -94,7 +94,7 @@ public class SpeedContourPlot extends ContourPlot
 
     /** {@inheritDoc} */
     @Override
-    public void incrementBinData(final int timeBin, final int distanceBin, final double duration,
+    public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())

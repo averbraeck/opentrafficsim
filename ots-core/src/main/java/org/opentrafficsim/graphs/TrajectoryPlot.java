@@ -82,7 +82,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     protected final JLabel statusLabel;
 
     /** List of parties interested in changes of this ContourPlot. */
-    transient EventListenerList listenerList = new EventListenerList();
+    private transient EventListenerList listenerList = new EventListenerList();
 
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
@@ -211,7 +211,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     /**
      * Redraw this TrajectoryGraph (after the underlying data has been changed).
      */
-    public void reGraph()
+    public final void reGraph()
     {
         configureAxis(this.chartPanel.getXYPlot().getDomainAxis(), this.maximumTime.getValueSI());
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
@@ -219,7 +219,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 
     /**
      * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event
+     * @param event DatasetChangedEvent
      */
     private void notifyListeners(final DatasetChangeEvent event)
     {
@@ -231,8 +231,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 
     /**
      * Configure the range of an axis.
-     * @param valueAxis
-     * @param range
+     * @param valueAxis ValueAxis
+     * @param range double; the upper bound of the axis
      */
     private static void configureAxis(final ValueAxis valueAxis, final double range)
     {
@@ -256,9 +256,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     ArrayList<Trajectory> trajectories = new ArrayList<Trajectory>();
 
     /**
+     * Add the scheduled motion of a car to this TrajectoryPlot.
      * @param car Car; the Car that has determined it's next move
      */
-    public void addData(final Car car)
+    public final void addData(final Car car)
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<LengthUnit> startPosition = car.getPosition(startTime);
@@ -426,49 +427,49 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 
     /** {@inheritDoc} */
     @Override
-    public void addChangeListener(final DatasetChangeListener listener)
+    public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void removeChangeListener(final DatasetChangeListener listener)
+    public final void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
     @Override
-    public DatasetGroup getGroup()
+    public final DatasetGroup getGroup()
     {
         return this.datasetGroup;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setGroup(final DatasetGroup group)
+    public final void setGroup(final DatasetGroup group)
     {
         this.datasetGroup = group;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DomainOrder getDomainOrder()
+    public final DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
 
     /** {@inheritDoc} */
     @Override
-    public int getItemCount(final int series)
+    public final int getItemCount(final int series)
     {
         return this.trajectories.get(series).size();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Number getX(final int series, final int item)
+    public final Number getX(final int series, final int item)
     {
         double v = getXValue(series, item);
         if (Double.isNaN(v))
@@ -480,14 +481,14 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 
     /** {@inheritDoc} */
     @Override
-    public double getXValue(final int series, final int item)
+    public final double getXValue(final int series, final int item)
     {
         return this.trajectories.get(series).getTime(item);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Number getY(final int series, final int item)
+    public final Number getY(final int series, final int item)
     {
         double v = getYValue(series, item);
         if (Double.isNaN(v))
@@ -499,7 +500,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 
     /** {@inheritDoc} */
     @Override
-    public double getYValue(final int series, final int item)
+    public final double getYValue(final int series, final int item)
     {
         return this.trajectories.get(series).getDistance(item);
     }
