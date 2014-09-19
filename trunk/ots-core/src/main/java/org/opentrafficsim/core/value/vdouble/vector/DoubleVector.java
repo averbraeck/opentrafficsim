@@ -130,27 +130,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableDoubleVector.Abs.Dense<U> mutable()
             {
                 return new MutableDoubleVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new DenseDoubleMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final DoubleVector.Abs.Dense<U> copy()
             {
@@ -203,27 +197,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableDoubleVector.Abs.Sparse<U> mutable()
+            public final MutableDoubleVector.Abs.Sparse<U> mutable()
             {
                 return new MutableDoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new DenseDoubleMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final DoubleVector.Abs.Sparse<U> copy()
             {
@@ -232,10 +220,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
         }
 
-        /**
-         * 
-         * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
-         */
+        /** {@inheritDoc} */
         @Override
         public final DoubleScalar.Abs<U> get(final int index) throws ValueException
         {
@@ -305,27 +290,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableDoubleVector.Rel.Dense<U> mutable()
+            public final MutableDoubleVector.Rel.Dense<U> mutable()
             {
                 return new MutableDoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new SparseDoubleMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final DoubleVector.Rel.Dense<U> copy()
             {
@@ -378,27 +357,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableDoubleVector.Rel.Sparse<U> mutable()
             {
                 return new MutableDoubleVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vdouble.vector.DoubleVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final DoubleMatrix1D createMatrix1D(final int size)
             {
                 return new SparseDoubleMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final DoubleVector.Rel.Sparse<U> copy()
             {
@@ -407,9 +380,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#get(int)
-         */
+        /** {@inheritDoc} */
         @Override
         public final DoubleScalar.Rel<U> get(final int index) throws ValueException
         {
@@ -531,10 +502,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return expressAsSpecifiedUnit(getSI(index));
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vdouble.vector.ReadOnlyDoubleVectorFunctions#getInUnit(int,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
+    /** {@inheritDoc} */
     @Override
     public final double getInUnit(final int index, final U targetUnit) throws ValueException
     {

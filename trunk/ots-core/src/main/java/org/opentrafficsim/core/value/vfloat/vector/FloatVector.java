@@ -127,27 +127,21 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableFloatVector.Abs.Dense<U> mutable()
             {
                 return new MutableFloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final FloatVector.Abs.Dense<U> copy()
             {
@@ -200,40 +194,32 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatVector.Abs.Sparse<U> mutable()
+            public final MutableFloatVector.Abs.Sparse<U> mutable()
             {
                 return new MutableFloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
-            protected FloatMatrix1D createMatrix1D(final int size)
+            protected final FloatMatrix1D createMatrix1D(final int size)
             {
                 return new DenseFloatMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
-            public FloatVector.Abs.Sparse<U> copy()
+            public final FloatVector.Abs.Sparse<U> copy()
             {
                 return this;
             }
 
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
-         */
+        /** {@inheritDoc} */
         @Override
-        public FloatScalar.Abs<U> get(final int index) throws ValueException
+        public final FloatScalar.Abs<U> get(final int index) throws ValueException
         {
             return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
         }
@@ -301,29 +287,23 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatVector.Rel.Dense<U> mutable()
+            public final MutableFloatVector.Rel.Dense<U> mutable()
             {
                 return new MutableFloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
-            protected FloatMatrix1D createMatrix1D(final int size)
+            protected final FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
-            public FloatVector.Rel.Dense<U> copy()
+            public final FloatVector.Rel.Dense<U> copy()
             {
                 return this;
             }
@@ -374,27 +354,21 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableFloatVector.Rel.Sparse<U> mutable()
             {
                 return new MutableFloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.vector.FloatVector#createMatrix1D(int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final FloatMatrix1D createMatrix1D(final int size)
             {
                 return new SparseFloatMatrix1D(size);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final FloatVector.Rel.Sparse<U> copy()
             {
@@ -403,9 +377,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#get(int)
-         */
+        /** {@inheritDoc} */
         @Override
         public final FloatScalar.Rel<U> get(final int index) throws ValueException
         {
@@ -527,10 +499,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return (float) expressAsSpecifiedUnit(getSI(index));
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
+    /** {@inheritDoc} */
     @Override
     public final float getInUnit(final int index, final U targetUnit) throws ValueException
     {

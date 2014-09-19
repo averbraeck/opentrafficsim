@@ -97,27 +97,21 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
             initialize(value);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
-         */
-        @Override
+        /** {@inheritDoc} */
+       @Override
         public final MutableDoubleScalar.Abs<U> mutable()
         {
             return new MutableDoubleScalar.Abs<U>(this);
         }
 
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
+       /** {@inheritDoc} */
         @Override
         public final int compareTo(final Abs<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.Value#copy()
-         */
+        /** {@inheritDoc} */
         @Override
         public final DoubleScalar.Abs<U> copy()
         {
@@ -168,27 +162,21 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
             initialize(value);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar#mutable()
-         */
+        /** {@inheritDoc} */
         @Override
         public final MutableDoubleScalar.Rel<U> mutable()
         {
             return new MutableDoubleScalar.Rel<U>(this);
         }
 
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
         public final int compareTo(final Rel<U> o)
         {
             return new Double(this.valueSI).compareTo(o.valueSI);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.Value#copy()
-         */
+        /** {@inheritDoc} */
         @Override
         public final DoubleScalar.Rel<U> copy()
         {

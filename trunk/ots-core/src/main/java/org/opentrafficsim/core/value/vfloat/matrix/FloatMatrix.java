@@ -136,27 +136,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
                 return new MutableFloatMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Abs.Dense<U> copy()
             {
@@ -210,27 +204,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatMatrix.Abs.Sparse<U> mutable()
+            public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
                 return new MutableFloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Abs.Sparse<U> copy()
             {
@@ -238,9 +226,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             }
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
-         */
+        /** {@inheritDoc} */
         @Override
         public final FloatScalar<U> get(final int row, final int column) throws ValueException
         {
@@ -311,29 +297,23 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatMatrix.Rel.Dense<U> mutable()
+            public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
                 return new MutableFloatMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseFloatMatrix2D(rows, columns);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
-            public FloatMatrix.Rel.Dense<U> copy()
+            public final FloatMatrix.Rel.Dense<U> copy()
             {
                 return this;
             }
@@ -385,27 +365,21 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
                 return new MutableFloatMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseFloatMatrix2D(rows, columns);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.Value#copy()
-             */
+            /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Rel.Sparse<U> copy()
             {
@@ -414,9 +388,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
 
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
-         */
+        /** {@inheritDoc} */
         @Override
         public final FloatScalar<U> get(final int row, final int column) throws ValueException
         {
@@ -558,10 +530,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         return (float) expressAsSpecifiedUnit(getSI(row, column));
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.vector.ReadOnlyFloatVectorFunctions#getInUnit(int,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
+    /** {@inheritDoc} */
     @Override
     public final float getInUnit(final int row, final int column, final U targetUnit) throws ValueException
     {

@@ -93,38 +93,30 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
             initialize(value);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#immutable()
-         */
+        /** {@inheritDoc} */
         @Override
-        public FloatScalar.Abs<U> immutable()
+        public final FloatScalar.Abs<U> immutable()
         {
             return new FloatScalar.Abs<U>(this);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
-         */
+        /** {@inheritDoc} */
         @Override
-        public MutableFloatScalar.Abs<U> mutable()
+        public final MutableFloatScalar.Abs<U> mutable()
         {
             return new MutableFloatScalar.Abs<U>(this);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.Value#copy()
-         */
+        /** {@inheritDoc} */
         @Override
-        public MutableFloatScalar.Abs<U> copy()
+        public final MutableFloatScalar.Abs<U> copy()
         {
             return new MutableFloatScalar.Abs<U>(this);
         }
 
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
-        public int compareTo(final Abs<U> o)
+        public final int compareTo(final Abs<U> o)
         {
             return new Float(this.valueSI).compareTo(o.valueSI);
         }
@@ -173,36 +165,28 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
             initialize(value);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar#immutable()
-         */
+        /** {@inheritDoc} */
         @Override
-        public FloatScalar.Rel<U> immutable()
+        public final FloatScalar.Rel<U> immutable()
         {
             return new FloatScalar.Rel<U>(this);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
-         */
+        /** {@inheritDoc} */
         @Override
-        public MutableFloatScalar.Rel<U> mutable()
+        public final MutableFloatScalar.Rel<U> mutable()
         {
             return new MutableFloatScalar.Rel<U>(this);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.Value#copy()
-         */
+        /** {@inheritDoc} */
         @Override
         public final MutableFloatScalar.Rel<U> copy()
         {
             return new MutableFloatScalar.Rel<U>(this);
         }
         
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
         public final int compareTo(final Rel<U> o)
         {

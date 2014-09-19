@@ -97,29 +97,23 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
             initialize(value);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
-         */
+        /** {@inheritDoc} */
         @Override
-        public MutableFloatScalar.Abs<U> mutable()
+        public final MutableFloatScalar.Abs<U> mutable()
         {
             return new MutableFloatScalar.Abs<U>(this);
         }
 
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
-        public int compareTo(final Abs<U> o)
+        public final int compareTo(final Abs<U> o)
         {
             return new Float(this.valueSI).compareTo(o.valueSI);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.Value#copy()
-         */
+        /** {@inheritDoc} */
         @Override
-        public FloatScalar.Abs<U> copy()
+        public final FloatScalar.Abs<U> copy()
         {
             return this;
         }
@@ -168,27 +162,21 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
             initialize(value);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.scalar.FloatScalar#mutable()
-         */
+        /** {@inheritDoc} */
         @Override
         public final MutableFloatScalar.Rel<U> mutable()
         {
             return new MutableFloatScalar.Rel<U>(this);
         }
 
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
         public final int compareTo(final Rel<U> o)
         {
             return new Float(this.valueSI).compareTo(o.valueSI);
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.Value#copy()
-         */
+        /** {@inheritDoc} */
         @Override
         public final FloatScalar.Rel<U> copy()
         {
@@ -263,7 +251,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
     /** {@inheritDoc} */
     @Override
-    public int intValue()
+    public final int intValue()
     {
         return Math.round(this.valueSI);
     }

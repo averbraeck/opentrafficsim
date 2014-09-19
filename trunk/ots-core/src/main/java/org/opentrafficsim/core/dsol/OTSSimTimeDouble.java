@@ -46,7 +46,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     private MutableDoubleScalar.Abs<TimeUnit> time;
 
     /**
-     * @param time
+     * @param time DoubleSclaar.Abs&lt;TimeUnit&gt;
      */
     public OTSSimTimeDouble(final DoubleScalar.Abs<TimeUnit> time)
     {

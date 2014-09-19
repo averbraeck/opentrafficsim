@@ -147,31 +147,25 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.MutableFloatMatrix#immutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public FloatMatrix.Abs.Dense<U> immutable()
+            public final FloatMatrix.Abs.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
                 return new FloatMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatMatrix.Abs.Dense<U> mutable()
+            public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
                 this.copyOnWrite = true;
                 return new MutableFloatMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new DenseFloatMatrix2D(rows, columns);
             }
@@ -224,9 +218,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.MutableFloatMatrix#immutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Abs.Sparse<U> immutable()
             {
@@ -234,9 +226,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 return new FloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
             public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
@@ -244,9 +234,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 return new MutableFloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
             protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
@@ -255,9 +243,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
-         */
+        /** {@inheritDoc} */
         @Override
         public final FloatScalar.Abs<U> get(final int row, final int column) throws ValueException
         {
@@ -329,31 +315,25 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.MutableFloatMatrix#immutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public FloatMatrix.Rel.Dense<U> immutable()
+            public final FloatMatrix.Rel.Dense<U> immutable()
             {
                 this.copyOnWrite = true;
                 return new FloatMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatMatrix.Rel.Dense<U> mutable()
+            public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
                 this.copyOnWrite = true;
                 return new MutableFloatMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseFloatMatrix2D(rows, columns);
             }
@@ -406,42 +386,34 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.MutableFloatMatrix#immutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public FloatMatrix.Rel.Sparse<U> immutable()
+            public final FloatMatrix.Rel.Sparse<U> immutable()
             {
                 this.copyOnWrite = true;
                 return new FloatMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#mutable()
-             */
+            /** {@inheritDoc} */
             @Override
-            public MutableFloatMatrix.Rel.Sparse<U> mutable()
+            public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
                 this.copyOnWrite = true;
                 return new MutableFloatMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
             }
 
-            /**
-             * @see org.opentrafficsim.core.value.vfloat.matrix.FloatMatrix#createMatrix2D(int, int)
-             */
+            /** {@inheritDoc} */
             @Override
-            protected FloatMatrix2D createMatrix2D(final int rows, final int columns)
+            protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
                 return new SparseFloatMatrix2D(rows, columns);
             }
 
         }
 
-        /**
-         * @see org.opentrafficsim.core.value.vfloat.matrix.ReadOnlyFloatMatrixFunctions#get(int, int)
-         */
+        /** {@inheritDoc} */
         @Override
-        public FloatScalar.Rel<U> get(final int row, final int column) throws ValueException
+        public final FloatScalar.Rel<U> get(final int row, final int column) throws ValueException
         {
             return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
         }
@@ -456,7 +428,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /** {@inheritDoc} */
     @Override
-    public MutableFloatMatrix<U> copy()
+    public final MutableFloatMatrix<U> copy()
     {
         return immutable().mutable(); // Almost as simple as the copy in FloatMatrix
     }
@@ -483,20 +455,14 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         safeSet(row, column, valueSI);
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.WriteFloatMatrixFunctions#set(int, int,
-     *      org.opentrafficsim.core.value.vfloat.scalar.FloatScalar)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void set(final int row, final int column, final FloatScalar<U> value) throws ValueException
     {
         setSI(row, column, value.getValueSI());
     }
 
-    /**
-     * @see org.opentrafficsim.core.value.vfloat.matrix.WriteFloatMatrixFunctions#setInUnit(int, int, float,
-     *      org.opentrafficsim.core.unit.Unit)
-     */
+    /** {@inheritDoc} */
     @Override
     public final void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
     {
