@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.location;
 
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+
 import org.opentrafficsim.core.unit.LengthUnit;
 
 /**
@@ -33,7 +35,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://opentrafficsim.org/yufei">Yufei Yuan</a>
  */
-public interface LocationRelative<E extends Edge> extends Location
+public interface LocationRelative<E extends Edge> extends Location, LocatableInterface
 {
     E getEdge();
 

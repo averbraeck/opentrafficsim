@@ -35,54 +35,39 @@ package org.opentrafficsim.core.network;
  */
 public class ExpansionNode<ID> extends Node<ID>
 {
-
-    /** ID of ExpansionNode */
-    private final ID id;
-
-    /** Network attribute of expanded Node */
+    /** Network of expanded Node. */
     private Network<?, ?> network;
 
     /**
-     * @param id
+     * @param id ID of ExpansionNode.
      */
     public ExpansionNode(final ID id)
     {
         super(id);
-        this.id = id;
     }
 
     /**
-     * @param id
-     * @param network
-     * @param network
+     * @param id ID of ExpansionNode.
+     * @param network Network of expanded Node.
      */
-    public ExpansionNode(final ID id, Network<?, ?> network)
+    public ExpansionNode(final ID id, final Network<?, ?> network)
     {
         super(id);
-        this.id = id;
         this.setNetwork(network);
     }
 
     /**
-     * @return id
+     * @return Network of expanded Node.
      */
-    public ID getId()
-    {
-        return this.id;
-    }
-
-    /**
-     * @return network
-     */
-    public Network<?, ?> getNetwork()
+    public final Network<?, ?> getNetwork()
     {
         return this.network;
     }
 
     /**
-     * @param network set network
+     * @param network Network of expanded Node.
      */
-    public void setNetwork(Network<?, ?> network)
+    public final void setNetwork(final Network<?, ?> network)
     {
         this.network = network;
     }

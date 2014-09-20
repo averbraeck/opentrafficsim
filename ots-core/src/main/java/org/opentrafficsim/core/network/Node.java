@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network;
 
-//import java.util.Set;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -33,28 +33,27 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID>
  */
-public class Node<ID>
+public class Node<ID> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140920L;
 
-    /** id */
+    /** the node id. */
     private final ID id;
 
-    /** nodeName */
-    private final String nodeName;
+    /** the node name. */
+    private final String name;
 
     /**
-     * Construction of a Node
-     * @param id
-     * @param nodeName
-     * @param ID of the Node ID
-     * @param name of the Node
+     * Construction of a Node.
+     * @param id the id of the Node ID.
+     * @param name the name of the Node as a String.
      */
 
-    public Node(final ID id, String nodeName)
+    public Node(final ID id, final String name)
     {
         this.id = id;
-        this.nodeName = nodeName;
-
+        this.name = name;
     }
 
     /**
@@ -70,13 +69,13 @@ public class Node<ID>
      */
     public String getNodeName()
     {
-        return this.nodeName;
+        return this.name;
     }
 
     /**
      * @return id
      */
-    public ID getNodeID()
+    public ID getId()
     {
         return this.id;
     }
