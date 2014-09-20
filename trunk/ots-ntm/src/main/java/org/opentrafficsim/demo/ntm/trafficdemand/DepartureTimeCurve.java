@@ -47,7 +47,6 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  */
 public class DepartureTimeCurve
 {
-   
     /** */
     ArrayList<ShareTripDemandByTimeSegmentOfDay> departureTimeCurve;
         
@@ -86,30 +85,30 @@ public class DepartureTimeCurve
                 continue;
             }
             else if (segmentIn.timeSinceMidnight.getValueInUnit() >= startSimulationTimeSinceMidnight.getValueInUnit() + durationOfSimulation.getValueInUnit())  {
-                @SuppressWarnings("static-access")
-                DoubleScalar.Rel<TimeUnit> timeToEnd = MutableDoubleScalar.Rel.minus(segmentIn.timeSinceMidnight,durationOfSimulation);
-                double share  = timeToEnd.getValueSI() / prevSegment.getDuration().getValueSI();
-                double newShare = share * prevSegment.getShareOfDemand();                    
-                ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(startSimulationTimeSinceMidnight, timeToEnd, newShare);
-                segmentsOut.add(newSegment);
-                totalShare += newSegment.shareOfDemand;
+//                @SuppressWarnings("static-access")
+//                DoubleScalar.Rel<TimeUnit> timeToEnd = MutableDoubleScalar.Rel.minus(segmentIn.timeSinceMidnight,durationOfSimulation);
+//                double share  = timeToEnd.getValueSI() / prevSegment.getDuration().getValueSI();
+//                double newShare = share * prevSegment.getShareOfDemand();                    
+//                ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(startSimulationTimeSinceMidnight, timeToEnd, newShare);
+//                segmentsOut.add(newSegment);
+//                totalShare += newSegment.shareOfDemand;
                 break;
             }
             else  {
                 if (segmentIn.timeSinceMidnight.getValueInUnit() >= startSimulationTimeSinceMidnight.getValueInUnit() && firstTry) {
-                    firstTry = false;
-                    DoubleScalar.Rel<TimeUnit> timeSinceStart = MutableDoubleScalar..minus(segmentIn.timeSinceMidnight, startSimulationTimeSinceMidnight);
-                    double share  = timeSinceStart.getValueSI() / prevSegment.getDuration().getValueSI();
-                    double newShare = share * prevSegment.getShareOfDemand();                    
-                    ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(startSimulationTimeSinceMidnight, timeSinceStart, newShare);
-                    segmentsOut.add(newSegment);
-                    totalShare += newSegment.shareOfDemand;
+//                    firstTry = false;
+//                    DoubleScalar.Rel<TimeUnit> timeSinceStart = MutableDoubleScalar.minus(segmentIn.timeSinceMidnight, startSimulationTimeSinceMidnight);
+//                    double share  = timeSinceStart.getValueSI() / prevSegment.getDuration().getValueSI();
+//                    double newShare = share * prevSegment.getShareOfDemand();                    
+//                    ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(startSimulationTimeSinceMidnight, timeSinceStart, newShare);
+//                    segmentsOut.add(newSegment);
+//                    totalShare += newSegment.shareOfDemand;
                 }
                 else {
                     ShareTripDemandByTimeSegmentOfDay newSegment = new ShareTripDemandByTimeSegmentOfDay(segmentIn.timeSinceMidnight, segmentIn.duration, segmentIn.shareOfDemand);
                     segmentsOut.add(newSegment);
                     totalShare += newSegment.shareOfDemand;
-                }
+                } 
                 
             }
         }
