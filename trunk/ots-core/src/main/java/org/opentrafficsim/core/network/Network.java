@@ -221,7 +221,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     {
         if (isInNetwork(addThis))
         {
-            throw new NetworkException("Adding Node " + addThis.getNodeID().toString() + ". Node "
+            throw new NetworkException("Adding Node " + addThis.getId().toString() + ". Node "
                     + addThis.getNodeName().toString() + " is  already in the Set");
         }
         else
@@ -277,7 +277,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         }
         else
         {
-            throw new NetworkException("The network does not contain the Node" + node.getNodeID().toString() + ".");
+            throw new NetworkException("The network does not contain the Node" + node.getId().toString() + ".");
         }
         return null;
     }
@@ -305,7 +305,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         }
         else
         {
-            throw new NetworkException("Deleting" + deleteThis.getNodeID().toString() + "is failed. Possible cause:"
+            throw new NetworkException("Deleting" + deleteThis.getId().toString() + "is failed. Possible cause:"
                     + " node is not a member of the given Network");
         }
     }

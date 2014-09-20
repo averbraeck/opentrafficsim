@@ -1,7 +1,9 @@
 package org.opentrafficsim.core.network;
 
-//import org.jgrapht.*;
-//import org.jgrapht.graph.*; 
+import java.io.Serializable;
+
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -34,135 +36,120 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID>
  */
-public class Link<ID>
+public class Link<ID> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140920L;
 
-    /** id */
+    /** link id. */
     private final ID id;
 
-    /** beginNode */
+    /** begin node (directional). */
     private final Node<?> beginNode;
 
-    /** */
+    /** end node (directional). */
     private final Node<?> endNode;
 
-    /** linkLength */
-    private final double linkLength;
+    /** link length in a length unit. */
+    private final DoubleScalar<LengthUnit> length;
 
-    /** linkCapacity */
-    private double linkCapacity;
+    /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
+    private double capacity;
 
-    /** linkeResistance */
-    private double linkResistance;
+    /** link resistance in TODO: unit. This is a mutable property (e.g., blockage). */
+    private double resistance;
 
     /**
      * Construction of a link.
-     * @param id the Link id.
-     * @param beginNode
-     * @param endNode
-     * @param linkLength
-     * @param linkCapacity
-     * @param linkResistance
+     * @param id the link id.
+     * @param beginNode begin node (directional).
+     * @param endNode end node (directional).
+     * @param length link length in a length unit.
+     * @param capacity link capacity in vehicles per hour.
+     * @param resistance link resistance in ???????? unit.
      */
-
-    public Link(final ID id, Node<?> beginNode, Node<?> endNode, double linkLength, double linkCapacity,
-            double linkResistance)
+    public Link(final ID id, final Node<?> beginNode, final Node<?> endNode, final DoubleScalar<LengthUnit> length,
+            final double capacity, final double resistance)
     {
         this.id = id;
         this.beginNode = beginNode;
         this.endNode = endNode;
-        this.linkLength = linkLength;
-        this.setLinkCapacity(linkCapacity);
-        this.setLinkResistance(linkResistance);
+        this.length = length;
+        setCapacity(capacity);
+        setResistance(resistance);
 
     }
 
     /**
-     * @return linkLength
+     * @return link length.
      */
-    public double getLenght()
+    public final DoubleScalar<LengthUnit> getLenght()
     {
-        return this.getLinkLength();
+        return this.length;
     }
 
     /**
-     * @return id
+     * @return id.
      */
-    public ID getId()
+    public final ID getId()
     {
         return this.id;
     }
 
     /**
-     * @return linkCapacity
+     * @return link capacity.
      */
-    public double getCapacity()
+    public final double getCapacity()
     {
         return this.getLinkCapacity();
     }
 
     /**
-     * @return linkResistance
+     * @return begin node.
      */
-    public double getResistance()
-    {
-        return this.getLinkResistance();
-    }
-
-    /**
-     * @return beginNode
-     */
-    public Node<?> getBeginNode()
+    public final Node<?> getBeginNode()
     {
         return this.beginNode;
     }
 
     /**
-     * @return endNode
+     * @return end node.
      */
-    public Node<?> getEndNode()
+    public final Node<?> getEndNode()
     {
         return this.endNode;
     }
 
     /**
-     * @return linkLength
+     * @return link capacity.
      */
-    public double getLinkLength()
+    public final double getLinkCapacity()
     {
-        return this.linkLength;
+        return this.capacity;
     }
 
     /**
-     * @return linkCapacity
+     * @param capacity set the link capacity.
      */
-    public double getLinkCapacity()
+    public final void setCapacity(final double capacity)
     {
-        return this.linkCapacity;
+        this.capacity = capacity;
     }
 
     /**
-     * @param linkCapacity set linkCapacity
+     * @return link resistance.
      */
-    public void setLinkCapacity(double linkCapacity)
+    public final double getResistance()
     {
-        this.linkCapacity = linkCapacity;
+        return this.resistance;
     }
 
     /**
-     * @return linkResistance
+     * @param resistance set link resistance.
      */
-    public double getLinkResistance()
+    public final void setResistance(final double resistance)
     {
-        return this.linkResistance;
-    }
-
-    /**
-     * @param linkResistance set linkResistance
-     */
-    public void setLinkResistance(double linkResistance)
-    {
-        this.linkResistance = linkResistance;
+        this.resistance = resistance;
     }
 
 }
