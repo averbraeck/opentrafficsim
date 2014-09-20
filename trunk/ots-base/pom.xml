@@ -39,11 +39,25 @@
 				<!-- module>../ots-yyy</module -->
 			</modules>
 		</profile>
+
+		<profile>
+			<id>activate-in-module</id>
+			<activation>
+				<file>
+					<exists>${basedir}/../development/dsol-checks.xml</exists>
+				</file>
+			</activation>
+			<properties>
+				<checkstyleDir>${basedir}/../development</checkstyleDir>
+			</properties>
+		</profile>
 	</profiles>
 
 	<properties>
 		<jdk.version>1.7</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<checkstyleDir>${basedir}/development</checkstyleDir>
 
 		<ots-version>${project.version}</ots-version>
 		<dsol-version>3.0.0</dsol-version>
@@ -464,6 +478,8 @@
 				<version>${maven.checkstyle.version}</version>
 				<configuration>
 					<configLocation>development/dsol-checks.xml</configLocation>
+					<suppressionsLocation>development/checkstyle_suppressions.xml</suppressionsLocation>
+					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
 				</configuration>
 				<reportSets>
 					<reportSet>
