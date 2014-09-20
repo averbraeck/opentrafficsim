@@ -45,17 +45,17 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class Node implements LocatableInterface
 {
-    /** the center of the area for the simplified graph */
+    /** the center of the area for the simplified graph. */
     private final Point centroid;
 
-    /** the area to which the node belongs */
+    /** the area to which the node belongs. */
     private final Area area;
     
     /**
-     * @param centroid
-     * @param area
+     * @param centroid the center of the area for the simplified graph.
+     * @param area the area to which the node belongs.
      */
-    public Node(Point centroid, Area area)
+    public Node(final Point centroid, final Area area)
     {
         super();
         this.centroid = centroid;
@@ -64,14 +64,14 @@ public class Node implements LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation() throws RemoteException
     {
         return new DirectedPoint(new double[]{this.centroid.getX(), this.centroid.getY(), 0.0d});
     }
 
     /** {@inheritDoc} */
     @Override
-    public Bounds getBounds() throws RemoteException
+    public final Bounds getBounds() throws RemoteException
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
     }
@@ -79,27 +79,29 @@ public class Node implements LocatableInterface
     /**
      * @return centroid
      */
-    public Point getCentroid()
+    public final Point getCentroid()
     {
         return this.centroid;
     }
 
+    /**
+     * @return area
+     */
+    public final Area getArea()
+    {
+        return this.area;
+    }
+    
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {
         return "Node [centroid=" + this.centroid + "]";
     }
 
-    /**
-     * @return area
-     */
-    public Area getArea()
-    {
-        return this.area;
-    }
-
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
     {
@@ -111,8 +113,9 @@ public class Node implements LocatableInterface
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -121,7 +124,7 @@ public class Node implements LocatableInterface
         if (getClass() != obj.getClass())
             return false;
         Node other = (Node) obj;
-        if (this.area == null)
+        if (this.area == null) 
         {
             if (other.area != null)
                 return false;

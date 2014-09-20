@@ -39,22 +39,22 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class Link implements LocatableInterface
 {
-    /** node A */
+    /** node A. */
     private Node nodeA;
 
-    /** node B */
+    /** node B. */
     private Node nodeB;
 
-    /** name */
+    /** name. */
     private String name;
 
-    /** length */
+    /** length. */
     private double length;
 
-    /** speed */
+    /** speed. */
     private double speed;
 
-    /** capacity */
+    /** capacity. */
     private double capacity;
 
     /**
