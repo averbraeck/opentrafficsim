@@ -448,4 +448,12 @@ public class ShpLink implements LocatableInterface
         return this.capacity;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ShpLink [nr=" + this.nr + ", name=" + this.name + ", nodeA=" + this.nodeA + ", nodeB=" + this.nodeB
+                + "]";
+    }
+
 }

@@ -18,6 +18,8 @@ import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.LinkEdge;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
@@ -47,40 +49,44 @@ public class NTMModel implements OTSModelInterface
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** the simulator */
+    /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** areas */
+    /** areas. */
     private Map<java.lang.Long, Area> areas;
 
-    /** nodes from shape file */
+    /** nodes from shape file. */
     private Map<java.lang.Long, ShpNode> shpNodes;
 
-    /** conectors from shape file */
+    /** conectors from shape file. */
     private Map<java.lang.Long, ShpLink> shpConnectors;
 
-    /** links from shape file */
+    /** links from shape file. */
     private Map<java.lang.Long, ShpLink> shpLinks;
 
-    /** the centroids */
+    /** the centroids. */
     private Map<java.lang.Long, ShpNode> centroids;
 
-    /** the demand of trips by Origin and Destination */
+    /** the demand of trips by Origin and Destination. */
     private TripDemand tripDemand;
 
-    /** graph containing the original network */
-    SimpleWeightedGraph<Node, LinkEdge> linkGraph = new SimpleWeightedGraph<Node, LinkEdge>(LinkEdge.class);
+    /** graph containing the original network. */
+    @SuppressWarnings("unchecked")
+    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> linkGraph = new SimpleWeightedGraph<>(
+            (Class<? extends LinkEdge<Link>>) LinkEdge.class);
 
-    /** graph containing the simplified network */
-    SimpleWeightedGraph<Node, LinkEdge> areaGraph = new SimpleWeightedGraph<Node, LinkEdge>(LinkEdge.class);
+    /** graph containing the simplified network. */
+    @SuppressWarnings("unchecked")
+    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> areaGraph = new SimpleWeightedGraph<>(
+            (Class<? extends LinkEdge<Link>>) LinkEdge.class);
 
-    /** debug information? */
-    private static boolean DEBUG = true;
+    /** debug information?. */
+    private static final boolean DEBUG = true;
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+    public final void constructModel(
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
@@ -164,86 +170,112 @@ public class NTMModel implements OTSModelInterface
         }
 
         // temporary storage for nodes and edges mapped from the number to the node
-        Map<java.lang.Long, Node> nodeMap = new HashMap<>();
-        Map<java.lang.Long, LinkEdge> linkMap = new HashMap<>();
+        Map<java.lang.Long, AreaNode> nodeMap = new HashMap<>();
+        Map<java.lang.Long, LinkEdge<Link>> linkMap = new HashMap<>();
 
         // make a directed graph of the entire network
         for (ShpLink shpLink : this.shpLinks.values())
         {
-            Node n1 = nodeMap.get(shpLink.getNodeA().getNr());
+            AreaNode n1 = nodeMap.get(shpLink.getNodeA().getNr());
             if (n1 == null)
             {
-                n1 = new Node(shpLink.getNodeA().getPoint(), findArea(shpLink.getNodeA().getPoint()));
-                nodeMap.put(shpLink.getNodeA().getNr(), n1);
-                this.linkGraph.addVertex(n1);
+                Area areaA = findArea(shpLink.getNodeA().getPoint());
+                if (areaA == null)
+                {
+                    System.err.println("Could not find area for NodeA of shapeLink " + shpLink);
+                }
+                else
+                {
+                    n1 = new AreaNode(shpLink.getNodeA().getPoint(), areaA);
+                    nodeMap.put(shpLink.getNodeA().getNr(), n1);
+                    this.linkGraph.addVertex(n1);
+                }
             }
 
-            Node n2 = nodeMap.get(shpLink.getNodeB().getNr());
+            AreaNode n2 = nodeMap.get(shpLink.getNodeB().getNr());
             if (n2 == null)
             {
-                n2 = new Node(shpLink.getNodeB().getPoint(), findArea(shpLink.getNodeB().getPoint()));
-                nodeMap.put(shpLink.getNodeB().getNr(), n2);
-                this.linkGraph.addVertex(n2);
+                Area areaB = findArea(shpLink.getNodeB().getPoint());
+                if (areaB == null)
+                {
+                    System.err.println("Could not find area for NodeB of shapeLink " + shpLink);
+                }
+                else
+                {
+                    n2 = new AreaNode(shpLink.getNodeB().getPoint(), areaB);
+                    nodeMap.put(shpLink.getNodeB().getNr(), n2);
+                    this.linkGraph.addVertex(n2);
+                }
             }
 
             // TODO: direction of a road?
-            Link link = new Link(n1, n2, shpLink.getName());
-            LinkEdge linkEdge = new LinkEdge(link);
-            this.linkGraph.addEdge(n1, n2, linkEdge);
-            this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLength()); // shpLink.getGeometry().getLength());
-            linkMap.put(shpLink.getNr(), linkEdge);
+            // TODO: is the length in ShapeFiles in meters or in kilometers? I believe in km.
+            if (n1 != null && n2 != null)
+            {
+                DoubleScalar<LengthUnit> length =
+                        new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
+                Link link = new Link(shpLink.getNr(), n1, n2, length, shpLink.getName());
+                LinkEdge<Link> linkEdge = new LinkEdge<>(link);
+                this.linkGraph.addEdge(n1, n2, linkEdge);
+                this.linkGraph.setEdgeWeight(linkEdge, length.doubleValue());
+                linkMap.put(shpLink.getNr(), linkEdge);
+            }
         }
 
         if (DEBUG)
         {
             // test: from node 314071 (Scheveningen) to node 78816 (Voorburg)
-            Node nSch = nodeMap.get(314071L);
-            Node nVb = nodeMap.get(78816L);
-            DijkstraShortestPath<Node, LinkEdge> sp = new DijkstraShortestPath<>(this.linkGraph, nSch, nVb);
+            AreaNode nSch = nodeMap.get(314071L);
+            AreaNode nVb = nodeMap.get(78816L);
+            DijkstraShortestPath<AreaNode, LinkEdge<Link>> sp = new DijkstraShortestPath<>(this.linkGraph, nSch, nVb);
             System.out.println("\nScheveningen -> Voorburg");
             System.out.println("Length=" + sp.getPathLength());
-            List<LinkEdge> spList = sp.getPathEdgeList();
+            List<LinkEdge<Link>> spList = sp.getPathEdgeList();
             if (spList != null)
             {
-                for (LinkEdge le : spList)
+                for (LinkEdge<Link> le : spList)
                 {
-                    System.out.println(le.getEdge().getName());
+                    System.out.println(le.getLink().getName());
                 }
             }
         }
 
         // put all centroids in the Graph as nodes
-        Map<Area, Node> areaNodeCentroidMap = new HashMap<>();
+        Map<Area, AreaNode> areaNodeCentroidMap = new HashMap<>();
         for (Area area : this.areas.values())
         {
-            Node centroid = new Node(area.getCentroid(), area);
-            Node nc = new Node(centroid.getCentroid(), area);
+            AreaNode centroid = new AreaNode(area.getCentroid(), area);
+            AreaNode nc = new AreaNode(centroid.getPoint(), area);
             this.areaGraph.addVertex(nc);
             areaNodeCentroidMap.put(area, nc);
         }
 
         // iterate over the roads and map them on the area centroids
-        for (LinkEdge le : linkMap.values())
+        long uniqueNr = 0;
+        for (LinkEdge<Link> le : linkMap.values())
         {
-            Area aA = le.getEdge().getNodeA().getArea();
-            Area aB = le.getEdge().getNodeB().getArea();
+            Area aA = le.getLink().getStartNode().getArea();
+            Area aB = le.getLink().getEndNode().getArea();
             // if the nodes are in adjacent areas, create a link between their centroids
             // otherwise, discard the link (either in same area, or in non-adjacent areas)
             if (aA != null && aB != null && aA.getTouchingAreas().contains(aB))
             {
-                Node cA = areaNodeCentroidMap.get(aA);
-                Node cB = areaNodeCentroidMap.get(aB);
+                AreaNode cA = areaNodeCentroidMap.get(aA);
+                AreaNode cB = areaNodeCentroidMap.get(aB);
                 if (this.areaGraph.containsEdge(cA, cB))
                 {
                     // TODO: if the link between these areas already exists, add the capacity to the link
                 }
                 else
                 {
-                    Link link = new Link(cA, cB, aA.getNr() + " - " + aB.getNr());
-                    LinkEdge linkEdge = new LinkEdge(link);
+                    // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
+                    DoubleScalar<LengthUnit> length =
+                            new DoubleScalar.Abs<LengthUnit>(cA.getPoint().distance(cB.getPoint()), LengthUnit.METER);
+                    Link link = new Link(uniqueNr++, cA, cB, length, aA.getNr() + " - " + aB.getNr());
+                    LinkEdge<Link> linkEdge = new LinkEdge<>(link);
                     this.areaGraph.addEdge(cA, cB, linkEdge);
                     // TODO: average length? straight distance? straight distance + 20%?
-                    this.areaGraph.setEdgeWeight(linkEdge, cA.getCentroid().distance(cB.getCentroid()));
+                    this.areaGraph.setEdgeWeight(linkEdge, length.doubleValue());
                 }
             }
         }
@@ -252,8 +284,8 @@ public class NTMModel implements OTSModelInterface
         {
             // test: from node 314071 (Scheveningen) to node 78816 (Voorburg)
             System.out.println("\nScheveningen -> Voorburg via centroids");
-            Point pSch = nodeMap.get(314071L).getCentroid();
-            Point pVb = nodeMap.get(78816L).getCentroid();
+            Point pSch = nodeMap.get(314071L).getPoint();
+            Point pVb = nodeMap.get(78816L).getPoint();
             Area aSch = findArea(pSch);
             Area aVb = findArea(pVb);
             if (aSch == null || aVb == null)
@@ -262,16 +294,17 @@ public class NTMModel implements OTSModelInterface
             }
             else
             {
-                Node cSch = areaNodeCentroidMap.get(aSch);
-                Node cVb = areaNodeCentroidMap.get(aVb);
-                DijkstraShortestPath<Node, LinkEdge> sp = new DijkstraShortestPath<>(this.areaGraph, cSch, cVb);
+                AreaNode cSch = areaNodeCentroidMap.get(aSch);
+                AreaNode cVb = areaNodeCentroidMap.get(aVb);
+                DijkstraShortestPath<AreaNode, LinkEdge<Link>> sp =
+                        new DijkstraShortestPath<>(this.areaGraph, cSch, cVb);
                 System.out.println("Length=" + sp.getPathLength());
-                List<LinkEdge> spList = sp.getPathEdgeList();
+                List<LinkEdge<Link>> spList = sp.getPathEdgeList();
                 if (spList != null)
                 {
-                    for (LinkEdge le : spList)
+                    for (LinkEdge<Link> le : spList)
                     {
-                        System.out.println(le.getEdge().getName());
+                        System.out.println(le.getLink().getName());
                     }
                 }
             }
@@ -280,10 +313,10 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param p the point to search
-     * @return the area that contains point p, or null if not found
+     * @param p the point to search.
+     * @return the area that contains point p, or null if not found.
      */
-    private Area findArea(Point p)
+    private Area findArea(final Point p)
     {
         Area area = null;
         for (Area a : this.areas.values())
@@ -291,8 +324,10 @@ public class NTMModel implements OTSModelInterface
             if (a.getGeometry().contains(p))
             {
                 if (area != null)
+                {
                     System.out.println("findArea: point " + p.toText() + " is in multiple areas: " + a.getNr()
                             + " and " + area.getNr());
+                }
                 area = a;
             }
         }
@@ -320,15 +355,15 @@ public class NTMModel implements OTSModelInterface
             {
                 new ShpNodeAnimation(shpNode, this.simulator);
             }
-            for (LinkEdge linkEdge : this.linkGraph.edgeSet())
+            for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet())
             {
                 // new LinkAnimation(linkEdge.getEdge(), this.simulator, 0.5f);
             }
-            for (LinkEdge linkEdge : this.areaGraph.edgeSet())
+            for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
             {
-                new LinkAnimation(linkEdge.getEdge(), this.simulator, 2.5f);
+                new LinkAnimation(linkEdge.getLink(), this.simulator, 2.5f);
             }
-            for (Node node : this.areaGraph.vertexSet())
+            for (AreaNode node : this.areaGraph.vertexSet())
             {
                 new NodeAnimation(node, this.simulator);
             }
@@ -341,7 +376,7 @@ public class NTMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
         return this.simulator;
