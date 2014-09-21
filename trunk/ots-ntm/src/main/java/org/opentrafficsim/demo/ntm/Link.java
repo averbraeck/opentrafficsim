@@ -81,9 +81,9 @@ public class Link implements LocatableInterface
     @Override
     public Bounds getBounds() throws RemoteException
     {
-        return new BoundingBox(new Point3d(0.0d, 0.0d, 0.0d),
-                new Point3d(this.nodeB.getCentroid().getX() - this.nodeA.getCentroid().getX(), this.nodeB.getCentroid()
-                        .getY() - this.nodeA.getCentroid().getY(), 0.0d));
+        return new BoundingBox(new Point3d(0.0d, 0.0d, 0.0d), new Point3d(this.nodeB.getCentroid().getX()
+                - this.nodeA.getCentroid().getX(), this.nodeB.getCentroid().getY() - this.nodeA.getCentroid().getY(),
+                0.0d));
     }
 
     /**

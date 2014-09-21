@@ -22,7 +22,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
  * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
  * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
  * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>.
- * <br /> Output is a graph showing one line for each car indicating distance traveled as a function of time.
+ * <br> Output is a graph showing one line for each car indicating distance traveled as a function of time.
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
  * reserved.

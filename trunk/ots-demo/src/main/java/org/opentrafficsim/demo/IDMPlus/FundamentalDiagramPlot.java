@@ -23,9 +23,9 @@ import org.opentrafficsim.graphs.FundamentalDiagram;
  * rate of 1500 veh/hour. At time 300s a blockade is inserted at position 4 km; this blockade is removed at time 500s.
  * The used car following algorithm is IDM+ <a
  * href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
- * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br />
+ * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
  * Output is a graph showing a point for each minute of measured values. Above each point is shown the time at the end
- * of the measurement interval. The points are connected by lines. <br />
+ * of the measurement interval. The points are connected by lines. <br>
  * Right click in the graph and select another layout (under <cite>Set layout</cite> to change the quantity graphed
  * along each axis.
  * <p>

@@ -22,29 +22,28 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Aug 25, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -74,9 +73,7 @@ public class FundamentalDiagramPlotTest
         }
         try
         {
-            fd =
-                    new FundamentalDiagram("Fundamental Diagram", 1, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND),
-                            position);
+            fd = new FundamentalDiagram("Fundamental Diagram", 1, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), position);
             fail("Bad number of lanes should have thrown an Error");
         }
         catch (Error e)
@@ -87,8 +84,8 @@ public class FundamentalDiagramPlotTest
         {
             fd = new FundamentalDiagram("Fundamental Diagram", numberOfLanes, aggregationTime, position);
             assertEquals("SeriesCount should match numberOfLanes", numberOfLanes, fd.getSeriesCount());
-            assertEquals("Position should match the supplied position", position.getValueSI(), fd.getPosition()
-                    .getValueSI(), 0.0001);
+            assertEquals("Position should match the supplied position", position.getValueSI(), fd.getPosition().getValueSI(),
+                    0.0001);
             try
             {
                 fd.getXValue(-1, 0);
@@ -153,7 +150,8 @@ public class FundamentalDiagramPlotTest
                         value = fd.getYValue(readBackLane, sample);
                         if (shouldHaveData)
                         {
-                            double expectedFlow = readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getValueSI() : 0;
+                            double expectedFlow =
+                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getValueSI() : 0;
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
@@ -163,7 +161,8 @@ public class FundamentalDiagramPlotTest
                         value = fd.getY(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
-                            double expectedFlow = readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getValueSI() : 0;
+                            double expectedFlow =
+                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getValueSI() : 0;
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
@@ -202,7 +201,7 @@ public class FundamentalDiagramPlotTest
             fd.actionPerformed(setXToSpeed);
             value = fd.getYValue(0, bucket);
             double expected = 2d / (1d / 100 + 1d / 10);
-            //System.out.println("harmonic speed is " + value + ", expected is " + expected);
+            // System.out.println("harmonic speed is " + value + ", expected is " + expected);
             assertEquals("Harmonic mean of 10 and 100 is " + expected, expected, value, 0.0001);
             // Test the actionPerformed method with various malformed ActionEvents.
             try
@@ -270,7 +269,7 @@ public class FundamentalDiagramPlotTest
             }
         }
     }
-    
+
     /**
      * Test the updateHint method in the PointerHandler.
      */
@@ -292,12 +291,12 @@ public class FundamentalDiagramPlotTest
                 {
                     for (Component c2 : ((Container) c1).getComponents())
                     {
-                        //System.out.println("c2 is " + c2);
+                        // System.out.println("c2 is " + c2);
                         if (c2 instanceof Container)
                         {
                             for (Component c3 : ((Container) c2).getComponents())
                             {
-                                //System.out.println("c3 is " + c3);
+                                // System.out.println("c3 is " + c3);
                                 if (c3 instanceof JLabel)
                                 {
                                     if (null == hintPanel)
@@ -355,7 +354,7 @@ public class FundamentalDiagramPlotTest
             fail("Could not find the PointerHandler for the chartPanel");
         }
         ph.updateHint(1, 2);
-        //System.out.println("Hint text is now " + hintPanel.getText());
+        // System.out.println("Hint text is now " + hintPanel.getText());
         assertFalse("Hint should not be a single space", " ".equals(hintPanel.getText()));
         ph.updateHint(Double.NaN, Double.NaN);
         assertEquals("The text should again be a single space", " ", hintPanel.getText());

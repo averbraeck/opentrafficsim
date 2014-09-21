@@ -24,29 +24,28 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -82,8 +81,7 @@ public abstract class FloatVectorTest
             assertEquals("Values in FloatVector in unit should be equal to input values", in[i], out[i], 0.0001);
             try
             {
-                assertEquals("Values in FloatVector in unit should be equal to input values", in[i], fv.getInUnit(i),
-                        0.0001);
+                assertEquals("Values in FloatVector in unit should be equal to input values", in[i], fv.getInUnit(i), 0.0001);
                 assertEquals("Values in FloatVector in unit should be equal to input values", in[i], fv.getSI(i)
                         / (12 * 0.0254), 0.0001);
                 assertEquals("Values in FloatVector in unit should be equal to input values", in[i],
@@ -136,8 +134,8 @@ public abstract class FloatVectorTest
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInOtherUnit.length);
         for (int i = 0; i < in.length; i++)
         {
-            assertEquals("Contents of valuesInUnit should be equal to input", in[i] * (12 * 0.0254) / 10,
-                    valuesInOtherUnit[i], 0.0001);
+            assertEquals("Contents of valuesInUnit should be equal to input", in[i] * (12 * 0.0254) / 10, valuesInOtherUnit[i],
+                    0.0001);
         }
         try
         {
@@ -218,16 +216,14 @@ public abstract class FloatVectorTest
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
         {
-            assertEquals("Values in FloatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
-                    0.0001);
+            assertEquals("Values in FloatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254), 0.0001);
         }
         out = mfv.getValuesSI();
         assertTrue("getValuesSI does not return null", null != out);
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
         {
-            assertEquals("Values in FloatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
-                    0.0001);
+            assertEquals("Values in FloatVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254), 0.0001);
         }
         LengthUnit uOut = fv.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
@@ -276,7 +272,7 @@ public abstract class FloatVectorTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 11", 11, fv.cardinality());
-        float[] in2 = {1f, -1f, 0f};
+        float[] in2 = { 1f, -1f, 0f };
         mfv = createFloatVector(in2, u, absolute).mutable();
         assertEquals("zSum should be 0", 0, mfv.zSum(), 0.00001);
         try
@@ -343,7 +339,7 @@ public abstract class FloatVectorTest
             assertFalse("fv and fvr should not be equal", fv.equals(fvr));
             assertFalse("fvr and fv should not be equal", fvr.equals(fv));
         }
-        float[] in3 = {-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100};
+        float[] in3 = { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 };
         mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
         mfv.abs();
         MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new FloatToFloat()
@@ -625,7 +621,7 @@ public abstract class FloatVectorTest
         if (absolute)
         {
             FloatVector<LengthUnit> fvAbsolute = createFloatVector(in3, LengthUnit.METER, true);
-            float[] in4 = {1, 2, 3, 4};
+            float[] in4 = { 1, 2, 3, 4 };
             FloatVector<LengthUnit> fvRelative = createFloatVector(in4, LengthUnit.METER, false);
             MutableFloatVector<LengthUnit> plus = null;
             MutableFloatVector<LengthUnit> minus = null;
@@ -677,7 +673,7 @@ public abstract class FloatVectorTest
             {
                 // ignore
             }
-            float[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            float[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fvRelative = createFloatVector(in5, LengthUnit.METER, false);
             try
             {
@@ -726,13 +722,13 @@ public abstract class FloatVectorTest
             {
                 for (int i = 0; i < in3.length; i++)
                 {
-                    assertEquals("value of element should be sum of contributing elements", in3[i] + in5[i],
-                            plus.getSI(i), 0.00001);
+                    assertEquals("value of element should be sum of contributing elements", in3[i] + in5[i], plus.getSI(i),
+                            0.00001);
                 }
                 for (int i = 0; i < in3.length; i++)
                 {
-                    assertEquals("value of element should be sum of contributing elements", in3[i] - in5[i],
-                            minus.getSI(i), 0.00001);
+                    assertEquals("value of element should be sum of contributing elements", in3[i] - in5[i], minus.getSI(i),
+                            0.00001);
                 }
             }
             catch (ValueException exception)
@@ -758,7 +754,7 @@ public abstract class FloatVectorTest
 
             try
             {
-                float[] in6 = {1, 2, 3};
+                float[] in6 = { 1, 2, 3 };
                 MutableFloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute).mutable();
                 MutableFloatVector<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -777,7 +773,7 @@ public abstract class FloatVectorTest
         // Relative
         {
             FloatVector<LengthUnit> fv1 = createFloatVector(in3, LengthUnit.METER, false);
-            float[] in4 = {1, 2, 3, 4};
+            float[] in4 = { 1, 2, 3, 4 };
             FloatVector<LengthUnit> fv2 = createFloatVector(in4, LengthUnit.METER, false);
             MutableFloatVector<SIUnit> product = null;
             try
@@ -788,8 +784,7 @@ public abstract class FloatVectorTest
                 }
                 else if (fv1 instanceof FloatVector.Rel.Sparse)
                 {
-                    product =
-                            MutableFloatVector.times((FloatVector.Rel.Sparse<?>) fv1, (FloatVector.Rel.Sparse<?>) fv2);
+                    product = MutableFloatVector.times((FloatVector.Rel.Sparse<?>) fv1, (FloatVector.Rel.Sparse<?>) fv2);
                 }
                 fail("Multiplying FloatVectors of unequal length should have thrown a ValueException");
             }
@@ -797,7 +792,7 @@ public abstract class FloatVectorTest
             {
                 // ignore
             }
-            float[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            float[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fv2 = createFloatVector(in5, LengthUnit.METER, false);
             try
             {
@@ -807,8 +802,7 @@ public abstract class FloatVectorTest
                 }
                 else if (fv1 instanceof FloatVector.Rel.Sparse)
                 {
-                    product =
-                            MutableFloatVector.times((FloatVector.Rel.Sparse<?>) fv1, (FloatVector.Rel.Sparse<?>) fv2);
+                    product = MutableFloatVector.times((FloatVector.Rel.Sparse<?>) fv1, (FloatVector.Rel.Sparse<?>) fv2);
                 }
             }
             catch (ValueException exception)
@@ -821,8 +815,8 @@ public abstract class FloatVectorTest
             {
                 for (int i = 0; i < in3.length; i++)
                 {
-                    assertEquals("value of element should be sum of contributing elements", in3[i] * in5[i],
-                            product.getSI(i), 0.00001);
+                    assertEquals("value of element should be sum of contributing elements", in3[i] * in5[i], product.getSI(i),
+                            0.00001);
                 }
             }
             catch (ValueException exception)
@@ -853,8 +847,7 @@ public abstract class FloatVectorTest
             {
                 if (fv1 instanceof FloatVector.Rel.Dense)
                 {
-                    multiplyReverse =
-                            MutableFloatVector.times((FloatVector.Rel.Dense<?>) fv2, (FloatVector.Rel.Dense<?>) fv1);
+                    multiplyReverse = MutableFloatVector.times((FloatVector.Rel.Dense<?>) fv2, (FloatVector.Rel.Dense<?>) fv1);
                 }
                 else if (fv1 instanceof FloatVector.Rel.Sparse)
                 {
@@ -872,7 +865,7 @@ public abstract class FloatVectorTest
             assertTrue("result of a * b should be equal to result of b * a", product.equals(multiplyReverse));
             try
             {
-                float[] in6 = {1, 2, 3};
+                float[] in6 = { 1, 2, 3 };
                 FloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute);
                 MutableFloatVector<LengthUnit> duplicate = original.mutable();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -888,8 +881,8 @@ public abstract class FloatVectorTest
             }
         }
         fv = createFloatVector(in, u, absolute);
-        float[] factorsTooShort = {10, 20, 30, 40, 50, 60};
-        float[] factorsCorrectLength = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+        float[] factorsTooShort = { 10, 20, 30, 40, 50, 60 };
+        float[] factorsCorrectLength = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 };
         if (absolute)
         {
             MutableFloatVector<LengthUnit> fv2 = null;
@@ -1045,8 +1038,7 @@ public abstract class FloatVectorTest
     /**
      * Interface encapsulating a function that takes a float and returns a float.
      * <p>
-     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -1054,20 +1046,20 @@ public abstract class FloatVectorTest
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jun 23, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -1082,8 +1074,7 @@ public abstract class FloatVectorTest
 
     /**
      * <p>
-     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -1091,20 +1082,20 @@ public abstract class FloatVectorTest
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jun 23, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -1116,8 +1107,8 @@ public abstract class FloatVectorTest
          * @param operation String; description of method that is being tested
          * @param resultValues array of float with processed values
          * @param precision double expected accuracy
-         * @param function FloatToFloat encapsulating function that converts one value in inputValues to the
-         *            corresponding value in resultValues
+         * @param function FloatToFloat encapsulating function that converts one value in inputValues to the corresponding value
+         *            in resultValues
          */
         public static void tester(final float[] inputValues, String operation, final float[] resultValues,
                 final double precision, final FloatToFloat function)
@@ -1207,8 +1198,8 @@ public abstract class FloatVectorTest
     @Test
     public final void relRel()
     {
-        float[] in1 = {10f, 20f, 30f, 40f};
-        float[] in2 = {110f, 120f, 130f, 140f};
+        float[] in1 = { 10f, 20f, 30f, 40f };
+        float[] in2 = { 110f, 120f, 130f, 140f };
         MassUnit u = MassUnit.POUND;
         FloatVector<MassUnit> fv1 = createFloatVectorRel(in1, u);
         FloatVector<MassUnit> fv2 = createFloatVectorRel(in2, u);
@@ -1217,15 +1208,11 @@ public abstract class FloatVectorTest
         {
             if (fv1 instanceof FloatVector.Rel.Dense)
             {
-                sum =
-                        MutableFloatVector.plus((FloatVector.Rel.Dense<MassUnit>) fv1,
-                                (FloatVector.Rel.Dense<MassUnit>) fv2);
+                sum = MutableFloatVector.plus((FloatVector.Rel.Dense<MassUnit>) fv1, (FloatVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof FloatVector.Rel.Sparse)
             {
-                sum =
-                        MutableFloatVector.plus((FloatVector.Rel.Sparse<MassUnit>) fv1,
-                                (FloatVector.Rel.Sparse<MassUnit>) fv2);
+                sum = MutableFloatVector.plus((FloatVector.Rel.Sparse<MassUnit>) fv1, (FloatVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
             {
@@ -1242,8 +1229,8 @@ public abstract class FloatVectorTest
         float[] sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i],
-                    sumValues[i], 0.0001);
+            assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i], sumValues[i],
+                    0.0001);
         }
         MutableFloatVector<MassUnit> difference = null;
         try
@@ -1251,14 +1238,13 @@ public abstract class FloatVectorTest
             if (fv1 instanceof FloatVector.Rel.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Rel.Dense<MassUnit>) fv1,
-                                (FloatVector.Rel.Dense<MassUnit>) fv2);
+                        MutableFloatVector.minus((FloatVector.Rel.Dense<MassUnit>) fv1, (FloatVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof FloatVector.Rel.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Rel.Sparse<MassUnit>) fv1,
-                                (FloatVector.Rel.Sparse<MassUnit>) fv2);
+                        MutableFloatVector
+                                .minus((FloatVector.Rel.Sparse<MassUnit>) fv1, (FloatVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
             {
@@ -1278,21 +1264,17 @@ public abstract class FloatVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        float[] in3 = {110f, 120f, 130f};
+        float[] in3 = { 110f, 120f, 130f };
         FloatVector<MassUnit> fv3 = createFloatVectorRel(in3, u);
         try
         {
             if (fv1 instanceof FloatVector.Rel.Dense)
             {
-                sum =
-                        MutableFloatVector.plus((FloatVector.Rel.Dense<MassUnit>) fv1,
-                                (FloatVector.Rel.Dense<MassUnit>) fv3);
+                sum = MutableFloatVector.plus((FloatVector.Rel.Dense<MassUnit>) fv1, (FloatVector.Rel.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof FloatVector.Rel.Sparse)
             {
-                sum =
-                        MutableFloatVector.plus((FloatVector.Rel.Sparse<MassUnit>) fv1,
-                                (FloatVector.Rel.Sparse<MassUnit>) fv3);
+                sum = MutableFloatVector.plus((FloatVector.Rel.Sparse<MassUnit>) fv1, (FloatVector.Rel.Sparse<MassUnit>) fv3);
             }
             else
             {
@@ -1309,14 +1291,13 @@ public abstract class FloatVectorTest
             if (fv1 instanceof FloatVector.Rel.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Rel.Dense<MassUnit>) fv1,
-                                (FloatVector.Rel.Dense<MassUnit>) fv3);
+                        MutableFloatVector.minus((FloatVector.Rel.Dense<MassUnit>) fv1, (FloatVector.Rel.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof FloatVector.Rel.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Rel.Sparse<MassUnit>) fv1,
-                                (FloatVector.Rel.Sparse<MassUnit>) fv3);
+                        MutableFloatVector
+                                .minus((FloatVector.Rel.Sparse<MassUnit>) fv1, (FloatVector.Rel.Sparse<MassUnit>) fv3);
             }
             else
             {
@@ -1334,15 +1315,11 @@ public abstract class FloatVectorTest
         {
             if (fv1 instanceof FloatVector.Rel.Dense)
             {
-                sum =
-                        MutableFloatVector.plus((FloatVector.Rel.Dense<MassUnit>) fv1,
-                                (FloatVector.Rel.Dense<MassUnit>) fv2);
+                sum = MutableFloatVector.plus((FloatVector.Rel.Dense<MassUnit>) fv1, (FloatVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof FloatVector.Rel.Sparse)
             {
-                sum =
-                        MutableFloatVector.plus((FloatVector.Rel.Sparse<MassUnit>) fv1,
-                                (FloatVector.Rel.Sparse<MassUnit>) fv2);
+                sum = MutableFloatVector.plus((FloatVector.Rel.Sparse<MassUnit>) fv1, (FloatVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
             {
@@ -1360,8 +1337,8 @@ public abstract class FloatVectorTest
         sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i] * 0.45359
-                    + in2[i] * 0.028350, sumValues[i] * 0.45359, 0.0001);
+            assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i] * 0.45359 + in2[i]
+                    * 0.028350, sumValues[i] * 0.45359, 0.0001);
         }
         fv2 = createFloatVectorRel(in2, u2);
         try
@@ -1369,14 +1346,13 @@ public abstract class FloatVectorTest
             if (fv1 instanceof FloatVector.Rel.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Rel.Dense<MassUnit>) fv1,
-                                (FloatVector.Rel.Dense<MassUnit>) fv2);
+                        MutableFloatVector.minus((FloatVector.Rel.Dense<MassUnit>) fv1, (FloatVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof FloatVector.Rel.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Rel.Sparse<MassUnit>) fv1,
-                                (FloatVector.Rel.Sparse<MassUnit>) fv2);
+                        MutableFloatVector
+                                .minus((FloatVector.Rel.Sparse<MassUnit>) fv1, (FloatVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
             {
@@ -1394,8 +1370,8 @@ public abstract class FloatVectorTest
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
-                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i] * 0.45359
+                    - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
         }
     }
 
@@ -1405,8 +1381,8 @@ public abstract class FloatVectorTest
     @Test
     public final void absAbs()
     {
-        float[] in1 = {10f, 20f, 30f, 40f};
-        float[] in2 = {110f, 220f, 330f, 440f};
+        float[] in1 = { 10f, 20f, 30f, 40f };
+        float[] in2 = { 110f, 220f, 330f, 440f };
         MassUnit u = MassUnit.POUND;
         FloatVector<MassUnit> fv1 = createFloatVectorAbs(in1, u);
         // System.out.println("fv1: " + fv1);
@@ -1418,14 +1394,13 @@ public abstract class FloatVectorTest
             if (fv1 instanceof FloatVector.Abs.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv1,
-                                (FloatVector.Abs.Dense<MassUnit>) fv2);
+                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv1, (FloatVector.Abs.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof FloatVector.Abs.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Sparse<MassUnit>) fv1,
-                                (FloatVector.Abs.Sparse<MassUnit>) fv2);
+                        MutableFloatVector
+                                .minus((FloatVector.Abs.Sparse<MassUnit>) fv1, (FloatVector.Abs.Sparse<MassUnit>) fv2);
             }
             else
             {
@@ -1446,21 +1421,20 @@ public abstract class FloatVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        float[] in3 = {110f, 120f, 130f};
+        float[] in3 = { 110f, 120f, 130f };
         FloatVector<MassUnit> fv3 = createFloatVectorAbs(in3, u);
         try
         {
             if (fv1 instanceof FloatVector.Abs.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv1,
-                                (FloatVector.Abs.Dense<MassUnit>) fv3);
+                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv1, (FloatVector.Abs.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof FloatVector.Abs.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Sparse<MassUnit>) fv1,
-                                (FloatVector.Abs.Sparse<MassUnit>) fv3);
+                        MutableFloatVector
+                                .minus((FloatVector.Abs.Sparse<MassUnit>) fv1, (FloatVector.Abs.Sparse<MassUnit>) fv3);
             }
             else
             {
@@ -1479,14 +1453,13 @@ public abstract class FloatVectorTest
             if (fv1 instanceof FloatVector.Abs.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv1,
-                                (FloatVector.Abs.Dense<MassUnit>) fv2);
+                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv1, (FloatVector.Abs.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof FloatVector.Abs.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Sparse<MassUnit>) fv1,
-                                (FloatVector.Abs.Sparse<MassUnit>) fv2);
+                        MutableFloatVector
+                                .minus((FloatVector.Abs.Sparse<MassUnit>) fv1, (FloatVector.Abs.Sparse<MassUnit>) fv2);
             }
             else
             {
@@ -1504,22 +1477,21 @@ public abstract class FloatVectorTest
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
-                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.001);
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i] * 0.45359
+                    - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.001);
         }
         try
         {
             if (fv1 instanceof FloatVector.Abs.Dense)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv2,
-                                (FloatVector.Abs.Dense<MassUnit>) fv1);
+                        MutableFloatVector.minus((FloatVector.Abs.Dense<MassUnit>) fv2, (FloatVector.Abs.Dense<MassUnit>) fv1);
             }
             else if (fv1 instanceof FloatVector.Abs.Sparse)
             {
                 difference =
-                        MutableFloatVector.minus((FloatVector.Abs.Sparse<MassUnit>) fv2,
-                                (FloatVector.Abs.Sparse<MassUnit>) fv1);
+                        MutableFloatVector
+                                .minus((FloatVector.Abs.Sparse<MassUnit>) fv2, (FloatVector.Abs.Sparse<MassUnit>) fv1);
             }
             else
             {
@@ -1537,8 +1509,8 @@ public abstract class FloatVectorTest
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted difference of the contributing elements", in2[i]
-                    * 0.028350 - in1[i] * 0.45359, differenceValues[i] * 0.028350, 0.001);
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in2[i] * 0.028350
+                    - in1[i] * 0.45359, differenceValues[i] * 0.028350, 0.001);
         }
         LengthUnit u4 = LengthUnit.INCH;
         FloatVector<LengthUnit> fv4 = createFloatVectorAbs(in1, u4);

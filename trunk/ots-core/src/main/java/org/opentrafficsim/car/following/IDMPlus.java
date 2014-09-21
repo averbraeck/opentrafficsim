@@ -13,35 +13,33 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
- * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter
- * J. Schakel, Victor L. Knoop and Bart van Arem in Transportation Research Record No 2316 pp 47-57, Washington D.C.,
- * 2012. <br />
- * There are two nasty type setting errors in equation 7 in this published version of the paper. Both times an equals
- * sign (<cite>=</cite>) after <cite>a<sub>gain</sub></cite> should <b>not</b> be there.
+ * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter J.
+ * Schakel, Victor L. Knoop and Bart van Arem in Transportation Research Record No 2316 pp 47-57, Washington D.C., 2012. <br>
+ * There are two nasty type setting errors in equation 7 in this published version of the paper. Both times an equals sign
+ * (<cite>=</cite>) after <cite>a<sub>gain</sub></cite> should <b>not</b> be there.
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <Line>
@@ -64,8 +62,8 @@ public class IDMPlus<Line> implements CarFollowingModel
             AccelerationUnit.METER_PER_SECOND_2);
 
     /**
-     * Maximum deceleration when actual speed is more than desired speed (v > vdes). (Should be a positive value even
-     * though it is a <b>de</b>celeration.) [m/s^2]
+     * Maximum deceleration when actual speed is more than desired speed (v &gt; vdes). (Should be a positive value even though
+     * it is a <b>de</b>celeration.) [m/s^2]
      */
     protected final DoubleScalar.Abs<AccelerationUnit> b0 = new DoubleScalar.Abs<AccelerationUnit>(0.5,
             AccelerationUnit.METER_PER_SECOND_2);
@@ -98,14 +96,14 @@ public class IDMPlus<Line> implements CarFollowingModel
     protected final DoubleScalar.Rel<TimeUnit> tSafe = new DoubleScalar.Rel<TimeUnit>(1.6, TimeUnit.SECOND);
 
     /**
-     * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the
-     * speed limit, etc.).
+     * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the speed
+     * limit, etc.).
      */
     protected final double delta = 1.0;
 
     /**
-     * Time slot size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between
-     * computational speed and accuracy).
+     * Time slot size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between computational speed
+     * and accuracy).
      */
     protected final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
 
@@ -121,10 +119,7 @@ public class IDMPlus<Line> implements CarFollowingModel
                 SpeedUnit.METER_PER_SECOND);
     }
 
-    /**
-     * @see org.opentrafficsim.car.following.CarFollowingModel#computeAcceleration(org.opentrafficsim.car.Car,
-     *      java.util.Set, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs)
-     */
+    /** {@inheritDoc} */
     @Override
     public final CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
             final DoubleScalar.Abs<SpeedUnit> speedLimit)
@@ -134,8 +129,7 @@ public class IDMPlus<Line> implements CarFollowingModel
         // System.out.println("vDes is " + vDes);
         DoubleScalar.Abs<LengthUnit> myFrontPosition = car.positionOfFront(thisEvaluationTime);
         // System.out.println("myFrontPosition is " + myFrontPosition);
-        DoubleScalar.Rel<LengthUnit> shortestHeadway =
-                new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> shortestHeadway = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
         Car closestLeader = null;
         for (Car leader : leaders)
         {
@@ -161,9 +155,8 @@ public class IDMPlus<Line> implements CarFollowingModel
                         AccelerationUnit.METER_PER_SECOND_2);
         logWeightedAverageSpeedTimes2.multiply(2); // don't forget the times 2
         DoubleScalar.Rel<SpeedUnit> dV =
-                (null == closestLeader) ? new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND)
-                        : MutableDoubleScalar.minus(car.getVelocity(thisEvaluationTime),
-                                closestLeader.getVelocity(thisEvaluationTime)).immutable();
+                (null == closestLeader) ? new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND) : MutableDoubleScalar
+                        .minus(car.getVelocity(thisEvaluationTime), closestLeader.getVelocity(thisEvaluationTime)).immutable();
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + car.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
@@ -172,18 +165,16 @@ public class IDMPlus<Line> implements CarFollowingModel
                         LengthUnit.METER,
                         this.s0,
                         Calc.speedTimesTime(car.getVelocity(thisEvaluationTime), this.tSafe),
-                        Calc.speedTimesTime(
-                                dV,
-                                Calc.speedDividedByAcceleration(myCurrentSpeed,
-                                        logWeightedAverageSpeedTimes2.immutable()))).immutable();
+                        Calc.speedTimesTime(dV,
+                                Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2.immutable())))
+                        .immutable();
         if (sStar.getValueSI() < 0) // Negative value should be treated as 0
         {
             sStar = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         }
         // System.out.println("s* is " + sStar);
         double distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);
-        MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration =
-                new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
+        MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration = new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
         newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));
         // System.out.println("distanceIncentive is " + distanceIncentive);
         // System.out.println("newAcceleration is " + newAcceleration);
@@ -192,11 +183,7 @@ public class IDMPlus<Line> implements CarFollowingModel
         return new CarFollowingModelResult(newAcceleration.immutable(), nextEvaluationTime.immutable(), 0);
     }
 
-    /**
-     * @see org.opentrafficsim.car.following.CarFollowingModel#computeLaneChangeAndAcceleration(org.opentrafficsim.car.Car,
-     *      java.util.Collection, java.util.Collection, java.util.Collection, java.util.Collection,
-     *      java.util.Collection, org.opentrafficsim.core.value.vdouble.scalar.DoubleScalarAbs, double, double)
-     */
+    /** {@inheritDoc} */
     @Override
     public final CarFollowingModelResult computeLaneChangeAndAcceleration(final Car car, final Collection<Car> sameLaneCars,
             final Collection<Car> preferredLaneCars, final Collection<Car> nonPreferredLaneCars,
@@ -208,8 +195,8 @@ public class IDMPlus<Line> implements CarFollowingModel
                 preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
         DoubleScalar.Abs<SpeedUnit> vAntStraight = anticipatedSpeed(speedLimit, car, sameLaneCars);
         double aGain =
-                (this.a.getValueSI() - Math.max(
-                        computeAcceleration(car, sameLaneCars, speedLimit).acceleration.getValueSI(), 0))
+                (this.a.getValueSI() - Math
+                        .max(computeAcceleration(car, sameLaneCars, speedLimit).acceleration.getValueSI(), 0))
                         / this.a.getValueSI();
         System.out.println(String.format("aGain: %.3f", aGain));
         double nonPreferredLaneSpeedIncentive = 0;
@@ -217,8 +204,8 @@ public class IDMPlus<Line> implements CarFollowingModel
         {
             nonPreferredLaneSpeedIncentive =
                     aGain
-                            * MutableDoubleScalar.minus(anticipatedSpeed(speedLimit, car, nonPreferredLaneCars),
-                                    vAntStraight).getValueSI() / this.vGain.getValueSI();
+                            * MutableDoubleScalar.minus(anticipatedSpeed(speedLimit, car, nonPreferredLaneCars), vAntStraight)
+                                    .getValueSI() / this.vGain.getValueSI();
         }
         double dBias = 0;
         double preferredLaneSpeedIncentive = 0;
@@ -249,8 +236,7 @@ public class IDMPlus<Line> implements CarFollowingModel
                 "Speed desire to merge to preferredLane: %.3f, speed desire to merge to overtakingLane: %.3f",
                 preferredLaneSpeedIncentive, nonPreferredLaneSpeedIncentive));
         double preferredLaneChangeDesire = totalDesire(preferredLaneRouteIncentive, preferredLaneSpeedIncentive, dBias);
-        double nonPreferredLaneChangeDesire =
-                totalDesire(nonPreferredLaneRouteIncentive, nonPreferredLaneSpeedIncentive, 0);
+        double nonPreferredLaneChangeDesire = totalDesire(nonPreferredLaneRouteIncentive, nonPreferredLaneSpeedIncentive, 0);
         boolean preferredLaneChangeOK = checkLaneChange(car, preferredLaneCars, preferredLaneChangeDesire, speedLimit);
         CarFollowingModelResult straight = computeAcceleration(car, sameLaneCars, speedLimit);
         System.out.println(String.format(
@@ -321,7 +307,7 @@ public class IDMPlus<Line> implements CarFollowingModel
     }
 
     /**
-     * Compute the total desire to change lane. <br />
+     * Compute the total desire to change lane. <br>
      * Equation 1 in the LMRS paper.
      * @param routeIncentive double; the desire to make the lane change in order to follow the route
      * @param speedIncentive double; the desire to make the lane change in order to gain speed (or avoid reducing speed)
@@ -334,7 +320,7 @@ public class IDMPlus<Line> implements CarFollowingModel
     }
 
     /**
-     * Combine the lane change incentives into one value that describes how <i>voluntary</i> a potential lane change is. <br />
+     * Combine the lane change incentives into one value that describes how <i>voluntary</i> a potential lane change is. <br>
      * Equation 11 in the LRMS paper.
      * @param routeIncentive double; the lane change incentive to follow the intended route
      * @param speedIncentive double; the lane change incentive for gaining (or not so much reducing) speed

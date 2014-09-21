@@ -17,36 +17,35 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 /**
  * This is a quick hack attempting to test-implement IDM+.
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jul 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleScalar.Rel<SpeedUnit>>
 {
     // TODO lots of these fields should probably be moved int the GTU class...
-    
+
     /** Time of last evaluation. */
     protected DoubleScalar.Abs<TimeUnit> lastEvaluationTime;
 
@@ -102,7 +101,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     }
 
     /**
-     * Return the speed of this Car at the specified time. <br />
+     * Return the speed of this Car at the specified time. <br>
      * v(t) = v0 + (t - t0) * a
      * @param when time for which the speed must be returned
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the speed at the specified time
@@ -115,7 +114,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     }
 
     /**
-     * Return the position of this Car at the specified time. <br />
+     * Return the position of this Car at the specified time. <br>
      * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
      * @param when time for which the position must be returned.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
@@ -220,8 +219,8 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.id,
-                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(), this.getPosition(when)
-                        .getValueSI(), this.getVelocity(when).getValueSI(), this.acceleration.getValueSI());
+                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(),
+                this.getPosition(when).getValueSI(), this.getVelocity(when).getValueSI(), this.acceleration.getValueSI());
     }
 
     /**
@@ -262,7 +261,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     }
 
     /**
-     * Determine by what distance the front of this Car is ahead or behind the front an other Car. <br />
+     * Determine by what distance the front of this Car is ahead or behind the front an other Car. <br>
      * Positive values indicate that this Car is ahead, negative values indicate behind.
      * @param otherCar Car; the car to which the headway must be returned
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
@@ -274,7 +273,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     }
 
     // TODO: we need something like headway that returns the lateral offset in lanes or meters
-    
+
     /**
      * Retrieve the CarFollowingModel of this Car.
      * @return CarFollowingModel

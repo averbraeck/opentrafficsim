@@ -39,25 +39,11 @@
 				<!-- module>../ots-yyy</module -->
 			</modules>
 		</profile>
-
-		<profile>
-			<id>activate-in-module</id>
-			<activation>
-				<file>
-					<exists>${basedir}/../development/dsol-checks.xml</exists>
-				</file>
-			</activation>
-			<properties>
-				<checkstyleDir>${basedir}/../development</checkstyleDir>
-			</properties>
-		</profile>
 	</profiles>
 
 	<properties>
 		<jdk.version>1.7</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<checkstyleDir>${basedir}/development</checkstyleDir>
 
 		<ots-version>${project.version}</ots-version>
 		<dsol-version>3.0.0</dsol-version>
@@ -84,11 +70,10 @@
 		<maven.failsafe.version>2.17</maven.failsafe.version>
 		<maven.cobertura.version>2.6</maven.cobertura.version>
 		<maven.jacoco.version>0.7.1.201405082137</maven.jacoco.version>
-		<maven.findbugs.version>2.5.4</maven.findbugs.version>
+		<maven.findbugs.version>3.0.0</maven.findbugs.version>
 		<maven.project-info-reports.version>2.7</maven.project-info-reports.version>
 		<maven.jxr.version>2.4</maven.jxr.version>
 		<maven.taglist.version>2.4</maven.taglist.version>
-		<maven.findbugs.version>2.5.4</maven.findbugs.version>
 		<maven.pmd.version>3.2</maven.pmd.version>
 		<maven.changes.version>2.10</maven.changes.version>
 		<wagon.maven.version>1.0-beta-5</wagon.maven.version>
@@ -220,21 +205,9 @@
 						<link>http://junit.sourceforge.net/javadoc/</link>
 						<link>http://xerces.apache.org/xerces2-j/javadocs/api/</link>
 						<link>http://www.jdom.org/docs/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/language/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/event/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/logger/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/interpreter/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/jstats/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/jstats-charts/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/naming/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-xml/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-gui/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-examples/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-tutorial/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-devs/apidocs/</link>
-						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-hla/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
+						<link>http://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
 						<link>http://simulation.tudelft.nl/parallelcolt/apidocs/</link>
 					</links>
 					<additionalJOption>-J-Xmx1024m</additionalJOption>
@@ -327,6 +300,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${maven.jacoco.version}</version>
 				<executions>
+				
 					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
 						is passed as VM argument when Maven the Surefire plugin is executed. -->
 					<execution>
@@ -343,6 +317,7 @@
 							<propertyName>surefireArgLine</propertyName>
 						</configuration>
 					</execution>
+					
 					<!-- Ensures that the code coverage report for unit tests is created 
 						after unit tests have been run. -->
 					<execution>
@@ -358,46 +333,7 @@
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${maven.jacoco.version}</version>
-				<executions>
-					<!-- The Executions required by unit tests are omitted. -->
-					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
-						is passed as VM argument when Maven the Failsafe plugin is executed. -->
-					<execution>
-						<id>pre-integration-test</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
-							<!-- Sets the name of the property containing the settings for JaCoCo 
-								runtime agent. -->
-							<propertyName>failsafeArgLine</propertyName>
-						</configuration>
-					</execution>
-					<!-- Ensures that the code coverage report for integration tests after 
-						integration tests have been run. -->
-					<execution>
-						<id>post-integration-test</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
-						</configuration>
-					</execution>
+					
 				</executions>
 			</plugin>
 
@@ -746,15 +682,6 @@
 			<id>central</id>
 			<name>Maven Repository Switchboard</name>
 			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>mvnrepository</id>
-			<name>mvnrepository</name>
-			<url>http://mvnrepository.com/artifact</url>
 		</repository>
 
 		<repository>

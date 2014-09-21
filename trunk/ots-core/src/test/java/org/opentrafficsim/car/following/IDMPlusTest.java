@@ -18,29 +18,28 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jul 11, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -104,10 +103,9 @@ public class IDMPlusTest
         {
             leaders.clear();
             leaderPosition =
-                    new DoubleScalar.Abs<LengthUnit>(
-                            spareDistance
-                                    + (3 + referenceCar.length().getValueSI() + referenceCar.getPosition(initialTime)
-                                            .getValueSI()), LengthUnit.METER);
+                    new DoubleScalar.Abs<LengthUnit>(spareDistance
+                            + (3 + referenceCar.length().getValueSI() + referenceCar.getPosition(initialTime).getValueSI()),
+                            LengthUnit.METER);
             leaderCar = new Car(0, simulator, null, initialTime, leaderPosition, initialSpeed);
             leaders.add(leaderCar);
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
@@ -139,8 +137,7 @@ public class IDMPlusTest
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             double acceleration = cfmr.acceleration.getValueSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);
-            assertTrue("acceleration should not decrease when leader speed is increased",
-                    acceleration >= referenceAcceleration);
+            assertTrue("acceleration should not decrease when leader speed is increased", acceleration >= referenceAcceleration);
             referenceAcceleration = acceleration;
         }
         assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
@@ -155,17 +152,19 @@ public class IDMPlusTest
                         + referenceCar.getPosition(initialTime).getValueSI(), LengthUnit.METER);
         leaderCar = new Car(0, simulator, null, initialTime, leaderPosition, initialSpeed);
         leaders.add(leaderCar);
-        //System.out.println("Setup    referenceCar: " + referenceCar);
+        // System.out.println("Setup    referenceCar: " + referenceCar);
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             referenceCar.setState(cfmr);
-            //System.out.println(String.format("step %3d referenceCar: %s", timeStep, referenceCar));
+            // System.out.println(String.format("step %3d referenceCar: %s", timeStep, referenceCar));
             if (timeStep > 100)
             {
                 double position = referenceCar.getPosition(cfmr.validUntil).getValueSI();
-                assertEquals("After 20 seconds the referenceCar should now be very close to 3m before the rear of the leader", 200, position, 0.1);
-                assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar.getVelocity(cfmr.validUntil).getValueSI(), 0.2);
+                assertEquals("After 20 seconds the referenceCar should now be very close to 3m before the rear of the leader",
+                        200, position, 0.1);
+                assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0,
+                        referenceCar.getVelocity(cfmr.validUntil).getValueSI(), 0.2);
             }
         }
     }

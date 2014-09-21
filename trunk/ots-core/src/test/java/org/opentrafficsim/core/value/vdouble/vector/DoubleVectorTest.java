@@ -24,29 +24,28 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jun 19, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -82,8 +81,7 @@ public abstract class DoubleVectorTest
             assertEquals("Values in DoubleVector in unit should be equal to input values", in[i], out[i], 0.0001);
             try
             {
-                assertEquals("Values in DoubleVector in unit should be equal to input values", in[i], fv.getInUnit(i),
-                        0.0001);
+                assertEquals("Values in DoubleVector in unit should be equal to input values", in[i], fv.getInUnit(i), 0.0001);
                 assertEquals("Values in DoubleVector in unit should be equal to input values", in[i], fv.getSI(i)
                         / (12 * 0.0254), 0.0001);
                 assertEquals("Values in DoubleVector in unit should be equal to input values", in[i],
@@ -136,8 +134,8 @@ public abstract class DoubleVectorTest
         assertEquals("Size of valuesInUnit should be size of input array", in.length, valuesInOtherUnit.length);
         for (int i = 0; i < in.length; i++)
         {
-            assertEquals("Contents of valuesInUnit should be equal to input", in[i] * (12 * 0.0254) / 10,
-                    valuesInOtherUnit[i], 0.0001);
+            assertEquals("Contents of valuesInUnit should be equal to input", in[i] * (12 * 0.0254) / 10, valuesInOtherUnit[i],
+                    0.0001);
         }
         try
         {
@@ -218,16 +216,14 @@ public abstract class DoubleVectorTest
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
         {
-            assertEquals("Values in DoubleVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
-                    0.0001);
+            assertEquals("Values in DoubleVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254), 0.0001);
         }
         out = mfv.getValuesSI();
         assertTrue("getValuesSI does not return null", null != out);
         assertEquals("Length of getValuesSI should match size", in.length, out.length);
         for (int i = 0; i < in.length; i++)
         {
-            assertEquals("Values in DoubleVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254),
-                    0.0001);
+            assertEquals("Values in DoubleVector should be equivalent values in meters", in[i], out[i] / (12 * 0.0254), 0.0001);
         }
         LengthUnit uOut = fv.getUnit();
         assertEquals("Stored unit should be provided unit", u, uOut);
@@ -276,7 +272,7 @@ public abstract class DoubleVectorTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 11", 11, fv.cardinality());
-        double[] in2 = {1f, -1f, 0f};
+        double[] in2 = { 1f, -1f, 0f };
         mfv = createDoubleVector(in2, u, absolute).mutable();
         assertEquals("zSum should be 0", 0, mfv.zSum(), 0.00001);
         try
@@ -343,7 +339,7 @@ public abstract class DoubleVectorTest
             assertFalse("fv and fvr should not be equal", fv.equals(fvr));
             assertFalse("fvr and fv should not be equal", fvr.equals(fv));
         }
-        double[] in3 = {-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100};
+        double[] in3 = { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 };
         mfv = createDoubleVector(in3, LengthUnit.METER, absolute).mutable();
         mfv.abs();
         MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new DoubleToDouble()
@@ -625,7 +621,7 @@ public abstract class DoubleVectorTest
         if (absolute)
         {
             DoubleVector<LengthUnit> fvAbsolute = createDoubleVector(in3, LengthUnit.METER, true);
-            double[] in4 = {1, 2, 3, 4};
+            double[] in4 = { 1, 2, 3, 4 };
             DoubleVector<LengthUnit> fvRelative = createDoubleVector(in4, LengthUnit.METER, false);
             MutableDoubleVector<LengthUnit> plus = null;
             MutableDoubleVector<LengthUnit> minus = null;
@@ -677,7 +673,7 @@ public abstract class DoubleVectorTest
             {
                 // ignore
             }
-            double[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            double[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fvRelative = createDoubleVector(in5, LengthUnit.METER, false);
             try
             {
@@ -726,13 +722,13 @@ public abstract class DoubleVectorTest
             {
                 for (int i = 0; i < in3.length; i++)
                 {
-                    assertEquals("value of element should be sum of contributing elements", in3[i] + in5[i],
-                            plus.getSI(i), 0.00001);
+                    assertEquals("value of element should be sum of contributing elements", in3[i] + in5[i], plus.getSI(i),
+                            0.00001);
                 }
                 for (int i = 0; i < in3.length; i++)
                 {
-                    assertEquals("value of element should be sum of contributing elements", in3[i] - in5[i],
-                            minus.getSI(i), 0.00001);
+                    assertEquals("value of element should be sum of contributing elements", in3[i] - in5[i], minus.getSI(i),
+                            0.00001);
                 }
             }
             catch (ValueException exception)
@@ -758,9 +754,8 @@ public abstract class DoubleVectorTest
 
             try
             {
-                double[] in6 = {1, 2, 3};
-                MutableDoubleVector<LengthUnit> original =
-                        createDoubleVector(in6, LengthUnit.METER, absolute).mutable();
+                double[] in6 = { 1, 2, 3 };
+                MutableDoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute).mutable();
                 MutableDoubleVector<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
                 assertTrue("Duplicate should be equal to original", duplicate.equals(original));
@@ -778,21 +773,18 @@ public abstract class DoubleVectorTest
         // Relative
         {
             DoubleVector<LengthUnit> fv1 = createDoubleVector(in3, LengthUnit.METER, false);
-            double[] in4 = {1, 2, 3, 4};
+            double[] in4 = { 1, 2, 3, 4 };
             DoubleVector<LengthUnit> fv2 = createDoubleVector(in4, LengthUnit.METER, false);
             MutableDoubleVector<SIUnit> product = null;
             try
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
                 {
-                    product =
-                            MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
+                    product = MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
                 }
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
                 {
-                    product =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1,
-                                    (DoubleVector.Rel.Sparse<?>) fv2);
+                    product = MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
                 }
                 fail("Multiplying DoubleVectors of unequal length should have thrown a ValueException");
             }
@@ -800,20 +792,17 @@ public abstract class DoubleVectorTest
             {
                 // ignore
             }
-            double[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            double[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fv2 = createDoubleVector(in5, LengthUnit.METER, false);
             try
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
                 {
-                    product =
-                            MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
+                    product = MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
                 }
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
                 {
-                    product =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1,
-                                    (DoubleVector.Rel.Sparse<?>) fv2);
+                    product = MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
                 }
             }
             catch (ValueException exception)
@@ -826,8 +815,8 @@ public abstract class DoubleVectorTest
             {
                 for (int i = 0; i < in3.length; i++)
                 {
-                    assertEquals("value of element should be sum of contributing elements", in3[i] * in5[i],
-                            product.getSI(i), 0.00001);
+                    assertEquals("value of element should be sum of contributing elements", in3[i] * in5[i], product.getSI(i),
+                            0.00001);
                 }
             }
             catch (ValueException exception)
@@ -864,8 +853,7 @@ public abstract class DoubleVectorTest
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
                 {
                     multiplyReverse =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv2,
-                                    (DoubleVector.Rel.Sparse<?>) fv1);
+                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv2, (DoubleVector.Rel.Sparse<?>) fv1);
                 }
             }
             catch (ValueException exception)
@@ -878,7 +866,7 @@ public abstract class DoubleVectorTest
             assertTrue("result of a * b should be equal to result of b * a", product.equals(multiplyReverse));
             try
             {
-                double[] in6 = {1, 2, 3};
+                double[] in6 = { 1, 2, 3 };
                 DoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute);
                 MutableDoubleVector<LengthUnit> duplicate = original.mutable();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -894,8 +882,8 @@ public abstract class DoubleVectorTest
             }
         }
         fv = createDoubleVector(in, u, absolute);
-        double[] factorsTooShort = {10, 20, 30, 40, 50, 60};
-        double[] factorsCorrectLength = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+        double[] factorsTooShort = { 10, 20, 30, 40, 50, 60 };
+        double[] factorsCorrectLength = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 };
         if (absolute)
         {
             MutableDoubleVector<LengthUnit> fv2 = null;
@@ -1047,8 +1035,7 @@ public abstract class DoubleVectorTest
     /**
      * Interface encapsulating a function that takes a double and returns a double.
      * <p>
-     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -1056,20 +1043,20 @@ public abstract class DoubleVectorTest
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jun 23, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -1084,8 +1071,7 @@ public abstract class DoubleVectorTest
 
     /**
      * <p>
-     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -1093,20 +1079,20 @@ public abstract class DoubleVectorTest
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jun 23, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -1118,8 +1104,8 @@ public abstract class DoubleVectorTest
          * @param operation String; description of method that is being tested
          * @param resultValues array of double with processed values
          * @param precision double expected accuracy
-         * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the
-         *            corresponding value in resultValues
+         * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the corresponding
+         *            value in resultValues
          */
         public static void tester(final double[] inputValues, final String operation, final double[] resultValues,
                 final double precision, final DoubleToDouble function)
@@ -1209,8 +1195,8 @@ public abstract class DoubleVectorTest
     @Test
     public void relRel()
     {
-        double[] in1 = {10f, 20f, 30f, 40f};
-        double[] in2 = {110f, 120f, 130f, 140f};
+        double[] in1 = { 10f, 20f, 30f, 40f };
+        double[] in2 = { 110f, 120f, 130f, 140f };
         MassUnit u = MassUnit.POUND;
         DoubleVector<MassUnit> fv1 = createDoubleVectorRel(in1, u);
         DoubleVector<MassUnit> fv2 = createDoubleVectorRel(in2, u);
@@ -1219,9 +1205,7 @@ public abstract class DoubleVectorTest
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
-                sum =
-                        MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1,
-                                (DoubleVector.Rel.Dense<MassUnit>) fv2);
+                sum = MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
@@ -1244,8 +1228,8 @@ public abstract class DoubleVectorTest
         double[] sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i],
-                    sumValues[i], 0.0001);
+            assertEquals("Each element should equal the sum of the contributing elements", in1[i] + in2[i], sumValues[i],
+                    0.0001);
         }
         MutableDoubleVector<MassUnit> difference = null;
         try
@@ -1280,15 +1264,13 @@ public abstract class DoubleVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        double[] in3 = {110f, 120f, 130f};
+        double[] in3 = { 110f, 120f, 130f };
         DoubleVector<MassUnit> fv3 = createDoubleVectorRel(in3, u);
         try
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
-                sum =
-                        MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1,
-                                (DoubleVector.Rel.Dense<MassUnit>) fv3);
+                sum = MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
@@ -1336,9 +1318,7 @@ public abstract class DoubleVectorTest
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
-                sum =
-                        MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1,
-                                (DoubleVector.Rel.Dense<MassUnit>) fv2);
+                sum = MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
@@ -1362,8 +1342,8 @@ public abstract class DoubleVectorTest
         sumValues = sum.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i] * 0.45359
-                    + in2[i] * 0.028350, sumValues[i] * 0.45359, 0.0001);
+            assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i] * 0.45359 + in2[i]
+                    * 0.028350, sumValues[i] * 0.45359, 0.0001);
         }
         fv2 = createDoubleVectorRel(in2, u2);
         try
@@ -1396,8 +1376,8 @@ public abstract class DoubleVectorTest
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
-                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i] * 0.45359
+                    - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.0001);
         }
     }
 
@@ -1407,8 +1387,8 @@ public abstract class DoubleVectorTest
     @Test
     public final void absAbs()
     {
-        double[] in1 = {10f, 20f, 30f, 40f};
-        double[] in2 = {110f, 220f, 330f, 440f};
+        double[] in1 = { 10f, 20f, 30f, 40f };
+        double[] in2 = { 110f, 220f, 330f, 440f };
         MassUnit u = MassUnit.POUND;
         DoubleVector<MassUnit> fv1 = createDoubleVectorAbs(in1, u);
         // System.out.println("fv1: " + fv1);
@@ -1448,7 +1428,7 @@ public abstract class DoubleVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        double[] in3 = {110f, 120f, 130f};
+        double[] in3 = { 110f, 120f, 130f };
         DoubleVector<MassUnit> fv3 = createDoubleVectorAbs(in3, u);
         try
         {
@@ -1506,8 +1486,8 @@ public abstract class DoubleVectorTest
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i]
-                    * 0.45359 - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.001);
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i] * 0.45359
+                    - in2[i] * 0.028350, differenceValues[i] * 0.45359, 0.001);
         }
         try
         {
@@ -1539,8 +1519,8 @@ public abstract class DoubleVectorTest
         differenceValues = difference.getValuesInUnit();
         for (int i = 0; i < in1.length; i++)
         {
-            assertEquals("Each element should equal the weighted difference of the contributing elements", in2[i]
-                    * 0.028350 - in1[i] * 0.45359, differenceValues[i] * 0.028350, 0.001);
+            assertEquals("Each element should equal the weighted difference of the contributing elements", in2[i] * 0.028350
+                    - in1[i] * 0.45359, differenceValues[i] * 0.028350, 0.001);
         }
         LengthUnit u4 = LengthUnit.INCH;
         DoubleVector<LengthUnit> fv4 = createDoubleVectorAbs(in1, u4);

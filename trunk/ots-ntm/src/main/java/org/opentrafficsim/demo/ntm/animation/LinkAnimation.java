@@ -49,7 +49,7 @@ public class LinkAnimation extends Renderable2D
 {
     /** stroke width for drawing links */
     private final float width;
-    
+
     /**
      * @param source
      * @param simulator
@@ -57,7 +57,8 @@ public class LinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public LinkAnimation(Link source, OTSSimulatorInterface simulator, float width) throws NamingException, RemoteException
+    public LinkAnimation(Link source, OTSSimulatorInterface simulator, float width) throws NamingException,
+            RemoteException
     {
         super(source, simulator);
         this.width = width;

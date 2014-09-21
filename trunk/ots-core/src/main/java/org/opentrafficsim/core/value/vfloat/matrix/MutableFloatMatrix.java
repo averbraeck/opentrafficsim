@@ -19,35 +19,34 @@ import cern.jet.math.tfloat.FloatFunctions;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit
  */
-public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements
-        WriteFloatMatrixFunctions<U>, FloatMathFunctions
+public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements WriteFloatMatrixFunctions<U>,
+        FloatMathFunctions
 {
 
     /** */
@@ -464,8 +463,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /** {@inheritDoc} */
     @Override
-    public final void setInUnit(final int row, final int column, final float value, final U valueUnit)
-            throws ValueException
+    public final void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
     {
         // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do this...
         setSI(row, column, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());
@@ -752,8 +750,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Scale the values in this MutableFloatMatrix by the corresponding values in a FloatMatrix.
-     * @param factor FloatMatrix; contains the values by which to scale the corresponding entries in this
-     *            MutableFloatMatrix
+     * @param factor FloatMatrix; contains the values by which to scale the corresponding entries in this MutableFloatMatrix
      * @throws ValueException if the matrices do not have the same size
      */
     public final void scaleValueByValue(final FloatMatrix<?> factor) throws ValueException
@@ -770,8 +767,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Scale the values in this MutableFloatMatrix by the corresponding values in a float array.
-     * @param factor float[][]; contains the values by which to scale the corresponding entries in this
-     *            MutableFloatMatrix
+     * @param factor float[][]; contains the values by which to scale the corresponding entries in this MutableFloatMatrix
      * @return this
      * @throws ValueException if the matrix and the array do not have the same size
      */
@@ -905,8 +901,8 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Abs<U> right) throws ValueException
     {
-        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(),
-                left.getUnit()).decrementBy(right);
+        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
+                .decrementBy(right);
     }
 
     /**
@@ -920,8 +916,8 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Abs.Sparse<U> right) throws ValueException
     {
-        return (MutableFloatMatrix.Rel.Sparse<U>) new MutableFloatMatrix.Rel.Sparse<U>(left.deepCopyOfData(),
-                left.getUnit()).decrementBy(right);
+        return (MutableFloatMatrix.Rel.Sparse<U>) new MutableFloatMatrix.Rel.Sparse<U>(left.deepCopyOfData(), left.getUnit())
+                .decrementBy(right);
     }
 
     /**
@@ -935,8 +931,8 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Abs.Dense<U> right) throws ValueException
     {
-        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(),
-                left.getUnit()).decrementBy(right);
+        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
+                .decrementBy(right);
     }
 
     /**
@@ -1036,8 +1032,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatMatrix.Abs.Dense<SIUnit> work =
-                new MutableFloatMatrix.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatMatrix.Abs.Dense<SIUnit> work = new MutableFloatMatrix.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
@@ -1055,8 +1050,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatMatrix.Rel.Dense<SIUnit> work =
-                new MutableFloatMatrix.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatMatrix.Rel.Dense<SIUnit> work = new MutableFloatMatrix.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }

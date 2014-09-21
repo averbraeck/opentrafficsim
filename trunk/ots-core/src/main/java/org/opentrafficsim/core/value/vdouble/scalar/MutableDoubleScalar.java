@@ -10,29 +10,28 @@ import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Sep 5, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit
@@ -199,7 +198,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Create a mutable version of this DoubleScalar. <br />
+     * Create a mutable version of this DoubleScalar. <br>
      * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
      * @return MutableDoubleScalar; mutable version of this DoubleScalar
      */
@@ -243,9 +242,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**********************************************************************************/
 
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
-     * is not allowed. Adding an absolute value to an existing relative value would require the result to become
-     * absolute, which is a type change that is impossible. For that operation, use a static method.
+     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value is not
+     * allowed. Adding an absolute value to an existing relative value would require the result to become absolute, which is a
+     * type change that is impossible. For that operation, use a static method.
      * @param value the value to add
      */
     public final void add(final DoubleScalar.Rel<U> value)
@@ -254,9 +253,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
-     * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
-     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
+     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a relative
+     * value is not allowed. Subtracting an absolute value from an existing absolute value would require the result to become
+     * relative, which is a type change that is impossible. For that operation, use a static method.
      * @param value the value to subtract
      */
     public final void subtract(final DoubleScalar.Rel<U> value)
@@ -269,9 +268,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**********************************************************************************/
 
     /**
-     * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
-     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return value
+     * will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an array of
+     * arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to add to the absolute value
      * @return the sum of the values as an absolute value
@@ -290,8 +289,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Add a number of relative values. Return a new instance of the value. Because of type erasure of generics, the
-     * method cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * Add a number of relative values. Return a new instance of the value. Because of type erasure of generics, the method
+     * cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param targetUnit the unit of the sum
      * @param valuesRel zero or more values to add
      * @return the sum of the values as a relative value
@@ -310,9 +309,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
-     * return value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
-     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the return
+     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an
+     * array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to subtract from the absolute value
      * @return the resulting value as an absolute value
@@ -331,9 +330,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the
-     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check
-     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the value
+     * will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an array of
+     * arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param valueRel the relative base value
      * @param valuesRel zero or more values to subtract from the first value
      * @return the resulting value as a relative value
@@ -352,8 +351,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
-     * will be the unit of the first argument.
+     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value will be
+     * the unit of the first argument.
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @param <U> Unit; the unit
@@ -375,8 +374,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
             final DoubleScalar.Abs<?> valueAbs2)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        valueAbs1.getUnit().getSICoefficients(), valueAbs2.getUnit().getSICoefficients()).toString());
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueAbs1.getUnit().getSICoefficients(),
+                        valueAbs2.getUnit().getSICoefficients()).toString());
         return new MutableDoubleScalar.Abs<SIUnit>(valueAbs1.valueSI * valueAbs2.valueSI, targetUnit);
     }
 
@@ -390,8 +389,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
             final DoubleScalar.Rel<?> valueRel2)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueRel1.getUnit().getSICoefficients(),
+                        valueRel2.getUnit().getSICoefficients()).toString());
         return new MutableDoubleScalar.Rel<SIUnit>(valueRel1.valueSI * valueRel2.valueSI, targetUnit);
     }
 
@@ -401,12 +400,11 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueAbs2 value 2
      * @return the division of the two absolute values as an absolute value
      */
-    public static DoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> valueAbs1,
-            final DoubleScalar.Abs<?> valueAbs2)
+    public static DoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> valueAbs1, final DoubleScalar.Abs<?> valueAbs2)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
-                        valueAbs1.getUnit().getSICoefficients(), valueAbs2.getUnit().getSICoefficients()).toString());
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueAbs1.getUnit().getSICoefficients(),
+                        valueAbs2.getUnit().getSICoefficients()).toString());
         return new DoubleScalar.Abs<SIUnit>(valueAbs1.valueSI / valueAbs2.valueSI, targetUnit);
     }
 
@@ -416,12 +414,11 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * @param valueRel2 value 2
      * @return the division of the two two relative values as a relative value
      */
-    public static DoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> valueRel1,
-            final DoubleScalar.Rel<?> valueRel2)
+    public static DoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> valueRel1, final DoubleScalar.Rel<?> valueRel2)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
-                        valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueRel1.getUnit().getSICoefficients(),
+                        valueRel2.getUnit().getSICoefficients()).toString());
         return new DoubleScalar.Rel<SIUnit>(valueRel1.valueSI / valueRel2.valueSI, targetUnit);
     }
 

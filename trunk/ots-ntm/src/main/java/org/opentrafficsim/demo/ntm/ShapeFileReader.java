@@ -145,7 +145,7 @@ public class ShapeFileReader
 
     /**
      * @param shapeFileName the nodes shapefile to read
-     * @param numberType 
+     * @param numberType
      * @param returnCentroid if true only loop through the centroid/zones (in case of mixed nodes and centroids)
      * @param allCentroids if true: the file contains centroids (a centroid file)
      * @return map of (shape file) nodes with nodenr as the key
@@ -231,7 +231,7 @@ public class ShapeFileReader
         String name = names[0];
         if (name.charAt(0) == 'C')
         {
-            name = name.substring(1);           
+            name = name.substring(1);
             nr = (long) Long.parseLong(name);
         }
         else
@@ -288,8 +288,8 @@ public class ShapeFileReader
                 long nr = (long) feature.getAttribute("LINKNR");
                 String name = String.valueOf(feature.getAttribute("NAME"));
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
-                // but also represent LENGTH by a string .... 
-                double length= Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
+                // but also represent LENGTH by a string ....
+                double length = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 Long lNodeA = InspectNodeCentroid(String.valueOf(feature.getAttribute("ANODE")));
                 long lNodeB = InspectNodeCentroid(String.valueOf(feature.getAttribute("BNODE")));
@@ -325,7 +325,7 @@ public class ShapeFileReader
                 }
                 else
                 { // possibly a link that connects to a centroid
-                    // but first test the geometry of the node/centroid: is it a node or is it a centroid?
+                  // but first test the geometry of the node/centroid: is it a node or is it a centroid?
                     if (centroidA != null)
                     {
                         if (testGeometry(geometry.getCoordinates()[0], centroidA.getPoint()))
@@ -387,7 +387,7 @@ public class ShapeFileReader
     }
 
     /**
-     * @param coordinate 
+     * @param coordinate
      * @param centroid
      * @return if TRUE: the points match geographically
      */
@@ -402,8 +402,7 @@ public class ShapeFileReader
 
     /**
      * @param shapeFileName the areas shapefile to read
-     * @throws IOException
-     * @throws Exception on error
+     * @throws IOException on error
      */
     public static void shapeFileInfo(final String shapeFileName) throws IOException
     {
