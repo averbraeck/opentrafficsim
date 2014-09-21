@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class LinkAnimation extends Renderable2D
 {
-    /** stroke width for drawing links */
+    /** stroke width for drawing links. */
     private final float width;
 
     /**
@@ -38,8 +38,8 @@ public class LinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public LinkAnimation(Link source, OTSSimulatorInterface simulator, float width) throws NamingException,
-            RemoteException
+    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -47,13 +47,13 @@ public class LinkAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.BLACK);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        Point a = ((Link) getSource()).getNodeA().getCentroid();
-        Point b = ((Link) getSource()).getNodeB().getCentroid();
+        Point a = ((Link) getSource()).getStartNode().getPoint();
+        Point b = ((Link) getSource()).getEndNode().getPoint();
         // draw relative to point A (getLocation)
         graphics.draw(new Line2D.Double(0.0, 0.0, b.getX() - a.getX(), a.getY() - b.getY()));
         graphics.setStroke(oldStroke);

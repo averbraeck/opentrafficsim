@@ -131,4 +131,11 @@ public class ShpNode implements LocatableInterface
         return this.y;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ShpNode [nr=" + this.nr + ", x=" + this.x + ", y=" + this.y + "]";
+    }
+
 }

@@ -6,8 +6,9 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.opentrafficsim.core.network.AbstractNode;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -24,10 +25,10 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Node implements LocatableInterface
+public class AreaNode extends AbstractNode<Long, Point>
 {
-    /** the center of the area for the simplified graph. */
-    private final Point centroid;
+    /** */
+    private static final long serialVersionUID = 20140920L;
 
     /** the area to which the node belongs. */
     private final Area area;
@@ -36,10 +37,9 @@ public class Node implements LocatableInterface
      * @param centroid the center of the area for the simplified graph.
      * @param area the area to which the node belongs.
      */
-    public Node(final Point centroid, final Area area)
+    public AreaNode(final Point centroid, final Area area)
     {
-        super();
-        this.centroid = centroid;
+        super(area.getNr(), centroid);
         this.area = area;
     }
 
@@ -47,7 +47,7 @@ public class Node implements LocatableInterface
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        return new DirectedPoint(new double[]{this.centroid.getX(), this.centroid.getY(), 0.0d});
+        return new DirectedPoint(new double[]{getPoint().getX(), getPoint().getY(), 0.0d});
     }
 
     /** {@inheritDoc} */
@@ -55,14 +55,6 @@ public class Node implements LocatableInterface
     public final Bounds getBounds() throws RemoteException
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
-    }
-
-    /**
-     * @return centroid
-     */
-    public final Point getCentroid()
-    {
-        return this.centroid;
     }
 
     /**
@@ -78,7 +70,7 @@ public class Node implements LocatableInterface
     @Override
     public String toString()
     {
-        return "Node [centroid=" + this.centroid + "]";
+        return "Node [centroid=" + getPoint() + "]";
     }
 
     /** {@inheritDoc} */
@@ -89,7 +81,7 @@ public class Node implements LocatableInterface
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.area == null) ? 0 : this.area.hashCode());
-        result = prime * result + ((this.centroid == null) ? 0 : this.centroid.hashCode());
+        result = prime * result + ((getPoint() == null) ? 0 : getPoint().hashCode());
         return result;
     }
 
@@ -104,7 +96,7 @@ public class Node implements LocatableInterface
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Node other = (Node) obj;
+        AreaNode other = (AreaNode) obj;
         if (this.area == null)
         {
             if (other.area != null)
@@ -112,12 +104,12 @@ public class Node implements LocatableInterface
         }
         else if (!this.area.equals(other.area))
             return false;
-        if (this.centroid == null)
+        if (getPoint() == null)
         {
-            if (other.centroid != null)
+            if (other.getPoint() != null)
                 return false;
         }
-        else if (!this.centroid.equals(other.centroid))
+        else if (!getPoint().equals(other.getPoint()))
             return false;
         return true;
     }

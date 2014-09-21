@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.demo.ntm.Node;
+import org.opentrafficsim.demo.ntm.AreaNode;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ public class NodeAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public NodeAnimation(Node source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(AreaNode source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(source, simulator);
     }
