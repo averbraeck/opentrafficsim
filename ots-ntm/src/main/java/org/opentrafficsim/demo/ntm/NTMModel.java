@@ -71,17 +71,26 @@ public class NTMModel implements OTSModelInterface
     private TripDemand tripDemand;
 
     /** graph containing the original network. */
-    @SuppressWarnings("unchecked")
-    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> linkGraph = new SimpleWeightedGraph<>(
-            (Class<? extends LinkEdge<Link>>) LinkEdge.class);
+    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> linkGraph;
 
     /** graph containing the simplified network. */
-    @SuppressWarnings("unchecked")
-    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> areaGraph = new SimpleWeightedGraph<>(
-            (Class<? extends LinkEdge<Link>>) LinkEdge.class);
+    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> areaGraph;
 
     /** debug information?. */
     private static final boolean DEBUG = true;
+
+    /**
+     * Constructor to make the graphs with the right type.
+     */
+    @SuppressWarnings("unchecked")
+    public NTMModel()
+    {
+        LinkEdge<Link> l = new LinkEdge<Link>(null);
+        this.linkGraph =
+                new SimpleWeightedGraph<AreaNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+        this.areaGraph =
+                new SimpleWeightedGraph<AreaNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+    }
 
     /** {@inheritDoc} */
     @Override
