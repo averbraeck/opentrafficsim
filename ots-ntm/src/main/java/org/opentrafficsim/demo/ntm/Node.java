@@ -50,7 +50,7 @@ public class Node implements LocatableInterface
 
     /** the area to which the node belongs. */
     private final Area area;
-    
+
     /**
      * @param centroid the center of the area for the simplified graph.
      * @param area the area to which the node belongs.
@@ -91,7 +91,7 @@ public class Node implements LocatableInterface
     {
         return this.area;
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
@@ -124,7 +124,7 @@ public class Node implements LocatableInterface
         if (getClass() != obj.getClass())
             return false;
         Node other = (Node) obj;
-        if (this.area == null) 
+        if (this.area == null)
         {
             if (other.area != null)
                 return false;
@@ -140,5 +140,5 @@ public class Node implements LocatableInterface
             return false;
         return true;
     }
-    
+
 }

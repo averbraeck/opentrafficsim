@@ -35,32 +35,31 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Common code for a contour plot. <br />
+ * Common code for a contour plot. <br>
  * The data collection code for acceleration assumes constant acceleration during the evaluation period of the GTU.
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -82,20 +81,20 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected final Axis yAxis;
 
     /** Time granularity values. */
-    protected static final double[] STANDARDTIMEGRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
+    protected static final double[] STANDARDTIMEGRANULARITIES = { 1, 2, 5, 10, 20, 30, 60, 120, 300, 600 };
 
     /** Index of the initial time granularity in standardTimeGranularites. */
     protected static final int STANDARDINITIALTIMEGRANULARITYINDEX = 3;
 
     /** Distance granularity values. */
-    protected static final double[] STANDARDDISTANCEGRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};
+    protected static final double[] STANDARDDISTANCEGRANULARITIES = { 10, 20, 50, 100, 200, 500, 1000 };
 
     /** Index of the initial distance granularity in standardTimeGranularites. */
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final DoubleScalar.Abs<TimeUnit> INITIALLOWERTIMEBOUND = new DoubleScalar.Abs<TimeUnit>(0,
-            TimeUnit.SECOND);
+    protected static final DoubleScalar.Abs<TimeUnit> INITIALLOWERTIMEBOUND =
+            new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
 
     /** Initial upper bound for the time scale. */
     protected static final DoubleScalar.Abs<TimeUnit> INITIALUPPERTIMEBOUND = new DoubleScalar.Abs<TimeUnit>(300,
@@ -120,13 +119,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         extendXRange(xAxis.getMaximumValue());
-        double[] boundaries = {redValue, yellowValue, greenValue};
+        double[] boundaries = { redValue, yellowValue, greenValue };
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
         final PointerHandler ph = new PointerHandler()
         {
-            /**
-             * @see org.opentrafficsim.graphs.PointerHandler#updateHint(double, double)
-             */
+            /** {@inheritDoc} */
             @Override
             void updateHint(final double domainValue, final double rangeValue)
             {
@@ -192,13 +189,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param caption String; caption for the new JMenu
      * @param format String; format string for the values in the items under the new JMenu
      * @param commandPrefix String; prefix for the actionCommand of the items under the new JMenu
-     * @param values double[]; array of values to be formatted using the format strings to yield the items under the new
-     *            JMenu
+     * @param values double[]; array of values to be formatted using the format strings to yield the items under the new JMenu
      * @param currentValue double; the currently selected value (used to put the bullet on the correct item)
      * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
      */
-    private JMenu buildMenu(final String caption, final String format, final String commandPrefix,
-            final double[] values, final double currentValue)
+    private JMenu buildMenu(final String caption, final String format, final String commandPrefix, final double[] values,
+            final double currentValue)
     {
         final JMenu result = new JMenu(caption);
         // Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?
@@ -222,8 +218,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param dataset XYZDataset with the values to render
      * @param boundaries double[]; array of three boundary values corresponding to Red, Yellow and Green
      * @param legendFormat String; the format string for captions in the legend
-     * @param legendStep value difference for successive colors in the legend. The first legend value displayed is equal
-     *            to the lowest value in boundaries.
+     * @param legendStep value difference for successive colors in the legend. The first legend value displayed is equal to the
+     *            lowest value in boundaries.
      * @return JFreeChart; the new XYBlockChart
      */
     private static JFreeChart createChart(final String caption, final String valueFormat, final XYZDataset dataset,
@@ -238,9 +234,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         yAxis.setUpperMargin(0.0);
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         XYBlockRenderer renderer = new XYBlockRenderer();
-        final Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
-        final ContinuousColorPaintScale paintScale =
-                new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
+        final Color[] colorValues = { Color.RED, Color.YELLOW, Color.GREEN };
+        final ContinuousColorPaintScale paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
         renderer.setPaintScale(paintScale);
         final XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
         final LegendItemCollection legend = new LegendItemCollection();
@@ -347,7 +342,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /**
-     * Return the y-axis bin number (the row number) of an item. <br />
+     * Return the y-axis bin number (the row number) of an item. <br>
      * Do not rely on the (current) fact that the data is stored column by column!
      * @param item Integer; the item
      * @return Integer; the bin number along the y axis of the item
@@ -362,7 +357,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /**
-     * Return the x-axis bin number (the column number) of an item. <br />
+     * Return the x-axis bin number (the column number) of an item. <br>
      * Do not rely on the (current) fact that the data is stored column by column!
      * @param item Integer; the item
      * @return Integer; the bin number along the x axis of the item
@@ -529,14 +524,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             }
             double binDistanceStart =
                     (car.getPosition(
-                            new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.xAxis.granularities[0],
-                                    TimeUnit.SECOND)).getValueSI() - this.yAxis.getMinimumValue().getValueSI())
-                            / this.yAxis.granularities[0];
-            double binDistanceEnd =
-                    (car.getPosition(
-                            new DoubleScalar.Abs<TimeUnit>(binEndTime * this.xAxis.granularities[0], TimeUnit.SECOND))
+                            new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.xAxis.granularities[0], TimeUnit.SECOND))
                             .getValueSI() - this.yAxis.getMinimumValue().getValueSI())
                             / this.yAxis.granularities[0];
+            double binDistanceEnd =
+                    (car.getPosition(new DoubleScalar.Abs<TimeUnit>(binEndTime * this.xAxis.granularities[0], TimeUnit.SECOND))
+                            .getValueSI() - this.yAxis.getMinimumValue().getValueSI()) / this.yAxis.granularities[0];
 
             // Compute the time in each distanceBin
             for (int distanceBin = (int) Math.floor(binDistanceStart); distanceBin <= binDistanceEnd; distanceBin++)
@@ -579,9 +572,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /**
-     * Increase storage for sample data. <br />
+     * Increase storage for sample data. <br>
      * This is only implemented for the time axis.
-     * @param newUpperLimit DoubleScalar<?> new upper limit for the X range
+     * @param newUpperLimit DoubleScalar&lt;?&gt; new upper limit for the X range
      */
     public abstract void extendXRange(DoubleScalar<?> newUpperLimit);
 

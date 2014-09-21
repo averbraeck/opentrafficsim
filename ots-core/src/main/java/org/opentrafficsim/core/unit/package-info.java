@@ -1,8 +1,8 @@
 /**
  * Classes that make up the unit system.
- * <br /> The unit system ensures that quantities (lengths, temperatures, etc) 
+ * <br> The unit system ensures that quantities (lengths, temperatures, etc) 
  * have a suitable unit and cannot be confused with quantities in other units
- * <br /> If that appears impossible, the abstract class ClarFollowingModel
+ * <br> If that appears impossible, the abstract class ClarFollowingModel
  * may need to be adapted. 
  * <p>
  * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX

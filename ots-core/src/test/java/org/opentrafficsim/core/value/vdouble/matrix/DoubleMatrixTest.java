@@ -28,29 +28,28 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jun 26, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -126,8 +125,7 @@ public abstract class DoubleMatrixTest
             {
                 try
                 {
-                    assertEquals("Value should still match", reference[row][column], fm.getInUnit(row, column),
-                            precision);
+                    assertEquals("Value should still match", reference[row][column], fm.getInUnit(row, column), precision);
                 }
                 catch (ValueException exception)
                 {
@@ -156,7 +154,7 @@ public abstract class DoubleMatrixTest
     /**
      * Check that the four creators of MutableDoubleMatrix work.
      */
-    @SuppressWarnings({"static-method", "unused"})
+    @SuppressWarnings({ "static-method", "unused" })
     @Test
     public final void mutableDoubleMatrixCreators()
     {
@@ -164,20 +162,16 @@ public abstract class DoubleMatrixTest
         try
         {
             checkContentsAndType(new DoubleMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true, true);
-            checkContentsAndType(new DoubleMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true,
+            checkContentsAndType(new DoubleMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true, false);
+            checkContentsAndType(new DoubleMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false, true);
+            checkContentsAndType(new DoubleMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false, false);
+            checkContentsAndType(new MutableDoubleMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true, true);
+            checkContentsAndType(new MutableDoubleMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, true,
                     false);
-            checkContentsAndType(new DoubleMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false,
+            checkContentsAndType(new MutableDoubleMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false,
                     true);
-            checkContentsAndType(new DoubleMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false,
+            checkContentsAndType(new MutableDoubleMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f, false,
                     false);
-            checkContentsAndType(new MutableDoubleMatrix.Abs.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
-                    true, true);
-            checkContentsAndType(new MutableDoubleMatrix.Abs.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
-                    true, false);
-            checkContentsAndType(new MutableDoubleMatrix.Rel.Dense<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
-                    false, true);
-            checkContentsAndType(new MutableDoubleMatrix.Rel.Sparse<LengthUnit>(data, LengthUnit.FOOT), data, 0.001f,
-                    false, false);
         }
         catch (ValueException exception)
         {
@@ -335,8 +329,8 @@ public abstract class DoubleMatrixTest
     }
 
     /**
-     * Create a 2D array of double for testing. Entry 0,0 is zero, all others will be non-zero unless a non-zero offset
-     * is specified.
+     * Create a 2D array of double for testing. Entry 0,0 is zero, all others will be non-zero unless a non-zero offset is
+     * specified.
      * @param rows Integer; number of rows in the 2D array
      * @param cols Integer; number of columns in the 2D array
      * @param badRow Boolean; if true; make the last row one entry longer than the rest
@@ -373,14 +367,13 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in[i].length; j++)
             {
-                assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j], out[i][j],
-                        0.001);
+                assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j], out[i][j], 0.001);
                 try
                 {
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
                             dm.getInUnit(i, j), 0.001);
-                    assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
-                            dm.getSI(i, j) / (12 * 0.0254), 0.001);
+                    assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j], dm.getSI(i, j)
+                            / (12 * 0.0254), 0.001);
                     assertEquals("Values in DoubleMatrix in unit should be equal to input values", in[i][j],
                             dm.getInUnit(i, j, LengthUnit.MILE) * 1609.34 / (12 * 0.0254), 0.1);
                 }
@@ -609,8 +602,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in[i].length; j++)
             {
-                assertEquals("Values in copy of DoubleMatrix should be equivalent values in meters", in[i][j],
-                        copyOut[i][j] / (12 * 0.0254), 0.001);
+                assertEquals("Values in copy of DoubleMatrix should be equivalent values in meters", in[i][j], copyOut[i][j]
+                        / (12 * 0.0254), 0.001);
             }
         }
         copyOut = dm.getValuesInUnit();
@@ -618,8 +611,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in[i].length; j++)
             {
-                assertEquals("Values in copy of DoubleMatrix in unit should be equal to input values", in[i][j],
-                        copyOut[i][j], 0.001);
+                assertEquals("Values in copy of DoubleMatrix in unit should be equal to input values", in[i][j], copyOut[i][j],
+                        0.001);
             }
         }
         MutableDoubleMatrix<LengthUnit> mcopy = copy.mutable();
@@ -673,7 +666,7 @@ public abstract class DoubleMatrixTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 35", 35, dm.cardinality());
-        double[][] in2 = {{1f, -1f, 0f}};
+        double[][] in2 = { { 1f, -1f, 0f } };
         mfm = safeCreateDoubleMatrix(in2, u, absolute).mutable();
         assertEquals("Cardinality should be 2", 2, mfm.cardinality());
         assertEquals("zSum should be 0", 0, mfm.zSum(), 0.00001);
@@ -756,8 +749,8 @@ public abstract class DoubleMatrixTest
             // ignore
         }
         double[][] in3 =
-                {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100},
-                        {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000}};
+                { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 },
+                        { -1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000 } };
         mfm = safeCreateDoubleMatrix(in3, LengthUnit.METER, absolute).mutable();
         mfm.abs();
         MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new DoubleToDouble()
@@ -1032,7 +1025,7 @@ public abstract class DoubleMatrixTest
         {
             // ignore
         }
-        double[][] singular = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
+        double[][] singular = { { 1, 2, 3 }, { 3, 5, 7 }, { 5, 10, 0 } };
         mfm = safeCreateDoubleMatrix(singular, LengthUnit.METER, absolute).mutable();
         try
         {
@@ -1077,8 +1070,8 @@ public abstract class DoubleMatrixTest
         {
             DoubleMatrix<LengthUnit> fm1 = safeCreateDoubleMatrix(in3, LengthUnit.METER, true);
             double[][] inRowCountMismatch =
-                    {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10}, {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000}};
-            double[][] inColCountMismatch = {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100}};
+                    { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10 }, { -1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000 } };
+            double[][] inColCountMismatch = { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 } };
             DoubleMatrix<LengthUnit> fm2 = safeCreateDoubleMatrix(inRowCountMismatch, LengthUnit.METER, false);
             DoubleMatrix<LengthUnit> plus = null;
             DoubleMatrix<LengthUnit> minus = null;
@@ -1446,9 +1439,8 @@ public abstract class DoubleMatrixTest
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
             try
             {
-                double[][] in6 = {{1, 2, 3}, {4, 5, 6}};
-                MutableDoubleMatrix<LengthUnit> original =
-                        safeCreateDoubleMatrix(in6, LengthUnit.METER, absolute).mutable();
+                double[][] in6 = { { 1, 2, 3 }, { 4, 5, 6 } };
+                MutableDoubleMatrix<LengthUnit> original = safeCreateDoubleMatrix(in6, LengthUnit.METER, absolute).mutable();
                 DoubleMatrix<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
                 assertTrue("Duplicate should be equal to original", duplicate.equals(original));
@@ -1560,8 +1552,8 @@ public abstract class DoubleMatrixTest
             {
                 for (int j = 0; j < left[0].length; j++)
                 {
-                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j],
-                            leftMatrix.getSI(i, j), 0.001);
+                    assertEquals("Values should now be sum of input values", left[i][j] + right[i][j], leftMatrix.getSI(i, j),
+                            0.001);
                 }
             }
         }
@@ -1622,8 +1614,7 @@ public abstract class DoubleMatrixTest
     /**
      * Interface encapsulating a function that takes a double and returns a double.
      * <p>
-     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -1631,20 +1622,20 @@ public abstract class DoubleMatrixTest
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jun 23, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -1659,8 +1650,7 @@ public abstract class DoubleMatrixTest
 
     /**
      * <p>
-     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -1668,20 +1658,20 @@ public abstract class DoubleMatrixTest
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jun 23, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -1693,8 +1683,8 @@ public abstract class DoubleMatrixTest
          * @param operation String; description of method that is being tested
          * @param resultValues array of array of double with processed values
          * @param precision double expected accuracy
-         * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the
-         *            corresponding value in resultValues
+         * @param function DoubleToDouble encapsulating function that converts one value in inputValues to the corresponding
+         *            value in resultValues
          */
         public static void tester(final double[][] inputValues, final String operation, final double[][] resultValues,
                 final double precision, final DoubleToDouble function)
@@ -1705,8 +1695,8 @@ public abstract class DoubleMatrixTest
                 {
                     double result = function.function(inputValues[i][j]);
                     String description =
-                            String.format("indices=%d,%d: %s(%f)->%f should be equal to %f with precision %f", i, j,
-                                    operation, inputValues[i][j], result, resultValues[i][j], precision);
+                            String.format("indices=%d,%d: %s(%f)->%f should be equal to %f with precision %f", i, j, operation,
+                                    inputValues[i][j], result, resultValues[i][j], precision);
                     // System.out.println(description);
                     assertEquals(description, result, resultValues[i][j], precision);
                 }
@@ -1940,8 +1930,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
-                        - in2[i][j], differenceValues[i][j], 0.0001);
+                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j] - in2[i][j],
+                        differenceValues[i][j], 0.0001);
             }
         }
         double[][] in3 = buildArray(2, 3, false, 0);
@@ -2038,8 +2028,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i][j]
-                        * 0.45359 + in2[i][j] * 0.028350, sumValues[i][j] * 0.45359, 0.001);
+                assertEquals("Each element should equal the weighted sum of the contributing elements", in1[i][j] * 0.45359
+                        + in2[i][j] * 0.028350, sumValues[i][j] * 0.45359, 0.001);
             }
         }
         try
@@ -2081,8 +2071,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.001);
+                assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i][j]
+                        * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.001);
             }
         }
     }
@@ -2140,8 +2130,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
-                        - in2[i][j], differenceValues[i][j], 0.0001);
+                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j] - in2[i][j],
+                        differenceValues[i][j], 0.0001);
             }
         }
         double[][] in3 = buildArray(2, 3, false, 0);
@@ -2220,8 +2210,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.01);
+                assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i][j]
+                        * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.01);
             }
         }
         try
@@ -2257,8 +2247,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[i].length; j++)
             {
-                assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in2[i][j] * 0.028350 - in1[i][j] * 0.45359, differenceValues[i][j] * 0.028350, 0.02);
+                assertEquals("Each element should equal the weighted difference of the contributing elements", in2[i][j]
+                        * 0.028350 - in1[i][j] * 0.45359, differenceValues[i][j] * 0.028350, 0.02);
             }
         }
         LengthUnit u4 = LengthUnit.INCH;
@@ -2335,7 +2325,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Abs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = {{1, 2, 3}, {4, 5, 6}};
+            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 } };
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
@@ -2356,8 +2346,8 @@ public abstract class DoubleMatrixTest
             {
                 for (int column = 0; column < 3; column++)
                 {
-                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
-                            .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column).getValueSI()
+                            * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
                 }
             }
         }
@@ -2368,7 +2358,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Rel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = {{1, 2, 3}, {4, 5, 6}};
+            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 } };
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
@@ -2389,8 +2379,8 @@ public abstract class DoubleMatrixTest
             {
                 for (int column = 0; column < 3; column++)
                 {
-                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column)
-                            .getValueSI() * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column).getValueSI()
+                            * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
                 }
             }
         }
@@ -2401,7 +2391,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Abs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
                 MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
@@ -2423,7 +2413,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Rel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
                 MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
@@ -2499,8 +2489,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j]
-                        - in2[i][j], differenceValues[i][j], 0.0001);
+                assertEquals("Each element should equal the difference of the contributing elements", in1[i][j] - in2[i][j],
+                        differenceValues[i][j], 0.0001);
             }
         }
         double[][] in3 = buildArray(2, 3, false, 0);
@@ -2579,8 +2569,8 @@ public abstract class DoubleMatrixTest
         {
             for (int j = 0; j < in1[0].length; j++)
             {
-                assertEquals("Each element should equal the weighted difference of the contributing elements",
-                        in1[i][j] * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.002);
+                assertEquals("Each element should equal the weighted difference of the contributing elements", in1[i][j]
+                        * 0.45359 - in2[i][j] * 0.028350, differenceValues[i][j] * 0.45359, 0.002);
             }
         }
     }
@@ -2591,8 +2581,8 @@ public abstract class DoubleMatrixTest
     @Test
     public final void solver()
     {
-        double[][] a = {{1, 2, 3}, {5, 6, 7}, {9, 10, 15}};
-        double[] b = {4, 8, 12};
+        double[][] a = { { 1, 2, 3 }, { 5, 6, 7 }, { 9, 10, 15 } };
+        double[] b = { 4, 8, 12 };
         DoubleMatrix<LengthUnit> aMatrix = safeCreateDoubleMatrix(a, LengthUnit.METER, true);
         DoubleVector<ForceUnit> bVector = null;
         if (aMatrix instanceof SparseData)
@@ -2726,8 +2716,7 @@ public abstract class DoubleMatrixTest
      * @throws ValueException when the array is not rectangular
      * @param <U> Unit; the unit
      */
-    protected abstract <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(double[][] in, U u)
-            throws ValueException;
+    protected abstract <U extends Unit<U>> DoubleMatrix.Abs<U> createDoubleMatrixAbs(double[][] in, U u) throws ValueException;
 
     /**
      * Create a new DoubleMatrix.Abs from an array of DoubleScalarAbs values.
@@ -2747,8 +2736,7 @@ public abstract class DoubleMatrixTest
      * @throws ValueException when the array is not rectangular
      * @param <U> Unit; the unit
      */
-    protected abstract <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(double[][] in, U u)
-            throws ValueException;
+    protected abstract <U extends Unit<U>> DoubleMatrix.Rel<U> createDoubleMatrixRel(double[][] in, U u) throws ValueException;
 
     /**
      * Create a new DoubleMatrix.Rel from an array of DoubleScalarRel values.

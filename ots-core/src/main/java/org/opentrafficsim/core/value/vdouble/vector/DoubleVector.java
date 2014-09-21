@@ -25,23 +25,23 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
  * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -51,8 +51,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         ReadOnlyDoubleVectorFunctions<U>
 {
     /**
-     * The internal storage for the vector; internally the values are stored in SI units; storage can be dense or
-     * sparse.
+     * The internal storage for the vector; internally the values are stored in SI units; storage can be dense or sparse.
      */
     protected DoubleMatrix1D vectorSI;
 
@@ -390,9 +389,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Create a mutable version of this DoubleVector. <br />
-     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
-     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * Create a mutable version of this DoubleVector. <br>
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first operation
+     * in the mutable version that modifies the data shall trigger a deep copy of the data.
      * @return MutableDoubleVector; mutable version of this DoubleVector
      */
     public abstract MutableDoubleVector<U> mutable();
@@ -597,7 +596,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Centralized size equality check.
-     * @param other DoubleVector<U>; other DoubleVector
+     * @param other DoubleVector&lt;?&gt;; other DoubleVector
      * @throws ValueException when vectors have unequal size
      */
     protected final void checkSize(final DoubleVector<?> other) throws ValueException
@@ -630,8 +629,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     {
         if (index < 0 || index >= this.vectorSI.size())
         {
-            throw new ValueException("index out of range (valid range is 0.." + (this.vectorSI.size() - 1) + ", got "
-                    + index + ")");
+            throw new ValueException("index out of range (valid range is 0.." + (this.vectorSI.size() - 1) + ", got " + index
+                    + ")");
         }
     }
 
@@ -671,13 +670,11 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @throws ValueException if the array has zero length
      * @param <U> Unit; the unit
      */
-    protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] fsArray)
-            throws ValueException
+    protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] fsArray) throws ValueException
     {
         if (0 == fsArray.length)
         {
-            throw new ValueException(
-                    "Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
+            throw new ValueException("Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
         }
         return fsArray;
     }

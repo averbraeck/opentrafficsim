@@ -77,13 +77,13 @@ public class NTMModel implements OTSModelInterface
 
     /** conectors from shape file */
     private Map<java.lang.Long, ShpLink> shpConnectors;
-    
+
     /** links from shape file */
     private Map<java.lang.Long, ShpLink> shpLinks;
 
     /** the centroids */
     private Map<java.lang.Long, ShpNode> centroids;
-    
+
     /** the demand of trips by Origin and Destination */
     private TripDemand tripDemand;
 
@@ -105,31 +105,35 @@ public class NTMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
         {
-            // read TrafficDemand   /src/main/resources
+            // read TrafficDemand /src/main/resources
             this.tripDemand = CsvFileReader.CsvReader("/gis/cordonmatrix_pa_os.txt", ";");
             System.out.println(new File(".").getCanonicalPath());
             // read the shape files
-        	// public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean returnCentroid, boolean allCentroids)
-        	// if returnCentroid: true: return centroids; 
-        	//                    false: return nodes
-        	// if allCentroids:   true: we are reading a file with only centroids
-        	//                    false: mixed centroids (number starts with "C") and nodes        	
-        	this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
-        	this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
-            this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
-      /*    this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
+            // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
+            // returnCentroid, boolean allCentroids)
+            // if returnCentroid: true: return centroids;
+            // false: return nodes
+            // if allCentroids: true: we are reading a file with only centroids
+            // false: mixed centroids (number starts with "C") and nodes
+            this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
             this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
-            this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
-            */
+            this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
+            /*
+             * this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true); this.areas =
+             * ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids); this.shpNodes =
+             * ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
+             */
 
-            this.shpLinks = new  HashMap<>();
-            this.shpConnectors = new  HashMap<>();
-            ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
-            //ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes, this.centroids);
+            this.shpLinks = new HashMap<>();
+            this.shpConnectors = new HashMap<>();
+            ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+                    this.shpNodes, this.centroids);
+            // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
+            // this.centroids);
 
             // build the higher level map and the graph
             buildGraph();
-            
+
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
             {

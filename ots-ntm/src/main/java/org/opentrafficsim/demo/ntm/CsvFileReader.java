@@ -50,7 +50,6 @@ public class CsvFileReader
 
     /**
      * @param csvFileName
-     * @param csvSplitBy
      * @param csvSplitBy : token that defines how to split a line
      * @return the TripDemand (nested HashMap: <origin, map<destination, tripinformation>>
      * @throws IOException
@@ -115,8 +114,10 @@ public class CsvFileReader
                     throw new Error("duplicate origin");
                 demand.put(origin, tripDemandRow);
 
-/*                System.out.println(demand.get(3569L).get(1L).getNumberOfTrips());
-                System.out.println(demand.get(3569L).get(2L).getNumberOfTrips());*/
+                /*
+                 * System.out.println(demand.get(3569L).get(1L).getNumberOfTrips());
+                 * System.out.println(demand.get(3569L).get(2L).getNumberOfTrips());
+                 */
             }
 
         }

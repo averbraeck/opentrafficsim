@@ -25,7 +25,7 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
  * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
  * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
  * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br />
+ * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
  * Output is a set of block charts:
  * <ul>
  * <li>Traffic density</li>

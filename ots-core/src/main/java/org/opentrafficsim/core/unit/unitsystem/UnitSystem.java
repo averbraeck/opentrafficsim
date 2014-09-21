@@ -12,23 +12,23 @@ import org.opentrafficsim.core.locale.Localization;
  * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Jun 6, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
@@ -74,13 +74,11 @@ public abstract class UnitSystem implements Serializable
     {
         CGS = new CGS("UnitSystem.CGS", "UnitSystem.centimeter-gram-second_system");
         CGS_ESU = new CGS_ESU("UnitSystem.CGS_(ESU)", "UnitSystem.centimeter-gram-second_system,_electrostatic_units");
-        CGS_EMU =
-                new CGS_EMU("UnitSystem.CGS_(EMU)", "UnitSystem.centimeter-gram-second_system,_electromagnetic_units");
+        CGS_EMU = new CGS_EMU("UnitSystem.CGS_(EMU)", "UnitSystem.centimeter-gram-second_system,_electromagnetic_units");
         IMPERIAL = new Imperial("UnitSystem.Imperial", "UnitSystem.Imperial_system");
         MTS = new MTS("UnitSystem.MTS", "UnitSystem.meter-tonne-second_system");
         OTHER = new Other("UnitSystem.Other", "UnitSystem.other_system");
-        SI_ACCEPTED =
-                new SIAccepted("UnitSystem.SI_accepted", "UnitSystem.International_System_of_Units_(Accepted_Unit)");
+        SI_ACCEPTED = new SIAccepted("UnitSystem.SI_accepted", "UnitSystem.International_System_of_Units_(Accepted_Unit)");
         SI_BASE = new SIBase("UnitSystem.SI", "UnitSystem.International_System_of_Units_(Base_Unit)");
         SI_DERIVED = new SIDerived("UnitSystem.SI_derived", "UnitSystem.International_System_of_Units_(Derived_Unit)");
         US_CUSTOMARY = new USCustomary("UnitSystem.US_customary", "UnitSystem.US_customary_system");

@@ -27,29 +27,28 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 /**
  * Test the non-GUI part of the ContourPlot class.
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights
- * reserved.
+ * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met:
  * <ul>
  * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  * disclaimer.</li>
- * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
- * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.</li>
+ * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+ * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or promote
+ * products derived from this software without specific prior written permission.</li>
  * </ul>
- * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
- * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
- * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
- * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or
- * services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability,
- * whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use
- * of this software, even if advised of the possibility of such damage.
+ * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including,
+ * but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no
+ * event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or
+ * consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or
+ * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
+ * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
+ * possibility of such damage.
  * @version Aug 21, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -116,13 +115,13 @@ public class ContourPlotTest
     /**
      * Test various properties of a ContourPlot that has no observed data added.
      * @param cp ContourPlot; the ContourPlot to test
-     * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has
-     *            passed
-     * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car
-     *            has travelled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the
-     *            value expected when no car has passed
+     * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has passed
+     * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car has
+     *            travelled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the value
+     *            expected when no car has passed
      */
-    public static void standardContourTests(final ContourPlot cp, final double expectedZValue, final double expectedZValueWithTraffic)
+    public static void standardContourTests(final ContourPlot cp, final double expectedZValue,
+            final double expectedZValueWithTraffic)
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -132,14 +131,13 @@ public class ContourPlotTest
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
         int expectedXBins =
-                (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
-                        ContourPlot.INITIALLOWERTIMEBOUND).getValueSI())
+                (int) Math.ceil((MutableDoubleScalar
+                        .minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getValueSI())
                         / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins =
-                (int) Math
-                        .ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
-                                / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
+                (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
+                        / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
         assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
@@ -195,8 +193,8 @@ public class ContourPlotTest
                     }
                     else
                     {
-                        assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue,
-                                alternateZ.doubleValue(), 0.0000);
+                        assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
+                                0.0000);
                     }
                 }
                 try
@@ -288,9 +286,9 @@ public class ContourPlotTest
         // Create a car running 50 km.h
         Car car = new Car(0, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car run at constant speed for one minute
-        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(initialTime.getValueSI() + 60,
-                TimeUnit.SECOND), 0));
+        car.setState(new CarFollowingModelResult(
+                new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
+                        initialTime.getValueSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
@@ -306,14 +304,14 @@ public class ContourPlotTest
             assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
                     x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
             Number alternateX = cp.getX(0, item);
-            assertEquals("getXValue and getX should return things that have the same value", x,
-                    alternateX.doubleValue(), 0.000001);
+            assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
+                    0.000001);
             double y = cp.getYValue(0, item);
             assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getValueSI());
             assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getValueSI());
             Number alternateY = cp.getY(0, item);
-            assertEquals("getYValue and getY should return things that have the same value", y,
-                    alternateY.doubleValue(), 0.000001);
+            assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
+                    0.000001);
             double z = cp.getZValue(0, item);
             if (Double.isNaN(expectedZValue))
             {
@@ -330,14 +328,13 @@ public class ContourPlotTest
             }
             else
             {
-                assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
-                        0.0000);
+                assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(), 0.0000);
             }
         }
         // Make the car run at constant speed for another minute
-        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
-                .getValueSI() + 60, TimeUnit.SECOND), 0));
+        car.setState(new CarFollowingModelResult(
+                new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
+                        car.getNextEvaluationTime().getValueSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
@@ -351,14 +348,14 @@ public class ContourPlotTest
             assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
                     x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
             Number alternateX = cp.getX(0, item);
-            assertEquals("getXValue and getX should return things that have the same value", x,
-                    alternateX.doubleValue(), 0.000001);
+            assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
+                    0.000001);
             double y = cp.getYValue(0, item);
             assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getValueSI());
             assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getValueSI());
             Number alternateY = cp.getY(0, item);
-            assertEquals("getYValue and getY should return things that have the same value", y,
-                    alternateY.doubleValue(), 0.000001);
+            assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
+                    0.000001);
             double z = cp.getZValue(0, item);
             // figure out if the car has traveled through this cell
             // if (x >= 180)
@@ -371,8 +368,7 @@ public class ContourPlotTest
             {
                 // the car MAY have hit contributed to this cell
                 DoubleScalar.Abs<TimeUnit> cellStartTime =
-                        new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getValueSI(), x),
-                                TimeUnit.SECOND);
+                        new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getValueSI(), x), TimeUnit.SECOND);
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
                         new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getValueSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
@@ -416,15 +412,15 @@ public class ContourPlotTest
                 }
                 else
                 {
-                    assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue,
-                            alternateZ.doubleValue(), 0.0000);
+                    assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
+                            0.0000);
                 }
             }
         }
         // Make the car run at constant speed for five more minutes
-        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
-                .getValueSI() + 300, TimeUnit.SECOND), 0));
+        car.setState(new CarFollowingModelResult(
+                new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
+                        car.getNextEvaluationTime().getValueSI() + 300, TimeUnit.SECOND), 0));
         cp.addData(car);
         // Check that the time range has expanded
         xBins = cp.xAxisBins();
@@ -440,8 +436,7 @@ public class ContourPlotTest
         }
         DoubleScalar.Abs<TimeUnit> carEndTime = car.getNextEvaluationTime();
         double expectedHighestTime = Math.floor(carEndTime.getValueSI() / useTimeGranularity) * useTimeGranularity;
-        assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime,
-                0.0001);
+        assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime, 0.0001);
         // Check the updateHint method in the PointerHandler
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
@@ -454,12 +449,12 @@ public class ContourPlotTest
                 {
                     for (Component c2 : ((Container) c1).getComponents())
                     {
-                        //System.out.println("c2 is " + c2);
+                        // System.out.println("c2 is " + c2);
                         if (c2 instanceof Container)
                         {
                             for (Component c3 : ((Container) c2).getComponents())
                             {
-                                //System.out.println("c3 is " + c3);
+                                // System.out.println("c3 is " + c3);
                                 if (c3 instanceof JLabel)
                                 {
                                     if (null == hintPanel)
@@ -517,7 +512,7 @@ public class ContourPlotTest
             fail("Could not find the PointerHandler for the chartPanel");
         }
         ph.updateHint(1, 2);
-        //System.out.println("Hint text is now " + hintPanel.getText());
+        // System.out.println("Hint text is now " + hintPanel.getText());
         assertFalse("Hint should not be a single space", " ".equals(hintPanel.getText()));
         ph.updateHint(Double.NaN, Double.NaN);
         assertEquals("The text should again be a single space", " ", hintPanel.getText());

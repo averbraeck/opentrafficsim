@@ -94,7 +94,7 @@ public class NTMTestApplication extends DSOLApplication
         {
             throw new SimRuntimeException("map.xml not found", e);
         }
-        */
+         */
 
         OTSReplication replication =
                 new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
