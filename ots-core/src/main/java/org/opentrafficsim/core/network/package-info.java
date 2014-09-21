@@ -1,13 +1,21 @@
 /**
+ * Classes that build a network with nodes, links, cross-sections and possibly lanes.
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
+ * The network classes are independent of the type of vehicle (GTU) that is used.
+ * Specific subclasses for roads, rail, shipping lanes, or planes should be added
+ * to sub-packages with names like road, rail, ship, pedestrians, and air. <br>
+ * Geometry classes can be added for animation, as well as a detailed cross-section
+ * of the links on the network. The d2 sub-package adds 2-dimensional spaces to the
+ * network for e.g., parking places and pedestrian movements. 
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.
- * 
  * <p>
- * See for project information <a href="http://www.simulation.tudelft.nl/">
- * www.simulation.tudelft.nl</a>.
+ * See for project information <a href="http://www.opentrafficsim.org/">
+ * www.opentrafficsim.org</a>.
  * <p>
- * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
+ * The OpenTrafficSim project is distributed under the following BSD-style license:
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * <ul>
@@ -31,8 +39,6 @@
  * contract, strict liability, or tort (including negligence or otherwise)
  * arising in any way out of the use of this software, even if advised of the
  * possibility of such damage.
- * 
- * @version Jul 1, 2014 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-package org.opentrafficsim.core.value.vdouble.matrix;
+package org.opentrafficsim.core.network;
+

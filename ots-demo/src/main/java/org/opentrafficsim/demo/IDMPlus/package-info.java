@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
+ * Copyright (c) 2013-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
  * Delft, the Netherlands. All rights reserved.
  * 
  * <p>
@@ -36,3 +36,4 @@
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 package org.opentrafficsim.demo.IDMPlus;
+

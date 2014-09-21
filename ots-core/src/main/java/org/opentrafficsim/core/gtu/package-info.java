@@ -1,13 +1,14 @@
 /**
- * GTU is short for Generalized Travel Unit.
+ * GTU (Generalized Travel Unit) is the base class for cars, trains, pedestrians, etc.
  * <p>
- * Copyright (c) 2002-2014 Delft University of Technology, Jaffalaan 5, 2628 BX
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.
  * <p>
- * See for project information <a href="http://www.simulation.tudelft.nl/">
- * www.simulation.tudelft.nl</a>.
+ * See for project information <a href="http://www.opentrafficsim.org/">
+ * www.opentrafficsim.org</a>.
  * <p>
- * The OpenTrafficSim project is distributed under the following BSD-style license:<br>
+ * The OpenTrafficSim project is distributed under the following BSD-style license:
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * <ul>
@@ -31,9 +32,6 @@
  * contract, strict liability, or tort (including negligence or otherwise)
  * arising in any way out of the use of this software, even if advised of the
  * possibility of such damage.
- * 
- * @version Sep 15, 2014 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 package org.opentrafficsim.core.gtu;
 
