@@ -1,5 +1,5 @@
 /**
- * Base classes for unit-based 0-d (Scalar), 1-d (Vector) and 2-d (Matrix) values.
+ * TEMPORARY PACKAGE; will be integrated into network package.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.
@@ -33,5 +33,5 @@
  * arising in any way out of the use of this software, even if advised of the
  * possibility of such damage.
  */
-package org.opentrafficsim.core.value;
+package org.opentrafficsim.core.direction;
 
