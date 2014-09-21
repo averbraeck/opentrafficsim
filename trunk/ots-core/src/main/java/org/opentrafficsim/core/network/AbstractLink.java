@@ -2,6 +2,9 @@ package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
 
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+
+import org.opentrafficsim.core.unit.FlowUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -14,44 +17,57 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the type of ID, e.g., String or Integer.
+ * @param <ID> the ID type of the Link, e.g., String or Integer.
+ * @param <N> the type of node that this link uses.
  */
-public class Link<ID> implements Serializable
+public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements Serializable, LocatableInterface
 {
     /** */
     private static final long serialVersionUID = 20140920L;
 
     /** link id. */
-    private final ID id;
+    private ID id;
 
-    /** begin node (directional). */
-    private final Node<?> beginNode;
+    /** start node (directional). */
+    private N startNode;
 
     /** end node (directional). */
-    private final Node<?> endNode;
+    private N endNode;
 
     /** link length in a length unit. */
-    private final DoubleScalar<LengthUnit> length;
+    private DoubleScalar<LengthUnit> length;
 
     /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
-    private double capacity;
+    private DoubleScalar<FlowUnit> capacity;
 
     /**
      * Construction of a link.
      * @param id the link id.
-     * @param beginNode begin node (directional).
+     * @param startNode start node (directional).
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
      */
-    public Link(final ID id, final Node<?> beginNode, final Node<?> endNode, final DoubleScalar<LengthUnit> length,
-            final double capacity)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length,
+            final DoubleScalar<FlowUnit> capacity)
     {
         this.id = id;
-        this.beginNode = beginNode;
+        this.startNode = startNode;
         this.endNode = endNode;
         this.length = length;
         setCapacity(capacity);
+    }
+
+    /**
+     * Construction of a link.
+     * @param id the link id.
+     * @param startNode start node (directional).
+     * @param endNode end node (directional).
+     * @param length link length in a length unit.
+     */
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length)
+    {
+        this(id, startNode, endNode, length, new DoubleScalar.Abs<FlowUnit>(Double.POSITIVE_INFINITY, FlowUnit.PER_SECOND));
     }
 
     /**
@@ -71,25 +87,17 @@ public class Link<ID> implements Serializable
     }
 
     /**
-     * @return link capacity.
+     * @return start node.
      */
-    public final double getCapacity()
+    public final N getStartNode()
     {
-        return this.getLinkCapacity();
-    }
-
-    /**
-     * @return begin node.
-     */
-    public final Node<?> getBeginNode()
-    {
-        return this.beginNode;
+        return this.startNode;
     }
 
     /**
      * @return end node.
      */
-    public final Node<?> getEndNode()
+    public final N getEndNode()
     {
         return this.endNode;
     }
@@ -97,7 +105,7 @@ public class Link<ID> implements Serializable
     /**
      * @return link capacity.
      */
-    public final double getLinkCapacity()
+    public final DoubleScalar<FlowUnit> getCapacity()
     {
         return this.capacity;
     }
@@ -105,7 +113,7 @@ public class Link<ID> implements Serializable
     /**
      * @param capacity set the link capacity.
      */
-    public final void setCapacity(final double capacity)
+    public final void setCapacity(final DoubleScalar<FlowUnit> capacity)
     {
         this.capacity = capacity;
     }

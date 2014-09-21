@@ -70,19 +70,19 @@ import java.util.Set;
  * @param <ID> the ID type of the network.
  * @param <L>
  */
-public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serializable
+public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140822L;
 
-    /** network id */
+    /** network id. */
     private final ID id;
 
-    /** Node of which this network is an expansion */
-    private Node<?> expansionOfNode = null;
+    /** Node of which this network is an expansion. */
+    private AbstractNode<?, ?> expansionOfNode = null;
 
-    /** HashSet of Nodes */
-    private Set<Node<?>> nodeSet = new HashSet<Node<?>>();
+    /** HashSet of Nodes. */
+    private Set<AbstractNode<?, ?>> nodeSet = new HashSet<>();
 
     /**
      * Construction of an empty network.
@@ -112,7 +112,8 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @param expansionNode Node of which this network is an expansion.
      * @throws NetworkException when expansion node is part of the initial collection.
      */
-    public Network(final ID id, final Collection<? extends L> collection, final Node<?> expansionNode) throws NetworkException
+    public Network(final ID id, final Collection<? extends L> collection, final AbstractNode<?, ?> expansionNode)
+            throws NetworkException
     {
         super(collection);
         this.id = id;
@@ -125,7 +126,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     /**
      * @return expansionOfNode
      */
-    public Node<?> getExpansionOfNode()
+    public AbstractNode<?, ?> getExpansionOfNode()
     {
         return this.expansionOfNode;
     }
@@ -134,7 +135,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @param expansionOfNode set expansionOfNode
      * @throws NetworkException when expansion node is part of the node collection.
      */
-    public void setExpansionOfNode(Node<?> expansionOfNode) throws NetworkException
+    public void setExpansionOfNode(AbstractNode<?, ?> expansionOfNode) throws NetworkException
     {
         this.expansionOfNode = expansionOfNode;
     }
@@ -150,7 +151,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     /**
      * @return nodeSet
      */
-    public Set<Node<?>> getNodeSet()
+    public Set<AbstractNode<?, ?>> getNodeSet()
     {
         return this.nodeSet;
     }
@@ -158,7 +159,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
     /**
      * @param nodeSet set nodeSet
      */
-    public void setNodeSet(Set<Node<?>> nodeSet)
+    public void setNodeSet(Set<AbstractNode<?, ?>> nodeSet)
     {
         this.nodeSet = nodeSet;
     }
@@ -167,7 +168,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @param node
      * @return true or false
      */
-    public boolean isInNetwork(Node<?> node)
+    public boolean isInNetwork(AbstractNode<?, ?> node)
     {
 
         if (this.nodeSet.contains(node))
@@ -176,11 +177,11 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         }
         else
         {
-            for (Node<?> n : this.nodeSet)
+            for (AbstractNode<?, ?> n : this.nodeSet)
             {
-                if (n instanceof ExpansionNode)
+                if (n instanceof AbstractExpansionNode)
                 {
-                    if (((ExpansionNode<?>) n).getNetwork().isInNetwork(node))
+                    if (((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetwork(node))
                     {
                         return true;
                     }
@@ -196,12 +197,11 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @return true or false
      * @throws NetworkException
      */
-    public boolean addNode(Node<?> addThis) throws NetworkException
+    public boolean addNode(AbstractNode<?, ?> addThis) throws NetworkException
     {
         if (isInNetwork(addThis))
         {
-            throw new NetworkException("Adding Node " + addThis.getId().toString() + ". Node " + addThis.getName().toString()
-                    + " is  already in the Set");
+            throw new NetworkException("Adding Node " + addThis.getId().toString() + ". This Node is  already in the Set");
         }
         else
         {
@@ -215,7 +215,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @param node
      * @return boolean
      */
-    public boolean isInNetworkLevel(Node<?> node)
+    public boolean isInNetworkLevel(AbstractNode<?, ?> node)
     {
         if (this.nodeSet.contains(node))
         {
@@ -232,7 +232,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @return network
      * @throws NetworkException
      */
-    public Network<?, ?> getSubNetworkConsistNode(Node<?> node) throws NetworkException
+    public Network<?, ?> getSubNetworkConsistNode(AbstractNode<?, ?> node) throws NetworkException
     {
         if (isInNetwork(node))
         {
@@ -242,11 +242,11 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
             }
             else
             {
-                for (Node<?> n : this.nodeSet)
+                for (AbstractNode<?, ?> n : this.nodeSet)
                 {
-                    if (n instanceof ExpansionNode)
+                    if (n instanceof AbstractExpansionNode)
                     {
-                        if (((ExpansionNode<?>) n).getNetwork().isInNetworkLevel(node))
+                        if (((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetworkLevel(node))
                         {
                             return getSubNetworkConsistNode(node);
                         }
@@ -266,7 +266,7 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
      * @return boolean
      * @throws NetworkException
      */
-    public boolean deleteNode(Node<?> deleteThis) throws NetworkException
+    public boolean deleteNode(AbstractNode<?, ?> deleteThis) throws NetworkException
     {
         if (isInNetwork(deleteThis))
         {
@@ -289,10 +289,21 @@ public class Network<ID, L extends Link<?>> extends HashSet<L> implements Serial
         }
     }
 
-    /*
-     * public boolean expandNode(Node<?> node) throws NetworkException{ if (expansionOfNode == null){ throw new
-     * NetworkException("This Node"+node.getNodeID().toString()+"is not able to expand.") } else{ } } public boolean
-     * collapseToNode(Network<?,?> node){ }
+    /*-
+    public boolean expandNode(AbstractNode<?, ?> node) throws NetworkException
+    {
+        if (expansionOfNode == null)
+        {
+            throw new NetworkException("This Node" + node.getId().toString() + " is not able to expand.");
+        }
+        else
+        {
+        }
+    }
+
+    public boolean collapseToNode(Network<?, ?> node)
+    {
+    }
      */
 
 } // End of class

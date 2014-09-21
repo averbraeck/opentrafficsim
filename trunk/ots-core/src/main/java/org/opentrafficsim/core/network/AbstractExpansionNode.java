@@ -11,29 +11,26 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
- * @param <ID>
+ * @param <ID> the ID type of the node.
+ * @param <P> the point type of the node (Point, DirectedPoint, XY, etc.).
  */
-public class ExpansionNode<ID> extends Node<ID>
+public abstract class AbstractExpansionNode<ID, P> extends AbstractNode<ID, P>
 {
+    /** */
+    private static final long serialVersionUID = 20140921L;
+    
     /** Network of expanded Node. */
     private Network<?, ?> network;
 
     /**
      * @param id ID of ExpansionNode.
-     */
-    public ExpansionNode(final ID id)
-    {
-        super(id);
-    }
-
-    /**
-     * @param id ID of ExpansionNode.
+     * @param point the point when the expansion node is collapsed.
      * @param network Network of expanded Node.
      */
-    public ExpansionNode(final ID id, final Network<?, ?> network)
+    public AbstractExpansionNode(final ID id, final P point, final Network<?, ?> network)
     {
-        super(id);
-        this.setNetwork(network);
+        super(id, point);
+        this.network = network;
     }
 
     /**
@@ -42,14 +39,6 @@ public class ExpansionNode<ID> extends Node<ID>
     public final Network<?, ?> getNetwork()
     {
         return this.network;
-    }
-
-    /**
-     * @param network Network of expanded Node.
-     */
-    public final void setNetwork(final Network<?, ?> network)
-    {
-        this.network = network;
     }
 
 }
