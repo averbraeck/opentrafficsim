@@ -56,11 +56,11 @@ public class FlowContourPlot extends ContourPlot
             this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
         }
         final int highestBinNeeded =
-                (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
-                        / this.xAxis.granularities[0]);
+                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                        / this.getXAxis().granularities[0]);
         while (highestBinNeeded >= this.cumulativeLengths.size())
         {
-            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis().getBinCount()],
                     LengthUnit.METER));
         }
     }
@@ -70,13 +70,13 @@ public class FlowContourPlot extends ContourPlot
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
     {
-        if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
             return;
         }
         while (timeBin >= this.cumulativeLengths.size())
         {
-            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis().getBinCount()],
                     LengthUnit.METER));
         }
         MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBin);
@@ -122,7 +122,7 @@ public class FlowContourPlot extends ContourPlot
                     endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
-        return 3600 * cumulativeLengthInSI / this.xAxis.getCurrentGranularity() / this.yAxis.getCurrentGranularity();
+        return 3600 * cumulativeLengthInSI / this.getXAxis().getCurrentGranularity() / this.getYAxis().getCurrentGranularity();
     }
 
 }

@@ -40,10 +40,11 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
- * http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow</a>.
+ * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow">
+ * Wikipedia: http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow</a>.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 31, 2014 <br>
@@ -55,60 +56,112 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private static final long serialVersionUID = 20140701L;
 
     /** The ChartPanel for this Fundamental Diagram. */
-    protected JFreeChart chartPanel;
+    private  JFreeChart chartPanel;
 
     /** Caption for this Fundamental Diagram. */
-    final String caption;
+    private final String caption;
 
     /** Position of this Fundamental Diagram. */
-    final DoubleScalar.Abs<LengthUnit> position;
+    private final DoubleScalar.Abs<LengthUnit> position;
 
     /** Area to show status information. */
-    protected final JLabel statusLabel;
+    private final JLabel statusLabel;
 
     /** Sample duration of the detector that generates this Fundamental Diagram. */
-    protected final DoubleScalar.Rel<TimeUnit> aggregationTime;
+    private final DoubleScalar.Rel<TimeUnit> aggregationTime;
+
+    /**
+     * @return aggregationTime
+     */
+    public final DoubleScalar.Rel<TimeUnit> getAggregationTime()
+    {
+        return this.aggregationTime;
+    }
 
     /** Storage for the Samples; one for each lane covered by the detector. */
     private ArrayList<ArrayList<Sample>> sampleSets;
 
     // TODO we need a linear density unit (1/m, 1/km). Now badly abusing MassUnit.KILOGRAM.
     /** Definition of the density axis. */
-    Axis densityAxis = new Axis(new DoubleScalar.Abs<MassUnit>(0, MassUnit.KILOGRAM), new DoubleScalar.Abs<MassUnit>(200,
-            MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new DoubleScalar.Abs<MassUnit>(0, MassUnit.KILOGRAM),
+            new DoubleScalar.Abs<MassUnit>(200, MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density",
+            "density %.1f veh/km");
+
+    /**
+     * @return densityAxis
+     */
+    public final Axis getDensityAxis()
+    {
+        return this.densityAxis;
+    }
 
     /** Definition of the speed axis. */
-    Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(180,
-            SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
+    private Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+            new DoubleScalar.Abs<SpeedUnit>(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed",
+            "speed %.0f km/h");
+
+    /**
+     * @return speedAxis
+     */
+    public final Axis getSpeedAxis()
+    {
+        return this.speedAxis;
+    }
+
+    /**
+     * @return flowAxis
+     */
+    public final Axis getFlowAxis()
+    {
+        return this.flowAxis;
+    }
 
     /** Definition of the flow axis. */
-    Axis flowAxis = new Axis(new DoubleScalar.Abs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR, "FrequencyUnit.PerHour",
-            "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalar.Abs<FrequencyUnit>(3000d, FrequencyUnit.HERTZ), null, 0d,
-            "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new DoubleScalar.Abs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR,
+            "FrequencyUnit.PerHour", "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalar.Abs<FrequencyUnit>(3000d,
+            FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
-    Axis xAxis;
+    private Axis xAxis;
 
     /** The currently shown Y-axis. */
-    Axis yAxis;
+    private Axis yAxis;
 
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();
 
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
+    
+    /**
+     * Retrieve the format string for the Y axis.
+     * @return format string
+     */
+    public final String getYAxisFormat()
+    {
+        return this.yAxis.format;
+    }
+
+    /**
+     * Retrieve the format string for the X axis.
+     * @return format string
+     */
+    public final String getXAxisFormat()
+    {
+        return this.xAxis.format;
+    }
 
     /**
      * Graph a Fundamental Diagram.
      * @param caption String; the caption shown above the graphing area.
-     * @param numberOfLanes Integer; the number of lanes covered by the detector that generates the data for this Fundamental
-     *            diagram
-     * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data for this
+     * @param numberOfLanes Integer; the number of lanes covered by the detector that generates the data for this
      *            Fundamental diagram
+     * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data
+     *            for this Fundamental diagram
      * @param position DoubleScalarAbs&lt;LengthUnit&gt;; position of the detector (FIXME: should be a LOT more general)
      */
-    public FundamentalDiagram(final String caption, final int numberOfLanes, final DoubleScalar.Rel<TimeUnit> aggregationTime,
-            final DoubleScalar.Abs<LengthUnit> position)
+    public FundamentalDiagram(final String caption, final int numberOfLanes,
+            final DoubleScalar.Rel<TimeUnit> aggregationTime, final DoubleScalar.Abs<LengthUnit> position)
     {
         if (numberOfLanes <= 0)
         {
@@ -128,7 +181,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.position = new DoubleScalar.Abs<LengthUnit>(position);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
-                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
+                        false);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(true);
@@ -150,12 +204,12 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             {
                 if (Double.isNaN(domainValue))
                 {
-                    FundamentalDiagram.this.statusLabel.setText(" ");
+                    setStatusText(" ");
                     return;
                 }
-                String s1 = String.format(FundamentalDiagram.this.xAxis.format, domainValue);
-                String s2 = String.format(FundamentalDiagram.this.yAxis.format, rangeValue);
-                FundamentalDiagram.this.statusLabel.setText(s1 + ", " + s2);
+                String s1 = String.format(getXAxisFormat(), domainValue);
+                String s2 = String.format(getYAxisFormat(), rangeValue);
+                setStatusText(s1 + ", " + s2);
             }
 
         };
@@ -164,7 +218,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         cp.setMouseWheelEnabled(true);
         final JMenu subMenu = new JMenu("Set layout");
         final ButtonGroup group = new ButtonGroup();
-        final JRadioButtonMenuItem defaultItem = addMenuItem(subMenu, group, this.densityAxis, this.flowAxis, true);
+        final JRadioButtonMenuItem defaultItem = addMenuItem(subMenu, group, getDensityAxis(), this.flowAxis, true);
         addMenuItem(subMenu, group, this.flowAxis, this.speedAxis, false);
         addMenuItem(subMenu, group, this.densityAxis, this.speedAxis, false);
         actionPerformed(new ActionEvent(this, 0, defaultItem.getActionCommand()));
@@ -173,6 +227,15 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
+    }
+    
+    /**
+     * Update the status text.
+     * @param newText String; the new text to show
+     */
+    public final void setStatusText(final String newText)
+    {
+        this.statusLabel.setText(newText);
     }
 
     /**
@@ -183,21 +246,22 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     {
         return new DoubleScalar.Abs<LengthUnit>(this.position);
     }
-
+    
     /**
      * Build one JRadioButtonMenuItem for the sub menu of the context menu.
      * @param subMenu JMenu; the menu to which the new JRadioButtonMenuItem is added
      * @param group ButtonGroup; the buttonGroup for the new JRadioButtonMenuItem
      * @param xAxisToSelect Axis; the Axis that will become X-axis when this item is clicked
      * @param yAxisToSelect Axis; the Axis that will become Y-axis when this item is clicked
-     * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new JRadioButtonMenuItem
-     *            will <b>not</b> be selected
+     * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new
+     *            JRadioButtonMenuItem will <b>not</b> be selected
      * @return JRatioButtonMenuItem; the newly added item
      */
     private JRadioButtonMenuItem addMenuItem(final JMenu subMenu, final ButtonGroup group, final Axis xAxisToSelect,
             final Axis yAxisToSelect, final boolean selected)
     {
-        final JRadioButtonMenuItem item = new JRadioButtonMenuItem(yAxisToSelect.shortName + " / " + xAxisToSelect.shortName);
+        final JRadioButtonMenuItem item =
+                new JRadioButtonMenuItem(yAxisToSelect.shortName + " / " + xAxisToSelect.shortName);
         item.setSelected(selected);
         item.setActionCommand(yAxisToSelect.shortName + "/" + xAxisToSelect.shortName);
         item.addActionListener(this);
@@ -390,7 +454,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Storage for one sample of data collected by a point-detector that accumulates harmonic mean speed and flow.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -398,20 +463,20 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-     * disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
-     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
-     * promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
+     * following disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
+     * or promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
-     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
-     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
-     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
-     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
-     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
-     * software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied
+     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
+     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
+     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
+     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
+     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
+     * in any way out of the use of this software, even if advised of the possibility of such damage.
      * @version Jul 31, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -430,15 +495,15 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          */
         public double getValue(final Axis axis)
         {
-            if (axis == FundamentalDiagram.this.densityAxis)
+            if (axis == getDensityAxis())
             {
-                return this.flow * 3600 / FundamentalDiagram.this.aggregationTime.getValueSI() / this.harmonicMeanSpeed;
+                return this.flow * 3600 / getAggregationTime().getValueSI() / this.harmonicMeanSpeed;
             }
-            else if (axis == FundamentalDiagram.this.flowAxis)
+            else if (axis == getFlowAxis())
             {
-                return this.flow * 3600 / FundamentalDiagram.this.aggregationTime.getValueSI();
+                return this.flow * 3600 / getAggregationTime().getValueSI();
             }
-            else if (axis == FundamentalDiagram.this.speedAxis)
+            else if (axis == getSpeedAxis())
             {
                 return this.harmonicMeanSpeed * 3600 / 1000;
             }

@@ -32,7 +32,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 24, 2014 <br>
@@ -44,22 +45,62 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     private static final long serialVersionUID = 20140724L;
 
     /** Sample interval of this TrajectoryPlot. */
-    protected final DoubleScalar.Rel<TimeUnit> sampleInterval;
+    private final DoubleScalar.Rel<TimeUnit> sampleInterval;
+
+    /**
+     * @return sampleInterval
+     */
+    public final DoubleScalar.Rel<TimeUnit> getSampleInterval()
+    {
+        return this.sampleInterval;
+    }
 
     /** Minimum position on this TrajectoryPlot. */
-    protected final DoubleScalar.Abs<LengthUnit> minimumPosition;
+    private final DoubleScalar.Abs<LengthUnit> minimumPosition;
+
+    /**
+     * @return minimumPosition
+     */
+    public final DoubleScalar.Abs<LengthUnit> getMinimumPosition()
+    {
+        return this.minimumPosition;
+    }
+
+    /**
+     * @return maximumPosition
+     */
+    public final DoubleScalar.Abs<LengthUnit> getMaximumPosition()
+    {
+        return this.maximumPosition;
+    }
 
     /** Maximum position on this TrajectoryPlot. */
-    protected final DoubleScalar.Abs<LengthUnit> maximumPosition;
+    private final DoubleScalar.Abs<LengthUnit> maximumPosition;
 
     /** Maximum of the time axis. */
-    protected DoubleScalar.Abs<TimeUnit> maximumTime = new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND);
+    private DoubleScalar.Abs<TimeUnit> maximumTime = new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND);
+
+    /**
+     * @return maximumTime
+     */
+    public final DoubleScalar.Abs<TimeUnit> getMaximumTime()
+    {
+        return this.maximumTime;
+    }
+
+    /**
+     * @param maximumTime set maximumTime
+     */
+    public final void setMaximumTime(final DoubleScalar.Abs<TimeUnit> maximumTime)
+    {
+        this.maximumTime = maximumTime;
+    }
 
     /** The ChartPanel for this TrajectoryPlot. */
-    protected final JFreeChart chartPanel;
+    private final JFreeChart chartPanel;
 
     /** Area to show status information. */
-    protected final JLabel statusLabel;
+    private final JLabel statusLabel;
 
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();
@@ -81,7 +122,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         this.minimumPosition = minimumPosition;
         this.maximumPosition = maximumPosition;
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
-        this.chartPanel = ChartFactory.createXYLineChart(caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+        this.chartPanel =
+                ChartFactory.createXYLineChart(caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
@@ -92,8 +134,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         this.chartPanel.getXYPlot().setDomainAxis(xAxis);
         this.chartPanel.getXYPlot().setRangeAxis(yAxis);
-        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(), MutableDoubleScalar.minus(maximumPosition, minimumPosition)
-                .getValueSI());
+        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(),
+                MutableDoubleScalar.minus(maximumPosition, minimumPosition).getValueSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
@@ -108,7 +150,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
             {
                 if (Double.isNaN(domainValue))
                 {
-                    TrajectoryPlot.this.statusLabel.setText(" ");
+                    setStatusText(" ");
                     return;
                 }
                 String value = "";
@@ -171,8 +213,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                 else
                     value = "";
                  */
-                TrajectoryPlot.this.statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue,
-                        value));
+                setStatusText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue, value));
             }
         };
         cp.addMouseMotionListener(ph);
@@ -183,6 +224,15 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         this.reGraph(); // fixes the domain axis
         // TODO ensure that shapes for all the data points don't get allocated.
         // Currently many megabytes of memory become allocated for Ellipses.
+    }
+
+    /**
+     * Update the status text.
+     * @param newText String; the new text to show
+     */
+    public final void setStatusText(final String newText)
+    {
+        this.statusLabel.setText(newText);
     }
 
     /**
@@ -263,7 +313,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
 
     /**
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -271,20 +322,20 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-     * disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
-     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
-     * promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
+     * following disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
+     * or promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
-     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
-     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
-     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
-     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
-     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
-     * software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied
+     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
+     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
+     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
+     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
+     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
+     * in any way out of the use of this software, even if advised of the possibility of such damage.
      * @version Jul 24, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -309,21 +360,19 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         public void addSegment(final Car car)
         {
             final int startSample =
-                    (int) Math.ceil(car.getLastEvaluationTime().getValueSI() / TrajectoryPlot.this.sampleInterval.getValueSI());
+                    (int) Math.ceil(car.getLastEvaluationTime().getValueSI() / getSampleInterval().getValueSI());
             final int endSample =
-                    (int) (Math
-                            .ceil(car.getNextEvaluationTime().getValueSI() / TrajectoryPlot.this.sampleInterval.getValueSI()));
+                    (int) (Math.ceil(car.getNextEvaluationTime().getValueSI() / getSampleInterval().getValueSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
-                        new DoubleScalar.Abs<TimeUnit>(sample * TrajectoryPlot.this.sampleInterval.getValueSI(),
-                                TimeUnit.SECOND);
+                        new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getValueSI(), TimeUnit.SECOND);
                 DoubleScalar.Abs<LengthUnit> position = car.getPosition(sampleTime);
-                if (position.getValueSI() < TrajectoryPlot.this.minimumPosition.getValueSI())
+                if (position.getValueSI() < getMinimumPosition().getValueSI())
                 {
                     continue;
                 }
-                if (position.getValueSI() > TrajectoryPlot.this.maximumPosition.getValueSI())
+                if (position.getValueSI() > getMaximumPosition().getValueSI())
                 {
                     continue;
                 }
@@ -340,9 +389,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition = car.getPosition(this.currentEndTime);
-            if (car.getNextEvaluationTime().getValueSI() > TrajectoryPlot.this.maximumTime.getValueSI())
+            if (car.getNextEvaluationTime().getValueSI() > getMaximumTime().getValueSI())
             {
-                TrajectoryPlot.this.maximumTime = car.getNextEvaluationTime();
+                setMaximumTime(car.getNextEvaluationTime());
             }
         }
 
@@ -361,7 +410,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
          */
         public double getTime(final int item)
         {
-            return (item + this.firstSample) * TrajectoryPlot.this.sampleInterval.getValueSI();
+            return (item + this.firstSample) * getSampleInterval().getValueSI();
         }
 
         /**
