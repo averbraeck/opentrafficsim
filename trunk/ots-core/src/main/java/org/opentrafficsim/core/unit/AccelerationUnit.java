@@ -80,12 +80,14 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
                 new AccelerationUnit(SpeedUnit.KNOT, TimeUnit.SECOND, "AccelerationUnit.knot_per_second",
                         "AccelerationUnit.kt/s", IMPERIAL);
         MILE_PER_HOUR_PER_SECOND =
-                new AccelerationUnit(SpeedUnit.MILE_PER_HOUR, TimeUnit.SECOND, "AccelerationUnit.mile_per_hour_per_second",
-                        "AccelerationUnit.mi/h/s", IMPERIAL);
+                new AccelerationUnit(SpeedUnit.MILE_PER_HOUR, TimeUnit.SECOND,
+                        "AccelerationUnit.mile_per_hour_per_second", "AccelerationUnit.mi/h/s", IMPERIAL);
         STANDARD_GRAVITY =
-                new AccelerationUnit("AccelerationUnit.standard_gravity", "AccelerationUnit.g", SI_DERIVED, METER_PER_SECOND_2,
-                        9.80665);
-        GAL = new AccelerationUnit(LengthUnit.CENTIMETER, TimeUnit.SECOND, "AccelerationUnit.gal", "AccelerationUnit.Gal", CGS);
+                new AccelerationUnit("AccelerationUnit.standard_gravity", "AccelerationUnit.g", SI_DERIVED,
+                        METER_PER_SECOND_2, 9.80665);
+        GAL =
+                new AccelerationUnit(LengthUnit.CENTIMETER, TimeUnit.SECOND, "AccelerationUnit.gal",
+                        "AccelerationUnit.Gal", CGS);
     }
 
     /**
@@ -128,7 +130,8 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public AccelerationUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final AccelerationUnit referenceUnit, final double conversionFactorToReferenceUnit)
