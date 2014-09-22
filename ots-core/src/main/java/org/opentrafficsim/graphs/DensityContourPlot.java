@@ -57,11 +57,11 @@ public class DensityContourPlot extends ContourPlot
             this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
         }
         final int highestBinNeeded =
-                (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
-                        / this.xAxis.granularities[0]);
+                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                        / this.getXAxis().granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
-            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis().getBinCount()],
                     TimeUnit.SECOND));
         }
     }
@@ -71,7 +71,7 @@ public class DensityContourPlot extends ContourPlot
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
     {
-        if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
             return;
         }
@@ -114,7 +114,7 @@ public class DensityContourPlot extends ContourPlot
                     endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
-        return 1000 * cumulativeTimeInSI / this.xAxis.getCurrentGranularity() / this.yAxis.getCurrentGranularity();
+        return 1000 * cumulativeTimeInSI / this.getXAxis().getCurrentGranularity() / this.getYAxis().getCurrentGranularity();
     }
 
 }

@@ -62,13 +62,13 @@ public class AccelerationContourPlot extends ContourPlot
             this.cumulativeAccelerations = new ArrayList<MutableDoubleVector.Abs<AccelerationUnit>>();
         }
         int highestBinNeeded =
-                (int) Math.floor(this.xAxis.getRelativeBin(newUpperLimit) * this.xAxis.getCurrentGranularity()
-                        / this.xAxis.granularities[0]);
+                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                        / this.getXAxis().granularities[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
-            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.yAxis.getBinCount()],
+            this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis().getBinCount()],
                     TimeUnit.SECOND));
-            this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Sparse<AccelerationUnit>(new double[this.yAxis
+            this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Sparse<AccelerationUnit>(new double[this.getYAxis()
                     .getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
         }
     }
@@ -78,7 +78,7 @@ public class AccelerationContourPlot extends ContourPlot
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
             final double distanceCovered, final double acceleration)
     {
-        if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.yAxis.getBinCount())
+        if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
             return;
         }

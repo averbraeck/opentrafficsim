@@ -14,7 +14,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 19, 2014 <br>
@@ -31,17 +32,18 @@ public final class Egoistic
     }
 
     /**
+     * Compute the acceleration of this car and the new follower car after a considered lane change. The lowers of the
+     * two computed accelerations is returned. If changing lane is not possible because it would result in dangerous
+     * deceleration or collision, the returned value is Double.NEGATIVE_INFINITY.
      * @param referenceCar Car; the car that considers changing lane
      * @param otherCars Set&lt;Car&gt;; the cars in the target lane
-     * @param keepCurrentLaneBias DoubleScalar.Abs&lt;AccelerationUnit&gt;; the bias against changing towards the target lane
-     * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum (deemed safe) deceleration. This is a
-     *            positive value, about 2 m/s/s.
+     * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum (deemed safe) deceleration. This
+     *            must be a positive value, about 2 m/s/s.
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the lane
-     *         change is carried out
+     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the
+     *         lane change is carried out
      */
     public static DoubleScalar.Abs<AccelerationUnit> acceleration(final Car referenceCar, final Set<Car> otherCars,
-            final DoubleScalar.Abs<AccelerationUnit> keepCurrentLaneBias,
             final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         Car leader = null;
