@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
+import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
 
 /**
  * A Cell extends a Zone and is used for the NetworkTransmissionModel The Cells cover a preferably homogeneous area and

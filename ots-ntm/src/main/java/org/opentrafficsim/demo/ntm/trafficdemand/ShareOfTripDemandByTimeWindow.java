@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import java.util.Calendar;
-
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -18,26 +16,25 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class ShareTripDemandByTimeSegmentOfDay
+public class ShareOfTripDemandByTimeWindow
 {
 
-    /** startTime of the segment in Calendar Time */
-    DoubleScalar.Abs<TimeUnit> timeSinceMidnight;
+    /** startTime of the segment in Calendar Time. */
+    private DoubleScalar.Abs<TimeUnit> timeSinceMidnight;
 
-    /** */
-    DoubleScalar.Rel<TimeUnit> duration;
+    /** length of a time segment. */
+    private DoubleScalar.Rel<TimeUnit> duration;
 
-    /** */
-    double shareOfDemand;
+    /** relative amount of trips. */
+    private double shareOfDemand;
 
     /**
-     * @param timeSinceMidnight
-     * @param duration
-     * @param shareOfDemand
+     * @param timeSinceMidnight by time of day (HH:MM:SS)
+     * @param duration length of this time segment
+     * @param shareOfDemand amount of trips of this segment relatively to the total simulation period
      */
-
-    public ShareTripDemandByTimeSegmentOfDay(DoubleScalar.Abs<TimeUnit> timeSinceMidnight,
-            DoubleScalar.Rel<TimeUnit> duration, double shareOfDemand)
+    public ShareOfTripDemandByTimeWindow(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight,
+            final DoubleScalar.Rel<TimeUnit> duration, final double shareOfDemand)
     {
         this.timeSinceMidnight = timeSinceMidnight;
         this.duration = duration;
@@ -47,7 +44,7 @@ public class ShareTripDemandByTimeSegmentOfDay
     /**
      * @return shareOfDemand
      */
-    public double getShareOfDemand()
+    public final double getShareOfDemand()
     {
         return this.shareOfDemand;
     }
@@ -55,7 +52,7 @@ public class ShareTripDemandByTimeSegmentOfDay
     /**
      * @param shareOfDemand set shareOfDemand
      */
-    public void setShareOfDemand(double shareOfDemand)
+    public final void setShareOfDemand(final double shareOfDemand)
     {
         this.shareOfDemand = shareOfDemand;
     }
@@ -63,7 +60,7 @@ public class ShareTripDemandByTimeSegmentOfDay
     /**
      * @return timeSinceMidnight
      */
-    public DoubleScalar.Abs<TimeUnit> getTimeSinceMidnight()
+    public final DoubleScalar.Abs<TimeUnit> getTimeSinceMidnight()
     {
         return this.timeSinceMidnight;
     }
@@ -71,7 +68,7 @@ public class ShareTripDemandByTimeSegmentOfDay
     /**
      * @param timeSinceMidnight set timeSinceMidnight
      */
-    public void setTimeSinceMidnight(DoubleScalar.Abs<TimeUnit> timeSinceMidnight)
+    public final void setTimeSinceMidnight(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight)
     {
         this.timeSinceMidnight = timeSinceMidnight;
     }
@@ -79,7 +76,7 @@ public class ShareTripDemandByTimeSegmentOfDay
     /**
      * @return duration
      */
-    public DoubleScalar.Rel<TimeUnit> getDuration()
+    public final DoubleScalar.Rel<TimeUnit> getDuration()
     {
         return this.duration;
     }
@@ -87,7 +84,7 @@ public class ShareTripDemandByTimeSegmentOfDay
     /**
      * @param duration set duration
      */
-    public void setDuration(DoubleScalar.Rel<TimeUnit> duration)
+    public final void setDuration(final DoubleScalar.Rel<TimeUnit> duration)
     {
         this.duration = duration;
     }
