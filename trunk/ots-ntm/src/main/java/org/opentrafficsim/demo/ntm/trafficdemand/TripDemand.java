@@ -2,7 +2,6 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
 
 import java.util.Map;
 
-import org.opentrafficsim.demo.ntm.TripInfo;
 
 /**
  * <p>

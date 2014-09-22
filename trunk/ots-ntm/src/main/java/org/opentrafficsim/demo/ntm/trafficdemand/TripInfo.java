@@ -1,4 +1,5 @@
-package org.opentrafficsim.demo.ntm;
+package org.opentrafficsim.demo.ntm.trafficdemand;
+
 
 /**
  * <p>
@@ -15,22 +16,22 @@ package org.opentrafficsim.demo.ntm;
  */
 public class TripInfo
 {
-    /** */
+    /** total number of Trips for this simulation. */
     private double numberOfTrips;
 
     /**
-     * @param numberOfTrips
+     * @param numberOfTrips total number of Trips for this simulation
      */
-    public TripInfo(double numberOfTrips)
+    public TripInfo(final double numberOfTrips)
     {
         super();
-        this.setNumberOfTrips(numberOfTrips);
+        this.setNumberOfTrips(numberOfTrips);        
     }
 
     /**
      * @return numberOfTrips
      */
-    public double getNumberOfTrips()
+    public final double getNumberOfTrips()
     {
         return this.numberOfTrips;
     }
@@ -38,9 +39,10 @@ public class TripInfo
     /**
      * @param numberOfTrips set numberOfTrips
      */
-    public void setNumberOfTrips(double numberOfTrips)
+    public final void setNumberOfTrips(final double numberOfTrips)
     {
         this.numberOfTrips = numberOfTrips;
     }
+
 
 }
