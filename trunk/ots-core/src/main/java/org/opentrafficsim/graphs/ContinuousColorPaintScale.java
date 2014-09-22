@@ -26,7 +26,7 @@ public class ContinuousColorPaintScale implements PaintScale
     private Color[] boundColors;
 
     /** Format string to render values in a human readable format (used in tool tip texts). */
-    final String format;
+    private final String format;
 
     /**
      * Create a new ContinuousColorPaintScale.
@@ -132,6 +132,15 @@ public class ContinuousColorPaintScale implements PaintScale
     public final double getUpperBound()
     {
         return this.bounds[this.bounds.length - 1];
+    }
+
+    /**
+     * Retrieve the format string.
+     * @return format string
+     */
+    public final String getFormat()
+    {
+        return this.format;
     }
 
 }

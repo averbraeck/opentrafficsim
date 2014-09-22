@@ -139,7 +139,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     public final String getYAxisFormat()
     {
-        return this.yAxis.format;
+        return this.yAxis.getFormat();
     }
 
     /**
@@ -148,7 +148,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     public final String getXAxisFormat()
     {
-        return this.xAxis.format;
+        return this.xAxis.getFormat();
     }
 
     /**
@@ -261,9 +261,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             final Axis yAxisToSelect, final boolean selected)
     {
         final JRadioButtonMenuItem item =
-                new JRadioButtonMenuItem(yAxisToSelect.shortName + " / " + xAxisToSelect.shortName);
+                new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
         item.setSelected(selected);
-        item.setActionCommand(yAxisToSelect.shortName + "/" + xAxisToSelect.shortName);
+        item.setActionCommand(yAxisToSelect.getShortName() + "/" + xAxisToSelect.getShortName());
         item.addActionListener(this);
         subMenu.add(item);
         group.add(item);
@@ -297,7 +297,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     private static void configureAxis(final ValueAxis valueAxis, final Axis axis)
     {
-        valueAxis.setLabel("\u2192 " + axis.name);
+        valueAxis.setLabel("\u2192 " + axis.getName());
         valueAxis.setRange(axis.getMinimumValue().getValueInUnit(), axis.getMaximumValue().getValueInUnit());
     }
 
@@ -541,7 +541,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         {
             for (String field : fields)
             {
-                if (field.equalsIgnoreCase(this.densityAxis.shortName))
+                if (field.equalsIgnoreCase(this.densityAxis.getShortName()))
                 {
                     if (field == fields[0])
                     {
@@ -552,7 +552,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
                         this.xAxis = this.densityAxis;
                     }
                 }
-                else if (field.equalsIgnoreCase(this.flowAxis.shortName))
+                else if (field.equalsIgnoreCase(this.flowAxis.getShortName()))
                 {
                     if (field == fields[0])
                     {
@@ -563,7 +563,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
                         this.xAxis = this.flowAxis;
                     }
                 }
-                else if (field.equalsIgnoreCase(this.speedAxis.shortName))
+                else if (field.equalsIgnoreCase(this.speedAxis.getShortName()))
                 {
                     if (field == fields[0])
                     {
