@@ -50,11 +50,11 @@ public class TorqueUnit extends Unit<TorqueUnit>
                 new TorqueUnit(ForceUnit.KILOGRAM_FORCE, LengthUnit.METER, "TorqueUnit.meter_kilogram-force",
                         "TorqueUnit.m.kgf", OTHER);
         FOOT_POUND_FORCE =
-                new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.FOOT, "TorqueUnit.foot_pound-force", "TorqueUnit.ft.lbf",
-                        IMPERIAL);
+                new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.FOOT, "TorqueUnit.foot_pound-force",
+                        "TorqueUnit.ft.lbf", IMPERIAL);
         INCH_POUND_FORCE =
-                new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.INCH, "TorqueUnit.inch_pound-force", "TorqueUnit.in.lbf",
-                        IMPERIAL);
+                new TorqueUnit(ForceUnit.POUND_FORCE, LengthUnit.INCH, "TorqueUnit.inch_pound-force",
+                        "TorqueUnit.in.lbf", IMPERIAL);
     }
 
     /**
@@ -66,8 +66,8 @@ public class TorqueUnit extends Unit<TorqueUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public TorqueUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
-            final String abbreviationKey, final UnitSystem unitSystem)
+    public TorqueUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON_METER, massUnit.getConversionFactorToStandardUnit()
                 * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
@@ -101,7 +101,8 @@ public class TorqueUnit extends Unit<TorqueUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public TorqueUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final TorqueUnit referenceUnit, final double conversionFactorToReferenceUnit)

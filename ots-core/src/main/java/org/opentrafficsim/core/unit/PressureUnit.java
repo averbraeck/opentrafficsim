@@ -93,13 +93,17 @@ public class PressureUnit extends Unit<PressureUnit>
                 new PressureUnit("PressureUnit.atmosphere_(standard)", "PressureUnit.atm", OTHER, PASCAL, 101325.0);
         TORR = new PressureUnit("PressureUnit.torr", "PressureUnit.Torr", OTHER, ATMOSPHERE_STANDARD, 1.0 / 760.0);
         ATMOSPHERE_TECHNICAL =
-                new PressureUnit(ForceUnit.KILOGRAM_FORCE, AreaUnit.SQUARE_CENTIMETER, "PressureUnit.atmosphere_(technical)",
-                        "PressureUnit.at", OTHER);
-        BARYE = new PressureUnit(ForceUnit.DYNE, AreaUnit.SQUARE_CENTIMETER, "PressureUnit.barye", "PressureUnit.Ba", CGS);
+                new PressureUnit(ForceUnit.KILOGRAM_FORCE, AreaUnit.SQUARE_CENTIMETER,
+                        "PressureUnit.atmosphere_(technical)", "PressureUnit.at", OTHER);
+        BARYE =
+                new PressureUnit(ForceUnit.DYNE, AreaUnit.SQUARE_CENTIMETER, "PressureUnit.barye", "PressureUnit.Ba",
+                        CGS);
         BAR = new PressureUnit("PressureUnit.bar_(full)", "PressureUnit.bar", OTHER, PASCAL, 1E5);
         MILLIBAR = new PressureUnit("PressureUnit.millibar", "PressureUnit.mbar", OTHER, PressureUnit.BAR, 0.001);
-        CENTIMETER_MERCURY = new PressureUnit("PressureUnit.centimeter_mercury", "PressureUnit.cmHg", OTHER, PASCAL, 1333.224);
-        MILLIMETER_MERCURY = new PressureUnit("PressureUnit.millimeter_mercury", "PressureUnit.mmHg", OTHER, PASCAL, 133.3224);
+        CENTIMETER_MERCURY =
+                new PressureUnit("PressureUnit.centimeter_mercury", "PressureUnit.cmHg", OTHER, PASCAL, 1333.224);
+        MILLIMETER_MERCURY =
+                new PressureUnit("PressureUnit.millimeter_mercury", "PressureUnit.mmHg", OTHER, PASCAL, 133.3224);
         FOOT_MERCURY = new PressureUnit("PressureUnit.foot_mercury", "PressureUnit.ftHg", IMPERIAL, PASCAL, 40.63666E3);
         INCH_MERCURY = new PressureUnit("PressureUnit.inch_mercury", "PressureUnit.inHg", IMPERIAL, PASCAL, 3.386389E3);
         KGF_PER_SQUARE_MM =
@@ -112,8 +116,8 @@ public class PressureUnit extends Unit<PressureUnit>
                 new PressureUnit(ForceUnit.POUND_FORCE, AreaUnit.SQUARE_INCH, "PressureUnit.pound_per_square_inch",
                         "PressureUnit.lbf/in^2", IMPERIAL);
         PIEZE =
-                new PressureUnit(MassUnit.TONNE, LengthUnit.METER, TimeUnit.SECOND, "PressureUnit.pieze", "PressureUnit.pz",
-                        MTS);
+                new PressureUnit(MassUnit.TONNE, LengthUnit.METER, TimeUnit.SECOND, "PressureUnit.pieze",
+                        "PressureUnit.pz", MTS);
     }
 
     /**
@@ -125,12 +129,14 @@ public class PressureUnit extends Unit<PressureUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public PressureUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
-            final String abbreviationKey, final UnitSystem unitSystem)
+    public PressureUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem, PASCAL, massUnit.getConversionFactorToStandardUnit()
-                / (lengthUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit() * timeUnit
-                        .getConversionFactorToStandardUnit()), true);
+        super(nameKey, abbreviationKey, unitSystem, PASCAL,
+                massUnit.getConversionFactorToStandardUnit()
+                        / (lengthUnit.getConversionFactorToStandardUnit()
+                                * timeUnit.getConversionFactorToStandardUnit() * timeUnit
+                                    .getConversionFactorToStandardUnit()), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -144,8 +150,8 @@ public class PressureUnit extends Unit<PressureUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public PressureUnit(final ForceUnit forceUnit, final AreaUnit areaUnit, final String nameKey, final String abbreviationKey,
-            final UnitSystem unitSystem)
+    public PressureUnit(final ForceUnit forceUnit, final AreaUnit areaUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, PASCAL, forceUnit.getConversionFactorToStandardUnit()
                 / areaUnit.getConversionFactorToStandardUnit(), true);
@@ -160,7 +166,8 @@ public class PressureUnit extends Unit<PressureUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public PressureUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final PressureUnit referenceUnit, final double conversionFactorToReferenceUnit)

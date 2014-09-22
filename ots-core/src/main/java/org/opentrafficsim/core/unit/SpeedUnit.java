@@ -6,8 +6,8 @@ import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
- * According to <a href="http://en.wikipedia.org/wiki/Velocity">Wikipedia</a>: Speed describes only how fast an object is
- * moving, whereas velocity gives both how fast and in what direction the object is moving.
+ * According to <a href="http://en.wikipedia.org/wiki/Velocity">Wikipedia</a>: Speed describes only how fast an object
+ * is moving, whereas velocity gives both how fast and in what direction the object is moving.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -44,10 +44,13 @@ public class SpeedUnit extends Unit<SpeedUnit>
     static
     {
         METER_PER_SECOND =
-                new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s", SI_DERIVED);
+                new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s",
+                        SI_DERIVED);
         KM_PER_HOUR =
-                new SpeedUnit(LengthUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h", SI_DERIVED);
-        MILE_PER_HOUR = new SpeedUnit(LengthUnit.MILE, TimeUnit.HOUR, "SpeedUnit.mile_per_hour", "SpeedUnit.mph", IMPERIAL);
+                new SpeedUnit(LengthUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h",
+                        SI_DERIVED);
+        MILE_PER_HOUR =
+                new SpeedUnit(LengthUnit.MILE, TimeUnit.HOUR, "SpeedUnit.mile_per_hour", "SpeedUnit.mph", IMPERIAL);
         FOOT_PER_SECOND =
                 new SpeedUnit(LengthUnit.FOOT, TimeUnit.SECOND, "SpeedUnit.foot_per_second", "SpeedUnit.fps", IMPERIAL);
         KNOT = new SpeedUnit(LengthUnit.NAUTICAL_MILE, TimeUnit.HOUR, "SpeedUnit.knot", "SpeedUnit.kt", IMPERIAL);
@@ -61,8 +64,8 @@ public class SpeedUnit extends Unit<SpeedUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public SpeedUnit(final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
-            final UnitSystem unitSystem)
+    public SpeedUnit(final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, METER_PER_SECOND, lengthUnit.getConversionFactorToStandardUnit()
                 / timeUnit.getConversionFactorToStandardUnit(), true);
@@ -76,7 +79,8 @@ public class SpeedUnit extends Unit<SpeedUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public SpeedUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
             final SpeedUnit referenceUnit, final double conversionFactorToReferenceUnit)
