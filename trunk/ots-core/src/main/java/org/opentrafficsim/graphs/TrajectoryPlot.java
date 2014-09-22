@@ -118,6 +118,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval,
             final DoubleScalar.Abs<LengthUnit> minimumPosition, final DoubleScalar.Abs<LengthUnit> maximumPosition)
     {
+        this.trajectories = new ArrayList<Trajectory>();
         this.sampleInterval = sampleInterval;
         this.minimumPosition = minimumPosition;
         this.maximumPosition = maximumPosition;
@@ -206,7 +207,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                             value =
                                     String.format(
                                             Main.locale,
-                                            ": vehicle %s; location on measurement path at t=%.1fs: longitudinal %.1fm, lateral %.1fm",
+                                            ": vehicle %s; location on measurement path at t=%.1fs: "
+                                            + "longitudinal %.1fm, lateral %.1fm",
                                             so.toString(), t, bestPosition.x, bestPosition.y);
                         }
                 }
@@ -280,7 +282,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     }
 
     /** All stored trajectories. */
-    private ArrayList<Trajectory> trajectories = new ArrayList<Trajectory>();
+    private ArrayList<Trajectory> trajectories;
 
     /**
      * Add the scheduled motion of a car to this TrajectoryPlot.

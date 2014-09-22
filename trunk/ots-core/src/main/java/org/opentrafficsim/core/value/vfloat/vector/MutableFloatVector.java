@@ -20,15 +20,16 @@ import cern.jet.math.tfloat.FloatFunctions;
 /**
  * Mutable float vector.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 28, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of this MutableFloatVector
  */
-public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements WriteFloatVectorFunctions<U>,
-        FloatMathFunctions
+public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements
+        WriteFloatVectorFunctions<U>, FloatMathFunctions
 {
     /** */
     private static final long serialVersionUID = 20130903L;
@@ -721,7 +722,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Scale the values in this MutableFloatVector by the corresponding values in a FloatVector.
-     * @param factor FloatVector; contains the values by which to scale the corresponding entries in this MutableFloatVector
+     * @param factor FloatVector; contains the values by which to scale the corresponding entries in this
+     *            MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
     public final void scaleValueByValue(final FloatVector<?> factor) throws ValueException
@@ -852,8 +854,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
             final FloatVector.Abs<U> right) throws ValueException
     {
-        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -867,8 +869,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
             final FloatVector.Abs<U> right) throws ValueException
     {
-        return (MutableFloatVector.Rel.Sparse<U>) new MutableFloatVector.Rel.Sparse<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableFloatVector.Rel.Sparse<U>) new MutableFloatVector.Rel.Sparse<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -934,13 +936,14 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      * @return new Absolute Dense Mutable FloatVector
      * @throws ValueException when the vectors do not have the same size
      */
-    public static MutableFloatVector.Abs.Dense<SIUnit> times(final FloatVector.Abs.Dense<?> left, final FloatVector.Abs<?> right)
-            throws ValueException
+    public static MutableFloatVector.Abs.Dense<SIUnit> times(final FloatVector.Abs.Dense<?> left,
+            final FloatVector.Abs<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Abs.Dense<SIUnit> work = new MutableFloatVector.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Abs.Dense<SIUnit> work =
+                new MutableFloatVector.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
@@ -952,13 +955,14 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      * @return new Relative Dense Mutable FloatVector
      * @throws ValueException when the vectors do not have the same size
      */
-    public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left, final FloatVector.Rel<?> right)
-            throws ValueException
+    public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left,
+            final FloatVector.Rel<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Rel.Dense<SIUnit> work = new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Rel.Dense<SIUnit> work =
+                new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
