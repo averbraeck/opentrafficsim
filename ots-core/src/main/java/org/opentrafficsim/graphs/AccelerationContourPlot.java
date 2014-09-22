@@ -63,7 +63,7 @@ public class AccelerationContourPlot extends ContourPlot
         }
         int highestBinNeeded =
                 (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
-                        / this.getXAxis().granularities[0]);
+                        / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis().getBinCount()],

@@ -280,7 +280,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     }
 
     /** All stored trajectories. */
-    ArrayList<Trajectory> trajectories = new ArrayList<Trajectory>();
+    private ArrayList<Trajectory> trajectories = new ArrayList<Trajectory>();
 
     /**
      * Add the scheduled motion of a car to this TrajectoryPlot.
@@ -294,8 +294,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
         {
-            if (t.currentEndTime.getValueSI() == startTime.getValueSI()
-                    && t.currentEndPosition.getValueSI() == startPosition.getValueSI())
+            if (t.getCurrentEndTime().getValueSI() == startTime.getValueSI()
+                    && t.getCurrentEndPosition().getValueSI() == startPosition.getValueSI())
             {
                 if (null != carTrajectory)
                 {
@@ -306,7 +306,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         }
         if (null == carTrajectory)
         {
-            this.trajectories.add(carTrajectory = new Trajectory());
+            carTrajectory = new Trajectory();
+            this.trajectories.add(carTrajectory);
         }
         carTrajectory.addSegment(car);
     }
@@ -342,22 +343,38 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     class Trajectory
     {
         /** Time of (current) end of trajectory. */
-        DoubleScalar.Abs<TimeUnit> currentEndTime;
+        private DoubleScalar.Abs<TimeUnit> currentEndTime;
+
+        /**
+         * @return currentEndTime
+         */
+        public final DoubleScalar.Abs<TimeUnit> getCurrentEndTime()
+        {
+            return this.currentEndTime;
+        }
 
         /** Position of (current) end of trajectory. */
-        DoubleScalar.Abs<LengthUnit> currentEndPosition;
+        private DoubleScalar.Abs<LengthUnit> currentEndPosition;
+
+        /**
+         * @return currentEndPosition
+         */
+        public final DoubleScalar.Abs<LengthUnit> getCurrentEndPosition()
+        {
+            return this.currentEndPosition;
+        }
 
         /** Storage for the position of the car. */
-        ArrayList<Double> positions = new ArrayList<Double>();
+        private ArrayList<Double> positions = new ArrayList<Double>();
 
         /** Time sample of first sample in positions (successive entries will each be one sampleTime later). */
-        int firstSample;
+        private int firstSample;
 
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
          * @param car Car; the Car whose currently committed trajectory segment must be added
          */
-        public void addSegment(final Car car)
+        public final void addSegment(final Car car)
         {
             final int startSample =
                     (int) Math.ceil(car.getLastEvaluationTime().getValueSI() / getSampleInterval().getValueSI());

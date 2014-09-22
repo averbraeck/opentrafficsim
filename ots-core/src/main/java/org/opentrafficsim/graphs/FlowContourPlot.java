@@ -57,7 +57,7 @@ public class FlowContourPlot extends ContourPlot
         }
         final int highestBinNeeded =
                 (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
-                        / this.getXAxis().granularities[0]);
+                        / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeLengths.size())
         {
             this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis().getBinCount()],

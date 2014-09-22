@@ -20,19 +20,19 @@ class Axis
     private DoubleScalar<?> maximumValue;
 
     /** Aggregation values along this axis (all values must be an integer multiple of the first value). */
-    final double[] granularities;
+    private final double[] granularities;
 
     /** Current aggregation value (must be one of the values in granularities). */
     private double currentGranularity;
 
     /** Name to describe the axis and to name the pop up menu that changes the current granularity. */
-    protected final String name;
+    private final String name;
 
     /** Name to identify this axis. */
-    protected final String shortName;
+    private final String shortName;
 
     /** Format for rendering a value along this axis. */
-    protected String format;
+    private String format;
 
     /**
      * Create a new AxisDefinition.
@@ -67,7 +67,7 @@ class Axis
      */
     public double getRelativeBin(final DoubleScalar<?> value)
     {
-        return (value.getValueSI() - this.getMinimumValue().getValueSI()) / this.granularities[0];
+        return (value.getValueSI() - this.getMinimumValue().getValueSI()) / this.getGranularities()[0];
     }
 
     /**
@@ -105,7 +105,7 @@ class Axis
     public int getBinCount()
     {
         return (int) Math.ceil((this.getMaximumValue().getValueSI() - this.getMinimumValue().getValueSI())
-                / this.granularities[0]);
+                / this.getGranularities()[0]);
     }
 
     /**
@@ -124,7 +124,7 @@ class Axis
      */
     public void setCurrentGranularity(final double newGranularity)
     {
-        for (double g : this.granularities)
+        for (double g : this.getGranularities())
         {
             if (g == newGranularity)
             {
@@ -166,4 +166,41 @@ class Axis
     {
         return this.minimumValue;
     }
+
+    /**
+     * Retrieve the possible granularities for this Axis.
+     * @return granularities
+     */
+    public final double[] getGranularities()
+    {
+        return this.granularities;
+    }
+
+    /**
+     * Retrieve the format for displaying values along this Axis.
+     * @return format
+     */
+    public String getFormat()
+    {
+        return this.format;
+    }
+
+    /**
+     * Retrieve the short name for this Axis.
+     * @return String; the short name for this Axis
+     */
+    public String getShortName()
+    {
+        return this.shortName;
+    }
+
+    /**
+     * Retrieve the name of this Axis.
+     * @return String; the name of this Axis
+     */
+    public String getName()
+    {
+        return this.name;
+    }
+
 }
