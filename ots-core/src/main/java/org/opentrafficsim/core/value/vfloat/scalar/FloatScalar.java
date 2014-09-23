@@ -34,7 +34,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /** the value, stored in SI units. */
-    protected float valueSI;
+    private float valueSI;
 
     /**
      * @param <U> Unit
@@ -89,7 +89,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         @Override
         public final int compareTo(final Abs<U> o)
         {
-            return new Float(this.valueSI).compareTo(o.valueSI);
+            return new Float(this.getValueSI()).compareTo(o.getValueSI());
         }
 
         /** {@inheritDoc} */
@@ -154,7 +154,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         @Override
         public final int compareTo(final Rel<U> o)
         {
-            return new Float(this.valueSI).compareTo(o.valueSI);
+            return new Float(this.getValueSI()).compareTo(o.getValueSI());
         }
 
         /** {@inheritDoc} */
@@ -179,7 +179,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      */
     protected final void initialize(final float value)
     {
-        if (this.unit.equals(this.unit.getStandardUnit()))
+        if (this.getUnit().equals(this.getUnit().getStandardUnit()))
         {
             this.valueSI = value;
         }
@@ -205,6 +205,15 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     public final float getValueSI()
     {
         return this.valueSI;
+    }
+
+    /**
+     * Set the value in the underlying SI unit.
+     * @param value float; the new value in the underlying SI unit
+     */
+    protected final void setValueSI(final float value)
+    {
+        this.valueSI = value;
     }
 
     /**
@@ -261,7 +270,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     @Override
     public final String toString()
     {
-        return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
+        return this.getValueInUnit() + " " + this.getUnit().getAbbreviationKey();
     }
 
     /** {@inheritDoc} */

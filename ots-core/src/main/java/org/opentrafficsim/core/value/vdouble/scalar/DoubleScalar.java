@@ -179,7 +179,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      */
     protected final void initialize(final double value)
     {
-        if (this.unit.equals(this.unit.getStandardUnit()))
+        if (this.getUnit().equals(this.getUnit().getStandardUnit()))
         {
             this.valueSI = value;
         }
@@ -259,7 +259,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     @Override
     public final String toString()
     {
-        return this.getValueInUnit() + " " + this.unit.getAbbreviationKey();
+        return this.getValueInUnit() + " " + this.getUnit().getAbbreviationKey();
     }
 
     /** {@inheritDoc} */

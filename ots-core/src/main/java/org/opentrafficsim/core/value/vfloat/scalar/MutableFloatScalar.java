@@ -98,7 +98,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         @Override
         public final int compareTo(final Abs<U> o)
         {
-            return new Float(this.valueSI).compareTo(o.valueSI);
+            return new Float(this.getValueSI()).compareTo(o.getValueSI());
         }
 
     }
@@ -170,7 +170,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         @Override
         public final int compareTo(final Rel<U> o)
         {
-            return new Float(this.valueSI).compareTo(o.valueSI);
+            return new Float(this.getValueSI()).compareTo(o.getValueSI());
         }
 
     }
@@ -187,7 +187,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      */
     final void setSI(final float valueSI)
     {
-        this.valueSI = valueSI;
+        setValueSI(valueSI);
     }
 
     /**
@@ -195,15 +195,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      */
     final void set(final FloatScalar<U> value)
     {
-        this.valueSI = value.valueSI;
-    }
-
-    /**
-     * @param value the strongly typed value to store in the cell
-     */
-    final void set(final MutableFloatScalar<U> value)
-    {
-        this.valueSI = value.valueSI;
+        setValueSI(value.getValueSI());
     }
 
     /**
@@ -212,7 +204,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      */
     final void setInUnit(final float value, final U valueUnit)
     {
-        this.valueSI = (float) ValueUtil.expressAsSIUnit(value, valueUnit);
+        setValueSI((float) ValueUtil.expressAsSIUnit(value, valueUnit));
     }
 
     /**********************************************************************************/
@@ -227,7 +219,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      */
     public final void add(final FloatScalar.Rel<U> value)
     {
-        this.valueSI += value.getValueSI();
+        setValueSI(getValueSI() + value.getValueSI());
     }
 
     /**
@@ -238,13 +230,24 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      */
     public final void subtract(final FloatScalar.Rel<U> value)
     {
-        this.valueSI -= value.getValueSI();
+        setValueSI(getValueSI() - value.getValueSI());
     }
 
     /**********************************************************************************/
     /********************************* STATIC METHODS *********************************/
     /**********************************************************************************/
 
+    /**
+     * Increment the stored value by a specified amount.
+     * @param increment float; the amount by which to increment the stored value
+     * @return this; the modified MutableFloatScalar
+     */
+    protected final FloatScalar<?> incrementBy(final FloatScalar<?> increment)
+    {
+        setValueSI(getValueSI() + increment.getValueSI());
+        return this;
+    }
+    
     /**
      * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return value
      * will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an array of
@@ -261,7 +264,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         MutableFloatScalar.Abs<U> result = new MutableFloatScalar.Abs<U>(valueAbs);
         for (FloatScalar.Rel<U> v : valuesRel)
         {
-            result.valueSI += v.valueSI;
+            result.incrementBy(v);
         }
         return result;
     }
@@ -272,7 +275,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param targetUnit the unit of the sum
      * @param valuesRel zero or more values to add
      * @return the sum of the values as a relative value
-     * @param <U> Unit; the unitof the parameters and the result
+     * @param <U> Unit; the unit of the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> plus(final U targetUnit, final FloatScalar.Rel<U>... valuesRel)
@@ -280,11 +283,22 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(0.0f, targetUnit);
         for (FloatScalar.Rel<U> v : valuesRel)
         {
-            result.valueSI += v.valueSI;
+            result.incrementBy(v);
         }
         return result;
     }
 
+    /**
+     * Decrement the stored value by a specified amount.
+     * @param decrement float; the amount by which to increment the stored value
+     * @return this; the modified MutableFloatScalar
+     */
+    protected final FloatScalar<?> decrementBy(final FloatScalar<?> decrement)
+    {
+        setValueSI(getValueSI() - decrement.getValueSI());
+        return this;
+    }
+    
     /**
      * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the return
      * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an
@@ -292,7 +306,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueAbs the absolute base value
      * @param valuesRel zero or more values to subtract from the absolute value
      * @return the resulting value as an absolute value
-     * @param <U> Unit; the unitof the parameters and the result
+     * @param <U> Unit; the unit of the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> minus(final FloatScalar.Abs<U> valueAbs,
@@ -301,7 +315,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         MutableFloatScalar.Abs<U> value = new MutableFloatScalar.Abs<U>(valueAbs);
         for (FloatScalar.Rel<U> v : valuesRel)
         {
-            value.valueSI -= v.valueSI;
+            value.decrementBy(v);
         }
         return value;
     }
@@ -313,7 +327,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueRel the relative base value
      * @param valuesRel zero or more values to subtract from the first value
      * @return the resulting value as a relative value
-     * @param <U> Unit; the unitof the parameters and the result
+     * @param <U> Unit; the unit of the parameters and the result
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Rel<U> valueRel,
@@ -322,7 +336,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         MutableFloatScalar.Rel<U> value = new MutableFloatScalar.Rel<U>(valueRel);
         for (FloatScalar.Rel<U> v : valuesRel)
         {
-            value.valueSI -= v.valueSI;
+            value.decrementBy(v);
         }
         return value;
     }
@@ -333,12 +347,14 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * @param valueAbs1 value 1
      * @param valueAbs2 value 2
      * @return the difference of the two absolute values as a relative value
-     * @param <U> Unit; the unitof the parameters and the result
+     * @param <U> Unit; the unit of the parameters and the result
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Abs<U> valueAbs1,
             final FloatScalar.Abs<U> valueAbs2)
     {
-        return new MutableFloatScalar.Rel<U>(valueAbs1.valueSI - valueAbs2.valueSI, valueAbs1.getUnit());
+        MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(valueAbs1.getValueSI(), valueAbs1.getUnit());
+        result.setValueSI(valueAbs1.getValueSI() - valueAbs2.getValueSI());
+        return result;
     }
 
     /**
@@ -352,7 +368,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueAbs1.getUnit().getSICoefficients(),
                         valueAbs2.getUnit().getSICoefficients()).toString());
-        return new MutableFloatScalar.Abs<SIUnit>(valueAbs1.valueSI * valueAbs2.valueSI, targetUnit);
+        return new MutableFloatScalar.Abs<SIUnit>(valueAbs1.getValueSI() * valueAbs2.getValueSI(), targetUnit);
     }
 
     /**
@@ -366,7 +382,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueRel1.getUnit().getSICoefficients(),
                         valueRel2.getUnit().getSICoefficients()).toString());
-        return new MutableFloatScalar.Rel<SIUnit>(valueRel1.valueSI * valueRel2.valueSI, targetUnit);
+        return new MutableFloatScalar.Rel<SIUnit>(valueRel1.getValueSI() * valueRel2.getValueSI(), targetUnit);
     }
 
     /**
@@ -380,7 +396,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueAbs1.getUnit().getSICoefficients(),
                         valueAbs2.getUnit().getSICoefficients()).toString());
-        return new FloatScalar.Abs<SIUnit>(valueAbs1.valueSI / valueAbs2.valueSI, targetUnit);
+        return new FloatScalar.Abs<SIUnit>(valueAbs1.getValueSI() / valueAbs2.getValueSI(), targetUnit);
     }
 
     /**
@@ -394,7 +410,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueRel1.getUnit().getSICoefficients(),
                         valueRel2.getUnit().getSICoefficients()).toString());
-        return new FloatScalar.Rel<SIUnit>(valueRel1.valueSI / valueRel2.valueSI, targetUnit);
+        return new FloatScalar.Rel<SIUnit>(valueRel1.getValueSI() / valueRel2.getValueSI(), targetUnit);
     }
 
     /**********************************************************************************/
@@ -405,7 +421,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void abs()
     {
-        this.valueSI = Math.abs(this.valueSI);
+        setValueSI(Math.abs(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -413,7 +429,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void acos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.acos(this.valueSI);
+        setValueSI((float) Math.acos(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -421,7 +437,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void asin()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.asin(this.valueSI);
+        setValueSI((float) Math.asin(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -429,7 +445,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void atan()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.atan(this.valueSI);
+        setValueSI((float) Math.atan(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -437,14 +453,14 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void cbrt()
     {
         // TODO: dimension for all SI coefficients / 3.
-        this.valueSI = (float) Math.cbrt(this.valueSI);
+        setValueSI((float) Math.cbrt(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void ceil()
     {
-        this.valueSI = (float) Math.ceil(this.valueSI);
+        setValueSI((float) Math.ceil(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -452,7 +468,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void cos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.cos(this.valueSI);
+        setValueSI((float) Math.cos(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -460,7 +476,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void cosh()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.cosh(this.valueSI);
+        setValueSI((float) Math.cosh(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -468,7 +484,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public final void exp()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = (float) Math.exp(this.valueSI);
+        setValueSI((float) Math.exp(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -477,14 +493,14 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void expm1()
     {
-        this.valueSI = (float) Math.expm1(this.valueSI);
+        setValueSI((float) Math.expm1(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void floor()
     {
-        this.valueSI = (float) Math.floor(this.valueSI);
+        setValueSI((float) Math.floor(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -493,7 +509,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void log()
     {
-        this.valueSI = (float) Math.log(this.valueSI);
+        setValueSI((float) Math.log(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -502,7 +518,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void log10()
     {
-        this.valueSI = (float) Math.log10(this.valueSI);
+        setValueSI((float) Math.log10(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -511,7 +527,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void log1p()
     {
-        this.valueSI = (float) Math.log1p(this.valueSI);
+        setValueSI((float) Math.log1p(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -520,21 +536,21 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void pow(final double x)
     {
-        this.valueSI = (float) Math.pow(this.valueSI, x);
+        setValueSI((float) Math.pow(getValueSI(), x));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void rint()
     {
-        this.valueSI = (float) Math.rint(this.valueSI);
+        setValueSI((float) Math.rint(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void round()
     {
-        this.valueSI = Math.round(this.valueSI);
+        setValueSI(Math.round(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -543,7 +559,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void signum()
     {
-        this.valueSI = Math.signum(this.valueSI);
+        setValueSI(Math.signum(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -552,7 +568,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sin()
     {
-        this.valueSI = (float) Math.sin(this.valueSI);
+        setValueSI((float) Math.sin(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -561,7 +577,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sinh()
     {
-        this.valueSI = (float) Math.sinh(this.valueSI);
+        setValueSI((float) Math.sinh(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -570,7 +586,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sqrt()
     {
-        this.valueSI = (float) Math.sqrt(this.valueSI);
+        setValueSI((float) Math.sqrt(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -579,7 +595,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void tan()
     {
-        this.valueSI = (float) Math.tan(this.valueSI);
+        setValueSI((float) Math.tan(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -588,21 +604,21 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void tanh()
     {
-        this.valueSI = (float) Math.tanh(this.valueSI);
+        setValueSI((float) Math.tanh(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void toDegrees()
     {
-        this.valueSI = (float) Math.toDegrees(this.valueSI);
+        setValueSI((float) Math.toDegrees(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void toRadians()
     {
-        this.valueSI = (float) Math.toRadians(this.valueSI);
+        setValueSI((float) Math.toRadians(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -611,21 +627,21 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void inv()
     {
-        this.valueSI = 1.0f / this.valueSI;
+        setValueSI(1.0f / getValueSI());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void multiply(final float constant)
     {
-        this.valueSI *= constant;
+        setValueSI(getValueSI() * constant);
     }
 
     /** {@inheritDoc} */
     @Override
     public final void divide(final float constant)
     {
-        this.valueSI /= constant;
+        setValueSI(getValueSI() / constant);
     }
 
 }
