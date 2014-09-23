@@ -2,6 +2,9 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
 
 import java.util.Map;
 
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 
 /**
  * <p>
@@ -19,32 +22,70 @@ import java.util.Map;
 public class TripDemand
 {
 
-    /** */
-    Map<Long, Map<Long, TripInfo>> tripDemand;
-
+    /** information on trips: number, shortest path etc..*/
+    private Map<Long, Map<Long, TripInfo>> tripInfo;
+    /** starting time. */
+    private DoubleScalar.Abs<TimeUnit> startTime;
+    /** time period covered by this demand. */
+    private DoubleScalar.Rel<TimeUnit> timeSpan;
+    
     /**
-     * @param tripDemand
      */
-    public TripDemand(Map<Long, Map<Long, TripInfo>> tripDemand)
+    public TripDemand()
     {
         super();
-        this.tripDemand = tripDemand;
+    }
+    /**
+     * @param tripInfo information for all non-empty OD-pairs
+     */
+    public TripDemand(final Map<Long, Map<Long, TripInfo>> tripInfo)
+    {
+        super();
+        this.tripInfo = tripInfo;
     }
 
+    /**
+     * @return startTime.
+     */
+    public final DoubleScalar.Abs<TimeUnit> getStartTime()
+    {
+        return this.startTime;
+    }
+    /**
+     * @param startTime set startTime.
+     */
+    public final void setStartTime(DoubleScalar.Abs<TimeUnit> startTime)
+    {
+        this.startTime = startTime;
+    }
     /**
      * @return tripDemand
      */
-    public Map<Long, Map<Long, TripInfo>> getTripDemand()
+    public final Map<Long, Map<Long, TripInfo>> getTripInfo()
     {
-        return this.tripDemand;
+        return this.tripInfo;
     }
 
     /**
-     * @param tripDemand set tripDemand
+     * @return timeSpan.
      */
-    public void setTripDemand(Map<Long, Map<Long, TripInfo>> tripDemand)
+    public final DoubleScalar.Rel<TimeUnit> getTimeSpan()
     {
-        this.tripDemand = tripDemand;
+        return this.timeSpan;
+    }
+    /**
+     * @param timeSpan set timeSpan.
+     */
+    public final void setTimeSpan(final DoubleScalar.Rel<TimeUnit> timeSpan)
+    {
+        this.timeSpan = timeSpan;
+    }
+    /**
+     * @param tripInfo sets tripInfo
+     */
+    public final void setTripInfo(final Map<Long, Map<Long, TripInfo>> tripInfo)
+    {
+        this.tripInfo = tripInfo;
     }
 
     /**
@@ -54,7 +95,7 @@ public class TripDemand
      */
     public Map<Long, TripInfo> getTripDemand_Origin_AllDestinations(Long origin, Long destination)
     {
-        Map<Long, Map<Long, TripInfo>> demand = this.getTripDemand();
+        Map<Long, Map<Long, TripInfo>> demand = this.getTripInfo();
         Map<Long, TripInfo> mapDestinations = demand.get(origin);
         return mapDestinations;
     }
@@ -66,25 +107,11 @@ public class TripDemand
      */
     public TripInfo getTripDemand_Origin_Destination(Long origin, Long destination)
     {
-        Map<Long, Map<Long, TripInfo>> demand = this.getTripDemand();
-        Map<Long, TripInfo> map = demand.get(origin);
-        TripInfo tripInfo = map.get(destination);
-        return tripInfo;
+        Map<Long, Map<Long, TripInfo>> tripInfoAll = this.getTripInfo();
+        Map<Long, TripInfo> map = tripInfoAll.get(origin);
+        TripInfo info = map.get(destination);
+        return info;
     }
 
-    /*    *//**
-     * @param originSize
-     * @param destinationSize
-     * @param trips
-     * @return a hashmap with Trips info by origin and destination
-     */
-    /*
-     * public Map<Long, Map<Long, TripInfo>> createTripDemand (long originSize, long destinationSize, double[][] trips)
-     * { Map<Integer, Map<Integer, TripInfo>> originMap = new HashMap<Integer, Map<Integer, TripInfo>>(); for (long i =
-     * 0; i < originSize; i++) { Map<Long, TripInfo> destinationMap = new HashMap<Long, TripInfo>(); double sumTrips =
-     * 0; for (long j = 0; j < destinationSize; j++) { if (trips[i][j] > 0) { TripInfo trip = new TripInfo(trips[i][j]);
-     * sumTrips += trips[i][j]; destinationMap.put(j, trip); } } if (sumTrips > 0) { originMap.put(i, destinationMap); }
-     * } return originMap; }
-     */
 
 }
