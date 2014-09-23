@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/yufeiyuan/Documents/workspace/lib/jts-1.12.jar"/>
+	<classpathentry kind="lib" path="/Users/yufeiyuan/Documents/workspace/geotools-8.2/gt-api-8.2.jar"/>
+	<classpathentry kind="lib" path="/Users/yufeiyuan/Documents/workspace/geotools-8.2/gt-swing-8.2.jar"/>
+	<classpathentry kind="lib" path="/Users/yufeiyuan/Documents/workspace/jfreechart-1.0.15/lib/jfreechart-1.0.15.jar"/>
+	<classpathentry kind="lib" path="/Users/yufeiyuan/Documents/workspace/jcommon-1.0.18/jcommon-1.0.18.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

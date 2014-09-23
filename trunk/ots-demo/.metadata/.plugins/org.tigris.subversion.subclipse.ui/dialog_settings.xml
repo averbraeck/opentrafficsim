@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="500" key="CommitDialog.weights.0"/>
+	<item value="500" key="CommitDialog.weights.1"/>
+	<item value="564" key="passwordStores.size.y"/>
+	<item value="78" key="CommitDialog.location.y"/>
+	<item value="972" key="passwordStores.size.x"/>
+	<item value="77" key="CommitDialog.location.x"/>
+	<item value="22" key="passwordStores.location.y"/>
+	<item value="154" key="passwordStores.location.x"/>
+	<item value="1127" key="CommitDialog.size.x"/>
+	<item value="449" key="CommitDialog.size.y"/>
+	<section name="NewLocationWizard">
+		<list key="ConfigurationWizardMainPage.STORE_URL_ID">
+			<item value="https://svn.tbm.tudelft.nl/OTS"/>
+		</list>
+	</section>
+</section>
