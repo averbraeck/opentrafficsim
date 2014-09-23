@@ -1,8 +1,9 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.opentrafficsim.demo.ntm.animation.LinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
+import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -58,7 +60,7 @@ public class NTMModel implements OTSModelInterface
     /** nodes from shape file. */
     private Map<java.lang.Long, ShpNode> shpNodes;
 
-    /** conectors from shape file. */
+    /** connectors from shape file. */
     private Map<java.lang.Long, ShpLink> shpConnectors;
 
     /** links from shape file. */
@@ -70,6 +72,9 @@ public class NTMModel implements OTSModelInterface
     /** the demand of trips by Origin and Destination. */
     private TripDemand tripDemand;
 
+    /** profiles with fractions of total demand. */
+    private ArrayList<DepartureTimeProfile> departureTimeProfiles;
+    
     /** graph containing the original network. */
     private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> linkGraph;
 
@@ -102,8 +107,10 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // read TrafficDemand /src/main/resources
-            this.tripDemand = CsvFileReader.CsvReader("/gis/cordonmatrix_pa_os.txt", ";");
-            System.out.println(new File(".").getCanonicalPath());
+            // including information on the time period this demand covers!
+            this.setTripDemand(CsvFileReader.ReadOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";","\\s+|-"));
+            // read the time profile curves: these will be attached to the demands
+            this.departureTimeProfiles = CsvFileReader.ReadDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"); 
             // read the shape files
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
             // returnCentroid, boolean allCentroids)
@@ -136,7 +143,7 @@ public class NTMModel implements OTSModelInterface
                 createAnimation();
             }
         }
-        catch (IOException exception)
+        catch (Throwable exception)
         {
             exception.printStackTrace();
         }
@@ -389,6 +396,38 @@ public class NTMModel implements OTSModelInterface
             throws RemoteException
     {
         return this.simulator;
+    }
+
+    /**
+     * @return departureTimeProfiles.
+     */
+    public final ArrayList<DepartureTimeProfile> getDepartureTimeProfiles()
+    {
+        return this.departureTimeProfiles;
+    }
+
+    /**
+     * @param departureTimeProfiles set departureTimeProfiles.
+     */
+    public final void setDepartureTimeProfiles(final ArrayList<DepartureTimeProfile> departureTimeProfiles)
+    {
+        this.departureTimeProfiles = departureTimeProfiles;
+    }
+
+    /**
+     * @return tripDemand.
+     */
+    public final TripDemand getTripDemand()
+    {
+        return this.tripDemand;
+    }
+
+    /**
+     * @param tripDemand set tripDemand.
+     */
+    public final void setTripDemand(final TripDemand tripDemand)
+    {
+        this.tripDemand = tripDemand;
     }
 
 }

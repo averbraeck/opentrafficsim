@@ -16,7 +16,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class ShareOfTripDemandByTimeWindow
+public class FractionOfTripDemandByTimeSegment
 {
 
     /** startTime of the segment in Calendar Time. */
@@ -33,7 +33,7 @@ public class ShareOfTripDemandByTimeWindow
      * @param duration length of this time segment
      * @param shareOfDemand amount of trips of this segment relatively to the total simulation period
      */
-    public ShareOfTripDemandByTimeWindow(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight,
+    public FractionOfTripDemandByTimeSegment(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight,
             final DoubleScalar.Rel<TimeUnit> duration, final double shareOfDemand)
     {
         this.timeSinceMidnight = timeSinceMidnight;
