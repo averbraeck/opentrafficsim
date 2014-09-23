@@ -43,7 +43,23 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     private static final long serialVersionUID = 20140909L;
 
     /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
-    protected DoubleMatrix2D matrixSI;
+    private DoubleMatrix2D matrixSI;
+
+    /**
+     * @return matrixSI
+     */
+    protected final DoubleMatrix2D getMatrixSI()
+    {
+        return this.matrixSI;
+    }
+
+    /**
+     * Make a deep copy of the data (used ONLY in the MutableDoubleMatrix sub class).
+     */
+    protected final void deepCopyData()
+    {
+        this.matrixSI = getMatrixSI().copy(); // makes a deep copy, using multithreading
+    }
 
     /**
      * Create a new DoubleMatrix.
@@ -120,7 +136,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleMatrix.Abs.Dense<U> mutable()
             {
-                return new MutableDoubleMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
+                return new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -188,7 +204,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleMatrix.Abs.Sparse<U> mutable()
             {
-                return new MutableDoubleMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
+                return new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -281,7 +297,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleMatrix.Rel.Dense<U> mutable()
             {
-                return new MutableDoubleMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
+                return new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -349,7 +365,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleMatrix.Rel.Sparse<U> mutable()
             {
-                return new MutableDoubleMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
+                return new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */

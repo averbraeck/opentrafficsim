@@ -45,7 +45,23 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
-    boolean copyOnWrite = false;
+    private boolean copyOnWrite = false;
+
+    /**
+     * @return copyOnWrite
+     */
+    public final boolean isCopyOnWrite()
+    {
+        return this.copyOnWrite;
+    }
+
+    /**
+     * @param copyOnWrite set copyOnWrite
+     */
+    public final void setCopyOnWrite(final boolean copyOnWrite)
+    {
+        this.copyOnWrite = copyOnWrite;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -57,7 +73,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             throw new ValueException("zSum is 0; cannot normalize");
         }
         checkCopyOnWrite();
-        for (int i = 0; i < this.vectorSI.size(); i++)
+        for (int i = 0; i < size(); i++)
         {
             safeSet(i, safeGet(i) / sum);
         }
@@ -97,7 +113,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -129,16 +145,16 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             @Override
             public final FloatVector.Abs.Dense<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new FloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new FloatVector.Abs.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableFloatVector.Abs.Dense<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableFloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableFloatVector.Abs.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -167,7 +183,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -199,16 +215,16 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             @Override
             public final FloatVector.Abs.Sparse<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new FloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new FloatVector.Abs.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableFloatVector.Abs.Sparse<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableFloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -263,7 +279,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -295,16 +311,16 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             @Override
             public final FloatVector.Rel.Dense<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new FloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new FloatVector.Rel.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableFloatVector.Rel.Dense<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableFloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableFloatVector.Rel.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -333,7 +349,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -365,16 +381,16 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             @Override
             public final FloatVector.Rel.Sparse<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new FloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new FloatVector.Rel.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableFloatVector.Rel.Sparse<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableFloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -415,11 +431,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      */
     protected final void checkCopyOnWrite()
     {
-        if (this.copyOnWrite)
+        if (this.isCopyOnWrite())
         {
             // System.out.println("copyOnWrite is set: Copying data");
-            this.vectorSI = this.vectorSI.copy(); // makes a deep copy, using multithreading
-            this.copyOnWrite = false;
+            deepCopyData();
+            setCopyOnWrite(false);
         }
     }
 
@@ -454,7 +470,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     public final void assign(final cern.colt.function.tfloat.FloatFunction f)
     {
         checkCopyOnWrite();
-        this.vectorSI.assign(f);
+        getVectorSI().assign(f);
     }
 
     /** {@inheritDoc} */
@@ -1081,7 +1097,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> denseToSparse(final FloatVector.Abs.Dense<U> in)
     {
-        return new MutableFloatVector.Abs.Sparse<U>(makeSparse(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Abs.Sparse<U>(makeSparse(in.getVectorSI()), in.getUnit());
     }
 
     /**
@@ -1092,7 +1108,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> denseToSparse(final FloatVector.Rel.Dense<U> in)
     {
-        return new MutableFloatVector.Rel.Sparse<U>(makeSparse(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Rel.Sparse<U>(makeSparse(in.getVectorSI()), in.getUnit());
     }
 
     /**
@@ -1115,7 +1131,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> sparseToDense(final FloatVector.Abs.Sparse<U> in)
     {
-        return new MutableFloatVector.Abs.Dense<U>(makeDense(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Abs.Dense<U>(makeDense(in.getVectorSI()), in.getUnit());
     }
 
     /**
@@ -1126,7 +1142,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> sparseToDense(final FloatVector.Rel.Sparse<U> in)
     {
-        return new MutableFloatVector.Rel.Dense<U>(makeDense(in.vectorSI), in.getUnit());
+        return new MutableFloatVector.Rel.Dense<U>(makeDense(in.getVectorSI()), in.getUnit());
     }
 
 }

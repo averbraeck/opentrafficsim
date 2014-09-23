@@ -34,7 +34,23 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * The internal storage for the vector; internally the values are stored in SI units; storage can be dense or sparse.
      */
-    protected DoubleMatrix1D vectorSI;
+    private DoubleMatrix1D vectorSI;
+
+    /**
+     * @return vectorSI
+     */
+    protected final DoubleMatrix1D getVectorSI()
+    {
+        return this.vectorSI;
+    }
+
+    /**
+     * Make a deep copy of the data (used ONLY in the MutableDoubleVector sub class).
+     */
+    protected final void deepCopyData()
+    {
+        this.vectorSI = getVectorSI().copy(); // makes a deep copy, using multithreading
+    }
 
     /**
      * Create a new Immutable DoubleVector.
@@ -114,7 +130,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Abs.Dense<U> mutable()
             {
-                return new MutableDoubleVector.Abs.Dense<U>(this.vectorSI, this.unit);
+                return new MutableDoubleVector.Abs.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -181,7 +197,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Abs.Sparse<U> mutable()
             {
-                return new MutableDoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
+                return new MutableDoubleVector.Abs.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -274,7 +290,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Rel.Dense<U> mutable()
             {
-                return new MutableDoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
+                return new MutableDoubleVector.Rel.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -341,7 +357,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Rel.Sparse<U> mutable()
             {
-                return new MutableDoubleVector.Rel.Sparse<U>(this.vectorSI, this.unit);
+                return new MutableDoubleVector.Rel.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */

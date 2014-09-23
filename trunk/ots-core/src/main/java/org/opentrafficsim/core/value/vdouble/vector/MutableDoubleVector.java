@@ -44,7 +44,23 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     }
 
     /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
-    boolean copyOnWrite = false;
+    private boolean copyOnWrite = false;
+
+    /**
+     * @return copyOnWrite
+     */
+    public final boolean isCopyOnWrite()
+    {
+        return this.copyOnWrite;
+    }
+
+    /**
+     * @param copyOnWrite set copyOnWrite
+     */
+    public final void setCopyOnWrite(final boolean copyOnWrite)
+    {
+        this.copyOnWrite = copyOnWrite;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -56,7 +72,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             throw new ValueException("zSum is 0; cannot normalize");
         }
         checkCopyOnWrite();
-        for (int i = 0; i < this.vectorSI.size(); i++)
+        for (int i = 0; i < size(); i++)
         {
             safeSet(i, safeGet(i) / sum);
         }
@@ -96,7 +112,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -128,16 +144,16 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             @Override
             public final DoubleVector.Abs.Dense<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleVector.Abs.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new DoubleVector.Abs.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleVector.Abs.Dense<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleVector.Abs.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableDoubleVector.Abs.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -166,7 +182,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 super(unit);
                 // System.out.println("Created Rel");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -198,16 +214,16 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             @Override
             public final DoubleVector.Abs.Sparse<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new DoubleVector.Abs.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleVector.Abs.Sparse<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleVector.Abs.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableDoubleVector.Abs.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -262,7 +278,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -294,16 +310,16 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             @Override
             public final DoubleVector.Rel.Dense<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new DoubleVector.Rel.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleVector.Rel.Dense<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleVector.Rel.Dense<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableDoubleVector.Rel.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -332,7 +348,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                this.copyOnWrite = true;
+                setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -364,16 +380,16 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             @Override
             public final DoubleVector.Rel.Sparse<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleVector.Rel.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new DoubleVector.Rel.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleVector.Rel.Sparse<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleVector.Rel.Sparse<U>(this.vectorSI, this.unit);
+                setCopyOnWrite(true);
+                return new MutableDoubleVector.Rel.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -414,11 +430,11 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      */
     protected final void checkCopyOnWrite()
     {
-        if (this.copyOnWrite)
+        if (this.isCopyOnWrite())
         {
             // System.out.println("copyOnWrite is set: Copying data");
-            this.vectorSI = this.vectorSI.copy(); // makes a deep copy, using multithreading
-            this.copyOnWrite = false;
+            deepCopyData();
+            setCopyOnWrite(false);
         }
     }
 
@@ -453,7 +469,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     public final void assign(final cern.colt.function.tdouble.DoubleFunction f)
     {
         checkCopyOnWrite();
-        this.vectorSI.assign(f);
+        getVectorSI().assign(f);
     }
 
     /** {@inheritDoc} */
@@ -1079,7 +1095,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Sparse<U> denseToSparse(final DoubleVector.Abs.Dense<U> in)
     {
-        return new MutableDoubleVector.Abs.Sparse<U>(makeSparse(in.vectorSI), in.getUnit());
+        return new MutableDoubleVector.Abs.Sparse<U>(makeSparse(in.getVectorSI()), in.getUnit());
     }
 
     /**
@@ -1090,7 +1106,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Sparse<U> denseToSparse(final DoubleVector.Rel.Dense<U> in)
     {
-        return new MutableDoubleVector.Rel.Sparse<U>(makeSparse(in.vectorSI), in.getUnit());
+        return new MutableDoubleVector.Rel.Sparse<U>(makeSparse(in.getVectorSI()), in.getUnit());
     }
 
     /**
@@ -1113,7 +1129,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      */
     public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> sparseToDense(final DoubleVector.Abs.Sparse<U> in)
     {
-        return new MutableDoubleVector.Abs.Dense<U>(makeDense(in.vectorSI), in.getUnit());
+        return new MutableDoubleVector.Abs.Dense<U>(makeDense(in.getVectorSI()), in.getUnit());
     }
 
     /**
@@ -1124,7 +1140,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      */
     public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> sparseToDense(final DoubleVector.Rel.Sparse<U> in)
     {
-        return new MutableDoubleVector.Rel.Dense<U>(makeDense(in.vectorSI), in.getUnit());
+        return new MutableDoubleVector.Rel.Dense<U>(makeDense(in.getVectorSI()), in.getUnit());
     }
 
 }

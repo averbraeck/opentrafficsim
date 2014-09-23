@@ -32,7 +32,23 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         ReadOnlyFloatVectorFunctions<U>
 {
     /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
-    protected FloatMatrix1D vectorSI;
+    private FloatMatrix1D vectorSI;
+
+    /**
+     * @return vectorSI
+     */
+    protected final FloatMatrix1D getVectorSI()
+    {
+        return this.vectorSI;
+    }
+
+    /**
+     * Make a deep copy of the data (used ONLY in the MutableDoubleVector sub class).
+     */
+    protected final void deepCopyData()
+    {
+        this.vectorSI = getVectorSI().copy(); // makes a deep copy, using multithreading
+    }
 
     /**
      * Create a new FloatVector.
@@ -112,7 +128,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Abs.Dense<U> mutable()
             {
-                return new MutableFloatVector.Abs.Dense<U>(this.vectorSI, this.unit);
+                return new MutableFloatVector.Abs.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -179,7 +195,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Abs.Sparse<U> mutable()
             {
-                return new MutableFloatVector.Abs.Sparse<U>(this.vectorSI, this.unit);
+                return new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -272,7 +288,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Rel.Dense<U> mutable()
             {
-                return new MutableFloatVector.Rel.Dense<U>(this.vectorSI, this.unit);
+                return new MutableFloatVector.Rel.Dense<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -339,7 +355,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Rel.Sparse<U> mutable()
             {
-                return new MutableFloatVector.Rel.Sparse<U>(this.vectorSI, this.unit);
+                return new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), this.unit);
             }
 
             /** {@inheritDoc} */

@@ -43,7 +43,23 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     private static final long serialVersionUID = 20140909L;
 
     /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
-    protected FloatMatrix2D matrixSI;
+    private FloatMatrix2D matrixSI;
+
+    /**
+     * @return matrixSI
+     */
+    protected final FloatMatrix2D getMatrixSI()
+    {
+        return this.matrixSI;
+    }
+
+    /**
+     * Make a deep copy of the data (used ONLY in the MutableDoubleMatrix sub class).
+     */
+    protected final void deepCopyData()
+    {
+        this.matrixSI = getMatrixSI().copy(); // makes a deep copy, using multithreading
+    }
 
     /**
      * Create a new FloatMatrix.
@@ -120,7 +136,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
-                return new MutableFloatMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
+                return new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -188,7 +204,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
-                return new MutableFloatMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
+                return new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -281,7 +297,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
-                return new MutableFloatMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
+                return new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -349,7 +365,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
-                return new MutableFloatMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
+                return new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
