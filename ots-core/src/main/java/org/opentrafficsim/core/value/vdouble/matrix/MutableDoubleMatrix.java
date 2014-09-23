@@ -42,7 +42,23 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
-    boolean copyOnWrite = false;
+    private boolean copyOnWrite = false;
+
+    /**
+     * @return copyOnWrite
+     */
+    public final boolean isCopyOnWrite()
+    {
+        return this.copyOnWrite;
+    }
+
+    /**
+     * @param copyOnWrite set copyOnWrite
+     */
+    public final void setCopyOnWrite(final boolean copyOnWrite)
+    {
+        this.copyOnWrite = copyOnWrite;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -97,7 +113,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                this.copyOnWrite = true;
+                this.setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -130,16 +146,16 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final DoubleMatrix.Abs.Dense<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new DoubleMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleMatrix.Abs.Dense<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleMatrix.Abs.Dense<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -168,7 +184,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                this.copyOnWrite = true;
+                this.setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -201,16 +217,16 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final DoubleMatrix.Abs.Sparse<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new DoubleMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleMatrix.Abs.Sparse<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleMatrix.Abs.Sparse<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -265,7 +281,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                this.copyOnWrite = true;
+                this.setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -298,16 +314,16 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final DoubleMatrix.Rel.Dense<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new DoubleMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleMatrix.Rel.Dense<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleMatrix.Rel.Dense<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -336,7 +352,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                this.copyOnWrite = true;
+                this.setCopyOnWrite(true);
                 initialize(values); // shallow copy
             }
 
@@ -369,16 +385,16 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final DoubleMatrix.Rel.Sparse<U> immutable()
             {
-                this.copyOnWrite = true;
-                return new DoubleMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new DoubleMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
             @Override
             public final MutableDoubleMatrix.Rel.Sparse<U> mutable()
             {
-                this.copyOnWrite = true;
-                return new MutableDoubleMatrix.Rel.Sparse<U>(this.matrixSI, this.unit);
+                this.setCopyOnWrite(true);
+                return new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
             }
 
             /** {@inheritDoc} */
@@ -419,11 +435,11 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
      */
     protected final void checkCopyOnWrite()
     {
-        if (this.copyOnWrite)
+        if (this.isCopyOnWrite())
         {
             // System.out.println("copyOnWrite is set: Copying data");
-            this.matrixSI = this.matrixSI.copy(); // makes a deep copy, using multithreading
-            this.copyOnWrite = false;
+            deepCopyData();
+            this.setCopyOnWrite(false);
         }
     }
 
@@ -458,7 +474,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     public final void assign(final cern.colt.function.tdouble.DoubleFunction f)
     {
         checkCopyOnWrite();
-        this.matrixSI.assign(f);
+        getMatrixSI().assign(f);
     }
 
     /** {@inheritDoc} */
@@ -1154,7 +1170,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> denseToSparse(final DoubleMatrix.Abs.Dense<U> in)
     {
-        return new MutableDoubleMatrix.Abs.Sparse<U>(makeSparse(in.matrixSI), in.getUnit());
+        return new MutableDoubleMatrix.Abs.Sparse<U>(makeSparse(in.getMatrixSI()), in.getUnit());
     }
 
     /**
@@ -1165,7 +1181,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> denseToSparse(final DoubleMatrix.Rel.Dense<U> in)
     {
-        return new MutableDoubleMatrix.Rel.Sparse<U>(makeSparse(in.matrixSI), in.getUnit());
+        return new MutableDoubleMatrix.Rel.Sparse<U>(makeSparse(in.getMatrixSI()), in.getUnit());
     }
 
     /**
@@ -1188,7 +1204,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> sparseToDense(final DoubleMatrix.Abs.Sparse<U> in)
     {
-        return new MutableDoubleMatrix.Abs.Dense<U>(makeDense(in.matrixSI), in.getUnit());
+        return new MutableDoubleMatrix.Abs.Dense<U>(makeDense(in.getMatrixSI()), in.getUnit());
     }
 
     /**
@@ -1199,7 +1215,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> sparseToDense(final DoubleMatrix.Rel.Sparse<U> in)
     {
-        return new MutableDoubleMatrix.Rel.Dense<U>(makeDense(in.matrixSI), in.getUnit());
+        return new MutableDoubleMatrix.Rel.Dense<U>(makeDense(in.getMatrixSI()), in.getUnit());
     }
 
 }
