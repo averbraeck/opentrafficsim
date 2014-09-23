@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Eclipse Juno Configuration</title>
+</head>
+<body>
+<h1>Development platform</h1>
+OpenTraffic is developed in Java in the Eclipse IDE.
+Eclipse is free software. To install it:
+<ol>
+<li>
+Go to <a href="http://eclipse.org/downloads/">Eclipse Downloads</a></li>
+<li>Select the Eclipse IDE for Java EE Developers (32 bit or 64 bit version depending on your CPU)</li>
+<li>Unpack the zip file in a suitable place on your hard disk; this creates a directory "eclipse" with some sub directories</li>
+<li>Run <i>eclipse.exe</i> from that directory</li>
+<li>Set the directory that will contain (or already contains) your Java projects</li>
+<li>Optionally: make a desktop or taskbar shortcut pointing to <i>eclipse.exe</i></li>
+</ol>
+<h1>Software installed in Eclipse Juno</h1>
+The list of installed software can be shown by:
+<ol>
+<li>Click "Help" in the main menu bar</li>
+<li>Click "About Eclipse"</li>
+<li>Click the "Installation details" in the popup window</li>
+</ol>
+The table should contain something like this:
+<table border="1">
+<tr><th>Name</th><th>Version</th><th>Id</th><th>Provider</th></tr>
+<tr><td>Eclipse IDE for Java EE Developers</td><td>1.5.2.20130211-1820</td><td>epp.package.jee</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;&nbsp;Eclipse Platform</td><td>4.2.2.M20130204-1200</td><td>org.eclipse.platform.ide</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;&nbsp;Java EE IDE Feature</td><td>1.5.2.20130211-1820</td><td>org.eclipse.epp.package.jee.feature.feature.group</td><td>Eclipse Packaging Project</td></tr>
+<tr><td>Knopflerfish OSGi IDE *</td><td>1.2.1</td><td>org.knopflerfish.eclipse.ide_feature.feature.group</td><td>Knopflerfish</td></tr>
+<tr><td>Web Page Editor</td><td>2.4.0.v201301161500-479-9oB58E588N8K55</td><td>org.eclipse.jst.webpageeditor.feature.feature.group</td><td>Eclipse.org</td></tr>
+<tr><td>WindowBuilder Core</td><td>1.5.2.r42x201302111859</td><td>org.eclipse.wb.core.feature.feature.group</td><td>Eclipse.org</td></tr>
+<tr><td>WindowBuilder Core Documentation</td><td>1.5.2.r42x201302111931</td><td>org.eclipse.wb.doc.user.feature.feature.group</td><td>Eclipse.org</td></tr>
+<tr><td>WindowBuilder Core UI</td><td>1.5.2.r42x201302111927</td><td>org.eclipse.wb.core.ui.feature.feature.group</td><td>Eclipse.org</td></tr>
+<tr><td>WindowBuilder GroupLayout Support</td><td>1.5.2.r42x201302111942</td><td>org.eclipse.wb.layout.group.feature.feature.group</td><td>Eclipse.org</td></tr>
+<tr><td>WindowBuilder XML Core (requires Eclipse WTP/WST)</td><td>1.5.2.r42x201302111919</td><td>org.eclipse.wb.core.xml.feature.feature.group</td><td>Eclipse.org</td></tr>
+</table>
+* Knopflerfish is currently not used in OpenTraffic.
+<h1>Installing the Java SE Development Kit</h1>
+OpenTraffic is developed using JDK7. An installer for Windows can be down-loaded from <a href="http://www.oracle.com">Oracle.com</a>.
+Make sure to install the JDK; not just the JRE (Java Runtime Environment). 
+<h1>Configuring Eclipse Juno</h1>
+<h2>Adding jar files to a project</h2>
+<ol>
+<li>The Package Explorer is not visible in Debug perspective; select the Java perspective if the Package Explorer is not visible</li> 
+<li>Right-click in Package Explorer window on project name (OpenTraffic)</li>
+<li>Click / expand "Build Path"</li>
+<li>Click "Configure Build Path ..."</li>
+<li>Click "Add external JARs ..."</li>
+<li>Navigate to the jar file, select it and click "Open"</li>
+</ol>
+<h2>Changing the number error or warnings shown in the Problems View</h2>
+The first three steps are only needed if the Problems tab is not currently visible.
+<ol>
+<li>Click "Window" in the main menu bar</li>
+<li>Expand "Show View"</li>
+<li>Click "Problems"</li>
+<li>Click the tiny triangle in the right of the tab control holding the Problems View</li>
+<li>Click "Configure contents ..."</li>
+<li>Uncheck "Use item limits", or change "Number of items visible per group:" to some large value</li> 
+</ol>
+Source: <a href="http://stackoverflow.com/questions/6786660/how-to-find-complete-list-of-warnings-in-eclipse-ide">Stack Overflow</a>.
+<h2>Setting up editing of HTML documents</h2>
+This is needed to modify documents like this one. If "Web Page Editor" is not shown in the list of installed software you can install it by following these instructions.
+<ol>
+<li>Click "Help" in the main menu bar</li>
+<li>Click "Install new software"</li>
+<li>Set "Work with" to "Juno - http://download.eclipse.org/releases/juno"</li>
+<li>Expand "Web, XML and Java EE development"</li>
+<li>Check "Web Page Editor"</li>
+<li>Click "Next"</li>
+<li>Let Eclipse restart if it wants to</li>
+</ol>
+Source: <a href="http://stackoverflow.com/questions/54868/what-is-the-best-html-editor-for-eclipse">Stack Overflow</a>;
+which describes the actions for Eclipse Indigo, but it works virtually the same way for Eclipse Juno.
+<h2>Generating documentation using Javadoc</h2>
+Javadoc is a program that extract particular comments from the source code files and generates a set of HTML files to be used as documentation.
+The <i>javadoc.exe</i> program is included with the JDK (java development kit).
+On Windows 7, the location of this program is usually something like "C:\Program Files\Java\jdk1.7.0_17\bin\javadoc.exe".
+
+To generate the HTML files from eclipse:
+<ol>
+<li>Click once on <i>OpenTraffic</i> in the <i>Package Explorer</i> to select 
+the entire project (otherwise only a fraction of the documentation may get generated)</li>
+<li>Click the "Project" menu</li>
+<li>Click the "Generate Javadoc ..." item to open the <i>Javadoc generation window</i></li>
+<li>If the Javadoc command is blank click the "Configure ..." button, navigate to the <i>javadoc.exe</i> program and click OK</li>
+<li>Select the OpenTraffic project under <i>Select types for which Javadoc will be generated</i></li>
+<li>Click the "Finish" button</li> 
+</ol>
+<h2>Setting warnings about missing/bad JavaDoc comments</h2>
+<ol>
+<li>Click "Window" in the main menu"</li>
+<li>Click "Preferences"</li>
+<li>Expand "Java"</li>
+<li>Expand "Compiler"</li>
+<li>Click "Javadoc"</li>
+<li>Check "Process Javadoc comments"</li>
+<li>Select "Warning" after "Malformed Javadoc comments"</li>
+<li>Select "Public" after "Only consider members as visible as"</li>
+<li>Select "Warning" after "Missing Javadoc tags"</li>
+<li>Select "Public" after "Only cosider members as visible as"</li>
+<li>Check "Ignore in overriding and implementing methods"</li>
+<li>Check "Ignore method type parameters"</li>
+<li>Select "Warning" after "Missing Javadoc comments"</li>
+<li>Select "Public" after "Only consider members as visible as"</li>
+<li>Check "Ignore in overriding and implementing methods"</li> 
+</ol>
+</body>
+</html>

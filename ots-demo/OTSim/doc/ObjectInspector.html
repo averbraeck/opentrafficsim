@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Writing Code for the Object Inspector</title>
+</head>
+<body>
+<h1>Writing Code for the Object Inspector</h1>
+ObjectInspector is a module of OpenTraffic that allows the user to inspect any Java object and to modify selected properties of an object.
+On the screen the ObjectInspector shows a window with a JTree. This tree shows the initial object and its direct descendants.
+Sub-children will be shown when the user expands them. Lazy tree expansion is used (and necessary) because there may be loops in the object tree.
+<h2>Creating an showing the Object Inspector</h2>
+To create an launch an instance of ObjectInspector put
+<pre>ObjectInspector objectInspector = new ObjectInspector(java.lang.Object rootObject, GraphicsPanelClient graphicsPanelClient);</pre>
+in your code. You can create as many instances of ObjectInspector as you like, but there will be a penalty in the form of memory used.
+<h2>Destroying an ObjectInspector</h2>
+To destroy an instance of ObjectInspector put
+<pre>objectInspector.dispose();</pre>
+in your code.
+<h2>Expanding a path in the ObjectInspector</h2>
+A particular path of objects can be expanded by calling the ExpandPath method of the ObjectInspector.
+<pre>
+public void expandPath(java.util.ArrayList&lt;java.lang.Object&gt; path)
+</pre>
+The provided ArrayList contains the Objects that must be expanded.
+The first Object must be a direct descendant of the root Object. 
+<h2>Hooks for the ObjectInspector</h2>
+The object passed to the ObjectInspector is analyzed using <a href="http://docs.oracle.com/javase/tutorial/reflect/index.html">Java reflection</a>.
+The ObjectInspector looks for methods with names matching particular prefix and suffix:
+<table border="1">
+<tr><th>Name prefix</th><th>Name suffix</th><th>Meaning</th></tr>
+<tr><td>get</td><td>_r</td><td><a href="#getter">Getter</a></td></tr>
+<tr><td>set</td><td>_w</td><td><a href="#setter">Setter</a></td></tr>
+<tr><td>validate</td><td>_v</td><td><a href="#validator">Validator</a></td></tr>
+<tr><td>itemize</td><td>_i</td><td><a href="#itemizer">Itemizer</a></td></tr>
+<tr><td>itemize</td><td>_caption</td><td><a href="itemizerCaption">ItemizerCaption</a></td></tr>
+<tr><td>mayDelete</td><td>_d</td><td><a href="#candeleter">Candeleter</a></td></tr>
+<tr><td>delete</td><td>_d</td><td><a href="#deleter">Deleter</a></td></tr>
+<tr><td>duplicate</td><td>_2</td><td><a href="#duplicator">Duplicator</a></td></tr>
+</table>
+The ObjectInspector used the part of the name between the prefix and the suffix as the caption of the node in the JTree.
+<a name="getter" /><h2>The Getter hook</h2>
+To use the ObjectInspector for inspection only, implement Getters for every (sub-)object that must be shown.
+<br />
+A Getter is a method that conforms to the pattern
+<pre>public java.lang.Object getName_r() {
+	return someObject;
+}
+</pre>
+A getter method has zero parameters and returns some object.
+The class name of the object, followed by a colon, a space and the result of the <i>toString</i> method is used to label the node of the tree shown by the ObjectInspector.
+Overriding the <i>toString</i> method in classes shown by the ObjectInspector can make these values much easier to read.
+<a name="setter" /><h2>The Setter hook</h2>
+A Setter is a method that allows the ObjectInspector to modify an object.
+<pre>
+public void setName_w(Object object) {
+	// code to modify the <i>Name</i> property of the object goes here
+}
+</pre>
+To make use of a Setter their must also be a <a href="#getter">Getter</a> or an <a href="#itemizer">Itemizer</a> method in the class.
+The ObjectInspector supplies a java.lang.String object as argument to a Setter method.
+To prevent the user from typing strings that would be invalid in the application a <a href="#validator">Validator</a> method may be provided.
+<br />
+If the object has a Setter, the ObjectInspector allows the user to modify the object by clicking three times on the node.
+This modification is sent to the object when focus leaves the object (i.e. when the user clicks on another object in the tree).
+<br />
+If the object returned by the Getter is a java.util.ArrayList&lt;java.lang.Object&gt;, the ObjectInspector
+creates a node that can be expanded. Such objects can also have a Duplicator, Deleter and Candeleter methods to be used by the ObjectInspector.
+<br />
+After invoking the Setter, the ObjectInspector rebuilds the shown tree from the root up and expands the path up to the modified object.
+<a name="validator" /><h2>The Validator hook</h2>
+A Validator is a method that checks if a java.lang.String is allowed to be used as argument in a Setter.
+<pre>
+public InputValidator validateName_v() {
+	return new InputValidator("[a-zA-Z_][a-zA-Z_0-9]*");
+}
+</pre>
+The example above creates an InputValidator that consists of a regular expression that matches a series characters starting with one letter or underscore followed by zero or more letters, digits and underscores.
+More advanced validators can be defined. See the chapter <a href="#inputvalidators">Input Validators</a> below.
+If an object has a Setter, but no Validator, no checking is done.
+<br />
+The Validator method is called each time the ObjectInspector needs to validate a value.
+The InputValidator returned by the Validator method is not cached for re-use by the ObjectInspector.
+<a name="itemizer" /><h2>The Itemizer hook</h2>
+An Itemizer method returns an java.util.ArrayList&lt;java.lang.String&gt; with captions that will be used in a javax.swing.JPopupMenu.
+This menu will be shown when the user clicks three times on the node in the tree. When the user selects an item in the menu, the Setter of the class will be called with the String of the item as argument.
+If the object has a Validator, any captions that are deemed invalid by this Validator will be shown disabled.
+If the object has no Validator, all captions will be shown enabled.
+<pre>
+public ArrayList&lt;String&gt; itemizeType_i() {
+	ArrayList&lt;String&gt; result = new ArrayList&lt;String&gt; ();
+	result.add("Caption one");
+	result.add("Caption two");
+	// etc.
+	return result;
+}
+</pre>
+<a name="itemizerCaption" /><h2>The ItemizerCaption hook</h2>
+If an ItemizerCaption is provided in addition to an Itemizer, the label that tops
+the pop up menu is set to the value returned by the ItemizerCaption hook.
+<pre>
+public String itemizeType_caption() {
+	return "Select one of these types";
+}
+</pre>
+<a name="candeleter" /><h2>The Candeleter hook</h2>
+A Candeleter hook checks whether the ObjectInspector is allowed to call the Deleter hook.
+A Candeleter can be used allow the ObjectInspector to delete all elements in a list (one at a time) bar one.
+The example below shows a Candeleter that implements this.
+<pre>
+public boolean mayDeleteName_d() {
+	return list.size() > 1;
+}
+</pre>
+<a name="deleter" /><h2>The Deleter hook</h2>
+A Deleter hook is called when the user deletes an object from the tree in the ObjectInspector.
+A Deleter hook is only used for objects of type java.util.ArrayList&lt;java.lang.Object&gt;.
+<pre>
+public void deleteName_d() {
+	// code to delete the object goes here
+}
+</pre>
+If the object has a <a href="#candeleter">Candeleter</a>, the user can only delete items that the Candeleter allows.
+<br />
+After invoking the Deleter, the ObjectInspector rebuilds the shown tree from the root up and expands the path to the parent of the deleted object.
+<a name="duplicator" /><h2>The Duplicator hook</h2>
+A Duplicator hook is called when the user wants to duplicate an object in the tree in the ObjectInspector.
+A Duplicator hook is only used for objects of type java.util.ArrayList&lt;java.lang.Object&gt;.
+<pre>
+	public void duplicateCrossSection_2(java.lang.Object object, null) {
+	// code to duplicate the object goes here
+}
+</pre>
+The ObjectInspector provides two arguments to the Duplicator method. The first argument is the object that should be duplicated. The second argument is null.
+<br />
+After invoking the Duplicator, the ObjectInspector rebuilds the shown tree from the root up and expands the path up to the duplicated object.
+<a name="inputvalidators" /><h1>Input Validators</h1>
+InputValidator is a class used to check that a java.lang.String value will be allowed as argument to a <a href="#setter">Setter</a>.
+Currently there are three main types of InputValidator:
+<ol>
+<li>Regular expression</li>
+<li>Range</li>
+<li>Custom</li>
+</ol>
+A regular expression InputValidator is created by
+<pre>
+new InputValidator(String <i>regularExpression</i>);
+</pre>
+A proposed string must match this <i>regular expression</i> to be deemed valid.
+<br />
+A range InputValidator is created by
+<pre>
+new InputValidator("[.,0-9].*", <i>lowerLimit</i>, <i>upperLimit</i>);
+</pre>
+The first argument is a regular expression that allows any string of digits, commas and periods.
+The second argument is a java.lang.Double that specifies the lower limit of the range. If there is no lower limit, use the value java.lang.Double.NaN.
+The third argument is a java.lang.Double that specifies the upper limit of the range. If there is no upper limit, use the value java.lang.Double.NaN.
+<br />
+If the input String matches the regular expression <i>Double.parseDouble</i> is called to convert it to a <i>Double</i> value for comparison to the range.
+If the value complies with the non-NaN values of the range it is deemed acceptable.
+<br />
+A custom InputValidator must override the <i>validate</i> method of InputValidator.
+To create a custom InputValidator in-line create a Validator method like this:
+<pre>
+public InputValidator validateName_v() {
+	return new InputValidator(new InputValidator.CustomValidator() {
+		@Override
+		public boolean validate(String originalValue, String proposedValue) {
+			if (! proposedValue.matches("[a-zA-Z_][-a-zA-Z0-9_.]*"))
+				return false;	// not a decent name
+			if (proposedValue.equals(originalValue))
+				return true;	// current name is OK
+			// Anything else must be unique among the node names
+			return network.lookupNode(proposedValue, false) == null;
+		}
+	});
+}
+</pre>
+This example accepts strings that match the regular expression but additionally ensures that all names in the network are unique.
+To allow for this the validate method is provided both the original value and the proposed value.
+</body>
+</html>
