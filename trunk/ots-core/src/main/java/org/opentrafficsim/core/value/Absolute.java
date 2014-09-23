@@ -9,7 +9,7 @@ package org.opentrafficsim.core.value;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Absolute extends AbsoluteRelative
+public interface Absolute
 {
     //
 }
