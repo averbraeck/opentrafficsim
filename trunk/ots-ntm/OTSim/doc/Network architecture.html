@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Architecture of the Network and environment</title>
+</head>
+<body>
+<h1>Network design</h1>
+Open Traffic intends to provide a network architecture that is "model free". 
+Instead of applying specific model design, we adhere to internationally accepted Open GIS Standards.
+ 
+<h2>Overview of the road network</h2>
+The network of roads is built-up from links and nodes. This enables the use of many path finding algorithms. 
+To use the network for all types of assignments, the network design enables a further specification of this network.
+The road includes one or more cross section objects. The longitudinal position is defined as its relative distance from the beginning of a link. 
+Every link should have at least one cross section at the beginning of the link. Cross sections describe a cross cut of the road through cross section elements: these are for instance grass, a hard shoulder lane, a barrier and a median.
+every cross section element may be further detailed. every cross section element includes information on its geometry: 
+its lateral position from the centreline of the link. The cross section element type Road may include several objects. 
+These extend the ""CrossSectionObject"", characterised by its topology such as a lateral and longitudinal position:
+<ol>
+<li>The road marking along: defines the lanes and rules for lane changing</li>
+<li>Turn arrow: the allowed movements</li>
+<li>Stop line: before the entrance of a junction</li>
+<li>Priority sign: priority or give-way (yield)</li>
+<li>Restrictions: defines the vehicles that may use the lane</li>
+</ol> 
+<h3>Junction</h2>
+In Open Traffic, a junction can basically be defined as a node with its entering and leaving links. Every link requires a defintion of its cross section. 
+If no further information is provided, the program creates a junction while using the geometry of the connecting links. 
+To create junction movements, Open Traffic expands them by creating additional nodes at the end 
+of very entering arm and the beginning of every leaving arm. 
+Between these nodes, new links are created that define all possible movements at a junction.  
+If no information is provided, all possible turns (excluding U-turns) are created within Open Traffic by some simple rules, 
+generating a first proposal for the turning movements.
+If, for instance an incoming arm has two lanes, and there are three leaving arms, the right lane allows for a right turn and straight forward. 
+The left lane only allows left turning movements. After this conversion, banned turns may be included by using the graphical editor.
+For that purpose the TurnArrow object can be used. It enables the definition of the allowed movements. Every incoming lane may have a turn arrow object. 
+This TurnArrow object defines which leaving links are connected to this incoming lane. 
+This is coded by numbering the outgoing links in anti-clockwise order, relatively to the incoming link (exit link 1, 2, 3 etc.). 
+If an outgoing link has more than one lane, Open Traffic again provides a logical lane suggestion. 
+Again, this may be changed later on by the graphical editor.
+
+
+ 
+  

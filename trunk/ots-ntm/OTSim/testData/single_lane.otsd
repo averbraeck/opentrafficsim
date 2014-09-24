@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Demand>
+  <TimeScaleFunction>
+  <Pair>
+  <Time>300</Time>
+  <Factor>0.2</Factor>
+  </Pair>
+  <Pair>
+  <Time>600</Time>
+  <Factor>1.0</Factor>
+  </Pair>
+  <Pair>
+  <Time>900</Time>
+  <Factor>1.0</Factor>
+  </Pair>
+  <Pair>
+  <Time>1800</Time>
+  <Factor>0.0</Factor>
+  </Pair>
+  </TimeScaleFunction>
+  <tripPattern>
+    <location>z1 z2</location>
+    <trips>600.000000</trips>
+  </tripPattern>
+</Demand>
