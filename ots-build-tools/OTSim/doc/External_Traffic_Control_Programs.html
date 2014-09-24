@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>External Traffic Control Programs</title>
+</head>
+<body>
+<h1>External Traffic Control Programs</h1>
+OTSim can communicate with one or several external traffic control programs.
+All communication takes place over a TCP-IP link. 
+The current method that the external program is launched requires that the
+external program is running on the same computer. This restriction should be
+<br /> 
+At this time the only supported program is Trafcod.
+TrafCOD loads a traffic control program and then connects to the running
+instance of OTSim. Several instances of Trafcod can be run simultaneously; one
+for each controlled intersection.
+<br />Trafcod runs only on MS-Windows. Running the Trafcod program on Linux or OS-X is not possible.
+<h2>Downloading Trafcod.exe</h2>
+Point your web browser to <a href="http://www.regiolab-delft.nl/downloads/Trafcod.exe">http://www.regiolab-delft.nl/downloads/Trafcod.exe</a> and save the result in a file named Trafcod.exe.
+<br/>In the current format, the traffic models in testData expect the Trafcod.exe in
+<code>d:/cppg/trafcod/trafcod.exe</code>
+<br />If this location is inconvenient, 
+you will have to edit the ControlURL in the otsm or otsn file. This can be done with OTSim, but it is easier to use a text editor.
+The ControlURL consists of three space-separated parts.
+<ol>
+<li>The first part defines where the external traffic control program is stored</li>
+<li>This part defines where the file with the traffic control rules is stored.</li>
+<li>The last part contains additional arguments to be sent to the traffic control program (see the next paragraph). 
+For Trafcod this argument specifies that the program should try to connect to a TCP-IP port to read the state of the detectors and to write the state of the traffic lights.</li>
+</ol>
+<h2>The traffic control rule file</h2>
+Trafcod.exe is an interpreter for traffic control programs written in the traffic control language <i>trafcod</i>.
+A trafcod program must be created for each controlled intersection. There are trafcod
+programs for the figure_8_traffic_lights.otsm model and for the junction4arm_traffic_lights.otsm model.
+<br />These programs have been generated with the Vrigen program, which, regrettable, is not publicly available.
+<br />Each trafcod programs should be stored in it's own directory with a group of accompanying files.
+Each program (with those additional files) is packed in a zip file.
+These zip files are available for download:
+<ul>
+<li>The trafcod program for figure_8_traffic_lights.otsm is <a href="http://www.regiolab-delft.nl/downloads/Simple.zip">http://www.regiolab-delft.nl/downloads/Simple.zip</a></li>
+<li>The trafcod program for junction4arm_traffic_lights.otsm is <a href="http://www.regiolab-delft.nl/downloads/4Arm.zip">http://www.regiolab-delft.nl/downloads/4Arm.zip</a> 
+</ul> 
+</body>
+</html>

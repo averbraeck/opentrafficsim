@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.opentrafficsim.core.value.vfloat.vector.FloatVectorDenseTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.036 sec - in org.opentrafficsim.core.value.vfloat.vector.FloatVectorDenseTest
