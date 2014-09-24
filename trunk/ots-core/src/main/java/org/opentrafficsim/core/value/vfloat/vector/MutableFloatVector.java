@@ -146,7 +146,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final FloatVector.Abs.Dense<U> immutable()
             {
                 setCopyOnWrite(true);
-                return new FloatVector.Abs.Dense<U>(getVectorSI(), this.unit);
+                return new FloatVector.Abs.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -154,7 +154,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final MutableFloatVector.Abs.Dense<U> mutable()
             {
                 setCopyOnWrite(true);
-                return new MutableFloatVector.Abs.Dense<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Abs.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -216,7 +216,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final FloatVector.Abs.Sparse<U> immutable()
             {
                 setCopyOnWrite(true);
-                return new FloatVector.Abs.Sparse<U>(getVectorSI(), this.unit);
+                return new FloatVector.Abs.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -224,7 +224,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final MutableFloatVector.Abs.Sparse<U> mutable()
             {
                 setCopyOnWrite(true);
-                return new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -240,7 +240,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         @Override
         public final FloatScalar.Abs<U> get(final int index) throws ValueException
         {
-            return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+            return new FloatScalar.Abs<U>(getInUnit(index, getUnit()), getUnit());
         }
 
     }
@@ -312,7 +312,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final FloatVector.Rel.Dense<U> immutable()
             {
                 setCopyOnWrite(true);
-                return new FloatVector.Rel.Dense<U>(getVectorSI(), this.unit);
+                return new FloatVector.Rel.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -320,7 +320,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final MutableFloatVector.Rel.Dense<U> mutable()
             {
                 setCopyOnWrite(true);
-                return new MutableFloatVector.Rel.Dense<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Rel.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -382,7 +382,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final FloatVector.Rel.Sparse<U> immutable()
             {
                 setCopyOnWrite(true);
-                return new FloatVector.Rel.Sparse<U>(getVectorSI(), this.unit);
+                return new FloatVector.Rel.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -390,7 +390,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final MutableFloatVector.Rel.Sparse<U> mutable()
             {
                 setCopyOnWrite(true);
-                return new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -406,7 +406,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         @Override
         public final FloatScalar.Rel<U> get(final int index) throws ValueException
         {
-            return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
+            return new FloatScalar.Rel<U>(getInUnit(index, getUnit()), getUnit());
         }
 
     }

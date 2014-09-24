@@ -22,7 +22,7 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     private static final long serialVersionUID = 20140615L;
 
     /** the unit of the value. */
-    protected final U unit;
+    private final U unit;
 
     /**
      * @param unit the unit of the value

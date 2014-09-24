@@ -147,7 +147,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final DoubleMatrix.Abs.Dense<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new DoubleMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
+                return new DoubleMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -155,7 +155,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final MutableDoubleMatrix.Abs.Dense<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
+                return new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -218,7 +218,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final DoubleMatrix.Abs.Sparse<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new DoubleMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
+                return new DoubleMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -226,7 +226,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final MutableDoubleMatrix.Abs.Sparse<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
+                return new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -242,7 +242,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
         @Override
         public final DoubleScalar.Abs<U> get(final int row, final int column) throws ValueException
         {
-            return new DoubleScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
+            return new DoubleScalar.Abs<U>(getInUnit(row, column, getUnit()), getUnit());
         }
 
     }
@@ -315,7 +315,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final DoubleMatrix.Rel.Dense<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new DoubleMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
+                return new DoubleMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -323,7 +323,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final MutableDoubleMatrix.Rel.Dense<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
+                return new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -386,7 +386,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final DoubleMatrix.Rel.Sparse<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new DoubleMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
+                return new DoubleMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -394,7 +394,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             public final MutableDoubleMatrix.Rel.Sparse<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
+                return new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -410,7 +410,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
         @Override
         public final DoubleScalar.Rel<U> get(final int row, final int column) throws ValueException
         {
-            return new DoubleScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            return new DoubleScalar.Rel<U>(getInUnit(row, column, getUnit()), getUnit());
         }
 
     }
