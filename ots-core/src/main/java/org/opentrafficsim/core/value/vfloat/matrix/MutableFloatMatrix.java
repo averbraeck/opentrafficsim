@@ -148,7 +148,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final FloatMatrix.Abs.Dense<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new FloatMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
+                return new FloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -156,7 +156,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -219,7 +219,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final FloatMatrix.Abs.Sparse<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new FloatMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
+                return new FloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -227,7 +227,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -243,7 +243,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         @Override
         public final FloatScalar.Abs<U> get(final int row, final int column) throws ValueException
         {
-            return new FloatScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
+            return new FloatScalar.Abs<U>(getInUnit(row, column, getUnit()), getUnit());
         }
 
     }
@@ -316,7 +316,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final FloatMatrix.Rel.Dense<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new FloatMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
+                return new FloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -324,7 +324,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -387,7 +387,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final FloatMatrix.Rel.Sparse<U> immutable()
             {
                 this.setCopyOnWrite(true);
-                return new FloatMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
+                return new FloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -395,7 +395,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
                 this.setCopyOnWrite(true);
-                return new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -411,7 +411,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         @Override
         public final FloatScalar.Rel<U> get(final int row, final int column) throws ValueException
         {
-            return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            return new FloatScalar.Rel<U>(getInUnit(row, column, getUnit()), getUnit());
         }
 
     }

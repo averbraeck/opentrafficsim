@@ -136,7 +136,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
-                return new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -204,7 +204,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
-                return new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -226,7 +226,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         @Override
         public final FloatScalar<U> get(final int row, final int column) throws ValueException
         {
-            return new FloatScalar.Abs<U>(getInUnit(row, column, this.unit), this.unit);
+            return new FloatScalar.Abs<U>(getInUnit(row, column, getUnit()), getUnit());
         }
 
     }
@@ -297,7 +297,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
-                return new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -365,7 +365,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
-                return new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), this.unit);
+                return new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -388,7 +388,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         @Override
         public final FloatScalar<U> get(final int row, final int column) throws ValueException
         {
-            return new FloatScalar.Rel<U>(getInUnit(row, column, this.unit), this.unit);
+            return new FloatScalar.Rel<U>(getInUnit(row, column, getUnit()), getUnit());
         }
 
     }
@@ -410,7 +410,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     {
         ensureRectangular(values);
         this.matrixSI = createMatrix2D(values.length, 0 == values.length ? 0 : values[0].length);
-        if (this.unit.equals(this.unit.getStandardUnit()))
+        if (getUnit().equals(getUnit().getStandardUnit()))
         {
             this.matrixSI.assign(values);
         }
@@ -476,7 +476,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      */
     public final float[][] getValuesInUnit()
     {
-        return getValuesInUnit(this.unit);
+        return getValuesInUnit(getUnit());
     }
 
     /**
@@ -579,7 +579,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     @Override
     public final String toString()
     {
-        return toString(this.unit);
+        return toString(getUnit());
     }
 
     /**

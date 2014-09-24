@@ -130,7 +130,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Abs.Dense<U> mutable()
             {
-                return new MutableDoubleVector.Abs.Dense<U>(getVectorSI(), this.unit);
+                return new MutableDoubleVector.Abs.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -197,7 +197,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Abs.Sparse<U> mutable()
             {
-                return new MutableDoubleVector.Abs.Sparse<U>(getVectorSI(), this.unit);
+                return new MutableDoubleVector.Abs.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -220,7 +220,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         @Override
         public final DoubleScalar.Abs<U> get(final int index) throws ValueException
         {
-            return new DoubleScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+            return new DoubleScalar.Abs<U>(getInUnit(index, getUnit()), getUnit());
         }
 
     }
@@ -290,7 +290,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Rel.Dense<U> mutable()
             {
-                return new MutableDoubleVector.Rel.Dense<U>(getVectorSI(), this.unit);
+                return new MutableDoubleVector.Rel.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -357,7 +357,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final MutableDoubleVector.Rel.Sparse<U> mutable()
             {
-                return new MutableDoubleVector.Rel.Sparse<U>(getVectorSI(), this.unit);
+                return new MutableDoubleVector.Rel.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -380,7 +380,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         @Override
         public final DoubleScalar.Rel<U> get(final int index) throws ValueException
         {
-            return new DoubleScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
+            return new DoubleScalar.Rel<U>(getInUnit(index, getUnit()), getUnit());
         }
 
     }
@@ -400,7 +400,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     protected final void initialize(final double[] values)
     {
         this.vectorSI = createMatrix1D(values.length);
-        if (this.unit.equals(this.unit.getStandardUnit()))
+        if (getUnit().equals(getUnit().getStandardUnit()))
         {
             this.vectorSI.assign(values);
         }
@@ -458,7 +458,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      */
     public final double[] getValuesInUnit()
     {
-        return getValuesInUnit(this.unit);
+        return getValuesInUnit(getUnit());
     }
 
     /**
@@ -523,7 +523,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     @Override
     public final String toString()
     {
-        return toString(this.unit);
+        return toString(getUnit());
     }
 
     /**

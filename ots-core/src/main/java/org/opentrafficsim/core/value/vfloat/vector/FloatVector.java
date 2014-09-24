@@ -128,7 +128,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Abs.Dense<U> mutable()
             {
-                return new MutableFloatVector.Abs.Dense<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Abs.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -195,7 +195,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Abs.Sparse<U> mutable()
             {
-                return new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -218,7 +218,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         @Override
         public final FloatScalar.Abs<U> get(final int index) throws ValueException
         {
-            return new FloatScalar.Abs<U>(getInUnit(index, this.unit), this.unit);
+            return new FloatScalar.Abs<U>(getInUnit(index, getUnit()), getUnit());
         }
 
     }
@@ -288,7 +288,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Rel.Dense<U> mutable()
             {
-                return new MutableFloatVector.Rel.Dense<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Rel.Dense<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -355,7 +355,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final MutableFloatVector.Rel.Sparse<U> mutable()
             {
-                return new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), this.unit);
+                return new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), getUnit());
             }
 
             /** {@inheritDoc} */
@@ -378,7 +378,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         @Override
         public final FloatScalar.Rel<U> get(final int index) throws ValueException
         {
-            return new FloatScalar.Rel<U>(getInUnit(index, this.unit), this.unit);
+            return new FloatScalar.Rel<U>(getInUnit(index, getUnit()), getUnit());
         }
 
     }
@@ -398,7 +398,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     protected final void initialize(final float[] values)
     {
         this.vectorSI = createMatrix1D(values.length);
-        if (this.unit.equals(this.unit.getStandardUnit()))
+        if (getUnit().equals(getUnit().getStandardUnit()))
         {
             this.vectorSI.assign(values);
         }
@@ -456,7 +456,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      */
     public final float[] getValuesInUnit()
     {
-        return getValuesInUnit(this.unit);
+        return getValuesInUnit(getUnit());
     }
 
     /**
@@ -521,7 +521,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     @Override
     public final String toString()
     {
-        return toString(this.unit);
+        return toString(getUnit());
     }
 
     /**
