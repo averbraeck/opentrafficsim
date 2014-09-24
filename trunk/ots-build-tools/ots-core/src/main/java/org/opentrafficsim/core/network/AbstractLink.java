@@ -1,0 +1,121 @@
+package org.opentrafficsim.core.network;
+
+import java.io.Serializable;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+
+import org.opentrafficsim.core.unit.FlowUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
+/**
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version Aug 19, 2014 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @param <ID> the ID type of the Link, e.g., String or Integer.
+ * @param <N> the type of node that this link uses.
+ */
+public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements Serializable, LocatableInterface
+{
+    /** */
+    private static final long serialVersionUID = 20140920L;
+
+    /** link id. */
+    private ID id;
+
+    /** start node (directional). */
+    private N startNode;
+
+    /** end node (directional). */
+    private N endNode;
+
+    /** link length in a length unit. */
+    private DoubleScalar<LengthUnit> length;
+
+    /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
+    private DoubleScalar<FlowUnit> capacity;
+
+    /**
+     * Construction of a link.
+     * @param id the link id.
+     * @param startNode start node (directional).
+     * @param endNode end node (directional).
+     * @param length link length in a length unit.
+     * @param capacity link capacity in vehicles per hour.
+     */
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length,
+            final DoubleScalar<FlowUnit> capacity)
+    {
+        this.id = id;
+        this.startNode = startNode;
+        this.endNode = endNode;
+        this.length = length;
+        setCapacity(capacity);
+    }
+
+    /**
+     * Construction of a link.
+     * @param id the link id.
+     * @param startNode start node (directional).
+     * @param endNode end node (directional).
+     * @param length link length in a length unit.
+     */
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length)
+    {
+        this(id, startNode, endNode, length, new DoubleScalar.Abs<FlowUnit>(Double.POSITIVE_INFINITY, FlowUnit.PER_SECOND));
+    }
+
+    /**
+     * @return link length.
+     */
+    public final DoubleScalar<LengthUnit> getLenght()
+    {
+        return this.length;
+    }
+
+    /**
+     * @return id.
+     */
+    public final ID getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * @return start node.
+     */
+    public final N getStartNode()
+    {
+        return this.startNode;
+    }
+
+    /**
+     * @return end node.
+     */
+    public final N getEndNode()
+    {
+        return this.endNode;
+    }
+
+    /**
+     * @return link capacity.
+     */
+    public final DoubleScalar<FlowUnit> getCapacity()
+    {
+        return this.capacity;
+    }
+
+    /**
+     * @param capacity set the link capacity.
+     */
+    public final void setCapacity(final DoubleScalar<FlowUnit> capacity)
+    {
+        this.capacity = capacity;
+    }
+
+}
