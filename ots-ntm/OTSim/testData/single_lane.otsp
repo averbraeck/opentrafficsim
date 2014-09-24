@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<MeasurementPlan>
+  <Name>Origin_to_Destination</Name>
+  <Node>
+    <Rank>0</Rank>
+    <ID>1</ID>
+  </Node>
+  <Node>
+    <Rank>1</Rank>
+    <ID>2</ID>
+  </Node>
+</MeasurementPlan>
