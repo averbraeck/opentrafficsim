@@ -1,4 +1,0 @@
-OTSim
-=====
-
-Open Traffic Simulator
