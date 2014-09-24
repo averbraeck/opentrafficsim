@@ -13,7 +13,9 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -106,11 +108,15 @@ public class NTMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
         {
-            // read TrafficDemand /src/main/resources
-            // including information on the time period this demand covers!
-            this.setTripDemand(CsvFileReader.ReadOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";","\\s+|-"));
             // read the time profile curves: these will be attached to the demands
             this.departureTimeProfiles = CsvFileReader.ReadDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"); 
+
+            // read TrafficDemand /src/main/resources
+            // including information on the time period this demand covers!
+            this.tripDemand = CsvFileReader.ReadOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-");
+            
+            //connect time profiles to the trips:
+            
             // read the shape files
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
             // returnCentroid, boolean allCentroids)
@@ -192,6 +198,8 @@ public class NTMModel implements OTSModelInterface
         // make a directed graph of the entire network
         for (ShpLink shpLink : this.shpLinks.values())
         {
+            // area node: copies a node from a link and connects the area 
+            // the nodeMap connects the shpNodes to these new AreaNode 
             AreaNode n1 = nodeMap.get(shpLink.getNodeA().getNr());
             if (n1 == null)
             {
@@ -323,6 +331,32 @@ public class NTMModel implements OTSModelInterface
                         System.out.println(le.getLink().getName());
                     }
                 }
+                System.out.println("Length = " + System.currentTimeMillis());
+                
+                //test K shortest
+                int k = 3;
+                int counterStart = 0;
+                for (AreaNode startNode : areaNodeCentroidMap.values()) 
+                {
+                    KShortestPaths<AreaNode, LinkEdge<Link>> kShortest = new KShortestPaths(this.areaGraph, startNode, k);
+                    counterStart++;
+                    int counterEnd = 0;
+                    System.out.println("Paths = " + counterStart);
+/*                    for (AreaNode endNode : areaNodeCentroidMap.values()) 
+                    {
+                        if (!startNode.equals(endNode))  
+                        {
+                            List<GraphPath<AreaNode, LinkEdge<Link>>> list1 = kShortest.getPaths(endNode);
+                            System.out.println("getPaths = " + counterEnd);
+                            counterEnd++;
+                        }
+                    }*/
+                }
+                System.out.println("Length = " + System.currentTimeMillis());                
+/*                System.out.println("Test k shortest length 1 = " + list1.get(0).getWeight());
+                System.out.println("Test k shortest length 1 = " + list1.get(1).getWeight());
+                System.out.println("Test k shortest length 1 = " + list1.get(2).getWeight());*/
+                System.out.println("Length = " + System.currentTimeMillis());
             }
         }
 
@@ -361,7 +395,7 @@ public class NTMModel implements OTSModelInterface
             // let's make several layers with the different types of information
             for (Area area : this.areas.values())
             {
-                new AreaAnimation(area, this.simulator);
+                new AreaAnimation(area, this.simulator, 2.5f);
             }
             for (ShpLink shpLink : this.shpLinks.values())
             {
@@ -398,36 +432,6 @@ public class NTMModel implements OTSModelInterface
         return this.simulator;
     }
 
-    /**
-     * @return departureTimeProfiles.
-     */
-    public final ArrayList<DepartureTimeProfile> getDepartureTimeProfiles()
-    {
-        return this.departureTimeProfiles;
-    }
 
-    /**
-     * @param departureTimeProfiles set departureTimeProfiles.
-     */
-    public final void setDepartureTimeProfiles(final ArrayList<DepartureTimeProfile> departureTimeProfiles)
-    {
-        this.departureTimeProfiles = departureTimeProfiles;
-    }
-
-    /**
-     * @return tripDemand.
-     */
-    public final TripDemand getTripDemand()
-    {
-        return this.tripDemand;
-    }
-
-    /**
-     * @param tripDemand set tripDemand.
-     */
-    public final void setTripDemand(final TripDemand tripDemand)
-    {
-        this.tripDemand = tripDemand;
-    }
 
 }

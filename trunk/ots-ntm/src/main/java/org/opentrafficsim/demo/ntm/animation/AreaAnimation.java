@@ -1,7 +1,9 @@
 package org.opentrafficsim.demo.ntm.animation;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
@@ -24,15 +26,18 @@ import org.opentrafficsim.demo.ntm.Area;
  */
 public class AreaAnimation extends Renderable2D
 {
+    private float width;
+
     /**
      * @param source
      * @param simulator
      * @throws NamingException
      * @throws RemoteException
      */
-    public AreaAnimation(Area source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public AreaAnimation(Area source, OTSSimulatorInterface simulator, final float width) throws NamingException, RemoteException
     {
         super(source, simulator);
+        this.width = width;
     }
 
     /** {@inheritDoc} */
@@ -43,8 +48,13 @@ public class AreaAnimation extends Renderable2D
         {
             // graphics.setPaint(Color.LIGHT_GRAY);
             // graphics.fill(polygon);
+            graphics.setColor(Color.BLACK);
+            Stroke oldStroke = graphics.getStroke();
+            graphics.setStroke(new BasicStroke(this.width));
             graphics.setColor(Color.GRAY);
+            graphics.setColor(Color.GREEN);
             graphics.draw(polygon);
+            graphics.setStroke(oldStroke);
         }
     }
 

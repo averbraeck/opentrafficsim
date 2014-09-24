@@ -19,16 +19,14 @@ public class TripInfo
     /** total number of Trips for this simulation. */
     private double numberOfTrips;
 
-    /** the time departure profile over this period. */
-    private DepartureTimeProfile departureTimeProfile;
-
     /**
      * @param numberOfTrips total number of Trips for this simulation
      */
-    public TripInfo(final double numberOfTrips)
+
+    public TripInfo(double numberOfTrips)
     {
         super();
-        this.setNumberOfTrips(numberOfTrips);        
+        this.numberOfTrips = numberOfTrips;
     }
 
     /**
@@ -39,6 +37,7 @@ public class TripInfo
         return this.numberOfTrips;
     }
 
+
     /**
      * @param numberOfTrips set numberOfTrips
      */
@@ -47,21 +46,6 @@ public class TripInfo
         this.numberOfTrips = numberOfTrips;
     }
 
-    /**
-     * @return departureTimeProfile.
-     */
-    public DepartureTimeProfile getDepartureTimeProfile()
-    {
-        return departureTimeProfile;
-    }
-
-    /**
-     * @param departureTimeProfile set departureTimeProfile.
-     */
-    public void setDepartureTimeProfile(DepartureTimeProfile departureTimeProfile)
-    {
-        this.departureTimeProfile = departureTimeProfile;
-    }
 
 
 }

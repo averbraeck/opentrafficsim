@@ -19,19 +19,19 @@ public class TimeDynamicTripInfo extends TripInfo
     private DepartureTimeProfile departureTimeProfile;
     
     /**
-     * @param numberOfTrips
-     * @param departureTimeProfile 
+     * @param numberOfTrips amount of....
+     * @param departureTimeProfile provides the division of trips by time segments
      */
-    public TimeDynamicTripInfo(double numberOfTrips, DepartureTimeProfile departureTimeProfile)
+    public TimeDynamicTripInfo(final double numberOfTrips, final DepartureTimeProfile departureTimeProfile)
     {
         super(numberOfTrips);
-        this.setDepartureTimeProfile(departureTimeProfile);
+        this.departureTimeProfile = departureTimeProfile;
     }
 
     /**
      * @return departureTimeProfile.
      */
-    public DepartureTimeProfile getDepartureTimeProfile()
+    public final DepartureTimeProfile getDepartureTimeProfile()
     {
         return this.departureTimeProfile;
     }
@@ -39,7 +39,7 @@ public class TimeDynamicTripInfo extends TripInfo
     /**
      * @param departureTimeProfile set departureTimeProfile.
      */
-    public void setDepartureTimeProfile(DepartureTimeProfile departureTimeProfile)
+    public final void setDepartureTimeProfile(final DepartureTimeProfile departureTimeProfile)
     {
         this.departureTimeProfile = departureTimeProfile;
     }

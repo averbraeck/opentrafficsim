@@ -302,7 +302,7 @@ public class CsvFileReader
                 }
 
             }
-
+            // test if the fractions are read correctly
         }
         catch (FileNotFoundException e)
         {
