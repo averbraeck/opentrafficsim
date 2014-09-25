@@ -50,7 +50,7 @@
 		<junit.version>4.11</junit.version>
 		<java3d.version>1.5.1</java3d.version>
 		<parallelcolt.version>0.10.1</parallelcolt.version>
-		<geotools.version>11.1</geotools.version>
+		<geotools.version>12.0</geotools.version>
 		<osmosis.version>0.43.1</osmosis.version>
 		<jfreechart.version>1.0.17</jfreechart.version>
 		<reflections.version>0.9.9-RC1</reflections.version>
@@ -300,7 +300,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${maven.jacoco.version}</version>
 				<executions>
-				
+
 					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
 						is passed as VM argument when Maven the Surefire plugin is executed. -->
 					<execution>
@@ -317,7 +317,7 @@
 							<propertyName>surefireArgLine</propertyName>
 						</configuration>
 					</execution>
-					
+
 					<!-- Ensures that the code coverage report for unit tests is created 
 						after unit tests have been run. -->
 					<execution>
@@ -333,7 +333,7 @@
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 						</configuration>
 					</execution>
-					
+
 				</executions>
 			</plugin>
 
@@ -697,18 +697,18 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<id>opengeo</id>
-			<name>opengeo</name>
-			<url>http://repo.opengeo.org</url>
+			<id>boundless</id>
+			<name>Boundless Maven Repository</name>
+			<url>http://repo.boundlessgeo.com/main</url>
 		</repository>
 
 		<repository>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<id>osgeo</id>
-			<name>osgeo</name>
-			<url>http://download.osgeo.org/webdav/geotools</url>
+			<id>codehaus</id>
+			<name>Codehaus Release Repository</name>
+			<url>http://repository.codehaus.org/</url>
 		</repository>
 	</repositories>
 
