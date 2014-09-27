@@ -24,17 +24,17 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /** */
     private static final long serialVersionUID = 20140618L;
 
+    /** The value, stored in the standard SI unit. */
+    private double valueSI;
+
     /**
-     * Create a new Immutable DoubleScalar.
-     * @param unit Unit; the unit of the new DoubleScalar
+     * Construct a new Immutable DoubleScalar.
+     * @param unit U; the unit of the new DoubleScalar
      */
-    public DoubleScalar(final U unit)
+    protected DoubleScalar(final U unit)
     {
         super(unit);
     }
-
-    /** the value, stored in SI units. */
-    protected double valueSI;
 
     /**
      * @param <U> Unit
@@ -45,9 +45,9 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute DoubleScalar.
-         * @param value double; the value of the new Absolute DoubleScalar
-         * @param unit Unit; the unit of the new Absolute DoubleScalar
+         * Construct a new Absolute Immutable DoubleScalar.
+         * @param value double; the value of the new Absolute Immutable DoubleScalar
+         * @param unit U; the unit of the new Absolute Immutable DoubleScalar
          */
         public Abs(final double value, final U unit)
         {
@@ -57,8 +57,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Absolute DoubleScalar from an existing one.
-         * @param value Absolute DoubleScalar; the reference
+         * Construct a new Absolute Immutable DoubleScalar from an existing one.
+         * @param value DoubleScalar.Abs<U>; the reference
          */
         public Abs(final DoubleScalar.Abs<U> value)
         {
@@ -68,8 +68,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Absolute DoubleScalar from an existing Absolute MutableDoubleScalar.
-         * @param value Absolute MutableDoubleScalar; the reference
+         * Construct a new Absolute Immutable DoubleScalar from an existing Absolute MutableDoubleScalar.
+         * @param value MutableDoubleScalar.Abs<U>; the reference
          */
         public Abs(final MutableDoubleScalar.Abs<U> value)
         {
@@ -89,7 +89,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         @Override
         public final int compareTo(final Abs<U> o)
         {
-            return new Double(this.valueSI).compareTo(o.valueSI);
+            return new Double(getValueSI()).compareTo(o.getValueSI());
         }
 
         /** {@inheritDoc} */
@@ -110,9 +110,9 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative DoubleScalar.
-         * @param value double; the value of the new Relative DoubleScalar
-         * @param unit Unit; the unit of the new Relative DoubleScalar
+         * Construct a new Relative Immutable DoubleScalar.
+         * @param value double; the value of the new Relative Immutable DoubleScalar
+         * @param unit U; the unit of the new Relative Immutable DoubleScalar
          */
         public Rel(final double value, final U unit)
         {
@@ -122,8 +122,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Relative DoubleScalar from an existing one.
-         * @param value Relative DoubleScalar; the reference
+         * Construct a new Relative Immutable DoubleScalar from an existing one.
+         * @param value DoubleScalar.Rel<U>; the reference
          */
         public Rel(final DoubleScalar.Rel<U> value)
         {
@@ -133,13 +133,13 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Relative DoubleScalar from an existing Relative MutableDoubleScalar.
-         * @param value Relative MutableDoubleScalar; the reference
+         * Construct a new Relative Immutable DoubleScalar from an existing Relative MutableDoubleScalar.
+         * @param value MutableDoubleScalar.Rel<U>; the reference
          */
         public Rel(final MutableDoubleScalar.Rel<U> value)
         {
             super(value.getUnit());
-            // System.out.println("Created Abs");
+            // System.out.println("Created Rel");
             initialize(value);
         }
 
@@ -154,7 +154,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         @Override
         public final int compareTo(final Rel<U> o)
         {
-            return new Double(this.valueSI).compareTo(o.valueSI);
+            return new Double(getValueSI()).compareTo(o.getValueSI());
         }
 
         /** {@inheritDoc} */
@@ -169,7 +169,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * Create a mutable version of this DoubleScalar. <br>
      * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableDoubleScalar; mutable version of this DoubleScalar
+     * @return MutableDoubleScalar<U>
      */
     public abstract MutableDoubleScalar<U> mutable();
 
@@ -191,15 +191,16 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
 
     /**
      * Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never necessary.
-     * @param value DoubleScalar; the value to use for initialization
+     * @param value DoubleScalar<U>; the value to use for initialization
      */
     protected final void initialize(final DoubleScalar<U> value)
     {
-        this.valueSI = value.valueSI;
+        setValueSI(value.getValueSI());
     }
 
     /**
-     * @return value in SI units
+     * Retrieve the value in the underlying SI unit.
+     * @return double
      */
     public final double getValueSI()
     {
@@ -207,7 +208,17 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * @return value in original units
+     * Set the value in the underlying SI unit.
+     * @param value double; the new value in the underlying SI unit
+     */
+    protected final void setValueSI(final double value)
+    {
+        this.valueSI = value;
+    }
+    
+    /**
+     * Retrieve the value in the original unit.
+     * @return double
      */
     public final double getValueInUnit()
     {
@@ -215,8 +226,9 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * @param targetUnit the unit to convert the value to
-     * @return value in specific target unit
+     * Retrieve the value converted into some specified unit.
+     * @param targetUnit U; the unit to convert the value into
+     * @return double
      */
     public final double getValueInUnit(final U targetUnit)
     {
@@ -291,12 +303,12 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
             return false;
         }
         DoubleScalar<?> other = (DoubleScalar<?>) obj;
-        // unequal if one is absolute and the other is relative
+        // unequal if not both absolute or both relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;
         }
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        // unequal if the underlying standard SI unit is different
         if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
         {
             return false;

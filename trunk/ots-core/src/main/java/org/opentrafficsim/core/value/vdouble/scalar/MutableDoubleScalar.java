@@ -101,7 +101,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         @Override
         public final int compareTo(final Abs<U> o)
         {
-            return new Double(this.valueSI).compareTo(o.valueSI);
+            return new Double(getValueSI()).compareTo(o.getValueSI());
         }
 
     }
@@ -173,7 +173,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         @Override
         public final int compareTo(final Rel<U> o)
         {
-            return new Double(this.valueSI).compareTo(o.valueSI);
+            return new Double(getValueSI()).compareTo(o.getValueSI());
         }
 
     }
@@ -190,7 +190,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      */
     final void setSI(final double valueSI)
     {
-        this.valueSI = valueSI;
+        setValueSI(valueSI);
     }
 
     /**
@@ -198,7 +198,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      */
     final void set(final DoubleScalar<U> value)
     {
-        this.valueSI = value.valueSI;
+        setValueSI(value.getValueSI());
     }
 
     /**
@@ -206,7 +206,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      */
     final void set(final MutableDoubleScalar<U> value)
     {
-        this.valueSI = value.valueSI;
+        setValueSI(value.getValueSI());
     }
 
     /**
@@ -215,7 +215,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      */
     final void setInUnit(final double value, final U valueUnit)
     {
-        this.valueSI = ValueUtil.expressAsSIUnit(value, valueUnit);
+        setValueSI(ValueUtil.expressAsSIUnit(value, valueUnit));
     }
 
     /**********************************************************************************/
@@ -230,7 +230,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      */
     public final void add(final DoubleScalar.Rel<U> value)
     {
-        this.valueSI += value.getValueSI();
+        setValueSI(getValueSI() + value.getValueSI());
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      */
     public final void subtract(final DoubleScalar.Rel<U> value)
     {
-        this.valueSI -= value.getValueSI();
+        setValueSI(getValueSI() - value.getValueSI());
     }
 
     /**********************************************************************************/
@@ -264,7 +264,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         MutableDoubleScalar.Abs<U> result = new MutableDoubleScalar.Abs<U>(valueAbs);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            result.valueSI += v.valueSI;
+            result.setValueSI(result.getValueSI() + v.getValueSI());
         }
         return result;
     }
@@ -284,7 +284,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(0.0f, targetUnit);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            result.valueSI += v.valueSI;
+            result.setValueSI(result.getValueSI() + v.getValueSI());
         }
         return result;
     }
@@ -305,7 +305,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         MutableDoubleScalar.Abs<U> value = new MutableDoubleScalar.Abs<U>(valueAbs);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            value.valueSI -= v.valueSI;
+            value.setValueSI(value.getValueSI() - v.getValueSI());
         }
         return value;
     }
@@ -326,7 +326,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         MutableDoubleScalar.Rel<U> value = new MutableDoubleScalar.Rel<U>(valueRel);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            value.valueSI -= v.valueSI;
+            value.setValueSI(value.getValueSI() - v.getValueSI());
         }
         return value;
     }
@@ -342,7 +342,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Abs<U> valueAbs1,
             final DoubleScalar.Abs<U> valueAbs2)
     {
-        return new MutableDoubleScalar.Rel<U>(valueAbs1.valueSI - valueAbs2.valueSI, valueAbs1.getUnit());
+        return new MutableDoubleScalar.Rel<U>(valueAbs1.getValueSI() - valueAbs2.getValueSI(), valueAbs1.getUnit());
     }
 
     /**
@@ -357,7 +357,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueAbs1.getUnit().getSICoefficients(),
                         valueAbs2.getUnit().getSICoefficients()).toString());
-        return new MutableDoubleScalar.Abs<SIUnit>(valueAbs1.valueSI * valueAbs2.valueSI, targetUnit);
+        return new MutableDoubleScalar.Abs<SIUnit>(valueAbs1.getValueSI() * valueAbs2.getValueSI(), targetUnit);
     }
 
     /**
@@ -372,7 +372,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueRel1.getUnit().getSICoefficients(),
                         valueRel2.getUnit().getSICoefficients()).toString());
-        return new MutableDoubleScalar.Rel<SIUnit>(valueRel1.valueSI * valueRel2.valueSI, targetUnit);
+        return new MutableDoubleScalar.Rel<SIUnit>(valueRel1.getValueSI() * valueRel2.getValueSI(), targetUnit);
     }
 
     /**
@@ -386,7 +386,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueAbs1.getUnit().getSICoefficients(),
                         valueAbs2.getUnit().getSICoefficients()).toString());
-        return new DoubleScalar.Abs<SIUnit>(valueAbs1.valueSI / valueAbs2.valueSI, targetUnit);
+        return new DoubleScalar.Abs<SIUnit>(valueAbs1.getValueSI() / valueAbs2.getValueSI(), targetUnit);
     }
 
     /**
@@ -400,7 +400,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueRel1.getUnit().getSICoefficients(),
                         valueRel2.getUnit().getSICoefficients()).toString());
-        return new DoubleScalar.Rel<SIUnit>(valueRel1.valueSI / valueRel2.valueSI, targetUnit);
+        return new DoubleScalar.Rel<SIUnit>(valueRel1.getValueSI() / valueRel2.getValueSI(), targetUnit);
     }
 
     /**********************************************************************************/
@@ -411,7 +411,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void abs()
     {
-        this.valueSI = Math.abs(this.valueSI);
+        setValueSI(Math.abs(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -419,7 +419,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void acos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = Math.acos(this.valueSI);
+        setValueSI(Math.acos(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -427,7 +427,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void asin()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = Math.asin(this.valueSI);
+        setValueSI(Math.asin(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -435,7 +435,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void atan()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = Math.atan(this.valueSI);
+        setValueSI(Math.atan(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -443,14 +443,14 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void cbrt()
     {
         // TODO: dimension for all SI coefficients / 3.
-        this.valueSI = Math.cbrt(this.valueSI);
+        setValueSI(Math.cbrt(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void ceil()
     {
-        this.valueSI = Math.ceil(this.valueSI);
+        setValueSI(Math.ceil(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -458,7 +458,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void cos()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = Math.cos(this.valueSI);
+        setValueSI(Math.cos(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -466,7 +466,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void cosh()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = Math.cosh(this.valueSI);
+        setValueSI(Math.cosh(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -474,7 +474,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public final void exp()
     {
         // TODO: dimensionless result (SIUnit.ONE).
-        this.valueSI = Math.exp(this.valueSI);
+        setValueSI(Math.exp(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -483,14 +483,14 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void expm1()
     {
-        this.valueSI = Math.expm1(this.valueSI);
+        setValueSI(Math.expm1(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void floor()
     {
-        this.valueSI = Math.floor(this.valueSI);
+        setValueSI(Math.floor(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -499,7 +499,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void log()
     {
-        this.valueSI = Math.log(this.valueSI);
+        setValueSI(Math.log(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -508,7 +508,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void log10()
     {
-        this.valueSI = Math.log10(this.valueSI);
+        setValueSI(Math.log10(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -517,7 +517,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void log1p()
     {
-        this.valueSI = Math.log1p(this.valueSI);
+        setValueSI(Math.log1p(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -526,21 +526,21 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void pow(final double x)
     {
-        this.valueSI = Math.pow(this.valueSI, x);
+        setValueSI(Math.pow(getValueSI(), x));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void rint()
     {
-        this.valueSI = Math.rint(this.valueSI);
+        setValueSI(Math.rint(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void round()
     {
-        this.valueSI = Math.round(this.valueSI);
+        setValueSI(Math.round(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -549,7 +549,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void signum()
     {
-        this.valueSI = Math.signum(this.valueSI);
+        setValueSI(Math.signum(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -558,7 +558,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void sin()
     {
-        this.valueSI = Math.sin(this.valueSI);
+        setValueSI(Math.sin(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -567,7 +567,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void sinh()
     {
-        this.valueSI = Math.sinh(this.valueSI);
+        setValueSI(Math.sinh(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -576,7 +576,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void sqrt()
     {
-        this.valueSI = Math.sqrt(this.valueSI);
+        setValueSI(Math.sqrt(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -585,7 +585,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void tan()
     {
-        this.valueSI = Math.tan(this.valueSI);
+        setValueSI(Math.tan(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -594,21 +594,21 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void tanh()
     {
-        this.valueSI = Math.tanh(this.valueSI);
+        setValueSI(Math.tanh(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void toDegrees()
     {
-        this.valueSI = Math.toDegrees(this.valueSI);
+        setValueSI(Math.toDegrees(getValueSI()));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void toRadians()
     {
-        this.valueSI = Math.toRadians(this.valueSI);
+        setValueSI(Math.toRadians(getValueSI()));
     }
 
     /** {@inheritDoc} */
@@ -617,20 +617,20 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void inv()
     {
-        this.valueSI = 1.0f / this.valueSI;
+        setValueSI(1.0f / getValueSI());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void multiply(final double constant)
     {
-        this.valueSI *= constant;
+        setValueSI(getValueSI() * constant);
     }
 
     /** {@inheritDoc} */
     @Override
     public final void divide(final double constant)
     {
-        this.valueSI /= constant;
+        setValueSI(getValueSI() / constant);
     }
 }

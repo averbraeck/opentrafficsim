@@ -24,17 +24,17 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /** */
     private static final long serialVersionUID = 20140618L;
 
+    /** the value, stored in the standard SI unit. */
+    private float valueSI;
+
     /**
-     * Create a new FloatScalar.
-     * @param unit Unit; the unit of the new FloatScalar
+     * Construct a new Immutable FloatScalar.
+     * @param unit U; the unit of the new FloatScalar
      */
-    public FloatScalar(final U unit)
+    protected FloatScalar(final U unit)
     {
         super(unit);
     }
-
-    /** the value, stored in SI units. */
-    private float valueSI;
 
     /**
      * @param <U> Unit
@@ -45,9 +45,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute Immutable FloatScalar.
-         * @param value float; the value of the new Absolute FloatScalar
-         * @param unit Unit; the unit of the new Absolute FloatScalar
+         * Construct a new Absolute Immutable FloatScalar.
+         * @param value float; the value of the new Absolute Immutable FloatScalar
+         * @param unit U; the unit of the new Absolute Immutable FloatScalar
          */
         public Abs(final float value, final U unit)
         {
@@ -57,8 +57,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Absolute Immutable FloatScalar from an existing one.
-         * @param value Absolute FloatScalar; the reference
+         * Construct a new Absolute Immutable FloatScalar from an existing Absolute Immutable FloatScalar.
+         * @param value FloatScalar.Abs<U>; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
         {
@@ -68,8 +68,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Absolute Immutable FloatScalar from an existing Absolute MutableFloatScalar.
-         * @param value Absolute MutableFloatScalar; the reference
+         * Construct a new Absolute Immutable FloatScalar from an existing Absolute MutableFloatScalar.
+         * @param value MutableFloatScalar.Abs<U>; the reference
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
         {
@@ -89,7 +89,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         @Override
         public final int compareTo(final Abs<U> o)
         {
-            return new Float(this.getValueSI()).compareTo(o.getValueSI());
+            return new Float(getValueSI()).compareTo(o.getValueSI());
         }
 
         /** {@inheritDoc} */
@@ -110,9 +110,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative Immutable FloatScalar.
-         * @param value float; the value of the new Relative FloatScalar
-         * @param unit Unit; the unit of the new Relative FloatScalar
+         * Construct a new Relative Immutable FloatScalar.
+         * @param value float; the value of the new Relative Immutable FloatScalar
+         * @param unit U; the unit of the new Relative Immutable FloatScalar
          */
         public Rel(final float value, final U unit)
         {
@@ -122,8 +122,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Relative Immutable FloatScalar from an existing one.
-         * @param value Relative FloatScalar; the reference
+         * Construct a new Relative Immutable FloatScalar from an existing Relative Immutable FloatScalar.
+         * @param value FloatScalar.Rel<U>; the reference
          */
         public Rel(final FloatScalar.Rel<U> value)
         {
@@ -133,8 +133,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Create a new Relative Immutable FloatScalar from an existing Relative MutableFloatScalar.
-         * @param value Relative MutableFloatScalar; the reference
+         * Construct a new Relative Immutable FloatScalar from an existing Relative MutableFloatScalar.
+         * @param value MutableFloatScalar.Rel<U>; the reference
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
         {
@@ -154,7 +154,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         @Override
         public final int compareTo(final Rel<U> o)
         {
-            return new Float(this.getValueSI()).compareTo(o.getValueSI());
+            return new Float(getValueSI()).compareTo(o.getValueSI());
         }
 
         /** {@inheritDoc} */
@@ -169,7 +169,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * Create a mutable version of this FloatScalar. <br>
      * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableFloatScalar; mutable version of this FloatScalar
+     * @return MutableFloatScalar<U>
      */
     public abstract MutableFloatScalar<U> mutable();
 
@@ -191,16 +191,16 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
     /**
      * Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never necessary.
-     * @param value FloatScalar; the value to use for initialization
+     * @param value FloatScalar<u>; the value to use for initialization
      */
     protected final void initialize(final FloatScalar<U> value)
     {
-        this.valueSI = value.valueSI;
+        setValueSI(value.getValueSI());
     }
 
     /**
      * Retrieve the value in the underlying SI unit.
-     * @return value in SI units
+     * @return float
      */
     public final float getValueSI()
     {
@@ -218,7 +218,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
     /**
      * Retrieve the value in the original unit.
-     * @return value in original units
+     * @return float
      */
     public final float getValueInUnit()
     {
@@ -226,8 +226,9 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * @param targetUnit the unit to convert the value to
-     * @return value in specific target unit
+     * Retrieve the value converted into some specified unit.
+     * @param targetUnit U; the unit to convert the value into
+     * @return float
      */
     public final float getValueInUnit(final U targetUnit)
     {
@@ -300,12 +301,12 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
             return false;
         }
         FloatScalar<?> other = (FloatScalar<?>) obj;
-        // unequal if one is absolute and the other is relative
+        // unequal if not both Absolute or both Relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;
         }
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        // unequal if the underlying standard SI unit is different
         if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
         {
             return false;
