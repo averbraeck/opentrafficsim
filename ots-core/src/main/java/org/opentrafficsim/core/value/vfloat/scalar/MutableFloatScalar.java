@@ -15,7 +15,7 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
  * <p>
  * @version Sep 5, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Unit
+ * @param <U> the unit of the values in the constructor and for display
  */
 public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<U> implements FloatMathFunctions
 {
@@ -23,10 +23,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     private static final long serialVersionUID = 20140905L;
 
     /**
-     * Create a new MutableFloatScalar.
-     * @param unit Unit; the unit of the new MutableFloatScalar
+     * Construct a new MutableFloatScalar.
+     * @param unit U; the unit of the new MutableFloatScalar
      */
-    public MutableFloatScalar(final U unit)
+    protected MutableFloatScalar(final U unit)
     {
         super(unit);
     }
@@ -40,11 +40,11 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute MutableFloatScalar.
+         * Construct a new Absolute MutableFloatScalar.
          * @param value float; the value of the new Absolute MutableFloatScalar
-         * @param unit Unit; the unit of the new Absolute MutableFloatScalar
+         * @param unit U; the unit of the new Absolute MutableFloatScalar
          */
-        protected Abs(final float value, final U unit)
+        public Abs(final float value, final U unit)
         {
             super(unit);
             // System.out.println("Created Abs");
@@ -52,8 +52,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a new Absolute MutableFloatScalar from an existing immutable one.
-         * @param value FloatScalar.Abs; the reference
+         * Construct a new Absolute MutableFloatScalar from an existing Absolute Immutable FloatScalar.
+         * @param value FloatScalar.Abs<U>; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
         {
@@ -63,8 +63,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a new Absolute MutableFloatScalar from an existing one.
-         * @param value MutableFloatScalar.Abs; the reference
+         * Construct a new Absolute MutableFloatScalar from an existing Absolute MutableFloatScalar.
+         * @param value MutableFloatScalar.Abs<U>; the reference
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
         {
@@ -112,7 +112,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative MutableFloatScalar.
+         * Construct a new Relative MutableFloatScalar.
          * @param value float; the value of the new Relative MutableFloatScalar
          * @param unit Unit; the unit of the new MutableFloatScalar
          */
@@ -124,7 +124,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a new Relative MutableFloatScalar from an existing immutable one.
+         * Construct a new Relative MutableFloatScalar from an existing immutable one.
          * @param value FloatScalar.Rel; the reference
          */
         public Rel(final FloatScalar.Rel<U> value)
@@ -135,7 +135,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
         }
 
         /**
-         * Create a new Relative MutableFloatScalar from an existing one.
+         * Construct a new Relative MutableFloatScalar from an existing one.
          * @param value MutableFloatScalar.Rel; the reference
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
