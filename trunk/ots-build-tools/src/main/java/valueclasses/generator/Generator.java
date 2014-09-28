@@ -293,7 +293,7 @@ public class Generator
                     String[] paramFields = param.split("[|]");
                     if (3 != paramFields.length)
                     {
-                        throw new Error("param should consist of three fields separated by |; got " + param);
+                        throw new Error("param should consist of three fields separated by |; got \"" + param + "\"");
                     }
                     if (paramFields[0].startsWith("final "))
                     {
@@ -308,15 +308,19 @@ public class Generator
                     construction.append("\r\n");
                 }
             }
-            if (3 != fields.length)
+            if (fields.length < 3)
             {
-                throw new Error("qualifiersTypeAndName should consist of three fields separated by |; got "
+                throw new Error("qualifiersTypeAndName should consist of at least three fields separated by |; got "
                         + qualifiersTypeAndName);
             }
             if (!"void".equals(fields[1]) && !constructor)
             {
                 construction.append(indent + " * @return ");
                 construction.append(fields[1]);
+                if (4 == fields.length)
+                {
+                    construction.append("; " + fields[3]);
+                }
                 construction.append("\r\n");
             }
             construction.append(indent + " */\r\n");
@@ -344,9 +348,12 @@ public class Generator
                 construction.append(sep);
                 sep = ", ";
                 String[] paramFields = param.split("[|]");
-                construction.append(paramFields[0]);
-                construction.append(" ");
-                construction.append(paramFields[1]);
+                if (!paramFields[1].startsWith("<"))
+                {
+                    construction.append(paramFields[0]);
+                    construction.append(" ");
+                    construction.append(paramFields[1]);
+                }
             }
         }
         construction.append(")");
@@ -721,7 +728,9 @@ public class Generator
                                                 "Replace the stored value by the supplied value which can be expressed in any compatible unit.",
                                                 new String[]{"final float|value|the value to store",
                                                         "final U|valueUnit|the unit of the supplied value"},
-                                                new String[]{"setValueSI(" + cast + " ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
+                                                new String[]{"setValueSI(" + cast
+                                                        + " ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
+                                        + buildOtherMutatingScalarMethods(outerIndent, scalarType)
                                 : buildMethod(
                                         outerIndent,
                                         "public abstract|Mutable" + scalarType + "Scalar<U>|mutable",
@@ -778,6 +787,151 @@ public class Generator
 
         );
 
+    }
+
+    /**
+     * Generate most of the java code that modifies MutableScalar values.
+     * @param indent String; prepended to output lines on the outermost level of the generated code
+     * @param scalarType String; either <cite>Float</cite> or <cite>Double</cite>
+     * @return String
+     */
+    private static String buildOtherMutatingScalarMethods(String indent, String scalarType)
+    {
+        StringBuilder construction = new StringBuilder();
+        construction.append(indent
+                + "/**********************************************************************************/\r\n");
+        construction.append(indent
+                + "/******************************* NON-STATIC METHODS *******************************/\r\n");
+        construction.append(indent
+                + "/**********************************************************************************/\r\n\r\n");
+        construction.append(buildMethod(indent, "public final|void|add", "Add another value to this value. "
+                + "Only Relative values are allowed; adding an absolute value to an absolute value\r\n" + indent
+                + " * is not allowed. Adding an absolute value to an existing relative value would require the "
+                + "result to become\r\n" + indent
+                + " * absolute, which is atype change that is impossible. For that operation, use a static method.",
+                new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to add"},
+                new String[]{"setValueSI(getValueSI() + value.getValueSI());"}, false));
+        construction
+                .append(buildMethod(
+                        indent,
+                        "public final|void|subtract",
+                        "Subtract another value from this value. "
+                                + "Only relative values are allowed; subtracting an absolute value from a\r\n"
+                                + indent
+                                + " * relative value is not allowed. Subtracting an absolute value from an existing absolute value "
+                                + "would require the\r\n" + indent
+                                + " * result to become relative, which is a type change that is impossible. "
+                                + "For that operation, use a static method.",
+                        new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to subtract"},
+                        new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
+        construction.append(indent
+                + "/**********************************************************************************/\r\n");
+        construction.append(indent
+                + "/********************************* STATIC METHODS *********************************/\r\n");
+        construction.append(indent
+                + "/**********************************************************************************/\r\n\r\n");
+        construction.append(buildMethod(indent, "protected final|" + scalarType
+                + "Scalar<?>|incrementBy|the modified Mutable" + scalarType + "Scalar",
+                "Increment the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
+                        + "Scalar<?>|increment|the amount by which to increment the stored value"}, new String[]{
+                        "setValueSI(getValueSI() + increment.getValueSI());", "return this;"}, false));
+        construction.append(buildScalarPlus(indent, scalarType, true));
+        construction.append(buildScalarPlus(indent, scalarType, false));
+        construction.append(buildMethod(indent, "protected final|" + scalarType
+                + "Scalar<?>|decrementBy|the modified Mutable" + scalarType + "Scalar",
+                "Decrement the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
+                        + "Scalar<?>|decrement|the amount by which to decrement the stored value"}, new String[]{
+                        "setValueSI(getValueSI() - decrement.getValueSI());", "return this;"}, false));
+        construction.append(buildScalarMinus(indent, scalarType, true));
+        construction.append(buildScalarMinus(indent, scalarType, false));
+
+        return construction.toString();
+    }
+
+    /**
+     * Build the plus method for adding an array of relative scalars to an absolute or relative scalar.
+     * @param indent String; prepended to each line
+     * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param absoluteResult boolean; if true the first operand and the result are absolute; if false, the first operand
+     *            and the result are relative
+     * @return String; java code
+     */
+    private static String buildScalarPlus(final String indent, final String scalarType, boolean absoluteResult)
+    {
+        final String absRel = absoluteResult ? "Abs" : "Rel";
+        return buildMethod(
+                indent,
+                "@SafeVarargs\r\n" + indent + "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar."
+                        + absRel + "<U>|plus|the sum of the values as "
+                        + (absoluteResult ? "an absolute" : "a relative") + " value",
+                absoluteResult
+                        ? "Add a number of relative values to an absolute value. Return a new instance of the value. "
+                                + "The unit of the return\r\n" + indent
+                                + " * value will be the unit of the first argument. "
+                                + "Due to type erasure of generics, the method cannot check whether an\r\n" + indent
+                                + " * array of arguments submitted to the varargs has a mixed-unit content at runtime."
+                        : "Add a number of relative values. Return a new instance of the value. Due to type erasure of generics, "
+                                + "the method\r\n"
+                                + indent
+                                + " * cannot check whether an array of arguments submitted to the varargs has a "
+                                + "mixed-unit content at runtime.", new String[]{
+                        absoluteResult ? "final " + scalarType + "Scalar." + absRel + "<U>|value" + absRel
+                                + "|the absolute base value" : "final U|targetUnit| the unit of the sum",
+                        "final " + scalarType + "Scalar.Rel<U>...|valuesRel|zero or more relative values to add "
+                                + (absoluteResult ? "to the absolute value" : "together"),
+                        "Unit|<U>|the unit of the parameters and the result"}, new String[]{
+                        "Mutable"
+                                + scalarType
+                                + "Scalar."
+                                + absRel
+                                + "<U> result = new MutableFloatScalar."
+                                + absRel
+                                + "<U>("
+                                + (absoluteResult ? "valueAbs);" : "0.0" + (scalarType.startsWith("F") ? "f" : "")
+                                        + ", targetUnit);"), "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)",
+                        "{", indentStep + "result.incrementBy(v);", "}", "return result;"}, false);
+    }
+
+    /**
+     * Build the minus method for adding an array of relative scalars to an absolute or relative scalar.
+     * @param indent String; prepended to each line
+     * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param absoluteResult boolean; if true the first operand and the result are absolute; if false, the first operand
+     *            and the result are relative
+     * @return String; java code
+     */
+    private static String buildScalarMinus(final String indent, final String scalarType, boolean absoluteResult)
+    {
+        final String absRel = absoluteResult ? "Abs" : "Rel";
+        return buildMethod(
+                indent,
+                "@SafeVarargs\r\n" + indent + "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar."
+                        + absRel + "<U>|minus|the resulting value as "
+                        + (absoluteResult ? "an absolute" : "a relative") + " value",
+                absoluteResult
+                        ? "Subtract a number of relative values from an absolute value. Return a new instance of the value. "
+                                + "The unit of the\r\n"
+                                + indent
+                                + " * return value will be the unit of the first argument. "
+                                + "Due to type erasure of generics, the method cannot check\r\n"
+                                + indent
+                                + " * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime."
+                        : "Subtract a number of relative values from a relative value. Return a new instance of the value. "
+                                + "The unit of the\r\n"
+                                + indent
+                                + " * value will be the unit of the first argument. Due to type erasure of generics, the method "
+                                + "cannot check whether an\r\n"
+                                + indent
+                                + " * array of arguments submitted to the varargs has a "
+                                + "mixed-unit content at runtime.", new String[]{
+                        "final " + scalarType + "Scalar." + absRel + "<U>|value" + absRel + "|the "
+                                + (absoluteResult ? "absolute" : "relative") + " base value",
+                        "final " + scalarType + "Scalar.Rel<U>...|valuesRel|zero or more relative values to subtract "
+                                + (absoluteResult ? "from the absolute value" : "from the first value"),
+                        "Unit|<U>|the unit of the parameters and the result"}, new String[]{
+                        "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new MutableFloatScalar." + absRel
+                                + "<U>(value" + absRel + ");", "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)",
+                        "{", indentStep + "result.decrementBy(v);", "}", "return result;"}, false);
     }
 
     /**
@@ -841,6 +995,12 @@ public class Generator
                                 + "(this.valueSI) != " + type + "." + lowerCaseType
                                 + (type.equals("Float") ? "ToIntBits" : "ToLongBits") + "(other.valueSI))", "{",
                         indentStep + "return false;", "}", "return true;"}, false));
+        construction.append(indent
+                + "/**********************************************************************************/\r\n");
+        construction.append(indent
+                + "/******************************** NUMBER METHODS **********************************/\r\n");
+        construction.append(indent
+                + "/**********************************************************************************/\r\n\r\n");
 
         return construction.toString();
     }
