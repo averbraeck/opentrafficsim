@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.unit;
 
 import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.OTHER;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
 import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 
 import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
@@ -40,6 +41,19 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** revolutions per minute = 1/60 Hz. */
     public static final FrequencyUnit RPM;
 
+    /** 1/s. */
+    public static final FrequencyUnit PER_SECOND;
+
+    /** 1/min. */
+    public static final FrequencyUnit PER_MINUTE;
+
+    /** 1/hour. */
+    public static final FrequencyUnit PER_HOUR;
+
+    /** 1/day. */
+    public static final FrequencyUnit PER_DAY;
+
+
     static
     {
         HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz", "FrequencyUnit.Hz", SI_DERIVED);
@@ -48,6 +62,10 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
         GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz", SI_DERIVED, HERTZ, 1.0E9);
         TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz", SI_DERIVED, HERTZ, 1.0E12);
         RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute", "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
+        PER_SECOND = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.per_second", "FrequencyUnit.1/s", SI_DERIVED);
+        PER_MINUTE = new FrequencyUnit(TimeUnit.MINUTE, "FrequencyUnit.per_minute", "FrequencyUnit.1/min", SI_ACCEPTED);
+        PER_HOUR = new FrequencyUnit(TimeUnit.HOUR, "FrequencyUnit.per_hour", "FrequencyUnit.1/h", SI_ACCEPTED);
+        PER_DAY = new FrequencyUnit(TimeUnit.DAY, "FrequencyUnit.per_day", "FrequencyUnit.1/d", SI_ACCEPTED);
     }
 
     /**

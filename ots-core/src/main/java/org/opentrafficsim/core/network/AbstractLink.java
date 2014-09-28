@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
-import org.opentrafficsim.core.unit.FlowUnit;
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -38,7 +38,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     private DoubleScalar<LengthUnit> length;
 
     /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
-    private DoubleScalar<FlowUnit> capacity;
+    private DoubleScalar<FrequencyUnit> capacity;
 
     /**
      * Construction of a link.
@@ -49,7 +49,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param capacity link capacity in vehicles per hour.
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length,
-            final DoubleScalar<FlowUnit> capacity)
+            final DoubleScalar<FrequencyUnit> capacity)
     {
         this.id = id;
         this.startNode = startNode;
@@ -67,7 +67,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length)
     {
-        this(id, startNode, endNode, length, new DoubleScalar.Abs<FlowUnit>(Double.POSITIVE_INFINITY, FlowUnit.PER_SECOND));
+        this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.PER_SECOND));
     }
 
     /**
@@ -105,7 +105,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @return link capacity.
      */
-    public final DoubleScalar<FlowUnit> getCapacity()
+    public final DoubleScalar<FrequencyUnit> getCapacity()
     {
         return this.capacity;
     }
@@ -113,7 +113,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @param capacity set the link capacity.
      */
-    public final void setCapacity(final DoubleScalar<FlowUnit> capacity)
+    public final void setCapacity(final DoubleScalar<FrequencyUnit> capacity)
     {
         this.capacity = capacity;
     }
