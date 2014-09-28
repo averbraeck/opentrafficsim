@@ -414,7 +414,7 @@ public class FloatScalarTest
         float rightValue = 21.098f;
         FloatScalar.Abs<LengthUnit> leftAbs = new FloatScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
         FloatScalar.Abs<SpeedUnit> rightAbs = new FloatScalar.Abs<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
-        FloatScalar.Abs<SIUnit> ratio = MutableFloatScalar.divide(leftAbs, rightAbs);
+        MutableFloatScalar.Abs<SIUnit> ratio = MutableFloatScalar.divide(leftAbs, rightAbs);
         String unitString = ratio.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
         {
@@ -429,7 +429,7 @@ public class FloatScalarTest
                 ratio.getValueSI(), 0.0001);
         FloatScalar.Rel<LengthUnit> leftRel = new FloatScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         FloatScalar.Rel<SpeedUnit> rightRel = new FloatScalar.Rel<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
-        FloatScalar.Rel<SIUnit> ratioRel = MutableFloatScalar.divide(leftRel, rightRel);
+        MutableFloatScalar.Rel<SIUnit> ratioRel = MutableFloatScalar.divide(leftRel, rightRel);
         unitString = ratioRel.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
         {

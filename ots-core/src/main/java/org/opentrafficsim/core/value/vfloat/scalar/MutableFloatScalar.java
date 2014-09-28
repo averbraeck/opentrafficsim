@@ -357,67 +357,66 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Abs<U> valueAbs1,
             final FloatScalar.Abs<U> valueAbs2)
     {
-        MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());
+        MutableFloatScalar.Rel<U> result =
+                new MutableFloatScalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());
         result.decrementBy(valueAbs2);
         return result;
     }
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the product of the two absolute values as an absolute value
+     * @param left FloatScalar.Abs<?>; the left operand
+     * @param right FloatScalar.Abs<?>; the right operand
+     * @return MutableFloatScalar.Abs<SIUnit>; the product of the two values
      */
-    public static MutableFloatScalar.Abs<SIUnit> multiply(final FloatScalar.Abs<?> valueAbs1,
-            final FloatScalar.Abs<?> valueAbs2)
+    public static MutableFloatScalar.Abs<SIUnit> multiply(final FloatScalar.Abs<?> left, final FloatScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        valueAbs1.getUnit().getSICoefficients(), valueAbs2.getUnit().getSICoefficients()).toString());
-        return new MutableFloatScalar.Abs<SIUnit>(valueAbs1.getValueSI() * valueAbs2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableFloatScalar.Abs<SIUnit>(left.getValueSI() * right.getValueSI(), targetUnit);
     }
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueRel1 value 1
-     * @param valueRel2 value 2
-     * @return the product of the two relative values as a relative value
+     * @param left FloatScalar.Rel<?>; the left operand
+     * @param right FloatScalar.Rel<?>; the right operand
+     * @return MutableFloatScalar.rel<SIUnit>; the product of the two values
      */
-    public static MutableFloatScalar.Rel<SIUnit> multiply(final FloatScalar.Rel<?> valueRel1,
-            final FloatScalar.Rel<?> valueRel2)
+    public static MutableFloatScalar.Rel<SIUnit> multiply(final FloatScalar.Rel<?> left, final FloatScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(
-                        valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
-        return new MutableFloatScalar.Rel<SIUnit>(valueRel1.getValueSI() * valueRel2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableFloatScalar.Rel<SIUnit>(left.getValueSI() * right.getValueSI(), targetUnit);
     }
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the division of the two absolute values as an absolute value
+     * @param left FloatScalar.Abs<?>; the left operand
+     * @param right FloatScalar.Abs<?>; the right operand
+     * @return MutableFloatScalar.Abs<SIUnit>; the ratio of the two values
      */
-    public static FloatScalar.Abs<SIUnit> divide(final FloatScalar.Abs<?> valueAbs1, final FloatScalar.Abs<?> valueAbs2)
+    public static MutableFloatScalar.Abs<SIUnit> divide(final FloatScalar.Abs<?> left, final FloatScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
-                        valueAbs1.getUnit().getSICoefficients(), valueAbs2.getUnit().getSICoefficients()).toString());
-        return new FloatScalar.Abs<SIUnit>(valueAbs1.getValueSI() / valueAbs2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableFloatScalar.Abs<SIUnit>(left.getValueSI() / right.getValueSI(), targetUnit);
     }
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueRel1 value 1
-     * @param valueRel2 value 2
-     * @return the division of the two two relative values as a relative value
+     * @param left FloatScalar.Rel<?>; the left operand
+     * @param right FloatScalar.Rel<?>; the right operand
+     * @return MutableFloatScalar.Rel<SIUnit>; the ratio of the two values
      */
-    public static FloatScalar.Rel<SIUnit> divide(final FloatScalar.Rel<?> valueRel1, final FloatScalar.Rel<?> valueRel2)
+    public static MutableFloatScalar.Rel<SIUnit> divide(final FloatScalar.Rel<?> left, final FloatScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(
-                        valueRel1.getUnit().getSICoefficients(), valueRel2.getUnit().getSICoefficients()).toString());
-        return new FloatScalar.Rel<SIUnit>(valueRel1.getValueSI() / valueRel2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableFloatScalar.Rel<SIUnit>(left.getValueSI() / right.getValueSI(), targetUnit);
     }
 
     /**********************************************************************************/
