@@ -7,6 +7,7 @@ import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
+import org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar;
 
 /**
  * <p>
@@ -342,7 +343,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Abs<U> valueAbs1,
             final DoubleScalar.Abs<U> valueAbs2)
     {
-        return new MutableDoubleScalar.Rel<U>(valueAbs1.getValueSI() - valueAbs2.getValueSI(), valueAbs1.getUnit());
+        MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());
+        result.setValueSI(valueAbs1.getValueSI() - valueAbs2.getValueSI());
+        return result;
+        //return new MutableDoubleScalar.Rel<U>(valueAbs1.getValueSI() - valueAbs2.getValueSI(), valueAbs1.getUnit());
     }
 
     /**

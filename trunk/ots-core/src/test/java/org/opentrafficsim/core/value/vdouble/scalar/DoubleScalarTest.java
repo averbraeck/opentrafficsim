@@ -12,6 +12,8 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.Relative;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
+import org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar;
 
 /**
  * <p>
@@ -345,6 +347,10 @@ public class DoubleScalarTest
         differenceRel = MutableDoubleScalar.minus(sum.immutable(), leftAbs);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
         assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getValueSI(), 0.0001);
+        differenceRel =
+                MutableDoubleScalar.minus(new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.FOOT),
+                        new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.INCH));
+        assertEquals("result should be 11 inches", 11 * 0.0254, differenceRel.getValueSI(), 0.0001);
         MutableDoubleScalar.Abs<?> surface = MutableDoubleScalar.multiply(leftAbs, difference.immutable());
         // System.out.println("surface is " + surface);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), surface.getUnit()
