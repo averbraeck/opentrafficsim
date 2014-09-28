@@ -349,15 +349,15 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
      * will be the unit of the first argument.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the difference of the two absolute values as a relative value
+     * @param valueAbs1 FloatScalar.Abs<U>; value 1
+     * @param valueAbs2 FloatScalar.Abs<U>; value 2
      * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatScalar.Rel<U>; the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Abs<U> valueAbs1,
             final FloatScalar.Abs<U> valueAbs2)
     {
-        MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(valueAbs1.getValueSI(), valueAbs1.getUnit());
+        MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());
         result.decrementBy(valueAbs2);
         return result;
     }
