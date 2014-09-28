@@ -329,34 +329,39 @@ public class Generator
         {
             construction.append(indent + "/** {@inheritDoc} */\r\n" + indent + "@Override\r\n");
         }
-        construction.append(indent);
-
-        construction.append(fields[0]);
-        construction.append(" ");
+        String line = indent + fields[0] + " ";
         if (fields[1].length() > 0)
         {
-            construction.append(fields[1]);
-            construction.append(" ");
+            line += fields[1] + " ";
         }
-        construction.append(fields[2]);
-        construction.append("(");
+        line += fields[2] + "(";
         String sep = "";
         if (null != params)
         {
             for (String param : params)
             {
-                construction.append(sep);
-                sep = ", ";
                 String[] paramFields = param.split("[|]");
                 if (!paramFields[1].startsWith("<"))
                 {
-                    construction.append(paramFields[0]);
-                    construction.append(" ");
-                    construction.append(paramFields[1]);
+                    String paramText = paramFields[0] + " " + paramFields[1];
+                    if (line.length() + paramText.length() + sep.length() >= 125)
+                    {
+                        if (!sep.equals(""))
+                        {
+                            sep = ",";
+                        }
+                        construction.append(line + sep + "\r\n");
+                        line = indent + indentStep + indentStep + paramText;
+                    }
+                    else
+                    {
+                        line += sep + paramText;
+                    }
+                    sep = ", ";
                 }
             }
         }
-        construction.append(")");
+        construction.append(line + ")");
         if (null != body)
         {
             construction.append("\r\n" + indent + "{\r\n");
@@ -798,17 +803,12 @@ public class Generator
     private static String buildOtherMutatingScalarMethods(String indent, String scalarType)
     {
         StringBuilder construction = new StringBuilder();
-        construction.append(indent
-                + "/**********************************************************************************/\r\n");
-        construction.append(indent
-                + "/******************************* NON-STATIC METHODS *******************************/\r\n");
-        construction.append(indent
-                + "/**********************************************************************************/\r\n\r\n");
+        construction.append(buildBlockComment(indent, "NON-STATIC METHODS"));
         construction.append(buildMethod(indent, "public final|void|add", "Add another value to this value. "
                 + "Only Relative values are allowed; adding an absolute value to an absolute value\r\n" + indent
                 + " * is not allowed. Adding an absolute value to an existing relative value would require the "
                 + "result to become\r\n" + indent
-                + " * absolute, which is atype change that is impossible. For that operation, use a static method.",
+                + " * absolute, which is a type change that is impossible. For that operation, use a static method.",
                 new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to add"},
                 new String[]{"setValueSI(getValueSI() + value.getValueSI());"}, false));
         construction
@@ -824,28 +824,172 @@ public class Generator
                                 + "For that operation, use a static method.",
                         new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to subtract"},
                         new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
-        construction.append(indent
-                + "/**********************************************************************************/\r\n");
-        construction.append(indent
-                + "/********************************* STATIC METHODS *********************************/\r\n");
-        construction.append(indent
-                + "/**********************************************************************************/\r\n\r\n");
-        construction.append(buildMethod(indent, "protected final|" + scalarType
-                + "Scalar<?>|incrementBy|the modified Mutable" + scalarType + "Scalar",
-                "Increment the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
-                        + "Scalar<?>|increment|the amount by which to increment the stored value"}, new String[]{
-                        "setValueSI(getValueSI() + increment.getValueSI());", "return this;"}, false));
+        construction.append(buildBlockComment(indent, "STATIC METHODS"));
+        construction.append(buildScalarIncrementDecrement(indent, scalarType, true));
         construction.append(buildScalarPlus(indent, scalarType, true));
         construction.append(buildScalarPlus(indent, scalarType, false));
-        construction.append(buildMethod(indent, "protected final|" + scalarType
-                + "Scalar<?>|decrementBy|the modified Mutable" + scalarType + "Scalar",
-                "Decrement the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
-                        + "Scalar<?>|decrement|the amount by which to decrement the stored value"}, new String[]{
-                        "setValueSI(getValueSI() - decrement.getValueSI());", "return this;"}, false));
+        construction.append(buildScalarIncrementDecrement(indent, scalarType, false));
         construction.append(buildScalarMinus(indent, scalarType, true));
         construction.append(buildScalarMinus(indent, scalarType, false));
-
+        // abs minus abs -> rel
+        construction.append(buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + scalarType
+                + "Scalar.Rel<U>|minus|the difference of the two absolute values as a relative value",
+                "Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value\r\n"
+                        + indent + " * will be the unit of the first argument.", new String[]{
+                        "final " + scalarType + "Scalar.Abs<U>|valueAbs1|value 1",
+                        "final " + scalarType + "Scalar.Abs<U>|valueAbs2|value 2",
+                        "Unit|<U>|the unit of the parameters and the result"}, new String[]{
+                        "Mutable" + scalarType + "Scalar.Rel<U> result = ",
+                        indent + indent + "new Mutable" + scalarType
+                                + "Scalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());",
+                        "result.decrementBy(valueAbs2);", "return result;"}, false));
+        construction.append(buildScalarMultiplyOrDivide(indent, scalarType, true, true));
+        construction.append(buildScalarMultiplyOrDivide(indent, scalarType, false, true));
+        construction.append(buildScalarMultiplyOrDivide(indent, scalarType, true, false));
+        construction.append(buildScalarMultiplyOrDivide(indent, scalarType, false, false));
+        construction.append(buildBlockComment(indent, "MATH METHODS"));
+        construction.append(buildScalarMathMethod(indent, "abs", "Math.abs(", ")", null, null));
+        construction.append(buildScalarMathMethod(indent, "acos", "Math.acos(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "asin", "Math.asin(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "atan", "Math.atan(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "cbrt", "Math.cbrt(", ")",
+                "// TODO: dimension for all SI coefficients / 3.", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "ceil", "Math.ceil(", ")", null, "(float)"));
+        construction.append(buildScalarMathMethod(indent, "cos", "Math.cos(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "cosh", "Math.cosh(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "exp", "Math.exp(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "expm1", "Math.expm1(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "floor", "Math.floor(", ")", null, "(float)"));
+        construction.append(buildScalarMathMethod(indent, "log", "Math.log(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "log10", "Math.log10(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "log1p", "Math.log1p(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildMethod(indent, "public final|void|pow", null, new String[]{"final double|x|"},
+                new String[]{"// TODO: SI unit with coefficients * x.",
+                        "setValueSI((float) Math.pow(getValueSI(), x));"}, false));
+        construction.append(buildScalarMathMethod(indent, "rint", "Math.rint(", ")", null, "(float)"));
+        construction.append(buildScalarMathMethod(indent, "round", "Math.round(", ")", null, null));
+        construction.append(buildScalarMathMethod(indent, "signum", "Math.signum(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", null));
+        construction.append(buildScalarMathMethod(indent, "sin", "Math.sin(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "sinh", "Math.sinh(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "sqrt", "Math.sqrt(", ")", "// TODO: unit coefficients / 2.",
+                "(float)"));
+        construction.append(buildScalarMathMethod(indent, "tan", "Math.tan(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "tanh", "Math.tanh(", ")",
+                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+        construction.append(buildScalarMathMethod(indent, "toDegrees", "Math.toDegrees(", ")", null, "(float)"));
+        construction.append(buildScalarMathMethod(indent, "toRadians", "Math.toRadians(", ")", null, "(float)"));
+        construction.append(buildScalarMathMethod(indent, "inv", "1.0" + (scalarType.startsWith("F") ? "f" : "")
+                + " / ", "", "// TODO: negate all coefficients in the Unit.", null));
+        construction.append(buildMethod(indent, "public final|void|multiply", null,
+                new String[]{"final float|constant|"}, new String[]{"setValueSI(getValueSI() * constant);"}, false));
+        construction.append(buildMethod(indent, "public final|void|divide", null,
+                new String[]{"final float|constant|"}, new String[]{"setValueSI(getValueSI() / constant);"}, false));
         return construction.toString();
+    }
+
+    /**
+     * Build one math method.
+     * @param indent String; prefix for all output lines
+     * @param name String; name of the method
+     * @param javaCodeBefore String; code that goes to the left of the value to process
+     * @param javaCodeAfter String; code that goes to the right of the value to process
+     * @param comment String; comment text that goes above the code line
+     * @param cast String; if non null, this cast must be applied to the result of the code
+     * @return String; java code
+     */
+    private static String buildScalarMathMethod(final String indent, final String name, final String javaCodeBefore,
+            final String javaCodeAfter, final String comment, final String cast)
+    {
+        String code =
+                "setValueSI(" + (null == cast ? "" : cast + " ") + javaCodeBefore + "getValueSI()" + javaCodeAfter
+                        + ");";
+
+        if (null != comment)
+        {
+            return buildMethod(indent, "public final|void|" + name, null, null, new String[]{comment, code}, false);
+        }
+        return buildMethod(indent, "public final|void|" + name, null, null, new String[]{code}, false);
+    }
+
+    /**
+     * Generate a block comment.
+     * @param indent String; prefix of all output lines
+     * @param comment String; the text to center in the block comment
+     * @return String; java code
+     */
+    private static String buildBlockComment(final String indent, String comment)
+    {
+        comment = " " + comment + " ";
+        StringBuffer construction = new StringBuffer();
+        final String pattern = "/**********************************************************************************/";
+        construction.append(indent + pattern + "\r\n");
+        int halfTruncate = comment.length() / 2;
+        construction.append(indent + pattern.substring(0, pattern.length() / 2 - halfTruncate));
+        construction.append(comment);
+        construction.append(pattern.substring(pattern.length() / 2 + comment.length() - halfTruncate));
+        construction.append("\r\n");
+        construction.append(indent + pattern + "\r\n\r\n");
+        return construction.toString();
+    }
+
+    /**
+     * Generate the code for scalar multiply or divide.
+     * @param indent String; prefix for all output lines
+     * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param absolute boolean; if true; the code for handling two absolutes is generated; if false; the code for
+     *            handling two relatives is generated
+     * @param multiply boolean; if true; the code for multiply is generated; if false; the code for divide is generated
+     * @return String; java code
+     */
+    private static String buildScalarMultiplyOrDivide(final String indent, final String scalarType, boolean absolute,
+            boolean multiply)
+    {
+        final String absRel = absolute ? "Abs" : "Rel";
+        return buildMethod(indent, "public static|Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>|"
+                + (multiply ? "multiply" : "divide") + "|the " + (multiply ? "product" : "ratio")
+                + " of the two values", (multiply ? "Multiply" : "Divide")
+                + " two values; the result is a new instance with a different (existing or generated) SI Unit.",
+                new String[]{"final " + scalarType + "Scalar." + absRel + "<?>|left|the left operand",
+                        "final " + scalarType + "Scalar." + absRel + "<?>|right|the right operand"}, new String[]{
+                        "SIUnit targetUnit =",
+                        indent + indent + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients."
+                                + (multiply ? "multiply" : "divide") + "(left.getUnit().getSICoefficients(),",
+                        indent + indent + indent + indent + "right.getUnit().getSICoefficients()).toString());",
+                        "return new Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>(left.getValueSI() "
+                                + (multiply ? "*" : "/") + " right.getValueSI(), targetUnit);"}, false);
+    }
+
+    /**
+     * Generate the code for scalar incrementBy and decrementBy.
+     * @param indent String; prefix for all output lines
+     * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param increment boolean; if true; the code for incrementBy is generated; if false; the code for decrementBy is
+     *            generated
+     * @return String; java code
+     */
+    private static String buildScalarIncrementDecrement(String indent, String scalarType, boolean increment)
+    {
+        return buildMethod(indent, "protected final|" + scalarType + "Scalar<?>|" + (increment ? "in" : "de")
+                + "crementBy|the modified Mutable" + scalarType + "Scalar", (increment ? "In" : "De")
+                + "crement the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
+                + "Scalar<?>|" + (increment ? "in" : "de") + "crement|the amount by which to "
+                + (increment ? "in" : "de") + "crement the stored value"}, new String[]{
+                "setValueSI(getValueSI() " + (increment ? "+ in" : "- de") + "crement.getValueSI());", "return this;"},
+                false);
     }
 
     /**
@@ -944,12 +1088,7 @@ public class Generator
         final String lowerCaseType = type.toLowerCase();
         final String indent = indentStep;
         StringBuilder construction = new StringBuilder();
-        construction.append(indent
-                + "/**********************************************************************************/\r\n");
-        construction.append(indent
-                + "/******************************** NUMBER METHODS **********************************/\r\n");
-        construction.append(indent
-                + "/**********************************************************************************/\r\n\r\n");
+        construction.append(buildBlockComment(indent, "NUMBER METHODS"));
         construction.append(buildMethod(indent, "public final|int|intValue", null, null,
                 new String[]{"return " + (type.equals("Float") ? "" : "(int) ") + "Math.round(this.valueSI);"}, false));
         construction.append(buildMethod(indent, "public final|long|longValue", null, null,
@@ -995,12 +1134,7 @@ public class Generator
                                 + "(this.valueSI) != " + type + "." + lowerCaseType
                                 + (type.equals("Float") ? "ToIntBits" : "ToLongBits") + "(other.valueSI))", "{",
                         indentStep + "return false;", "}", "return true;"}, false));
-        construction.append(indent
-                + "/**********************************************************************************/\r\n");
-        construction.append(indent
-                + "/******************************** NUMBER METHODS **********************************/\r\n");
-        construction.append(indent
-                + "/**********************************************************************************/\r\n\r\n");
+        construction.append(buildBlockComment(indent, "NUMBER METHODS"));
 
         return construction.toString();
     }
