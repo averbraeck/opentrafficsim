@@ -177,9 +177,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     }
 
     /**
-     * Create an immutable version of this MutableFloatScalar. <br>
+     * Construct an immutable version of this MutableFloatScalar. <br>
      * The immutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return FloatScalar<U>
+     * @return FloatScalar<U>; immutable version of this FloatScalar
      */
     public abstract FloatScalar<U> immutable();
 

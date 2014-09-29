@@ -7,11 +7,13 @@ import org.opentrafficsim.core.value.Absolute;
 import org.opentrafficsim.core.value.Relative;
 import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
-import org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar;
+
+// FIXME The compareTo methods look wrong because they don't check for object, nor for Absolute vs. Relative.
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 5, 2014 <br>
@@ -20,17 +22,14 @@ import org.opentrafficsim.core.value.vfloat.scalar.MutableFloatScalar;
  */
 public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScalar<U> implements DoubleMathFunctions
 {
-
-    // FIXME The compareTo methods look wrong because they don't check for object, nor for Absolute vs. Relative.
-
     /** */
     private static final long serialVersionUID = 20140905L;
 
     /**
-     * Create a new MutableDoubleScalar.
-     * @param unit Unit; the unit of the new MutableDoubleScalar
+     * Construct a new MutableDoubleScalar.
+     * @param unit U; the unit of the new MutableDoubleScalar
      */
-    public MutableDoubleScalar(final U unit)
+    protected MutableDoubleScalar(final U unit)
     {
         super(unit);
     }
@@ -44,11 +43,11 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute MutableDoubleScalar.
+         * Construct a new Absolute MutableDoubleScalar.
          * @param value double; the value of the new Absolute MutableDoubleScalar
-         * @param unit Unit; the unit of the new Absolute MutableDoubleScalar
+         * @param unit U; the unit of the new Absolute MutableDoubleScalar
          */
-        protected Abs(final double value, final U unit)
+        public Abs(final double value, final U unit)
         {
             super(unit);
             // System.out.println("Created Abs");
@@ -56,8 +55,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create a new Absolute MutableDoubleScalar from an existing immutable one.
-         * @param value DoubleScalar.Abs; the reference
+         * Construct a new Absolute MutableDoubleScalar from an existing Absolute Immutable DoubleScalar.
+         * @param value DoubleScalar.Abs<U>; the reference
          */
         public Abs(final DoubleScalar.Abs<U> value)
         {
@@ -67,21 +66,14 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create a new Absolute MutableDoubleScalar from an existing one.
-         * @param value MutableDoubleScalar.Abs; the existing Absolute MutableDoubleScalar
+         * Construct a new Absolute MutableDoubleScalar from an existing Absolute MutableDoubleScalar.
+         * @param value MutableDoubleScalar.Abs<U>; the reference
          */
         public Abs(final MutableDoubleScalar.Abs<U> value)
         {
             super(value.getUnit());
             // System.out.println("Created Abs");
             initialize(value);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final DoubleScalar.Abs<U> immutable()
-        {
-            return new DoubleScalar.Abs<U>(this);
         }
 
         /** {@inheritDoc} */
@@ -93,9 +85,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /** {@inheritDoc} */
         @Override
-        public final MutableDoubleScalar.Abs<U> copy()
+        public final DoubleScalar.Abs<U> immutable()
         {
-            return new MutableDoubleScalar.Abs<U>(this);
+            return new DoubleScalar.Abs<U>(this);
         }
 
         /** {@inheritDoc} */
@@ -103,6 +95,13 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         public final int compareTo(final Abs<U> o)
         {
             return new Double(getValueSI()).compareTo(o.getValueSI());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleScalar.Abs<U> copy()
+        {
+            return new MutableDoubleScalar.Abs<U>(this);
         }
 
     }
@@ -116,9 +115,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative MutableDoubleScalar.
+         * Construct a new Relative MutableDoubleScalar.
          * @param value double; the value of the new Relative MutableDoubleScalar
-         * @param unit Unit of the new Relative MutableDoubleScalar
+         * @param unit U; the unit of the new Relative MutableDoubleScalar
          */
         public Rel(final double value, final U unit)
         {
@@ -128,8 +127,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create a new Relative MutableDoubleScalar.
-         * @param value DoubleScalar.Rel; the value of the new Relative MutableDoubleScalar
+         * Construct a new Relative MutableDoubleScalar from an existing Relative Immutable DoubleScalar.
+         * @param value DoubleScalar.Rel<U>; the reference
          */
         public Rel(final DoubleScalar.Rel<U> value)
         {
@@ -139,21 +138,14 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         }
 
         /**
-         * Create a new Absolute MutableDoubleScalar from an existing one.
-         * @param value DoubleScalar.Rel; the reference
+         * Construct a new Relative MutableDoubleScalar from an existing Relative MutableDoubleScalar.
+         * @param value MutableDoubleScalar.Rel<U>; the reference
          */
         public Rel(final MutableDoubleScalar.Rel<U> value)
         {
             super(value.getUnit());
             // System.out.println("Created Rel");
             initialize(value);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final DoubleScalar.Rel<U> immutable()
-        {
-            return new DoubleScalar.Rel<U>(this);
         }
 
         /** {@inheritDoc} */
@@ -165,9 +157,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /** {@inheritDoc} */
         @Override
-        public final MutableDoubleScalar.Rel<U> copy()
+        public final DoubleScalar.Rel<U> immutable()
         {
-            return new MutableDoubleScalar.Rel<U>(this);
+            return new DoubleScalar.Rel<U>(this);
         }
 
         /** {@inheritDoc} */
@@ -177,17 +169,25 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
             return new Double(getValueSI()).compareTo(o.getValueSI());
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleScalar.Rel<U> copy()
+        {
+            return new MutableDoubleScalar.Rel<U>(this);
+        }
+
     }
 
     /**
-     * Create a mutable version of this DoubleScalar. <br>
-     * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableDoubleScalar; mutable version of this DoubleScalar
+     * Construct an immutable version of this MutableDoubleScalar. <br>
+     * The immutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
+     * @return DoubleScalar<U>; immutable version of this DoubleScalar
      */
     public abstract DoubleScalar<U> immutable();
 
     /**
-     * @param valueSI the value to store in the cell
+     * Replace the stored value by the supplied value which is expressed in the standard SI unit.
+     * @param valueSI double; the value to store (value must already be in the standard SI unit)
      */
     final void setSI(final double valueSI)
     {
@@ -195,7 +195,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * @param value the strongly typed value to store in the cell
+     * Replace the stored value by the supplied value.
+     * @param value DoubleScalar<U>; the strongly typed value to store
      */
     final void set(final DoubleScalar<U> value)
     {
@@ -203,16 +204,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * @param value the strongly typed value to store in the cell
-     */
-    final void set(final MutableDoubleScalar<U> value)
-    {
-        setValueSI(value.getValueSI());
-    }
-
-    /**
-     * @param value the value to store in the cell
-     * @param valueUnit the unit of the value.
+     * Replace the stored value by the supplied value which can be expressed in any compatible unit.
+     * @param value double; the value to store
+     * @param valueUnit U; the unit of the supplied value
      */
     final void setInUnit(final double value, final U valueUnit)
     {
@@ -224,10 +218,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**********************************************************************************/
 
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value is not
-     * allowed. Adding an absolute value to an existing relative value would require the result to become absolute, which is a
-     * type change that is impossible. For that operation, use a static method.
-     * @param value the value to add
+     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
+     * is not allowed. Adding an absolute value to an existing relative value would require the result to become
+     * absolute, which is a type change that is impossible. For that operation, use a static method.
+     * @param value DoubleScalar.Rel<U>; the value to add
      */
     public final void add(final DoubleScalar.Rel<U> value)
     {
@@ -235,10 +229,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /**
-     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a relative
-     * value is not allowed. Subtracting an absolute value from an existing absolute value would require the result to become
-     * relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param value the value to subtract
+     * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
+     * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
+     * result to become relative, which is a type change that is impossible. For that operation, use a static method.
+     * @param value DoubleScalar.Rel<U>; the value to subtract
      */
     public final void subtract(final DoubleScalar.Rel<U> value)
     {
@@ -250,13 +244,24 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**********************************************************************************/
 
     /**
-     * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return value
-     * will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an array of
-     * arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs the absolute base value
-     * @param valuesRel zero or more values to add to the absolute value
-     * @return the sum of the values as an absolute value
-     * @param <U> Unit; the unit
+     * Increment the stored value by a specified amount.
+     * @param increment DoubleScalar<?>; the amount by which to increment the stored value
+     * @return DoubleScalar<?>; the modified MutableDoubleScalar
+     */
+    protected final DoubleScalar<?> incrementBy(final DoubleScalar<?> increment)
+    {
+        setValueSI(getValueSI() + increment.getValueSI());
+        return this;
+    }
+
+    /**
+     * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
+     * value will be the unit of the first argument. Due to type erasure of generics, the method cannot check whether an
+     * array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * @param valueAbs DoubleScalar.Abs<U>; the absolute base value
+     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to add to the absolute value
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleScalar.Abs<U>; the sum of the values as an absolute value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> plus(final DoubleScalar.Abs<U> valueAbs,
@@ -265,146 +270,157 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
         MutableDoubleScalar.Abs<U> result = new MutableDoubleScalar.Abs<U>(valueAbs);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            result.setValueSI(result.getValueSI() + v.getValueSI());
+            result.incrementBy(v);
         }
         return result;
     }
 
     /**
-     * Add a number of relative values. Return a new instance of the value. Because of type erasure of generics, the method
+     * Add a number of relative values. Return a new instance of the value. Due to type erasure of generics, the method
      * cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param targetUnit the unit of the sum
-     * @param valuesRel zero or more values to add
-     * @return the sum of the values as a relative value
-     * @param <U> Unit; the unit
+     * @param targetUnit U; the unit of the sum
+     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to add together
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleScalar.Rel<U>; the sum of the values as a relative value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> plus(final U targetUnit,
             final DoubleScalar.Rel<U>... valuesRel)
     {
-        MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(0.0f, targetUnit);
+        MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(0.0, targetUnit);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            result.setValueSI(result.getValueSI() + v.getValueSI());
+            result.incrementBy(v);
         }
         return result;
     }
 
     /**
-     * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an
-     * array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs the absolute base value
-     * @param valuesRel zero or more values to subtract from the absolute value
-     * @return the resulting value as an absolute value
-     * @param <U> Unit; the unit
+     * Decrement the stored value by a specified amount.
+     * @param decrement DoubleScalar<?>; the amount by which to decrement the stored value
+     * @return DoubleScalar<?>; the modified MutableDoubleScalar
+     */
+    protected final DoubleScalar<?> decrementBy(final DoubleScalar<?> decrement)
+    {
+        setValueSI(getValueSI() - decrement.getValueSI());
+        return this;
+    }
+
+    /**
+     * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
+     * return value will be the unit of the first argument. Due to type erasure of generics, the method cannot check
+     * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * @param valueAbs DoubleScalar.Abs<U>; the absolute base value
+     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to subtract from the absolute value
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleScalar.Abs<U>; the resulting value as an absolute value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> minus(final DoubleScalar.Abs<U> valueAbs,
             final DoubleScalar.Rel<U>... valuesRel)
     {
-        MutableDoubleScalar.Abs<U> value = new MutableDoubleScalar.Abs<U>(valueAbs);
+        MutableDoubleScalar.Abs<U> result = new MutableDoubleScalar.Abs<U>(valueAbs);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            value.setValueSI(value.getValueSI() - v.getValueSI());
+            result.decrementBy(v);
         }
-        return value;
+        return result;
     }
 
     /**
-     * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the value
-     * will be the unit of the first argument. Because of type erasure of generics, the method cannot check whether an array of
-     * arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueRel the relative base value
-     * @param valuesRel zero or more values to subtract from the first value
-     * @return the resulting value as a relative value
-     * @param <U> Unit; the unit
+     * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the
+     * value will be the unit of the first argument. Due to type erasure of generics, the method cannot check whether an
+     * array of arguments submitted to the varargs has a mixed-unit content at runtime.
+     * @param valueRel DoubleScalar.Rel<U>; the relative base value
+     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to subtract from the first value
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleScalar.Rel<U>; the resulting value as a relative value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Rel<U> valueRel,
             final DoubleScalar.Rel<U>... valuesRel)
     {
-        MutableDoubleScalar.Rel<U> value = new MutableDoubleScalar.Rel<U>(valueRel);
+        MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(valueRel);
         for (DoubleScalar.Rel<U> v : valuesRel)
         {
-            value.setValueSI(value.getValueSI() - v.getValueSI());
+            result.decrementBy(v);
         }
-        return value;
+        return result;
     }
 
     /**
-     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value will be
-     * the unit of the first argument.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @param <U> Unit; the unit
-     * @return the difference of the two absolute values as a relative value
+     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
+     * will be the unit of the first argument.
+     * @param valueAbs1 DoubleScalar.Abs<U>; value 1
+     * @param valueAbs2 DoubleScalar.Abs<U>; value 2
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleScalar.Rel<U>; the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Abs<U> valueAbs1,
             final DoubleScalar.Abs<U> valueAbs2)
     {
-        MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());
-        result.setValueSI(valueAbs1.getValueSI() - valueAbs2.getValueSI());
+        MutableDoubleScalar.Rel<U> result =
+                new MutableDoubleScalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());
+        result.decrementBy(valueAbs2);
         return result;
-        //return new MutableDoubleScalar.Rel<U>(valueAbs1.getValueSI() - valueAbs2.getValueSI(), valueAbs1.getUnit());
     }
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the product of the two absolute values as an absolute value
+     * @param left DoubleScalar.Abs<?>; the left operand
+     * @param right DoubleScalar.Abs<?>; the right operand
+     * @return MutableDoubleScalar.Abs<SIUnit>; the product of the two values
      */
-    public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> valueAbs1,
-            final DoubleScalar.Abs<?> valueAbs2)
+    public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> left,
+            final DoubleScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueAbs1.getUnit().getSICoefficients(),
-                        valueAbs2.getUnit().getSICoefficients()).toString());
-        return new MutableDoubleScalar.Abs<SIUnit>(valueAbs1.getValueSI() * valueAbs2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableDoubleScalar.Abs<SIUnit>(left.getValueSI() * right.getValueSI(), targetUnit);
     }
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueRel1 value 1
-     * @param valueRel2 value 2
-     * @return the product of the two relative values as a relative value
+     * @param left DoubleScalar.Rel<?>; the left operand
+     * @param right DoubleScalar.Rel<?>; the right operand
+     * @return MutableDoubleScalar.Rel<SIUnit>; the product of the two values
      */
-    public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> valueRel1,
-            final DoubleScalar.Rel<?> valueRel2)
+    public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> left,
+            final DoubleScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(valueRel1.getUnit().getSICoefficients(),
-                        valueRel2.getUnit().getSICoefficients()).toString());
-        return new MutableDoubleScalar.Rel<SIUnit>(valueRel1.getValueSI() * valueRel2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableDoubleScalar.Rel<SIUnit>(left.getValueSI() * right.getValueSI(), targetUnit);
     }
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueAbs1 value 1
-     * @param valueAbs2 value 2
-     * @return the division of the two absolute values as an absolute value
+     * @param left DoubleScalar.Abs<?>; the left operand
+     * @param right DoubleScalar.Abs<?>; the right operand
+     * @return MutableDoubleScalar.Abs<SIUnit>; the ratio of the two values
      */
-    public static DoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> valueAbs1, final DoubleScalar.Abs<?> valueAbs2)
+    public static MutableDoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> left, final DoubleScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueAbs1.getUnit().getSICoefficients(),
-                        valueAbs2.getUnit().getSICoefficients()).toString());
-        return new DoubleScalar.Abs<SIUnit>(valueAbs1.getValueSI() / valueAbs2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableDoubleScalar.Abs<SIUnit>(left.getValueSI() / right.getValueSI(), targetUnit);
     }
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param valueRel1 value 1
-     * @param valueRel2 value 2
-     * @return the division of the two two relative values as a relative value
+     * @param left DoubleScalar.Rel<?>; the left operand
+     * @param right DoubleScalar.Rel<?>; the right operand
+     * @return MutableDoubleScalar.Rel<SIUnit>; the ratio of the two values
      */
-    public static DoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> valueRel1, final DoubleScalar.Rel<?> valueRel2)
+    public static MutableDoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> left, final DoubleScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(valueRel1.getUnit().getSICoefficients(),
-                        valueRel2.getUnit().getSICoefficients()).toString());
-        return new DoubleScalar.Rel<SIUnit>(valueRel1.getValueSI() / valueRel2.getValueSI(), targetUnit);
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        return new MutableDoubleScalar.Rel<SIUnit>(left.getValueSI() / right.getValueSI(), targetUnit);
     }
 
     /**********************************************************************************/
@@ -482,11 +498,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void expm1()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.expm1(getValueSI()));
     }
 
@@ -498,38 +513,34 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void log()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.log(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void log10()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.log10(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void log1p()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.log1p(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: SI unit with coefficients * x.
     @Override
     public final void pow(final double x)
     {
+        // TODO: SI unit with coefficients * x.
         setValueSI(Math.pow(getValueSI(), x));
     }
 
@@ -548,56 +559,50 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void signum()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.signum(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void sin()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.sin(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void sinh()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.sinh(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: unit coefficients / 2.
     @Override
     public final void sqrt()
     {
+        // TODO: unit coefficients / 2.
         setValueSI(Math.sqrt(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void tan()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.tan(getValueSI()));
     }
 
     /** {@inheritDoc} */
-
-    // TODO: dimensionless result (SIUnit.ONE).
     @Override
     public final void tanh()
     {
+        // TODO: dimensionless result (SIUnit.ONE).
         setValueSI(Math.tanh(getValueSI()));
     }
 
@@ -616,12 +621,11 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     }
 
     /** {@inheritDoc} */
-
-    // TODO: negate all coefficients in the Unit.
     @Override
     public final void inv()
     {
-        setValueSI(1.0f / getValueSI());
+        // TODO: negate all coefficients in the Unit.
+        setValueSI(1.0 / getValueSI());
     }
 
     /** {@inheritDoc} */
@@ -637,4 +641,5 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     {
         setValueSI(getValueSI() / constant);
     }
+    
 }

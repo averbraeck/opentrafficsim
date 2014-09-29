@@ -26,7 +26,7 @@ import cern.jet.math.tfloat.FloatFunctions;
  * <p>
  * @version Aug 28, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Unit of this MutableFloatVector
+ * @param <U> the Unit for this MutableFloatVector
  */
 public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements
         WriteFloatVectorFunctions<U>, FloatMathFunctions
@@ -35,7 +35,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     private static final long serialVersionUID = 20130903L;
 
     /**
-     * Create a new MutableFloatVector.
+     * Construct a new MutableFloatVector.
      * @param unit Unit; the unit of the new MutableFloatVector
      */
     protected MutableFloatVector(final U unit)
@@ -88,7 +88,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute MutableFloatVector.
+         * Construct a new Absolute MutableFloatVector.
          * @param unit Unit; the unit of the new MutableFloatVector
          */
         protected Abs(final U unit)
@@ -118,7 +118,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Absolute Dense MutableFloatVector.
+             * Construct a new Absolute Dense MutableFloatVector.
              * @param values float[]; the initial values of the entries of the new MutableFloatVector
              * @param unit Unit; the unit of the values of the new MutableFloatVector
              */
@@ -130,7 +130,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Absolute Dense MutableFloatVector.
+             * Construct a new Absolute Dense MutableFloatVector.
              * @param values FloatScalar.Abs[]; the initial values of the entries of the new MutableFloatVector
              * @throws ValueException when values has zero entries
              */
@@ -188,7 +188,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Sparse MutableFloatVector.
+             * Construct a new Relative Sparse MutableFloatVector.
              * @param values float[]; the initial values for the entries of the new MutableFloatVector
              * @param unit Unit; the unit of the new MutableFloatVector
              */
@@ -200,7 +200,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Sparse MutableFloatVector.
+             * Construct a new Relative Sparse MutableFloatVector.
              * @param values FloatScalar.Rel[]; the initial values for the
              * @throws ValueException when values contains zero entries
              */
@@ -254,7 +254,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Relative MutableFloatVector.
+         * Construct a Relative MutableFloatVector.
          * @param unit Unit; the unit of the new Relative MutableFloatVector
          */
         protected Rel(final U unit)
@@ -284,7 +284,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Dense MutableFloatVector.
+             * Construct a new Relative Dense MutableFloatVector.
              * @param values float[]; the initial values for the entries of the new MutableFloatVector
              * @param unit Unit; the unit of the new MutableFloatVector
              */
@@ -296,7 +296,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Dense MutableFloatVector.
+             * Construct a new Relative Dense MutableFloatVector.
              * @param values FloatScalar.Abs[]; the initial values for the entries of the new MutableFloatVector
              * @throws ValueException when values has zero entries
              */
@@ -354,7 +354,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Sparse MutableFloatVector.
+             * Construct a new Relative Sparse MutableFloatVector.
              * @param values float[]; the initial values for the entries of the new MutableFloatVector
              * @param unit Unit; the unit of the new MutableFloatVector
              */
@@ -366,7 +366,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             }
 
             /**
-             * Create a new Relative Sparse MutableFloatVector.
+             * Construct a new Relative Sparse MutableFloatVector.
              * @param values FloatScalar.Rel[]; initial values for the entries of the new MutableFloatVector
              * @throws ValueException when values has zero entries
              */

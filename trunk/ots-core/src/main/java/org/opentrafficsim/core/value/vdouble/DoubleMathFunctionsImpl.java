@@ -13,7 +13,7 @@ import cern.colt.function.tdouble.DoubleFunction;
 public final class DoubleMathFunctionsImpl
 {
     /**
-     * This class should never be instantiated.
+     * This class shall never be instantiated.
      */
     private DoubleMathFunctionsImpl()
     {
@@ -33,7 +33,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.cosh(x)</tt>.
+     * Function that returns <tt>Math.cosh(a)</tt>.
      */
     public static final DoubleFunction cosh = new DoubleFunction()
     {
@@ -45,7 +45,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.expm1(x)</tt>.
+     * Function that returns <tt>Math.expm1(a)</tt>.
      */
     public static final DoubleFunction expm1 = new DoubleFunction()
     {
@@ -57,7 +57,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.log10(x)</tt>.
+     * Function that returns <tt>Math.log10(a)</tt>.
      */
     public static final DoubleFunction log10 = new DoubleFunction()
     {
@@ -69,7 +69,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.log1p(x)</tt>.
+     * Function that returns <tt>Math.log1p(a)</tt>.
      */
     public static final DoubleFunction log1p = new DoubleFunction()
     {
@@ -81,7 +81,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.round(x)</tt>.
+     * Function that returns <tt>Math.round(a)</tt>.
      */
     public static final DoubleFunction round = new DoubleFunction()
     {
@@ -93,7 +93,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.signum(x)</tt>.
+     * Function that returns <tt>Math.signum(a)</tt>.
      */
     public static final DoubleFunction signum = new DoubleFunction()
     {
@@ -105,7 +105,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.sinh(x)</tt>.
+     * Function that returns <tt>Math.sinh(a)</tt>.
      */
     public static final DoubleFunction sinh = new DoubleFunction()
     {
@@ -117,7 +117,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.tanh(x)</tt>.
+     * Function that returns <tt>Math.tanh(a)</tt>.
      */
     public static final DoubleFunction tanh = new DoubleFunction()
     {
@@ -129,7 +129,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.toDegrees(x)</tt>.
+     * Function that returns <tt>Math.toDegrees(a)</tt>.
      */
     public static final DoubleFunction toDegrees = new DoubleFunction()
     {
@@ -141,7 +141,7 @@ public final class DoubleMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.toRadians(x)</tt>.
+     * Function that returns <tt>Math.toRadians(a)</tt>.
      */
     public static final DoubleFunction toRadians = new DoubleFunction()
     {
