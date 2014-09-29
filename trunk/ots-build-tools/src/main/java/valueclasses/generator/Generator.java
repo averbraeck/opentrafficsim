@@ -207,8 +207,8 @@ public class Generator
                 "public final",
                 typeInfo,
                 false,
-                buildMethod(indentStep, "private||name", "This class shall never be instantiated.", null,
-                        new String[]{"// Prevent instantiation of this class"}, true) + contents);
+                buildMethod(indentStep, "private||" + name, "This class shall never be instantiated.", null, null,
+                        null, new String[]{"// Prevent instantiation of this class"}, true) + contents);
     }
 
     /**
@@ -262,7 +262,7 @@ public class Generator
 
     /**
      * Create a String that defines one method.
-     * @param indent TODO
+     * @param indent String; prefix for all output lines
      * @param qualifiersTypeAndName String; the qualifiers, the type and the name of the method separated by vertical
      *            bars, e.g. <cite>final public|double|getDoubleValue</cite>. If this method overrides a method in a
      *            parent class set this parameter to null.
@@ -270,6 +270,9 @@ public class Generator
      * @param params String[]; one String for each parameter of the method. Each parameter string consists of
      *            qualifiers, type, name separated by vertical bars, e.g. <cite>final int|index|index of the
      *            entry</cite>
+     * @param exceptions String; exception type and description separated by a vertical bar, or null if this method does
+     *            not throw exceptions
+     * @param pragma String; text that goes after the JavaDoc, but before the start of the method code
      * @param body String[]; the lines of the body of the method. Lines on the outermost level should start with 0
      *            spaces
      * @param constructor boolean; if true; the new method is a constructor; if false; the new method is not a
@@ -277,8 +280,9 @@ public class Generator
      * @return String; the Java source code of the method.
      */
     public static String buildMethod(String indent, String qualifiersTypeAndName, String description, String[] params,
-            String[] body, boolean constructor)
+            String exceptions, String pragma, String[] body, boolean constructor)
     {
+        final int maxLineLength = 122;
         StringBuilder construction = new StringBuilder();
         String[] fields = qualifiersTypeAndName.split("[|]");
         if (null != description)
@@ -323,11 +327,22 @@ public class Generator
                 }
                 construction.append("\r\n");
             }
+            if (null != exceptions)
+            {
+                String[] exceptionFields = exceptions.split("[|]");
+                construction.append(indent + " * @throws " + exceptionFields[0] + " " + exceptionFields[1] + "\r\n");
+            }
             construction.append(indent + " */\r\n");
         }
         else
         {
             construction.append(indent + "/** {@inheritDoc} */\r\n" + indent + "@Override\r\n");
+        }
+        if (null != pragma)
+        {
+            if (pragma.length() == 0)
+                throw new Error("pragma should not be the empty string");
+            construction.append(indent + pragma + "\r\n");
         }
         String line = indent + fields[0] + " ";
         if (fields[1].length() > 0)
@@ -344,7 +359,7 @@ public class Generator
                 if (!paramFields[1].startsWith("<"))
                 {
                     String paramText = paramFields[0] + " " + paramFields[1];
-                    if (line.length() + paramText.length() + sep.length() >= 125)
+                    if (line.length() + sep.length() + paramText.length() + 1 > maxLineLength)
                     {
                         if (!sep.equals(""))
                         {
@@ -361,7 +376,17 @@ public class Generator
                 }
             }
         }
-        construction.append(line + ")");
+        line += ")";
+        construction.append(line);
+        if (null != exceptions)
+        {
+            String append = " throws " + exceptions.split("[|]")[0];
+            if (line.length() + append.length() > maxLineLength)
+            {
+                construction.append("\r\n" + indent + indentStep + indentStep);
+            }
+            construction.append(append);
+        }
         if (null != body)
         {
             construction.append("\r\n" + indent + "{\r\n");
@@ -430,20 +455,20 @@ public class Generator
                 "<U extends Unit<U>> implements Value<U>, Serializable",
                 buildField(indentStep, "private final U unit", "The unit of the AbstractValue")
                         + buildMethod(indentStep, "public||AbstractValue", "Construct a new AbstractValue.",
-                                new String[]{"final U|unit|the unit of the new AbstractValue"},
+                                new String[]{"final U|unit|the unit of the new AbstractValue"}, null, null,
                                 new String[]{"this.unit = unit;"}, true)
-                        + buildMethod(indentStep, "public final|U|getUnit", null, null,
+                        + buildMethod(indentStep, "public final|U|getUnit", null, null, null, null,
                                 new String[]{"return this.unit;"}, false)
                         + buildMethod(indentStep, "protected final|double|expressAsSIUnit", null,
-                                new String[]{"final double|value|"},
+                                new String[]{"final double|value|"}, null, null,
                                 new String[]{"return ValueUtil.expressAsSIUnit(value, this.unit);"}, false)
                         + buildMethod(indentStep, "protected final|double|expressAsSpecifiedUnit",
                                 "Convert a value in SI standard unit into the unit of this AbstractValue",
-                                new String[]{"final double|value|the value in standard SI unit"},
+                                new String[]{"final double|value|the value in standard SI unit"}, null, null,
                                 new String[]{"return ValueUtil.expressAsUnit(value, this.unit);"}, false)
-                        + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null,
+                        + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null, null, null,
                                 new String[]{"return this instanceof Absolute"}, false)
-                        + buildMethod(indentStep, "public final|boolean|isRelative", null, null,
+                        + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
                                 new String[]{"return this instanceof Relative"}, false));
         generateFinalClass(
                 "value",
@@ -462,7 +487,7 @@ public class Generator
                         + buildMethod(indentStep, "private static|String|formatString", "Build a format String.",
                                 new String[]{"final int|width|the number of characters in the result",
                                         "final int|precision|the number of fractional digits in the result",
-                                        "final String|converter|the format conversion specifier"},
+                                        "final String|converter|the format conversion specifier"}, null, null,
                                 new String[]{"return String.format(\"%%%d.%d%s\", width, precision, converter);"},
                                 false) + buildFormatMethods("float") + buildFormatMethods("double"));
         generateInterface(
@@ -528,16 +553,17 @@ public class Generator
                 "Value is a static interface that forces implementation of a few unit- and value-related methods.",
                 new String[]{"<U> the unit type"},
                 "<U extends Unit<U>>",
-                buildMethod(indentStep, "public final|U|getUnit", "Return the unit of the Value.", null, null, false)
+                buildMethod(indentStep, "public final|U|getUnit", "Return the unit of the Value.", null, null, null,
+                        null, false)
                         + buildMethod(indentStep, "|double|expressAsSIUnit", "Convert a value to the standard SI unit",
                                 new String[]{"final double|value|the value to convert to the standard SI unit"}, null,
-                                false)
+                                null, null, false)
                         + buildMethod(indentStep, "|boolean|isAbsolute", "Indicate whether this is an Absolute Value",
-                                null, null, false)
+                                null, null, null, null, false)
                         + buildMethod(indentStep, "|boolean|isRelative", "Indicate whether this is a Relative Value",
-                                null, null, false)
+                                null, null, null, null, false)
                         + buildMethod(indentStep, "|Value<U>|copy", "Create a deep copy of this Value", null, null,
-                                false));
+                                null, null, false));
 
         generateClass(
                 "value",
@@ -548,14 +574,14 @@ public class Generator
                 "public",
                 "extends Exception",
                 true,
-                buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.", null,
+                buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.", null, null, null,
                         new String[]{"super();"}, true)
                         + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
-                                new String[]{"final String|message|description of the problem"},
+                                new String[]{"final String|message|description of the problem"}, null, null,
                                 new String[]{"super(message);"}, true)
                         + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
                                 new String[]{"final String|message|description of the problem",
-                                        "final Throwable|cause|the cause of this ValueException"},
+                                        "final Throwable|cause|the cause of this ValueException"}, null, null,
                                 new String[]{"super(message, cause);"}, true)
                         + buildMethod(
                                 indentStep,
@@ -566,6 +592,7 @@ public class Generator
                                         "final Throwable|cause|the cause of this ValueException",
                                         "final boolean|enableSuppression|whether or not suppression is enabled or disabled",
                                         "final boolean|writableStackTrace|whether or not the stack trace should be writable"},
+                                null, null,
                                 new String[]{"super(message, cause, enableSuppression, writableStackTrace);"}, true));
         generateFinalClass(
                 "value",
@@ -577,7 +604,7 @@ public class Generator
                 buildMethod(indentStep, "public static|double|expressAsSIUnit",
                         "Convert a value in a given unit into the equivalent in the standard SI unit", new String[]{
                                 "final double|value|the value to convert into standard SI unit",
-                                "final Unit<?>|unit|the unit of the given value"}, new String[]{
+                                "final Unit<?>|unit|the unit of the given value"}, null, null, new String[]{
                                 "if (unit instanceof OffsetUnit<?>)", "{",
                                 "    return (value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit())",
                                 "            * unit.getConversionFactorToStandardUnit();", "}",
@@ -586,8 +613,8 @@ public class Generator
                         + buildMethod(indentStep, "public static|double|expressAsUnit",
                                 "Convert a value in the standard SI unit into another unit", new String[]{
                                         "final double|siValue|the given value in SI standard unit",
-                                        "final Unit<?>|targetUnit|the unit to convert the value into"}, new String[]{
-                                        "if (targetUnit instanceof OffsetUnit<?>)", "{",
+                                        "final Unit<?>|targetUnit|the unit to convert the value into"}, null, null,
+                                new String[]{"if (targetUnit instanceof OffsetUnit<?>)", "{",
                                         "    return siValue / targetUnit.getConversionFactorToStandardUnit()",
                                         "            + ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit();", "}",
                                         "return siValue / targetUnit.getConversionFactorToStandardUnit();"}, false));
@@ -600,10 +627,10 @@ public class Generator
                 null,
                 "",
                 buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor",
-                        new String[]{"double|factor|the multiplier"}, null, false)
+                        new String[]{"double|factor|the multiplier"}, null, null, null, false)
                         + buildMethod(indentStep, "|void|divide",
                                 "Scale the value(s) by the inverse of a factor; i.e. a divisor",
-                                new String[]{"double|divisor|the divisor"}, null, false)
+                                new String[]{"double|divisor|the divisor"}, null, null, null, false)
 
         );
 
@@ -631,12 +658,12 @@ public class Generator
                 new String[]{"org.opentrafficsim.core.value.MathFunctions"},
                 "Force implementation of multiply and divide.",
                 null,
-                "",
-                buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor",
-                        new String[]{"float|factor|the multiplier"}, null, false)
+                "extends MathFunctions",
+                buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor.",
+                        new String[]{"float|factor|the multiplier"}, null, null, null, false)
                         + buildMethod(indentStep, "|void|divide",
-                                "Scale the value(s) by the inverse of a factor; i.e. a divisor",
-                                new String[]{"float|divisor|the divisor"}, null, false)
+                                "Scale the value(s) by the inverse of a factor; i.e. a divisor.",
+                                new String[]{"float|divisor|the divisor"}, null, null, null, false)
 
         );
 
@@ -648,15 +675,15 @@ public class Generator
                 null,
                 "",
                 buildDoubleOrFloatFunction("cbrt", "Float", "(float)")
-                        + buildDoubleOrFloatFunction("cosh", "Double", "")
+                        + buildDoubleOrFloatFunction("cosh", "Float", "(float)")
                         + buildDoubleOrFloatFunction("expm1", "Float", "(float)")
                         + buildDoubleOrFloatFunction("log10", "Float", "(float)")
-                        + buildDoubleOrFloatFunction("log1p", "Float", "")
+                        + buildDoubleOrFloatFunction("log1p", "Float", "(float)")
                         + buildDoubleOrFloatFunction("round", "Float", "")
                         + buildDoubleOrFloatFunction("signum", "Float", "")
                         + buildDoubleOrFloatFunction("sinh", "Float", "(float)")
                         + buildDoubleOrFloatFunction("tanh", "Float", "(float)")
-                        + buildDoubleOrFloatFunction("toDegrees", "Float", "")
+                        + buildDoubleOrFloatFunction("toDegrees", "Float", "(float)")
                         + buildDoubleOrFloatFunction("toRadians", "Float", "(float)"));
 
         generateScalarClass("Float", false);
@@ -664,6 +691,289 @@ public class Generator
         generateScalarClass("Double", false);
         generateScalarClass("Double", true);
 
+        generateVectorClass("Float", false);
+        generateVectorClass("Float", true);
+        generateVectorClass("Double", false);
+        generateVectorClass("Double", true);
+    }
+
+    /**
+     * Generate a class file for a vector type.
+     * @param vectorType String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
+     * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
+     */
+    private static void generateVectorClass(String vectorType, boolean mutable)
+    {
+        final String lowerCaseType = vectorType.toLowerCase();
+        final String outerIndent = indentStep;
+        final String mutableType = mutable ? "Mutable" : "Immutable ";
+        generateAbstractClass(
+                "value.v" + lowerCaseType + ".vector",
+                (mutable ? "Mutable" : "") + vectorType + "Vector",
+                mutable ? new String[]{"org.opentrafficsim.core.unit.SICoefficients",
+                        "org.opentrafficsim.core.unit.SIUnit", "org.opentrafficsim.core.unit.Unit",
+                        "org.opentrafficsim.core.value.Absolute", "org.opentrafficsim.core.value.DenseData",
+                        "org.opentrafficsim.core.value.Relative", "org.opentrafficsim.core.value.SparseData",
+                        "org.opentrafficsim.core.value.ValueException",
+                        "org.opentrafficsim.core.value.v" + lowerCaseType + "." + vectorType + "MathFunctions",
+                        "org.opentrafficsim.core.value.v" + lowerCaseType + "." + vectorType + "MathFunctionsImpl",
+                        "org.opentrafficsim.core.value.v" + lowerCaseType + ".scalar." + vectorType + "Scalar", "",
+                        "cern.colt.matrix.t" + lowerCaseType + "." + vectorType + "Matrix1D",
+                        "cern.colt.matrix.t" + lowerCaseType + ".impl.Dense" + vectorType + "Matrix1D",
+                        "cern.colt.matrix.t" + lowerCaseType + ".impl.Sparse" + vectorType + "Matrix1D",
+                        "cern.jet.math.t" + lowerCaseType + "." + vectorType + "Functions"} : new String[]{
+                        "java.io.Serializable", "", "org.opentrafficsim.core.unit.Unit",
+                        "org.opentrafficsim.core.value.Absolute", "org.opentrafficsim.core.value.AbstractValue",
+                        "org.opentrafficsim.core.value.DenseData", "org.opentrafficsim.core.value.Format",
+                        "org.opentrafficsim.core.value.Relative", "org.opentrafficsim.core.value.SparseData",
+                        "org.opentrafficsim.core.value.ValueException", "org.opentrafficsim.core.value.ValueUtil",
+                        "org.opentrafficsim.core.value.v" + lowerCaseType + ".scalar." + vectorType + "Scalar", "",
+                        "cern.colt.matrix.t" + lowerCaseType + "." + vectorType + "Matrix1D",
+                        "cern.colt.matrix.t" + lowerCaseType + ".impl.Dense" + vectorType + "Matrix1D",
+                        "cern.colt.matrix.t" + lowerCaseType + ".impl.Sparse" + vectorType + "Matrix1D"},
+                mutableType + vectorType + "Vector.",
+                new String[]{"<U> the Unit for this " + (mutable ? "Mutable" : "") + vectorType + "Vector"},
+                "<U extends Unit<U>> extends "
+                        + (mutable ? vectorType + "Vector" : "AbstractValue")
+                        + "<U> implements "
+                        + (mutable ? "\r\n" + indentStep + indentStep + "Write" + vectorType + "VectorFunctions<U>, "
+                                + vectorType + "MathFunctions" : "Serializable,\r\n" + indentStep + "ReadOnly"
+                                + vectorType + "VectorFunctions<U>"),
+                mutable
+                        ? ""
+                        : buildField(outerIndent, "private " + vectorType + "Matrix1D vectorSI",
+                                "The internal storage for the vector; the values are stored in standard SI unit; storage can be dense or sparse.")
+                                + buildMethod(outerIndent, "protected||" + (mutable ? "Mutable" : " ") + vectorType
+                                        + "Vector", "Construct a new " + mutableType + vectorType + "Vector.",
+                                        new String[]{"final U|unit|the unit of the new " + (mutable ? "Mutable" : "")
+                                                + vectorType + "Vector"}, null, null, new String[]{"super(unit);",
+                                                "// System.out.println(\"Created " + vectorType + "Vector\");"}, true)
+                                + buildVectorSubClass(outerIndent, "Abs", "Absolute " + mutableType + vectorType
+                                        + "Vector", vectorType + "Vector<U>", "Absolute", vectorType + "Vector",
+                                        mutable)
+                                + buildVectorSubClass(outerIndent, "Rel", "Relative " + mutableType + vectorType
+                                        + "Vector", vectorType + "Vector<U>", "Relative", vectorType + "Vector",
+                                        mutable)
+                                + buildMethod(outerIndent, "protected final|" + lowerCaseType
+                                        + "Matrix1D|getVectorSI|the data in the internal format",
+                                        "Retrieve the internal data.", null, null, null,
+                                        new String[]{"return this.vectorSI;"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "protected final|void|deepCopyData",
+                                        "Make a deep copy of the data (used ONLY in the Mutable" + vectorType
+                                                + "Vector sub class).",
+                                        null,
+                                        null,
+                                        null,
+                                        new String[]{"this.vectorSI = getVectorSI().copy(); // makes a deep copy, using multithreading"},
+                                        false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "public abstract|Mutable" + vectorType
+                                                + "Vector<U>|mutable|mutable version of this " + vectorType + "Vector",
+                                        "Create a mutable version of this "
+                                                + vectorType
+                                                + "Vector. <br>\r\n"
+                                                + outerIndent
+                                                + " * The mutable version is created with a shallow copy of the data and the internal "
+                                                + "copyOnWrite flag set. The first operation\r\n"
+                                                + outerIndent
+                                                + " * in the mutable version that modifies the data shall trigger a deep copy of the data.",
+                                        null, null, null, null, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "protected final|void|initialize",
+                                        "Import the values and convert them into the SI standard unit",
+                                        new String[]{"final " + vectorType.toLowerCase()
+                                                + "[]|values|an array of values"},
+                                        null,
+                                        null,
+                                        new String[]{
+                                                "this.vectorSI = createMatrix1D(values.length);",
+                                                "if (getUnit().equals(getUnit.getStandardUnit()))",
+                                                "{",
+                                                indentStep + "this.vectorSI.assign(values);",
+                                                "}",
+                                                "else",
+                                                "{",
+                                                indentStep + "for (int index = 0; index < values.length; index++)",
+                                                indentStep + "{",
+                                                indentStep + indentStep + "safeSet(index, "
+                                                        + (vectorType.startsWith("F") ? "(float) " : "")
+                                                        + "expressAsSIUnit(values[index]));", indentStep + "}", "}"},
+                                        false)
+                                + buildMethod(outerIndent, "protected final|void|initialize",
+                                        "Import the values from an existing " + vectorType
+                                                + "Matrix1D. This makes a shallow copy.", new String[]{"final "
+                                                + vectorType + "Matrix1D<U>|values|the values",}, null, null,
+                                        new String[]{"this.vectorSI = values;"}, false)
+                                + buildMethod(outerIndent, "protected final|void|initialize",
+                                        "Construct the vector and store the values in the standard SI Unit",
+                                        new String[]{"final " + vectorType + "Scalar<U>[]|values|an array of values"},
+                                        "valueException|when values is empty", null, new String[]{
+                                                "this.vectorSI = createMatrix1D(values.length);",
+                                                "for (int index = 0; index < values.length; index++)", "{",
+                                                indentStep + "safeSet(index, values[index].getValueSI());",
+                                                indentStep + "}"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "protected abstract|"
+                                                + vectorType
+                                                + "Matrix1D|createMatrix1D| an instance of the right type of matrix (absolute / relative, dense /sparse, etc.)",
+                                        "Create storage for the data. <br/>\r\n" + outerIndent
+                                                + " * This method must be implemented by each leaf class.",
+                                        new String[]{"final int|size|the number of cells in the vector"}, null, null,
+                                        null, false)
+                                + buildMethod(outerIndent, "public final|" + vectorType.toLowerCase()
+                                        + "[]|getValuesSI|array of values in the standard SI unit", "Create a "
+                                        + vectorType.toLowerCase()
+                                        + "[] array filled with the values in the standard SI unit.", null, null, null,
+                                        new String[]{"return this.vectorSI.toArray(); // this makes a deep copy"},
+                                        false)
+                                + buildMethod(outerIndent, "public final|" + vectorType.toLowerCase()
+                                        + "[]|getValuesInUnit|the values in the original unit", "Create a "
+                                        + vectorType.toLowerCase()
+                                        + "[] array filled with the values in the original unit.", null, null, null,
+                                        new String[]{"return getValuesInUnit(getUnit());"}, false)
+                                + buildMethod(outerIndent, "public final|" + vectorType.toLowerCase()
+                                        + "[]|getValuesInUnit|the values converted into the specified unit",
+                                        "Create a " + vectorType.toLowerCase()
+                                                + "[] array filled with the values converted into a specified unit.",
+                                        new String[]{"final U|targetUnit|the unit to convert the values into"}, null,
+                                        null, new String[]{
+                                                "float[] values = this.vectorSI.toArray();",
+                                                "for (int i = 0; i < values.length; i++)",
+                                                "{",
+                                                indentStep + "values[i] = "
+                                                        + (vectorType.startsWith("F") ? "(float) " : "")
+                                                        + "ValueUtil.expressAsUnit(values[i], targetUnit);", "}",
+                                                "return values;"}, false)
+
+        );
+    }
+
+    /**
+     * Generate the Java code for a sub class of vector
+     * @param indent String; prefix for each output line
+     * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
+     * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatVector</cite> or
+     *            <cite>Relative Mutable DoubleVector</cite>
+     * @param extendsString String; something like <cite>DoubleScalar&lt;U&gt;</cite>
+     * @param implementsString String; something like <cite>Absolute, Comparable&lt;Abs&lt;U&gt;&gt;</cite>
+     * @param parentClassName String; name of the class that is being sub-classed
+     * @param mutable boolean; if true; the class file for the mutable version is generated; if false; the class file
+     *            for the immutable version is generated
+     * @return String; java code implementing the sub class
+     */
+    private static String buildVectorSubClass(final String indent, final String name, final String longName,
+            final String extendsString, final String implementsString, final String parentClassName, boolean mutable)
+    {
+        final String absRelType = longName.split(" ")[0];
+        final String floatType = extendsString.contains("Float") ? "Float" : "Double";
+        StringBuilder construction = new StringBuilder();
+        construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
+        construction.append(indent + "public abstract static class " + name + "<U extends Unit<U>> extends "
+                + (mutable ? "Mutable" : "") + extendsString + " implements " + implementsString + "\r\n" + indent
+                + "{\r\n");
+        final String contentIndent = indent + indentStep;
+        construction.append(buildSerialVersionUID(contentIndent));
+        construction.append(buildMethod(contentIndent, "||" + name, "Construct a new " + longName + ".",
+                new String[]{"final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
+                        "// System.out.println(\"Created " + name + "\");"}, true));
+        construction.append(buildVectorSubSubClass(contentIndent, absRelType, "Dense", absRelType + " Dense "
+                + parentClassName, mutable));
+        construction.append(buildVectorSubSubClass(contentIndent, absRelType, "Sparse", absRelType + " Sparse "
+                + parentClassName, mutable));
+        construction.append(buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name + "<U>|get",
+                null, new String[]{"final int|index|"}, "valueException|when index < 0 or index >= size()", null,
+                new String[]{"return new " + floatType + "Scalar." + name
+                        + "<U>(getInUnit(index, getUnit()), getUnit());"}, false));
+        construction.append(indent + "}\r\n\r\n");
+        /*
+         * construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName +
+         * " from an existing " + absRelType + " Immutable " + floatType + "Scalar.", new String[]{"final " +
+         * parentClassName + "." + name + "<U>|value|the reference"}, null, null, new String[]{
+         * "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
+         * construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName +
+         * " from an existing " + absRelType + " Mutable" + floatType + "Scalar.", new String[]{"final " + " Mutable" +
+         * floatType + "Scalar." + name + "<U>|value|the reference"}, null, null, new String[]{
+         * "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
+         * construction.append(buildMethod(contentIndent, "public final|" + "Mutable" + floatType + "Scalar." + name +
+         * "<U>|mutable", null, null, null, null, new String[]{"return new Mutable" + floatType + "Scalar." + name +
+         * "<U>(this);"}, false)); if (mutable) { construction.append(buildMethod(contentIndent, "public final|" +
+         * parentClassName + "." + name + "<U>|immutable", null, null, null, null, new String[]{"return new " +
+         * parentClassName + "." + name + "<U>(this);"}, false)); } construction.append(buildMethod(contentIndent,
+         * "public final|int|compareTo", null, new String[]{"final|" + name + "<U> o|"}, null, null, new
+         * String[]{"return new " + floatType + "(getValueSI()).compareTo(o.getValueSI());"}, false));
+         * construction.append(buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "") + parentClassName
+         * + "." + name + "<U>|copy", null, null, null, null, new String[]{mutable ? "return new Mutable" + floatType +
+         * "Scalar." + name + "<U>(this);" : "return this;"}, false)); construction.append(indent + "}\r\n\r\n");
+         */
+        return construction.toString();
+    }
+
+    /**
+     * Generate the code for a vector sub sub class.
+     * @param indent String; prefix of all output lines
+     * @param absRel String; either <cite>Absolute</cite>, or <cite>Relative</cite>
+     * @param denseOrSparse String; either <cite>Dense</cite>, or <cite>Sparse</cite>
+     * @param longName String; something like <cite>Absolute Dense Immutable FloatVector</cite>
+     * @param mutable boolean; if true; the code for the mutable version is generated; if false; the code for the
+     *            immutable version is generated
+     * @return String; Java code
+     */
+    private static String buildVectorSubSubClass(final String indent, final String absRel, final String denseOrSparse,
+            final String longName, boolean mutable)
+    {
+        final String fixedLongName = mutable ? longName : longName.replaceFirst("( \\S*$)", " Immutable$1");
+        final String floatingTypeName = longName.replaceFirst(".* (.*)Vector", "$1");
+        final String vectorTypeName = longName.replaceFirst(".* (.*)$", "$1");
+        final String immutableTypeName =
+                vectorTypeName.startsWith("Mutable") ? vectorTypeName.substring(7) : vectorTypeName;
+        StringBuilder construction = new StringBuilder();
+        construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
+        construction.append(indent + "public static class " + denseOrSparse + "<U extends Unit<U>> extends "
+                + longName.split(" ")[0].substring(0, 3) + "<U>" + (mutable ? "Mutable" : "") + " implements "
+                + denseOrSparse + "Data\r\n" + indent + "{\r\n");
+        final String contentIndent = indent + indentStep;
+        construction.append(buildSerialVersionUID(contentIndent));
+        construction.append(buildMethod(contentIndent, "public||" + denseOrSparse, "Construct a new " + fixedLongName
+                + ".", new String[]{
+                "final " + floatingTypeName.toLowerCase() + "[]|values|the values of the entries in the new "
+                        + fixedLongName, "final U|unit|the unit of the new " + fixedLongName}, null, null,
+                new String[]{"super(unit);", "// System.out.println(\"Created " + denseOrSparse + "\");",
+                        "initialize(values);"}, true));
+        construction.append(buildMethod(contentIndent, "public||" + denseOrSparse, "Construct a new " + fixedLongName
+                + ".", new String[]{"final " + floatingTypeName + "Scalar." + absRel.substring(0, 3)
+                + "<U>[]|values|the values of the entries in the new " + fixedLongName},
+                "valueException|when values has zero entries", null, new String[]{
+                        "super(checkNonEmpty(values)[0].getUnit());",
+                        "// System.out.println(\"Created " + denseOrSparse + "\");", "initialize(values);"}, true));
+        construction.append(buildMethod(contentIndent, "protected||" + denseOrSparse, "For package internal use only.",
+                new String[]{
+                        "final " + floatingTypeName + "Matrix1D|values|the values of the entries in the new "
+                                + fixedLongName, "final U|unit|the unit of the new " + fixedLongName}, null, null,
+                new String[]{"super(unit);", "// System.out.println(\"Created " + denseOrSparse + "\");",
+                        "initialize(values); // shallow copy"}, true));
+        construction
+                .append(buildMethod(contentIndent,
+                        "public final|Mutable" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
+                                + "<U>|mutable", null, null, null, null, new String[]{"return new Mutable"
+                                + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
+                                + "<U>(getVectorSI(), getUnit());"}, false));
+        construction.append(buildMethod(contentIndent, "protected final|" + floatingTypeName
+                + "Matrix1D|createMatrix1D", null, new String[]{"final int|size|"}, null, null,
+                new String[]{"return new " + denseOrSparse + floatingTypeName + "Matrix1D(size);"}, false));
+        if (!mutable)
+        {
+            construction.append(buildMethod(contentIndent,
+                    "public final|" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
+                            + "<U>|copy", null, null, null, null, new String[]{"return this; // That was easy..."},
+                    false));
+        }
+        construction.append(indent + "}\r\n\r\n");
+        return construction.toString();
     }
 
     /**
@@ -690,30 +1000,32 @@ public class Generator
                                 "org.opentrafficsim.core.value.ValueUtil"},
                 (mutable ? "Mutable" : "Immutable ") + scalarType + "Scalar.",
                 new String[]{"<U> the unit of the values in the constructor and for display"},
-                "<U extends Unit<U>> extends " + (mutable ? "Float" : "") + "Scalar<U>"
+                "<U extends Unit<U>> extends " + (mutable ? scalarType : "") + "Scalar<U>"
                         + (mutable ? " implements " + scalarType + "MathFunctions" : ""),
                 (mutable ? "" : buildField(outerIndent, "private " + lowerCaseType + " valueSI",
                         "The value, stored in the standard SI unit."))
                         + buildMethod(outerIndent, "protected||" + (mutable ? "Mutable" : " ") + scalarType + "Scalar",
                                 "Construct a new " + mutableType + scalarType + "Scalar.",
                                 new String[]{"final U|unit|the unit of the new " + (mutable ? "Mutable" : "")
-                                        + scalarType + "Scalar"}, new String[]{"super(unit);"}, true)
-                        + buildSubClass(outerIndent, "Abs", "Absolute " + mutableType + scalarType + "Scalar",
+                                        + scalarType + "Scalar"}, null, null, new String[]{"super(unit);"}, true)
+                        + buildScalarSubClass(outerIndent, "Abs", "Absolute " + mutableType + scalarType + "Scalar",
                                 scalarType + "Scalar<U>", "Absolute, Comparable<Abs<U>>", scalarType + "Scalar",
                                 mutable)
-                        + buildSubClass(outerIndent, "Rel", "Relative " + mutableType + scalarType + "Scalar",
+                        + buildScalarSubClass(outerIndent, "Rel", "Relative " + mutableType + scalarType + "Scalar",
                                 scalarType + "Scalar<U>", "Relative, Comparable<Rel<U>>", scalarType + "Scalar",
                                 mutable)
                         + (mutable
                                 ? buildMethod(
                                         outerIndent,
-                                        "public abstract|" + scalarType + "Scalar<U>|immutable",
-                                        "Create an immutable version of this Mutable"
+                                        "public abstract|" + scalarType
+                                                + "Scalar<U>|immutable|immutable version of this " + scalarType
+                                                + "Scalar",
+                                        "Construct an immutable version of this Mutable"
                                                 + scalarType
                                                 + "Scalar. <br>\r\n"
                                                 + outerIndent
                                                 + " * The immutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.",
-                                        null, null, false)
+                                        null, null, null, null, false)
                                         + buildMethod(
                                                 outerIndent,
                                                 "final|void|setSI",
@@ -721,20 +1033,20 @@ public class Generator
                                                 new String[]{"final "
                                                         + scalarType.toLowerCase()
                                                         + "|valueSI|the value to store (value must already be in the standard SI unit)"},
-                                                new String[]{"setValueSI(valueSI);"}, false)
+                                                null, null, new String[]{"setValueSI(valueSI);"}, false)
                                         + buildMethod(outerIndent, "final|void|set|",
                                                 "Replace the stored value by the supplied value.",
                                                 new String[]{"final " + scalarType
-                                                        + "Scalar<U>|value|the strongly typed value to store"},
-                                                new String[]{"setValueSI(value.getValueSI());"}, false)
+                                                        + "Scalar<U>|value|the strongly typed value to store"}, null,
+                                                null, new String[]{"setValueSI(value.getValueSI());"}, false)
                                         + buildMethod(
                                                 outerIndent,
                                                 "final|void|setInUnit",
                                                 "Replace the stored value by the supplied value which can be expressed in any compatible unit.",
-                                                new String[]{"final float|value|the value to store",
-                                                        "final U|valueUnit|the unit of the supplied value"},
-                                                new String[]{"setValueSI(" + cast
-                                                        + " ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
+                                                new String[]{"final " + scalarType + "|value|the value to store",
+                                                        "final U|valueUnit|the unit of the supplied value"}, null,
+                                                null, new String[]{"setValueSI(" + (cast.equals("") ? "" : cast + " ")
+                                                        + "ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
                                         + buildOtherMutatingScalarMethods(outerIndent, scalarType)
                                 : buildMethod(
                                         outerIndent,
@@ -744,14 +1056,14 @@ public class Generator
                                                 + "Scalar. <br>\r\n"
                                                 + outerIndent
                                                 + " * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.",
-                                        null, null, false)
+                                        null, null, null, null, false)
                                         + buildMethod(
                                                 outerIndent,
                                                 "protected final|void|initialize",
                                                 "Initialize the valueSI field (performing conversion to the SI standard unit if needed).",
                                                 new String[]{"final " + lowerCaseType
                                                         + "|value|the value in the unit of this " + scalarType
-                                                        + "Scalar"}, new String[]{
+                                                        + "Scalar"}, null, null, new String[]{
                                                         "if (this.getUnit().equals(this.getUnit().getStandardUnit()))",
                                                         "{",
                                                         indentStep + "this.valueSI = value;",
@@ -765,28 +1077,25 @@ public class Generator
                                                 "protected final|void|initialize",
                                                 "Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never necessary.",
                                                 new String[]{"final " + scalarType
-                                                        + "Scalar<U>|value|the value to use for initialization"},
-                                                new String[]{"setValueSI(value.getValueSI());"}, false)
+                                                        + "Scalar<U>|value|the value to use for initialization"}, null,
+                                                null, new String[]{"setValueSI(value.getValueSI());"}, false)
                                         + buildMethod(outerIndent, "public final|" + lowerCaseType + "|getValueSI",
-                                                "Retrieve the value in the underlying SI unit.", null,
+                                                "Retrieve the value in the underlying SI unit.", null, null, null,
                                                 new String[]{"return this.valueSI;"}, false)
                                         + buildMethod(outerIndent, "protected final|void|setValueSI",
                                                 "Set the value in the underlying SI unit.", new String[]{"final "
                                                         + scalarType.toLowerCase()
-                                                        + "|value|the new value in the underlying SI unit"},
-                                                new String[]{"this.valueSI = value;"}, false)
-                                        + buildMethod(
-                                                outerIndent,
-                                                "public final|" + scalarType.toLowerCase() + "|getValueInUnit",
-                                                "Retrieve the value in the original unit.",
-                                                null,
-                                                new String[]{"return " + cast + "expressAsSpecifiedUnit(this.valueSI);"},
-                                                false)
+                                                        + "|value|the new value in the underlying SI unit"}, null,
+                                                null, new String[]{"this.valueSI = value;"}, false)
+                                        + buildMethod(outerIndent, "public final|" + scalarType.toLowerCase()
+                                                + "|getValueInUnit", "Retrieve the value in the original unit.", null,
+                                                null, null, new String[]{"return " + cast
+                                                        + "expressAsSpecifiedUnit(this.valueSI);"}, false)
                                         + buildMethod(outerIndent, "public final|" + scalarType.toLowerCase()
                                                 + "|getValueInUnit",
                                                 "Retrieve the value converted into some specified unit.",
                                                 new String[]{"final U|targetUnit|the unit to convert the value into"},
-                                                new String[]{"return " + cast
+                                                null, null, new String[]{"return " + cast
                                                         + "ValueUtil.expressAsUnit(this.valueSI, targetUnit);"}, false)
                                         + buildNumberMethods(scalarType))
 
@@ -802,6 +1111,7 @@ public class Generator
      */
     private static String buildOtherMutatingScalarMethods(String indent, String scalarType)
     {
+        final String cast = (scalarType.startsWith("F") ? "(float)" : null);
         StringBuilder construction = new StringBuilder();
         construction.append(buildBlockComment(indent, "NON-STATIC METHODS"));
         construction.append(buildMethod(indent, "public final|void|add", "Add another value to this value. "
@@ -809,7 +1119,7 @@ public class Generator
                 + " * is not allowed. Adding an absolute value to an existing relative value would require the "
                 + "result to become\r\n" + indent
                 + " * absolute, which is a type change that is impossible. For that operation, use a static method.",
-                new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to add"},
+                new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to add"}, null, null,
                 new String[]{"setValueSI(getValueSI() + value.getValueSI());"}, false));
         construction
                 .append(buildMethod(
@@ -823,7 +1133,7 @@ public class Generator
                                 + " * result to become relative, which is a type change that is impossible. "
                                 + "For that operation, use a static method.",
                         new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to subtract"},
-                        new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
+                        null, null, new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
         construction.append(buildBlockComment(indent, "STATIC METHODS"));
         construction.append(buildScalarIncrementDecrement(indent, scalarType, true));
         construction.append(buildScalarPlus(indent, scalarType, true));
@@ -838,7 +1148,7 @@ public class Generator
                         + indent + " * will be the unit of the first argument.", new String[]{
                         "final " + scalarType + "Scalar.Abs<U>|valueAbs1|value 1",
                         "final " + scalarType + "Scalar.Abs<U>|valueAbs2|value 2",
-                        "Unit|<U>|the unit of the parameters and the result"}, new String[]{
+                        "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
                         "Mutable" + scalarType + "Scalar.Rel<U> result = ",
                         indent + indent + "new Mutable" + scalarType
                                 + "Scalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());",
@@ -850,54 +1160,55 @@ public class Generator
         construction.append(buildBlockComment(indent, "MATH METHODS"));
         construction.append(buildScalarMathMethod(indent, "abs", "Math.abs(", ")", null, null));
         construction.append(buildScalarMathMethod(indent, "acos", "Math.acos(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "asin", "Math.asin(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "atan", "Math.atan(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "cbrt", "Math.cbrt(", ")",
-                "// TODO: dimension for all SI coefficients / 3.", "(float)"));
-        construction.append(buildScalarMathMethod(indent, "ceil", "Math.ceil(", ")", null, "(float)"));
+                "// TODO: dimension for all SI coefficients / 3.", cast));
+        construction.append(buildScalarMathMethod(indent, "ceil", "Math.ceil(", ")", null, cast));
         construction.append(buildScalarMathMethod(indent, "cos", "Math.cos(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "cosh", "Math.cosh(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "exp", "Math.exp(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "expm1", "Math.expm1(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
-        construction.append(buildScalarMathMethod(indent, "floor", "Math.floor(", ")", null, "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
+        construction.append(buildScalarMathMethod(indent, "floor", "Math.floor(", ")", null, cast));
         construction.append(buildScalarMathMethod(indent, "log", "Math.log(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "log10", "Math.log10(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "log1p", "Math.log1p(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
-        construction.append(buildMethod(indent, "public final|void|pow", null, new String[]{"final double|x|"},
-                new String[]{"// TODO: SI unit with coefficients * x.",
-                        "setValueSI((float) Math.pow(getValueSI(), x));"}, false));
-        construction.append(buildScalarMathMethod(indent, "rint", "Math.rint(", ")", null, "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
+        construction.append(buildMethod(indent, "public final|void|pow", null, new String[]{"final double|x|"}, null,
+                null, new String[]{"// TODO: SI unit with coefficients * x.",
+                        "setValueSI(" + (cast == null ? "" : cast + " ") + "Math.pow(getValueSI(), x));"}, false));
+        construction.append(buildScalarMathMethod(indent, "rint", "Math.rint(", ")", null, cast));
         construction.append(buildScalarMathMethod(indent, "round", "Math.round(", ")", null, null));
         construction.append(buildScalarMathMethod(indent, "signum", "Math.signum(", ")",
                 "// TODO: dimensionless result (SIUnit.ONE).", null));
         construction.append(buildScalarMathMethod(indent, "sin", "Math.sin(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "sinh", "Math.sinh(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "sqrt", "Math.sqrt(", ")", "// TODO: unit coefficients / 2.",
-                "(float)"));
+                cast));
         construction.append(buildScalarMathMethod(indent, "tan", "Math.tan(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
         construction.append(buildScalarMathMethod(indent, "tanh", "Math.tanh(", ")",
-                "// TODO: dimensionless result (SIUnit.ONE).", "(float)"));
-        construction.append(buildScalarMathMethod(indent, "toDegrees", "Math.toDegrees(", ")", null, "(float)"));
-        construction.append(buildScalarMathMethod(indent, "toRadians", "Math.toRadians(", ")", null, "(float)"));
+                "// TODO: dimensionless result (SIUnit.ONE).", cast));
+        construction.append(buildScalarMathMethod(indent, "toDegrees", "Math.toDegrees(", ")", null, cast));
+        construction.append(buildScalarMathMethod(indent, "toRadians", "Math.toRadians(", ")", null, cast));
         construction.append(buildScalarMathMethod(indent, "inv", "1.0" + (scalarType.startsWith("F") ? "f" : "")
                 + " / ", "", "// TODO: negate all coefficients in the Unit.", null));
-        construction.append(buildMethod(indent, "public final|void|multiply", null,
-                new String[]{"final float|constant|"}, new String[]{"setValueSI(getValueSI() * constant);"}, false));
-        construction.append(buildMethod(indent, "public final|void|divide", null,
-                new String[]{"final float|constant|"}, new String[]{"setValueSI(getValueSI() / constant);"}, false));
+        final String type = (cast == null ? "double" : cast.substring(1, cast.length() - 1));
+        construction.append(buildMethod(indent, "public final|void|multiply", null, new String[]{"final " + type
+                + "|constant|"}, null, null, new String[]{"setValueSI(getValueSI() * constant);"}, false));
+        construction.append(buildMethod(indent, "public final|void|divide", null, new String[]{"final " + type
+                + "|constant|"}, null, null, new String[]{"setValueSI(getValueSI() / constant);"}, false));
         return construction.toString();
     }
 
@@ -920,9 +1231,10 @@ public class Generator
 
         if (null != comment)
         {
-            return buildMethod(indent, "public final|void|" + name, null, null, new String[]{comment, code}, false);
+            return buildMethod(indent, "public final|void|" + name, null, null, null, null,
+                    new String[]{comment, code}, false);
         }
-        return buildMethod(indent, "public final|void|" + name, null, null, new String[]{code}, false);
+        return buildMethod(indent, "public final|void|" + name, null, null, null, null, new String[]{code}, false);
     }
 
     /**
@@ -964,7 +1276,8 @@ public class Generator
                 + " of the two values", (multiply ? "Multiply" : "Divide")
                 + " two values; the result is a new instance with a different (existing or generated) SI Unit.",
                 new String[]{"final " + scalarType + "Scalar." + absRel + "<?>|left|the left operand",
-                        "final " + scalarType + "Scalar." + absRel + "<?>|right|the right operand"}, new String[]{
+                        "final " + scalarType + "Scalar." + absRel + "<?>|right|the right operand"}, null, null,
+                new String[]{
                         "SIUnit targetUnit =",
                         indent + indent + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients."
                                 + (multiply ? "multiply" : "divide") + "(left.getUnit().getSICoefficients(),",
@@ -987,7 +1300,7 @@ public class Generator
                 + "crementBy|the modified Mutable" + scalarType + "Scalar", (increment ? "In" : "De")
                 + "crement the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
                 + "Scalar<?>|" + (increment ? "in" : "de") + "crement|the amount by which to "
-                + (increment ? "in" : "de") + "crement the stored value"}, new String[]{
+                + (increment ? "in" : "de") + "crement the stored value"}, null, null, new String[]{
                 "setValueSI(getValueSI() " + (increment ? "+ in" : "- de") + "crement.getValueSI());", "return this;"},
                 false);
     }
@@ -1005,9 +1318,9 @@ public class Generator
         final String absRel = absoluteResult ? "Abs" : "Rel";
         return buildMethod(
                 indent,
-                "@SafeVarargs\r\n" + indent + "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar."
-                        + absRel + "<U>|plus|the sum of the values as "
-                        + (absoluteResult ? "an absolute" : "a relative") + " value",
+                "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar." + absRel
+                        + "<U>|plus|the sum of the values as " + (absoluteResult ? "an absolute" : "a relative")
+                        + " value",
                 absoluteResult
                         ? "Add a number of relative values to an absolute value. Return a new instance of the value. "
                                 + "The unit of the return\r\n" + indent
@@ -1018,17 +1331,23 @@ public class Generator
                                 + "the method\r\n"
                                 + indent
                                 + " * cannot check whether an array of arguments submitted to the varargs has a "
-                                + "mixed-unit content at runtime.", new String[]{
+                                + "mixed-unit content at runtime.",
+                new String[]{
                         absoluteResult ? "final " + scalarType + "Scalar." + absRel + "<U>|value" + absRel
                                 + "|the absolute base value" : "final U|targetUnit| the unit of the sum",
                         "final " + scalarType + "Scalar.Rel<U>...|valuesRel|zero or more relative values to add "
                                 + (absoluteResult ? "to the absolute value" : "together"),
-                        "Unit|<U>|the unit of the parameters and the result"}, new String[]{
+                        "Unit|<U>|the unit of the parameters and the result"},
+                null,
+                "@SafeVarargs",
+                new String[]{
                         "Mutable"
                                 + scalarType
                                 + "Scalar."
                                 + absRel
-                                + "<U> result = new MutableFloatScalar."
+                                + "<U> result = new Mutable"
+                                + scalarType
+                                + "Scalar."
                                 + absRel
                                 + "<U>("
                                 + (absoluteResult ? "valueAbs);" : "0.0" + (scalarType.startsWith("F") ? "f" : "")
@@ -1049,9 +1368,9 @@ public class Generator
         final String absRel = absoluteResult ? "Abs" : "Rel";
         return buildMethod(
                 indent,
-                "@SafeVarargs\r\n" + indent + "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar."
-                        + absRel + "<U>|minus|the resulting value as "
-                        + (absoluteResult ? "an absolute" : "a relative") + " value",
+                "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar." + absRel
+                        + "<U>|minus|the resulting value as " + (absoluteResult ? "an absolute" : "a relative")
+                        + " value",
                 absoluteResult
                         ? "Subtract a number of relative values from an absolute value. Return a new instance of the value. "
                                 + "The unit of the\r\n"
@@ -1072,10 +1391,11 @@ public class Generator
                                 + (absoluteResult ? "absolute" : "relative") + " base value",
                         "final " + scalarType + "Scalar.Rel<U>...|valuesRel|zero or more relative values to subtract "
                                 + (absoluteResult ? "from the absolute value" : "from the first value"),
-                        "Unit|<U>|the unit of the parameters and the result"}, new String[]{
-                        "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new MutableFloatScalar." + absRel
-                                + "<U>(value" + absRel + ");", "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)",
-                        "{", indentStep + "result.decrementBy(v);", "}", "return result;"}, false);
+                        "Unit|<U>|the unit of the parameters and the result"}, null, "@SafeVarargs", new String[]{
+                        "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new Mutable" + scalarType
+                                + "Scalar." + absRel + "<U>(value" + absRel + ");",
+                        "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)", "{",
+                        indentStep + "result.decrementBy(v);", "}", "return result;"}, false);
     }
 
     /**
@@ -1089,24 +1409,24 @@ public class Generator
         final String indent = indentStep;
         StringBuilder construction = new StringBuilder();
         construction.append(buildBlockComment(indent, "NUMBER METHODS"));
-        construction.append(buildMethod(indent, "public final|int|intValue", null, null,
+        construction.append(buildMethod(indent, "public final|int|intValue", null, null, null, null,
                 new String[]{"return " + (type.equals("Float") ? "" : "(int) ") + "Math.round(this.valueSI);"}, false));
-        construction.append(buildMethod(indent, "public final|long|longValue", null, null,
+        construction.append(buildMethod(indent, "public final|long|longValue", null, null, null, null,
                 new String[]{"return Math.round(this.valueSI);"}, false));
-        construction.append(buildMethod(indent, "public final|float|floatValue", null, null, new String[]{"return "
-                + cast + "this.valueSI;"}, false));
-        construction.append(buildMethod(indent, "public final|double|doubleValue", null, null,
+        construction.append(buildMethod(indent, "public final|float|floatValue", null, null, null, null,
+                new String[]{"return " + cast + "this.valueSI;"}, false));
+        construction.append(buildMethod(indent, "public final|double|doubleValue", null, null, null, null,
                 new String[]{"return this.valueSI;"}, false));
-        construction.append(buildMethod(indent, "public final|String|toString", null, null,
+        construction.append(buildMethod(indent, "public final|String|toString", null, null, null, null,
                 new String[]{"return this.getValueInUnit() + \" \" + this.getUnit().getAbbreviationKey();"}, false));
-        construction.append(buildMethod(indent, "public final|int|hashCode", null, null, type.equals("Float")
-                ? new String[]{"final int prime = 31;", "int result = 1;",
-                        "result = prime * result + Float.floatToIntBits(this.valueSI);", "return result;"}
-                : new String[]{"final int prime = 31;", "int result = 1;", "long temp;",
-                        "temp = Double.doubleToLongBits(this.valueSI);",
-                        "result = prime * result + (int) (temp ^ (temp >>> 32));", "return result;"}, false));
+        construction.append(buildMethod(indent, "public final|int|hashCode", null, null, null, null, type
+                .equals("Float") ? new String[]{"final int prime = 31;", "int result = 1;",
+                "result = prime * result + Float.floatToIntBits(this.valueSI);", "return result;"} : new String[]{
+                "final int prime = 31;", "int result = 1;", "long temp;",
+                "temp = Double.doubleToLongBits(this.valueSI);",
+                "result = prime * result + (int) (temp ^ (temp >>> 32));", "return result;"}, false));
         construction.append(buildMethod(indent, "public final|boolean|equals", null,
-                new String[]{"final Object|obj|the Object to compare with"}, new String[]{
+                new String[]{"final Object|obj|the Object to compare with"}, null, null, new String[]{
                         "if (this == obj)",
                         "{",
                         indentStep + "return true;",
@@ -1134,7 +1454,6 @@ public class Generator
                                 + "(this.valueSI) != " + type + "." + lowerCaseType
                                 + (type.equals("Float") ? "ToIntBits" : "ToLongBits") + "(other.valueSI))", "{",
                         indentStep + "return false;", "}", "return true;"}, false));
-        construction.append(buildBlockComment(indent, "NUMBER METHODS"));
 
         return construction.toString();
     }
@@ -1152,7 +1471,7 @@ public class Generator
      *            for the immutable version is generated
      * @return String; java code implementing the sub class
      */
-    private static String buildSubClass(final String indent, final String name, final String longName,
+    private static String buildScalarSubClass(final String indent, final String name, final String longName,
             final String extendsString, final String implementsString, final String parentClassName, boolean mutable)
     {
         final String absRelType = longName.split(" ")[0];
@@ -1166,32 +1485,33 @@ public class Generator
         construction.append(buildSerialVersionUID(contentIndent));
         construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName + ".",
                 new String[]{"final " + floatType.toLowerCase() + "|value|the value of the new " + longName,
-                        "final U|unit|the unit of the new " + longName}, new String[]{"super(unit);",
+                        "final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
                         "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
         construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
                 + " from an existing " + absRelType + " Immutable " + floatType + "Scalar.", new String[]{"final "
-                + parentClassName + "." + name + "<U>|value|the reference"}, new String[]{"super(value.getUnit());",
-                "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
+                + parentClassName + "." + name + "<U>|value|the reference"}, null, null, new String[]{
+                "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"},
+                true));
         construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
                 + " from an existing " + absRelType + " Mutable" + floatType + "Scalar.", new String[]{"final "
-                + " Mutable" + floatType + "Scalar." + name + "<U>|value|the reference"}, new String[]{
+                + " Mutable" + floatType + "Scalar." + name + "<U>|value|the reference"}, null, null, new String[]{
                 "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"},
                 true));
         construction.append(buildMethod(contentIndent, "public final|" + "Mutable" + floatType + "Scalar." + name
-                + "<U>|mutable", null, null, new String[]{"return new Mutable" + floatType + "Scalar." + name
-                + "<U>(this);"}, false));
+                + "<U>|mutable", null, null, null, null, new String[]{"return new Mutable" + floatType + "Scalar."
+                + name + "<U>(this);"}, false));
         if (mutable)
         {
             construction.append(buildMethod(contentIndent, "public final|" + parentClassName + "." + name
-                    + "<U>|immutable", null, null, new String[]{"return new " + parentClassName + "." + name
-                    + "<U>(this);"}, false));
+                    + "<U>|immutable", null, null, null, null, new String[]{"return new " + parentClassName + "."
+                    + name + "<U>(this);"}, false));
         }
         construction.append(buildMethod(contentIndent, "public final|int|compareTo", null, new String[]{"final|" + name
-                + "<U> o|"}, new String[]{"return new " + floatType + "(getValueSI()).compareTo(o.getValueSI());"},
-                false));
+                + "<U> o|"}, null, null, new String[]{"return new " + floatType
+                + "(getValueSI()).compareTo(o.getValueSI());"}, false));
         construction.append(buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "") + parentClassName
-                + "." + name + "<U>|copy", null, null, new String[]{mutable ? "return new Mutable" + floatType
-                + "Scalar." + name + "<U>(this);" : "return this;"}, false));
+                + "." + name + "<U>|copy", null, null, null, null, new String[]{mutable ? "return new Mutable"
+                + floatType + "Scalar." + name + "<U>(this);" : "return this;"}, false));
         construction.append(indent + "}\r\n\r\n");
         return construction.toString();
     }
@@ -1200,16 +1520,17 @@ public class Generator
      * Build the implementation of a DoubleFunction.
      * @param name String; name of the DoubleFunction.
      * @param objectType String; should be <cite>Double</cite>, or <cite>Float</cite>
-     * @param casts String; should be <cite>(float)</cite> or the empty String
+     * @param cast String; should be <cite>(float)</cite> or the empty String
      * @return String; java code that implements the DoubleFunction
      */
-    private static String buildDoubleOrFloatFunction(final String name, String objectType, String casts)
+    private static String buildDoubleOrFloatFunction(final String name, String objectType, String cast)
     {
-        return "    /*\r\n     * Function that returns <tt>Math." + name + "(a)</tt>.\r\n     */\r\n"
+        String useCast = (cast.length() == 0 ? "" : cast + " "); // append a space
+        return "    /**\r\n     * Function that returns <tt>Math." + name + "(a)</tt>.\r\n     */\r\n"
                 + "    public static final " + objectType + "Function " + name + " = new " + objectType
                 + "Function()\r\n    {\r\n" + "        @Override\r\n        public " + objectType.toLowerCase()
-                + " apply(final " + objectType.toLowerCase() + " a)\r\n" + "        {\r\n            return " + casts
-                + "Math." + name + "(a)\r\n" + "        }\r\n    };\r\n\r\n";
+                + " apply(final " + objectType.toLowerCase() + " a)\r\n" + "        {\r\n            return " + useCast
+                + "Math." + name + "(a);\r\n" + "        }\r\n    };\r\n\r\n";
     }
 
     /**
@@ -1233,15 +1554,15 @@ public class Generator
         return buildMethod(indentStep, "public static|String|format", "Format a floating point value.", new String[]{
                 "final " + valueType + "|value|the value to format",
                 "final int|width|the number of characters in the result",
-                "final int|precision|the number of fractional digits in the result"},
+                "final int|precision|the number of fractional digits in the result"}, null, null,
                 new String[]{"return String.format(formatString(width, precision, \"f\"), value);"}, false)
 
                 + buildMethod(indentStep, "public static|String|format", "Format a floating point value.",
                         new String[]{"final " + valueType + "|value|the value to format",
-                                "final int|size|the number of characters in the result"},
+                                "final int|size|the number of characters in the result"}, null, null,
                         new String[]{"return Format.format(value, size, Format.DEFAULTPRECISION);"}, false)
                 + buildMethod(indentStep, "public static|String|format", "Format a floating point value.",
-                        new String[]{"final " + valueType + "|value|the value to format",},
+                        new String[]{"final " + valueType + "|value|the value to format",}, null, null,
                         new String[]{"return format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);"}, false);
     }
 
