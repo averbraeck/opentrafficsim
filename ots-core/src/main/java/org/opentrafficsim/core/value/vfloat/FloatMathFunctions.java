@@ -14,15 +14,15 @@ import org.opentrafficsim.core.value.MathFunctions;
 public interface FloatMathFunctions extends MathFunctions
 {
     /**
-     * Multiply the value(s) with a constant.
-     * @param constant the multiplier
+     * Scale the value(s) by a factor.
+     * @param factor float; the multiplier
      */
-    void multiply(float constant);
+    void multiply(float factor);
 
     /**
-     * Divide the value(s) by a constant.
-     * @param constant the divisor
+     * Scale the value(s) by the inverse of a factor; i.e. a divisor.
+     * @param divisor float; the divisor
      */
-    void divide(float constant);
+    void divide(float divisor);
 
 }

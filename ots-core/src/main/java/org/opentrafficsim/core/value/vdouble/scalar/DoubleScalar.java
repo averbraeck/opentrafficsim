@@ -57,7 +57,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Construct a new Absolute Immutable DoubleScalar from an existing one.
+         * Construct a new Absolute Immutable DoubleScalar from an existing Absolute Immutable DoubleScalar.
          * @param value DoubleScalar.Abs<U>; the reference
          */
         public Abs(final DoubleScalar.Abs<U> value)
@@ -122,7 +122,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
 
         /**
-         * Construct a new Relative Immutable DoubleScalar from an existing one.
+         * Construct a new Relative Immutable DoubleScalar from an existing Relative Immutable DoubleScalar.
          * @param value DoubleScalar.Rel<U>; the reference
          */
         public Rel(final DoubleScalar.Rel<U> value)
@@ -236,7 +236,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**********************************************************************************/
-    /******************************** NUMBER METHODS **********************************/
+    /********************************* NUMBER METHODS *********************************/
     /**********************************************************************************/
 
     /** {@inheritDoc} */

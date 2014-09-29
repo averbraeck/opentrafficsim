@@ -13,7 +13,7 @@ import cern.colt.function.tfloat.FloatFunction;
 public final class FloatMathFunctionsImpl
 {
     /**
-     * This class should never be instantiated.
+     * This class shall never be instantiated.
      */
     private FloatMathFunctionsImpl()
     {
@@ -33,7 +33,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.cosh(x)</tt>.
+     * Function that returns <tt>Math.cosh(a)</tt>.
      */
     public static final FloatFunction cosh = new FloatFunction()
     {
@@ -45,7 +45,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.expm1(x)</tt>.
+     * Function that returns <tt>Math.expm1(a)</tt>.
      */
     public static final FloatFunction expm1 = new FloatFunction()
     {
@@ -57,7 +57,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.log10(x)</tt>.
+     * Function that returns <tt>Math.log10(a)</tt>.
      */
     public static final FloatFunction log10 = new FloatFunction()
     {
@@ -69,7 +69,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.log1p(x)</tt>.
+     * Function that returns <tt>Math.log1p(a)</tt>.
      */
     public static final FloatFunction log1p = new FloatFunction()
     {
@@ -81,7 +81,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.round(x)</tt>.
+     * Function that returns <tt>Math.round(a)</tt>.
      */
     public static final FloatFunction round = new FloatFunction()
     {
@@ -93,7 +93,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.signum(x)</tt>.
+     * Function that returns <tt>Math.signum(a)</tt>.
      */
     public static final FloatFunction signum = new FloatFunction()
     {
@@ -105,7 +105,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.sinh(x)</tt>.
+     * Function that returns <tt>Math.sinh(a)</tt>.
      */
     public static final FloatFunction sinh = new FloatFunction()
     {
@@ -117,7 +117,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.tanh(x)</tt>.
+     * Function that returns <tt>Math.tanh(a)</tt>.
      */
     public static final FloatFunction tanh = new FloatFunction()
     {
@@ -129,7 +129,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.toDegrees(x)</tt>.
+     * Function that returns <tt>Math.toDegrees(a)</tt>.
      */
     public static final FloatFunction toDegrees = new FloatFunction()
     {
@@ -141,7 +141,7 @@ public final class FloatMathFunctionsImpl
     };
 
     /**
-     * Function that returns <tt>Math.toRadians(x)</tt>.
+     * Function that returns <tt>Math.toRadians(a)</tt>.
      */
     public static final FloatFunction toRadians = new FloatFunction()
     {

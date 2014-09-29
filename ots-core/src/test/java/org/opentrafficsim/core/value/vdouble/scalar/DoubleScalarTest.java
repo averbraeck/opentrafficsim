@@ -396,7 +396,7 @@ public class DoubleScalarTest
         double rightValue = 21.098f;
         DoubleScalar.Abs<LengthUnit> leftAbs = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> rightAbs = new DoubleScalar.Abs<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar.Abs<SIUnit> ratio = MutableDoubleScalar.divide(leftAbs, rightAbs);
+        MutableDoubleScalar.Abs<SIUnit> ratio = MutableDoubleScalar.divide(leftAbs, rightAbs);
         String unitString = ratio.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
         {
@@ -411,7 +411,7 @@ public class DoubleScalarTest
                 ratio.getValueSI(), 0.0001);
         DoubleScalar.Rel<LengthUnit> leftRel = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> rightRel = new DoubleScalar.Rel<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar.Rel<SIUnit> ratioRel = MutableDoubleScalar.divide(leftRel, rightRel);
+        MutableDoubleScalar.Rel<SIUnit> ratioRel = MutableDoubleScalar.divide(leftRel, rightRel);
         unitString = ratioRel.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
         {
