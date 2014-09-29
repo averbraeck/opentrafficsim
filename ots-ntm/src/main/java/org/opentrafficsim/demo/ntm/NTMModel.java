@@ -1,8 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.text.ParseException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -23,6 +21,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
@@ -57,26 +56,29 @@ public class NTMModel implements OTSModelInterface
     private OTSDEVSSimulatorInterface simulator;
 
     /** areas. */
-    private Map<java.lang.Long, Area> areas;
+    private Map<java.lang.Long, ? extends Area> areas;
 
     /** nodes from shape file. */
-    private Map<java.lang.Long, ShpNode> shpNodes;
+    private Map<String, ShpNode> shpNodes;
 
     /** connectors from shape file. */
-    private Map<java.lang.Long, ShpLink> shpConnectors;
+    private Map<String, ShpLink> shpConnectors;
 
     /** links from shape file. */
-    private Map<java.lang.Long, ShpLink> shpLinks;
+    private Map<String, ShpLink> shpLinks;
 
     /** the centroids. */
-    private Map<java.lang.Long, ShpNode> centroids;
+    private Map<String, ShpNode> centroids;
 
     /** the demand of trips by Origin and Destination. */
     private TripDemand tripDemand;
 
+    /** The simulation settings. */
+    private NTMSettings settingsNTM;
+
     /** profiles with fractions of total demand. */
     private ArrayList<DepartureTimeProfile> departureTimeProfiles;
-    
+
     /** graph containing the original network. */
     private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> linkGraph;
 
@@ -108,15 +110,9 @@ public class NTMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
         {
-            // read the time profile curves: these will be attached to the demands
-            this.departureTimeProfiles = CsvFileReader.ReadDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"); 
-
-            // read TrafficDemand /src/main/resources
-            // including information on the time period this demand covers!
-            this.tripDemand = CsvFileReader.ReadOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-");
-            
-            //connect time profiles to the trips:
-            
+            // set the time step value at ten seconds;
+            DoubleScalar.Rel<TimeUnit> timeStep = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
+            this.settingsNTM = new NTMSettings(timeStep);
             // read the shape files
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
             // returnCentroid, boolean allCentroids)
@@ -124,6 +120,7 @@ public class NTMModel implements OTSModelInterface
             // false: return nodes
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed centroids (number starts with "C") and nodes
+
             this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
             this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
             this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
@@ -140,6 +137,16 @@ public class NTMModel implements OTSModelInterface
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
 
+            // read the time profile curves: these will be attached to the demands
+            this.setDepartureTimeProfiles(CsvFileReader.ReadDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
+
+            // read TrafficDemand /src/main/resources
+            // including information on the time period this demand covers!
+            this.setTripDemand(CsvFileReader.ReadOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
+                    this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM));
+
+            // connect time profiles to the trips:
+
             // build the higher level map and the graph
             buildGraph();
 
@@ -148,8 +155,46 @@ public class NTMModel implements OTSModelInterface
             {
                 createAnimation();
             }
+
+            //this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
+            //        "generateDemand", null);
+            // this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
+            // "drawGraph", null);
         }
         catch (Throwable exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Generate demand at fixed intervals based on traffic demand (implemented by re-scheduling this method).
+     */
+    protected final void generateDemand()
+    {
+        // At time zero, there are no cars in the network
+        // we start the simulation by injecting traffic into the areas, based on the traffic demand input
+        // 
+        //AreaNode vertex = this.centroids.;
+        //this.areaGraph.edgesOf(vertex);
+        // then, at every time step the following processes occur:
+
+        // traffic moves from one cell to another based on the cell production, the routing, and the possibility to
+        // accept traffic in another cell (supply)
+
+        
+        
+/*        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        IDMCar car =
+                new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
+                        .getSimulatorTime().get(), initialPosition, initialSpeed);
+        this.cars.add(0, car);*/
+        try
+        {
+            this.simulator.scheduleEventRel(this.settingsNTM.getTimeStepDuration(), this, this, "generateDemand", null);
+        }
+        catch (RemoteException | SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -192,15 +237,15 @@ public class NTMModel implements OTSModelInterface
         }
 
         // temporary storage for nodes and edges mapped from the number to the node
-        Map<java.lang.Long, AreaNode> nodeMap = new HashMap<>();
-        Map<java.lang.Long, LinkEdge<Link>> linkMap = new HashMap<>();
+        Map<String, AreaNode> nodeMap = new HashMap<>();
+        Map<String, LinkEdge<Link>> linkMap = new HashMap<>();
 
         // make a directed graph of the entire network
         for (ShpLink shpLink : this.shpLinks.values())
         {
-            // area node: copies a node from a link and connects the area 
-            // the nodeMap connects the shpNodes to these new AreaNode 
-            AreaNode n1 = nodeMap.get(shpLink.getNodeA().getNr());
+            // area node: copies a node from a link and connects the area
+            // the nodeMap connects the shpNodes to these new AreaNode
+            AreaNode n1 = nodeMap.get(shpLink.getNodeA().getId());
             if (n1 == null)
             {
                 Area areaA = findArea(shpLink.getNodeA().getPoint());
@@ -211,12 +256,12 @@ public class NTMModel implements OTSModelInterface
                 else
                 {
                     n1 = new AreaNode(shpLink.getNodeA().getPoint(), areaA);
-                    nodeMap.put(shpLink.getNodeA().getNr(), n1);
+                    nodeMap.put(shpLink.getNodeA().getName(), n1);
                     this.linkGraph.addVertex(n1);
                 }
             }
 
-            AreaNode n2 = nodeMap.get(shpLink.getNodeB().getNr());
+            AreaNode n2 = nodeMap.get(shpLink.getNodeB().getId());
             if (n2 == null)
             {
                 Area areaB = findArea(shpLink.getNodeB().getPoint());
@@ -227,7 +272,7 @@ public class NTMModel implements OTSModelInterface
                 else
                 {
                     n2 = new AreaNode(shpLink.getNodeB().getPoint(), areaB);
-                    nodeMap.put(shpLink.getNodeB().getNr(), n2);
+                    nodeMap.put(shpLink.getNodeB().getName(), n2);
                     this.linkGraph.addVertex(n2);
                 }
             }
@@ -249,8 +294,8 @@ public class NTMModel implements OTSModelInterface
         if (DEBUG)
         {
             // test: from node 314071 (Scheveningen) to node 78816 (Voorburg)
-            AreaNode nSch = nodeMap.get(314071L);
-            AreaNode nVb = nodeMap.get(78816L);
+            AreaNode nSch = nodeMap.get("314071");
+            AreaNode nVb = nodeMap.get("78816");
             DijkstraShortestPath<AreaNode, LinkEdge<Link>> sp = new DijkstraShortestPath<>(this.linkGraph, nSch, nVb);
             System.out.println("\nScheveningen -> Voorburg");
             System.out.println("Length=" + sp.getPathLength());
@@ -266,6 +311,7 @@ public class NTMModel implements OTSModelInterface
 
         // put all centroids in the Graph as nodes
         Map<Area, AreaNode> areaNodeCentroidMap = new HashMap<>();
+        // add all the cordon points that don't have an area
         for (Area area : this.areas.values())
         {
             AreaNode centroid = new AreaNode(area.getCentroid(), area);
@@ -275,7 +321,7 @@ public class NTMModel implements OTSModelInterface
         }
 
         // iterate over the roads and map them on the area centroids
-        long uniqueNr = 0;
+        // long uniqueNr = 0;
         for (LinkEdge<Link> le : linkMap.values())
         {
             Area aA = le.getLink().getStartNode().getArea();
@@ -295,7 +341,7 @@ public class NTMModel implements OTSModelInterface
                     // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
                     DoubleScalar<LengthUnit> length =
                             new DoubleScalar.Abs<LengthUnit>(cA.getPoint().distance(cB.getPoint()), LengthUnit.METER);
-                    Link link = new Link(uniqueNr++, cA, cB, length, aA.getNr() + " - " + aB.getNr());
+                    Link link = new Link(le.getLink().getId(), cA, cB, length, aA.getNr() + " - " + aB.getNr());
                     LinkEdge<Link> linkEdge = new LinkEdge<>(link);
                     this.areaGraph.addEdge(cA, cB, linkEdge);
                     // TODO: average length? straight distance? straight distance + 20%?
@@ -308,8 +354,10 @@ public class NTMModel implements OTSModelInterface
         {
             // test: from node 314071 (Scheveningen) to node 78816 (Voorburg)
             System.out.println("\nScheveningen -> Voorburg via centroids");
-            Point pSch = nodeMap.get(314071L).getPoint();
-            Point pVb = nodeMap.get(78816L).getPoint();
+            Point pSch = nodeMap.get("314071").getPoint();
+            Point pVb = nodeMap.get("78816").getPoint();
+            //Point pSch = nodeMap.get("C1").getPoint();
+            //Point pVb = nodeMap.get("C71").getPoint();
             Area aSch = findArea(pSch);
             Area aVb = findArea(pVb);
             if (aSch == null || aVb == null)
@@ -332,31 +380,20 @@ public class NTMModel implements OTSModelInterface
                     }
                 }
                 System.out.println("Length = " + System.currentTimeMillis());
-                
-                //test K shortest
-                int k = 3;
-                int counterStart = 0;
-                for (AreaNode startNode : areaNodeCentroidMap.values()) 
-                {
-                    KShortestPaths<AreaNode, LinkEdge<Link>> kShortest = new KShortestPaths(this.areaGraph, startNode, k);
-                    counterStart++;
-                    int counterEnd = 0;
-                    System.out.println("Paths = " + counterStart);
-/*                    for (AreaNode endNode : areaNodeCentroidMap.values()) 
-                    {
-                        if (!startNode.equals(endNode))  
-                        {
-                            List<GraphPath<AreaNode, LinkEdge<Link>>> list1 = kShortest.getPaths(endNode);
-                            System.out.println("getPaths = " + counterEnd);
-                            counterEnd++;
-                        }
-                    }*/
-                }
-                System.out.println("Length = " + System.currentTimeMillis());                
-/*                System.out.println("Test k shortest length 1 = " + list1.get(0).getWeight());
-                System.out.println("Test k shortest length 1 = " + list1.get(1).getWeight());
-                System.out.println("Test k shortest length 1 = " + list1.get(2).getWeight());*/
-                System.out.println("Length = " + System.currentTimeMillis());
+
+                /*
+                 * // test K shortest int k = 3; int counterStart = 0; for (AreaNode startNode :
+                 * areaNodeCentroidMap.values()) { KShortestPaths<AreaNode, LinkEdge<Link>> kShortest = new
+                 * KShortestPaths(this.areaGraph, startNode, k); counterStart++; int counterEnd = 0;
+                 * System.out.println("Paths = " + counterStart); for (AreaNode endNode : areaNodeCentroidMap.values())
+                 * { if (!startNode.equals(endNode)) { List<GraphPath<AreaNode, LinkEdge<Link>>> list1 =
+                 * kShortest.getPaths(endNode); System.out.println("getPaths = " + counterEnd); counterEnd++; } } }
+                 * System.out.println("Length = " + System.currentTimeMillis());
+                 * System.out.println("Test k shortest length 1 = " + list1.get(0).getWeight());
+                 * System.out.println("Test k shortest length 1 = " + list1.get(1).getWeight());
+                 * System.out.println("Test k shortest length 1 = " + list1.get(2).getWeight());
+                 * System.out.println("Length = " + System.currentTimeMillis());
+                 */
             }
         }
 
@@ -432,6 +469,52 @@ public class NTMModel implements OTSModelInterface
         return this.simulator;
     }
 
+    /**
+     * @return settingsNTM.
+     */
+    public NTMSettings getSettingsNTM()
+    {
+        return settingsNTM;
+    }
 
+    /**
+     * @param settingsNTM set settingsNTM.
+     */
+    public void setSettingsNTM(NTMSettings settingsNTM)
+    {
+        this.settingsNTM = settingsNTM;
+    }
+
+    /**
+     * @return tripDemand.
+     */
+    public TripDemand getTripDemand()
+    {
+        return tripDemand;
+    }
+
+    /**
+     * @param tripDemand set tripDemand.
+     */
+    public void setTripDemand(TripDemand tripDemand)
+    {
+        this.tripDemand = tripDemand;
+    }
+
+    /**
+     * @return departureTimeProfiles.
+     */
+    public ArrayList<DepartureTimeProfile> getDepartureTimeProfiles()
+    {
+        return departureTimeProfiles;
+    }
+
+    /**
+     * @param departureTimeProfiles set departureTimeProfiles.
+     */
+    public void setDepartureTimeProfiles(ArrayList<DepartureTimeProfile> departureTimeProfiles)
+    {
+        this.departureTimeProfiles = departureTimeProfiles;
+    }
 
 }

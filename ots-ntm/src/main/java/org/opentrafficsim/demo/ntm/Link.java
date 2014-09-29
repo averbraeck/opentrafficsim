@@ -22,7 +22,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class Link extends AbstractLink<Long, AreaNode> implements LocatableInterface
+public class Link extends AbstractLink<String, AreaNode> implements LocatableInterface
 {
     /** */
     private static final long serialVersionUID = 20140921L;
@@ -40,10 +40,10 @@ public class Link extends AbstractLink<Long, AreaNode> implements LocatableInter
      * @param length the length of the link with a unit.
      * @param name the human readable name of the link, e.g. a street name.
      */
-    public Link(final long id, final AreaNode nodeA, final AreaNode nodeB, final DoubleScalar<LengthUnit> length,
+    public Link(final String nr, final AreaNode nodeA, final AreaNode nodeB, final DoubleScalar<LengthUnit> length,
             final String name)
     {
-        super(id, nodeA, nodeB, length);
+        super(nr, nodeA, nodeB, length);
         this.name = name;
     }
 

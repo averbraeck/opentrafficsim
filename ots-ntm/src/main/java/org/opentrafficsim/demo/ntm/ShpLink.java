@@ -205,7 +205,7 @@ public class ShpLink implements LocatableInterface
     private final Geometry geometry;
 
     /** LINKNR class java.lang.Long 1 */
-    private final long nr;
+    private final String nr;
 
     /** NAME class java.lang.String */
     private final String name;
@@ -258,7 +258,7 @@ public class ShpLink implements LocatableInterface
      * @param speed
      * @param capacity
      */
-    public ShpLink(Geometry geometry, long nr, String name, short direction, double length, ShpNode nodeA,
+    public ShpLink(Geometry geometry, String nr, String name, short direction, double length, ShpNode nodeA,
             ShpNode nodeB, String linkTag, String wegtype, String typeWegVak, String typeWeg, double speed,
             double capacity)
     {
@@ -355,7 +355,7 @@ public class ShpLink implements LocatableInterface
     /**
      * @return nr
      */
-    public long getNr()
+    public String getNr()
     {
         return this.nr;
     }
