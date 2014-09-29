@@ -194,7 +194,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final FloatVector.Abs.Sparse<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -218,15 +218,16 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
         /**
          * Construct a new Relative Immutable FloatVector.
-         * @param unit Unit; the unit of the new FloatVector
+         * @param unit U; the unit of the new Relative Immutable FloatVector
          */
         Rel(final U unit)
         {
             super(unit);
+           // System.out.println("Created Rel");
         }
 
         /**
-         * @param <U>
+         * @param <U> Unit
          */
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
@@ -234,32 +235,20 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix1D; the values of the entries of the new FloatVector
-             * @param unit Unit; the unit of the new FloatVector
-             */
-            protected Dense(final FloatMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                initialize(values); // shallow copy
-            }
-
-            /**
              * Construct a new Relative Dense Immutable FloatVector.
-             * @param values float[]; the values for the entries of the new FloatVector
-             * @param unit Unit; the unit of the new FloatVector
+             * @param values float[]; the values of the entries in the new Relative Dense Immutable FloatVector
+             * @param unit U; the unit of the new Relative Dense Immutable FloatVector
              */
             public Dense(final float[] values, final U unit)
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                initialize(values); // shallow copy
+                initialize(values);
             }
 
             /**
              * Construct a new Relative Dense Immutable FloatVector.
-             * @param values FloatScalar.Rel[]; the values for the entries of the new FloatVector
+             * @param values FloatScalar.Rel[]; the values of the entries in the new Relative Dense Immutable FloatVector
              * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Rel<U>[] values) throws ValueException
@@ -267,6 +256,18 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Dense");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix1D; the values of the entries in the new Relative Dense Immutable FloatVector
+             * @param unit U; the unit of the new Relative Dense Immutable FloatVector
+             */
+            protected Dense(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -280,14 +281,14 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             protected final FloatMatrix1D createMatrix1D(final int size)
             {
-                return new SparseFloatMatrix1D(size);
+                return new DenseFloatMatrix1D(size);
             }
 
             /** {@inheritDoc} */
             @Override
             public final FloatVector.Rel.Dense<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -301,32 +302,20 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix1D; the values for the entries of the new FloatVector
-             * @param unit Unit; the unit of the new FloatVector
-             */
-            protected Sparse(final FloatMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
-            }
-
-            /**
              * Construct a new Relative Sparse Immutable FloatVector.
-             * @param values float[]; the values of the entries of the new FloatVector
-             * @param unit Unit; the unit of the new FloatVector
+             * @param values float[]; the values of the entries in the new Relative Sparse Immutable FloatVector
+             * @param unit U; the unit of the new Relative Sparse Immutable FloatVector
              */
             public Sparse(final float[] values, final U unit)
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
+                initialize(values);
             }
 
             /**
              * Construct a new Relative Sparse Immutable FloatVector.
-             * @param values FloatScalar.Rel; the values of the entries of the new FloatVector
+             * @param values FloatScalar.Rel; the values of the entries in the new Relative Sparse Immutable FloatVector
              * @throws ValueException when values has zero entries
              */
             public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
@@ -334,6 +323,18 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Sparse");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix1D; the values of the entries in the new Relative Sparse Immutable FloatVector
+             * @param unit U; the unit of the new Relative Sparse Immutable FloatVector
+             */
+            protected Sparse(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -354,7 +355,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             @Override
             public final FloatVector.Rel.Sparse<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -369,7 +370,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * @return vectorSI
+     * Retrieve the internal data.
+     * @return FloatMatrix1D; the data in the internal format
      */
     protected final FloatMatrix1D getVectorSI()
     {
@@ -377,7 +379,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Make a deep copy of the data (used ONLY in the MutableDoubleVector sub class).
+     * Make a deep copy of the data (used ONLY in the MutableFloatVector sub class).
      */
     protected final void deepCopyData()
     {
@@ -388,12 +390,12 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create a mutable version of this FloatVector. <br>
      * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first operation
      * in the mutable version that modifies the data shall trigger a deep copy of the data.
-     * @return MutableFloatVector; mutable version of this FloatVector
+     * @return MutableFloatVector<U>; mutable version of this FloatVector
      */
     public abstract MutableFloatVector<U> mutable();
 
     /**
-     * Import the values and convert them into SI units.
+     * Import the values and convert them into the SI standard unit.
      * @param values float[]; an array of values
      */
     protected final void initialize(final float[] values)
@@ -414,7 +416,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Import the values from an existing FloatMatrix1D. This makes a shallow copy.
-     * @param values FloatMatrix1D; the values
+     * @param values FloatMatrix1D<U>; the values
      */
     protected final void initialize(final FloatMatrix1D values)
     {
@@ -422,9 +424,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered
+     * Construct the vector and store the values in the standard SI unit.
+     * @param values FloatScalar<U>[]; an array of values
+     * @throws ValueException when values is empty
      */
     protected final void initialize(final FloatScalar<U>[] values) throws ValueException
     {
@@ -436,15 +438,16 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * This method has to be implemented by each leaf class.
-     * @param size the number of cells in the vector
-     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
+     * Create storage for the data. <br/>
+     * This method must be implemented by each leaf class.
+     * @param size int; the number of cells in the vector
+     * @return FloatMatrix1D; an instance of the right type of matrix (absolute / relative, dense / sparse, etc.)
      */
     protected abstract FloatMatrix1D createMatrix1D(final int size);
 
     /**
-     * Create a float[] array filled with the values in SI unit.
-     * @return float[]; array of values in SI unit
+     * Create a float[] array filled with the values in the standard SI unit.
+     * @return float[]; array of values in the standard SI unit
      */
     public final float[] getValuesSI()
     {
@@ -453,7 +456,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Create a float[] array filled with the values in the original unit.
-     * @return values in original unit
+     * @return float[]; the values in the original unit
      */
     public final float[] getValuesInUnit()
     {
@@ -461,9 +464,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Create a float[] array filled with the values in the specified unit.
-     * @param targetUnit the unit to convert the values to
-     * @return values in specific target unit
+     * Create a float[] array filled with the values converted into a specified unit.
+     * @param targetUnit U; the unit to convert the values into
+     * @return float[]; the values converted into the specified unit
      */
     public final float[] getValuesInUnit(final U targetUnit)
     {
