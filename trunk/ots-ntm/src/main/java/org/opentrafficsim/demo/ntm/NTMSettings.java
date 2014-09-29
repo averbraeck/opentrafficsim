@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.ntm;
 import java.util.Calendar;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -26,13 +27,13 @@ public class NTMSettings
     private DoubleScalar.Abs<TimeUnit> startTimeSinceMidnight;
 
     /** */
-    private DoubleScalar.Abs<TimeUnit> durationOfSimulation;
+    private Rel<TimeUnit> durationOfSimulation;
 
     /** */
     private String descriptionProject;
 
     /** */
-    private DoubleScalar.Abs<TimeUnit> timeStepLengthSimulation;
+    private DoubleScalar.Rel<TimeUnit> timeStepDuration;
 
     /** */
     private DoubleScalar.Abs<TimeUnit> absoluteStartTime;
@@ -43,8 +44,8 @@ public class NTMSettings
      * @param descriptionProject
      * @param timeStepDuration
      */
-    public NTMSettings(Calendar startTime, DoubleScalar.Abs<TimeUnit> durationOfSimulation, String descriptionProject,
-            DoubleScalar.Abs<TimeUnit> timeStepDuration)
+    public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
+            Rel<TimeUnit> timeStepDuration)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -56,9 +57,20 @@ public class NTMSettings
         this.startTimeSinceMidnight = new DoubleScalar.Abs<TimeUnit>(time, TimeUnit.SECOND);
         this.durationOfSimulation = durationOfSimulation;
         this.setDescriptionProject(descriptionProject);
-        this.timeStepLengthSimulation = timeStepDuration;
+        this.timeStepDuration = timeStepDuration;
     }
 
+    /**
+     * @param startTime
+     * @param durationOfSimulation
+     * @param descriptionProject
+     * @param timeStepDuration
+     */
+    public NTMSettings(Rel<TimeUnit> timeStepDuration)
+    {
+        this.timeStepDuration = timeStepDuration;
+    }
+    
     /**
      * @return startTimeSinceMidnight
      */
@@ -78,33 +90,33 @@ public class NTMSettings
     /**
      * @return durationOfSimulation
      */
-    public DoubleScalar.Abs<TimeUnit> getDurationOfSimulation()
+    public Rel<TimeUnit> getDurationOfSimulation()
     {
         return this.durationOfSimulation;
     }
 
     /**
-     * @param durationOfSimulation set durationOfSimulation
+     * @param timeSpan set durationOfSimulation
      */
-    public void setDurationOfSimulation(DoubleScalar.Abs<TimeUnit> durationOfSimulation)
+    public void setDurationOfSimulation(Rel<TimeUnit> timeSpan)
     {
-        this.durationOfSimulation = durationOfSimulation;
+        this.durationOfSimulation = timeSpan;
     }
 
     /**
      * @return timeStepDuration
      */
-    public DoubleScalar.Abs<TimeUnit> getTimeStepDuration()
+    public Rel<TimeUnit> getTimeStepDuration()
     {
-        return this.timeStepLengthSimulation;
+        return this.timeStepDuration;
     }
 
     /**
      * @param timeStepDuration set timeStepDuration
      */
-    public void setTimeStepDuration(DoubleScalar.Abs<TimeUnit> timeStepDuration)
+    public void setTimeStepDuration(Rel<TimeUnit> timeStepDuration)
     {
-        this.timeStepLengthSimulation = timeStepDuration;
+        this.timeStepDuration = timeStepDuration;
     }
 
     /**

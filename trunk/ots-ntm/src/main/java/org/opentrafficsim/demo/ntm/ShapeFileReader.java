@@ -38,7 +38,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<Long, Area> ReadAreas(final String shapeFileName, final Map<Long, ShpNode> centroids)
+    public static Map<Long, ? extends Area> ReadAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
             throws IOException
     {
         /*-
@@ -77,7 +77,7 @@ public class ShapeFileReader
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
-
+                ParametersNTM parametersNTM = null;
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
                 long nr = (long) feature.getAttribute("AREANR");
                 long centroidNr = (long) feature.getAttribute("CENTROIDNR");
@@ -87,7 +87,7 @@ public class ShapeFileReader
                 String regio = (String) feature.getAttribute("REGIO");
                 double dhb = (double) feature.getAttribute("DHB");
                 // search for areas within the centroids (from the "points")
-                ShpNode centroid = centroids.get(centroidNr);
+                ShpNode centroid = centroids.get("C" + centroidNr);
                 if (centroid == null)
                 {
                     // System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" +
@@ -102,7 +102,7 @@ public class ShapeFileReader
                         System.out.println("Area number " + nr + "(" + name + ") already exists. Number not unique!");
                         nr = newNr++;
                     }
-                    Area area = new Area(geometry, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint());
+                    AreaNTM area = new AreaNTM(geometry, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint());
                     areas.put(nr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -132,7 +132,7 @@ public class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
+    public static Map<String, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
             boolean returnCentroid, boolean allCentroids) throws IOException
     {
         /*-
@@ -151,7 +151,7 @@ public class ShapeFileReader
             url = ShapeFileReader.class.getResource(shapeFileName);
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<Long, ShpNode> nodes = new HashMap<>();
+        Map<String, ShpNode> nodes = new HashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();
@@ -162,28 +162,28 @@ public class ShapeFileReader
             {
                 SimpleFeature feature = iterator.next();
                 Point point = (Point) feature.getAttribute("the_geom");
-                String number = String.valueOf(feature.getAttribute(numberType));
-                Long nr = null;
+                String name = CsvFileReader.RemoveQuotes(String.valueOf(feature.getAttribute(numberType)));
+                boolean addThisNode = false;
                 if (returnCentroid)
                 {
-                    if (number.substring(0, 1).equals("C") || allCentroids)
+                    if (name.substring(0, 1).equals("C") || allCentroids)
                     {
-                        nr = InspectNodeCentroid(number);
+                        addThisNode = true;
                     }
                 }
                 else
                 {
-                    if (!number.substring(0, 1).equals("C"))
+                    if (!name.substring(0, 1).equals("C"))
                     {
-                        nr = (long) Long.parseLong(number);
+                        addThisNode = true;
                     }
                 }
-                if (nr != null)
+                if (addThisNode)
                 {
                     double x = (double) feature.getAttribute("X");
                     double y = (double) feature.getAttribute("Y");
-                    ShpNode node = new ShpNode(point, nr, x, y);
-                    nodes.put(nr, node);
+                    ShpNode node = new ShpNode(point, name, x, y);
+                    nodes.put(name, node);
                 }
             }
         }
@@ -204,22 +204,35 @@ public class ShapeFileReader
      * @param number
      * @return nr: the number of the Node without characters
      */
-    public static Long InspectNodeCentroid(String number)
+    public static String NodeCentroidNumber(String number)
     {
-        Long nr = null;
+        // String nr = null;
         number = CsvFileReader.RemoveQuotes(number);
         String[] names = number.split(":");
         String name = names[0];
         if (name.charAt(0) == 'C')
         {
             name = name.substring(1);
-            nr = (long) Long.parseLong(name);
+            // nr = (long) Long.parseLong(name);
         }
-        else
+        return name;
+    }
+
+    /**
+     * @param number
+     * @return nr: the number of the Node without characters
+     */
+    public static boolean InspectNodeCentroid(String number)
+    {
+        boolean isCentroid = false;
+        number = CsvFileReader.RemoveQuotes(number);
+        String[] names = number.split(":");
+        String name = names[0];
+        if (name.charAt(0) == 'C')
         {
-            nr = Long.parseLong(name);
+            isCentroid = true;
         }
-        return nr;
+        return isCentroid;
     }
 
     /**
@@ -230,8 +243,9 @@ public class ShapeFileReader
      * @param centroids the centroids to check start and end Node
      * @throws IOException on error
      */
-    public static void ReadLinks(final String shapeFileName, Map<Long, ShpLink> links, Map<Long, ShpLink> connectors,
-            Map<Long, ShpNode> nodes, Map<Long, ShpNode> centroids) throws IOException
+    public static void ReadLinks(final String shapeFileName, Map<String, ShpLink> links,
+            Map<String, ShpLink> connectors, Map<String, ShpNode> nodes, Map<String, ShpNode> centroids)
+            throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -266,14 +280,15 @@ public class ShapeFileReader
                 SimpleFeature feature = iterator.next();
 
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
-                long nr = (long) feature.getAttribute("LINKNR");
+                String nr = String.valueOf(feature.getAttribute("LINKNR"));
                 String name = String.valueOf(feature.getAttribute("NAME"));
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double length = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
-                Long lNodeA = InspectNodeCentroid(String.valueOf(feature.getAttribute("ANODE")));
-                long lNodeB = InspectNodeCentroid(String.valueOf(feature.getAttribute("BNODE")));
+                String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
+                String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
+                // long lNodeB = NodeCentroidNumber(String.valueOf(feature.getAttribute("BNODE")));
                 String linkTag = (String) feature.getAttribute("LINKTAG");
                 String wegtype = (String) feature.getAttribute("WEGTYPEAB");
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");

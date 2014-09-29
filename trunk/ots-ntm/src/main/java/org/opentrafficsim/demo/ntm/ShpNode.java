@@ -62,7 +62,10 @@ public class ShpNode implements LocatableInterface
     private final Point point;
 
     /** NODENR class java.lang.Long 18 */
-    private final long nr;
+    private final long id;
+    
+    /** NODENR class java.lang.Long 18 */
+    private final String name;
 
     /** X class java.lang.Double 190599.0 */
     private final double x;
@@ -70,17 +73,22 @@ public class ShpNode implements LocatableInterface
     /** Y class java.lang.Double 325650.0 */
     private final double y;
 
+    /** */
+    private static long indexNumber = 0;
     /**
      * @param point
-     * @param nr
+     * @param id
+     * @param name 
      * @param x
      * @param y
      */
-    public ShpNode(Point point, long nr, double x, double y)
+    public ShpNode(Point point, String name, double x, double y)
     {
         super();
+        long index = indexNumber++;
         this.point = point;
-        this.nr = nr;
+        this.name = name;
+        this.id = index;
         this.x = x;
         this.y = y;
     }
@@ -110,9 +118,9 @@ public class ShpNode implements LocatableInterface
     /**
      * @return nr
      */
-    public long getNr()
+    public long getId()
     {
-        return this.nr;
+        return this.id;
     }
 
     /**
@@ -121,6 +129,14 @@ public class ShpNode implements LocatableInterface
     public double getX()
     {
         return this.x;
+    }
+
+    /**
+     * @return name.
+     */
+    public String getName()
+    {
+        return this.name;
     }
 
     /**
@@ -135,7 +151,10 @@ public class ShpNode implements LocatableInterface
     @Override
     public String toString()
     {
-        return "ShpNode [nr=" + this.nr + ", x=" + this.x + ", y=" + this.y + "]";
+        return "ShpNode [id=" + this.id + "name = " + this.name + ", x=" + this.x + ", y=" + this.y + "]";
     }
+
+
+
 
 }

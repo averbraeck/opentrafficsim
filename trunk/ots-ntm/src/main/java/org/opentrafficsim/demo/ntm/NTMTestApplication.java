@@ -59,24 +59,6 @@ public class NTMTestApplication extends DSOLApplication
     {
         NTMModel model = new NTMModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
-
-        /*-
-        try
-        {
-            String absolutePath =
-                    new File(NTMTestApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath())
-                            + System.getProperty("file.separator");
-            String backgroundMapFile = absolutePath + "gis" + System.getProperty("file.separator") + "map.xml";
-            URL gisURL = new URL("file:/" + backgroundMapFile);
-            System.err.println("GIS-map file: " + gisURL.toString());
-            new GisRenderable2D(simulator, gisURL);
-        }
-        catch (MalformedURLException e)
-        {
-            throw new SimRuntimeException("map.xml not found", e);
-        }
-         */
-
         OTSReplication replication =
                 new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,

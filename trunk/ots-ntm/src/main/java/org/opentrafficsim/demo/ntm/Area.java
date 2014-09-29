@@ -8,6 +8,10 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -75,6 +79,7 @@ public class Area implements LocatableInterface
 
     /** polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
+
 
     /**
      * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...

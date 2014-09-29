@@ -43,12 +43,16 @@ public class CsvFileReader
      * @param csvFileName
      * @param csvSplitBy : token that defines how to split a line
      * @param csvSplitByTwo : two tokens that defines how to split a line
+     * @param centroids
+     * @param links
+     * @param connectors
      * @return the TripDemand (nested HashMap: <origin, map<destination, tripinformation>>
      * @throws IOException
      * @throws Throwable
      */
     public static TripDemand ReadOmnitransExportDemand(final String csvFileName, String csvSplitBy,
-            final String csvSplitByTwo) throws Throwable
+            final String csvSplitByTwo, Map<String, ShpNode> centroids, Map<String, ShpLink> links,
+            Map<String, ShpLink> connectors, NTMSettings settingsNTM) throws Throwable
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -64,15 +68,16 @@ public class CsvFileReader
 
         String path = url.getPath();
         TripDemand tripDemand = new TripDemand();
-        Map<Long, Map<Long, TripInfo>> demand = new HashMap<Long, Map<Long, TripInfo>>();
-        ArrayList<Long> zoneNames = new ArrayList<Long>();
+        Map<String, Map<String, TripInfo>> demand = new HashMap<String, Map<String, TripInfo>>();
+        Map<String, ShpNode> centroidsAndCordonConnectors = new HashMap<String, ShpNode>();
         try
         {
 
             bufferedReader = new BufferedReader(new FileReader(path));
 
             // read the first line of the demand file from Omnitrans
-            // this line contains the time period of the demand file
+            // this line contains the time period of the demand file: as an example....
+            // TimePeriod: 07:00:00 - 09:00:00
             if ((line = bufferedReader.readLine()) != null)
             {
                 String[] timePeriod = line.split(csvSplitByTwo);
@@ -92,6 +97,7 @@ public class CsvFileReader
                                         new DoubleScalar.Abs<TimeUnit>(timeInstance.getTimeInMillis() / 1000,
                                                 TimeUnit.SECOND);
                                 tripDemand.setStartTime(startTime);
+                                settingsNTM.setStartTimeSinceMidnight(startTime);
                             }
                             else if (counter == 1)
                             {
@@ -102,6 +108,7 @@ public class CsvFileReader
                                         MutableDoubleScalar.Abs.minus(endTime, tripDemand.getStartTime()).immutable();
 
                                 tripDemand.setTimeSpan(timeSpan);
+                                settingsNTM.setDurationOfSimulation(timeSpan);
                             }
                             counter++;
                         }
@@ -112,16 +119,96 @@ public class CsvFileReader
 
             // read the second line of the demand file from Omnitrans
             // this line contains the destinations: put them in the array
+            // The internal centroids start wit a capital "C",
+            // in case of a subarea model, other centroids are the nodes that are at the cordon of the subarea. They
+            // have the link number plus (sometimes) a name of the road
+            // "Links + Centroids";"3569";"11212";"95014";"95608";"116117";"116738";...................";
+            // ..... "563089";"563430";"C1";"C2";"C3";"C4";"C5";"C6";".........."
+            HashMap<Integer, String> orderedZones = new HashMap<Integer, String>();
             if ((line = bufferedReader.readLine()) != null)
             {
+                /*
+                 * // temporarily create a map that finds the node indices of centroids Map<String, ShpNode>
+                 * invertCentroids = new HashMap<>(); for (ShpNode centroid : centroids.values()) {
+                 * invertCentroids.put(centroid.getName(), centroid); }
+                 */
+
                 String[] namesZone = line.split(csvSplitBy);
+                int index = 0;
                 for (String name : namesZone)
                 {
-                    Long checkedName = CheckName(name);
-                    if (checkedName != null)
+                    // first we inspect if it is a centroid
+                    name = CsvFileReader.RemoveQuotes(name);
+                    boolean isCentroid = ShapeFileReader.InspectNodeCentroid(name);
+                    if (isCentroid)
                     {
-                        zoneNames.add(checkedName);
+                        centroidsAndCordonConnectors.put(name, centroids.get(name));
+                        orderedZones.put(index, name);
                     }
+                    // otherwise it is a cordon link: detect the "zoneConnector" node (at the cordon)
+                    // this is by definition a dangling link
+                    // we add the Node of the cordon Link to the "centroidsAndCordonConnectors"
+                    else if (links.get(name) != null || connectors.get(name) != null)
+                    {
+                        ShpLink cordonConnector = null;
+                        if (links.get(name) != null)
+                        {
+                            cordonConnector = links.get(name);
+                            links.remove(links.get(name));
+                            connectors.put(name, cordonConnector);
+                        }
+                        else if (connectors.get(name) != null)
+                        {
+                            cordonConnector = connectors.get(name);
+                        }
+
+                        if (cordonConnector == null)
+                        {
+                            System.out.println("Strange: no connector found!!!!");
+                        }
+                        ShpNode nodeA = cordonConnector.getNodeA();
+                        ShpNode nodeB = cordonConnector.getNodeB();
+                        int countedNodesA = 0;
+                        int countedNodesB = 0;
+                        for (ShpLink link : links.values())
+                        {
+                            if (link.getNodeA().equals(nodeA))
+                            {
+                                countedNodesA++;
+                            }
+                            if (link.getNodeA().equals(nodeB))
+                            {
+                                countedNodesB++;
+                            }
+                            if (link.getNodeB().equals(nodeA))
+                            {
+                                countedNodesA++;
+                            }
+                            if (link.getNodeB().equals(nodeB))
+                            {
+                                countedNodesB++;
+                            }
+
+                        }
+                        if (countedNodesA > countedNodesB)
+                        {
+                            centroidsAndCordonConnectors.put(nodeA.getName(), nodeA);
+                            orderedZones.put(index, nodeA.getName());
+                        }
+                        else
+                        {
+                            centroidsAndCordonConnectors.put(nodeB.getName(), nodeB);
+                            orderedZones.put(index, nodeB.getName());
+                        }
+
+                    }
+                    else
+                    {
+                        System.out.println("Strange: no connector found!!!!");
+                        continue;
+                    }
+
+                    index++;
                 }
             }
 
@@ -129,16 +216,17 @@ public class CsvFileReader
             // this can be either a link or a centroid (starts with "C")
             while ((line = bufferedReader.readLine()) != null)
             {
-                Map<Long, TripInfo> tripDemandRow = new HashMap<Long, TripInfo>();
+                Map<String, TripInfo> tripDemandRow = new HashMap<String, TripInfo>();
                 String[] tripData = line.split(csvSplitBy);
                 boolean firstElement = true;
-                long origin = 0;
+                String origin = null;
                 int index = 0;
                 for (String dataItem : tripData)
                 {
+                    dataItem = RemoveQuotes(dataItem);
                     if (firstElement)
                     {
-                        Long checkedName = CheckName(dataItem);
+                        String checkedName = returnNumber(dataItem);
                         origin = checkedName;
                         firstElement = false;
                     }
@@ -146,8 +234,15 @@ public class CsvFileReader
                     {
                         dataItem = RemoveQuotes(dataItem);
                         TripInfo tripInfo = new TripInfo(Double.parseDouble(dataItem));
-                        long destination = zoneNames.get(index);
-                        tripDemandRow.put(destination, tripInfo);
+                        if (centroidsAndCordonConnectors.get(orderedZones.get(index)) == null)
+                        {
+                            System.out.println("Strange: no destination????");
+                        }
+                        else
+                        {
+                            String destination = centroidsAndCordonConnectors.get(orderedZones.get(index)).getName();
+                            tripDemandRow.put(destination, tripInfo);
+                        }
                         index++;
                     }
                 }
@@ -346,9 +441,9 @@ public class CsvFileReader
      * @param name
      * @return name as a long
      */
-    public static Long CheckName(String name)
+    public static String returnNumber(String name)
     {
-        Long nr = null;
+        String nr = null;
         // replace double quotes at start and end of string
 
         name = RemoveQuotes(name);
@@ -359,7 +454,7 @@ public class CsvFileReader
         }
         else
         {
-            nr = ShapeFileReader.InspectNodeCentroid(name);
+            nr = ShapeFileReader.NodeCentroidNumber(name);
         }
         return nr;
     }
