@@ -1075,56 +1075,12 @@ public class Generator
                                                 + "[]|other|partner for the size check"},
                                         "ValueException|when the vectors do not have the same size", null,
                                         new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
-                                + buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType
-                                        + "Vector.Abs.Dense<U>|plus",
-                                        "Add two FloatVectors value by value and store the result in a new Mutable"
-                                                + vectorType + "Vector.Abs.Dense&lt;U&gt;.", new String[]{
-                                                "final " + vectorType + "Vector.Abs.Dense<U>|left|the left operand",
-                                                "final " + vectorType + "Vector.Rel<U>|right|the right operand",
-                                                "Unit|<U>|the unit of the parameters and the result"},
-                                        "ValueException|when the vectors do not have the same size", null,
-                                        new String[]{"return (Mutable" + vectorType
-                                                + "Vector.Abs.Dense<U>) left.mutable().incrementBy(right);"}, false)
-                                + buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType
-                                        + "Vector.Abs.Dense<U>|plus",
-                                        "Add two FloatVectors value by value and store the result in a new Mutable"
-                                                + vectorType + "Vector.Abs.Dense&lt;U&gt;.", new String[]{
-                                                "final " + vectorType + "Vector.Abs.Sparse<U>|left|the left operand",
-                                                "final " + vectorType + "Vector.Rel.Dense<U>|right|the right operand",
-                                                "Unit|<U>|the unit of the parameters and the result"},
-                                        "ValueException|when the vectors do not have the same size", null,
-                                        new String[]{"return (Mutable" + vectorType
-                                                + "Vector.Abs.Dense<U>) sparseToDense(left).incrementBy(right);"}, false)
-                                + buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType
-                                        + "Vector.Abs.Sparse<U>|plus",
-                                        "Add two FloatVectors value by value and store the result in a new Mutable"
-                                                + vectorType + "Vector.Abs.Sparse&lt;U&gt;.", new String[]{
-                                                "final " + vectorType + "Vector.Abs.Sparse<U>|left|the left operand",
-                                                "final " + vectorType + "Vector.Rel.Sparse<U>|right|the right operand",
-                                                "Unit|<U>|the unit of the parameters and the result"},
-                                        "ValueException|when the vectors do not have the same size", null,
-                                        new String[]{"return (Mutable" + vectorType
-                                                + "Vector.Abs.Sparse<U>) left.mutable().incrementBy(right);"}, false)
-                                + buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType
-                                        + "Vector.Rel.Dense<U>|plus",
-                                        "Add two FloatVectors value by value and store the result in a new Mutable"
-                                                + vectorType + "Vector.Rel.Dense&lt;U&gt;.", new String[]{
-                                                "final " + vectorType + "Vector.Rel.Dense<U>|left|the left operand",
-                                                "final " + vectorType + "Vector.Rel<U>|right|the right operand",
-                                                "Unit|<U>|the unit of the parameters and the result"},
-                                        "ValueException|when the vectors do not have the same size", null,
-                                        new String[]{"return (Mutable" + vectorType
-                                                + "Vector.Rel.Dense<U>) left.mutable().incrementBy(right);"}, false)
-                                + buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType
-                                        + "Vector.Rel.Sparse<U>|plus",
-                                        "Add two FloatVectors value by value and store the result in a new Mutable"
-                                                + vectorType + "Vector.Rel.Sparse&lt;U&gt;.", new String[]{
-                                                "final " + vectorType + "Vector.Rel.Sparse<U>|left|the left operand",
-                                                "final " + vectorType + "Vector.Rel<U>|right|the right operand",
-                                                "Unit|<U>|the unit of the parameters and the result"},
-                                        "ValueException|when the vectors do not have the same size", null,
-                                        new String[]{"return (Mutable" + vectorType
-                                                + "Vector.Rel.Sparse<U>) left.mutable().incrementBy(right);"}, false)
+                                + buildAddVector(outerIndent, vectorType, "Abs.Dense", "Rel")
+                                + buildAddVector(outerIndent, vectorType, "Abs.Sparse", "Rel.Dense")
+                                + buildAddVector(outerIndent, vectorType, "Abs.Sparse", "Rel.Sparse")
+                                + buildAddVector(outerIndent, vectorType, "Rel.Dense", "Rel")
+                                + buildAddVector(outerIndent, vectorType, "Rel.Sparse", "Rel.Dense")
+                                + buildAddVector(outerIndent, vectorType, "Rel.Sparse", "Rel.Sparse")
 
                         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX END OF MUTABLE SPECIFIC METHODS
 
@@ -1443,6 +1399,38 @@ public class Generator
                                                 indentStep + "return false;", "}", "return true;"}, false)
 
         );
+    }
+
+    /**
+     * Build an add vector method.
+     * @param outerIndent String; prefix for all output lines
+     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param leftType String; type of the left operand
+     * @param rightType String; type of the right operand
+     * @return String; java code
+     */
+    private static String buildAddVector(String outerIndent, String vectorType, String leftType, String rightType)
+    {
+        // If either type is Dense, the result is Dense
+        final String resultDenseSparse = leftType.contains("Dense") || rightType.contains("Dense") ? "Dense" : "Sparse";
+        final String resultAbsRel = leftType.contains("Abs") ? "Abs" : "Rel";
+        final String castCode = "(Mutable" + vectorType + "Vector." + resultAbsRel + "." + resultDenseSparse + "<U>) ";
+        final String code =
+                "return "
+                        + castCode
+                        + (resultDenseSparse.equals("Dense") && leftType.contains("Dense")
+                                || resultDenseSparse.equals("Sparse") && leftType.contains("Sparse")
+                                ? "left.mutable().incrementBy(right);" : resultDenseSparse.equals("Dense")
+                                        ? "sparseToDense(left).incrementBy(right);"
+                                        : "denseToSparse(left).incrementBy(right);");
+        return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType + "Vector."
+                + resultAbsRel + "." + resultDenseSparse + "<U>|plus",
+                "Add two FloatVectors value by value and store the result in a new Mutable" + vectorType + "Vector."
+                        + resultAbsRel + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
+                        "final " + vectorType + "Vector." + leftType + "<U>|left|the left operand",
+                        "final " + vectorType + "Vector." + rightType + "<U>|right|the right operand",
+                        "Unit|<U>|the unit of the parameters and the result"},
+                "ValueException|when the vectors do not have the same size", null, new String[]{code}, false);
     }
 
     /**
