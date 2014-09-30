@@ -261,12 +261,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Construct a Relative MutableFloatVector.
-         * @param unit Unit; the unit of the new Relative MutableFloatVector
+         * Construct a new Relative MutableFloatVector.
+         * @param unit U; the unit of the new Relative MutableFloatVector
          */
         protected Rel(final U unit)
         {
             super(unit);
+            // System.out.println("Created Rel");
         }
 
         /**
@@ -278,22 +279,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix1D; initial values for the entries of the new MutableFloatVector
-             * @param unit Unit; the unit of the new MutableFloatVector
-             */
-            protected Dense(final FloatMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
              * Construct a new Relative Dense MutableFloatVector.
-             * @param values float[]; the initial values for the entries of the new MutableFloatVector
-             * @param unit Unit; the unit of the new MutableFloatVector
+             * @param values float[]; the initial values of the entries in the new Relative Dense MutableFloatVector
+             * @param unit U; the unit of the new Relative Dense MutableFloatVector
              */
             public Dense(final float[] values, final U unit)
             {
@@ -304,14 +292,29 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * Construct a new Relative Dense MutableFloatVector.
-             * @param values FloatScalar.Abs[]; the initial values for the entries of the new MutableFloatVector
+             * @param values FloatScalar.Rel&lt;U&gt;[]; the initial values of the entries in the new Relative Dense
+             *            MutableFloatVector
              * @throws ValueException when values has zero entries
              */
-            public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
+            public Dense(final FloatScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Dense");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix1D; the initial values of the entries in the new Relative Dense
+             *            MutableFloatVector
+             * @param unit U; the unit of the new Relative Dense MutableFloatVector
+             */
+            protected Dense(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -334,7 +337,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             @Override
             protected final FloatMatrix1D createMatrix1D(final int size)
             {
-                return new SparseFloatMatrix1D(size);
+                return new DenseFloatMatrix1D(size);
             }
 
         }
@@ -348,22 +351,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix1D; the initial values for the entries of the new MutableFloatVector
-             * @param unit Unit; the unit of the new MutableFloatVector
-             */
-            protected Sparse(final FloatMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
              * Construct a new Relative Sparse MutableFloatVector.
-             * @param values float[]; the initial values for the entries of the new MutableFloatVector
-             * @param unit Unit; the unit of the new MutableFloatVector
+             * @param values float[]; the initial values of the entries in the new Relative Sparse MutableFloatVector
+             * @param unit U; the unit of the new Relative Sparse MutableFloatVector
              */
             public Sparse(final float[] values, final U unit)
             {
@@ -374,7 +364,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * Construct a new Relative Sparse MutableFloatVector.
-             * @param values FloatScalar.Rel[]; initial values for the entries of the new MutableFloatVector
+             * @param values FloatScalar.Rel&lt;U&gt;[]; the initial values of the entries in the new Relative Sparse
+             *            MutableFloatVector
              * @throws ValueException when values has zero entries
              */
             public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
@@ -382,6 +373,20 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Sparse");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix1D; the initial values of the entries in the new Relative Sparse
+             *            MutableFloatVector
+             * @param unit U; the unit of the new Relative Sparse MutableFloatVector
+             */
+            protected Sparse(final FloatMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
