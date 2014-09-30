@@ -425,7 +425,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Make (immutable) FloatVector equivalent for any type of MutableFloatVector.
-     * @return FloatVector
+     * @return FloatVector<U>
      */
     public abstract FloatVector<U> immutable();
 
@@ -435,11 +435,11 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     {
         return immutable().mutable();
         // FIXME: This may cause both the original and the copy to be deep copied later
-        // Maybe it is better to make a deep copy now?
+        // Maybe it is better to make one deep copy now...
     }
 
     /**
-     * Check the copyOnWrite flag and, if it is set make a deep copy of the data and clear the flag.
+     * Check the copyOnWrite flag and, if it is set, make a deep copy of the data and clear the flag.
      */
     protected final void checkCopyOnWrite()
     {
@@ -471,7 +471,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     @Override
     public final void setInUnit(final int index, final float value, final U valueUnit) throws ValueException
     {
-        // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do this...
+        // TODO: creating a FloatScalar.Abs along the way may not be the most efficient way to do this...
         setSI(index, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());
     }
 
@@ -683,15 +683,15 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Increment the values in this MutableFloatVector by the corresponding values in a FloatVector.
-     * @param increment FloatVector; contains the amounts by which to increment the corresponding entries in this
+     * @param increment FloatVector&lt;U&gt;; the values by which to increment the corresponding values in this
      *            MutableFloatVector
-     * @return this
+     * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
     private MutableFloatVector<U> incrementValueByValue(final FloatVector<U> increment) throws ValueException
     {
         checkSizeAndCopyOnWrite(increment);
-        for (int index = this.size(); --index >= 0;)
+        for (int index = size(); --index >= 0;)
         {
             safeSet(index, safeGet(index) + increment.safeGet(index));
         }
@@ -699,9 +699,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Increment the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector.
-     * @param rel FloatVector.Rel; the Relative FloatVector
-     * @return this
+     * Increment the values in this MutableFloatVector by the corresponding values in a Relative FloatVector.
+     * @param rel FloatVector.Rel&lt;U&gt;; the Relative FloatVector
+     * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
     public final MutableFloatVector<U> incrementBy(final FloatVector.Rel<U> rel) throws ValueException
@@ -711,15 +711,15 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Decrement the values in this MutableFloatVector by the corresponding values in a FloatVector.
-     * @param decrement FloatVector; contains the amounts by which to decrement the corresponding entries in this
-     *            MutableFloatVector
-     * @return this
+     * @param decrement FloatVector&lt;U&gt;; contains the amounts by which to decrement the corresponding values in
+     *            this MutableFloatVector
+     * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
     private MutableFloatVector<U> decrementValueByValue(final FloatVector<U> decrement) throws ValueException
     {
         checkSizeAndCopyOnWrite(decrement);
-        for (int index = this.size(); --index >= 0;)
+        for (int index = size(); --index >= 0;)
         {
             safeSet(index, safeGet(index) - decrement.safeGet(index));
         }
@@ -727,9 +727,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Relative FloatVector.
-     * @param rel FloatVector.Rel; the Relative FloatVector
-     * @return this
+     * Decrement the values in this MutableFloatVector by the corresponding values in a Relative FloatVector.
+     * @param rel FloatVector.Rel&lt;U&gt;; the Relative FloatVector
+     * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
     public final MutableFloatVector<U> decrementBy(final FloatVector.Rel<U> rel) throws ValueException
@@ -738,14 +738,14 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Decrement the entries in this MutableFloatVector by the corresponding values in a Absolute FloatVector.
-     * @param abs FloatVector.Abs; the Absolute FloatVector
-     * @return this
+     * Decrement the values in this Relative MutableFloatVector by the corresponding values in an Absolute FloatVector.
+     * @param abs FloatVector.Abs&lt;U&gt;; the Absolute FloatVector
+     * @return MutableFloatVector.Rel&lt;U&gt;; this modified Relative MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
-    public final MutableFloatVector<U> decrementBy(final FloatVector.Abs<U> abs) throws ValueException
+    protected final MutableFloatVector.Rel<U> decrementBy(final FloatVector.Abs<U> abs) throws ValueException
     {
-        return decrementValueByValue(abs);
+        return (MutableFloatVector.Rel<U>) decrementValueByValue(abs);
     }
 
     /**
