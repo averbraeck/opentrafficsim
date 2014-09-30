@@ -282,7 +282,7 @@ public class Generator
     public static String buildMethod(String indent, String qualifiersTypeAndName, String description, String[] params,
             String exceptions, String pragma, String[] body, boolean constructor)
     {
-        final int maxLineLength = 122;
+        final int maxLineLength = 121;
         StringBuilder construction = new StringBuilder();
         String[] fields = qualifiersTypeAndName.split("[|]");
         if (null != description)
@@ -330,10 +330,10 @@ public class Generator
             if (!"void".equals(fields[1]) && !constructor)
             {
                 construction.append(indent + " * @return ");
-                construction.append(fields[1]);
+                construction.append(escapeHTML(fields[1]));
                 if (4 == fields.length)
                 {
-                    construction.append("; " + fields[3]);
+                    construction.append("; " + escapeHTML(fields[3]));
                 }
                 construction.append("\r\n");
             }
@@ -470,6 +470,112 @@ public class Generator
     }
 
     /**
+     * Information about the math functions
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version 30 sep. 2014 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    static class MathFunctionEntry
+    {
+        /** Name of the function */
+        public final String name;
+
+        /** Additional argument with description */
+        public final String argument;
+
+        /** If set, the result of the function is always double (regardless of the argument) */
+        public final boolean castToFloatRequired;
+
+        /** Description of the function */
+        public final String description;
+
+        /** If set this function also appears in *MathFunctionsImpl */
+        public final boolean appearsInMathFunctionsImpl;
+
+        /**
+         * Create a new mathFunctionEntry.
+         * @param name String; name of the function
+         * @param argument String; additional argument of the function (set to null if the function has only one
+         *            argument)
+         * @param castToFloatRequired boolean; if true; the result of the function is double (regardless of the
+         *            argument)
+         * @param appearsInMathFunctionsImpl boolean; if true; this function must also appear in the *MathFunctionImpl
+         *            class
+         * @param comment String; description of the function
+         */
+        public MathFunctionEntry(final String name, final String argument, final boolean castToFloatRequired,
+                boolean appearsInMathFunctionsImpl, final String comment)
+        {
+            this.name = name;
+            this.argument = argument;
+            this.castToFloatRequired = castToFloatRequired;
+            this.appearsInMathFunctionsImpl = appearsInMathFunctionsImpl;
+            this.description = comment;
+        }
+    }
+
+    /** The math functions */
+    public static MathFunctionEntry[] mathFunctions =
+            {
+                    new MathFunctionEntry("abs", null, false, false, "Set the value(s) to their absolute value."),
+                    new MathFunctionEntry("acos", null, true, false,
+                            "Set the value(s) to the arc cosine of the value(s); the resulting angle is in the range 0.0 through pi."),
+                    new MathFunctionEntry("asin", null, true, false,
+                            "Set the value(s) to the arc sine of the value(s); the resulting angle is in the range -pi/2 through pi/2."),
+                    new MathFunctionEntry("atan", null, true, false,
+                            "Set the value(s) to the arc tangent of the value(s); the resulting angle is in the range -pi/2 through pi/2."),
+                    new MathFunctionEntry("cbrt", null, true, true, "Set the value(s) to the(ir) cube root."),
+                    new MathFunctionEntry("ceil", null, false, false,
+                            "Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the\r\n"
+                                    + indentStep + " * argument and equal to a mathematical integer."),
+                    new MathFunctionEntry("cos", null, true, false,
+                            "Set the value(s) to the trigonometric cosine of the value(s)."),
+                    new MathFunctionEntry("cosh", null, true, true,
+                            "Set the value(s) to the hyperbolic cosine of the value(s)."),
+                    new MathFunctionEntry("exp", null, true, false,
+                            "Set the value(s) to Euler's number e raised to the power of the value(s)."),
+                    new MathFunctionEntry("expm1", null, true, true,
+                            "Set the value(s) to Euler's number e raised to the power of the value(s) minus 1 (e^x - 1)."),
+                    new MathFunctionEntry("floor", null, false, false,
+                            "Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the\r\n"
+                                    + indentStep + " * argument and equal to a mathematical integer."),
+                    new MathFunctionEntry("log", null, true, false,
+                            "Set the value(s) to the natural logarithm (base e) of the value(s)."),
+                    new MathFunctionEntry("log10", null, true, true,
+                            "Set the value(s) to the base 10 logarithm of the value(s)."),
+                    new MathFunctionEntry("log1p", null, true, true,
+                            "Set the value(s) to the natural logarithm of the sum of the value(s) and 1."),
+                    new MathFunctionEntry("pow", "double|x|the value to use as the power", true, false,
+                            "Set the value(s) to the value(s) raised to the power of the argument."),
+                    new MathFunctionEntry("rint", null, true, false,
+                            "Set the value(s) to the value(s) that are closest in value to the argument and equal to a mathematical integer."),
+                    new MathFunctionEntry("round", null, true, true,
+                            "Set the value(s) to the closest long to the argument with ties rounding up."),
+                    new MathFunctionEntry("signum", null, true, true,
+                            "Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is\r\n"
+                                    + indentStep + "     * greater than zero, -1.0 if the argument is less than zero."),
+                    new MathFunctionEntry("sin", null, true, false,
+                            "Set the value(s) to the trigonometric sine of the value(s)."),
+                    new MathFunctionEntry("sinh", null, true, true,
+                            "Set the value(s) to the hyperbolic sine of the value(s)."),
+                    new MathFunctionEntry("sqrt", null, true, false,
+                            "Set the value(s) to the correctly rounded positive square root of the value(s)."),
+                    new MathFunctionEntry("tan", null, true, false,
+                            "Set the value(s) to the trigonometric tangent of the value(s)."),
+                    new MathFunctionEntry("tanh", null, true, true,
+                            "Set the value(s) to the hyperbolic tangent of the value(s)."),
+                    new MathFunctionEntry("toDegrees", null, true, true,
+                            "Set the value(s) to approximately equivalent angle(s) measured in degrees."),
+                    new MathFunctionEntry("toRadians", null, true, true,
+                            "Set the value(s) to approximately equivalent angle(s) measured in radians."),
+                    new MathFunctionEntry("inv", null, true, false,
+                            "Set the value(s) to the complement (1.0/x) of the value(s)."),};
+
+    /**
      * Generate the code for the value classes.
      * @param args String[]; the command line arguments (not used)
      */
@@ -540,62 +646,9 @@ public class Generator
                                         "final String|converter|the format conversion specifier"}, null, null,
                                 new String[]{"return String.format(\"%%%d.%d%s\", width, precision, converter);"},
                                 false) + buildFormatMethods("float") + buildFormatMethods("double"));
-        generateInterface(
-                "value",
-                "MathFunctions",
-                new String[]{"java.io.Serializable"},
-                "Interface to force all functions of Math that must be implemented.",
-                null,
-                "extends Serializable",
-                buildMathFunction("void abs()", "Set the value(s) to their absolute value(s).")
-                        + buildMathFunction("void acos()",
-                                "Set the value(s) to the arc cosine of the value; the resulting angle is in the range -pi/2 through pi/2.")
-                        + buildMathFunction("void asin()",
-                                "Set the value(s) to the arc sine of the value; the resulting angle is in the range -pi/2 through pi/2.")
-                        + buildMathFunction("void atan()",
-                                "Set the value(s) to the arc tangent of the value; the resulting angle is in the range -pi/2 through pi/2.")
-                        + buildMathFunction("void cbrt()", "Set the value(s) to their cube root.")
-                        + buildMathFunction("void ceil()",
-                                "Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the"
-                                        + " * argument and equal to a mathematical integer.")
-                        + buildMathFunction("void cos()",
-                                "Set the value(s) to the trigonimetric cosine of the value(s).")
-                        + buildMathFunction("void cosh()", "Set the value(s) to the hyperbolic cosine of the value(s).")
-                        + buildMathFunction("void exp()",
-                                "Set the value(s) to Euler's number e raised to the power of the value(s).")
-                        + buildMathFunction("void exp()",
-                                "Set the value(s) to Euler's number e raised to the power of the value(s) minus 1 (e^x - 1).")
-                        + buildMathFunction("void floor()",
-                                "Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the"
-                                        + " * argument and equal to a mathematical integer.")
-                        + buildMathFunction("void log()",
-                                "Set the value(s) to the natural logarithm (base e) of the value(s).")
-                        + buildMathFunction("void log()", "Set the value(s) to the base 10logarithm of the value(s).")
-                        + buildMathFunction("void log1p()",
-                                "Set the value(s) to the natural logarithm of sum of the value(s) and 1")
-                        + buildMathFunction("void pow(double x)",
-                                "Set the value(s) to  the value(s) raised to the power of the argument\r\n"
-                                        + "     * @param x double; the argument")
-                        + buildMathFunction("void rint()",
-                                "Set the value(s) to the value(s) that are closest in value to the argument and equal to a mathematical integer.")
-                        + buildMathFunction("void round()",
-                                "Set the value(s) to the closest long to the argument with ties rounding up.")
-                        + buildMathFunction("void signum()",
-                                "Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is"
-                                        + "     * greater than zero, -1.0 if the argument is less than zero.")
-                        + buildMathFunction("void sin()", "Set the value(s) to the trigonimetric sine of the value(s).")
-                        + buildMathFunction("void sinh()", "Set the value(s) to the hyperbolic sine of the value(s).")
-                        + buildMathFunction("void sqrt()",
-                                "Set the value(s) to the correctly rounded positive square root of the value(s)")
-                        + buildMathFunction("void tan()",
-                                "Set the value(s) to the trigonimetric tangent of the value(s).")
-                        + buildMathFunction("void tanh()",
-                                "Set the value(s) to the hyperbolic tangent of the value(s).")
-                        + buildMathFunction("void toDegrees()",
-                                "Set the value(s) to approximately equivalent angle(s) measured in degrees.")
-                        + buildMathFunction("void toRadians()",
-                                "Set the value(s) to approximately equivalent angle(s) measured in radians.")
-                        + buildMathFunction("void inv()", "Set the value(s) to the complement (1.0/x) of the value(s)."));
+        generateInterface("value", "MathFunctions", new String[]{"java.io.Serializable"},
+                "Interface to force all functions of Math that must be implemented.", null, "extends Serializable",
+                buildAllMathFunctions());
         generateInterface(
                 "value",
                 "Value",
@@ -684,23 +737,10 @@ public class Generator
 
         );
 
-        generateFinalClass(
-                "value.vdouble",
-                "DoubleMathFunctionsImpl",
+        generateFinalClass("value.vdouble", "DoubleMathFunctionsImpl",
                 new String[]{"import cern.colt.function.tdouble.DoubleFunction"},
-                "DoubleFunction implementations of the standard Math functions.",
-                null,
-                "",
-                buildDoubleOrFloatFunction("cbrt", "Double", "") + buildDoubleOrFloatFunction("cosh", "Double", "")
-                        + buildDoubleOrFloatFunction("expm1", "Double", "")
-                        + buildDoubleOrFloatFunction("log10", "Double", "")
-                        + buildDoubleOrFloatFunction("log1p", "Double", "")
-                        + buildDoubleOrFloatFunction("round", "Double", "")
-                        + buildDoubleOrFloatFunction("signum", "Double", "")
-                        + buildDoubleOrFloatFunction("sinh", "Double", "")
-                        + buildDoubleOrFloatFunction("tanh", "Double", "")
-                        + buildDoubleOrFloatFunction("toDegrees", "Double", "")
-                        + buildDoubleOrFloatFunction("toRadians", "Double", ""));
+                "DoubleFunction implementations of the standard Math functions.", null, "",
+                buildMathFunctionImpl("Double"));
 
         generateInterface(
                 "value.vfloat",
@@ -748,6 +788,45 @@ public class Generator
     }
 
     /**
+     * Generate the java code for *MathFunctionsImpl.
+     * @param type String; type of the result of the generated functions
+     * @return String; java code
+     */
+    private static String buildMathFunctionImpl(String type)
+    {
+        String useCast = (type.startsWith("D") ? "" : type + " "); // append a space
+        StringBuilder construction = new StringBuilder();
+        for (MathFunctionEntry mfu : mathFunctions)
+        {
+            if (mfu.appearsInMathFunctionsImpl)
+            {
+                construction.append("    /**\r\n     * Function that returns <tt>Math." + mfu.name
+                        + "(a)</tt>.\r\n     */\r\n" + "    public static final " + type + "Function " + mfu.name
+                        + " = new " + type + "Function()\r\n    {\r\n" + "        @Override\r\n        public "
+                        + type.toLowerCase() + " apply(final " + type.toLowerCase() + " a)\r\n"
+                        + "        {\r\n            return " + useCast + "Math." + mfu.name + "(a);\r\n"
+                        + "        }\r\n    };\r\n\r\n");
+            }
+        }
+        return construction.toString();
+    }
+
+    /**
+     * Generate the java code that declares all the math functions
+     * @return String; java code
+     */
+    private static String buildAllMathFunctions()
+    {
+        StringBuilder construction = new StringBuilder();
+        for (MathFunctionEntry mfu : mathFunctions)
+        {
+            construction.append(buildMethod(indentStep, "|void|" + mfu.name, mfu.description, null == mfu.argument
+                    ? new String[]{} : new String[]{mfu.argument}, null, null, null, false));
+        }
+        return construction.toString();
+    }
+
+    /**
      * Generate a class file for a vector type.
      * @param vectorType String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
@@ -789,29 +868,170 @@ public class Generator
                         + (mutable ? "\r\n" + indentStep + indentStep + "Write" + vectorType + "VectorFunctions<U>, "
                                 + vectorType + "MathFunctions" : "Serializable,\r\n" + indentStep + "ReadOnly"
                                 + vectorType + "VectorFunctions<U>"),
-                mutable ? buildMethod(outerIndent, "protected||Mutable" + vectorType + "Vector",
-                        "Construct a new Mutable" + vectorType + "Vector.",
-                        new String[]{"final U|unit|the unit of the new Mutable" + vectorType + "Vector"}, null, null,
-                        new String[]{"super(unit);",
-                                "// System.out.println(\"Created Mutable" + vectorType + "Vector\");"}, true)
-                        + buildField(outerIndent, "private boolean copyOnWrite = false",
-                                "If set, any modification of the data must be preceded by replacing the data "
-                                        + "with a local copy.")
-                        + buildMethod(outerIndent, "private|boolean|isCopyOnWrite",
-                                "Retrieve the value of the copyOnWrite flag.", null, null, null,
-                                new String[]{"return this.copyOnWrite;"}, false)
-                        + buildMethod(outerIndent, "final|void|setCopyOnWrite", "Change the copyOnWrite flag.",
-                                new String[]{"final boolean|copyOnWrite|the new value for the copyOnWrite flag"}, null,
-                                null, new String[]{"this.copyOnWrite = copyOnWrite;"}, false)
-                        + buildMethod(outerIndent, "public final|void|normalize", null, null,
-                                "ValueException|when zSum is 0", null, new String[]{
-                                        vectorType.toLowerCase() + " sum = zSum();", "if (0 == sum)", "{",
-                                        indentStep + "throw new ValueException(\"zSum is 0; cannot normalize\");", "}",
-                                        "checkCopyOnWrite();", "for (int i = 0; i < size(); i++)", "{",
-                                        indentStep + "safeSet(i, safeGet(i) / sum);", "}"}, false)
-                        + buildVectorSubClass(outerIndent, "Abs", "Absolute " + mutableType + vectorType + "Vector",
-                                "Mutable" + vectorType + "Vector<U>", "Absolute", "Mutable" + vectorType + "Vector",
-                                true)
+                mutable
+                        ? buildMethod(outerIndent, "protected||Mutable" + vectorType + "Vector",
+                                "Construct a new Mutable" + vectorType + "Vector.",
+                                new String[]{"final U|unit|the unit of the new Mutable" + vectorType + "Vector"}, null,
+                                null, new String[]{"super(unit);",
+                                        "// System.out.println(\"Created Mutable" + vectorType + "Vector\");"}, true)
+                                + buildField(outerIndent, "private boolean copyOnWrite = false",
+                                        "If set, any modification of the data must be preceded by replacing the data "
+                                                + "with a local copy.")
+                                + buildMethod(outerIndent, "private|boolean|isCopyOnWrite",
+                                        "Retrieve the value of the copyOnWrite flag.", null, null, null,
+                                        new String[]{"return this.copyOnWrite;"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "final|void|setCopyOnWrite",
+                                        "Change the copyOnWrite flag.",
+                                        new String[]{"final boolean|copyOnWrite|the new value for the copyOnWrite flag"},
+                                        null, null, new String[]{"this.copyOnWrite = copyOnWrite;"}, false)
+                                + buildMethod(outerIndent, "public final|void|normalize", null, null,
+                                        "ValueException|when zSum is 0", null, new String[]{
+                                                vectorType.toLowerCase() + " sum = zSum();",
+                                                "if (0 == sum)",
+                                                "{",
+                                                indentStep
+                                                        + "throw new ValueException(\"zSum is 0; cannot normalize\");",
+                                                "}", "checkCopyOnWrite();", "for (int i = 0; i < size(); i++)", "{",
+                                                indentStep + "safeSet(i, safeGet(i) / sum);", "}"}, false)
+                                + buildVectorSubClass(outerIndent, "Abs", "Absolute " + mutableType + vectorType
+                                        + "Vector", "Mutable" + vectorType + "Vector<U>", "Absolute", "Mutable"
+                                        + vectorType + "Vector", true)
+                                + buildVectorSubClass(outerIndent, "Rel", "Relative " + mutableType + vectorType
+                                        + "Vector", "Mutable" + vectorType + "Vector<U>", "Relative", "Mutable"
+                                        + vectorType + "Vector", true)
+                                + buildMethod(outerIndent, "public abstract|" + vectorType + "Vector<U>|immutable",
+                                        "Make (immutable) " + vectorType + "Vector equivalent for any type of Mutable"
+                                                + vectorType + "Vector.", null, null, null, null, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "public final|Mutable" + vectorType + "Vector<U>|copy",
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        new String[]{
+                                                "return immutable().mutable();",
+                                                "// FIXME: This may cause both the original and the copy to be deep copied later",
+                                                "// Maybe it is better to make one deep copy now..."}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "protected final|void|checkCopyOnWrite",
+                                        "Check the copyOnWrite flag and, if it is set, make a deep copy of the data and clear the flag.",
+                                        null,
+                                        null,
+                                        null,
+                                        new String[]{
+                                                "if (this.isCopyOnWrite())",
+                                                "{",
+                                                indentStep
+                                                        + "// System.out.println(\"CopyOnWrite is set: Copying data\");",
+                                                indentStep + "deepCopyData();", indentStep + "setCopyOnWrite(false);",
+                                                "}"}, false)
+                                + buildMethod(outerIndent, "public final|void|setSI", null, new String[]{
+                                        "final int|index|", "final " + vectorType.toLowerCase() + "|valueSI"},
+                                        "ValueException|when index is invalid", null,
+                                        new String[]{"checkIndex(index);", "checkCopyOnWrite();",
+                                                "safeSet(index, valueSI);"}, false)
+                                + buildMethod(outerIndent, "public final|void|set", null, new String[]{
+                                        "final int|index|", "final " + vectorType + "Scalar<U>|value"},
+                                        "ValueException|when index is invalid", null,
+                                        new String[]{"setSI(index, value.getvalueSI());"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "public final|void|setInUnit",
+                                        null,
+                                        new String[]{"final int|index|",
+                                                "final " + vectorType.toLowerCase() + "|value", "final U|valueUnit|"},
+                                        "ValueException|when index is invalid",
+                                        null,
+                                        new String[]{
+                                                "// TODO: creating a "
+                                                        + vectorType
+                                                        + "Scalar.Abs along the way may not be the most efficient way to do this...",
+                                                "setSI(index, new " + vectorType
+                                                        + "Scalar.Abs<U>(value, valueUnit).getValueSI());"}, false)
+                                + buildMethod(outerIndent, "public final|void|assign",
+                                        "Execute a function on a cell by cell basis.",
+                                        new String[]{"final cern.colt.function.t" + vectorType.toLowerCase() + "."
+                                                + vectorType + "Function|" + vectorType.substring(0, 1).toLowerCase()
+                                                + "|the function to apply"}, null, null,
+                                        new String[]{
+                                                "checkCopyOnWrite();",
+                                                "getVectorSI().assign(" + vectorType.substring(0, 1).toLowerCase()
+                                                        + ");"}, false)
+                                + buildVectorFunctions(outerIndent, vectorType)
+                                + buildMethod(outerIndent, "public final|void|multiply", null,
+                                        new String[]{"final float|constant|"}, null, null, new String[]{"assign("
+                                                + vectorType + "Functions.mult(constant));"}, false)
+                                + buildMethod(outerIndent, "public final|void|divide", null,
+                                        new String[]{"final float|constant|"}, null, null, new String[]{"assign("
+                                                + vectorType + "Functions.div(constant));"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "private|Mutable" + vectorType
+                                                + "Vector<U>|incrementValueByValue|this modified Mutable" + vectorType
+                                                + "Vector",
+                                        "Increment the values in this Mutable" + vectorType
+                                                + "Vector by the corresponding values in a " + vectorType + "Vector.",
+                                        new String[]{"final "
+                                                + vectorType
+                                                + "Vector<U>|increment|the values by which to increment the corresponding values in this Mutable"
+                                                + vectorType + "Vector"},
+                                        "ValueException|when the vectors do not have the same size", null,
+                                        new String[]{
+                                                "checkSizeAndCopyOnWrite(increment);",
+                                                "for (int index = size(); --index >= 0;)",
+                                                "{",
+                                                indentStep
+                                                        + "safeSet(index, safeGet(index) + increment.safeGet(index));",
+                                                "}", "return this;"}, false)
+                                + buildMethod(outerIndent, "public final|Mutable" + vectorType
+                                        + "Vector<U>|incrementBy|this modified Mutable" + vectorType + "Vector",
+                                        "Increment the values in this Mutable" + vectorType
+                                                + "Vector by the corresponding values in a Relative " + vectorType
+                                                + "Vector.", new String[]{"final " + vectorType
+                                                + "Vector.Rel<U>|rel|the Relative " + vectorType + "Vector"},
+                                        "ValueException|when the vectors do not have the same size", null,
+                                        new String[]{"return incrementValueByValue(rel);"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "private|Mutable" + vectorType
+                                                + "Vector<U>|decrementValueByValue|this modified Mutable" + vectorType
+                                                + "Vector",
+                                        "Decrement the values in this Mutable" + vectorType
+                                                + "Vector by the corresponding values in a " + vectorType + "Vector.",
+                                        new String[]{"final "
+                                                + vectorType
+                                                + "Vector<U>|decrement|contains the amounts by which to decrement the corresponding values in this Mutable"
+                                                + vectorType + "Vector"},
+                                        "ValueException|when the vectors do not have the same size", null,
+                                        new String[]{
+                                                "checkSizeAndCopyOnWrite(decrement);",
+                                                "for (int index = size(); --index >= 0;)",
+                                                "{",
+                                                indentStep
+                                                        + "safeSet(index, safeGet(index) - decrement.safeGet(index));",
+                                                "}", "return this;"}, false)
+                                + buildMethod(outerIndent, "public final|Mutable" + vectorType
+                                        + "Vector<U>|decrementBy|this modified Mutable" + vectorType + "Vector",
+                                        "Decrement the values in this Mutable" + vectorType
+                                                + "Vector by the corresponding values in a Relative " + vectorType
+                                                + "Vector.", new String[]{"final " + vectorType
+                                                + "Vector.Rel<U>|rel|the Relative " + vectorType + "Vector"},
+                                        "ValueException|when the vectors do not have the same size", null,
+                                        new String[]{"return decrementValueByValue(rel);"}, false)
+                                + buildMethod(outerIndent,
+                                        "protected final|Mutable" + vectorType
+                                                + "Vector.Rel<U>|decrementBy|this modified Relative Mutable" + vectorType
+                                                + "Vector", "Decrement the values in this Relative Mutable"
+                                                + vectorType + "Vector by the corresponding values in an Absolute "
+                                                + vectorType + "Vector.", new String[]{"final " + vectorType
+                                                + "Vector.Abs<U>|abs|the Absolute " + vectorType + "Vector"},
+                                        "ValueException|when the vectors do not have the same size", null,
+                                        new String[]{"return (Mutable" + vectorType
+                                                + "Vector.Rel<U>) decrementValueByValue(abs);"}, false)
 
                         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX END OF MUTABLE SPECIFIC METHODS
 
@@ -1130,6 +1350,27 @@ public class Generator
                                                 indentStep + "return false;", "}", "return true;"}, false)
 
         );
+    }
+
+    /**
+     * Generate the code for the *Functions in Mutable*Vector.
+     * @param indent String; prefix for all output lines
+     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @return String; java code
+     */
+    private static String buildVectorFunctions(final String indent, final String vectorType)
+    {
+        StringBuilder construction = new StringBuilder();
+        for (MathFunctionEntry mfu : mathFunctions)
+        {
+            construction.append(buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
+                    ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + vectorType
+                    + (mfu.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mfu.name
+                    + (null != mfu.argument ? "(" + (vectorType.startsWith("F") ? "(float) " : "") : "")
+                    + (null != mfu.argument ? "x)" : "") + ");"}, false));
+        }
+
+        return construction.toString();
     }
 
     /**
@@ -1823,17 +2064,6 @@ public class Generator
                 + "Function()\r\n    {\r\n" + "        @Override\r\n        public " + objectType.toLowerCase()
                 + " apply(final " + objectType.toLowerCase() + " a)\r\n" + "        {\r\n            return " + useCast
                 + "Math." + name + "(a);\r\n" + "        }\r\n    };\r\n\r\n";
-    }
-
-    /**
-     * Build the interface for one math function
-     * @param function String; code for the math function
-     * @param description String; description of the math function
-     * @return String; java code for the interface of the math function
-     */
-    private static String buildMathFunction(final String function, final String description)
-    {
-        return "    /**\r\n     * " + description + "\r\n     */\r\n    " + function + "\r\n\r\n";
     }
 
     /**
