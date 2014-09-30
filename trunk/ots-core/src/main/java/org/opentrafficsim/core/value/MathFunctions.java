@@ -20,28 +20,28 @@ public interface MathFunctions extends Serializable
     void abs();
 
     /**
-     * Set the value(s) to the arc cosine of the value(s); the angle is in the range 0.0 through pi.
+     * Set the value(s) to the arc cosine of the value(s); the resulting angle is in the range 0.0 through pi.
      */
     void acos();
 
     /**
-     * Set the value(s) to the arc sine of the value(s); the angle is in the range -pi/2 through pi/2.
+     * Set the value(s) to the arc sine of the value(s); the resulting angle is in the range -pi/2 through pi/2.
      */
     void asin();
 
     /**
-     * Set the value(s) to the arc tangent of the value(s); the angle is in the range -pi/2 through pi/2.
+     * Set the value(s) to the arc tangent of the value(s); the resulting angle is in the range -pi/2 through pi/2.
      */
     void atan();
 
     /**
-     * Set the value(s) to the cube root.
+     * Set the value(s) to the(ir) cube root.
      */
     void cbrt();
 
     /**
-     * Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the argument
-     * and equal to a mathematical integer.
+     * Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the
+     * argument and equal to a mathematical integer.
      */
     void ceil();
 
@@ -61,13 +61,13 @@ public interface MathFunctions extends Serializable
     void exp();
 
     /**
-     * Set the value(s) to e to the power of the value(s) minus 1 (e^x - 1).
+     * Set the value(s) to Euler's number e raised to the power of the value(s) minus 1 (e^x - 1).
      */
     void expm1();
 
     /**
-     * Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the argument and
-     * equal to a mathematical integer.
+     * Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the
+     * argument and equal to a mathematical integer.
      */
     void floor();
 
@@ -82,13 +82,13 @@ public interface MathFunctions extends Serializable
     void log10();
 
     /**
-     * Set the value(s) to the natural logarithm of the sum of the argument and 1.
+     * Set the value(s) to the natural logarithm of the sum of the value(s) and 1.
      */
     void log1p();
 
     /**
      * Set the value(s) to the value(s) raised to the power of the argument.
-     * @param x the value to use as the power
+     * @param x double; the value to use as the power
      */
     void pow(double x);
 
@@ -98,13 +98,13 @@ public interface MathFunctions extends Serializable
     void rint();
 
     /**
-     * Set the value(s) to the closest long to the argument, with ties rounding up.
+     * Set the value(s) to the closest long to the argument with ties rounding up.
      */
     void round();
 
     /**
-     * Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is greater
-     * than zero, -1.0 if the argument is less than zero.
+     * Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is
+     * greater than zero, -1.0 if the argument is less than zero.
      */
     void signum();
 
@@ -147,4 +147,5 @@ public interface MathFunctions extends Serializable
      * Set the value(s) to the complement (1.0/x) of the value(s).
      */
     void inv();
+    
 }
