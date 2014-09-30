@@ -59,7 +59,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
          * Construct a new Absolute Immutable FloatVector.
          * @param unit U; the unit of the new Absolute Immutable FloatVector
          */
-        Abs(final U unit)
+        protected Abs(final U unit)
         {
             super(unit);
             // System.out.println("Created Abs");
@@ -87,7 +87,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * Construct a new Absolute Dense Immutable FloatVector.
-             * @param values FloatScalar.Abs<U>[]; the values of the entries in the new Absolute Dense Immutable FloatVector
+             * @param values FloatScalar.Abs&lt;U&gt;[]; the values of the entries in the new Absolute Dense Immutable
+             *            FloatVector
              * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Abs<U>[] values) throws ValueException
@@ -154,7 +155,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * Construct a new Absolute Sparse Immutable FloatVector.
-             * @param values FloatScalar.Abs<U>[]; the values of the entries in the new Absolute Sparse Immutable FloatVector
+             * @param values FloatScalar.Abs&lt;U&gt;[]; the values of the entries in the new Absolute Sparse Immutable
+             *            FloatVector
              * @throws ValueException when values has zero entries
              */
             public Sparse(final FloatScalar.Abs<U>[] values) throws ValueException
@@ -220,10 +222,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
          * Construct a new Relative Immutable FloatVector.
          * @param unit U; the unit of the new Relative Immutable FloatVector
          */
-        Rel(final U unit)
+        protected Rel(final U unit)
         {
             super(unit);
-           // System.out.println("Created Rel");
+            // System.out.println("Created Rel");
         }
 
         /**
@@ -248,7 +250,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * Construct a new Relative Dense Immutable FloatVector.
-             * @param values FloatScalar.Rel[]; the values of the entries in the new Relative Dense Immutable FloatVector
+             * @param values FloatScalar.Rel&lt;U&gt;[]; the values of the entries in the new Relative Dense Immutable
+             *            FloatVector
              * @throws ValueException when values has zero entries
              */
             public Dense(final FloatScalar.Rel<U>[] values) throws ValueException
@@ -315,7 +318,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
             /**
              * Construct a new Relative Sparse Immutable FloatVector.
-             * @param values FloatScalar.Rel; the values of the entries in the new Relative Sparse Immutable FloatVector
+             * @param values FloatScalar.Rel&lt;U&gt;[]; the values of the entries in the new Relative Sparse Immutable
+             *            FloatVector
              * @throws ValueException when values has zero entries
              */
             public Sparse(final FloatScalar.Rel<U>[] values) throws ValueException
@@ -388,8 +392,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Create a mutable version of this FloatVector. <br>
-     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first operation
-     * in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
      * @return MutableFloatVector<U>; mutable version of this FloatVector
      */
     public abstract MutableFloatVector<U> mutable();
@@ -416,7 +420,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Import the values from an existing FloatMatrix1D. This makes a shallow copy.
-     * @param values FloatMatrix1D<U>; the values
+     * @param values FloatMatrix1D; the values
      */
     protected final void initialize(final FloatMatrix1D values)
     {
@@ -425,7 +429,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Construct the vector and store the values in the standard SI unit.
-     * @param values FloatScalar<U>[]; an array of values
+     * @param values FloatScalar&lt;U&gt;[]; an array of values
      * @throws ValueException when values is empty
      */
     protected final void initialize(final FloatScalar<U>[] values) throws ValueException
@@ -441,7 +445,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create storage for the data. <br/>
      * This method must be implemented by each leaf class.
      * @param size int; the number of cells in the vector
-     * @return FloatMatrix1D; an instance of the right type of matrix (absolute / relative, dense / sparse, etc.)
+     * @return FloatMatrix1D; an instance of the right type of FloatMatrix1D (absolute / relative, dense / sparse, etc.)
      */
     protected abstract FloatMatrix1D createMatrix1D(final int size);
 
@@ -465,7 +469,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Create a float[] array filled with the values converted into a specified unit.
-     * @param targetUnit U; the unit to convert the values into
+     * @param targetUnit U; the unit into which the values are converted for display
      * @return float[]; the values converted into the specified unit
      */
     public final float[] getValuesInUnit(final U targetUnit)
@@ -530,8 +534,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Print this FloatVector with the values expressed in the specified unit.
-     * @param displayUnit the unit to display the vector in.
-     * @return a printable String with the vector contents
+     * @param displayUnit U; the unit into which the values are converted for display
+     * @return String; printable string with the vector contents
      */
     public final String toString(final U displayUnit)
     {
@@ -585,7 +589,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             }
         }
         buf.append("[" + displayUnit.getAbbreviation() + "]");
-        for (int i = 0; i < this.vectorSI.size(); i++)
+        for (int i = 0; i < size(); i++)
         {
             float f = (float) ValueUtil.expressAsUnit(safeGet(i), displayUnit);
             buf.append(" " + Format.format(f));
@@ -621,21 +625,20 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Check that a provided index is valid.
-     * @param index integer; the value to check
+     * @param index int; the value to check
      * @throws ValueException when index is invalid
      */
     protected final void checkIndex(final int index) throws ValueException
     {
-        if (index < 0 || index >= this.vectorSI.size())
+        if (index < 0 || index >= size())
         {
-            throw new ValueException("index out of range (valid range is 0.." + (this.vectorSI.size() - 1) + ", got " + index
-                    + ")");
+            throw new ValueException("index out of range (valid range is 0.." + (size() - 1) + ", got " + index + ")");
         }
     }
 
     /**
      * Retrieve a value in vectorSI without checking validity of the index.
-     * @param index integer; the index
+     * @param index int; the index
      * @return float; the value stored at that index
      */
     protected final float safeGet(final int index)
@@ -645,7 +648,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Modify a value in vectorSI without checking validity of the index.
-     * @param index integer; the index
+     * @param index int; the index
      * @param valueSI float; the new value for the entry in vectorSI
      */
     protected final void safeSet(final int index, final float valueSI)
@@ -663,17 +666,19 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Check that a provided array can be used to create some descendant of an FloatVector.
-     * @param fsArray FloatScalar[]; the provided array
-     * @return FloatScalar[]; the provided array
-     * @throws ValueException when the proved array has length equal to 0
+     * Check that a provided array can be used to create some descendant of a FloatVector.
+     * @param fsArray FloatScalar&lt;U&gt;[]; the provided array
      * @param <U> Unit; the unit of the FloatScalar array
+     * @return FloatScalar<U>[]; the provided array
+     * @throws ValueException when the provided array has length equal to 0
      */
-    protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray) throws ValueException
+    protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray)
+            throws ValueException
     {
         if (0 == fsArray.length)
         {
-            throw new ValueException("Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
+            throw new ValueException(
+                    "Cannot create a FloatVector or MutableFloatVector from an empty array of FloatScalar");
         }
         return fsArray;
     }
@@ -705,18 +710,18 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
             return false;
         }
         FloatVector<?> other = (FloatVector<?>) obj;
-        // unequal if one is absolute and the other is relative
+        // unequal if not both absolute or both relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;
         }
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        // unequal if the standard SI units differ
         if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
         {
             return false;
         }
         // Colt's equals also tests the size of the vector
-        if (!this.vectorSI.equals(other.vectorSI))
+        if (!getVectorSI().equals(other.getVectorSI()))
         {
             return false;
         }
