@@ -858,15 +858,29 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
+     * Add two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Dense&lt;U&gt;.
+     * @param left FloatVector.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the vectors do not have the same size
+     */
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> plus(final FloatVector.Rel.Sparse<U> left,
+            final FloatVector.Rel.Dense<U> right) throws ValueException
+    {
+        return (MutableFloatVector.Rel.Dense<U>) sparseToDense(left).incrementBy(right);
+    }
+
+    /**
      * Add two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Sparse&lt;U&gt;.
      * @param left FloatVector.Rel.Sparse&lt;U&gt;; the left operand
-     * @param right FloatVector.Rel&lt;U&gt;; the right operand
+     * @param right FloatVector.Rel.Sparse&lt;U&gt;; the right operand
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> plus(final FloatVector.Rel.Sparse<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+            final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Sparse<U>) left.mutable().incrementBy(right);
     }
