@@ -16,46 +16,53 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 public interface ReadOnlyFloatVectorFunctions<U extends Unit<U>>
 {
     /**
-     * @return the size of the vector as an int.
+     * Retrieve the size of the vector.
+     * @return int; the size of the vector
      */
     int size();
 
     /**
-     * @return the number of cells having non-zero values; ignores tolerance.
+     * Count the number of cells that have a non-zero value (ignores tolerance).
+     * @return int; the number of cells having non-zero value
      */
     int cardinality();
 
     /**
-     * @param index position to get the value for in the SI unit in which it has been stored.
-     * @return value at position index.
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Retrieve the value stored at a specified position in the standard SI unit.
+     * @param index int; index of the value to return
+     * @return float; value at position index in the standard SI unit
+     * @throws ValueException when index out of range (index &lt; 0 or index &gt;= size())
      */
     float getSI(int index) throws ValueException;
 
     /**
-     * @param index position to get the value for in the original unit of creation.
-     * @return value at position index.
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Retrieve the value stored at a specified position in the original unit.
+     * @param index int; index of the value to return
+     * @return float; value at position index in the original unit
+     * @throws ValueException when index out of range (index &lt; 0 or index &gt;= size())
      */
     float getInUnit(int index) throws ValueException;
 
     /**
-     * @param index position to get the value for in the SI unit in which it has been stored.
-     * @param targetUnit the unit for the result.
-     * @return value at position index.
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Retrieve the value stored at a specified position converted into a specified unit.
+     * @param index int; index of the value to return
+     * @param targetUnit U; the unit for the result
+     * @return float; value at position index converted into the specified unit
+     * @throws ValueException when index out of range (index &lt; 0 or index &gt;= size())
      */
     float getInUnit(int index, U targetUnit) throws ValueException;
 
     /**
-     * @param index index position to get the value that has been stored.
-     * @return a strongly typed value from the cell
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Retrieve the value stored at position index converted into a FloatScalar&lt;U&gt;.
+     * @param index int; index of the value to return
+     * @return FloatScalar&lt;U&gt;; the strongly typed value of the selected cell
+     * @throws ValueException when index out of range (index &lt; 0 or index &gt;= size())
      */
     FloatScalar<U> get(int index) throws ValueException;
 
     /**
-     * @return sum of all values of the vector.
+     * Compute the sum of all values of this vector.
+     * @return float; the sum of all values of this vector
      */
     float zSum();
 
