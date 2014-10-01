@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -1075,12 +1076,55 @@ public class Generator
                                                 + "[]|other|partner for the size check"},
                                         "ValueException|when the vectors do not have the same size", null,
                                         new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
-                                + buildAddVector(outerIndent, vectorType, "Abs.Dense", "Rel")
-                                + buildAddVector(outerIndent, vectorType, "Abs.Sparse", "Rel.Dense")
-                                + buildAddVector(outerIndent, vectorType, "Abs.Sparse", "Rel.Sparse")
-                                + buildAddVector(outerIndent, vectorType, "Rel.Dense", "Rel")
-                                + buildAddVector(outerIndent, vectorType, "Rel.Sparse", "Rel.Dense")
-                                + buildAddVector(outerIndent, vectorType, "Rel.Sparse", "Rel.Sparse")
+                                // Generate 6 plus methods
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Dense", "Rel", true)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Sparse", "Rel.Dense", true)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Sparse", "Rel.Sparse", true)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Rel.Dense", "Rel", true)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Rel.Sparse", "Rel.Dense", true)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Rel.Sparse", "Rel.Sparse", true)
+                                // Generate 9 minus methods
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Dense", "Abs", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Sparse", "Abs.Sparse", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Sparse", "Abs.Dense", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Dense", "Rel", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Sparse", "Rel.Dense", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Abs.Sparse", "Rel.Sparse", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Rel.Dense", "Rel", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Rel.Sparse", "Rel.Dense", false)
+                                + buildVectorPlusOrMinus(outerIndent, vectorType, "Rel.Sparse", "Rel.Sparse", false)
+                                // Generate 10 times methods
+                                // TODO: Decide if you ever need multiply an Absolute with anything; I don't think so...
+                                + buildVectorTimes(outerIndent, vectorType, "Abs.Dense", "Abs.Dense")
+                                + buildVectorTimes(outerIndent, vectorType, "Abs.Dense", "Abs.Sparse")
+                                + buildVectorTimes(outerIndent, vectorType, "Abs.Sparse", "Abs")
+                                + buildVectorTimes(outerIndent, vectorType, "Rel.Dense", "Rel.Dense")
+                                + buildVectorTimes(outerIndent, vectorType, "Rel.Dense", "Rel.Sparse")
+                                + buildVectorTimes(outerIndent, vectorType, "Rel.Sparse", "Rel")
+                                + buildVectorTimes(outerIndent, vectorType, "Abs.Dense", "")
+                                + buildVectorTimes(outerIndent, vectorType, "Abs.Sparse", "")
+                                + buildVectorTimes(outerIndent, vectorType, "Rel.Dense", "")
+                                + buildVectorTimes(outerIndent, vectorType, "Rel.Sparse", "")
+                                + buildMethod(outerIndent,
+                                        "private static|Sparse" + vectorType + "Matrix1D|makeSparse",
+                                        "Make the Sparse equivalent of a Dense" + vectorType + "Matrix1D.",
+                                        new String[]{"final " + vectorType + "Matrix1D|dense|the Dense " + vectorType
+                                                + "Matrix1D"}, null, null, new String[]{
+                                                "Sparse" + vectorType + "Matrix1D result = new Sparse" + vectorType
+                                                        + "Matrix1D((int) dense.size());", "result.assign(dense);",
+                                                "return result;"}, false)
+                                + buildDenseSparseVectorConverter(outerIndent, vectorType, "Abs", true)
+                                + buildDenseSparseVectorConverter(outerIndent, vectorType, "Rel", true)
+                                + buildMethod(outerIndent,
+                                        "private static|Dense" + vectorType + "Matrix1D|makeDense",
+                                        "Make the Dense equivalent of a Sparse" + vectorType + "Matrix1D.",
+                                        new String[]{"final " + vectorType + "Matrix1D|sparse|the Sparse " + vectorType
+                                                + "Matrix1D"}, null, null, new String[]{
+                                                "Dense" + vectorType + "Matrix1D result = new Dense" + vectorType
+                                                        + "Matrix1D((int) sparse.size());", "result.assign(sparse);",
+                                                "return result;"}, false)
+                                + buildDenseSparseVectorConverter(outerIndent, vectorType, "Abs", false)
+                                + buildDenseSparseVectorConverter(outerIndent, vectorType, "Rel", false)
 
                         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX END OF MUTABLE SPECIFIC METHODS
 
@@ -1402,35 +1446,147 @@ public class Generator
     }
 
     /**
-     * Build an add vector method.
+     * Generate java code for a denseToSparse vector method.
      * @param outerIndent String; prefix for all output lines
+     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param absRel String; either <cite>Abs</cite>, or <cite>Rel</cite>
+     * @param toSparse boolean; if true; code for denseToSparse is generated; if false; code for sparseToDense is
+     *            generated
+     * @return String; java code
+     */
+    private static String buildDenseSparseVectorConverter(String outerIndent, String vectorType, String absRel,
+            boolean toSparse)
+    {
+        final String from = toSparse ? "Dense" : "Sparse";
+        final String to = toSparse ? "Sparse" : "Dense";
+        return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType + "Vector." + absRel
+                + "." + to + "<U>|" + from.toLowerCase() + "To" + to, "Create a " + to + " version of this " + from
+                + " " + vectorType + "Vector.", new String[]{
+                "final " + vectorType + "Vector." + absRel + "." + from + "<U>|in|the " + from + " " + vectorType
+                        + "Vector", "Unit|<U>|the unit of the parameter and the result"}, null, null,
+                new String[]{"return new Mutable" + vectorType + "Vector." + absRel + "." + to + "<U>(make" + to
+                        + "(in.getVectorSI()), in.getUnit());"}, false);
+    }
+
+    /**
+     * Generate the code for the Vector times methods
+     * @param outerIndent String; prefix of all output line
      * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param leftType String; type of the left operand
      * @param rightType String; type of the right operand
      * @return String; java code
      */
-    private static String buildAddVector(String outerIndent, String vectorType, String leftType, String rightType)
+    private static String buildVectorTimes(String outerIndent, String vectorType, String leftType, String rightType)
+    {
+        final String resultType =
+                leftType.contains("Sparse") ? leftType : rightType.contains("Sparse") ? leftType.replace("Dense",
+                        "Sparse") : leftType;
+        final String paramUnit = rightType.length() == 0 ? "U" : "?";
+        ArrayList<String> code = new ArrayList<String>();
+        if (rightType.length() > 0)
+        {
+            code.add("SIUnit targetUnit =");
+            code.add(indentStep
+                    + indentStep
+                    + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),");
+            code.add(indentStep + indentStep + indentStep + indentStep
+                    + "right.getUnit().getSICoefficients()).toString());");
+            code.add("Mutable" + vectorType + "Vector." + resultType + "<SIUnit> work =");
+            code.add(indentStep + indentStep + "new Mutable" + vectorType + "Vector." + resultType
+                    + "<SIUnit>(left.deepCopyOfData(), targetUnit);");
+            code.add("work.scaleValueByValue(right);");
+            code.add("return work;");
+        }
+        else
+        {
+            code.add("return (Mutable" + vectorType + "Vector." + leftType
+                    + "<U>) left.mutable().scaleValueByValue(right);");
+        }
+        ArrayList<String> params = new ArrayList<String>();
+        params.add("final " + vectorType + "Vector." + leftType + "<" + paramUnit + ">|left|the "
+                + (rightType.length() == 0 ? vectorType + "Vector" : "left operand"));
+        params.add("final "
+                + (rightType.length() == 0 ? vectorType.toLowerCase() + "[]" : vectorType + "Vector." + rightType + "<"
+                        + paramUnit + ">") + "|right|the "
+                + (rightType.length() == 0 ? "float array" : "right operand"));
+        if (rightType.length() == 0)
+        {
+            params.add("Unit|<U>|the unit of the left parameter and the result");
+        }
+
+        return buildMethod(outerIndent, "public static" + (rightType.length() == 0 ? " <U extends Unit<U>>" : "")
+                + "|Mutable" + vectorType + "Vector." + resultType + "<" + (rightType.length() == 0 ? "U" : "SIUnit")
+                + ">|times", (rightType.length() == 0 ? "Scale the values in a " + vectorType + "Vector and a "
+                + vectorType.toLowerCase() + " array" : "Multiply two " + vectorType + "Vectors")
+                + " value by value and store the result in a new\r\n"
+                + outerIndent
+                + " * Mutable"
+                + vectorType
+                + "Vector." + resultType + "&lt;" + (rightType.length() == 0 ? "U" : "SIUnit") + "&gt;.",
+                arrayListToArray(params),
+                "ValueException|when the " + (rightType.length() == 0 ? "vector and the array" : "vectors")
+                        + " do not have the same size", null, arrayListToArray(code), false);
+    }
+
+    /**
+     * Build a vector plus or minus method.
+     * @param outerIndent String; prefix for all output lines
+     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param leftType String; type of the left operand
+     * @param rightType String; type of the right operand
+     * @param makePlus boolean; if true; generate code for plus; if false; generat code for minus
+     * @return String; java code
+     */
+    private static String buildVectorPlusOrMinus(String outerIndent, String vectorType, String leftType,
+            String rightType, boolean makePlus)
     {
         // If either type is Dense, the result is Dense
         final String resultDenseSparse = leftType.contains("Dense") || rightType.contains("Dense") ? "Dense" : "Sparse";
-        final String resultAbsRel = leftType.contains("Abs") ? "Abs" : "Rel";
+        final String resultAbsRel = leftType.contains("Abs") ? (rightType.contains("Abs") ? "Rel" : "Abs") : "Rel";
         final String castCode = "(Mutable" + vectorType + "Vector." + resultAbsRel + "." + resultDenseSparse + "<U>) ";
-        final String code =
-                "return "
-                        + castCode
-                        + (resultDenseSparse.equals("Dense") && leftType.contains("Dense")
-                                || resultDenseSparse.equals("Sparse") && leftType.contains("Sparse")
-                                ? "left.mutable().incrementBy(right);" : resultDenseSparse.equals("Dense")
-                                        ? "sparseToDense(left).incrementBy(right);"
-                                        : "denseToSparse(left).incrementBy(right);");
+        final String operation = makePlus ? "incrementBy" : "decrementBy";
+        final boolean absAbsToRel = leftType.contains("Abs") && rightType.contains("Abs");
+        ArrayList<String> code = new ArrayList<String>();
+        if (absAbsToRel)
+        {
+            code.add("return " + castCode + "new Mutable" + vectorType + "Vector.Rel." + resultDenseSparse
+                    + "<U>(left.deepCopyOfData(),");
+            code.add(outerIndent + indentStep + indentStep + "left.getUnit())." + operation + "(right);");
+        }
+        else if (resultDenseSparse.equals("Dense") && leftType.contains("Dense") || resultDenseSparse.equals("Sparse")
+                && leftType.contains("Sparse"))
+        {
+            code.add("return " + castCode + "left.mutable()." + operation + "(right);");
+        }
+        else
+        {
+            // Need a sparseToDense conversion; this makes a deep copy
+            code.add("return " + castCode + "sparseToDense(left)." + operation + "(right);");
+        }
         return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType + "Vector."
-                + resultAbsRel + "." + resultDenseSparse + "<U>|plus",
-                "Add two FloatVectors value by value and store the result in a new Mutable" + vectorType + "Vector."
-                        + resultAbsRel + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
-                        "final " + vectorType + "Vector." + leftType + "<U>|left|the left operand",
-                        "final " + vectorType + "Vector." + rightType + "<U>|right|the right operand",
-                        "Unit|<U>|the unit of the parameters and the result"},
-                "ValueException|when the vectors do not have the same size", null, new String[]{code}, false);
+                + resultAbsRel + "." + resultDenseSparse + "<U>|" + (makePlus ? "plus" : "minus"), (makePlus ? "Add"
+                : "Subtract")
+                + " two FloatVectors value by value and store the result in a new Mutable"
+                + vectorType
+                + "Vector." + resultAbsRel + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
+                "final " + vectorType + "Vector." + leftType + "<U>|left|the left operand",
+                "final " + vectorType + "Vector." + rightType + "<U>|right|the right operand",
+                "Unit|<U>|the unit of the parameters and the result"},
+                "ValueException|when the vectors do not have the same size", null, arrayListToArray(code), false);
+    }
+
+    /**
+     * @param code
+     * @return
+     */
+    private static String[] arrayListToArray(ArrayList<String> code)
+    {
+        String[] codeLines = new String[code.size()];
+        for (int line = 0; line < code.size(); line++)
+        {
+            codeLines[line] = code.get(line);
+        }
+        return codeLines;
     }
 
     /**
