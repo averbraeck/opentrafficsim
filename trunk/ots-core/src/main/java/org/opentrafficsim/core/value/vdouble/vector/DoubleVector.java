@@ -31,39 +31,24 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyDoubleVectorFunctions<U>
 {
+    /** */
+    private static final long serialVersionUID = 20140618L;
+
     /**
-     * The internal storage for the vector; internally the values are stored in SI units; storage can be dense or sparse.
+     * The internal storage for the vector; internally the values are stored in standard SI unit; storage can be dense
+     * or sparse.
      */
     private DoubleMatrix1D vectorSI;
 
     /**
-     * @return vectorSI
-     */
-    protected final DoubleMatrix1D getVectorSI()
-    {
-        return this.vectorSI;
-    }
-
-    /**
-     * Make a deep copy of the data (used ONLY in the MutableDoubleVector sub class).
-     */
-    protected final void deepCopyData()
-    {
-        this.vectorSI = getVectorSI().copy(); // makes a deep copy, using multithreading
-    }
-
-    /**
-     * Create a new Immutable DoubleVector.
-     * @param unit Unit; the unit of the new DoubleVector
+     * Construct a new Immutable DoubleVector.
+     * @param unit U; the unit of the new DoubleVector
      */
     protected DoubleVector(final U unit)
     {
         super(unit);
         // System.out.println("Created DoubleVector");
     }
-
-    /** */
-    private static final long serialVersionUID = 20140618L;
 
     /**
      * @param <U> Unit
@@ -74,12 +59,13 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute DoubleVector.
-         * @param unit Unit; the unit of the new DoubleVector
+         * Construct a new Absolute Immutable DoubleVector.
+         * @param unit U; the unit of the new Absolute Immutable DoubleVector
          */
-        Abs(final U unit)
+        protected Abs(final U unit)
         {
             super(unit);
+            // System.out.println("Created Abs");
         }
 
         /**
@@ -91,21 +77,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix1D; the values for the entries in the new DoubleVector
-             * @param unit Unit; the unit of the new DoubleVector
-             */
-            protected Dense(final DoubleMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Absolute Dense Immutable DoubleVector.
-             * @param values double[]; the values for the entries in the new DoubleVector
-             * @param unit Unit; the unit of the values for the new DoubleVector
+             * Construct a new Absolute Dense Immutable DoubleVector.
+             * @param values double[]; the values of the entries in the new Absolute Dense Immutable DoubleVector
+             * @param unit U; the unit of the new Absolute Dense Immutable DoubleVector
              */
             public Dense(final double[] values, final U unit)
             {
@@ -115,8 +89,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Absolute Dense Immutable DoubleVector.
-             * @param values DoubleScalar.Abs[]; the values for the entries in the new DoubleVector
+             * Construct a new Absolute Dense Immutable DoubleVector.
+             * @param values DoubleScalar.Abs&lt;U&gt;[]; the values of the entries in the new Absolute Dense Immutable
+             *            DoubleVector
              * @throws ValueException when values has zero entries
              */
             public Dense(final DoubleScalar.Abs<U>[] values) throws ValueException
@@ -124,6 +99,18 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Dense");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix1D; the values of the entries in the new Absolute Dense Immutable DoubleVector
+             * @param unit U; the unit of the new Absolute Dense Immutable DoubleVector
+             */
+            protected Dense(final DoubleMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -144,7 +131,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final DoubleVector.Abs.Dense<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -158,21 +145,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix1D; the values for entries of the new DoubleVector
-             * @param unit Unit; the unit of the new DoubleVector
-             */
-            protected Sparse(final DoubleMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a Relative Sparse Immutable DoubleVector.
-             * @param values double[]; values for the entries of the new DoubleVector
-             * @param unit Unit; the unit of the values for the new DoubleVector
+             * Construct a new Absolute Sparse Immutable DoubleVector.
+             * @param values double[]; the values of the entries in the new Absolute Sparse Immutable DoubleVector
+             * @param unit U; the unit of the new Absolute Sparse Immutable DoubleVector
              */
             public Sparse(final double[] values, final U unit)
             {
@@ -182,8 +157,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a Relative Sparse Immutable DoubleVector.
-             * @param values DoubleScalar.Abs[]; values for the entries of the new DoubleVector
+             * Construct a new Absolute Sparse Immutable DoubleVector.
+             * @param values DoubleScalar.Abs&lt;U&gt;[]; the values of the entries in the new Absolute Sparse Immutable
+             *            DoubleVector
              * @throws ValueException when values has zero entries
              */
             public Sparse(final DoubleScalar.Abs<U>[] values) throws ValueException
@@ -191,6 +167,18 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Sparse");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix1D; the values of the entries in the new Absolute Sparse Immutable DoubleVector
+             * @param unit U; the unit of the new Absolute Sparse Immutable DoubleVector
+             */
+            protected Sparse(final DoubleMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -204,14 +192,14 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             protected final DoubleMatrix1D createMatrix1D(final int size)
             {
-                return new DenseDoubleMatrix1D(size);
+                return new SparseDoubleMatrix1D(size);
             }
 
             /** {@inheritDoc} */
             @Override
             public final DoubleVector.Abs.Sparse<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -234,16 +222,17 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative DoubleVector.
-         * @param unit Unit; the unit of the new DoubleVector
+         * Construct a new Relative Immutable DoubleVector.
+         * @param unit U; the unit of the new Relative Immutable DoubleVector
          */
-        Rel(final U unit)
+        protected Rel(final U unit)
         {
             super(unit);
+            // System.out.println("Created Rel");
         }
 
         /**
-         * @param <U>
+         * @param <U> Unit
          */
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
@@ -251,32 +240,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix1D; the values for the entries in the new DoubleVector
-             * @param unit Unit; the unit of the new DoubleVector
-             */
-            protected Dense(final DoubleMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Dense Immutable DoubleVector.
-             * @param values double[]; values for the entries of the new DoubleVector
-             * @param unit Unit; the unit of the values for the new DoubleVector
+             * Construct a new Relative Dense Immutable DoubleVector.
+             * @param values double[]; the values of the entries in the new Relative Dense Immutable DoubleVector
+             * @param unit U; the unit of the new Relative Dense Immutable DoubleVector
              */
             public Dense(final double[] values, final U unit)
             {
                 super(unit);
                 // System.out.println("Created Dense");
-                initialize(values); // shallow copy
+                initialize(values);
             }
 
             /**
-             * Create a new Relative Dense Immutable DoubleVector.
-             * @param values DoubleScalarRel; values for the entries of the new DoubleVector
+             * Construct a new Relative Dense Immutable DoubleVector.
+             * @param values DoubleScalar.Rel&lt;U&gt;[]; the values of the entries in the new Relative Dense Immutable
+             *            DoubleVector
              * @throws ValueException when values has zero entries
              */
             public Dense(final DoubleScalar.Rel<U>[] values) throws ValueException
@@ -284,6 +262,18 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Dense");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix1D; the values of the entries in the new Relative Dense Immutable DoubleVector
+             * @param unit U; the unit of the new Relative Dense Immutable DoubleVector
+             */
+            protected Dense(final DoubleMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -297,14 +287,14 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             protected final DoubleMatrix1D createMatrix1D(final int size)
             {
-                return new SparseDoubleMatrix1D(size);
+                return new DenseDoubleMatrix1D(size);
             }
 
             /** {@inheritDoc} */
             @Override
             public final DoubleVector.Rel.Dense<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -318,39 +308,40 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix1D; the values for the entries of the new DoubleVector
-             * @param unit Unit; the unit of the new DoubleVector
-             */
-            protected Sparse(final DoubleMatrix1D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Sparse Immutable DoubleVector.
-             * @param values double[]; the values for the entries of the new DoubleVector
-             * @param unit Unit; the unit of the values for the new DoubleVector
+             * Construct a new Relative Sparse Immutable DoubleVector.
+             * @param values double[]; the values of the entries in the new Relative Sparse Immutable DoubleVector
+             * @param unit U; the unit of the new Relative Sparse Immutable DoubleVector
              */
             public Sparse(final double[] values, final U unit)
             {
                 super(unit);
                 // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
+                initialize(values);
             }
 
             /**
-             * Create a new Relative Sparse Immutable DoubleVector.
-             * @param values DoubleScalar.Rel[]; the values for the entries of the new DoubleVector
-             * @throws ValueException when values contains zero entries
+             * Construct a new Relative Sparse Immutable DoubleVector.
+             * @param values DoubleScalar.Rel&lt;U&gt;[]; the values of the entries in the new Relative Sparse Immutable
+             *            DoubleVector
+             * @throws ValueException when values has zero entries
              */
             public Sparse(final DoubleScalar.Rel<U>[] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0].getUnit());
                 // System.out.println("Created Sparse");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix1D; the values of the entries in the new Relative Sparse Immutable DoubleVector
+             * @param unit U; the unit of the new Relative Sparse Immutable DoubleVector
+             */
+            protected Sparse(final DoubleMatrix1D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -371,7 +362,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final DoubleVector.Rel.Sparse<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -386,16 +377,33 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
+     * Retrieve the internal Data.
+     * @return doubleMatrix1D; the data in the internal format
+     */
+    protected final DoubleMatrix1D getVectorSI()
+    {
+        return this.vectorSI;
+    }
+
+    /**
+     * Make a deep copy of the data (used ONLY in the MutableDoubleVector sub class).
+     */
+    protected final void deepCopyData()
+    {
+        this.vectorSI = getVectorSI().copy(); // makes a deep copy, using multithreading
+    }
+
+    /**
      * Create a mutable version of this DoubleVector. <br>
-     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first operation
-     * in the mutable version that modifies the data shall trigger a deep copy of the data.
-     * @return MutableDoubleVector; mutable version of this DoubleVector
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * @return MutableDoubleVector&lt;U&gt;; mutable version of this DoubleVector
      */
     public abstract MutableDoubleVector<U> mutable();
 
     /**
-     * Construct the vector, import the values and convert them into SI units.
-     * @param values double[]; the values to import and convert
+     * Import the values and convert them into the SI standard unit.
+     * @param values double[]; an array of values
      */
     protected final void initialize(final double[] values)
     {
@@ -414,8 +422,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Import the values from a DoubleMatrix1D. Makes a shallow copy.
-     * @param values DoubleMatrix1D; the values to import
+     * Import the values from an existing DoubleMatrix1D. This makes a shallow copy.
+     * @param values DoubleMatrix1D; the values
      */
     protected final void initialize(final DoubleMatrix1D values)
     {
@@ -423,9 +431,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values an array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered
+     * Construct the vector and store the values in the standard SI unit.
+     * @param values DoubleScalar&lt;U&gt;[]; an array of values
+     * @throws ValueException when values is empty
      */
     protected final void initialize(final DoubleScalar<U>[] values) throws ValueException
     {
@@ -437,15 +445,16 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * This method has to be implemented by each leaf class.
-     * @param size the number of cells in the vector
-     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
+     * Create storage for the data. <br/>
+     * This method must be implemented by each leaf class.
+     * @param size int; the number of cells in the vector
+     * @return DoubleMatrix1D; an instance of the right type of DoubleMatrix1D (absolute/relative, dense/sparse, etc.)
      */
     protected abstract DoubleMatrix1D createMatrix1D(final int size);
 
     /**
-     * Create a double[] array filled with the values in SI unit.
-     * @return double[]; array of values in SI unit
+     * Create a double[] array filled with the values in the standard SI unit.
+     * @return double[]; array of values in the standard SI unit
      */
     public final double[] getValuesSI()
     {
@@ -454,7 +463,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Create a double[] array filled with the values in the original unit.
-     * @return values in original unit
+     * @return double[]; the values in the original unit
      */
     public final double[] getValuesInUnit()
     {
@@ -462,9 +471,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Create a double[] array filled with the values in the specified unit.
-     * @param targetUnit the unit to convert the values to
-     * @return values in specific target unit
+     * Create a double[] array filled with the values converted into a specified unit.
+     * @param targetUnit U; the unit into which the values are converted for use
+     * @return double[]; the values converted into the specified unit
      */
     public final double[] getValuesInUnit(final U targetUnit)
     {
@@ -527,9 +536,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Print this AbstractDoubleVector with the values expressed in the specified unit.
-     * @param displayUnit the unit to display the vector in.
-     * @return a printable String with the vector contents
+     * Print this DoubleVector with the values expressed in the specified unit.
+     * @param displayUnit U; the unit into which the values are converted for display
+     * @return String; printable String with the vector contents
      */
     public final String toString(final U displayUnit)
     {
@@ -583,10 +592,10 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             }
         }
         buf.append("[" + displayUnit.getAbbreviation() + "]");
-        for (int i = 0; i < this.vectorSI.size(); i++)
+        for (int i = 0; i < size(); i++)
         {
-            double f = ValueUtil.expressAsUnit(safeGet(i), displayUnit);
-            buf.append(" " + Format.format(f));
+            double d = ValueUtil.expressAsUnit(safeGet(i), displayUnit);
+            buf.append(" " + Format.format(d));
         }
         return buf.toString();
     }
@@ -619,21 +628,20 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Check that a provided index is valid.
-     * @param index integer; the value to check
-     * @throws ValueException when the index is out of range
+     * @param index int; the value to check
+     * @throws ValueException when index is invalid
      */
     protected final void checkIndex(final int index) throws ValueException
     {
-        if (index < 0 || index >= this.vectorSI.size())
+        if (index < 0 || index >= size())
         {
-            throw new ValueException("index out of range (valid range is 0.." + (this.vectorSI.size() - 1) + ", got " + index
-                    + ")");
+            throw new ValueException("index out of range (valid range is 0.." + (size() - 1) + ", got " + index + ")");
         }
     }
 
     /**
      * Retrieve a value in vectorSI without checking validity of the index.
-     * @param index integer; the index
+     * @param index int; the index
      * @return double; the value stored at that index
      */
     protected final double safeGet(final int index)
@@ -643,7 +651,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Modify a value in vectorSI without checking validity of the index.
-     * @param index integer; the index
+     * @param index int; the index
      * @param valueSI double; the new value for the entry in vectorSI
      */
     protected final void safeSet(final int index, final double valueSI)
@@ -661,19 +669,21 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Check that a provided array can be used to create some descendant of an AbstractDoubleVector.
-     * @param fsArray DoubleScalar[]; the provided array
-     * @return DoubleScalar[]; the provided array
-     * @throws ValueException if the array has zero length
-     * @param <U> Unit; the unit
+     * Check that a provided array can be used to create some descendant of a DoubleVector.
+     * @param dsArray DoubleScalar&lt;U&gt;[]; the provided array
+     * @param <U> Unit; the unit of the DoubleScalar array
+     * @return DoubleScalar&lt;U&gt;[]; the provided array
+     * @throws ValueException when the provided array has length equal to 0
      */
-    protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] fsArray) throws ValueException
+    protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] dsArray)
+            throws ValueException
     {
-        if (0 == fsArray.length)
+        if (0 == dsArray.length)
         {
-            throw new ValueException("Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
+            throw new ValueException(
+                    "Cannot create a DoubleVector or MutableDoubleVector from an empty array of DoubleScalar");
         }
-        return fsArray;
+        return dsArray;
     }
 
     /** {@inheritDoc} */
@@ -703,18 +713,18 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             return false;
         }
         DoubleVector<?> other = (DoubleVector<?>) obj;
-        // unequal if one is absolute and the other is relative
+        // unequal if not both absolute or both relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;
         }
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        // unequal if the standard SI units differ
         if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
         {
             return false;
         }
         // Colt's equals also tests the size of the vector
-        if (!this.vectorSI.equals(other.vectorSI))
+        if (!getVectorSI().equals(other.getVectorSI()))
         {
             return false;
         }
