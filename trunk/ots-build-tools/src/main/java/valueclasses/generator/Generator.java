@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Generate the code for the value classes.
+ * Generate the Java code for the value classes.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -430,7 +430,7 @@ public class Generator
     /**
      * Replace HTML-special character by their escaped versions.
      * @param input String; text to convert to clean HTML
-     * @return String; text with correct HTML excapes
+     * @return String; text with correct HTML escapes
      */
     private static String escapeHTML(final String input)
     {
@@ -673,7 +673,7 @@ public class Generator
                 "value",
                 "ValueException",
                 null,
-                "Exception that is thrown for bad indices or non-rectangular, or effectively empty arrays",
+                "Exception that is thrown for bad indices, or non-rectangular arrays, or empty arrays",
                 null,
                 "public",
                 "extends Exception",
@@ -789,9 +789,9 @@ public class Generator
     }
 
     /**
-     * Generate the java code for *MathFunctionsImpl.
+     * Generate the Java code for *MathFunctionsImpl.
      * @param type String; type of the result of the generated functions
-     * @return String; java code
+     * @return String; Java code
      */
     private static String buildMathFunctionImpl(String type)
     {
@@ -813,8 +813,8 @@ public class Generator
     }
 
     /**
-     * Generate the java code that declares all the math functions
-     * @return String; java code
+     * Generate the Java code that declares all the math functions
+     * @return String; Java code
      */
     private static String buildAllMathFunctions()
     {
@@ -963,12 +963,12 @@ public class Generator
                                                 "getVectorSI().assign(" + vectorType.substring(0, 1).toLowerCase()
                                                         + ");"}, false)
                                 + buildVectorFunctions(outerIndent, vectorType)
-                                + buildMethod(outerIndent, "public final|void|multiply", null,
-                                        new String[]{"final float|constant|"}, null, null, new String[]{"assign("
-                                                + vectorType + "Functions.mult(constant));"}, false)
-                                + buildMethod(outerIndent, "public final|void|divide", null,
-                                        new String[]{"final float|constant|"}, null, null, new String[]{"assign("
-                                                + vectorType + "Functions.div(constant));"}, false)
+                                + buildMethod(outerIndent, "public final|void|multiply", null, new String[]{"final "
+                                        + vectorType.toLowerCase() + "|constant|"}, null, null, new String[]{"assign("
+                                        + vectorType + "Functions.mult(constant));"}, false)
+                                + buildMethod(outerIndent, "public final|void|divide", null, new String[]{"final "
+                                        + vectorType.toLowerCase() + "|constant|"}, null, null, new String[]{"assign("
+                                        + vectorType + "Functions.div(constant));"}, false)
                                 + buildMethod(
                                         outerIndent,
                                         "private|Mutable" + vectorType
@@ -1023,12 +1023,15 @@ public class Generator
                                                 + "Vector.Rel<U>|rel|the Relative " + vectorType + "Vector"},
                                         "ValueException|when the vectors do not have the same size", null,
                                         new String[]{"return decrementValueByValue(rel);"}, false)
-                                + buildMethod(outerIndent, "protected final|Mutable" + vectorType
-                                        + "Vector.Rel<U>|decrementBy|this modified Relative Mutable" + vectorType
-                                        + "Vector",
+                                + buildMethod(
+                                        outerIndent,
+                                        "protected final|Mutable" + vectorType
+                                                + "Vector.Rel<U>|decrementBy|this modified Relative Mutable"
+                                                + vectorType + "Vector",
                                         "Decrement the values in this Relative Mutable" + vectorType
-                                                + "Vector by the corresponding values in an Absolute " + vectorType
-                                                + "Vector.", new String[]{"final " + vectorType
+                                                + "Vector by the corresponding values in an Absolute"
+                                                + (vectorType.startsWith("D") ? "\r\n" + outerIndent + " * " : " ")
+                                                + vectorType + "Vector.", new String[]{"final " + vectorType
                                                 + "Vector.Abs<U>|abs|the Absolute " + vectorType + "Vector"},
                                         "ValueException|when the vectors do not have the same size", null,
                                         new String[]{"return (Mutable" + vectorType
@@ -1115,8 +1118,7 @@ public class Generator
                                                 "return result;"}, false)
                                 + buildDenseSparseVectorConverter(outerIndent, vectorType, "Abs", true)
                                 + buildDenseSparseVectorConverter(outerIndent, vectorType, "Rel", true)
-                                + buildMethod(outerIndent,
-                                        "private static|Dense" + vectorType + "Matrix1D|makeDense",
+                                + buildMethod(outerIndent, "private static|Dense" + vectorType + "Matrix1D|makeDense",
                                         "Make the Dense equivalent of a Sparse" + vectorType + "Matrix1D.",
                                         new String[]{"final " + vectorType + "Matrix1D|sparse|the Sparse " + vectorType
                                                 + "Matrix1D"}, null, null, new String[]{
@@ -1125,11 +1127,13 @@ public class Generator
                                                 "return result;"}, false)
                                 + buildDenseSparseVectorConverter(outerIndent, vectorType, "Abs", false)
                                 + buildDenseSparseVectorConverter(outerIndent, vectorType, "Rel", false)
-
-                        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX END OF MUTABLE SPECIFIC METHODS
-
-                        : buildField(outerIndent, "private " + vectorType + "Matrix1D vectorSI",
-                                "The internal storage for the vector; the values are stored in standard SI unit; storage can be dense or sparse.")
+                        : buildField(
+                                outerIndent,
+                                "private " + vectorType + "Matrix1D vectorSI",
+                                "\r\n"
+                                        + outerIndent
+                                        + " * The internal storage for the vector; internally the values are stored in standard SI unit; storage can be dense\r\n"
+                                        + outerIndent + " * or sparse.\r\n" + outerIndent)
                                 + buildMethod(outerIndent, "protected||" + (mutable ? "Mutable" : " ") + vectorType
                                         + "Vector", "Construct a new " + mutableType + vectorType + "Vector.",
                                         new String[]{"final U|unit|the unit of the new " + (mutable ? "Mutable" : "")
@@ -1203,7 +1207,7 @@ public class Generator
                                                 indentStep + "}"}, false)
                                 + buildMethod(outerIndent, "protected abstract|" + vectorType
                                         + "Matrix1D|createMatrix1D|an instance of the right type of " + vectorType
-                                        + "Matrix1D (absolute / relative, dense / sparse, etc.)",
+                                        + "Matrix1D (absolute/relative, dense/sparse, etc.)",
                                         "Create storage for the data. <br/>\r\n" + outerIndent
                                                 + " * This method must be implemented by each leaf class.",
                                         new String[]{"final int|size|the number of cells in the vector"}, null, null,
@@ -1225,9 +1229,9 @@ public class Generator
                                                 + "[]|getValuesInUnit|the values converted into the specified unit",
                                         "Create a " + vectorType.toLowerCase()
                                                 + "[] array filled with the values converted into a specified unit.",
-                                        new String[]{"final U|targetUnit|the unit into which the values are converted for display"},
+                                        new String[]{"final U|targetUnit|the unit into which the values are converted for use"},
                                         null, null, new String[]{
-                                                "float[] values = this.vectorSI.toArray();",
+                                                vectorType.toLowerCase() + "[] values = this.vectorSI.toArray();",
                                                 "for (int i = 0; i < values.length; i++)",
                                                 "{",
                                                 indentStep + "values[i] = "
@@ -1239,8 +1243,8 @@ public class Generator
                                 + buildMethod(outerIndent, "public final|" + vectorType.toLowerCase() + "|getSI", null,
                                         new String[]{"final int|index|"}, "ValueException|", null, new String[]{
                                                 "checkIndex(index);", "return safeGet(index);"}, false)
-                                + buildMethod(outerIndent, "public final|float|getInUnit", null,
-                                        new String[]{"final int|index|"}, "ValueException", null,
+                                + buildMethod(outerIndent, "public final|" + vectorType.toLowerCase() + "|getInUnit",
+                                        null, new String[]{"final int|index|"}, "ValueException", null,
                                         new String[]{"return " + (vectorType.startsWith("F") ? "(float) " : "")
                                                 + "expressAsSpecifiedUnit(getSI(index));"}, false)
                                 + buildMethod(outerIndent, "public final|" + vectorType.toLowerCase() + "|getInUnit",
@@ -1398,7 +1402,8 @@ public class Generator
                                                 indentStep + indentStep + indentStep + "\"Cannot create a "
                                                         + vectorType + "Vector or Mutable" + vectorType
                                                         + "Vector from an empty array of " + vectorType + "Scalar\");",
-                                                "}", "return fsArray;"}, false)
+                                                "}", "return " + vectorType.substring(0, 1).toLowerCase() + "sArray;"},
+                                        false)
                                 + buildMethod(
                                         outerIndent,
                                         "public final|int|hashcode",
@@ -1508,7 +1513,7 @@ public class Generator
         params.add("final "
                 + (rightType.length() == 0 ? vectorType.toLowerCase() + "[]" : vectorType + "Vector." + rightType + "<"
                         + paramUnit + ">") + "|right|the "
-                + (rightType.length() == 0 ? "float array" : "right operand"));
+                + (rightType.length() == 0 ? vectorType.toLowerCase() + " array" : "right operand"));
         if (rightType.length() == 0)
         {
             params.add("Unit|<U>|the unit of the left parameter and the result");
@@ -1516,15 +1521,15 @@ public class Generator
 
         return buildMethod(outerIndent, "public static" + (rightType.length() == 0 ? " <U extends Unit<U>>" : "")
                 + "|Mutable" + vectorType + "Vector." + resultType + "<" + (rightType.length() == 0 ? "U" : "SIUnit")
-                + ">|times", (rightType.length() == 0 ? "Scale the values in a " + vectorType + "Vector and a "
+                + ">|times", (rightType.length() == 0 ? "multiply the values in a " + vectorType + "Vector and a "
                 + vectorType.toLowerCase() + " array" : "Multiply two " + vectorType + "Vectors")
                 + " value by value and store the result in a new\r\n"
                 + outerIndent
                 + " * Mutable"
                 + vectorType
                 + "Vector." + resultType + "&lt;" + (rightType.length() == 0 ? "U" : "SIUnit") + "&gt;.",
-                arrayListToArray(params),
-                "ValueException|when the " + (rightType.length() == 0 ? "vector and the array" : "vectors")
+                arrayListToArray(params), "ValueException|when the "
+                        + (rightType.length() == 0 ? vectorType + "Vector and the array" : "vectors")
                         + " do not have the same size", null, arrayListToArray(code), false);
     }
 
@@ -1566,9 +1571,10 @@ public class Generator
         return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType + "Vector."
                 + resultAbsRel + "." + resultDenseSparse + "<U>|" + (makePlus ? "plus" : "minus"), (makePlus ? "Add"
                 : "Subtract")
-                + " two FloatVectors value by value and store the result in a new Mutable"
+                + " two "
                 + vectorType
-                + "Vector." + resultAbsRel + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
+                + "Vectors value by value and store the result in a new Mutable"
+                + vectorType + "Vector." + resultAbsRel + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
                 "final " + vectorType + "Vector." + leftType + "<U>|left|the left operand",
                 "final " + vectorType + "Vector." + rightType + "<U>|right|the right operand",
                 "Unit|<U>|the unit of the parameters and the result"},
@@ -1621,7 +1627,7 @@ public class Generator
      * @param parentClassName String; name of the class that is being sub-classed
      * @param mutable boolean; if true; the class file for the mutable version is generated; if false; the class file
      *            for the immutable version is generated
-     * @return String; java code implementing the sub class
+     * @return String; Java code implementing the sub class
      */
     private static String buildVectorSubClass(final String indent, final String name, final String longName,
             final String extendsString, final String implementsString, final String parentClassName, boolean mutable)
@@ -1646,31 +1652,11 @@ public class Generator
                 new String[]{"return new " + floatType + "Scalar." + name
                         + "<U>(getInUnit(index, getUnit()), getUnit());"}, false));
         construction.append(indent + "}\r\n\r\n");
-        /*
-         * construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName +
-         * " from an existing " + absRelType + " Immutable " + floatType + "Scalar.", new String[]{"final " +
-         * parentClassName + "." + name + "<U>|value|the reference"}, null, null, new String[]{
-         * "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
-         * construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName +
-         * " from an existing " + absRelType + " Mutable" + floatType + "Scalar.", new String[]{"final " + " Mutable" +
-         * floatType + "Scalar." + name + "<U>|value|the reference"}, null, null, new String[]{
-         * "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
-         * construction.append(buildMethod(contentIndent, "public final|" + "Mutable" + floatType + "Scalar." + name +
-         * "<U>|mutable", null, null, null, null, new String[]{"return new Mutable" + floatType + "Scalar." + name +
-         * "<U>(this);"}, false)); if (mutable) { construction.append(buildMethod(contentIndent, "public final|" +
-         * parentClassName + "." + name + "<U>|immutable", null, null, null, null, new String[]{"return new " +
-         * parentClassName + "." + name + "<U>(this);"}, false)); } construction.append(buildMethod(contentIndent,
-         * "public final|int|compareTo", null, new String[]{"final|" + name + "<U> o|"}, null, null, new
-         * String[]{"return new " + floatType + "(getValueSI()).compareTo(o.getValueSI());"}, false));
-         * construction.append(buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "") + parentClassName
-         * + "." + name + "<U>|copy", null, null, null, null, new String[]{mutable ? "return new Mutable" + floatType +
-         * "Scalar." + name + "<U>(this);" : "return this;"}, false)); construction.append(indent + "}\r\n\r\n");
-         */
         return construction.toString();
     }
 
     /**
-     * Generate the code for a vector sub sub class.
+     * Generate the Java code for a vector sub sub class.
      * @param indent String; prefix of all output lines
      * @param absRel String; either <cite>Absolute</cite>, or <cite>Relative</cite>
      * @param denseOrSparse String; either <cite>Dense</cite>, or <cite>Sparse</cite>
