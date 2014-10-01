@@ -886,12 +886,12 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry.
-     * @param left Absolute Dense FloatVector
-     * @param right Absolute FloatVector
-     * @return new Relative Dense Mutable FloatVector
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Dense&lt;U&gt;.
+     * @param left FloatVector.Abs.Dense&lt;U&gt;; the left operand
+     * @param right FloatVector.Abs&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
-     * @param <U> Unit; the unit of the parameters
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
             final FloatVector.Abs<U> right) throws ValueException
@@ -901,27 +901,42 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry.
-     * @param left Absolute Sparse FloatVector
-     * @param right Absolute FloatVector
-     * @return new Relative Sparse Mutable FloatVector
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Sparse&lt;U&gt;.
+     * @param left FloatVector.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Abs.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
-     * @param <U> Unit; the unit of the parameters
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Abs<U> right) throws ValueException
+            final FloatVector.Abs.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Sparse<U>) new MutableFloatVector.Rel.Sparse<U>(left.deepCopyOfData(),
                 left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two FloatVectors entry by entry.
-     * @param left Absolute Dense FloatVector
-     * @param right Relative FloatVector
-     * @return new Relative Dense Mutable FloatVector
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Dense&lt;U&gt;.
+     * @param left FloatVector.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Abs.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
-     * @param <U> Unit; the unit of the parameters
+     */
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Sparse<U> left,
+            final FloatVector.Abs.Dense<U> right) throws ValueException
+    {
+        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
+    }
+
+    /**
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Abs.Dense&lt;U&gt;.
+     * @param left FloatVector.Abs.Dense&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -930,26 +945,40 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry.
-     * @param left Absolute Sparse FloatVector
-     * @param right Relative FloatVector
-     * @return new Absolute Sparse Mutable FloatVector
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Abs.Dense&lt;U&gt;.
+     * @param left FloatVector.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Abs.Dense&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
-     * @param <U> Unit; the unit of the parameters
+     */
+    public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> minus(final FloatVector.Abs.Sparse<U> left,
+            final FloatVector.Rel.Dense<U> right) throws ValueException
+    {
+        return (MutableFloatVector.Abs.Dense<U>) sparseToDense(left).decrementBy(right);
+    }
+
+    /**
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Abs.Sparse&lt;U&gt;.
+     * @param left FloatVector.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Abs.Sparse&lt;U&gt;
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+            final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Sparse<U>) left.mutable().decrementBy(right);
     }
 
     /**
-     * Subtract two FloatVectors entry by entry.
-     * @param left Relative Dense FloatVector
-     * @param right Relative FloatVector
-     * @return new Relative Dense Mutable FloatVector
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Dense&lt;U&gt;.
+     * @param left FloatVector.Rel.Dense&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
-     * @param <U> Unit; the unit of the parameters
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Rel.Dense<U> left,
             final FloatVector.Rel<U> right) throws ValueException
@@ -958,28 +987,43 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Subtract two FloatVectors entry by entry.
-     * @param left Relative Sparse FloatVector
-     * @param right Relative FloatVector
-     * @return new Relative Sparse Mutable FloatVector
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Dense&lt;U&gt;.
+     * @param left FloatVector.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
      * @throws ValueException when the vectors do not have the same size
-     * @param <U> Unit; the unit of the parameters
+     */
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Rel.Sparse<U> left,
+            final FloatVector.Rel.Dense<U> right) throws ValueException
+    {
+        return (MutableFloatVector.Rel.Dense<U>) sparseToDense(left).decrementBy(right);
+    }
+
+    /**
+     * Subtract two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Sparse&lt;U&gt;.
+     * @param left FloatVector.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatVector.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Rel.Sparse<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+            final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Sparse<U>) left.mutable().decrementBy(right);
     }
 
     /**
-     * Multiply two FloatVectors entry by entry.
-     * @param left Absolute Dense FloatVector
-     * @param right Absolute FloatVector
-     * @return new Absolute Dense Mutable FloatVector
+     * Multiply two FloatVectors value by value and store the result in a new
+     * MutableFloatVector.Abs.Dense&lt;SIUnit&gt;.
+     * @param left FloatVector.Abs.Dense&lt;?&gt;; the left operand
+     * @param right FloatVector.Abs.Dense&lt;?&gt;; the right operand
+     * @return MutableFloatVector.Abs.Dense&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Dense<SIUnit> times(final FloatVector.Abs.Dense<?> left,
-            final FloatVector.Abs<?> right) throws ValueException
+            final FloatVector.Abs.Dense<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
@@ -991,29 +1035,31 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply two FloatVectors entry by entry.
-     * @param left Relative Dense FloatVector
-     * @param right Relative FloatVector
-     * @return new Relative Dense Mutable FloatVector
+     * Multiply two FloatVectors value by value and store the result in a new
+     * MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;.
+     * @param left FloatVector.Abs.Dense&lt;?&gt;; the left operand
+     * @param right FloatVector.Abs.Sparse&lt;?&gt;; the right operand
+     * @return MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
-    public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left,
-            final FloatVector.Rel<?> right) throws ValueException
+    public static MutableFloatVector.Abs.Sparse<SIUnit> times(final FloatVector.Abs.Dense<?> left,
+            final FloatVector.Abs.Sparse<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatVector.Rel.Dense<SIUnit> work =
-                new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatVector.Abs.Sparse<SIUnit> work =
+                new MutableFloatVector.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatVectors entry by entry.
-     * @param left Absolute Sparse FloatVector
-     * @param right Absolute FloatVector
-     * @return new XAbsolute Sparse Mutable FloatVector
+     * Multiply two FloatVectors value by value and store the result in a new
+     * MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;.
+     * @param left FloatVector.Abs.Sparse&lt;?&gt;; the left operand
+     * @param right FloatVector.Abs&lt;?&gt;; the right operand
+     * @return MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Sparse<SIUnit> times(final FloatVector.Abs.Sparse<?> left,
@@ -1029,10 +1075,51 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply two FloatVectors entry by entry.
-     * @param left Relative Sparse FloatVector
-     * @param right Relative FloatVector
-     * @return new Relative Sparse Mutable FloatVector
+     * Multiply two FloatVectors value by value and store the result in a new
+     * MutableFloatVector.Rel.Dense&lt;SIUnit&gt;.
+     * @param left FloatVector.Rel.Dense&lt;?&gt;; the left operand
+     * @param right FloatVector.Rel.Dense&lt;?&gt;; the right operand
+     * @return MutableFloatVector.Rel.Dense&lt;SIUnit&gt;
+     * @throws ValueException when the vectors do not have the same size
+     */
+    public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left,
+            final FloatVector.Rel.Dense<?> right) throws ValueException
+    {
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        MutableFloatVector.Rel.Dense<SIUnit> work =
+                new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        work.scaleValueByValue(right);
+        return work;
+    }
+
+    /**
+     * Multiply two FloatVectors value by value and store the result in a new
+     * MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;.
+     * @param left FloatVector.Rel.Dense&lt;?&gt;; the left operand
+     * @param right FloatVector.Rel.Sparse&lt;?&gt;; the right operand
+     * @return MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;
+     * @throws ValueException when the vectors do not have the same size
+     */
+    public static MutableFloatVector.Rel.Sparse<SIUnit> times(final FloatVector.Rel.Dense<?> left,
+            final FloatVector.Rel.Sparse<?> right) throws ValueException
+    {
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        MutableFloatVector.Rel.Sparse<SIUnit> work =
+                new MutableFloatVector.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+        work.scaleValueByValue(right);
+        return work;
+    }
+
+    /**
+     * Multiply two FloatVectors value by value and store the result in a new
+     * MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;.
+     * @param left FloatVector.Rel.Sparse&lt;?&gt;; the left operand
+     * @param right FloatVector.Rel&lt;?&gt;; the right operand
+     * @return MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Rel.Sparse<SIUnit> times(final FloatVector.Rel.Sparse<?> left,
@@ -1048,12 +1135,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Absolute Dense FloatVector
+     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * MutableFloatVector.Abs.Dense&lt;U&gt;.
+     * @param left FloatVector.Abs.Dense&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
-     * @return new Dense Absolute Mutable FloatVector
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatVector.Abs.Dense&lt;U&gt;
      * @throws ValueException when the vector and the array do not have the same size
-     * @param <U> Unit; the unit of the parameters
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> times(final FloatVector.Abs.Dense<U> left,
             final float[] right) throws ValueException
@@ -1062,26 +1150,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Relative Dense FloatVector
+     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * MutableFloatVector.Abs.Sparse&lt;U&gt;.
+     * @param left FloatVector.Abs.Sparse&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
-     * @return new Relative Dense Mutable FloatVector
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatVector.Abs.Sparse&lt;U&gt;
      * @throws ValueException when the vector and the array do not have the same size
-     * @param <U> Unit; the unit of the parameters
-     */
-    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> times(final FloatVector.Rel.Dense<U> left,
-            final float[] right) throws ValueException
-    {
-        return (MutableFloatVector.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
-    }
-
-    /**
-     * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Absolute Sparse FloatVector
-     * @param right float[]; the float array
-     * @return new Absolute Sparse Mutable FloatVector
-     * @throws ValueException when the vector and the array do not have the same size
-     * @param <U> Unit; the unit of the parameters
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> times(final FloatVector.Abs.Sparse<U> left,
             final float[] right) throws ValueException
@@ -1090,12 +1165,28 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Multiply the values in a FloatVector by the corresponding values in a float array.
-     * @param left Relative Sparse FloatVector
+     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * MutableFloatVector.Rel.Dense&lt;U&gt;.
+     * @param left FloatVector.Rel.Dense&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
-     * @return new Relative Sparse Mutable FloatVector
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
      * @throws ValueException when the vector and the array do not have the same size
-     * @param <U> Unit; the unit of the parameters
+     */
+    public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> times(final FloatVector.Rel.Dense<U> left,
+            final float[] right) throws ValueException
+    {
+        return (MutableFloatVector.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
+    }
+
+    /**
+     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * MutableFloatVector.Rel.Sparse&lt;U&gt;.
+     * @param left FloatVector.Rel.Sparse&lt;U&gt;; the FloatVector
+     * @param right float[]; the float array
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the vector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> times(final FloatVector.Rel.Sparse<U> left,
             final float[] right) throws ValueException
@@ -1105,21 +1196,21 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Make the Sparse equivalent of a DenseFloatMatrix1D.
-     * @param dense DenseFloatMatrix1D
+     * @param dense FloatMatrix1D; the Dense FloatMatrix1D
      * @return SparseFloatMatrix1D
      */
-    private static FloatMatrix1D makeSparse(final FloatMatrix1D dense)
+    private static SparseFloatMatrix1D makeSparse(final FloatMatrix1D dense)
     {
-        FloatMatrix1D result = new SparseFloatMatrix1D((int) dense.size());
+        SparseFloatMatrix1D result = new SparseFloatMatrix1D((int) dense.size());
         result.assign(dense);
         return result;
     }
 
     /**
      * Create a Sparse version of this Dense FloatVector.
-     * @param in FloatVector.Abs.Dense the Dense FloatVector
-     * @return MutableFloatVector.Abs.Sparse
-     * @param <U> Unit; the unit of the parameters
+     * @param in FloatVector.Abs.Dense&lt;U&gt;; the Dense FloatVector
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatVector.Abs.Sparse&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> denseToSparse(final FloatVector.Abs.Dense<U> in)
     {
@@ -1128,9 +1219,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Create a Sparse version of this Dense FloatVector.
-     * @param in FloatVector.Rel.Dense the Dense FloatVector
-     * @return MutableFloatVector.Rel.Sparse
-     * @param <U> Unit; the unit of the parameters
+     * @param in FloatVector.Rel.Dense&lt;U&gt;; the Dense FloatVector
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> denseToSparse(final FloatVector.Rel.Dense<U> in)
     {
@@ -1139,21 +1230,21 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Make the Dense equivalent of a SparseFloatMatrix1D.
-     * @param sparse SparseFloatMatrix1D
+     * @param sparse FloatMatrix1D; the Sparse FloatMatrix1D
      * @return DenseFloatMatrix1D
      */
-    private static FloatMatrix1D makeDense(final FloatMatrix1D sparse)
+    private static DenseFloatMatrix1D makeDense(final FloatMatrix1D sparse)
     {
-        FloatMatrix1D result = new SparseFloatMatrix1D((int) sparse.size());
+        DenseFloatMatrix1D result = new DenseFloatMatrix1D((int) sparse.size());
         result.assign(sparse);
         return result;
     }
 
     /**
      * Create a Dense version of this Sparse FloatVector.
-     * @param in FloatVector.Abs.Dense the Dense FloatVector
-     * @return MutableFloatVector.Abs.Sparse
-     * @param <U> Unit; the unit of the parameters
+     * @param in FloatVector.Abs.Sparse&lt;U&gt;; the Sparse FloatVector
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatVector.Abs.Dense&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> sparseToDense(final FloatVector.Abs.Sparse<U> in)
     {
@@ -1162,9 +1253,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Create a Dense version of this Sparse FloatVector.
-     * @param in FloatVector.Rel.Dense the Dense FloatVector
-     * @return MutableFloatVector.Rel.Sparse
-     * @param <U> Unit; the unit of the parameters
+     * @param in FloatVector.Rel.Sparse&lt;U&gt;; the Sparse FloatVector
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatVector.Rel.Dense&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> sparseToDense(final FloatVector.Rel.Sparse<U> in)
     {
