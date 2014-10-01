@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class AreaNode extends AbstractNode<Long, Point>
+public class AreaNode extends AbstractNode<String, Point>
 {
     /** */
     private static final long serialVersionUID = 20140920L;
@@ -39,7 +39,7 @@ public class AreaNode extends AbstractNode<Long, Point>
      */
     public AreaNode(final Point centroid, final Area area)
     {
-        super(area.getNr(), centroid);
+        super(area.getCentroidNr(), centroid);
         this.area = area;
     }
 

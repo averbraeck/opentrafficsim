@@ -54,7 +54,7 @@ public class Area implements LocatableInterface
     private final Geometry geometry;
 
     /** AREANR class java.lang.Long 15127 */
-    private final long nr;
+    private final String centroidNr;
 
     /** NAME class java.lang.String 70 Oostduinen */
     private final String name;
@@ -83,6 +83,7 @@ public class Area implements LocatableInterface
 
     /**
      * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
+     * @param centroidNr 
      * @param nr AREANR class java.lang.Long 15127
      * @param name NAME class java.lang.String 70 Oostduinen
      * @param gemeente GEMEENTEVM class java.lang.String sGravenhage
@@ -91,12 +92,12 @@ public class Area implements LocatableInterface
      * @param dhb DHB class java.lang.Double 70.0
      * @param centroid Centroid as a Point
      */
-    public Area(final Geometry geometry, final long nr, final String name, final String gemeente, final String gebied,
+    public Area(final Geometry geometry, String centroidNr, final String name, final String gemeente, final String gebied,
             final String regio, final double dhb, final Point centroid)
     {
         super();
         this.geometry = geometry;
-        this.nr = nr;
+        this.centroidNr = centroidNr;
         this.name = name;
         this.gemeente = gemeente;
         this.gebied = gebied;
@@ -170,9 +171,9 @@ public class Area implements LocatableInterface
     /**
      * @return nr
      */
-    public long getNr()
+    public String getCentroidNr()
     {
-        return this.nr;
+        return this.centroidNr;
     }
 
     /**
@@ -227,7 +228,7 @@ public class Area implements LocatableInterface
     @Override
     public String toString()
     {
-        return "Area [nr=" + this.nr + "]";
+        return "Area [nr=" + this.centroidNr + "]";
     }
 
     /**

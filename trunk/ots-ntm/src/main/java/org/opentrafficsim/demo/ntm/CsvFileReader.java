@@ -19,6 +19,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
+import org.opentrafficsim.demo.ntm.trafficdemand.TimeDynamicTripInfo;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
 
@@ -46,13 +47,15 @@ public class CsvFileReader
      * @param centroids
      * @param links
      * @param connectors
+     * @param profiles
      * @return the TripDemand (nested HashMap: <origin, map<destination, tripinformation>>
      * @throws IOException
      * @throws Throwable
      */
-    public static TripDemand ReadOmnitransExportDemand(final String csvFileName, String csvSplitBy,
-            final String csvSplitByTwo, Map<String, ShpNode> centroids, Map<String, ShpLink> links,
-            Map<String, ShpLink> connectors, NTMSettings settingsNTM) throws Throwable
+    public static TripDemand<TimeDynamicTripInfo> ReadOmnitransExportDemand(final String csvFileName,
+            String csvSplitBy, final String csvSplitByTwo, Map<String, ShpNode> centroids, Map<String, ShpLink> links,
+            Map<String, ShpLink> connectors, NTMSettings settingsNTM, ArrayList<DepartureTimeProfile> profiles)
+            throws Throwable
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -67,8 +70,8 @@ public class CsvFileReader
         }
 
         String path = url.getPath();
-        TripDemand tripDemand = new TripDemand();
-        Map<String, Map<String, TripInfo>> demand = new HashMap<String, Map<String, TripInfo>>();
+        TripDemand<TimeDynamicTripInfo> tripDemand = new TripDemand<TimeDynamicTripInfo>();
+        Map<String, Map<String, TimeDynamicTripInfo>> demand = new HashMap<String, Map<String, TimeDynamicTripInfo>>();
         Map<String, ShpNode> centroidsAndCordonConnectors = new HashMap<String, ShpNode>();
         try
         {
@@ -154,6 +157,7 @@ public class CsvFileReader
                         if (links.get(name) != null)
                         {
                             cordonConnector = links.get(name);
+                            // remove cordonLink from normal links to connectors!!
                             links.remove(links.get(name));
                             connectors.put(name, cordonConnector);
                         }
@@ -161,11 +165,12 @@ public class CsvFileReader
                         {
                             cordonConnector = connectors.get(name);
                         }
-
                         if (cordonConnector == null)
                         {
                             System.out.println("Strange: no connector found!!!!");
                         }
+
+                        
                         ShpNode nodeA = cordonConnector.getNodeA();
                         ShpNode nodeB = cordonConnector.getNodeB();
                         int countedNodesA = 0;
@@ -192,13 +197,13 @@ public class CsvFileReader
                         }
                         if (countedNodesA > countedNodesB)
                         {
-                            centroidsAndCordonConnectors.put(nodeA.getName(), nodeA);
-                            orderedZones.put(index, nodeA.getName());
+                            centroidsAndCordonConnectors.put(nodeB.getName(), nodeB);
+                            orderedZones.put(index, nodeB.getName());
                         }
                         else
                         {
-                            centroidsAndCordonConnectors.put(nodeB.getName(), nodeB);
-                            orderedZones.put(index, nodeB.getName());
+                            centroidsAndCordonConnectors.put(nodeA.getName(), nodeA);
+                            orderedZones.put(index, nodeA.getName());
                         }
 
                     }
@@ -211,47 +216,57 @@ public class CsvFileReader
                     index++;
                 }
             }
-
+            // after these preparations, the tripdata are being read
+            // only values > 0 are recorded!
             // then, read all other lines: first column contains the name of the origin
             // this can be either a link or a centroid (starts with "C")
+            int indexRow = 0;
             while ((line = bufferedReader.readLine()) != null)
             {
-                Map<String, TripInfo> tripDemandRow = new HashMap<String, TripInfo>();
+                Map<String, TimeDynamicTripInfo> tripDemandRow = new HashMap<String, TimeDynamicTripInfo>();
                 String[] tripData = line.split(csvSplitBy);
                 boolean firstElement = true;
                 String origin = null;
-                int index = 0;
-                for (String dataItem : tripData)
+                int indexColumn = 0;
+                for (String numberOfTrips : tripData)
                 {
-                    dataItem = RemoveQuotes(dataItem);
+                    numberOfTrips = RemoveQuotes(numberOfTrips);
                     if (firstElement)
                     {
-                        String checkedName = returnNumber(dataItem);
-                        origin = checkedName;
+/*                        String checkedName = returnNumber(dataItem);
+                        origin = checkedName;*/
+                        origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getName();
                         firstElement = false;
                     }
                     else
                     {
-                        dataItem = RemoveQuotes(dataItem);
-                        TripInfo tripInfo = new TripInfo(Double.parseDouble(dataItem));
-                        if (centroidsAndCordonConnectors.get(orderedZones.get(index)) == null)
-                        {
-                            System.out.println("Strange: no destination????");
+                        numberOfTrips = RemoveQuotes(numberOfTrips);
+                        //only the non-zero cells
+                        if (Double.parseDouble(numberOfTrips) > 0.0)  {
+                            // ToDo: now we simply take the first time profile. Should be input in file: which profile is
+                            // connected to which OD pair
+                            TimeDynamicTripInfo tripInfo =
+                                    new TimeDynamicTripInfo(Double.parseDouble(numberOfTrips), profiles.get(0));
+                            if (centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)) == null)
+                            {
+                                System.out.println("Strange: no destination????");
+                            }
+                            else
+                            {
+                                String destination = centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)).getName();
+                                tripDemandRow.put(destination, tripInfo);
+                            }
                         }
-                        else
-                        {
-                            String destination = centroidsAndCordonConnectors.get(orderedZones.get(index)).getName();
-                            tripDemandRow.put(destination, tripInfo);
-                        }
-                        index++;
+                        indexColumn++;
+                        
                     }
                 }
                 if (demand.get(origin) != null)
                 {
-                    throw new Error("duplicate origin");
+                  //  throw new Error("duplicate origin");
                 }
                 demand.put(origin, tripDemandRow);
-
+                indexRow++;
                 /*
                  * System.out.println(demand.get(3569L).get(1L).getNumberOfTrips());
                  * System.out.println(demand.get(3569L).get(2L).getNumberOfTrips());

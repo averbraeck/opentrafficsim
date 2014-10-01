@@ -56,20 +56,20 @@ public class CellBehaviourNTM implements CellBehaviour
     private double speedElse;
 
     /**
-     * @param id ID
-     * @param accCritical1 low param
-     * @param accCritical2 high param
-     * @param accJam jam param
-     * @param freeSpeed uncongested speed
-     * @param roadLength length of all roads
+     * @param parametersNTM are: 
+     * - id ID
+     * - accCritical1 low param
+     * - accCritical2 high param
+     * - accJam jam param
+     * - freeSpeed uncongested speed
+     * - roadLength length of all roads
      */
-    public CellBehaviourNTM(ParametersNTM parametersNTM)
+    public CellBehaviourNTM(final ParametersNTM parametersNTM)
     {
         super();
         this.parametersNTM = parametersNTM;
-        double capacity =
+        this.maxCapacity =
                 parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getValueInUnit(SpeedUnit.KM_PER_HOUR);
-        this.maxCapacity = capacity;
     }
 
     /**

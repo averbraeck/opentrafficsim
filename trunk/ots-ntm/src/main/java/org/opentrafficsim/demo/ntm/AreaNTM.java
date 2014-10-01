@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo.ntm;
 
-import org.opentrafficsim.core.unit.SpeedUnit;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
@@ -24,7 +22,9 @@ public class AreaNTM extends Area
 
     /** The movement of traffic between cells */
     private CellBehaviourNTM cellBehaviourNTM;
-
+    
+    /** The number of cars within this Area*/
+    private double accumulatedCars; 
     /**
      * @param geometry
      * @param nr
@@ -36,7 +36,7 @@ public class AreaNTM extends Area
      * @param centroid
      * @param parametersNTM
      */
-    public AreaNTM(Geometry geometry, long nr, final String name, final String gemeente, final String gebied,
+    public AreaNTM(Geometry geometry, String nr, final String name, final String gemeente, final String gebied,
             final String regio, double dhb, Point centroid)
     {
         super(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
@@ -53,7 +53,7 @@ public class AreaNTM extends Area
      * @param centroid
      * @param parametersNTM
      */
-    public AreaNTM(Geometry geometry, long nr, final String name, final String gemeente, final String gebied,
+    public AreaNTM(Geometry geometry, String nr, final String name, final String gemeente, final String gebied,
             final String regio, double dhb, Point centroid, final ParametersNTM parametersNTM)
     {
         super(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
@@ -65,7 +65,7 @@ public class AreaNTM extends Area
      */
     public CellBehaviourNTM getCellBehaviourNTM()
     {
-        return cellBehaviourNTM;
+        return this.cellBehaviourNTM;
     }
 
     /**
@@ -74,6 +74,22 @@ public class AreaNTM extends Area
     public void setCellBehaviourNTM(CellBehaviourNTM cellBehaviourNTM)
     {
         this.cellBehaviourNTM = cellBehaviourNTM;
+    }
+
+    /**
+     * @return accumulatedCars.
+     */
+    public double getAccumulatedCars()
+    {
+        return this.accumulatedCars;
+    }
+
+    /**
+     * @param d set accumulatedCars.
+     */
+    public void setAccumulatedCars(double d)
+    {
+        this.accumulatedCars = d;
     }
     
     
