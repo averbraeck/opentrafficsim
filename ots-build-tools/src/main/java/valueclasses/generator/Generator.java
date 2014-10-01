@@ -782,10 +782,63 @@ public class Generator
         generateScalarClass("Double", false);
         generateScalarClass("Double", true);
 
+        generateReadOnlyVectorFunctions("Float");
+        generateReadOnlyVectorFunctions("Double");
         generateVectorClass("Float", false);
         generateVectorClass("Float", true);
         generateVectorClass("Double", false);
         generateVectorClass("Double", true);
+    }
+
+    /**
+     * @param type String; type of the result of the generated functions
+     */
+    private static void generateReadOnlyVectorFunctions(String type)
+    {
+        generateInterface(
+                "value.v" + type.toLowerCase() + ".vector",
+                "ReadOnly" + type + "VectorFunctions",
+                new String[]{"org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.ValueException",
+                        "org.opentrafficsim.core.value.v" + type.toLowerCase() + ".scalar." + type + "Scalar"},
+                "Methods that operate on " + type + "Vector but do not modify the contents of the " + type + "Vector",
+                new String[]{"<U> Unit of the vector"},
+                "<U extends Unit<U>>",
+                buildMethod(indentStep, "|int|size|the size of the vector", "Retrieve the size of the vector.", null,
+                        null, null, null, false)
+
+                        + buildMethod(indentStep, "|int|cardinality|the number of cells having non-zero value",
+                                "Count the number of cells that have a non-zero value (ignores tolerance).", null,
+                                null, null, null, false)
+                        + buildMethod(indentStep, "|" + type.toLowerCase()
+                                + "|getSI|value at position index in the standard SI unit",
+                                "Retrieve the value stored at a specified position in the standard SI unit.",
+                                new String[]{"int|index|index of the value to return"},
+                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                                null, false)
+                        + buildMethod(indentStep, "|" + type.toLowerCase()
+                                + "|getInUnit|value at position index in the original unit",
+                                "Retrieve the value stored at a specified position in the original unit.",
+                                new String[]{"int|index|index of the value to return"},
+                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                                null, false)
+                        + buildMethod(indentStep, "|" + type.toLowerCase()
+                                + "|getInUnit|value at position index converted into the specified unit",
+                                "Retrieve the value stored at a specified position converted into a specified unit.",
+                                new String[]{"int|index|index of the value to return",
+                                        "U|targetUnit|the unit for the result"},
+                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                                null, false)
+                        + buildMethod(indentStep, "|" + type
+                                + "Scalar<U>|get|the strongly typed value of the selected cell",
+                                "Retrieve the value stored at position index converted into a " + type
+                                        + "Scalar&lt;U&gt;.", new String[]{"int|index|index of the value to return"},
+                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                                null, false)
+                        + buildMethod(indentStep, "|" + type.toLowerCase()
+                                + "|zSum|the sum of all values of this vector",
+                                "Compute the sum of all values of this vector.", null, null, null, null, false)
+
+        );
     }
 
     /**
