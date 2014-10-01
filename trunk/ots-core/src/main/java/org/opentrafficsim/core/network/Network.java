@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -148,6 +149,8 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         return this.id;
     }
 
+    
+    
     /**
      * @return nodeSet
      */
@@ -289,7 +292,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         }
     }
 
-    /*-
+/*    
     public boolean expandNode(AbstractNode<?, ?> node) throws NetworkException
     {
         if (expansionOfNode == null)
@@ -298,12 +301,44 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         }
         else
         {
+             
+            
+            
         }
     }
 
-    public boolean collapseToNode(Network<?, ?> node)
+    public boolean collapseToNode(HashSet<AbstractNodes> nodeSet)
     {
+       Iterator<L> it = l.iterator();
+       Set<L> neighbours = new HashSet<L> ();
+       Set<AbstractNode> neighbourNodes= new HashSet<AbstractNode>();  
+       while(it.hasNext()){
+           AbstractLink link =it.next();
+           AbstractNode<?, ?> node1 = link.getEndNode();
+           AbstractNode<?, ?> node2 = link.getStartNode();
+           boolean n1 = network.isInNetwork(node1);
+           boolean n2 = network.isInNetwork(node2);
+           
+           if (!n1 || !n2  ){
+               neighbours.add(link);
+               if(!n1){
+                   // neighbourNodes.add(node1);
+                   network.addNode(node2);
+               }
+               else{
+                   // neighbourNodes.add(node2);
+                       network.addNode(node1);
+                   }
+                       
+               }
+           }
+      
+       
+       
+       
     }
-     */
+        
+ */
+     
 
 } // End of class
