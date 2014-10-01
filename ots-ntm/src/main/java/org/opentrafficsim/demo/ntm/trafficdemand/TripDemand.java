@@ -18,12 +18,13 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
+ * @param <TripInformation> 
  */
-public class TripDemand
+public class TripDemand<TripInformation>
 {
 
     /** information on trips: number, shortest path etc..*/
-    private Map<String, Map<String, TripInfo>> tripInfo;
+    private Map<String, Map<String, TripInformation>> tripInfo;
     /** starting time. */
     private DoubleScalar.Abs<TimeUnit> startTime;
     /** time period covered by this demand. */
@@ -38,7 +39,7 @@ public class TripDemand
     /**
      * @param tripInfo information for all non-empty OD-pairs
      */
-    public TripDemand(final Map<String, Map<String, TripInfo>> tripInfo)
+    public TripDemand(final Map<String, Map<String, TripInformation>> tripInfo)
     {
         super();
         this.tripInfo = tripInfo;
@@ -61,7 +62,7 @@ public class TripDemand
     /**
      * @return tripDemand
      */
-    public final Map<String, Map<String, TripInfo>> getTripInfo()
+    public final Map<String, Map<String, TripInformation>> getTripInfo()
     {
         return this.tripInfo;
     }
@@ -83,7 +84,7 @@ public class TripDemand
     /**
      * @param tripInfo sets tripInfo
      */
-    public final void setTripInfo(final Map<String, Map<String, TripInfo>> tripInfo)
+    public final void setTripInfo(final Map<String, Map<String, TripInformation>> tripInfo)
     {
         this.tripInfo = tripInfo;
     }
@@ -93,10 +94,10 @@ public class TripDemand
      * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
-    public Map<String, TripInfo> getTripDemand_Origin_AllDestinations(String origin, String destination)
+    public Map<String, TripInformation> getTripDemand_Origin_AllDestinations(String origin, String destination)
     {
-        Map<String, Map<String, TripInfo>> demand = this.getTripInfo();
-        Map<String, TripInfo> mapDestinations = demand.get(origin);
+        Map<String, Map<String, TripInformation>> demand = this.getTripInfo();
+        Map<String, TripInformation> mapDestinations = demand.get(origin);
         return mapDestinations;
     }
 
@@ -105,11 +106,11 @@ public class TripDemand
      * @param destination
      * @return tripInfo by OD pair
      */
-    public TripInfo getTripDemand_Origin_Destination(String origin, String destination)
+    public TripInformation getTripDemand_Origin_Destination(String origin, String destination)
     {
-        Map<String, Map<String, TripInfo>> tripInfoAll = this.getTripInfo();
-        Map<String, TripInfo> map = tripInfoAll.get(origin);
-        TripInfo info = map.get(destination);
+        Map<String, Map<String, TripInformation>> tripInfoAll = this.getTripInfo();
+        Map<String, TripInformation> map = tripInfoAll.get(origin);
+        TripInformation info = map.get(destination);
         return info;
     }
 

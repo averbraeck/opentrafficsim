@@ -38,7 +38,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<Long, ? extends Area> ReadAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
+    public static Map<String, AreaNTM> ReadAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
             throws IOException
     {
         /*-
@@ -64,12 +64,12 @@ public class ShapeFileReader
             url = ShapeFileReader.class.getResource(shapeFileName);
         ShapefileDataStore storeAreas = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<Long, Area> areas = new HashMap<>();
+        Map<String, AreaNTM> areas = new HashMap<>();
 
         SimpleFeatureSource featureSourceAreas = storeAreas.getFeatureSource();
         SimpleFeatureCollection featureCollectionAreas = featureSourceAreas.getFeatures();
         SimpleFeatureIterator iterator = featureCollectionAreas.features();
-        long newNr = 100000000L;
+        Long newNr = 100000000L;
         int numberOfAreasWithoutCentroid = 0;
         int numberOfAreasWithCentroid = 0;
         try
@@ -79,15 +79,15 @@ public class ShapeFileReader
                 SimpleFeature feature = iterator.next();
                 ParametersNTM parametersNTM = null;
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
-                long nr = (long) feature.getAttribute("AREANR");
-                long centroidNr = (long) feature.getAttribute("CENTROIDNR");
+               // String nr =  String.valueOf(feature.getAttribute("AREANR"));
+                String centroidNr = "C" + String.valueOf(feature.getAttribute("CENTROIDNR"));
                 String name = (String) feature.getAttribute("NAME");
                 String gemeente = (String) feature.getAttribute("GEMEENTEVM");
                 String gebied = (String) feature.getAttribute("GEBIEDSNAA");
                 String regio = (String) feature.getAttribute("REGIO");
                 double dhb = (double) feature.getAttribute("DHB");
                 // search for areas within the centroids (from the "points")
-                ShpNode centroid = centroids.get("C" + centroidNr);
+                ShpNode centroid = centroids.get(centroidNr);
                 if (centroid == null)
                 {
                     // System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" +
@@ -97,13 +97,14 @@ public class ShapeFileReader
                 }
                 else
                 {
-                    if (areas.containsKey(nr))
+                    if (areas.containsKey(centroidNr))
                     {
-                        System.out.println("Area number " + nr + "(" + name + ") already exists. Number not unique!");
-                        nr = newNr++;
+                        System.out.println("Area number " + centroidNr + "(" + name + ") already exists. Number not unique!");
+                        newNr++;
+                        centroidNr = newNr.toString();                        
                     }
-                    AreaNTM area = new AreaNTM(geometry, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint());
-                    areas.put(nr, area);
+                    AreaNTM area = new AreaNTM(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint());
+                    areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
             }
