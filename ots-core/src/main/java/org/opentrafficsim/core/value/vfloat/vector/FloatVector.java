@@ -34,7 +34,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** The internal storage for the vector; the values are stored in standard SI unit; storage can be dense or sparse. */
+    /**
+     * The internal storage for the vector; internally the values are stored in standard SI unit; storage can be dense
+     * or sparse.
+     */
     private FloatMatrix1D vectorSI;
 
     /**
@@ -394,7 +397,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create a mutable version of this FloatVector. <br>
      * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
      * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
-     * @return MutableFloatVector<U>; mutable version of this FloatVector
+     * @return MutableFloatVector&lt;U&gt;; mutable version of this FloatVector
      */
     public abstract MutableFloatVector<U> mutable();
 
@@ -445,7 +448,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Create storage for the data. <br/>
      * This method must be implemented by each leaf class.
      * @param size int; the number of cells in the vector
-     * @return FloatMatrix1D; an instance of the right type of FloatMatrix1D (absolute / relative, dense / sparse, etc.)
+     * @return FloatMatrix1D; an instance of the right type of FloatMatrix1D (absolute/relative, dense/sparse, etc.)
      */
     protected abstract FloatMatrix1D createMatrix1D(final int size);
 
@@ -469,7 +472,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Create a float[] array filled with the values converted into a specified unit.
-     * @param targetUnit U; the unit into which the values are converted for display
+     * @param targetUnit U; the unit into which the values are converted for use
      * @return float[]; the values converted into the specified unit
      */
     public final float[] getValuesInUnit(final U targetUnit)
@@ -669,7 +672,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Check that a provided array can be used to create some descendant of a FloatVector.
      * @param fsArray FloatScalar&lt;U&gt;[]; the provided array
      * @param <U> Unit; the unit of the FloatScalar array
-     * @return FloatScalar<U>[]; the provided array
+     * @return FloatScalar&lt;U&gt;[]; the provided array
      * @throws ValueException when the provided array has length equal to 0
      */
     protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray)

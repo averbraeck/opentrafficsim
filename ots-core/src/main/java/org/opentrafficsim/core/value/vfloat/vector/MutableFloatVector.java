@@ -1135,13 +1135,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * Multiply the values in a FloatVector and a float array value by value and store the result in a new
      * MutableFloatVector.Abs.Dense&lt;U&gt;.
      * @param left FloatVector.Abs.Dense&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
      * @param <U> Unit; the unit of the left parameter and the result
      * @return MutableFloatVector.Abs.Dense&lt;U&gt;
-     * @throws ValueException when the vector and the array do not have the same size
+     * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> times(final FloatVector.Abs.Dense<U> left,
             final float[] right) throws ValueException
@@ -1150,13 +1150,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * Multiply the values in a FloatVector and a float array value by value and store the result in a new
      * MutableFloatVector.Abs.Sparse&lt;U&gt;.
      * @param left FloatVector.Abs.Sparse&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
      * @param <U> Unit; the unit of the left parameter and the result
      * @return MutableFloatVector.Abs.Sparse&lt;U&gt;
-     * @throws ValueException when the vector and the array do not have the same size
+     * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> times(final FloatVector.Abs.Sparse<U> left,
             final float[] right) throws ValueException
@@ -1165,13 +1165,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * Multiply the values in a FloatVector and a float array value by value and store the result in a new
      * MutableFloatVector.Rel.Dense&lt;U&gt;.
      * @param left FloatVector.Rel.Dense&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
      * @param <U> Unit; the unit of the left parameter and the result
      * @return MutableFloatVector.Rel.Dense&lt;U&gt;
-     * @throws ValueException when the vector and the array do not have the same size
+     * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> times(final FloatVector.Rel.Dense<U> left,
             final float[] right) throws ValueException
@@ -1180,13 +1180,13 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Scale the values in a FloatVector and a float array value by value and store the result in a new
+     * Multiply the values in a FloatVector and a float array value by value and store the result in a new
      * MutableFloatVector.Rel.Sparse&lt;U&gt;.
      * @param left FloatVector.Rel.Sparse&lt;U&gt;; the FloatVector
      * @param right float[]; the float array
      * @param <U> Unit; the unit of the left parameter and the result
      * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
-     * @throws ValueException when the vector and the array do not have the same size
+     * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> times(final FloatVector.Rel.Sparse<U> left,
             final float[] right) throws ValueException
