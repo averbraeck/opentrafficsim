@@ -17,30 +17,33 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public interface WriteDoubleVectorFunctions<U extends Unit<U>>
 {
     /**
-     * @param index position to set the value in the SI unit in which it has been stored.
-     * @param valueSI the value to store in the cell
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Replace the value at index by the supplied value which is expressed in the standard SI unit.
+     * @param index int; index of the value to replace
+     * @param valueSI double; the value to store (expressed in the standard SI unit)
+     * @throws ValueException when index &lt; 0 or index &gt;= size()
      */
     void setSI(int index, double valueSI) throws ValueException;
 
     /**
-     * @param index position to set the value in the original unit of creation.
-     * @param value the strongly typed value to store in the cell
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Replace the value at index by the supplied value which is in a compatible unit.
+     * @param index int; index of the value to replace
+     * @param value doubleScalar&lt;U&gt;; the strongly typed value to store
+     * @throws ValueException when index &lt; 0 or index &gt;= size()
      */
     void set(int index, DoubleScalar<U> value) throws ValueException;
 
     /**
-     * @param index position to set the value in the provided unit.
-     * @param value the value to store in the cell
-     * @param valueUnit the unit of the value.
-     * @throws ValueException if index &lt; 0 or index &gt;= vector.size().
+     * Replace the value at index by the supplied value which is expressed in a supplied (compatible) unit.
+     * @param index int; index of the value to replace
+     * @param value double; the value to store (which is expressed in valueUnit)
+     * @param valueUnit U; unit of the supplied value
+     * @throws ValueException when index &lt; 0 or index &gt;= size()
      */
     void setInUnit(int index, double value, U valueUnit) throws ValueException;
 
     /**
-     * normalize the vector, i.e. make the sum of all elements equal to 1.
-     * @throws ValueException if the sum of the values is zero, and normalization is not possible
+     * Normalize the vector, i.e. scale the values to make the sum equal to 1.
+     * @throws ValueException when the sum of the values is zero and normalization is not possible
      */
     void normalize() throws ValueException;
 
