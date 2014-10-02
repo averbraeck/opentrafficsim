@@ -14,6 +14,10 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -59,9 +63,13 @@ public class ShapeFileReader
 
         URL url;
         if (new File(shapeFileName).canRead())
+        {
             url = new File(shapeFileName).toURI().toURL();
+        }
         else
+        {
             url = ShapeFileReader.class.getResource(shapeFileName);
+        }
         ShapefileDataStore storeAreas = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
         Map<String, AreaNTM> areas = new HashMap<>();
@@ -72,14 +80,16 @@ public class ShapeFileReader
         Long newNr = 100000000L;
         int numberOfAreasWithoutCentroid = 0;
         int numberOfAreasWithCentroid = 0;
+        DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(10, LengthUnit.KILOMETER);
+        ParametersNTM parametersNTM = new ParametersNTM(25.0, 50.0, 100, speed, roadLength);
         try
         {
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
-                ParametersNTM parametersNTM = null;
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
-               // String nr =  String.valueOf(feature.getAttribute("AREANR"));
+                // String nr = String.valueOf(feature.getAttribute("AREANR"));
                 String centroidNr = "C" + String.valueOf(feature.getAttribute("CENTROIDNR"));
                 String name = (String) feature.getAttribute("NAME");
                 String gemeente = (String) feature.getAttribute("GEMEENTEVM");
@@ -99,11 +109,13 @@ public class ShapeFileReader
                 {
                     if (areas.containsKey(centroidNr))
                     {
-                        System.out.println("Area number " + centroidNr + "(" + name + ") already exists. Number not unique!");
+                        System.out.println("Area number " + centroidNr + "(" + name
+                                + ") already exists. Number not unique!");
                         newNr++;
-                        centroidNr = newNr.toString();                        
+                        centroidNr = newNr.toString();
                     }
-                    AreaNTM area = new AreaNTM(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint());
+                    AreaNTM area =
+                            new AreaNTM(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint(), parametersNTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -147,9 +159,13 @@ public class ShapeFileReader
 
         URL url;
         if (new File(shapeFileName).canRead())
+        {
             url = new File(shapeFileName).toURI().toURL();
+        }
         else
+        {
             url = ShapeFileReader.class.getResource(shapeFileName);
+        }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
         Map<String, ShpNode> nodes = new HashMap<>();
@@ -163,7 +179,7 @@ public class ShapeFileReader
             {
                 SimpleFeature feature = iterator.next();
                 Point point = (Point) feature.getAttribute("the_geom");
-                String name = CsvFileReader.RemoveQuotes(String.valueOf(feature.getAttribute(numberType)));
+                String name = CsvFileReader.removeQuotes(String.valueOf(feature.getAttribute(numberType)));
                 boolean addThisNode = false;
                 if (returnCentroid)
                 {
@@ -174,6 +190,10 @@ public class ShapeFileReader
                 }
                 else
                 {
+                    if (name == null)
+                    {
+                        System.out.println("null found");
+                    }
                     if (!name.substring(0, 1).equals("C"))
                     {
                         addThisNode = true;
@@ -208,7 +228,7 @@ public class ShapeFileReader
     public static String NodeCentroidNumber(String number)
     {
         // String nr = null;
-        number = CsvFileReader.RemoveQuotes(number);
+        number = CsvFileReader.removeQuotes(number);
         String[] names = number.split(":");
         String name = names[0];
         if (name.charAt(0) == 'C')
@@ -226,7 +246,7 @@ public class ShapeFileReader
     public static boolean InspectNodeCentroid(String number)
     {
         boolean isCentroid = false;
-        number = CsvFileReader.RemoveQuotes(number);
+        number = CsvFileReader.removeQuotes(number);
         String[] names = number.split(":");
         String name = names[0];
         if (name.charAt(0) == 'C')
@@ -267,9 +287,13 @@ public class ShapeFileReader
 
         URL url;
         if (new File(shapeFileName).canRead())
+        {
             url = new File(shapeFileName).toURI().toURL();
+        }
         else
+        {
             url = ShapeFileReader.class.getResource(shapeFileName);
+        }
         ShapefileDataStore storeLinks = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
         SimpleFeatureSource featureSourceLinks = storeLinks.getFeatureSource();
         SimpleFeatureCollection featureCollectionLinks = featureSourceLinks.getFeatures();
@@ -388,12 +412,16 @@ public class ShapeFileReader
      * @param centroid
      * @return if TRUE: the points match geographically
      */
-    public static boolean testGeometry(Coordinate coordinate, Point centroid)
+    public static boolean testGeometry(final Coordinate coordinate, final Point centroid)
     {
         boolean geomEqual = false;
         if (Math.abs(coordinate.x - centroid.getX()) < 1)
+        {
             if (Math.abs(coordinate.y - centroid.getY()) < 1)
+            {
                 geomEqual = true;
+            }
+        }
         return geomEqual;
     }
 
@@ -405,9 +433,13 @@ public class ShapeFileReader
     {
         URL url;
         if (new File(shapeFileName).canRead())
+        {
             url = new File(shapeFileName).toURI().toURL();
+        }
         else
+        {
             url = ShapeFileReader.class.getResource(shapeFileName);
+        }
         ShapefileDataStore store = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
         SimpleFeatureSource featureSource = store.getFeatureSource();

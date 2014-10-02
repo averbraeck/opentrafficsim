@@ -28,13 +28,14 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
 import org.opentrafficsim.demo.ntm.animation.LinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
-import org.opentrafficsim.demo.ntm.trafficdemand.TimeDynamicTripInfo;
+import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -77,7 +78,7 @@ public class NTMModel implements OTSModelInterface
     private Map<String, ShpNode> centroids;
 
     /** the demand of trips by Origin and Destination. */
-    private TripDemand<TimeDynamicTripInfo> tripDemand;
+    private TripDemand<TripInfoTimeDynamic> tripDemand;
 
     /** The simulation settings. */
     private NTMSettings settingsNTM;
@@ -119,6 +120,7 @@ public class NTMModel implements OTSModelInterface
             // set the time step value at ten seconds;
             DoubleScalar.Rel<TimeUnit> timeStep = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             this.settingsNTM = new NTMSettings(timeStep);
+            
             // read the shape files
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
             // returnCentroid, boolean allCentroids)
@@ -144,11 +146,11 @@ public class NTMModel implements OTSModelInterface
             // this.centroids);
             this.areas = createHighwayAreas(this.shpLinks, this.areas);
             // read the time profile curves: these will be attached to the demands
-            this.setDepartureTimeProfiles(CsvFileReader.ReadDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
+            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
 
             // read TrafficDemand /src/main/resources
             // including information on the time period this demand covers!
-            this.setTripDemand(CsvFileReader.ReadOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
+            this.setTripDemand(CsvFileReader.readOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles()));
 
@@ -164,7 +166,7 @@ public class NTMModel implements OTSModelInterface
             }
 
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "generateDemand", null);
+                    "initiateSimulationNTM", null);
 
             // this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
             // "drawGraph", null);
@@ -178,24 +180,22 @@ public class NTMModel implements OTSModelInterface
     /**
      * Generate demand at fixed intervals based on traffic demand (implemented by re-scheduling this method).
      */
-    protected final void generateDemand()
+    protected final void initiateSimulationNTM()
     {
         // At time zero, there are no cars in the network
         // we start the simulation by injecting traffic into the areas, based on the traffic demand input
         // The trips are put in the "stock" of the area, but keep a reference to the destination and to the first Area
         // they encounter (a neighbour) on their shortest path towards that destination.
-        // AreaNode vertex = this.centroids.;
-        // this.areaGraph.edgesOf(vertex);
 
-        // Intiate the simulation by creating the paths
-        boolean Floyd = true;
-        boolean Dijkstra = false;
+
+        // Initiate the simulation by creating the paths
+        boolean floyd = true;
         @SuppressWarnings("unchecked")
         Collection<GraphPath<AreaNode, LinkEdge<Link>>> sp1 = null;
 
         long initial = System.currentTimeMillis();
 
-        if (Floyd)
+        if (floyd)
         {
             sp1 = new FloydWarshallShortestPaths(this.areaGraph).getShortestPaths();
             for (GraphPath<AreaNode, LinkEdge<Link>> path : sp1)
@@ -211,7 +211,7 @@ public class NTMModel implements OTSModelInterface
                 // TODO: the centroids at the cordon have yet to be connected to the area (yet to be created)
                 if (origin.getId().startsWith("C") && endNode.getId().startsWith("C"))
                 {
-                    TimeDynamicTripInfo tripInfo =
+                    TripInfoTimeDynamic tripInfo =
                             this.tripDemand.getTripDemand_Origin_Destination(origin.getId(), endNode.getId());
                     if (tripInfo != null)
                     {
@@ -233,38 +233,6 @@ public class NTMModel implements OTSModelInterface
         {
             exception.printStackTrace();
         }
-        /*
-         * Set<AreaNode> vertices = this.areaGraph.vertexSet(); int limitTo = 0; int numberNoPathFound = 0; initial =
-         * System.currentTimeMillis(); if (Dijkstra) { for (AreaNode origin : vertices) { AreaNTM area =
-         * this.areas.get(origin.getArea().getCentroidNr()); area.setAccumulatedCars(100); for (AreaNode destination :
-         * vertices) { if (!origin.equals(destination)) { DijkstraShortestPath<AreaNode, LinkEdge<Link>> sp = new
-         * DijkstraShortestPath<>(this.areaGraph, origin, destination); if (sp.getPath() != null) { AreaNode startNode =
-         * sp.getPathEdgeList().get(0).getLink().getStartNode(); AreaNode endNode =
-         * sp.getPathEdgeList().get(0).getLink().getEndNode(); AreaNTM areaNext =
-         * this.areas.get(endNode.getArea().getCentroidNr()); System.out.println("origin = " + origin.getArea().getNr()
-         * + " startNode " + startNode.getArea().getNr() + " endNode " + endNode.getArea().getNr());
-         * System.out.println("Length=" + sp.getPathLength()); } else if (sp.getPath() == null) { numberNoPathFound++;
-         * // System.out.println("Null message"); } } limitTo++; } } System.out.println("finished: " + limitTo +
-         * " paths"); System.out.println("Number of Paths not found =" + numberNoPathFound); } now =
-         * System.currentTimeMillis() - initial; System.out.println("Dijkstra: time duration in millis = " + now);
-         */
-
-        // The stock contains all trips from this area to all other destinations, including trips that are passing this
-        // area
-
-        // the total production of an area depends on the accumulation (stock) and the NFD function
-
-        // then, at every time step the following processes occur:
-
-        // traffic moves from one cell to another based on the cell production (demand), the routes, and the possibility
-        // to accept traffic in another cell (supply)
-
-        /*
-         * DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
-         * DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-         * IDMCar car = new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
-         * .getSimulatorTime().get(), initialPosition, initialSpeed); this.cars.add(0, car);
-         */
 
     }
 
@@ -273,48 +241,89 @@ public class NTMModel implements OTSModelInterface
      */
     protected final void startSimulate()
     {
-        double accumulateCars = 0; 
-        long timeStep = 0;
+        double accumulatedCars = 0;
+        //long timeStep = 0;
+        
         // Initiate trips from OD to first Area (Origin)
-        Map<String, Map<String, TimeDynamicTripInfo>> trips = this.tripDemand.getTripInfo();
+        Map<String, Map<String, TripInfoTimeDynamic>> trips = this.tripDemand.getTripInfo();
         for (AreaNTM areaFrom : this.areas.values())
         {
-            accumulateCars = areaFrom.getAccumulatedCars();
+            // at every iteration: initiate with value 0
+            areaFrom.getCellBehaviourNTM().setDemandToEnter(0);
+
+            accumulatedCars = areaFrom.getAccumulatedCars();
             if (trips.containsKey(areaFrom))
             {
-                Map<String, TimeDynamicTripInfo> tripsFrom = trips.get(areaFrom);
+                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom);
                 for (AreaNTM areaTo : this.areas.values())
                 {
                     if (tripsFrom.containsKey(areaTo))
                     {
-                        accumulateCars += tripsFrom.get(areaTo).getNumberOfTrips();
+                        // adjust next formulae wit time dependant variable
+                        double startingTrips = tripsFrom.get(areaTo).getNumberOfTrips();
+                        tripsFrom.get(areaTo).addToPassingTrips(startingTrips);
+                        accumulatedCars += startingTrips;
                     }
                 }
             }
             // put these trips in the stock of the Area (added the new Trips)
-            areaFrom.setAccumulatedCars(accumulateCars);
+            areaFrom.setAccumulatedCars(accumulatedCars);
+
+            // compute the total production from an Area to all other Destinations (based on the accumulation NFD)
+            areaFrom.getCellBehaviourNTM().computeProductionDemand(accumulatedCars);
+
+            // compute the total supply (maximum) from neighbours to an Area (based on the accumulation NFD)
+            areaFrom.getCellBehaviourNTM().computeProductionSupply(accumulatedCars);
+            
         }
         
+        // compute the flows if no restrictions on the supply side
+        // these will be corrected if supply poses restrictions!
         for (AreaNTM areaFrom : this.areas.values())
         {
-            accumulateCars = areaFrom.getAccumulatedCars();
+            accumulatedCars = areaFrom.getAccumulatedCars();
             if (trips.containsKey(areaFrom))
             {
-                Map<String, TimeDynamicTripInfo> tripsFrom = trips.get(areaFrom);
+                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom);
                 for (AreaNTM areaTo : this.areas.values())
                 {
                     if (tripsFrom.containsKey(areaTo))
                     {
-                        accumulateCars += tripsFrom.get(areaTo).getNumberOfTrips();
+                        // retrieve the number of cars that want to leave to a neighbouring cell
+                        AreaNTM neighbour = findArea(tripsFrom.get(areaTo).getNeighbour().getPoint());
+                        double share = tripsFrom.get(areaTo).getPassingTrips() / areaFrom.getAccumulatedCars();
+                        double flowFromDemand = share * areaFrom.getCellBehaviourNTM().getProductionDemand();
+                        tripsFrom.get(neighbour).setFlow(flowFromDemand);     
+                        neighbour.getCellBehaviourNTM().addDemandToEnter(flowFromDemand);
                     }
                 }
             }
-            // put these trips in the stock of the Area (added the new Trips)
-            areaFrom.setAccumulatedCars(accumulateCars);
+        }
+
+        // compute the flows if no restrictions on the supply side
+        // these will be corrected if supply poses restrictions!
+        for (AreaNTM areaFrom : this.areas.values())
+        {
+            accumulatedCars = areaFrom.getAccumulatedCars();
+            if (trips.containsKey(areaFrom))
+            {
+                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom);
+                for (AreaNTM areaTo : this.areas.values())
+                {
+                    if (tripsFrom.containsKey(areaTo))
+                    {
+                        // retrieve the number of cars that want to leave to a neighbouring cell
+                        AreaNTM neighbour = findArea(tripsFrom.get(areaTo).getNeighbour().getPoint());
+                        double share = tripsFrom.get(areaTo).getFlow() / neighbour.getCellBehaviourNTM().getDemandToEnter();
+                        double flowFromDemand = share * neighbour.getCellBehaviourNTM().getProductionSupply();
+                        tripsFrom.get(neighbour).setFlow(flowFromDemand);
+                    }
+                }
+            }
         }
         
-
-
+        
+        
         // Evaluate the accumulation per area and determine the maximum production
 
         // potential transfer from a source area to all neighbours (demand)
@@ -507,19 +516,6 @@ public class NTMModel implements OTSModelInterface
                 }
                 System.out.println("Length = " + System.currentTimeMillis());
 
-                /*
-                 * // test K shortest int k = 3; int counterStart = 0; for (AreaNode startNode :
-                 * areaNodeCentroidMap.values()) { KShortestPaths<AreaNode, LinkEdge<Link>> kShortest = new
-                 * KShortestPaths(this.areaGraph, startNode, k); counterStart++; int counterEnd = 0;
-                 * System.out.println("Paths = " + counterStart); for (AreaNode endNode : areaNodeCentroidMap.values())
-                 * { if (!startNode.equals(endNode)) { List<GraphPath<AreaNode, LinkEdge<Link>>> list1 =
-                 * kShortest.getPaths(endNode); System.out.println("getPaths = " + counterEnd); counterEnd++; } } }
-                 * System.out.println("Length = " + System.currentTimeMillis());
-                 * System.out.println("Test k shortest length 1 = " + list1.get(0).getWeight());
-                 * System.out.println("Test k shortest length 1 = " + list1.get(1).getWeight());
-                 * System.out.println("Test k shortest length 1 = " + list1.get(2).getWeight());
-                 * System.out.println("Length = " + System.currentTimeMillis());
-                 */
             }
         }
 
@@ -529,10 +525,10 @@ public class NTMModel implements OTSModelInterface
      * @param p the point to search.
      * @return the area that contains point p, or null if not found.
      */
-    private Area findArea(final Point p)
+    private AreaNTM findArea(final Point p)
     {
-        Area area = null;
-        for (Area a : this.areas.values())
+        AreaNTM area = null;
+        for (AreaNTM a : this.areas.values())
         {
             if (a.getGeometry().contains(p))
             {
@@ -603,7 +599,6 @@ public class NTMModel implements OTSModelInterface
                 Geometry buffer = shpLink.getGeometry().buffer(10);
                 Point centroid = buffer.getCentroid();
                 String nr = shpLink.getNr();
-                String centroidNr = shpLink.getNr();
                 String name = shpLink.getName();
                 String gemeente = shpLink.getName();
                 String gebied = shpLink.getName();
@@ -627,15 +622,15 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return settingsNTM.
      */
-    public NTMSettings getSettingsNTM()
+    public final NTMSettings getSettingsNTM()
     {
-        return settingsNTM;
+        return this.settingsNTM;
     }
 
     /**
      * @param settingsNTM set settingsNTM.
      */
-    public void setSettingsNTM(NTMSettings settingsNTM)
+    public final void setSettingsNTM(final NTMSettings settingsNTM)
     {
         this.settingsNTM = settingsNTM;
     }
@@ -643,15 +638,15 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return tripDemand.
      */
-    public TripDemand getTripDemand()
+    public final TripDemand getTripDemand()
     {
-        return tripDemand;
+        return this.tripDemand;
     }
 
     /**
      * @param tripDemand set tripDemand.
      */
-    public void setTripDemand(TripDemand tripDemand)
+    public final void setTripDemand(TripDemand tripDemand)
     {
         this.tripDemand = tripDemand;
     }
@@ -659,15 +654,15 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return departureTimeProfiles.
      */
-    public ArrayList<DepartureTimeProfile> getDepartureTimeProfiles()
+    public final ArrayList<DepartureTimeProfile> getDepartureTimeProfiles()
     {
-        return departureTimeProfiles;
+        return this.departureTimeProfiles;
     }
 
     /**
      * @param departureTimeProfiles set departureTimeProfiles.
      */
-    public void setDepartureTimeProfiles(ArrayList<DepartureTimeProfile> departureTimeProfiles)
+    public final void setDepartureTimeProfiles(final ArrayList<DepartureTimeProfile> departureTimeProfiles)
     {
         this.departureTimeProfiles = departureTimeProfiles;
     }

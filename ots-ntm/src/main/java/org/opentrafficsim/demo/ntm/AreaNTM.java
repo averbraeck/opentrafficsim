@@ -20,11 +20,14 @@ public class AreaNTM extends Area
 
 {
 
-    /** The movement of traffic between cells */
+    /** The movement of traffic between cells. */
     private CellBehaviourNTM cellBehaviourNTM;
-    
-    /** The number of cars within this Area*/
-    private double accumulatedCars; 
+
+    /** The number of cars within this Area. */
+    private double accumulatedCars;
+
+
+
     /**
      * @param geometry
      * @param nr
@@ -34,9 +37,8 @@ public class AreaNTM extends Area
      * @param regio
      * @param dhb
      * @param centroid
-     * @param parametersNTM
      */
-    public AreaNTM(Geometry geometry, String nr, final String name, final String gemeente, final String gebied,
+    public AreaNTM(final Geometry geometry, String nr, final String name, final String gemeente, final String gebied,
             final String regio, double dhb, Point centroid)
     {
         super(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
@@ -53,7 +55,7 @@ public class AreaNTM extends Area
      * @param centroid
      * @param parametersNTM
      */
-    public AreaNTM(Geometry geometry, String nr, final String name, final String gemeente, final String gebied,
+    public AreaNTM(final Geometry geometry, String nr, final String name, final String gemeente, final String gebied,
             final String regio, double dhb, Point centroid, final ParametersNTM parametersNTM)
     {
         super(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
@@ -63,7 +65,7 @@ public class AreaNTM extends Area
     /**
      * @return cellBehaviourNTM.
      */
-    public CellBehaviourNTM getCellBehaviourNTM()
+    public final CellBehaviourNTM getCellBehaviourNTM()
     {
         return this.cellBehaviourNTM;
     }
@@ -71,7 +73,7 @@ public class AreaNTM extends Area
     /**
      * @param cellBehaviourNTM set cellBehaviourNTM.
      */
-    public void setCellBehaviourNTM(CellBehaviourNTM cellBehaviourNTM)
+    public final void setCellBehaviourNTM(final CellBehaviourNTM cellBehaviourNTM)
     {
         this.cellBehaviourNTM = cellBehaviourNTM;
     }
@@ -79,7 +81,7 @@ public class AreaNTM extends Area
     /**
      * @return accumulatedCars.
      */
-    public double getAccumulatedCars()
+    public final double getAccumulatedCars()
     {
         return this.accumulatedCars;
     }
@@ -87,11 +89,11 @@ public class AreaNTM extends Area
     /**
      * @param d set accumulatedCars.
      */
-    public void setAccumulatedCars(double d)
+    public final void setAccumulatedCars(final double d)
     {
         this.accumulatedCars = d;
     }
-    
-    
+
+
 
 }

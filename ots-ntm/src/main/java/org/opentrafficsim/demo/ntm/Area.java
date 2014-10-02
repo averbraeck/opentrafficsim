@@ -92,7 +92,7 @@ public class Area implements LocatableInterface
      * @param dhb DHB class java.lang.Double 70.0
      * @param centroid Centroid as a Point
      */
-    public Area(final Geometry geometry, String centroidNr, final String name, final String gemeente, final String gebied,
+    public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
             final String regio, final double dhb, final Point centroid)
     {
         super();
@@ -126,9 +126,9 @@ public class Area implements LocatableInterface
 
     /**
      * @return polygon
-     * @throws RemoteException
+     * @throws RemoteException comment
      */
-    public Set<Path2D> getPolygons() throws RemoteException
+    public final Set<Path2D> getPolygons() throws RemoteException
     {
         // create the polygon if it did not exist before
         if (this.polygons == null)
@@ -163,7 +163,7 @@ public class Area implements LocatableInterface
     /**
      * @return centroid
      */
-    public Point getCentroid()
+    public final Point getCentroid()
     {
         return this.centroid;
     }
@@ -171,7 +171,7 @@ public class Area implements LocatableInterface
     /**
      * @return nr
      */
-    public String getCentroidNr()
+    public final String getCentroidNr()
     {
         return this.centroidNr;
     }
@@ -179,7 +179,7 @@ public class Area implements LocatableInterface
     /**
      * @return name
      */
-    public String getName()
+    public final String getName()
     {
         return this.name;
     }
@@ -187,7 +187,7 @@ public class Area implements LocatableInterface
     /**
      * @return gemeente
      */
-    public String getGemeente()
+    public final String getGemeente()
     {
         return this.gemeente;
     }
@@ -195,7 +195,7 @@ public class Area implements LocatableInterface
     /**
      * @return gebied
      */
-    public String getGebied()
+    public final String getGebied()
     {
         return this.gebied;
     }
@@ -203,7 +203,7 @@ public class Area implements LocatableInterface
     /**
      * @return regio
      */
-    public String getRegio()
+    public final String getRegio()
     {
         return this.regio;
     }
@@ -211,7 +211,7 @@ public class Area implements LocatableInterface
     /**
      * @return dhb
      */
-    public double getDhb()
+    public final double getDhb()
     {
         return this.dhb;
     }
@@ -219,7 +219,7 @@ public class Area implements LocatableInterface
     /**
      * @return geometry
      */
-    public Geometry getGeometry()
+    public final Geometry getGeometry()
     {
         return this.geometry;
     }
@@ -234,7 +234,7 @@ public class Area implements LocatableInterface
     /**
      * @return touchingAreas
      */
-    public Set<Area> getTouchingAreas()
+    public final Set<Area> getTouchingAreas()
     {
         return this.touchingAreas;
     }

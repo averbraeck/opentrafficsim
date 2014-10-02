@@ -24,5 +24,5 @@ public interface CellBehaviour
     /**
      * @param accumulatedCars
      */
-    public void computeProduction(final double accumulatedCars);
+    public void computeProductionDemand(final double accumulatedCars);
 }
