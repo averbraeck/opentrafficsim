@@ -3,7 +3,6 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
@@ -20,7 +19,6 @@ import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
- * @param <ID>
  */
 public class CellBehaviourNTM implements CellBehaviour
 {
@@ -43,6 +41,9 @@ public class CellBehaviourNTM implements CellBehaviour
     /** */
     private double productionDemand;
 
+    /** The number of cars that are heading for this Cell. */
+    private double demandToEnter;
+    
     /** */
     private double productionElse;
 
@@ -82,10 +83,13 @@ public class CellBehaviourNTM implements CellBehaviour
         Point2D p = new Point2D.Double();
         p.setLocation(0, 0);
         xyPairs.add(p);
+        p = new Point2D.Double();
         p.setLocation(this.parametersNTM.getAccCritical1(), this.maxCapacity);
         xyPairs.add(p);
+        p = new Point2D.Double();
         p.setLocation(this.parametersNTM.getAccCritical2(), this.maxCapacity);
         xyPairs.add(p);
+        p = new Point2D.Double();
         p.setLocation(this.parametersNTM.getAccJam(), 0);
         xyPairs.add(p);
         double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
@@ -95,24 +99,41 @@ public class CellBehaviourNTM implements CellBehaviour
     /**
      * @param accumulatedCars number of cars in Cell
      */
-    public final void computeProduction(final double accumulatedCars)
+    public final void computeProductionDemand(final double accumulatedCars)
+    {
+        double maxDemand = this.parametersNTM.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
+        this.productionDemand = Math.min(maxDemand, this.maxCapacity); // / demand
+        this.speedDemand = this.productionDemand / accumulatedCars;
+    }
+
+    /**
+     * @param accumulatedCars number of cars in Cell
+     */
+    public final void computeProductionSupply(final double accumulatedCars)
     {
         double carProduction = retrieveCarProduction(accumulatedCars);
         this.productionSupply = Math.min(this.maxCapacity, carProduction); // supply
         this.speedSupply = this.productionSupply / accumulatedCars;
+    }
 
-        double lowerBoundProduction = Math.max(0.05 * this.maxCapacity, this.productionSupply);
+    /**
+     * @param accumulatedCars number of cars in Cell
+     */
+    public final void computeProductionElse(final double accumulatedCars)
+    {
+        double carProduction = retrieveCarProduction(accumulatedCars);
+        double production = Math.min(this.maxCapacity, carProduction); // supply
+     
+        double lowerBoundProduction = Math.max(0.05 * this.maxCapacity, production);
         double maxDemand = this.parametersNTM.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
-        this.productionDemand = Math.min(maxDemand, this.maxCapacity); // / demand
-        this.speedDemand = this.productionDemand / accumulatedCars;
-
-        this.productionElse = Math.min(lowerBoundProduction, this.productionDemand); // / else
+        double demand = Math.min(maxDemand, this.maxCapacity); // / demand
+     
+        this.productionElse = Math.min(lowerBoundProduction, demand); // / else
         this.speedElse = this.productionElse / accumulatedCars;
         // if (accumulationCars > 0) {
         // this.currentSpeed = new DoubleScalarAbs<SpeedUnit>(carProduction / accumulatedCars, SpeedUnit.KM_PER_HOUR);
         // }
-    }
-
+    } 
     /**
      * @return averageSpeed
      */
@@ -132,7 +153,7 @@ public class CellBehaviourNTM implements CellBehaviour
     /**
      * @param maxCapacity set maxCapacity.
      */
-    public void setMaxCapacity(double maxCapacity)
+    public void setMaxCapacity(final double maxCapacity)
     {
         this.maxCapacity = maxCapacity;
     }
@@ -193,5 +214,29 @@ public class CellBehaviourNTM implements CellBehaviour
         return this.speedElse;
     }
 
+    /**
+     * @return demandToEnter.
+     */
+    public final double getDemandToEnter()
+    {
+        return this.demandToEnter;
+    }
 
+    /**
+     * @param demandToEnter set demandToEnter.
+     */
+    public final void setDemandToEnter(final double demandToEnter)
+    {
+        this.demandToEnter = demandToEnter;
+    }
+
+    /**
+     * @param demandToEnter adds demandToEnter.
+     */
+    public final void addDemandToEnter(double demandToEnter)
+    {
+        this.demandToEnter += demandToEnter;
+    }
+
+    
 }

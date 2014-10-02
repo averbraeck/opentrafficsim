@@ -32,7 +32,10 @@ public class LinearFunctionLibrary
         {
             if (p.getX() > var)
             {
-                result = p.getY() + (prevPoint.getY() - p.getY()) * var / (p.getX() - prevPoint.getX());
+                result =
+                        prevPoint.getY() + (p.getY() - prevPoint.getY()) * (var - prevPoint.getX())
+                                / (p.getX() - prevPoint.getX());
+                break;
             }
             prevPoint = p;
         }

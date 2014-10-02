@@ -12,7 +12,7 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class TimeDynamicTripInfo extends TripInfo
+public class TripInfoTimeDynamic extends TripInfo
 {
 
     /** relative amount of trips within a period over the separate segments. */
@@ -22,7 +22,7 @@ public class TimeDynamicTripInfo extends TripInfo
      * @param numberOfTrips amount of....
      * @param departureTimeProfile provides the division of trips by time segments
      */
-    public TimeDynamicTripInfo(final double numberOfTrips, final DepartureTimeProfile departureTimeProfile)
+    public TripInfoTimeDynamic(final double numberOfTrips, final DepartureTimeProfile departureTimeProfile)
     {
         super(numberOfTrips);
         this.departureTimeProfile = departureTimeProfile;

@@ -58,31 +58,30 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class ShpNode implements LocatableInterface
 {
-    /** the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650) */
+    /** the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650). */
     private final Point point;
 
-    /** NODENR class java.lang.Long 18 */
+    /** NODENR class java.lang.Long 18. */
     private final long id;
     
-    /** NODENR class java.lang.Long 18 */
+    /** NODENR class java.lang.Long 18. */
     private final String name;
 
-    /** X class java.lang.Double 190599.0 */
+    /** X class java.lang.Double 190599.0. */
     private final double x;
 
-    /** Y class java.lang.Double 325650.0 */
+    /** Y class java.lang.Double 325650.0. */
     private final double y;
 
     /** */
     private static long indexNumber = 0;
     /**
      * @param point
-     * @param id
      * @param name 
      * @param x
      * @param y
      */
-    public ShpNode(Point point, String name, double x, double y)
+    public ShpNode(Point point, final String name, double x, double y)
     {
         super();
         long index = indexNumber++;
@@ -110,7 +109,7 @@ public class ShpNode implements LocatableInterface
     /**
      * @return point
      */
-    public Point getPoint()
+    public final Point getPoint()
     {
         return this.point;
     }
@@ -118,7 +117,7 @@ public class ShpNode implements LocatableInterface
     /**
      * @return nr
      */
-    public long getId()
+    public final long getId()
     {
         return this.id;
     }
@@ -126,7 +125,7 @@ public class ShpNode implements LocatableInterface
     /**
      * @return x
      */
-    public double getX()
+    public final double getX()
     {
         return this.x;
     }
@@ -134,7 +133,7 @@ public class ShpNode implements LocatableInterface
     /**
      * @return name.
      */
-    public String getName()
+    public final String getName()
     {
         return this.name;
     }
@@ -142,7 +141,7 @@ public class ShpNode implements LocatableInterface
     /**
      * @return y
      */
-    public double getY()
+    public final double getY()
     {
         return this.y;
     }

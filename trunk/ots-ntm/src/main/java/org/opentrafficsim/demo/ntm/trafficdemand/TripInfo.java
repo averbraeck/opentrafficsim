@@ -21,14 +21,21 @@ public class TripInfo
     /** total number of Trips for this simulation. */
     private double numberOfTrips;
 
-    /** the first AreaNode encountered on the path to Destination*/
+    /** the first AreaNode encountered on the path to Destination.*/
     private AreaNode neighbour;
+    
+    /** trips on their journey passing an area.*/
+    private double passingTrips;
+
+    /** flow to neighbour.*/
+    private double flow;
+
     
     /**
      * @param numberOfTrips total number of Trips for this simulation
      */
 
-    public TripInfo(double numberOfTrips)
+    public TripInfo(final double numberOfTrips)
     {
         super();
         this.numberOfTrips = numberOfTrips;
@@ -54,17 +61,57 @@ public class TripInfo
     /**
      * @return neighbour.
      */
-    public AreaNode getNeighbour()
+    public final AreaNode getNeighbour()
     {
-        return neighbour;
+        return this.neighbour;
     }
 
     /**
      * @param neighbour set neighbour.
      */
-    public void setNeighbour(AreaNode neighbour)
+    public final void setNeighbour(final AreaNode neighbour)
     {
         this.neighbour = neighbour;
+    }
+
+    /**
+     * @return passingTrips.
+     */
+    public final double getPassingTrips()
+    {
+        return this.passingTrips;
+    }
+
+    /**
+     * @param passingTrips set passingTrips.
+     */
+    public final void setPassingTrips(final double passingTrips)
+    {
+        this.passingTrips = passingTrips;
+    }
+    
+    /**
+     * @param addTrips set passingTrips.
+     */
+    public final void addToPassingTrips(final double addTrips)
+    {
+        this.passingTrips += addTrips;
+    }
+
+    /**
+     * @return flow.
+     */
+    public final double getFlow()
+    {
+        return this.flow;
+    }
+
+    /**
+     * @param flow set flow.
+     */
+    public final void setFlow(final double flow)
+    {
+        this.flow = flow;
     }
 
 
