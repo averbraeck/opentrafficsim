@@ -98,7 +98,7 @@ public final class ContourPlots
         contourPlots.add(cp);
 
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
-        CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
+        CarFollowingModel<Car> carFollowingModel = new IDMPlus<Line<String>, Car>();
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);

@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.awt.Dimension;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -7,12 +9,16 @@ import java.rmi.RemoteException;
 import javax.swing.JScrollPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.Event;
 
+import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -53,11 +59,12 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      * @throws SimRuntimeException
      * @throws RemoteException
      */
-    @SuppressWarnings("unused")
     public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         ContourPlotsModel model = new ContourPlotsModel();
-        OTSDEVSSimulator simulator = new OTSDEVSSimulator();
+        // use the OTSDEVSSimulator if we don't want animation, otherwise the OTSDEVSAnimator.
+        // OTSDEVSSimulator simulator = new OTSDEVSSimulator();
+        OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         OTSReplication replication =
                 new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
@@ -67,6 +74,16 @@ public class ContourPlotsSwingApplication extends DSOLApplication
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
                         simulator);
         makePlots(model, panel);
+
+        Rectangle2D extent = new Rectangle2D.Double(0, -100, 5000, 200);
+        Dimension size = new Dimension(1024, 768);
+        AnimationPanel animationPanel = new AnimationPanel(extent, size, simulator);
+        panel.getTabbedPane().addTab(0, "animation", animationPanel);
+
+        // tell the animation panel to update its statistics
+        // TODO: should be done automatically in DSOL!
+        animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
+
         addInfoTab(panel);
         new ContourPlotsSwingApplication("IDM-plus model - Contourplots", panel);
     }
