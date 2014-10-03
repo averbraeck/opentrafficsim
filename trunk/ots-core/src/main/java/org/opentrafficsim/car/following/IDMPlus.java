@@ -1,5 +1,6 @@
 package org.opentrafficsim.car.following;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,7 +26,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <Line>
  */
-public class IDMPlus<Line> implements CarFollowingModel
+public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
 {
     /** Preferred net longitudinal distance when stopped [m]. */
     protected final DoubleScalar.Rel<LengthUnit> s0 = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
@@ -94,7 +95,7 @@ public class IDMPlus<Line> implements CarFollowingModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
      */
-    private DoubleScalar.Rel<SpeedUnit> vDes(final Car car, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    private DoubleScalar.Rel<SpeedUnit> vDes(final C car, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getValueSI(), car.vMax().getValueSI()),
                 SpeedUnit.METER_PER_SECOND);
@@ -102,7 +103,7 @@ public class IDMPlus<Line> implements CarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
+    public final CarFollowingModelResult computeAcceleration(final C car, final Collection<C> leaders,
             final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = car.getNextEvaluationTime();
@@ -111,8 +112,8 @@ public class IDMPlus<Line> implements CarFollowingModel
         DoubleScalar.Abs<LengthUnit> myFrontPosition = car.positionOfFront(thisEvaluationTime);
         // System.out.println("myFrontPosition is " + myFrontPosition);
         DoubleScalar.Rel<LengthUnit> shortestHeadway = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
-        Car closestLeader = null;
-        for (Car leader : leaders)
+        C closestLeader = null;
+        for (C leader : leaders)
         {
             DoubleScalar.Rel<LengthUnit> s =
                     MutableDoubleScalar.minus(leader.positionOfRear(thisEvaluationTime), myFrontPosition).immutable();
@@ -164,12 +165,13 @@ public class IDMPlus<Line> implements CarFollowingModel
         return new CarFollowingModelResult(newAcceleration.immutable(), nextEvaluationTime.immutable(), 0);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @throws RemoteException */
     @Override
-    public final CarFollowingModelResult computeLaneChangeAndAcceleration(final Car car, final Collection<Car> sameLaneCars,
-            final Collection<Car> preferredLaneCars, final Collection<Car> nonPreferredLaneCars,
+    public final CarFollowingModelResult computeLaneChangeAndAcceleration(final C car, final Collection<C> sameLaneCars,
+            final Collection<C> preferredLaneCars, final Collection<C> nonPreferredLaneCars,
             final DoubleScalar.Abs<SpeedUnit> speedLimit, final double preferredLaneRouteIncentive,
-            final double nonPreferredLaneRouteIncentive)
+            final double nonPreferredLaneRouteIncentive) throws RemoteException
     {
         System.out.println(String.format(
                 "Route desire to merge to preferredLane: %.3f, route desire to merge to overtakingLane: %.3f",
@@ -233,16 +235,17 @@ public class IDMPlus<Line> implements CarFollowingModel
      * @param desire double; the desire to change into the adjacent lane
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit in the adjacent lane
      * @return boolean; true if the lane change can be performed; false if the lane change should not be performed
+     * @throws RemoteException 
      */
-    private boolean checkLaneChange(final Car car, final Collection<Car> carsInOtherLane, final double desire,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    private boolean checkLaneChange(final C car, final Collection<C> carsInOtherLane, final double desire,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         // Find the new leader and follower
-        Car leader = null;
+        C leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
-        Car follower = null;
+        C follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
-        for (Car c : carsInOtherLane)
+        for (C c : carsInOtherLane)
         {
             DoubleScalar.Rel<LengthUnit> headway = car.headway(c);
             if (headway.getValueSI() > 0)
@@ -262,7 +265,7 @@ public class IDMPlus<Line> implements CarFollowingModel
                 }
             }
         }
-        Collection<Car> leaders = new ArrayList<Car>();
+        Collection<C> leaders = new ArrayList<C>();
         if (null != leader)
         {
             leaders.add(leader);
@@ -274,7 +277,7 @@ public class IDMPlus<Line> implements CarFollowingModel
         }
         if (null != follower)
         {
-            Collection<Car> referenceCarGroup = new ArrayList<Car>();
+            Collection<C> referenceCarGroup = new ArrayList<C>();
             referenceCarGroup.add(car);
             DoubleScalar.Abs<AccelerationUnit> otherCarAcceleration =
                     computeAcceleration(follower, referenceCarGroup, speedLimit).acceleration;
@@ -330,12 +333,12 @@ public class IDMPlus<Line> implements CarFollowingModel
      * @param leaders Collection&lt;Car&gt;; the set of other cars
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the anticipated speed
      */
-    private DoubleScalar.Abs<SpeedUnit> anticipatedSpeed(final DoubleScalar.Abs<SpeedUnit> speedLimit, final Car car,
-            final Collection<Car> leaders)
+    private DoubleScalar.Abs<SpeedUnit> anticipatedSpeed(final DoubleScalar.Abs<SpeedUnit> speedLimit, final C car,
+            final Collection<C> leaders)
     {
         DoubleScalar.Abs<SpeedUnit> result = speedLimit;
         DoubleScalar.Abs<LengthUnit> frontPositionOfCar = car.positionOfFront(car.getNextEvaluationTime());
-        for (Car leader : leaders)
+        for (C leader : leaders)
         {
             DoubleScalar.Rel<LengthUnit> headway =
                     MutableDoubleScalar.minus(leader.positionOfRear(car.getNextEvaluationTime()), frontPositionOfCar)
