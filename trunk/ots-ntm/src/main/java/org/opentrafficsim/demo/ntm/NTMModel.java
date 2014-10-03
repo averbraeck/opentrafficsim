@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -74,6 +75,9 @@ public class NTMModel implements OTSModelInterface
     /** links from shape file. */
     private Map<String, ShpLink> shpLinks;
 
+    /** subset of links from shape file used as flow links. */
+    private Map<String, ShpLink> flowLinks;
+
     /** the centroids. */
     private Map<String, ShpNode> centroids;
 
@@ -120,7 +124,7 @@ public class NTMModel implements OTSModelInterface
             // set the time step value at ten seconds;
             DoubleScalar.Rel<TimeUnit> timeStep = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             this.settingsNTM = new NTMSettings(timeStep);
-            
+
             // read the shape files
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
             // returnCentroid, boolean allCentroids)
@@ -131,12 +135,12 @@ public class NTMModel implements OTSModelInterface
 
             this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
             this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
+
             this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
-            /*
-             * this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true); this.areas =
-             * ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids); this.shpNodes =
-             * ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
-             */
+
+            // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
+            // this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
+            // this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
 
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
@@ -144,7 +148,7 @@ public class NTMModel implements OTSModelInterface
                     this.shpNodes, this.centroids);
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
-            this.areas = createHighwayAreas(this.shpLinks, this.areas);
+
             // read the time profile curves: these will be attached to the demands
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
 
@@ -152,12 +156,14 @@ public class NTMModel implements OTSModelInterface
             // including information on the time period this demand covers!
             this.setTripDemand(CsvFileReader.readOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
-                    this.getDepartureTimeProfiles()));
+                    this.getDepartureTimeProfiles(), this.areas));
 
+            this.flowLinks = createFlowLinks(this.shpLinks);
             // connect time profiles to the trips:
 
             // build the higher level map and the graph
             buildGraph();
+            initiateSimulationNTM();
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
@@ -166,8 +172,7 @@ public class NTMModel implements OTSModelInterface
             }
 
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "initiateSimulationNTM", null);
-
+                    "ntmFlowTimestep", null);
             // this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
             // "drawGraph", null);
         }
@@ -186,7 +191,6 @@ public class NTMModel implements OTSModelInterface
         // we start the simulation by injecting traffic into the areas, based on the traffic demand input
         // The trips are put in the "stock" of the area, but keep a reference to the destination and to the first Area
         // they encounter (a neighbour) on their shortest path towards that destination.
-
 
         // Initiate the simulation by creating the paths
         boolean floyd = true;
@@ -212,7 +216,7 @@ public class NTMModel implements OTSModelInterface
                 if (origin.getId().startsWith("C") && endNode.getId().startsWith("C"))
                 {
                     TripInfoTimeDynamic tripInfo =
-                            this.tripDemand.getTripDemand_Origin_Destination(origin.getId(), endNode.getId());
+                            this.tripDemand.getTripDemandOriginToDestination(origin.getId(), endNode.getId());
                     if (tripInfo != null)
                     {
                         tripInfo.setNeighbour(endNode);
@@ -224,44 +228,39 @@ public class NTMModel implements OTSModelInterface
         long now = System.currentTimeMillis() - initial;
         System.out.println("Floyd: time duration in millis = " + now);
 
-        // if we want to repeat:
-        try
-        {
-            this.simulator.scheduleEventRel(this.settingsNTM.getTimeStepDuration(), this, this, "startSimulate", null);
-        }
-        catch (RemoteException | SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
-
     }
 
     /**
      * 
      */
-    protected final void startSimulate()
+    protected final void ntmFlowTimestep()
     {
         double accumulatedCars = 0;
-        //long timeStep = 0;
-        
+        // long timeStep = 0;
+
         // Initiate trips from OD to first Area (Origin)
         Map<String, Map<String, TripInfoTimeDynamic>> trips = this.tripDemand.getTripInfo();
         for (AreaNTM areaFrom : this.areas.values())
         {
             // at every iteration: initiate with value 0
+            if (areaFrom.getCellBehaviourNTM() == null)
+            {
+                System.out.println(" area null");
+            }
+
             areaFrom.getCellBehaviourNTM().setDemandToEnter(0);
 
             accumulatedCars = areaFrom.getAccumulatedCars();
-            if (trips.containsKey(areaFrom))
+            if (trips.containsKey(areaFrom.getCentroidNr()))
             {
-                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom);
+                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom.getCentroidNr());
                 for (AreaNTM areaTo : this.areas.values())
                 {
-                    if (tripsFrom.containsKey(areaTo))
+                    if (tripsFrom.containsKey(areaTo.getCentroidNr()))
                     {
                         // adjust next formulae wit time dependant variable
-                        double startingTrips = tripsFrom.get(areaTo).getNumberOfTrips();
-                        tripsFrom.get(areaTo).addToPassingTrips(startingTrips);
+                        double startingTrips = tripsFrom.get(areaTo.getCentroidNr()).getNumberOfTrips();
+                        tripsFrom.get(areaTo.getCentroidNr()).addToPassingTrips(startingTrips);
                         accumulatedCars += startingTrips;
                     }
                 }
@@ -274,26 +273,27 @@ public class NTMModel implements OTSModelInterface
 
             // compute the total supply (maximum) from neighbours to an Area (based on the accumulation NFD)
             areaFrom.getCellBehaviourNTM().computeProductionSupply(accumulatedCars);
-            
+
         }
-        
+
         // compute the flows if no restrictions on the supply side
         // these will be corrected if supply poses restrictions!
         for (AreaNTM areaFrom : this.areas.values())
         {
             accumulatedCars = areaFrom.getAccumulatedCars();
-            if (trips.containsKey(areaFrom))
+            if (trips.containsKey(areaFrom.getCentroidNr()))
             {
-                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom);
+                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom.getCentroidNr());
                 for (AreaNTM areaTo : this.areas.values())
                 {
-                    if (tripsFrom.containsKey(areaTo))
+                    if (tripsFrom.containsKey(areaTo.getCentroidNr()))
                     {
                         // retrieve the number of cars that want to leave to a neighbouring cell
-                        AreaNTM neighbour = findArea(tripsFrom.get(areaTo).getNeighbour().getPoint());
-                        double share = tripsFrom.get(areaTo).getPassingTrips() / areaFrom.getAccumulatedCars();
+                        AreaNTM neighbour = findArea(tripsFrom.get(areaTo.getCentroidNr()).getNeighbour().getPoint());
+                        double share =
+                                tripsFrom.get(areaTo.getCentroidNr()).getPassingTrips() / areaFrom.getAccumulatedCars();
                         double flowFromDemand = share * areaFrom.getCellBehaviourNTM().getProductionDemand();
-                        tripsFrom.get(neighbour).setFlow(flowFromDemand);     
+                        tripsFrom.get(neighbour.getCentroidNr()).setFlow(flowFromDemand);
                         neighbour.getCellBehaviourNTM().addDemandToEnter(flowFromDemand);
                     }
                 }
@@ -305,32 +305,40 @@ public class NTMModel implements OTSModelInterface
         for (AreaNTM areaFrom : this.areas.values())
         {
             accumulatedCars = areaFrom.getAccumulatedCars();
-            if (trips.containsKey(areaFrom))
+            if (trips.containsKey(areaFrom.getCentroidNr()))
             {
-                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom);
+                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom.getCentroidNr());
                 for (AreaNTM areaTo : this.areas.values())
                 {
-                    if (tripsFrom.containsKey(areaTo))
+                    if (tripsFrom.containsKey(areaTo.getCentroidNr()))
                     {
                         // retrieve the number of cars that want to leave to a neighbouring cell
-                        AreaNTM neighbour = findArea(tripsFrom.get(areaTo).getNeighbour().getPoint());
-                        double share = tripsFrom.get(areaTo).getFlow() / neighbour.getCellBehaviourNTM().getDemandToEnter();
+                        AreaNTM neighbour = findArea(tripsFrom.get(areaTo.getCentroidNr()).getNeighbour().getPoint());
+                        double share =
+                                tripsFrom.get(areaTo.getCentroidNr()).getFlow()
+                                        / neighbour.getCellBehaviourNTM().getDemandToEnter();
                         double flowFromDemand = share * neighbour.getCellBehaviourNTM().getProductionSupply();
-                        tripsFrom.get(neighbour).setFlow(flowFromDemand);
+                        tripsFrom.get(neighbour.getCentroidNr()).setFlow(flowFromDemand);
                     }
                 }
             }
         }
-        
-        
-        
+
         // Evaluate the accumulation per area and determine the maximum production
 
         // potential transfer from a source area to all neighbours (demand)
         // evaluate the production
 
         // evaluate all potential transfers
-
+        try
+        {
+            this.simulator
+                    .scheduleEventRel(this.settingsNTM.getTimeStepDuration(), this, this, "ntmFlowTimestep", null);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -552,22 +560,42 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
+            boolean showLinks = true;
+            boolean showConnectors = true;
+            boolean showNodes = false;
             for (Area area : this.areas.values())
             {
-                new AreaAnimation(area, this.simulator, 2.5f);
+                new AreaAnimation(area, this.simulator, 5f);
             }
-            for (ShpLink shpLink : this.shpLinks.values())
+            if (showLinks)
             {
-                new ShpLinkAnimation(shpLink, this.simulator);
+                for (ShpLink shpLink : this.shpLinks.values())
+                {
+                    new ShpLinkAnimation(shpLink, this.simulator, 2.0F, Color.GRAY);
+                }
             }
-            for (ShpNode shpNode : this.shpNodes.values())
+            if (showConnectors)
             {
-                new ShpNodeAnimation(shpNode, this.simulator);
+                for (ShpLink shpConnector : this.shpConnectors.values())
+                {
+                    new ShpLinkAnimation(shpConnector, this.simulator, 5.0F, Color.BLUE);
+                }
             }
-            for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet())
+            for (ShpLink flowLink : this.flowLinks.values())
             {
-                // new LinkAnimation(linkEdge.getEdge(), this.simulator, 0.5f);
+                new ShpLinkAnimation(flowLink, this.simulator, 5.0F, Color.RED);
             }
+            if (showNodes)
+            {
+                for (ShpNode shpNode : this.shpNodes.values())
+                {
+                    new ShpNodeAnimation(shpNode, this.simulator);
+                }
+            }
+            /*
+             * for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet()) { new LinkAnimation(linkEdge.getEdge(),
+             * this.simulator, 0.5f); }
+             */
             for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
             {
                 new LinkAnimation(linkEdge.getLink(), this.simulator, 2.5f);
@@ -586,10 +614,37 @@ public class NTMModel implements OTSModelInterface
     // Create new Areas around highways, that show different behaviour
     /**
      * @param shpLinks the links of this model
+     * @return the flowLinks
+     */
+    public static Map<String, ShpLink> createFlowLinks(final Map<String, ShpLink> shpLinks)
+    {
+        Map<String, ShpLink> flowLinks = new HashMap<String, ShpLink>();
+        for (ShpLink shpLink : shpLinks.values())
+        {
+            if (shpLink.getSpeed() >= 65 && shpLink.getCapacity() > 3000)
+            {
+                ShpLink flowLink = new ShpLink(shpLink);
+                flowLinks.put(flowLink.getNr(), flowLink);
+            }
+        }
+
+        for (ShpLink flowLink : flowLinks.values())
+        {
+            if (flowLink.getSpeed() >= 65 && flowLink.getCapacity() > 3000)
+            {
+                shpLinks.remove(flowLink.getNr());
+            }
+        }
+        return flowLinks;
+    }
+
+    // Create new Areas around highways, that show different behaviour
+    /**
+     * @param shpLinks the links of this model
      * @param areas the intial areas
      * @return the additional areas
      */
-    public static Map<String, AreaNTM> createHighwayAreas(final Map<String, ShpLink> shpLinks,
+    public static Map<String, AreaNTM> createCordonFeederAreas(final Map<String, ShpLink> shpLinks,
             final Map<String, AreaNTM> areas)
     {
         for (ShpLink shpLink : shpLinks.values())
@@ -609,6 +664,25 @@ public class NTMModel implements OTSModelInterface
             }
         }
         return areas;
+    }
+
+    // Create new Areas around highways, that show different behaviour
+    /**
+     * @param centroid
+     * @return the additional areas
+     */
+    public static AreaNTM createMissingArea(final ShpNode centroid)
+    {
+        Geometry buffer = centroid.getPoint().getGeometryN(0).buffer(30);
+        Point centroid1 = buffer.getCentroid();
+        String nr = String.valueOf(centroid.getId());
+        String name = centroid.getName();
+        String gemeente = "Area is missing for: " + centroid.getName();
+        String gebied = "Area is missing for: " + centroid.getName();
+        String regio = "Missing";
+        double dhb = 0.0;
+        AreaNTM area = new AreaNTM(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1);
+        return area;
     }
 
     /** {@inheritDoc} */
@@ -665,6 +739,22 @@ public class NTMModel implements OTSModelInterface
     public final void setDepartureTimeProfiles(final ArrayList<DepartureTimeProfile> departureTimeProfiles)
     {
         this.departureTimeProfiles = departureTimeProfiles;
+    }
+
+    /**
+     * @return flowLinks.
+     */
+    public final Map<String, ShpLink> getFlowLinks()
+    {
+        return this.flowLinks;
+    }
+
+    /**
+     * @param flowLinks set flowLinks.
+     */
+    public final void setFlowLinks(final Map<String, ShpLink> flowLinks)
+    {
+        this.flowLinks = flowLinks;
     }
 
 }

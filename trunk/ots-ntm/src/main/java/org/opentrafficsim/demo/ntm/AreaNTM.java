@@ -1,5 +1,9 @@
 package org.opentrafficsim.demo.ntm;
 
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
@@ -42,6 +46,10 @@ public class AreaNTM extends Area
             final String regio, double dhb, Point centroid)
     {
         super(geometry, nr, name, gemeente, gebied, regio, dhb, centroid);
+        DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(10, LengthUnit.KILOMETER);
+        ParametersNTM parametersNTM = new ParametersNTM(25.0, 50.0, 100, speed, roadLength);
+        this.setCellBehaviourNTM(new CellBehaviourNTM(parametersNTM));
     }
 
     /**

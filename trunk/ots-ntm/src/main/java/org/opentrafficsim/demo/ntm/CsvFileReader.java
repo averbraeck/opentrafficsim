@@ -22,6 +22,9 @@ import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegme
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
+
 /**
  * A Cell extends a Zone and is used for the NetworkTransmissionModel The Cells cover a preferably homogeneous area and
  * have their specific characteristics such as their free speed, a capacity and an NFD diagram A trip matrix quantifies
@@ -40,6 +43,7 @@ public class CsvFileReader
 {
 
     /**
+     * Class reads the demand and others from .csv type of files.
      * @param csvFileName name of file
      * @param csvSplitBy : token that defines how to split a line
      * @param csvSplitByTwo : two tokens that defines how to split a line
@@ -48,14 +52,15 @@ public class CsvFileReader
      * @param connectors artificial roads connecting the links and centroids
      * @param settingsNTM the parameters of the NTM
      * @param profiles departure profile of Trips
+     * @param areas the NTM model areas
      * @return the TripDemand (nested HashMap: <origin, map<destination, tripinformation>>
      * @throws IOException
-     * @throws Throwable 
+     * @throws Throwable
      */
     public static TripDemand<TripInfoTimeDynamic> readOmnitransExportDemand(final String csvFileName,
             final String csvSplitBy, final String csvSplitByTwo, final Map<String, ShpNode> centroids,
             final Map<String, ShpLink> links, final Map<String, ShpLink> connectors, final NTMSettings settingsNTM,
-            final ArrayList<DepartureTimeProfile> profiles) throws Throwable
+            final ArrayList<DepartureTimeProfile> profiles, final Map<String, AreaNTM> areas) throws Throwable
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -137,6 +142,7 @@ public class CsvFileReader
                     // first we inspect if it is a centroid
                     name = CsvFileReader.removeQuotes(name);
                     boolean isCentroid = ShapeFileReader.InspectNodeCentroid(name);
+                    ShpNode cordonPoint = null;
                     if (isCentroid)
                     {
                         centroidsAndCordonConnectors.put(name, centroids.get(name));
@@ -148,11 +154,13 @@ public class CsvFileReader
                     else if (links.get(name) != null || connectors.get(name) != null)
                     {
                         ShpLink cordonConnector = null;
+                        boolean createArea = false;
                         if (links.get(name) != null)
                         {
                             cordonConnector = links.get(name);
+                            createArea = true;
                             // remove cordonLink from normal links to connectors!!
-                            links.remove(links.get(name));
+                            links.remove(cordonConnector.getNr());
                             connectors.put(name, cordonConnector);
                         }
                         else if (connectors.get(name) != null)
@@ -190,13 +198,30 @@ public class CsvFileReader
                         }
                         if (countedNodesA > countedNodesB)
                         {
+                            cordonPoint = nodeB;
                             centroidsAndCordonConnectors.put(nodeB.getName(), nodeB);
                             orderedZones.put(index, nodeB.getName());
                         }
                         else
                         {
+                            cordonPoint = nodeA;
                             centroidsAndCordonConnectors.put(nodeA.getName(), nodeA);
                             orderedZones.put(index, nodeA.getName());
+                        }
+                        if (createArea)
+                        {
+                            // after determining the new cordon centroid, a new area is created around this feeding
+                            // link. This becomes a feeder type of area
+                            Geometry buffer = cordonPoint.getPoint().getGeometryN(0).buffer(30);
+                            Point centroid = buffer.getCentroid();
+                            String nr = cordonConnector.getNr();
+                            String newName = cordonConnector.getName();
+                            String gemeente = cordonConnector.getName();
+                            String gebied = cordonConnector.getName();
+                            String regio = "cordonPoint";
+                            double dhb = 0.0;
+                            AreaNTM area = new AreaNTM(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid);
+                            areas.put(nr, area);
                         }
 
                     }
@@ -224,6 +249,7 @@ public class CsvFileReader
                 String[] tripData = line.split(csvSplitBy);
                 boolean firstElement = true;
                 String origin = null;
+                String originLinknr = null;
                 int indexColumn = 0;
                 for (String numberOfTrips : tripData)
                 {
@@ -238,6 +264,7 @@ public class CsvFileReader
                         {
                             System.out.println("let op");
                         }
+                        originLinknr = numberOfTrips;
                         firstElement = false;
                     }
                     else
@@ -268,15 +295,12 @@ public class CsvFileReader
                 }
                 if (demand.get(origin) != null)
                 {
-                    System.out.println("duplicate origin!!");
-                    //throw new Error("duplicate origin");
+                    System.out.println("duplicate origin!!" + originLinknr + " knoop " + origin);
+                    // throw new Error("duplicate origin");
                 }
                 demand.put(origin, tripDemandRow);
                 indexRow++;
-                /*
-                 * System.out.println(demand.get(3569L).get(1L).getNumberOfTrips());
-                 * System.out.println(demand.get(3569L).get(2L).getNumberOfTrips());
-                 */
+
             }
 
         }
@@ -308,12 +332,12 @@ public class CsvFileReader
     }
 
     /**
-     * @param csvFileName 
-     * @param csvSplitBy 
-     * @param csvSplitInternalBy 
-     * @return an ArrayList<DepartureTimeProfile<?>> 
-     * @throws IOException 
-     * @throws ParseException 
+     * @param csvFileName
+     * @param csvSplitBy
+     * @param csvSplitInternalBy
+     * @return an ArrayList<DepartureTimeProfile<?>>
+     * @throws IOException
+     * @throws ParseException
      */
     public static ArrayList<DepartureTimeProfile> readDepartureTimeProfiles(final String csvFileName,
             final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
@@ -446,7 +470,7 @@ public class CsvFileReader
     }
 
     /**
-     * @param name 
+     * @param name
      * @return name without quotes
      */
     public static String removeQuotes(final String name)
@@ -459,25 +483,14 @@ public class CsvFileReader
         return newName;
     }
 
-    /**
-     * @param name 
+    /*    *//**
+     * @param name
      * @return name as a long
      */
-    public static String returnNumber(final String name)
-    {
-        // replace double quotes at start and end of string
-
-        String nr = removeQuotes(name);
-
-        if (name.startsWith("Links"))
-        {
-            nr = null;
-        }
-        else
-        {
-            nr = ShapeFileReader.NodeCentroidNumber(nr);
-        }
-        return nr;
-    }
+    /*
+     * public static String returnNumber(final String name) { // replace double quotes at start and end of string String
+     * nr = removeQuotes(name); if (name.startsWith("Links")) { nr = null; } else { nr =
+     * ShapeFileReader.NodeCentroidNumber(nr); } return nr; }
+     */
 
 }

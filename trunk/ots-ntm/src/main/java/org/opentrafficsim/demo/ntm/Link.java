@@ -34,7 +34,7 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
     private double speed;
 
     /**
-     * @param id the id of the link (Long).
+     * @param nr 
      * @param nodeA the start node of the link.
      * @param nodeB the end node of the link.
      * @param length the length of the link with a unit.

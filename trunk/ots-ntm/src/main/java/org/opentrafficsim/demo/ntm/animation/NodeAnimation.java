@@ -40,7 +40,7 @@ public class NodeAnimation extends Renderable2D
     public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.BLACK);
-        graphics.draw(new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0));
+        graphics.draw(new Ellipse2D.Double(-10.0, -10.0, 20.0, 20.0));
     }
 
 }
