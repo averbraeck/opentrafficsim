@@ -39,7 +39,6 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
 public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyFloatMatrixFunctions<U>
 {
-
     /** */
     private static final long serialVersionUID = 20140909L;
 
@@ -732,23 +731,23 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Check that provided row and column indices are valid.
-     * @param row integer; the row value to check
-     * @param column integer; the column value to check
+     * @param row int; the row value to check
+     * @param column int; the column value to check
      * @throws ValueException when row or column is invalid
      */
     protected final void checkIndex(final int row, final int column) throws ValueException
     {
-        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+        if (row < 0 || row >= rows() || column < 0 || column >= columns())
         {
-            throw new ValueException("index out of range (valid range is 0.." + (this.matrixSI.rows() - 1) + ", 0.."
-                    + this.matrixSI.columns() + ", got " + row + ", " + column + ")");
+            throw new ValueException("index out of range (valid range is 0.." + (rows() - 1) + ", 0.."
+                    + (columns() - 1) + ", got " + row + ", " + column + ")");
         }
     }
 
     /**
-     * Retrieve a value in vectorSI without checking validity of the index.
-     * @param row integer; the row where the value must be retrieved
-     * @param column integer; the column where the value must be retrieved
+     * Retrieve a value in matrixSI without checking validity of the indices.
+     * @param row int; the row where the value must be retrieved
+     * @param column int; the column where the value must be retrieved
      * @return float; the value stored at the indicated row and column
      */
     protected final float safeGet(final int row, final int column)
@@ -757,10 +756,10 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Modify a value in vectorSI without checking validity of the indices.
-     * @param row integer; the row where the value must be stored
-     * @param column integer; the column where the value must be stored
-     * @param valueSI float; the new value for the entry in vectorSI
+     * Modify a value in matrixSI without checking validity of the indices.
+     * @param row int; the row where the value must be stored
+     * @param column int; the column where the value must be stored
+     * @param valueSI float; the new value for the entry in matrixSI
      */
     protected final void safeSet(final int row, final int column, final float valueSI)
     {
@@ -777,11 +776,11 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Check that a provided array can be used to create some descendant of an FloatMatrix.
-     * @param fsArray FloatScalar[][]; the provided array
-     * @return FloatScalar[][]; the provided array
+     * Check that a provided array can be used to create some descendant of a FloatMatrix.
+     * @param fsArray FloatScalar&lt;U&gt;[][]; the provided array
+     * @param <U> Unit; the unit of the FloatScalar array
+     * @return FloatScalar&lt;U&gt;[][]; the provided array
      * @throws ValueException when the array has zero entries
-     * @param <U> Unit; the unit
      */
     protected static <U extends Unit<U>> FloatScalar<U>[][] checkNonEmpty(final FloatScalar<U>[][] fsArray)
             throws ValueException
@@ -789,7 +788,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         if (0 == fsArray.length || 0 == fsArray[0].length)
         {
             throw new ValueException(
-                    "Cannot create a FloatValue or MutableFloatValue from an empty array of FloatScalar");
+                    "Cannot create a FloatMatrix or MutableFloatMatrix from an empty array of FloatScalar");
         }
         return fsArray;
     }
@@ -797,10 +796,10 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * Solve x for A*x = b. According to Colt: x; a new independent matrix; solution if A is square, least squares
      * solution if A.rows() &gt; A.columns(), underdetermined system solution if A.rows() &lt; A.columns().
-     * @param A matrix A in A*x = b
-     * @param b vector b in A*x = b
-     * @return vector x in A*x = b
-     * @throws ValueException when Matrix A is neither Sparse nor Dense.
+     * @param A FloatMatrix&lt;?&gt;; matrix A in A*x = b
+     * @param b FloatVector&lt;?&gt;; vector b in A*x = b
+     * @return FloatVector&lt;SIUnit&gt;; vector x in A*x = b
+     * @throws ValueException when matrix A is neither Sparse nor Dense
      */
     public static FloatVector<SIUnit> solve(final FloatMatrix<?> A, final FloatVector<?> b) throws ValueException
     {
@@ -810,7 +809,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
                         A.getUnit().getSICoefficients()).toString());
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        FloatMatrix2D A2D = A.matrixSI;
+        FloatMatrix2D A2D = A.getMatrixSI();
         if (A instanceof SparseData)
         {
             SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());
@@ -855,18 +854,18 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
             return false;
         }
         FloatMatrix<?> other = (FloatMatrix<?>) obj;
-        // unequal if one is absolute and the other is relative
+        // unequal if not both absolute or both relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;
         }
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        // unequal if the standard SI units differ
         if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
         {
             return false;
         }
-        // Colt's equals also tests the size of the vector
-        if (!this.matrixSI.equals(other.matrixSI))
+        // Colt's equals also tests the size of the matrix
+        if (!getMatrixSI().equals(other.getMatrixSI()))
         {
             return false;
         }
