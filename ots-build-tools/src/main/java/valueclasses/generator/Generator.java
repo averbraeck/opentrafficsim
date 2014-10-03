@@ -745,17 +745,17 @@ public class Generator
                 new String[]{"org.opentrafficsim.core.value.MathFunctions"},
                 "Force implementation of multiply and divide.",
                 null,
-                "",
-                buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor",
+                "extends MathFunctions",
+                buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor.",
                         new String[]{"double|factor|the multiplier"}, null, null, null, false)
                         + buildMethod(indentStep, "|void|divide",
-                                "Scale the value(s) by the inverse of a factor; i.e. a divisor",
+                                "Scale the value(s) by the inverse of a factor; i.e. a divisor.",
                                 new String[]{"double|divisor|the divisor"}, null, null, null, false)
 
         );
 
         generateFinalClass("value.vdouble", "DoubleMathFunctionsImpl",
-                new String[]{"import cern.colt.function.tdouble.DoubleFunction"},
+                new String[]{"cern.colt.function.tdouble.DoubleFunction"},
                 "DoubleFunction implementations of the standard Math functions.", null, "",
                 buildMathFunctionImpl("Double"));
 
@@ -798,8 +798,8 @@ public class Generator
         generateScalarClass("Double", false);
         generateScalarClass("Double", true);
 
-        generateReadOnlyVectorFunctions("Float");
-        generateReadOnlyVectorFunctions("Double");
+        generateReadOnlyVectorFunctions("Float", 1);
+        generateReadOnlyVectorFunctions("Double", 1);
         generateWriteVectorFunctions("Float");
         generateWriteVectorFunctions("Double");
         generateVectorClass("Float", false, 1);
@@ -807,6 +807,8 @@ public class Generator
         generateVectorClass("Double", false, 1);
         generateVectorClass("Double", true, 1);
 
+        generateReadOnlyVectorFunctions("Float", 2);
+        generateReadOnlyVectorFunctions("Double", 2);
         generateVectorClass("Float", false, 2);
         generateVectorClass("Float", true, 2);
         generateVectorClass("Double", false, 2);
@@ -857,51 +859,74 @@ public class Generator
 
     /**
      * @param type String; type of the result of the generated functions
+     * @param dimensions int; number of dimensions of the data
      */
-    private static void generateReadOnlyVectorFunctions(String type)
+    private static void generateReadOnlyVectorFunctions(String type, int dimensions)
     {
+        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
+        final String valueException =
+                1 == dimensions ? "ValueException|when index out of range (index &lt; 0 or index &gt;= size())"
+                        : "ValueException|when row or column out of range (row &lt; 0 or row &gt;= rows() or "
+                                + "column &lt; 0 or column\r\n" + indentStep + " *             &gt;= columns())";
         generateInterface(
-                "value.v" + type.toLowerCase() + ".vector",
-                "ReadOnly" + type + "VectorFunctions",
+                "value.v" + type.toLowerCase() + "." + vectorOrMatrix.toLowerCase(),
+                "ReadOnly" + type + vectorOrMatrix + "Functions",
                 new String[]{"org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.ValueException",
                         "org.opentrafficsim.core.value.v" + type.toLowerCase() + ".scalar." + type + "Scalar"},
-                "Methods that operate on " + type + "Vector but do not modify the contents of the " + type + "Vector",
-                new String[]{"<U> Unit of the vector"},
+                "Methods that operate on " + type + vectorOrMatrix + " but do not modify the contents of the " + type
+                        + vectorOrMatrix + ".",
+                new String[]{"<U> Unit of the " + vectorOrMatrix.toLowerCase()},
                 "<U extends Unit<U>>",
-                buildMethod(indentStep, "|int|size|the size of the vector", "Retrieve the size of the vector.", null,
-                        null, null, null, false)
-
+                (1 == dimensions ? buildMethod(indentStep, "|int|size|the size of the vector",
+                        "Retrieve the size of the vector.", null, null, null, null, false) : buildMethod(indentStep,
+                        "|int|rows|the number of rows of the matrix", "Retrieve the number of rows of the matrix.",
+                        null, null, null, null, false)
+                        + buildMethod(indentStep, "|int|columns|the number of columns of the matrix",
+                                "Retrieve the number of columns of the matrix.", null, null, null, null, false))
                         + buildMethod(indentStep, "|int|cardinality|the number of cells having non-zero value",
                                 "Count the number of cells that have a non-zero value (ignores tolerance).", null,
                                 null, null, null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase()
-                                + "|getSI|value at position index in the standard SI unit",
-                                "Retrieve the value stored at a specified position in the standard SI unit.",
-                                new String[]{"int|index|index of the value to return"},
-                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|getSI|value at position "
+                                + (1 == dimensions ? "index" : "row, column") + " in the standard SI unit",
+                                "Retrieve the value stored at a specified "
+                                        + (1 == dimensions ? "position" : "row and column")
+                                        + " in the standard SI unit.", 1 == dimensions
+                                        ? new String[]{"int|index|index of the value to retrieve"} : new String[]{
+                                                "int|row|row of the value to retrieve",
+                                                "int|column|column of the value to retrieve"}, valueException, null,
                                 null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase()
-                                + "|getInUnit|value at position index in the original unit",
-                                "Retrieve the value stored at a specified position in the original unit.",
-                                new String[]{"int|index|index of the value to return"},
-                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|getInUnit|value at position "
+                                + (1 == dimensions ? "index" : "row, column") + " in the original unit",
+                                "Retrieve the value stored at a specified "
+                                        + (1 == dimensions ? "position" : "row and column") + " in the original unit.",
+                                1 == dimensions ? new String[]{"int|index|index of the value to retrieve"}
+                                        : new String[]{"int|row|row of the value to retrieve",
+                                                "int|column|column of the value to retrieve"}, valueException, null,
                                 null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase()
-                                + "|getInUnit|value at position index converted into the specified unit",
-                                "Retrieve the value stored at a specified position converted into a specified unit.",
-                                new String[]{"int|index|index of the value to return",
-                                        "U|targetUnit|the unit for the result"},
-                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
-                                null, false)
+                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|getInUnit|value at position "
+                                + (1 == dimensions ? "index" : "row, column") + " converted into the specified unit",
+                                "Retrieve the value stored at a specified "
+                                        + (1 == dimensions ? "position" : "row and column")
+                                        + " converted into a specified unit.", new String[]{
+                                        1 == dimensions ? "int|index|index of the value to retrieve"
+                                                : "int|row|row of the value to retrieve",
+                                        dimensions > 1 ? "int|column|column of the value to retrieve" : null,
+                                        "U|targetUnit|the unit for the result"}, valueException, null, null, false)
                         + buildMethod(indentStep, "|" + type
                                 + "Scalar<U>|get|the strongly typed value of the selected cell",
-                                "Retrieve the value stored at position index converted into a " + type
-                                        + "Scalar&lt;U&gt;.", new String[]{"int|index|index of the value to return"},
-                                "ValueException|when index out of range (index &lt; 0 or index &gt;= size())", null,
+                                "Retrieve the value stored at a specified "
+                                        + (1 == dimensions ? "index" : "row and column") + " as a " + type + "Scalar.",
+                                1 == dimensions ? new String[]{"int|index|index of the value to retrieve"}
+                                        : new String[]{"int|row|row of the value to retrieve",
+                                                "int|column|column of the value to retrieve"}, valueException, null,
                                 null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase()
-                                + "|zSum|the sum of all values of this vector",
-                                "Compute the sum of all values of this vector.", null, null, null, null, false)
+                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|zSum|the sum of all values of this "
+                                + vectorOrMatrix.toLowerCase(), "Compute the sum of all values of this "
+                                + vectorOrMatrix.toLowerCase() + ".", null, null, null, null, false)
+                        + (2 == dimensions ? buildMethod(indentStep, "|" + type.toLowerCase()
+                                + "|det|the determinant of the matrix", "Compute the determinant of the matrix.", null,
+                                "ValueException|when matrix is neither sparse, nor dense, or not square", null, null,
+                                false) : "")
 
         );
     }
