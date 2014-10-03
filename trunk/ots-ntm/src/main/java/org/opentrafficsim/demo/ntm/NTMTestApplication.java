@@ -104,5 +104,9 @@ public class NTMTestApplication extends DSOLApplication
             }
             panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
         }
+        else
+        {
+            System.err.println("Information page " + helpSource + " not found.");
+        }
     }
 }
