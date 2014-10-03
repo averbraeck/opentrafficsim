@@ -1,5 +1,6 @@
 package org.opentrafficsim.car.following;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 
 import org.opentrafficsim.car.Car;
@@ -17,7 +18,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Jul 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface CarFollowingModel
+public interface CarFollowingModel<C extends Car>
 {
     /**
      * Compute the acceleration that would be used to follow a set of leaders.
@@ -26,7 +27,7 @@ public interface CarFollowingModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return CarFollowingModelResult; the result of application of the car following model
      */
-    CarFollowingModelResult computeAcceleration(final Car car, final Collection<Car> leaders,
+    CarFollowingModelResult computeAcceleration(final C car, final Collection<C> leaders,
             final DoubleScalar.Abs<SpeedUnit> speedLimit);
 
     /**
@@ -43,11 +44,12 @@ public interface CarFollowingModel
      * @param nonPreferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane into which cars should merge
      *            to overtake other traffic
      * @return CarFollowingModelResult; the result of the lane change and car following model
+     * @throws RemoteException
      */
-    CarFollowingModelResult computeLaneChangeAndAcceleration(final Car car, final Collection<Car> sameLaneCars,
-            final Collection<Car> preferredLaneCars, final Collection<Car> nonPreferredLaneCars,
+    CarFollowingModelResult computeLaneChangeAndAcceleration(final C car, final Collection<C> sameLaneCars,
+            final Collection<C> preferredLaneCars, final Collection<C> nonPreferredLaneCars,
             final DoubleScalar.Abs<SpeedUnit> speedLimit, double preferredLaneRouteIncentive,
-            double nonPreferredLaneRouteIncentive);
+            double nonPreferredLaneRouteIncentive) throws RemoteException;
 
     /**
      * The result of a CarFollowingModel evaluation shall be stored in an instance of this class.

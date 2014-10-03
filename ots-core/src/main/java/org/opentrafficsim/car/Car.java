@@ -1,8 +1,16 @@
 package org.opentrafficsim.car;
 
+import java.rmi.RemoteException;
+
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.location.Line;
 import org.opentrafficsim.core.location.LocationRelative;
@@ -53,7 +61,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     private final int id;
 
     /** Simulator "running" this Car. */
-    private final OTSDEVSSimulator simulator;
+    private final OTSDEVSSimulatorInterface simulator;
 
     /** CarFollowingModel used by this Car. */
     private final CarFollowingModel carFollowingModel;
@@ -67,7 +75,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial position of the new Car
      * @param initialSpeed DoubleScalar.Rel&lt;SpeedUnit&gt;; the initial speed of the new Car
      */
-    public Car(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
+    public Car(final int id, final OTSDEVSSimulatorInterface simulator, final CarFollowingModel carFollowingModel,
             final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
             final DoubleScalar.Rel<SpeedUnit> initialSpeed)
     {
@@ -157,21 +165,17 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Retrieve the simulator of this Car.
      * @return OTSDEVSSimulatorInterface; the simulator of this Car
      */
-    public final OTSDEVSSimulator getSimulator()
+    public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @throws RemoteException
+     */
     @Override
-    public LocationRelative<Line<String>> getLocation()
-    {
-        return null; // FIXME: STUB
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final DoubleScalar.Rel<SpeedUnit> getVelocity()
+    public final DoubleScalar.Rel<SpeedUnit> getVelocity() throws RemoteException
     {
         return getVelocity(this.simulator.getSimulatorTime().get());
     }
@@ -188,7 +192,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     @Override
     public final String toString()
     {
-        return toString(this.simulator.getSimulatorTime().get());
+        return "" + this.id;
     }
 
     /**
@@ -246,8 +250,9 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
      * Positive values indicate that this Car is ahead, negative values indicate behind.
      * @param otherCar Car; the car to which the headway must be returned
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
+     * @throws RemoteException
      */
-    public final DoubleScalar.Rel<LengthUnit> headway(final Car otherCar)
+    public final DoubleScalar.Rel<LengthUnit> headway(final Car otherCar) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> when = this.simulator.getSimulatorTime().get();
         return MutableDoubleScalar.minus(positionOfFront(when), otherCar.positionOfFront(when)).immutable();
@@ -264,4 +269,20 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         return this.carFollowingModel;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        // quick and dirty... straight line.
+        // TODO: map to a geometry model...
+        return new DirectedPoint(
+                new double[] { getPosition(this.simulator.getSimulatorTime().get()).doubleValue(), 0.0d, 0.0d });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Bounds getBounds() throws RemoteException
+    {
+        return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
+    }
 }

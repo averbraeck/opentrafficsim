@@ -67,7 +67,8 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length)
     {
-        this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.PER_SECOND));
+        this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
+                FrequencyUnit.PER_SECOND));
     }
 
     /**

@@ -36,7 +36,7 @@ public class IDMPlusTest
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
-        CarFollowingModel carFollowingModel = new IDMPlus<Line<String>>();
+        CarFollowingModel<Car> carFollowingModel = new IDMPlus<Line<String>, Car>();
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(123.456, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
