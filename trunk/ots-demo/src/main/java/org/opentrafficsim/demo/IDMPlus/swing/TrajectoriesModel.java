@@ -45,10 +45,10 @@ public class TrajectoriesModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus. */
-    protected CarFollowingModel carFollowingModel;
+    protected CarFollowingModel<Car> carFollowingModel;
 
     /** cars in the model. */
-    private ArrayList<Car> cars = new ArrayList<Car>();
+    protected ArrayList<Car> cars = new ArrayList<Car>();
 
     /** minimum distance. */
     private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
@@ -70,7 +70,7 @@ public class TrajectoriesModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulator) simulator;
 
-        this.carFollowingModel = new IDMPlus<Line<String>>();
+        this.carFollowingModel = new IDMPlus<Line<String>, Car>();
 
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
