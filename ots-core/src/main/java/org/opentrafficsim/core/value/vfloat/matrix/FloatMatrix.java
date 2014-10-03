@@ -34,7 +34,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
  * <p>
  * @version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Unit; the unit for this FloatMatrix
+ * @param <U> the Unit for this FloatMatrix
  */
 public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyFloatMatrixFunctions<U>
@@ -450,7 +450,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     /**
      * Construct the matrix and store the values in the standard SI unit.
      * @param values FloatScalar&lt;U&gt;[][]; a 2D array of values
-     * @throws ValueException when values is empty
+     * @throws ValueException when values has zero entries, or is not rectangular
      */
     protected final void initialize(final FloatScalar<U>[][] values) throws ValueException
     {
@@ -568,11 +568,11 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
         {
             if (this instanceof SparseData)
             {
-                return new SparseFloatAlgebra().det(this.matrixSI);
+                return new SparseFloatAlgebra().det(getMatrixSI());
             }
             if (this instanceof DenseData)
             {
-                return new DenseFloatAlgebra().det(this.matrixSI);
+                return new DenseFloatAlgebra().det(getMatrixSI());
             }
             throw new ValueException("FloatMatrix.det -- matrix implements neither Sparse nor Dense");
         }
@@ -712,7 +712,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
      * Check that a 2D array of FloatScalar&lt;?&gt; is rectangular; i.e. all rows have the same length and is non
      * empty.
      * @param values FloatScalar&lt;?&gt;[][]; the 2D array to check
-     * @throws ValueException when not all rows have the same length, or contains no data
+     * @throws ValueException when values is not rectangular, or contains no data
      */
     private static void ensureRectangularAndNonEmpty(final FloatScalar<?>[][] values) throws ValueException
     {

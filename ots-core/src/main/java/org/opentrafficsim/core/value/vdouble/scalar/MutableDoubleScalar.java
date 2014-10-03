@@ -56,7 +56,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /**
          * Construct a new Absolute MutableDoubleScalar from an existing Absolute Immutable DoubleScalar.
-         * @param value DoubleScalar.Abs<U>; the reference
+         * @param value DoubleScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final DoubleScalar.Abs<U> value)
         {
@@ -67,7 +67,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /**
          * Construct a new Absolute MutableDoubleScalar from an existing Absolute MutableDoubleScalar.
-         * @param value MutableDoubleScalar.Abs<U>; the reference
+         * @param value MutableDoubleScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final MutableDoubleScalar.Abs<U> value)
         {
@@ -128,7 +128,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /**
          * Construct a new Relative MutableDoubleScalar from an existing Relative Immutable DoubleScalar.
-         * @param value DoubleScalar.Rel<U>; the reference
+         * @param value DoubleScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final DoubleScalar.Rel<U> value)
         {
@@ -139,7 +139,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
         /**
          * Construct a new Relative MutableDoubleScalar from an existing Relative MutableDoubleScalar.
-         * @param value MutableDoubleScalar.Rel<U>; the reference
+         * @param value MutableDoubleScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final MutableDoubleScalar.Rel<U> value)
         {
@@ -181,7 +181,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * Construct an immutable version of this MutableDoubleScalar. <br>
      * The immutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return DoubleScalar<U>; immutable version of this DoubleScalar
+     * @return DoubleScalar&lt;U&gt;; immutable version of this DoubleScalar
      */
     public abstract DoubleScalar<U> immutable();
 
@@ -196,7 +196,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Replace the stored value by the supplied value.
-     * @param value DoubleScalar<U>; the strongly typed value to store
+     * @param value DoubleScalar&lt;U&gt;; the strongly typed value to store
      */
     final void set(final DoubleScalar<U> value)
     {
@@ -218,10 +218,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**********************************************************************************/
 
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
+     * Add another value to this value. Only Relative values are allowed; adding an absolute value to an absolute value
      * is not allowed. Adding an absolute value to an existing relative value would require the result to become
      * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param value DoubleScalar.Rel<U>; the value to add
+     * @param value DoubleScalar.Rel&lt;U&gt;; the value to add
      */
     public final void add(final DoubleScalar.Rel<U> value)
     {
@@ -232,7 +232,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
      * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param value DoubleScalar.Rel<U>; the value to subtract
+     * @param value DoubleScalar.Rel&lt;U&gt;; the value to subtract
      */
     public final void subtract(final DoubleScalar.Rel<U> value)
     {
@@ -245,8 +245,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Increment the stored value by a specified amount.
-     * @param increment DoubleScalar<?>; the amount by which to increment the stored value
-     * @return DoubleScalar<?>; the modified MutableDoubleScalar
+     * @param increment DoubleScalar&lt;?&gt;; the amount by which to increment the stored value
+     * @return DoubleScalar&lt;?&gt;; the modified MutableDoubleScalar
      */
     protected final DoubleScalar<?> incrementBy(final DoubleScalar<?> increment)
     {
@@ -258,10 +258,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
      * value will be the unit of the first argument. Due to type erasure of generics, the method cannot check whether an
      * array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs DoubleScalar.Abs<U>; the absolute base value
-     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to add to the absolute value
+     * @param valueAbs DoubleScalar.Abs&lt;U&gt;; the absolute base value
+     * @param valuesRel DoubleScalar.Rel&lt;U&gt;...; zero or more relative values to add to the absolute value
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableDoubleScalar.Abs<U>; the sum of the values as an absolute value
+     * @return MutableDoubleScalar.Abs&lt;U&gt;; the sum of the values as an absolute value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> plus(final DoubleScalar.Abs<U> valueAbs,
@@ -279,9 +279,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * Add a number of relative values. Return a new instance of the value. Due to type erasure of generics, the method
      * cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param targetUnit U; the unit of the sum
-     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to add together
+     * @param valuesRel DoubleScalar.Rel&lt;U&gt;...; zero or more relative values to add together
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableDoubleScalar.Rel<U>; the sum of the values as a relative value
+     * @return MutableDoubleScalar.Rel&lt;U&gt;; the sum of the values as a relative value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> plus(final U targetUnit,
@@ -297,8 +297,8 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Decrement the stored value by a specified amount.
-     * @param decrement DoubleScalar<?>; the amount by which to decrement the stored value
-     * @return DoubleScalar<?>; the modified MutableDoubleScalar
+     * @param decrement DoubleScalar&lt;?&gt;; the amount by which to decrement the stored value
+     * @return DoubleScalar&lt;?&gt;; the modified MutableDoubleScalar
      */
     protected final DoubleScalar<?> decrementBy(final DoubleScalar<?> decrement)
     {
@@ -310,10 +310,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
      * return value will be the unit of the first argument. Due to type erasure of generics, the method cannot check
      * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs DoubleScalar.Abs<U>; the absolute base value
-     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to subtract from the absolute value
+     * @param valueAbs DoubleScalar.Abs&lt;U&gt;; the absolute base value
+     * @param valuesRel DoubleScalar.Rel&lt;U&gt;...; zero or more relative values to subtract from the absolute value
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableDoubleScalar.Abs<U>; the resulting value as an absolute value
+     * @return MutableDoubleScalar.Abs&lt;U&gt;; the resulting value as an absolute value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> minus(final DoubleScalar.Abs<U> valueAbs,
@@ -331,10 +331,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the
      * value will be the unit of the first argument. Due to type erasure of generics, the method cannot check whether an
      * array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueRel DoubleScalar.Rel<U>; the relative base value
-     * @param valuesRel DoubleScalar.Rel<U>...; zero or more relative values to subtract from the first value
+     * @param valueRel DoubleScalar.Rel&lt;U&gt;; the relative base value
+     * @param valuesRel DoubleScalar.Rel&lt;U&gt;...; zero or more relative values to subtract from the first value
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableDoubleScalar.Rel<U>; the resulting value as a relative value
+     * @return MutableDoubleScalar.Rel&lt;U&gt;; the resulting value as a relative value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Rel<U> valueRel,
@@ -351,10 +351,10 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     /**
      * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
      * will be the unit of the first argument.
-     * @param valueAbs1 DoubleScalar.Abs<U>; value 1
-     * @param valueAbs2 DoubleScalar.Abs<U>; value 2
+     * @param valueAbs1 DoubleScalar.Abs&lt;U&gt;; value 1
+     * @param valueAbs2 DoubleScalar.Abs&lt;U&gt;; value 2
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableDoubleScalar.Rel<U>; the difference of the two absolute values as a relative value
+     * @return MutableDoubleScalar.Rel&lt;U&gt;; the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Abs<U> valueAbs1,
             final DoubleScalar.Abs<U> valueAbs2)
@@ -367,9 +367,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left DoubleScalar.Abs<?>; the left operand
-     * @param right DoubleScalar.Abs<?>; the right operand
-     * @return MutableDoubleScalar.Abs<SIUnit>; the product of the two values
+     * @param left DoubleScalar.Abs&lt;?&gt;; the left operand
+     * @param right DoubleScalar.Abs&lt;?&gt;; the right operand
+     * @return MutableDoubleScalar.Abs&lt;SIUnit&gt;; the product of the two values
      */
     public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> left,
             final DoubleScalar.Abs<?> right)
@@ -382,9 +382,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left DoubleScalar.Rel<?>; the left operand
-     * @param right DoubleScalar.Rel<?>; the right operand
-     * @return MutableDoubleScalar.Rel<SIUnit>; the product of the two values
+     * @param left DoubleScalar.Rel&lt;?&gt;; the left operand
+     * @param right DoubleScalar.Rel&lt;?&gt;; the right operand
+     * @return MutableDoubleScalar.Rel&lt;SIUnit&gt;; the product of the two values
      */
     public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> left,
             final DoubleScalar.Rel<?> right)
@@ -397,9 +397,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left DoubleScalar.Abs<?>; the left operand
-     * @param right DoubleScalar.Abs<?>; the right operand
-     * @return MutableDoubleScalar.Abs<SIUnit>; the ratio of the two values
+     * @param left DoubleScalar.Abs&lt;?&gt;; the left operand
+     * @param right DoubleScalar.Abs&lt;?&gt;; the right operand
+     * @return MutableDoubleScalar.Abs&lt;SIUnit&gt;; the ratio of the two values
      */
     public static MutableDoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> left, final DoubleScalar.Abs<?> right)
     {
@@ -411,9 +411,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left DoubleScalar.Rel<?>; the left operand
-     * @param right DoubleScalar.Rel<?>; the right operand
-     * @return MutableDoubleScalar.Rel<SIUnit>; the ratio of the two values
+     * @param left DoubleScalar.Rel&lt;?&gt;; the left operand
+     * @param right DoubleScalar.Rel&lt;?&gt;; the right operand
+     * @return MutableDoubleScalar.Rel&lt;SIUnit&gt;; the ratio of the two values
      */
     public static MutableDoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> left, final DoubleScalar.Rel<?> right)
     {

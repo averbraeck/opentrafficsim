@@ -7,6 +7,8 @@ import org.opentrafficsim.core.value.Scalar;
 import org.opentrafficsim.core.value.ValueUtil;
 
 /**
+ * Immutable FloatScalar.
+ * <p>
  * All calculations are according to IEEE 754. This means that division by zero results in Float.INFINITY, and some calculations
  * could result in NaN. No changes have been made to avoid this, as it is the standard behavior of Java for floating point
  * numbers.
@@ -24,7 +26,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /** */
     private static final long serialVersionUID = 20140618L;
 
-    /** the value, stored in the standard SI unit. */
+    /** The value, stored in the standard SI unit. */
     private float valueSI;
 
     /**
@@ -58,7 +60,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Absolute Immutable FloatScalar from an existing Absolute Immutable FloatScalar.
-         * @param value FloatScalar.Abs<U>; the reference
+         * @param value FloatScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
         {
@@ -69,7 +71,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Absolute Immutable FloatScalar from an existing Absolute MutableFloatScalar.
-         * @param value MutableFloatScalar.Abs<U>; the reference
+         * @param value MutableFloatScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
         {
@@ -123,7 +125,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Relative Immutable FloatScalar from an existing Relative Immutable FloatScalar.
-         * @param value FloatScalar.Rel<U>; the reference
+         * @param value FloatScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final FloatScalar.Rel<U> value)
         {
@@ -134,7 +136,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Relative Immutable FloatScalar from an existing Relative MutableFloatScalar.
-         * @param value MutableFloatScalar.Rel<U>; the reference
+         * @param value MutableFloatScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
         {
@@ -169,7 +171,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * Create a mutable version of this FloatScalar. <br>
      * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableFloatScalar<U>
+     * @return MutableFloatScalar&lt;U&gt;
      */
     public abstract MutableFloatScalar<U> mutable();
 
@@ -191,7 +193,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
 
     /**
      * Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never necessary.
-     * @param value FloatScalar<u>; the value to use for initialization
+     * @param value FloatScalar&lt;U&gt;; the value to use for initialization
      */
     protected final void initialize(final FloatScalar<U> value)
     {

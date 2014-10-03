@@ -5,7 +5,7 @@ import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Methods that modify the data stored in a vector.
+ * Methods that modify the data stored in a DoubleVector.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -27,7 +27,7 @@ public interface WriteDoubleVectorFunctions<U extends Unit<U>>
     /**
      * Replace the value at index by the supplied value which is in a compatible unit.
      * @param index int; index of the value to replace
-     * @param value doubleScalar&lt;U&gt;; the strongly typed value to store
+     * @param value DoubleScalar&lt;U&gt;; the strongly typed value to store
      * @throws ValueException when index &lt; 0 or index &gt;= size()
      */
     void set(int index, DoubleScalar<U> value) throws ValueException;

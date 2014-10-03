@@ -9,6 +9,7 @@ import org.opentrafficsim.core.value.ValueUtil;
 import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
 
 /**
+ * MutableFloatScalar.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -54,7 +55,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
         /**
          * Construct a new Absolute MutableFloatScalar from an existing Absolute Immutable FloatScalar.
-         * @param value FloatScalar.Abs<U>; the reference
+         * @param value FloatScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final FloatScalar.Abs<U> value)
         {
@@ -65,7 +66,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
         /**
          * Construct a new Absolute MutableFloatScalar from an existing Absolute MutableFloatScalar.
-         * @param value MutableFloatScalar.Abs<U>; the reference
+         * @param value MutableFloatScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final MutableFloatScalar.Abs<U> value)
         {
@@ -126,7 +127,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
         /**
          * Construct a new Relative MutableFloatScalar from an existing Relative Immutable FloatScalar.
-         * @param value FloatScalar.Rel<U>; the reference
+         * @param value FloatScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final FloatScalar.Rel<U> value)
         {
@@ -137,7 +138,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
         /**
          * Construct a new Relative MutableFloatScalar from an existing Relative MutableFloatScalar.
-         * @param value MutableFloatScalar.Rel<U>; the reference
+         * @param value MutableFloatScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final MutableFloatScalar.Rel<U> value)
         {
@@ -179,7 +180,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * Construct an immutable version of this MutableFloatScalar. <br>
      * The immutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return FloatScalar<U>; immutable version of this FloatScalar
+     * @return FloatScalar&lt;U&gt;; immutable version of this FloatScalar
      */
     public abstract FloatScalar<U> immutable();
 
@@ -194,7 +195,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Replace the stored value by the supplied value.
-     * @param value FloatScalar<U>; the strongly typed value to store
+     * @param value FloatScalar&lt;U&gt;; the strongly typed value to store
      */
     final void set(final FloatScalar<U> value)
     {
@@ -216,10 +217,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**********************************************************************************/
 
     /**
-     * Add another value to this value. Only relative values are allowed; adding an absolute value to an absolute value
+     * Add another value to this value. Only Relative values are allowed; adding an absolute value to an absolute value
      * is not allowed. Adding an absolute value to an existing relative value would require the result to become
      * absolute, which is a type change that is impossible. For that operation, use a static method.
-     * @param value FloatScalar.Rel<U>; the value to add
+     * @param value FloatScalar.Rel&lt;U&gt;; the value to add
      */
     public final void add(final FloatScalar.Rel<U> value)
     {
@@ -230,7 +231,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * Subtract another value from this value. Only relative values are allowed; subtracting an absolute value from a
      * relative value is not allowed. Subtracting an absolute value from an existing absolute value would require the
      * result to become relative, which is a type change that is impossible. For that operation, use a static method.
-     * @param value FloatScalar.Rel<U>; the value to subtract
+     * @param value FloatScalar.Rel&lt;U&gt;; the value to subtract
      */
     public final void subtract(final FloatScalar.Rel<U> value)
     {
@@ -243,8 +244,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Increment the stored value by a specified amount.
-     * @param increment FloatScalar<?>; the amount by which to increment the stored value
-     * @return FloatScalar<?>; the modified MutableFloatScalar
+     * @param increment FloatScalar&lt;?&gt;; the amount by which to increment the stored value
+     * @return FloatScalar&lt;?&gt;; the modified MutableFloatScalar
      */
     protected final FloatScalar<?> incrementBy(final FloatScalar<?> increment)
     {
@@ -256,10 +257,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * Add a number of relative values to an absolute value. Return a new instance of the value. The unit of the return
      * value will be the unit of the first argument. Due to type erasure of generics, the method cannot check whether an
      * array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs FloatScalar.Abs<U>; the absolute base value
-     * @param valuesRel FloatScalar.Rel<U>...; zero or more relative values to add to the absolute value
+     * @param valueAbs FloatScalar.Abs&lt;U&gt;; the absolute base value
+     * @param valuesRel FloatScalar.Rel&lt;U&gt;...; zero or more relative values to add to the absolute value
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableFloatScalar.Abs<U>; the sum of the values as an absolute value
+     * @return MutableFloatScalar.Abs&lt;U&gt;; the sum of the values as an absolute value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> plus(final FloatScalar.Abs<U> valueAbs,
@@ -277,9 +278,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * Add a number of relative values. Return a new instance of the value. Due to type erasure of generics, the method
      * cannot check whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
      * @param targetUnit U; the unit of the sum
-     * @param valuesRel FloatScalar.Rel<U>...; zero or more relative values to add together
+     * @param valuesRel FloatScalar.Rel&lt;U&gt;...; zero or more relative values to add together
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableFloatScalar.Rel<U>; the sum of the values as a relative value
+     * @return MutableFloatScalar.Rel&lt;U&gt;; the sum of the values as a relative value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> plus(final U targetUnit,
@@ -295,8 +296,8 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Decrement the stored value by a specified amount.
-     * @param decrement FloatScalar<?>; the amount by which to decrement the stored value
-     * @return FloatScalar<?>; the modified MutableFloatScalar
+     * @param decrement FloatScalar&lt;?&gt;; the amount by which to decrement the stored value
+     * @return FloatScalar&lt;?&gt;; the modified MutableFloatScalar
      */
     protected final FloatScalar<?> decrementBy(final FloatScalar<?> decrement)
     {
@@ -308,10 +309,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * Subtract a number of relative values from an absolute value. Return a new instance of the value. The unit of the
      * return value will be the unit of the first argument. Due to type erasure of generics, the method cannot check
      * whether an array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueAbs FloatScalar.Abs<U>; the absolute base value
-     * @param valuesRel FloatScalar.Rel<U>...; zero or more relative values to subtract from the absolute value
+     * @param valueAbs FloatScalar.Abs&lt;U&gt;; the absolute base value
+     * @param valuesRel FloatScalar.Rel&lt;U&gt;...; zero or more relative values to subtract from the absolute value
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableFloatScalar.Abs<U>; the resulting value as an absolute value
+     * @return MutableFloatScalar.Abs&lt;U&gt;; the resulting value as an absolute value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> minus(final FloatScalar.Abs<U> valueAbs,
@@ -329,10 +330,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * Subtract a number of relative values from a relative value. Return a new instance of the value. The unit of the
      * value will be the unit of the first argument. Due to type erasure of generics, the method cannot check whether an
      * array of arguments submitted to the varargs has a mixed-unit content at runtime.
-     * @param valueRel FloatScalar.Rel<U>; the relative base value
-     * @param valuesRel FloatScalar.Rel<U>...; zero or more relative values to subtract from the first value
+     * @param valueRel FloatScalar.Rel&lt;U&gt;; the relative base value
+     * @param valuesRel FloatScalar.Rel&lt;U&gt;...; zero or more relative values to subtract from the first value
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableFloatScalar.Rel<U>; the resulting value as a relative value
+     * @return MutableFloatScalar.Rel&lt;U&gt;; the resulting value as a relative value
      */
     @SafeVarargs
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Rel<U> valueRel,
@@ -349,10 +350,10 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     /**
      * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
      * will be the unit of the first argument.
-     * @param valueAbs1 FloatScalar.Abs<U>; value 1
-     * @param valueAbs2 FloatScalar.Abs<U>; value 2
+     * @param valueAbs1 FloatScalar.Abs&lt;U&gt;; value 1
+     * @param valueAbs2 FloatScalar.Abs&lt;U&gt;; value 2
      * @param <U> Unit; the unit of the parameters and the result
-     * @return MutableFloatScalar.Rel<U>; the difference of the two absolute values as a relative value
+     * @return MutableFloatScalar.Rel&lt;U&gt;; the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Abs<U> valueAbs1,
             final FloatScalar.Abs<U> valueAbs2)
@@ -365,9 +366,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left FloatScalar.Abs<?>; the left operand
-     * @param right FloatScalar.Abs<?>; the right operand
-     * @return MutableFloatScalar.Abs<SIUnit>; the product of the two values
+     * @param left FloatScalar.Abs&lt;?&gt;; the left operand
+     * @param right FloatScalar.Abs&lt;?&gt;; the right operand
+     * @return MutableFloatScalar.Abs&lt;SIUnit&gt;; the product of the two values
      */
     public static MutableFloatScalar.Abs<SIUnit> multiply(final FloatScalar.Abs<?> left, final FloatScalar.Abs<?> right)
     {
@@ -379,9 +380,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Multiply two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left FloatScalar.Rel<?>; the left operand
-     * @param right FloatScalar.Rel<?>; the right operand
-     * @return MutableFloatScalar.rel<SIUnit>; the product of the two values
+     * @param left FloatScalar.Rel&lt;?&gt;; the left operand
+     * @param right FloatScalar.Rel&lt;?&gt;; the right operand
+     * @return MutableFloatScalar.Rel&lt;SIUnit&gt;; the product of the two values
      */
     public static MutableFloatScalar.Rel<SIUnit> multiply(final FloatScalar.Rel<?> left, final FloatScalar.Rel<?> right)
     {
@@ -393,9 +394,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left FloatScalar.Abs<?>; the left operand
-     * @param right FloatScalar.Abs<?>; the right operand
-     * @return MutableFloatScalar.Abs<SIUnit>; the ratio of the two values
+     * @param left FloatScalar.Abs&lt;?&gt;; the left operand
+     * @param right FloatScalar.Abs&lt;?&gt;; the right operand
+     * @return MutableFloatScalar.Abs&lt;SIUnit&gt;; the ratio of the two values
      */
     public static MutableFloatScalar.Abs<SIUnit> divide(final FloatScalar.Abs<?> left, final FloatScalar.Abs<?> right)
     {
@@ -407,9 +408,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Divide two values; the result is a new instance with a different (existing or generated) SI unit.
-     * @param left FloatScalar.Rel<?>; the left operand
-     * @param right FloatScalar.Rel<?>; the right operand
-     * @return MutableFloatScalar.Rel<SIUnit>; the ratio of the two values
+     * @param left FloatScalar.Rel&lt;?&gt;; the left operand
+     * @param right FloatScalar.Rel&lt;?&gt;; the right operand
+     * @return MutableFloatScalar.Rel&lt;SIUnit&gt;; the ratio of the two values
      */
     public static MutableFloatScalar.Rel<SIUnit> divide(final FloatScalar.Rel<?> left, final FloatScalar.Rel<?> right)
     {
