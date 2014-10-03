@@ -18,45 +18,49 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
 import cern.jet.math.tfloat.FloatFunctions;
 
 /**
+ * MutableFloatMatrix.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Unit
+ * @param <U> the Unit for this MutableFloatMatrix
  */
-public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements WriteFloatMatrixFunctions<U>,
-        FloatMathFunctions
+public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements
+        WriteFloatMatrixFunctions<U>, FloatMathFunctions
 {
-
     /** */
     private static final long serialVersionUID = 20140909L;
 
     /**
-     * Create a new MutableFloatMatrix.
-     * @param unit Unit; the unit of the new MutableFloatMatrix
+     * Construct a new MutableFloatMatrix.
+     * @param unit U; the unit of the new MutableFloatMatrix
      */
     protected MutableFloatMatrix(final U unit)
     {
         super(unit);
+        // System.out.println("Created MutableFloatMatrix");
     }
 
     /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
     private boolean copyOnWrite = false;
 
     /**
-     * @return copyOnWrite
+     * Retrieve the value of the copyOnWrite flag.
+     * @return boolean
      */
-    public final boolean isCopyOnWrite()
+    private boolean isCopyOnWrite()
     {
         return this.copyOnWrite;
     }
 
     /**
-     * @param copyOnWrite set copyOnWrite
+     * Change the copyOnWrite flag.
+     * @param copyOnWrite boolean; the new value for the copyOnWrite flag
      */
-    public final void setCopyOnWrite(final boolean copyOnWrite)
+    final void setCopyOnWrite(final boolean copyOnWrite)
     {
         this.copyOnWrite = copyOnWrite;
     }
@@ -71,9 +75,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             throw new ValueException("zSum is 0; cannot normalize");
         }
         checkCopyOnWrite();
-        for (int row = 0; row < rows(); row++)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = 0; column < columns(); column++)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) / sum);
             }
@@ -89,12 +93,13 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute MutableFloatMatrix.
-         * @param unit Unit; the unit of the new MutableFloatMatrix
+         * Construct a new Absolute MutableFloatMatrix.
+         * @param unit U; the unit of the new Absolute MutableFloatMatrix
          */
         protected Abs(final U unit)
         {
             super(unit);
+            // System.out.println("Created Abs");
         }
 
         /**
@@ -106,22 +111,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the new MutableFloatMatrix
-             */
-            protected Dense(final FloatMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Absolute Dense MutableFloatMatrix.
-             * @param values float[][]; the initial values of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the new MutableFloatMatrix
+             * Construct a new Absolute Dense MutableFloatMatrix.
+             * @param values float[][]; the initial values of the entries in the new Absolute Dense MutableFloatMatrix
+             * @param unit U; the unit of the new Absolute Dense MutableFloatMatrix
              * @throws ValueException when values is not rectangular
              */
             public Dense(final float[][] values, final U unit) throws ValueException
@@ -132,9 +124,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             }
 
             /**
-             * Create a new Absolute Dense MutableFloatMatrix.
-             * @param values FloatScalar.Abs[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @throws ValueException when values is not rectangular
+             * Construct a new Absolute Dense MutableFloatMatrix.
+             * @param values FloatScalar.Abs&lt;U&gt;[][]; the initial values of the entries in the new Absolute Dense
+             *            MutableFloatMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Dense(final FloatScalar.Abs<U>[][] values) throws ValueException
             {
@@ -143,11 +136,25 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix2D; the initial values of the entries in the new Absolute Dense
+             *            MutableFloatMatrix
+             * @param unit U; the unit of the new Absolute Dense MutableFloatMatrix
+             */
+            protected Dense(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Abs.Dense<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new FloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -155,7 +162,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             @Override
             public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -177,22 +184,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the new MutableFloatMatrix
-             */
-            protected Sparse(final FloatMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Absolute Sparse MutableFloatMatrix.
-             * @param values float[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the new MutableFloatMatrix
+             * Construct a new Absolute Sparse MutableFloatMatrix.
+             * @param values float[][]; the initial values of the entries in the new Absolute Sparse MutableFloatMatrix
+             * @param unit U; the unit of the new Absolute Sparse MutableFloatMatrix
              * @throws ValueException when values is not rectangular
              */
             public Sparse(final float[][] values, final U unit) throws ValueException
@@ -203,9 +197,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             }
 
             /**
-             * Create a new Absolute Sparse MutableFloatMatrix.
-             * @param values FloatScalar.Abs[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @throws ValueException when values is not rectangular, or contains zero entries
+             * Construct a new Absolute Sparse MutableFloatMatrix.
+             * @param values FloatScalar.Abs&lt;U&gt;[][]; the initial values of the entries in the new Absolute Sparse
+             *            MutableFloatMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Sparse(final FloatScalar.Abs<U>[][] values) throws ValueException
             {
@@ -214,11 +209,25 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix2D; the initial values of the entries in the new Absolute Sparse
+             *            MutableFloatMatrix
+             * @param unit U; the unit of the new Absolute Sparse MutableFloatMatrix
+             */
+            protected Sparse(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Abs.Sparse<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new FloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -226,7 +235,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             @Override
             public final MutableFloatMatrix.Abs.Sparse<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -234,7 +243,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             @Override
             protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
-                return new DenseFloatMatrix2D(rows, columns);
+                return new SparseFloatMatrix2D(rows, columns);
             }
 
         }
@@ -257,12 +266,13 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative MutableFloatMatrix.
-         * @param unit Unit; the unit of the new MutableFloatMatrix
+         * Construct a new Relative MutableFloatMatrix.
+         * @param unit U; the unit of the new Relative MutableFloatMatrix
          */
         protected Rel(final U unit)
         {
             super(unit);
+            // System.out.println("Created Rel");
         }
 
         /**
@@ -274,22 +284,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the new MutableFloatMatrix
-             */
-            protected Dense(final FloatMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Dense MutableFloatMatrix.
-             * @param values float[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the value of the new MutableFloatMatrix
+             * Construct a new Relative Dense MutableFloatMatrix.
+             * @param values float[][]; the initial values of the entries in the new Relative Dense MutableFloatMatrix
+             * @param unit U; the unit of the new Relative Dense MutableFloatMatrix
              * @throws ValueException when values is not rectangular
              */
             public Dense(final float[][] values, final U unit) throws ValueException
@@ -300,9 +297,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             }
 
             /**
-             * Create a new Relative Dense MutableFloatMatrix.
-             * @param values FloatScalar.Rel[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @throws ValueException when values is not rectangular, or contains zero entries
+             * Construct a new Relative Dense MutableFloatMatrix.
+             * @param values FloatScalar.Rel&lt;U&gt;[][]; the initial values of the entries in the new Relative Dense
+             *            MutableFloatMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Dense(final FloatScalar.Rel<U>[][] values) throws ValueException
             {
@@ -311,11 +309,25 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix2D; the initial values of the entries in the new Relative Dense
+             *            MutableFloatMatrix
+             * @param unit U; the unit of the new Relative Dense MutableFloatMatrix
+             */
+            protected Dense(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Rel.Dense<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new FloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -323,7 +335,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             @Override
             public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -331,7 +343,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             @Override
             protected final FloatMatrix2D createMatrix2D(final int rows, final int columns)
             {
-                return new SparseFloatMatrix2D(rows, columns);
+                return new DenseFloatMatrix2D(rows, columns);
             }
 
         }
@@ -345,22 +357,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the new MutableFloatMatrix
-             */
-            protected Sparse(final FloatMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Sparse MutableFloatMatrix.
-             * @param values float[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @param unit Unit; the unit of the values of the new MutableFloatMatrix
+             * Construct a new Relative Sparse MutableFloatMatrix.
+             * @param values float[][]; the initial values of the entries in the new Relative Sparse MutableFloatMatrix
+             * @param unit U; the unit of the new Relative Sparse MutableFloatMatrix
              * @throws ValueException when values is not rectangular
              */
             public Sparse(final float[][] values, final U unit) throws ValueException
@@ -371,9 +370,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             }
 
             /**
-             * Create a new Relative Sparse MutableFloatMatrix.
-             * @param values FloatScalar.Rel[][]; the initial values of the entries of the new MutableFloatMatrix
-             * @throws ValueException when values is not rectangular, or has zero entries
+             * Construct a new Relative Sparse MutableFloatMatrix.
+             * @param values FloatScalar.Rel&lt;U&gt;[][]; the initial values of the entries in the new Relative Sparse
+             *            MutableFloatMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Sparse(final FloatScalar.Rel<U>[][] values) throws ValueException
             {
@@ -382,11 +382,25 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values FloatMatrix2D; the initial values of the entries in the new Relative Sparse
+             *            MutableFloatMatrix
+             * @param unit U; the unit of the new Relative Sparse MutableFloatMatrix
+             */
+            protected Sparse(final FloatMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final FloatMatrix.Rel.Sparse<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new FloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -394,7 +408,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             @Override
             public final MutableFloatMatrix.Rel.Sparse<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -418,7 +432,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Make (immutable) FloatMatrix equivalent for any type of MutableFloatMatrix.
-     * @return FloatMatrix
+     * @return FloatMatrix&lt;U&gt;
      */
     public abstract FloatMatrix<U> immutable();
 
@@ -426,11 +440,13 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     @Override
     public final MutableFloatMatrix<U> copy()
     {
-        return immutable().mutable(); // Almost as simple as the copy in FloatMatrix
+        return immutable().mutable();
+        // FIXME: This may cause both the original and the copy to be deep copied later
+        // Maybe it is better to make one deep copy now...
     }
 
     /**
-     * Check the copyOnWrite flag and, if it is set make a deep copy of the data and clear the flag.
+     * Check the copyOnWrite flag and, if it is set, make a deep copy of the data and clear the flag.
      */
     protected final void checkCopyOnWrite()
     {
@@ -438,7 +454,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         {
             // System.out.println("copyOnWrite is set: Copying data");
             deepCopyData();
-            this.setCopyOnWrite(false);
+            setCopyOnWrite(false);
         }
     }
 
@@ -460,9 +476,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /** {@inheritDoc} */
     @Override
-    public final void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
+    public final void setInUnit(final int row, final int column, final float value, final U valueUnit)
+            throws ValueException
     {
-        // TODO: creating a FloatScalarAbs along the way may not be the most efficient way to do this...
+        // TODO: creating a FloatScalar.Abs along the way may not be the most efficient way to do this...
         setSI(row, column, new FloatScalar.Abs<U>(value, valueUnit).getValueSI());
     }
 
@@ -674,17 +691,17 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Increment the values in this MutableFloatMatrix by the corresponding values in a FloatMatrix.
-     * @param increment FloatMatrix; contains the amounts by which to increment the corresponding entries in this
+     * @param increment FloatMatrix&lt;U&gt;; the values by which to increment the corresponding values in this
      *            MutableFloatMatrix
-     * @return this
-     * @throws ValueException if the matrices do not have the same size
+     * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
+     * @throws ValueException when the matrices do not have the same size
      */
     private MutableFloatMatrix<U> incrementValueByValue(final FloatMatrix<U> increment) throws ValueException
     {
         checkSizeAndCopyOnWrite(increment);
-        for (int row = this.rows(); --row >= 0;)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = this.columns(); --column >= 0;)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) + increment.safeGet(row, column));
             }
@@ -693,10 +710,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Increment the entries in this MutableFloatMatrix by the corresponding values in a Relative FloatMatrix.
-     * @param rel FloatMatrix.Rel; the Relative FloatMatrix
-     * @return this
-     * @throws ValueException if the matrices do not have the same size
+     * Increment the values in this MutableFloatMatrix by the corresponding values in a Relative FloatMatrix.
+     * @param rel FloatMatrix.Rel&lt;U&gt;; the Relative FloatMatrix
+     * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
+     * @throws ValueException when the matrices do not have the same size
      */
     public final MutableFloatMatrix<U> incrementBy(final FloatMatrix.Rel<U> rel) throws ValueException
     {
@@ -705,10 +722,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Decrement the values in this MutableFloatMatrix by the corresponding values in a FloatMatrix.
-     * @param decrement FloatMatrix; contains the amounts by which to decrement the corresponding entries in this
+     * @param decrement FloatMatrix&lt;U&gt;; the values by which to decrement the corresponding values in this
      *            MutableFloatMatrix
-     * @return this
-     * @throws ValueException if the matrices do not have the same size
+     * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
+     * @throws ValueException when the matrices do not have the same size
      */
     private MutableFloatMatrix<U> decrementValueByValue(final FloatMatrix<U> decrement) throws ValueException
     {
@@ -724,10 +741,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Decrement the entries in this MutableFloatMatrix by the corresponding values in a Relative FloatMatrix.
-     * @param rel FloatMatrix.Rel; the Relative FloatMatrix
-     * @return this
-     * @throws ValueException if the matrices do not have the same size
+     * Decrement the values in this MutableFloatMatrix by the corresponding values in a Relative FloatMatrix.
+     * @param rel FloatMatrix.Rel&lt;U&gt;; the Relative FloatMatrix
+     * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
+     * @throws ValueException when the matrices do not have the same size
      */
     public final MutableFloatMatrix<U> decrementBy(final FloatMatrix.Rel<U> rel) throws ValueException
     {
@@ -735,27 +752,28 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Decrement the entries in this MutableFloatMatrix by the corresponding values in a Absolute FloatMatrix.
-     * @param abs FloatMatrix.Abs; the Absolute FloatMatrix
-     * @return this
-     * @throws ValueException if the matrices do not have the same size
+     * Decrement the values in this Relative MutableFloatMatrix by the corresponding values in an Absolute FloatMatrix.
+     * @param abs FloatMatrix.Abs&lt;U&gt;; the Absolute FloatMatrix
+     * @return MutableFloatMatrix.Rel&lt;U&gt;; this modified Relative MutableFloatMatrix
+     * @throws ValueException when the matrices do not have the same size
      */
-    public final MutableFloatMatrix<U> decrementBy(final FloatMatrix.Abs<U> abs) throws ValueException
+    protected final MutableFloatMatrix.Rel<U> decrementBy(final FloatMatrix.Abs<U> abs) throws ValueException
     {
-        return decrementValueByValue(abs);
+        return (MutableFloatMatrix.Rel<U>) decrementValueByValue(abs);
     }
 
     /**
      * Scale the values in this MutableFloatMatrix by the corresponding values in a FloatMatrix.
-     * @param factor FloatMatrix; contains the values by which to scale the corresponding entries in this MutableFloatMatrix
-     * @throws ValueException if the matrices do not have the same size
+     * @param factor FloatMatrix&lt;?&gt;; contains the values by which to scale the corresponding values in this
+     *            MutableFloatMatrix
+     * @throws ValueException when the matrices do not have the same size
      */
     public final void scaleValueByValue(final FloatMatrix<?> factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
-        for (int row = this.rows(); --row >= 0;)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = this.columns(); --column >= 0;)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) * factor.safeGet(row, column));
             }
@@ -764,16 +782,17 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Scale the values in this MutableFloatMatrix by the corresponding values in a float array.
-     * @param factor float[][]; contains the values by which to scale the corresponding entries in this MutableFloatMatrix
-     * @return this
-     * @throws ValueException if the matrix and the array do not have the same size
+     * @param factor float[][]; contains the values by which to scale the corresponding values in this
+     *            MutableFloatMatrix
+     * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
+     * @throws ValueException when the matrix and the array do not have the same size
      */
     public final MutableFloatMatrix<U> scaleValueByValue(final float[][] factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
-        for (int row = this.rows(); --row >= 0;)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = this.columns(); --column >= 0;)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) * factor[row][column]);
             }
@@ -783,8 +802,8 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Check sizes and copy the data if the copyOnWrite flag is set.
-     * @param other FloatMatrix; partner for the size check
-     * @throws ValueException if the matrices do not have the same size
+     * @param other FloatMatrix&lt;?&gt;; partner for the size check
+     * @throws ValueException when the matrices do not have the same size
      */
     private void checkSizeAndCopyOnWrite(final FloatMatrix<?> other) throws ValueException
     {
@@ -795,7 +814,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     /**
      * Check sizes and copy the data if the copyOnWrite flag is set.
      * @param other float[][]; partner for the size check
-     * @throws ValueException when the size of other does not match the size of this
+     * @throws ValueException when the matrices do not have the same size
      */
     private void checkSizeAndCopyOnWrite(final float[][] other) throws ValueException
     {
@@ -804,12 +823,12 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Add two FloatMatrices entry by entry.
-     * @param left Absolute Dense FloatMatrix
-     * @param right Relative FloatMatrix
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Add two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Abs.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Dense&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> plus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -818,26 +837,12 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Add two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Relative Sparse FloatMatrix
-     * @return new Absolute Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> plus(final FloatMatrix.Abs.Sparse<U> left,
-            final FloatMatrix.Rel.Sparse<U> right) throws ValueException
-    {
-        return (MutableFloatMatrix.Abs.Sparse<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Relative Dense FloatMatrix
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Add two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Abs.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> plus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -846,12 +851,26 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Add two FloatMatrices entry by entry.
-     * @param left Relative Dense FloatMatrix
-     * @param right Relative FloatMatrix
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Add two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Abs.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Abs.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> plus(final FloatMatrix.Abs.Sparse<U> left,
+            final FloatMatrix.Rel.Sparse<U> right) throws ValueException
+    {
+        return (MutableFloatMatrix.Abs.Sparse<U>) left.mutable().incrementBy(right);
+    }
+
+    /**
+     * Add two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Dense&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> plus(final FloatMatrix.Rel.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -860,26 +879,12 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Add two FloatMatrices entry by entry.
-     * @param left Relative Sparse FloatMatrix
-     * @param right Relative Sparse FloatMatrix
-     * @return new Relative Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> plus(final FloatMatrix.Rel.Sparse<U> left,
-            final FloatMatrix.Rel.Sparse<U> right) throws ValueException
-    {
-        return (MutableFloatMatrix.Rel.Sparse<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two FloatMatrices entry by entry.
-     * @param left Relative Sparse FloatMatrix
-     * @param right Relative Dense FloatMatrix
-     * @return new Relative Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Add two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> plus(final FloatMatrix.Rel.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -888,57 +893,71 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Absolute Dense FloatMatrix
-     * @param right Absolute FloatMatrix
-     * @return new Relative Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Add two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> plus(final FloatMatrix.Rel.Sparse<U> left,
+            final FloatMatrix.Rel.Sparse<U> right) throws ValueException
+    {
+        return (MutableFloatMatrix.Rel.Sparse<U>) left.mutable().incrementBy(right);
+    }
+
+    /**
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Dense&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Abs&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Abs<U> right) throws ValueException
     {
-        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Absolute Sparse FloatMatrix
-     * @return new Relative Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Abs.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Abs.Sparse<U> right) throws ValueException
     {
-        return (MutableFloatMatrix.Rel.Sparse<U>) new MutableFloatMatrix.Rel.Sparse<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableFloatMatrix.Rel.Sparse<U>) new MutableFloatMatrix.Rel.Sparse<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Absolute Dense FloatMatrix
-     * @return new Relative Dense Mutable FloatMatrix
-     * @param <U> Unit; the unit
-     * @throws ValueException if the matrices do not have the same size
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Abs.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Abs.Dense<U> right) throws ValueException
     {
-        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableFloatMatrix.Rel.Dense<U>) new MutableFloatMatrix.Rel.Dense<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Absolute Dense FloatMatrix
-     * @param right Relative FloatMatrix
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Abs.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Dense&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> minus(final FloatMatrix.Abs.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -947,12 +966,26 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Relative Sparse FloatMatrix
-     * @return new Absolute Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Abs.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> minus(final FloatMatrix.Abs.Sparse<U> left,
+            final FloatMatrix.Rel.Dense<U> right) throws ValueException
+    {
+        return (MutableFloatMatrix.Abs.Dense<U>) sparseToDense(left).decrementBy(right);
+    }
+
+    /**
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Abs.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Abs.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
             final FloatMatrix.Rel.Sparse<U> right) throws ValueException
@@ -961,26 +994,12 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Relative Dense FloatMatrix
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> minus(final FloatMatrix.Abs.Sparse<U> left,
-            final FloatMatrix.Rel.Dense<U> right) throws ValueException
-    {
-        return (MutableFloatMatrix.Abs.Sparse<U>) sparseToDense(left).decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Relative Dense FloatMatrix
-     * @param right Relative FloatMatrix
-     * @return new Relative Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Dense&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Rel.Dense<U> left,
             final FloatMatrix.Rel<U> right) throws ValueException
@@ -989,26 +1008,12 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Relative Sparse FloatMatrix
-     * @param right Relative Sparse FloatMatrix
-     * @return new Relative Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> minus(final FloatMatrix.Rel.Sparse<U> left,
-            final FloatMatrix.Rel.Sparse<U> right) throws ValueException
-    {
-        return (MutableFloatMatrix.Rel.Sparse<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two FloatMatrices entry by entry.
-     * @param left Relative Sparse FloatMatrix
-     * @param right Relative Dense FloatMatrix
-     * @return new Relative Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
-     * @param <U> Unit; the unit
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> minus(final FloatMatrix.Rel.Sparse<U> left,
             final FloatMatrix.Rel.Dense<U> right) throws ValueException
@@ -1017,11 +1022,26 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Multiply two FloatMatricess entry by entry.
-     * @param left Absolute Dense FloatMatrix
-     * @param right Absolute Dense FloatMatrix
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
+     * Subtract two FloatMatrices value by value and store the result in a new MutableFloatMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right FloatMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableFloatMatrix.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> minus(final FloatMatrix.Rel.Sparse<U> left,
+            final FloatMatrix.Rel.Sparse<U> right) throws ValueException
+    {
+        return (MutableFloatMatrix.Rel.Sparse<U>) left.mutable().decrementBy(right);
+    }
+
+    /**
+     * Multiply two FloatMatrices value by value and store the result in a new
+     * MutableFloatMatrix.Abs.Dense&lt;SIUnit&gt;.
+     * @param left FloatMatrix.Abs.Dense&lt;?&gt;; the left operand
+     * @param right FloatMatrix.Abs.Dense&lt;?&gt;; the right operand
+     * @return MutableFloatMatrix.Abs.Dense&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static MutableFloatMatrix.Abs.Dense<SIUnit> times(final FloatMatrix.Abs.Dense<?> left,
             final FloatMatrix.Abs.Dense<?> right) throws ValueException
@@ -1029,35 +1049,39 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatMatrix.Abs.Dense<SIUnit> work = new MutableFloatMatrix.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatMatrix.Abs.Dense<SIUnit> work =
+                new MutableFloatMatrix.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatMatrices entry by entry.
-     * @param left Relative Dense FloatMatrix
-     * @param right Relative Dense FloatMatrix
-     * @return new Relative Dense Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
+     * Multiply two FloatMatrices value by value and store the result in a new
+     * MutableFloatMatrix.Abs.Sparse&lt;SIUnit&gt;.
+     * @param left FloatMatrix.Abs.Dense&lt;?&gt;; the left operand
+     * @param right FloatMatrix.Abs.Sparse&lt;?&gt;; the right operand
+     * @return MutableFloatMatrix.Abs.Sparse&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
-    public static MutableFloatMatrix.Rel.Dense<SIUnit> times(final FloatMatrix.Rel.Dense<?> left,
-            final FloatMatrix.Rel.Dense<?> right) throws ValueException
+    public static MutableFloatMatrix.Abs.Sparse<SIUnit> times(final FloatMatrix.Abs.Dense<?> left,
+            final FloatMatrix.Abs.Sparse<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableFloatMatrix.Rel.Dense<SIUnit> work = new MutableFloatMatrix.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableFloatMatrix.Abs.Sparse<SIUnit> work =
+                new MutableFloatMatrix.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatMatrices entry by entry.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right Absolute FloatMatrix
-     * @return new Absolute Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
+     * Multiply two FloatMatrices value by value and store the result in a new
+     * MutableFloatMatrix.Abs.Sparse&lt;SIUnit&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;?&gt;; the left operand
+     * @param right FloatMatrix.Abs&lt;?&gt;; the right operand
+     * @return MutableFloatMatrix.Abs.Sparse&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static MutableFloatMatrix.Abs.Sparse<SIUnit> times(final FloatMatrix.Abs.Sparse<?> left,
             final FloatMatrix.Abs<?> right) throws ValueException
@@ -1072,11 +1096,52 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Multiply two FloatMatrices entry by entry.
-     * @param left Relative Sparse FloatMatrix
-     * @param right Relative FloatMatrix
-     * @return new Relative Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrices do not have the same size
+     * Multiply two FloatMatrices value by value and store the result in a new
+     * MutableFloatMatrix.Rel.Dense&lt;SIUnit&gt;.
+     * @param left FloatMatrix.Rel.Dense&lt;?&gt;; the left operand
+     * @param right FloatMatrix.Rel.Dense&lt;?&gt;; the right operand
+     * @return MutableFloatMatrix.Rel.Dense&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static MutableFloatMatrix.Rel.Dense<SIUnit> times(final FloatMatrix.Rel.Dense<?> left,
+            final FloatMatrix.Rel.Dense<?> right) throws ValueException
+    {
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        MutableFloatMatrix.Rel.Dense<SIUnit> work =
+                new MutableFloatMatrix.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        work.scaleValueByValue(right);
+        return work;
+    }
+
+    /**
+     * Multiply two FloatMatrices value by value and store the result in a new
+     * MutableFloatMatrix.Rel.Sparse&lt;SIUnit&gt;.
+     * @param left FloatMatrix.Rel.Dense&lt;?&gt;; the left operand
+     * @param right FloatMatrix.Rel.Sparse&lt;?&gt;; the right operand
+     * @return MutableFloatMatrix.Rel.Sparse&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static MutableFloatMatrix.Rel.Sparse<SIUnit> times(final FloatMatrix.Rel.Dense<?> left,
+            final FloatMatrix.Rel.Sparse<?> right) throws ValueException
+    {
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        MutableFloatMatrix.Rel.Sparse<SIUnit> work =
+                new MutableFloatMatrix.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+        work.scaleValueByValue(right);
+        return work;
+    }
+
+    /**
+     * Multiply two FloatMatrices value by value and store the result in a new
+     * MutableFloatMatrix.Rel.Sparse&lt;SIUnit&gt;.
+     * @param left FloatMatrix.Rel.Sparse&lt;?&gt;; the left operand
+     * @param right FloatMatrix.Rel&lt;?&gt;; the right operand
+     * @return MutableFloatMatrix.Rel.Sparse&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static MutableFloatMatrix.Rel.Sparse<SIUnit> times(final FloatMatrix.Rel.Sparse<?> left,
             final FloatMatrix.Rel<?> right) throws ValueException
@@ -1091,12 +1156,13 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Multiply the values in a FloatMatrix by the corresponding values in a float array.
-     * @param left Absolute Dense FloatMatrix
+     * Multiply the values in a FloatMatrix and a float array value by value and store the result in a new
+     * MutableFloatMatrix.Abs.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Dense&lt;U&gt;; the FloatMatrix
      * @param right float[][]; the float array
-     * @return new Absolute Dense Mutable FloatMatrix
-     * @throws ValueException if the matrix and the float array do not have the same size
-     * @param <U> Unit; the unit
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatMatrix.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the FloatMatrix and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> times(final FloatMatrix.Abs.Dense<U> left,
             final float[][] right) throws ValueException
@@ -1105,26 +1171,13 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Multiply the values in a FloatMatrix by the corresponding values in a float array.
-     * @param left Relative Dense FloatMatrix
+     * Multiply the values in a FloatMatrix and a float array value by value and store the result in a new
+     * MutableFloatMatrix.Abs.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Abs.Sparse&lt;U&gt;; the FloatMatrix
      * @param right float[][]; the float array
-     * @return new Relative Dense Mutable FloatMatrix
-     * @throws ValueException if the matrix and the float array do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> times(final FloatMatrix.Rel.Dense<U> left,
-            final float[][] right) throws ValueException
-    {
-        return (MutableFloatMatrix.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
-    }
-
-    /**
-     * Multiply the values in a FloatMatrix by the corresponding values in a float array.
-     * @param left Absolute Sparse FloatMatrix
-     * @param right float[][]; the float array
-     * @return new Sparse Absolute Mutable FloatMatrix
-     * @throws ValueException if the matrix and the float array do not have the same size
-     * @param <U> Unit; the unit
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatMatrix.Abs.Sparse&lt;U&gt;
+     * @throws ValueException when the FloatMatrix and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> times(final FloatMatrix.Abs.Sparse<U> left,
             final float[][] right) throws ValueException
@@ -1133,12 +1186,28 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Multiply the values in a FloatMatrix by the corresponding values in a float array.
-     * @param left Relative Sparse FloatMatrix
+     * Multiply the values in a FloatMatrix and a float array value by value and store the result in a new
+     * MutableFloatMatrix.Rel.Dense&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Dense&lt;U&gt;; the FloatMatrix
      * @param right float[][]; the float array
-     * @return new Relative Sparse Mutable FloatMatrix
-     * @throws ValueException if the matrix and the float array do not have the same size
-     * @param <U> Unit; the unit
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the FloatMatrix and the array do not have the same size
+     */
+    public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> times(final FloatMatrix.Rel.Dense<U> left,
+            final float[][] right) throws ValueException
+    {
+        return (MutableFloatMatrix.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
+    }
+
+    /**
+     * Multiply the values in a FloatMatrix and a float array value by value and store the result in a new
+     * MutableFloatMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left FloatMatrix.Rel.Sparse&lt;U&gt;; the FloatMatrix
+     * @param right float[][]; the float array
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableFloatMatrix.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the FloatMatrix and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> times(final FloatMatrix.Rel.Sparse<U> left,
             final float[][] right) throws ValueException
@@ -1148,21 +1217,21 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Make the Sparse equivalent of a DenseFloatMatrix2D.
-     * @param dense DenseFloatMatrix2D
+     * @param dense FloatMatrix2D; the Dense FloatMatrix2D
      * @return SparseFloatMatrix2D
      */
-    private static FloatMatrix2D makeSparse(final FloatMatrix2D dense)
+    private static SparseFloatMatrix2D makeSparse(final FloatMatrix2D dense)
     {
-        FloatMatrix2D result = new SparseFloatMatrix2D(dense.rows(), dense.columns());
+        SparseFloatMatrix2D result = new SparseFloatMatrix2D(dense.rows(), dense.columns());
         result.assign(dense);
         return result;
     }
 
     /**
-     * Create a Sparse version of this Dense FloatMatrix.
-     * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
-     * @return MutableFloatMatrix.Sparse.Abs
-     * @param <U> Unit; the unit
+     * Create a Sparse version of a Dense FloatMatrix.
+     * @param in FloatMatrix.Abs.Dense&lt;U&gt;; the Dense FloatMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatMatrix.Abs.Sparse&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Sparse<U> denseToSparse(final FloatMatrix.Abs.Dense<U> in)
     {
@@ -1170,10 +1239,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Create a Sparse version of this Dense FloatMatrix.
-     * @param in FloatMatrix.Rel.Dense the Dense FloatMatrix
-     * @return MutableFloatMatrix.Abs.Sparse
-     * @param <U> Unit; the unit
+     * Create a Sparse version of a Dense FloatMatrix.
+     * @param in FloatMatrix.Rel.Dense&lt;U&gt;; the Dense FloatMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatMatrix.Rel.Sparse&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Sparse<U> denseToSparse(final FloatMatrix.Rel.Dense<U> in)
     {
@@ -1182,21 +1251,21 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Make the Dense equivalent of a SparseFloatMatrix2D.
-     * @param sparse SpaseFloatMatrix2D
+     * @param sparse FloatMatrix2D; the Sparse FloatMatrix2D
      * @return DenseFloatMatrix2D
      */
-    private static FloatMatrix2D makeDense(final FloatMatrix2D sparse)
+    private static DenseFloatMatrix2D makeDense(final FloatMatrix2D sparse)
     {
-        FloatMatrix2D result = new SparseFloatMatrix2D(sparse.rows(), sparse.columns());
+        DenseFloatMatrix2D result = new DenseFloatMatrix2D(sparse.rows(), sparse.columns());
         result.assign(sparse);
         return result;
     }
 
     /**
-     * Create a Dense version of this Sparse FloatMatrix.
-     * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
-     * @return MutableFloatMatrix.Abs.Dense
-     * @param <U> Unit; the unit
+     * Create a Dense version of a Sparse FloatMatrix.
+     * @param in FloatMatrix.Abs.Sparse&lt;U&gt;; the Sparse FloatMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatMatrix.Abs.Dense&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Abs.Dense<U> sparseToDense(final FloatMatrix.Abs.Sparse<U> in)
     {
@@ -1204,10 +1273,10 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     }
 
     /**
-     * Create a Dense version of this Sparse FloatMatrix.
-     * @param in FloatMatrix.Abs.Dense the Dense FloatMatrix
-     * @return MutableFloatMatrix.Abs.Dense
-     * @param <U> Unit; the unit
+     * Create a Dense version of a Sparse FloatMatrix.
+     * @param in FloatMatrix.Rel.Sparse&lt;U&gt;; the Sparse FloatMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableFloatMatrix.Rel.Dense&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatMatrix.Rel.Dense<U> sparseToDense(final FloatMatrix.Rel.Sparse<U> in)
     {

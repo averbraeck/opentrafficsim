@@ -18,7 +18,7 @@ import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 
 /**
- * Immutable double vector.
+ * Immutable DoubleVector.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,7 +26,7 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> The unit for this DoubleVector
+ * @param <U> the Unit for this DoubleVector
  */
 public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyDoubleVectorFunctions<U>
@@ -377,8 +377,8 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Retrieve the internal Data.
-     * @return doubleMatrix1D; the data in the internal format
+     * Retrieve the internal data.
+     * @return DoubleMatrix1D; the data in the internal format
      */
     protected final DoubleMatrix1D getVectorSI()
     {
@@ -414,7 +414,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         }
         else
         {
-            for (int index = 0; index < values.length; index++)
+            for (int index = values.length; --index >= 0;)
             {
                 safeSet(index, expressAsSIUnit(values[index]));
             }
@@ -478,7 +478,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     public final double[] getValuesInUnit(final U targetUnit)
     {
         double[] values = this.vectorSI.toArray();
-        for (int i = 0; i < values.length; i++)
+        for (int i = values.length; --i >= 0;)
         {
             values[i] = ValueUtil.expressAsUnit(values[i], targetUnit);
         }
@@ -538,7 +538,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * Print this DoubleVector with the values expressed in the specified unit.
      * @param displayUnit U; the unit into which the values are converted for display
-     * @return String; printable String with the vector contents
+     * @return String; printable string with the vector contents
      */
     public final String toString(final U displayUnit)
     {
@@ -673,7 +673,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @param dsArray DoubleScalar&lt;U&gt;[]; the provided array
      * @param <U> Unit; the unit of the DoubleScalar array
      * @return DoubleScalar&lt;U&gt;[]; the provided array
-     * @throws ValueException when the provided array has length equal to 0
+     * @throws ValueException when the array has length equal to 0
      */
     protected static <U extends Unit<U>> DoubleScalar<U>[] checkNonEmpty(final DoubleScalar<U>[] dsArray)
             throws ValueException

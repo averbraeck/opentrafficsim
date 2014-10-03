@@ -7,6 +7,8 @@ import org.opentrafficsim.core.value.Scalar;
 import org.opentrafficsim.core.value.ValueUtil;
 
 /**
+ * Immutable DoubleScalar.
+ * <p>
  * All calculations are according to IEEE 754. This means that division by zero results in Double.INFINITY, and some
  * calculations could result in NaN. No changes have been made to avoid this, as it is the standard behavior of Java for
  * floating point numbers.
@@ -58,7 +60,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Absolute Immutable DoubleScalar from an existing Absolute Immutable DoubleScalar.
-         * @param value DoubleScalar.Abs<U>; the reference
+         * @param value DoubleScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final DoubleScalar.Abs<U> value)
         {
@@ -69,7 +71,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Absolute Immutable DoubleScalar from an existing Absolute MutableDoubleScalar.
-         * @param value MutableDoubleScalar.Abs<U>; the reference
+         * @param value MutableDoubleScalar.Abs&lt;U&gt;; the reference
          */
         public Abs(final MutableDoubleScalar.Abs<U> value)
         {
@@ -123,7 +125,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Relative Immutable DoubleScalar from an existing Relative Immutable DoubleScalar.
-         * @param value DoubleScalar.Rel<U>; the reference
+         * @param value DoubleScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final DoubleScalar.Rel<U> value)
         {
@@ -134,7 +136,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
 
         /**
          * Construct a new Relative Immutable DoubleScalar from an existing Relative MutableDoubleScalar.
-         * @param value MutableDoubleScalar.Rel<U>; the reference
+         * @param value MutableDoubleScalar.Rel&lt;U&gt;; the reference
          */
         public Rel(final MutableDoubleScalar.Rel<U> value)
         {
@@ -169,7 +171,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /**
      * Create a mutable version of this DoubleScalar. <br>
      * The mutable version is created as a deep copy of this. Delayed copying is not worthwhile for a Scalar.
-     * @return MutableDoubleScalar<U>
+     * @return MutableDoubleScalar&lt;U&gt;
      */
     public abstract MutableDoubleScalar<U> mutable();
 
@@ -191,7 +193,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
 
     /**
      * Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never necessary.
-     * @param value DoubleScalar<U>; the value to use for initialization
+     * @param value DoubleScalar&lt;U&gt;; the value to use for initialization
      */
     protected final void initialize(final DoubleScalar<U> value)
     {
@@ -303,7 +305,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
             return false;
         }
         DoubleScalar<?> other = (DoubleScalar<?>) obj;
-        // unequal if not both absolute or both relative
+        // unequal if not both Absolute or both Relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;

@@ -5,7 +5,7 @@ import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
- * Methods that modify the data stored in a vector.
+ * Methods that modify the data stored in a FloatVector.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -42,7 +42,7 @@ public interface WriteFloatVectorFunctions<U extends Unit<U>>
     void setInUnit(int index, float value, U valueUnit) throws ValueException;
 
     /**
-     * normalize the vector, i.e. scale the values to make the sum equal to 1.
+     * Normalize the vector, i.e. scale the values to make the sum equal to 1.
      * @throws ValueException when the sum of the values is zero and normalization is not possible
      */
     void normalize() throws ValueException;

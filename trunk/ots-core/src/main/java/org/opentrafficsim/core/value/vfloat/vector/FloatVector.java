@@ -18,7 +18,7 @@ import cern.colt.matrix.tfloat.impl.DenseFloatMatrix1D;
 import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
 
 /**
- * Immutable float vector.
+ * Immutable FloatVector.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,7 +26,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> the unit for this FloatVector
+ * @param <U> the Unit for this FloatVector
  */
 public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyFloatVectorFunctions<U>
@@ -414,7 +414,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         }
         else
         {
-            for (int index = 0; index < values.length; index++)
+            for (int index = values.length; --index >= 0;)
             {
                 safeSet(index, (float) expressAsSIUnit(values[index]));
             }
@@ -478,7 +478,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     public final float[] getValuesInUnit(final U targetUnit)
     {
         float[] values = this.vectorSI.toArray();
-        for (int i = 0; i < values.length; i++)
+        for (int i = values.length; --i >= 0;)
         {
             values[i] = (float) ValueUtil.expressAsUnit(values[i], targetUnit);
         }
@@ -673,7 +673,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @param fsArray FloatScalar&lt;U&gt;[]; the provided array
      * @param <U> Unit; the unit of the FloatScalar array
      * @return FloatScalar&lt;U&gt;[]; the provided array
-     * @throws ValueException when the provided array has length equal to 0
+     * @throws ValueException when the array has length equal to 0
      */
     protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray)
             throws ValueException

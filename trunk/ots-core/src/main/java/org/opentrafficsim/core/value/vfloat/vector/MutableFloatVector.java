@@ -18,7 +18,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
 import cern.jet.math.tfloat.FloatFunctions;
 
 /**
- * Mutable float vector.
+ * MutableFloatVector.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -711,8 +711,8 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Decrement the values in this MutableFloatVector by the corresponding values in a FloatVector.
-     * @param decrement FloatVector&lt;U&gt;; contains the amounts by which to decrement the corresponding values in
-     *            this MutableFloatVector
+     * @param decrement FloatVector&lt;U&gt;; the values by which to decrement the corresponding values in this
+     *            MutableFloatVector
      * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
      */
@@ -1207,7 +1207,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Sparse version of this Dense FloatVector.
+     * Create a Sparse version of a Dense FloatVector.
      * @param in FloatVector.Abs.Dense&lt;U&gt;; the Dense FloatVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableFloatVector.Abs.Sparse&lt;U&gt;
@@ -1218,7 +1218,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Sparse version of this Dense FloatVector.
+     * Create a Sparse version of a Dense FloatVector.
      * @param in FloatVector.Rel.Dense&lt;U&gt;; the Dense FloatVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableFloatVector.Rel.Sparse&lt;U&gt;
@@ -1241,7 +1241,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Dense version of this Sparse FloatVector.
+     * Create a Dense version of a Sparse FloatVector.
      * @param in FloatVector.Abs.Sparse&lt;U&gt;; the Sparse FloatVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableFloatVector.Abs.Dense&lt;U&gt;
@@ -1252,7 +1252,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     }
 
     /**
-     * Create a Dense version of this Sparse FloatVector.
+     * Create a Dense version of a Sparse FloatVector.
      * @param in FloatVector.Rel.Sparse&lt;U&gt;; the Sparse FloatVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableFloatVector.Rel.Dense&lt;U&gt;

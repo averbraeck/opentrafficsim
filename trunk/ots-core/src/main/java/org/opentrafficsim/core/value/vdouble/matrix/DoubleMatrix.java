@@ -26,48 +26,36 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
 /**
- * Immutable double matrix.
+ * Immutable DoubleMatrix.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Unit
+ * @param <U> the Unit for this DoubleMatrix
  */
 public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
         ReadOnlyDoubleMatrixFunctions<U>
 {
-
     /** */
     private static final long serialVersionUID = 20140909L;
 
-    /** the internal storage for the vector; internally they are stored in SI units; can be dense or sparse. */
+    /**
+     * The internal storage for the matrix; internally the values are stored in standard SI unit; storage can be dense
+     * or sparse.
+     */
     private DoubleMatrix2D matrixSI;
 
     /**
-     * @return matrixSI
-     */
-    protected final DoubleMatrix2D getMatrixSI()
-    {
-        return this.matrixSI;
-    }
-
-    /**
-     * Make a deep copy of the data (used ONLY in the MutableDoubleMatrix sub class).
-     */
-    protected final void deepCopyData()
-    {
-        this.matrixSI = getMatrixSI().copy(); // makes a deep copy, using multithreading
-    }
-
-    /**
-     * Create a new DoubleMatrix.
-     * @param unit Unit of the new DoubleMatrix.
+     * Construct a new Immutable DoubleMatrix.
+     * @param unit U; the unit of the new DoubleMatrix
      */
     protected DoubleMatrix(final U unit)
     {
         super(unit);
+        // System.out.println("Created DoubleMatrix");
     }
 
     /**
@@ -79,12 +67,13 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Absolute Immutable DoubleMatrix.
-         * @param unit Unit; the unit of the new DoubleMatrix
+         * Construct a new Absolute Immutable DoubleMatrix.
+         * @param unit U; the unit of the new Absolute Immutable DoubleMatrix
          */
         protected Abs(final U unit)
         {
             super(unit);
+            // System.out.println("Created Abs");
         }
 
         /**
@@ -96,21 +85,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the values to assign to the entries in the new DoubleMatrix
-             * @param unit Unit; the unit of the values in the new DoubleMatrix
-             */
-            protected Dense(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Absolute Dense Immutable DoubleMatrix.
-             * @param values float[][]; the values to assign to the entries in the new DoubleMatrix
-             * @param unit Unit; the unit of the values in the new DoubleMatrix
+             * Construct a new Absolute Dense Immutable DoubleMatrix.
+             * @param values double[][]; the values of the entries in the new Absolute Dense Immutable DoubleMatrix
+             * @param unit U; the unit of the new Absolute Dense Immutable DoubleMatrix
              * @throws ValueException when values is not rectangular
              */
             public Dense(final double[][] values, final U unit) throws ValueException
@@ -121,15 +98,28 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Absolute Dense Immutable DoubleMatrix.
-             * @param values DoubleScalar.Abs[][]; the values to assign to the entries in the new DoubleMatrix
-             * @throws ValueException when values is not rectangular or contains no values
+             * Construct a new Absolute Dense Immutable DoubleMatrix.
+             * @param values DoubleScalar.Abs&lt;U&gt;[][]; the values of the entries in the new Absolute Dense
+             *            Immutable DoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Dense(final DoubleScalar.Abs<U>[][] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0][0].getUnit());
                 // System.out.println("Created Dense");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the values of the entries in the new Absolute Dense Immutable DoubleMatrix
+             * @param unit U; the unit of the new Absolute Dense Immutable DoubleMatrix
+             */
+            protected Dense(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -150,7 +140,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final DoubleMatrix.Abs.Dense<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -164,22 +154,10 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the values to assign to the entries of the new DoubleMatrix
-             * @param unit Unit; unit of the values in the new DoubleMatrix
-             */
-            protected Sparse(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a Relative Sparse Immutable DoubleMatrix.
-             * @param values double[][]; values to assign to the entries of the new DoubleMatrix
-             * @param unit Unit; unit of the values in the new DoubleMatrix
-             * @throws ValueException when values is not rectangular, or contains no entries
+             * Construct a new Absolute Sparse Immutable DoubleMatrix.
+             * @param values double[][]; the values of the entries in the new Absolute Sparse Immutable DoubleMatrix
+             * @param unit U; the unit of the new Absolute Sparse Immutable DoubleMatrix
+             * @throws ValueException when values is not rectangular
              */
             public Sparse(final double[][] values, final U unit) throws ValueException
             {
@@ -189,15 +167,28 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Absolute Sparse Immutable DoubleMatrix.
-             * @param values DoubleScalar.Abs[][]; values to assign to the entries in the new DoubleMatrix
-             * @throws ValueException when values is not rectangular or contains no entries
+             * Construct a new Absolute Sparse Immutable DoubleMatrix.
+             * @param values DoubleScalar.Abs&lt;U&gt;[][]; the values of the entries in the new Absolute Sparse
+             *            Immutable DoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Sparse(final DoubleScalar.Abs<U>[][] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0][0].getUnit());
                 // System.out.println("Created Sparse");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the values of the entries in the new Absolute Sparse Immutable DoubleMatrix
+             * @param unit U; the unit of the new Absolute Sparse Immutable DoubleMatrix
+             */
+            protected Sparse(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -211,20 +202,21 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
-                return new DenseDoubleMatrix2D(rows, columns);
+                return new SparseDoubleMatrix2D(rows, columns);
             }
 
             /** {@inheritDoc} */
             @Override
             public final DoubleMatrix.Abs.Sparse<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
+
         }
 
         /** {@inheritDoc} */
         @Override
-        public final DoubleScalar<U> get(final int row, final int column) throws ValueException
+        public final DoubleScalar.Abs<U> get(final int row, final int column) throws ValueException
         {
             return new DoubleScalar.Abs<U>(getInUnit(row, column, getUnit()), getUnit());
         }
@@ -240,16 +232,17 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a Relative Immutable DoubleMatrix.
-         * @param unit Unit; the unit of the new DoubleMatrix
+         * Construct a new Relative Immutable DoubleMatrix.
+         * @param unit U; the unit of the new Relative Immutable DoubleMatrix
          */
         protected Rel(final U unit)
         {
             super(unit);
+            // System.out.println("Created Rel");
         }
 
         /**
-         * @param <U>
+         * @param <U> Unit
          */
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
@@ -257,21 +250,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the values to assign to the entries in the new DoubleMatrix
-             * @param unit Unit; the unit of the values in the new DoubleMatrix
-             */
-            protected Dense(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Dense Immutable DoubleMatrix.
-             * @param values double[][]; the values to assign to the entries in the new DoubleMatrix
-             * @param unit Unit; the unit of the values in the new DoubleMatrix
+             * Construct a new Relative Dense Immutable DoubleMatrix.
+             * @param values double[][]; the values of the entries in the new Relative Dense Immutable DoubleMatrix
+             * @param unit U; the unit of the new Relative Dense Immutable DoubleMatrix
              * @throws ValueException when values is not rectangular
              */
             public Dense(final double[][] values, final U unit) throws ValueException
@@ -282,15 +263,28 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a new Relative Dense Immutable DoubleMatrix.
-             * @param values DoubleScalar.Rel; the values to assign to the entries in the new DoubleMatrix
-             * @throws ValueException when values is not rectangular or contains no entries
+             * Construct a new Relative Dense Immutable DoubleMatrix.
+             * @param values DoubleScalar.Rel&lt;U&gt;[][]; the values of the entries in the new Relative Dense
+             *            Immutable DoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Dense(final DoubleScalar.Rel<U>[][] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0][0].getUnit());
                 // System.out.println("Created Dense");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the values of the entries in the new Relative Dense Immutable DoubleMatrix
+             * @param unit U; the unit of the new Relative Dense Immutable DoubleMatrix
+             */
+            protected Dense(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -304,14 +298,14 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
-                return new SparseDoubleMatrix2D(rows, columns);
+                return new DenseDoubleMatrix2D(rows, columns);
             }
 
             /** {@inheritDoc} */
             @Override
             public final DoubleMatrix.Rel.Dense<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
@@ -325,21 +319,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the values to assign to the entries in the new DoubleMatrix
-             * @param unit Unit; the unit of the values in the new DoubleMatrix
-             */
-            protected Sparse(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Sparse Relative Immutable DoubleMatrix.
-             * @param values DoubleMatrix2D; the values to assign to the entries in the new DoubleMatrix
-             * @param unit Unit; the unit of the values in the new DoubleMatrix
+             * Construct a new Relative Sparse Immutable DoubleMatrix.
+             * @param values double[][]; the values of the entries in the new Relative Sparse Immutable DoubleMatrix
+             * @param unit U; the unit of the new Relative Sparse Immutable DoubleMatrix
              * @throws ValueException when values is not rectangular
              */
             public Sparse(final double[][] values, final U unit) throws ValueException
@@ -350,15 +332,28 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             }
 
             /**
-             * Create a Relative Sparse Immutable DoubleMatrix.
-             * @param values DoubleScalar.Rel[][]; 2D array of values to assign to the entries in the new DoubleMatrix
-             * @throws ValueException when values contains zero entries
+             * Construct a new Relative Sparse Immutable DoubleMatrix.
+             * @param values DoubleScalar.Rel&lt;U&gt;[][]; the values of the entries in the new Relative Sparse
+             *            Immutable DoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Sparse(final DoubleScalar.Rel<U>[][] values) throws ValueException
             {
                 super(checkNonEmpty(values)[0][0].getUnit());
                 // System.out.println("Created Sparse");
                 initialize(values);
+            }
+
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the values of the entries in the new Relative Sparse Immutable DoubleMatrix
+             * @param unit U; the unit of the new Relative Sparse Immutable DoubleMatrix
+             */
+            protected Sparse(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                initialize(values); // shallow copy
             }
 
             /** {@inheritDoc} */
@@ -379,14 +374,14 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             @Override
             public final DoubleMatrix.Rel.Sparse<U> copy()
             {
-                return this;
+                return this; // That was easy...
             }
 
         }
 
         /** {@inheritDoc} */
         @Override
-        public final DoubleScalar<U> get(final int row, final int column) throws ValueException
+        public final DoubleScalar.Rel<U> get(final int row, final int column) throws ValueException
         {
             return new DoubleScalar.Rel<U>(getInUnit(row, column, getUnit()), getUnit());
         }
@@ -394,16 +389,33 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
+     * Retrieve the internal data.
+     * @return DoubleMatrix2D; the data in the internal format
+     */
+    protected final DoubleMatrix2D getMatrixSI()
+    {
+        return this.matrixSI;
+    }
+
+    /**
+     * Make a deep copy of the data (used ONLY in the MutableDoubleMatrix sub class).
+     */
+    protected final void deepCopyData()
+    {
+        this.matrixSI = getMatrixSI().copy(); // makes a deep copy, using multithreading
+    }
+
+    /**
      * Create a mutable version of this DoubleMatrix. <br>
-     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first operation
-     * in the mutable version that modifies the data shall trigger a deep copy of the data.
-     * @return MutableDoubleMatrix; mutable version of this DoubleMatrix
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
+     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * @return MutableDoubleMatrix&lt;U&gt;; mutable version of this DoubleMatrix
      */
     public abstract MutableDoubleMatrix<U> mutable();
 
     /**
-     * Import the values and convert them into SI units.
-     * @param values an array of values
+     * Import the values and convert them into the SI standard unit.
+     * @param values double[][]; an array of values
      * @throws ValueException when values is not rectangular
      */
     protected final void initialize(final double[][] values) throws ValueException
@@ -416,9 +428,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         }
         else
         {
-            for (int row = 0; row < values.length; row++)
+            for (int row = values.length; --row >= 0;)
             {
-                for (int column = 0; column < values[row].length; column++)
+                for (int column = values[row].length; --column >= 0;)
                 {
                     safeSet(row, column, expressAsSIUnit(values[row][column]));
                 }
@@ -427,8 +439,8 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Shallow copy the values from an existing DoubleMatrix.
-     * @param values DoubleMatrix2D; the reference
+     * Import the values from an existing DoubleMatrix2D. This makes a shallow copy.
+     * @param values DoubleMatrix2D; the values
      */
     protected final void initialize(final DoubleMatrix2D values)
     {
@@ -436,17 +448,17 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Construct the vector and store the values in SI units.
-     * @param values double[][] a 2D array of values for the constructor
-     * @throws ValueException exception thrown when array with zero elements is offered
+     * Construct the matrix and store the values in the standard SI unit.
+     * @param values DoubleScalar&lt;U&gt;[][]; a 2D array of values
+     * @throws ValueException when values has zero entries, or is not rectangular
      */
     protected final void initialize(final DoubleScalar<U>[][] values) throws ValueException
     {
         ensureRectangularAndNonEmpty(values);
         this.matrixSI = createMatrix2D(values.length, values[0].length);
-        for (int row = 0; row < values.length; row++)
+        for (int row = values.length; --row >= 0;)
         {
-            for (int column = 0; column < values[0].length; column++)
+            for (int column = values[row].length; --column >= 0;)
             {
                 safeSet(row, column, values[row][column].getValueSI());
             }
@@ -454,16 +466,17 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * This method has to be implemented by each leaf class.
-     * @param rows the number of rows in the matrix
-     * @param columns the number of columns in the matrix
-     * @return an instance of the right type of matrix (absolute / relative, dense / sparse, etc.).
+     * Create storage for the data. <br/>
+     * This method must be implemented by each leaf class.
+     * @param rows int; the number of rows in the matrix
+     * @param columns int; the number of columns in the matrix
+     * @return DoubleMatrix2D; an instance of the right type of DoubleMatrix2D (absolute/relative, dense/sparse, etc.)
      */
     protected abstract DoubleMatrix2D createMatrix2D(final int rows, final int columns);
 
     /**
-     * Create a double[][] array filled with the values in SI unit.
-     * @return double[][]; array of values in SI unit
+     * Create a double[][] array filled with the values in the standard SI unit.
+     * @return double[][]; array of values in the standard SI unit
      */
     public final double[][] getValuesSI()
     {
@@ -472,7 +485,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Create a double[][] array filled with the values in the original unit.
-     * @return values in original unit
+     * @return double[][]; the values in the original unit
      */
     public final double[][] getValuesInUnit()
     {
@@ -480,16 +493,16 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Create a double[][] array filled with the values in the specified unit.
-     * @param targetUnit the unit to convert the values to
-     * @return values in specific target unit
+     * Create a double[][] array filled with the values converted into a specified unit.
+     * @param targetUnit U; the unit into which the values are converted for use
+     * @return double[][]; the values converted into the specified unit
      */
     public final double[][] getValuesInUnit(final U targetUnit)
     {
         double[][] values = this.matrixSI.toArray();
-        for (int row = 0; row < values.length; row++)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = 0; column < values[0].length; column++)
+            for (int column = columns(); --column >= 0;)
             {
                 values[row][column] = ValueUtil.expressAsUnit(values[row][column], targetUnit);
             }
@@ -555,13 +568,11 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         {
             if (this instanceof SparseData)
             {
-                // System.out.println("calling SparseDoubleAlgebra().det(this.matrixSI)");
-                return new SparseDoubleAlgebra().det(this.matrixSI);
+                return new SparseDoubleAlgebra().det(getMatrixSI());
             }
             if (this instanceof DenseData)
             {
-                // System.out.println("calling DenseDoubleAlgebra().det(this.matrixSI)");
-                return new DenseDoubleAlgebra().det(this.matrixSI);
+                return new DenseDoubleAlgebra().det(getMatrixSI());
             }
             throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
         }
@@ -583,9 +594,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Print this AbstractDoubleVector with the values expressed in the specified unit.
-     * @param displayUnit the unit to display the vector in.
-     * @return a printable String with the vector contents
+     * Print this DoubleMatrix with the values expressed in the specified unit.
+     * @param displayUnit U; the unit into which the values are converted for display
+     * @return String; printable string with the matrix contents
      */
     public final String toString(final U displayUnit)
     {
@@ -639,13 +650,13 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             }
         }
         buf.append("[" + displayUnit.getAbbreviation() + "]");
-        for (int row = 0; row < this.matrixSI.rows(); row++)
+        for (int row = 0; row < rows(); row++)
         {
             buf.append("\r\n\t");
-            for (int column = 0; column < this.matrixSI.columns(); column++)
+            for (int column = 0; column < columns(); column++)
             {
-                double f = ValueUtil.expressAsUnit(safeGet(row, column), displayUnit);
-                buf.append(" " + Format.format(f));
+                double d = ValueUtil.expressAsUnit(safeGet(row, column), displayUnit);
+                buf.append(" " + Format.format(d));
             }
         }
         return buf.toString();
@@ -653,28 +664,30 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Centralized size equality check.
-     * @param other DoubleMatrix&lt;?&gt;; other DoubleVector
-     * @throws ValueException when vectors have unequal size
+     * @param other DoubleMatrix&lt;?&gt;; other DoubleMatrix
+     * @throws ValueException when matrices have unequal size
      */
     protected final void checkSize(final DoubleMatrix<?> other) throws ValueException
     {
         if (rows() != other.rows() || columns() != other.columns())
         {
-            throw new ValueException("The matrices have different sizes: " + rows() + "x" + columns() + " != " + other.rows()
-                    + "x" + other.columns());
+            throw new ValueException("The matrices have different sizes: " + rows() + "x" + columns() + " != "
+                    + other.rows() + "x" + other.columns());
         }
     }
 
     /**
      * Centralized size equality check.
      * @param other double[][]; array of double
-     * @throws ValueException when vectors have unequal size
+     * @throws ValueException when matrices have unequal size
      */
     protected final void checkSize(final double[][] other) throws ValueException
     {
-        if (rows() != other.length || columns() != other[0].length)
+        final int otherColumns = 0 == other.length ? 0 : other[0].length;
+        if (rows() != other.length || columns() != otherColumns)
         {
-            throw new ValueException("The vector and the array have different sizes: " + rows() + " != " + other.length);
+            throw new ValueException("The matrix and the array have different sizes: " + rows() + "x" + columns()
+                    + " != " + other.length + "x" + otherColumns);
         }
         ensureRectangular(other);
     }
@@ -682,11 +695,11 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     /**
      * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
      * @param values double[][]; the 2D array to check
-     * @throws ValueException when values is not rectangular
+     * @throws ValueException when not all rows have the same length
      */
     private static void ensureRectangular(final double[][] values) throws ValueException
     {
-        for (int row = 1; row < values.length; row++)
+        for (int row = values.length; --row >= 1;)
         {
             if (values[0].length != values[row].length)
             {
@@ -696,9 +709,10 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Check that a 2D array of double is rectangular; i.e. all rows have the same length.
-     * @param values DoubleScalar[][]; the 2D array to check
-     * @throws ValueException when values is not rectangular
+     * Check that a 2D array of DoubleScalar&lt;?&gt; is rectangular; i.e. all rows have the same length and is non
+     * empty.
+     * @param values DoubleScalar&lt;?&gt;[][]; the 2D array to check
+     * @throws ValueException when values is not rectangular, or contains no data
      */
     private static void ensureRectangularAndNonEmpty(final DoubleScalar<?>[][] values) throws ValueException
     {
@@ -706,7 +720,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         {
             throw new ValueException("Cannot determine unit for DoubleMatrix from an empty array of DoubleScalar");
         }
-        for (int row = 1; row < values.length; row++)
+        for (int row = values.length; --row >= 1;)
         {
             if (values[0].length != values[row].length)
             {
@@ -717,23 +731,23 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
 
     /**
      * Check that provided row and column indices are valid.
-     * @param row integer; the row value to check
-     * @param column integer; the column value to check
-     * @throws ValueException when row or column has an invalid value
+     * @param row int; the row value to check
+     * @param column int; the column value to check
+     * @throws ValueException when row or column is invalid
      */
     protected final void checkIndex(final int row, final int column) throws ValueException
     {
-        if (row < 0 || row >= this.matrixSI.rows() || column < 0 || column >= this.matrixSI.columns())
+        if (row < 0 || row >= rows() || column < 0 || column >= columns())
         {
-            throw new ValueException("index out of range (valid range is 0.." + (this.matrixSI.rows() - 1) + ", 0.."
-                    + this.matrixSI.columns() + ", got " + row + ", " + column + ")");
+            throw new ValueException("index out of range (valid range is 0.." + (rows() - 1) + ", 0.."
+                    + (columns() - 1) + ", got " + row + ", " + column + ")");
         }
     }
 
     /**
-     * Retrieve a value in vectorSI without checking validity of the index.
-     * @param row integer; the row where the value must be retrieved
-     * @param column integer; the column where the value must be retrieved
+     * Retrieve a value in matrixSI without checking validity of the indices.
+     * @param row int; the row where the value must be retrieved
+     * @param column int; the column where the value must be retrieved
      * @return double; the value stored at the indicated row and column
      */
     protected final double safeGet(final int row, final int column)
@@ -742,10 +756,10 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Modify a value in vectorSI without checking validity of the indices.
-     * @param row integer; the row where the value must be stored
-     * @param column integer; the column where the value must be stored
-     * @param valueSI double; the new value for the entry in vectorSI
+     * Modify a value in matrixSI without checking validity of the indices.
+     * @param row int; the row where the value must be stored
+     * @param column int; the column where the value must be stored
+     * @param valueSI double; the new value for the entry in matrixSI
      */
     protected final void safeSet(final int row, final int column, final double valueSI)
     {
@@ -762,29 +776,30 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Check that a provided array can be used to create some descendant of an AbstractDoubleMatrix.
-     * @param fsArray DoubleScalar[][]; the provided array
-     * @return DoubleScalar[][]; the provided array
-     * @throws ValueException when the provided array has zero entries
-     * @param <U> Unit; the unit
+     * Check that a provided array can be used to create some descendant of a DoubleMatrix.
+     * @param dsArray DoubleScalar&lt;U&gt;[][]; the provided array
+     * @param <U> Unit; the unit of the DoubleScalar array
+     * @return DoubleScalar&lt;U&gt;[][]; the provided array
+     * @throws ValueException when the array has zero entries
      */
-    protected static <U extends Unit<U>> DoubleScalar<U>[][] checkNonEmpty(final DoubleScalar<U>[][] fsArray)
+    protected static <U extends Unit<U>> DoubleScalar<U>[][] checkNonEmpty(final DoubleScalar<U>[][] dsArray)
             throws ValueException
     {
-        if (0 == fsArray.length || 0 == fsArray[0].length)
+        if (0 == dsArray.length || 0 == dsArray[0].length)
         {
-            throw new ValueException("Cannot create a DoubleValue or MutableDoubleValue from an empty array of DoubleScalar");
+            throw new ValueException(
+                    "Cannot create a DoubleMatrix or MutableDoubleMatrix from an empty array of DoubleScalar");
         }
-        return fsArray;
+        return dsArray;
     }
 
     /**
-     * Solve x for A*x = b. According to Colt: x; a new independent matrix; solution if A is square, least squares solution if
-     * A.rows() &gt; A.columns(), undetermined system solution if A.rows() &lt; A.columns().
-     * @param A matrix A in A*x = b
-     * @param b vector b in A*x = b
-     * @return vector x in A*x = b
-     * @throws ValueException when Matrix A is neither Sparse nor Dense.
+     * Solve x for A*x = b. According to Colt: x; a new independent matrix; solution if A is square, least squares
+     * solution if A.rows() &gt; A.columns(), underdetermined system solution if A.rows() &lt; A.columns().
+     * @param A DoubleMatrix&lt;?&gt;; matrix A in A*x = b
+     * @param b DoubleVector&lt;?&gt;; vector b in A*x = b
+     * @return DoubleVector&lt;SIUnit&gt;; vector x in A*x = b
+     * @throws ValueException when matrix A is neither Sparse nor Dense
      */
     public static DoubleVector<SIUnit> solve(final DoubleMatrix<?> A, final DoubleVector<?> b) throws ValueException
     {
@@ -794,7 +809,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
                         A.getUnit().getSICoefficients()).toString());
 
         // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
-        DoubleMatrix2D A2D = A.matrixSI;
+        DoubleMatrix2D A2D = A.getMatrixSI();
         if (A instanceof SparseData)
         {
             SparseDoubleMatrix1D b1D = new SparseDoubleMatrix1D(b.getValuesSI());
@@ -839,18 +854,18 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             return false;
         }
         DoubleMatrix<?> other = (DoubleMatrix<?>) obj;
-        // unequal if one is absolute and the other is relative
+        // unequal if not both absolute or both relative
         if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())
         {
             return false;
         }
-        // unequal if the SI unit type differs (km/h and m/s could have the same content, so that is allowed)
+        // unequal if the standard SI units differ
         if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))
         {
             return false;
         }
-        // Colt's equals also tests the size of the vector
-        if (!this.matrixSI.equals(other.matrixSI))
+        // Colt's equals also tests the size of the matrix
+        if (!getMatrixSI().equals(other.getMatrixSI()))
         {
             return false;
         }

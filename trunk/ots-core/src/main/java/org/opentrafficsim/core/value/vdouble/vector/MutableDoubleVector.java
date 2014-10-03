@@ -18,7 +18,7 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.jet.math.tdouble.DoubleFunctions;
 
 /**
- * Mutable double vector.
+ * MutableDoubleVector.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -26,7 +26,7 @@ import cern.jet.math.tdouble.DoubleFunctions;
  * <p>
  * @version Aug 28, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> Unit of this MutableDoubleVector
+ * @param <U> the Unit for this MutableDoubleVector
  */
 public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVector<U> implements
         WriteDoubleVectorFunctions<U>, DoubleMathFunctions
@@ -443,7 +443,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      */
     protected final void checkCopyOnWrite()
     {
-        if (this.isCopyOnWrite())
+        if (isCopyOnWrite())
         {
             // System.out.println("copyOnWrite is set: Copying data");
             deepCopyData();
@@ -685,7 +685,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
      * Increment the values in this MutableDoubleVector by the corresponding values in a DoubleVector.
      * @param increment DoubleVector&lt;U&gt;; the values by which to increment the corresponding values in this
      *            MutableDoubleVector
-     * @return MutableDoubleVEctor&lt;U&gt;; this modified MutableDoubleVector
+     * @return MutableDoubleVector&lt;U&gt;; this modified MutableDoubleVector
      * @throws ValueException when the vectors do not have the same size
      */
     private MutableDoubleVector<U> incrementValueByValue(final DoubleVector<U> increment) throws ValueException
@@ -711,8 +711,8 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
     /**
      * Decrement the values in this MutableDoubleVector by the corresponding values in a DoubleVector.
-     * @param decrement DoubleVector&lt;U&gt;; contains the amounts by which to decrement the corresponding values in
-     *            this MutableDoubleVector
+     * @param decrement DoubleVector&lt;U&gt;; the values by which to decrement the corresponding values in this
+     *            MutableDoubleVector
      * @return MutableDoubleVector&lt;U&gt;; this modified MutableDoubleVector
      * @throws ValueException when the vectors do not have the same size
      */
@@ -1209,7 +1209,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     }
 
     /**
-     * Create a Sparse version of this Dense DoubleVector.
+     * Create a Sparse version of a Dense DoubleVector.
      * @param in DoubleVector.Abs.Dense&lt;U&gt;; the Dense DoubleVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableDoubleVector.Abs.Sparse&lt;U&gt;
@@ -1220,7 +1220,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     }
 
     /**
-     * Create a Sparse version of this Dense DoubleVector.
+     * Create a Sparse version of a Dense DoubleVector.
      * @param in DoubleVector.Rel.Dense&lt;U&gt;; the Dense DoubleVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableDoubleVector.Rel.Sparse&lt;U&gt;
@@ -1243,7 +1243,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     }
 
     /**
-     * Create a Dense version of this Sparse DoubleVector.
+     * Create a Dense version of a Sparse DoubleVector.
      * @param in DoubleVector.Abs.Sparse&lt;U&gt;; the Sparse DoubleVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableDoubleVector.Abs.Dense&lt;U&gt;
@@ -1254,7 +1254,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     }
 
     /**
-     * Create a Dense version of this Sparse DoubleVector.
+     * Create a Dense version of a Sparse DoubleVector.
      * @param in DoubleVector.Rel.Sparse&lt;U&gt;; the Sparse DoubleVector
      * @param <U> Unit; the unit of the parameter and the result
      * @return MutableDoubleVector.Rel.Dense&lt;U&gt;

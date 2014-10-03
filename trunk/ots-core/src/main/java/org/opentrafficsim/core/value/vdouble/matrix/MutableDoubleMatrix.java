@@ -18,44 +18,49 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 import cern.jet.math.tdouble.DoubleFunctions;
 
 /**
+ * MutableDoubleMatrix.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit
  */
-public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatrix<U> implements WriteDoubleMatrixFunctions<U>,
-        DoubleMathFunctions
+public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatrix<U> implements
+        WriteDoubleMatrixFunctions<U>, DoubleMathFunctions
 {
-
     /** */
     private static final long serialVersionUID = 20140909L;
 
     /**
-     * @param unit Unit
+     * Construct a new MutableDoubleMatrix.
+     * @param unit U; the unit of the new MutableDoubleMatrix
      */
     protected MutableDoubleMatrix(final U unit)
     {
         super(unit);
+        // System.out.println("Created MutableDoubleMatrix");
     }
 
     /** If set, any modification of the data must be preceded by replacing the data with a local copy. */
     private boolean copyOnWrite = false;
 
     /**
-     * @return copyOnWrite
+     * Retrieve the value of the copyOnWrite flag.
+     * @return boolean
      */
-    public final boolean isCopyOnWrite()
+    private boolean isCopyOnWrite()
     {
-        return this.copyOnWrite;
+        return copyOnWrite;
     }
 
     /**
-     * @param copyOnWrite set copyOnWrite
+     * Change the copyOnWrite flag.
+     * @param copyOnWrite boolean; the new value for the copyOnWrite flag
      */
-    public final void setCopyOnWrite(final boolean copyOnWrite)
+    final void setCopyOnWrite(final boolean copyOnWrite)
     {
         this.copyOnWrite = copyOnWrite;
     }
@@ -70,9 +75,9 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             throw new ValueException("zSum is 0; cannot normalize");
         }
         checkCopyOnWrite();
-        for (int row = 0; row < rows(); row++)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = 0; column < columns(); column++)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) / sum);
             }
@@ -88,12 +93,13 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Absolute MutableDoubleMatrix.
-         * @param unit Unit; the unit of the new DoubleMatrix
+         * Construct a new Absolute MutableDoubleMatrix.
+         * @param unit U; the unit of the new Absolute MutableDoubleMatrix
          */
         protected Abs(final U unit)
         {
             super(unit);
+            // System.out.println("Created Abs");
         }
 
         /**
@@ -105,23 +111,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values for the new MutableDoubleMatrix
-             * @param unit Unit; the unit for the new MutableDoubleMatrix
-             */
-            protected Dense(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Absolute Dense Mutable DoubleMatrix.
-             * @param values double[][]; the initial values for the new MutableDoubleMatrix
-             * @param unit Unit; the unit of the values for the new MutableDoubleMatrix
-             * @throws ValueException when values is not rectangular, or has zero entries
+             * Construct a new Absolute Dense MutableDoubleMatrix.
+             * @param values double[][]; the initial values of the entries in the new Absolute Dense MutableDoubleMatrix
+             * @param unit U; the unit of the new Absolute Dense MutableDoubleMatrix
+             * @throws ValueException when values is not rectangular
              */
             public Dense(final double[][] values, final U unit) throws ValueException
             {
@@ -131,9 +124,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             }
 
             /**
-             * Create a new Absolute Dense Mutable DoubleMatrix.
-             * @param values DoubleScalar.Abs][][]; the initial values for the new MutableDoubleMatrix
-             * @throws ValueException when values it not rectangular
+             * Construct a new Absolute Dense MutableDoubleMatrix.
+             * @param values DoubleScalar.Abs&lt;U&gt;[][]; the initial values of the entries in the new Absolute Dense
+             *            MutableDoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Dense(final DoubleScalar.Abs<U>[][] values) throws ValueException
             {
@@ -142,11 +136,25 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Absolute Dense
+             *            MutableDoubleMatrix
+             * @param unit U; the unit of the new Absolute Dense MutableDoubleMatrix
+             */
+            protected Dense(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final DoubleMatrix.Abs.Dense<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new DoubleMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -154,7 +162,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final MutableDoubleMatrix.Abs.Dense<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -176,23 +184,11 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values for the entries in the new MutableDoubleMatrix
-             * @param unit Unit; the unit of the new MutableDoubleMatrix
-             */
-            protected Sparse(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Sparse Relative Mutable DoubleMatrix.
-             * @param values double[][]; the initial values for the entries in the new MutableDoubleMatrix
-             * @param unit Unit; the unit of the values
-             * @throws ValueException when values it not rectangular
+             * Construct a new Absolute Sparse MutableDoubleMatrix.
+             * @param values double[][]; the initial values of the entries in the new Absolute Sparse
+             *            MutableDoubleMatrix
+             * @param unit U; the unit of the new Absolute Sparse MutableDoubleMatrix
+             * @throws ValueException when values is not rectangular
              */
             public Sparse(final double[][] values, final U unit) throws ValueException
             {
@@ -202,9 +198,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             }
 
             /**
-             * Create a new Absolute Sparse MutableDoubleMatrix.
-             * @param values DoubleScalar.Abs[][]; the initial values for the entries in the new MutableDoubleMatrix
-             * @throws ValueException when values is not rectangular, or has zero entries
+             * Construct a new Absolute Sparse MutableDoubleMatrix.
+             * @param values DoubleScalar.Abs&lt;U&gt;[][]; the initial values of the entries in the new Absolute Sparse
+             *            MutableDoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Sparse(final DoubleScalar.Abs<U>[][] values) throws ValueException
             {
@@ -213,11 +210,25 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Absolute Sparse
+             *            MutableDoubleMatrix
+             * @param unit U; the unit of the new Absolute Sparse MutableDoubleMatrix
+             */
+            protected Sparse(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final DoubleMatrix.Abs.Sparse<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new DoubleMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -225,7 +236,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final MutableDoubleMatrix.Abs.Sparse<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -233,7 +244,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
-                return new DenseDoubleMatrix2D(rows, columns);
+                return new SparseDoubleMatrix2D(rows, columns);
             }
 
         }
@@ -256,12 +267,13 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
         private static final long serialVersionUID = 20140905L;
 
         /**
-         * Create a new Relative MutableDoubleMatrix.
-         * @param unit Unit; the unit of the new DoubleMatrix
+         * Construct a new Relative MutableDoubleMatrix.
+         * @param unit U; the unit of the new Relative MutableDoubleMatrix
          */
         protected Rel(final U unit)
         {
             super(unit);
+            // System.out.println("Created Rel");
         }
 
         /**
@@ -273,23 +285,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; initial values for the new MutableDoubleMatrix
-             * @param unit Unit; the unit of the new DoubleMatrix
-             */
-            protected Dense(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Dense");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Dense Mutable DoubleMatrix.
-             * @param values double[][]; initial values for the new MutableDoubleMatrix
-             * @param unit Unit; the unit of the values
-             * @throws ValueException when values it not rectangular
+             * Construct a new Relative Dense MutableDoubleMatrix.
+             * @param values double[][]; the initial values of the entries in the new Relative Dense MutableDoubleMatrix
+             * @param unit U; the unit of the new Relative Dense MutableDoubleMatrix
+             * @throws ValueException when values is not rectangular
              */
             public Dense(final double[][] values, final U unit) throws ValueException
             {
@@ -299,9 +298,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             }
 
             /**
-             * Create a new Relative Dense Mutable DoubleMatrix.
-             * @param values DoubleScalar.Rel[][]; initial values for the new MutableDoubleMatrix
-             * @throws ValueException when values it not rectangular or has zero entries
+             * Construct a new Relative Dense MutableDoubleMatrix.
+             * @param values DoubleScalar.Rel&lt;U&gt;[][]; the initial values of the entries in the new Relative Dense
+             *            MutableDoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Dense(final DoubleScalar.Rel<U>[][] values) throws ValueException
             {
@@ -310,11 +310,25 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Relative Dense
+             *            MutableDoubleMatrix
+             * @param unit U; the unit of the new Relative Dense MutableDoubleMatrix
+             */
+            protected Dense(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Dense");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final DoubleMatrix.Rel.Dense<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new DoubleMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -322,7 +336,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final MutableDoubleMatrix.Rel.Dense<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
             }
 
@@ -330,7 +344,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             protected final DoubleMatrix2D createMatrix2D(final int rows, final int columns)
             {
-                return new SparseDoubleMatrix2D(rows, columns);
+                return new DenseDoubleMatrix2D(rows, columns);
             }
 
         }
@@ -344,22 +358,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             private static final long serialVersionUID = 20140905L;
 
             /**
-             * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values for the new DoubleMatrix
-             * @param unit Unit; the unit for the new DoubleMatrix
-             */
-            protected Sparse(final DoubleMatrix2D values, final U unit)
-            {
-                super(unit);
-                // System.out.println("Created Sparse");
-                this.setCopyOnWrite(true);
-                initialize(values); // shallow copy
-            }
-
-            /**
-             * Create a new Relative Sparse Mutable DoubleMatrix.
-             * @param values double[][]; initial values for the entries in the new DoubleMatrix
-             * @param unit Unit; unit of the values
+             * Construct a new Relative Sparse MutableDoubleMatrix.
+             * @param values double[][]; the initial values of the entries in the new Relative Sparse
+             *            MutableDoubleMatrix
+             * @param unit U; the unit of the new Relative Sparse MutableDoubleMatrix
              * @throws ValueException when values is not rectangular
              */
             public Sparse(final double[][] values, final U unit) throws ValueException
@@ -370,9 +372,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             }
 
             /**
-             * Create a new Relative Sparse Mutable DoubleMatrix.
-             * @param values DoubleScalar.Rel[][]; initial values for the entries in the new DoubleMatrix
-             * @throws ValueException when values is not rectangular or has zero entries
+             * Construct a new Relative Sparse MutableDoubleMatrix.
+             * @param values DoubleScalar.Rel&lt;U&gt;[][]; the initial values of the entries in the new Relative Sparse
+             *            MutableDoubleMatrix
+             * @throws ValueException when values has zero entries, or is not rectangular
              */
             public Sparse(final DoubleScalar.Rel<U>[][] values) throws ValueException
             {
@@ -381,11 +384,25 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
                 initialize(values);
             }
 
+            /**
+             * For package internal use only.
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Relative Sparse
+             *            MutableDoubleMatrix
+             * @param unit U; the unit of the new Relative Sparse MutableDoubleMatrix
+             */
+            protected Sparse(final DoubleMatrix2D values, final U unit)
+            {
+                super(unit);
+                // System.out.println("Created Sparse");
+                setCopyOnWrite(true);
+                initialize(values); // shallow copy
+            }
+
             /** {@inheritDoc} */
             @Override
             public final DoubleMatrix.Rel.Sparse<U> immutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new DoubleMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -393,7 +410,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             @Override
             public final MutableDoubleMatrix.Rel.Sparse<U> mutable()
             {
-                this.setCopyOnWrite(true);
+                setCopyOnWrite(true);
                 return new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
             }
 
@@ -417,7 +434,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Make (immutable) DoubleMatrix equivalent for any type of MutableDoubleMatrix.
-     * @return DoubleMatrix
+     * @return DoubleMatrix&lt;U&gt;
      */
     public abstract DoubleMatrix<U> immutable();
 
@@ -427,19 +444,19 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     {
         return immutable().mutable();
         // FIXME: This may cause both the original and the copy to be deep copied later
-        // Maybe it is better to make a deep copy now?
+        // Maybe it is better to make one deep copy now...
     }
 
     /**
-     * Check the copyOnWrite flag and, if it is set make a deep copy of the data and clear the flag.
+     * Check the copyOnWrite flag and, if it is set, make a deep copy of the data and clear the flag.
      */
     protected final void checkCopyOnWrite()
     {
-        if (this.isCopyOnWrite())
+        if (isCopyOnWrite())
         {
             // System.out.println("copyOnWrite is set: Copying data");
             deepCopyData();
-            this.setCopyOnWrite(false);
+            setCopyOnWrite(false);
         }
     }
 
@@ -461,20 +478,21 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /** {@inheritDoc} */
     @Override
-    public final void setInUnit(final int row, final int column, final double value, final U valueUnit) throws ValueException
+    public final void setInUnit(final int row, final int column, final double value, final U valueUnit)
+            throws ValueException
     {
-        // TODO: creating a DoubleScalarAbs along the way may not be the most efficient way to do this...
+        // TODO: creating a DoubleScalar.Abs along the way may not be the most efficient way to do this...
         setSI(row, column, new DoubleScalar.Abs<U>(value, valueUnit).getValueSI());
     }
 
     /**
      * Execute a function on a cell by cell basis.
-     * @param f cern.colt.function.tdouble.DoubleFunction; the function to apply
+     * @param d cern.colt.function.tdouble.DoubleFunction; the function to apply
      */
-    public final void assign(final cern.colt.function.tdouble.DoubleFunction f)
+    public final void assign(final cern.colt.function.tdouble.DoubleFunction d)
     {
         checkCopyOnWrite();
-        getMatrixSI().assign(f);
+        getMatrixSI().assign(d);
     }
 
     /** {@inheritDoc} */
@@ -674,18 +692,18 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Increment the values in this MutableDoubleMatrix by the corresponding values in an DoubleMatrix.
-     * @param increment AbstractDoubleMatrix; contains the amounts by which to increment the corresponding entries in this
+     * Increment the values in this MutableDoubleMatrix by the corresponding values in a DoubleMatrix.
+     * @param increment DoubleMatrix&lt;U&gt;; the values by which to increment the corresponding values in this
      *            MutableDoubleMatrix
-     * @return this
+     * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
      */
     private MutableDoubleMatrix<U> incrementValueByValue(final DoubleMatrix<U> increment) throws ValueException
     {
         checkSizeAndCopyOnWrite(increment);
-        for (int row = this.rows(); --row >= 0;)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = this.columns(); --column >= 0;)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) + increment.safeGet(row, column));
             }
@@ -694,9 +712,9 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Increment the entries in this MutableDoubleMatrix by the corresponding values in a Relative DoubleMatrix.
-     * @param rel DoubleMatrix.Rel; the Relative DoubleMatrix
-     * @return this
+     * Increment the values in this MutableDoubleMatrix by the corresponding values in a Relative DoubleMatrix.
+     * @param rel DoubleMatrix.Rel&lt;U&gt;; the Relative DoubleMatrix
+     * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
      */
     public final MutableDoubleMatrix<U> incrementBy(final DoubleMatrix.Rel<U> rel) throws ValueException
@@ -705,10 +723,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Decrement the values in this MutableDoubleMatrix by the corresponding values in an DoubleMatrix.
-     * @param decrement AbstractDoubleMatrix; contains the amounts by which to decrement the corresponding entries in this
+     * Decrement the values in this MutableDoubleMatrix by the corresponding values in a DoubleMatrix.
+     * @param decrement DoubleMatrix&lt;U&gt;; the values by which to decrement the corresponding values in this
      *            MutableDoubleMatrix
-     * @return this
+     * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
      */
     private MutableDoubleMatrix<U> decrementValueByValue(final DoubleMatrix<U> decrement) throws ValueException
@@ -725,9 +743,9 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Decrement the entries in this MutableDoubleMatrix by the corresponding values in a Relative DoubleMatrix.
-     * @param rel DoubleMatrix.Rel; the Relative DoubleMatrix
-     * @return this
+     * Decrement the values in this MutableDoubleMatrix by the corresponding values in a Relative DoubleMatrix.
+     * @param rel DoubleMatrix.Rel&lt;U&gt;; the Relative DoubleMatrix
+     * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
      */
     public final MutableDoubleMatrix<U> decrementBy(final DoubleMatrix.Rel<U> rel) throws ValueException
@@ -736,28 +754,29 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Decrement the entries in this MutableDoubleMatrix by the corresponding values in a Absolute DoubleMatrix.
-     * @param abs DoubleMatrix.Abs; the Absolute DoubleMatrix
-     * @return this
+     * Decrement the values in this Relative MutableDoubleMatrix by the corresponding values in an Absolute
+     * DoubleMatrix.
+     * @param abs DoubleMatrix.Abs&lt;U&gt;; the Absolute DoubleMatrix
+     * @return MutableDoubleMatrix.Rel&lt;U&gt;; this modified Relative MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
      */
-    public final MutableDoubleMatrix<U> decrementBy(final DoubleMatrix.Abs<U> abs) throws ValueException
+    protected final MutableDoubleMatrix.Rel<U> decrementBy(final DoubleMatrix.Abs<U> abs) throws ValueException
     {
-        return decrementValueByValue(abs);
+        return (MutableDoubleMatrix.Rel<U>) decrementValueByValue(abs);
     }
 
     /**
-     * Scale the values in this MutableDoubleMatrix by the corresponding values in an DoubleMatrix.
-     * @param factor AbstractDoubleMatrix; contains the values by which to scale the corresponding entries in this
+     * Scale the values in this MutableDoubleMatrix by the corresponding values in a DoubleMatrix.
+     * @param factor DoubleMatrix&lt;?&gt;; contains the values by which to scale the corresponding values in this
      *            MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
      */
     public final void scaleValueByValue(final DoubleMatrix<?> factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
-        for (int row = this.rows(); --row >= 0;)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = this.columns(); --column >= 0;)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) * factor.safeGet(row, column));
             }
@@ -766,16 +785,17 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Scale the values in this MutableDoubleMatrix by the corresponding values in a double array.
-     * @param factor double[][]; contains the values by which to scale the corresponding entries in this MutableDoubleMatrix
-     * @return this
-     * @throws ValueException when the matrix and the 2D array do not have the same size
+     * @param factor double[][]; contains the values by which to scale the corresponding values in this
+     *            MutableDoubleMatrix
+     * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
+     * @throws ValueException when the matrix and the array do not have the same size
      */
     public final MutableDoubleMatrix<U> scaleValueByValue(final double[][] factor) throws ValueException
     {
         checkSizeAndCopyOnWrite(factor);
-        for (int row = this.rows(); --row >= 0;)
+        for (int row = rows(); --row >= 0;)
         {
-            for (int column = this.columns(); --column >= 0;)
+            for (int column = columns(); --column >= 0;)
             {
                 safeSet(row, column, safeGet(row, column) * factor[row][column]);
             }
@@ -785,7 +805,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Check sizes and copy the data if the copyOnWrite flag is set.
-     * @param other AbstractDoubleMatrix; partner for the size check
+     * @param other DoubleMatrix&lt;?&gt;; partner for the size check
      * @throws ValueException when the matrices do not have the same size
      */
     private void checkSizeAndCopyOnWrite(final DoubleMatrix<?> other) throws ValueException
@@ -806,12 +826,12 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Add two DoubleMatrices entry by entry.
-     * @param left Absolute Dense DoubleMatrix
-     * @param right Relative DoubleMatrix
-     * @return new Absolute Dense Mutable DoubleMatrix
+     * Add two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Abs.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Dense&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> plus(final DoubleMatrix.Abs.Dense<U> left,
             final DoubleMatrix.Rel<U> right) throws ValueException
@@ -820,26 +840,12 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Add two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Relative Sparse DoubleMatrix
-     * @return new Absolute Sparse Mutable DoubleMatrix
+     * Add two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Abs.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> plus(final DoubleMatrix.Abs.Sparse<U> left,
-            final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
-    {
-        return (MutableDoubleMatrix.Abs.Sparse<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Relative Dense DoubleMatrix
-     * @return new Absolute Dense Mutable DoubleMatrix
-     * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> plus(final DoubleMatrix.Abs.Sparse<U> left,
             final DoubleMatrix.Rel.Dense<U> right) throws ValueException
@@ -848,12 +854,26 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Add two DoubleMatrices entry by entry.
-     * @param left Relative Dense DoubleMatrix
-     * @param right Relative DoubleMatrix
-     * @return new Absolute Dense Mutable DoubleMatrix
+     * Add two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Abs.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Abs.Sparse&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
+     */
+    public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> plus(final DoubleMatrix.Abs.Sparse<U> left,
+            final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
+    {
+        return (MutableDoubleMatrix.Abs.Sparse<U>) left.mutable().incrementBy(right);
+    }
+
+    /**
+     * Add two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Dense&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> plus(final DoubleMatrix.Rel.Dense<U> left,
             final DoubleMatrix.Rel<U> right) throws ValueException
@@ -862,26 +882,12 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Add two DoubleMatrices entry by entry.
-     * @param left Relative Sparse DoubleMatrix
-     * @param right Relative Sparse DoubleMatrix
-     * @return new Relative Sparse Mutable DoubleMatrix
+     * Add two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> plus(final DoubleMatrix.Rel.Sparse<U> left,
-            final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
-    {
-        return (MutableDoubleMatrix.Rel.Sparse<U>) left.mutable().incrementBy(right);
-    }
-
-    /**
-     * Add two DoubleMatrices entry by entry.
-     * @param left Relative Sparse DoubleMatrix
-     * @param right Relative Dense DoubleMatrix
-     * @return new Relative Dense Mutable DoubleMatrix
-     * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> plus(final DoubleMatrix.Rel.Sparse<U> left,
             final DoubleMatrix.Rel.Dense<U> right) throws ValueException
@@ -890,57 +896,71 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Absolute Dense DoubleMatrix
-     * @param right Absolute DoubleMatrix
-     * @return new Relative Dense Mutable DoubleMatrix
+     * Add two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
+     */
+    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> plus(final DoubleMatrix.Rel.Sparse<U> left,
+            final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
+    {
+        return (MutableDoubleMatrix.Rel.Sparse<U>) left.mutable().incrementBy(right);
+    }
+
+    /**
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Dense&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Abs&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> minus(final DoubleMatrix.Abs.Dense<U> left,
             final DoubleMatrix.Abs<U> right) throws ValueException
     {
-        return (MutableDoubleMatrix.Rel.Dense<U>) new MutableDoubleMatrix.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableDoubleMatrix.Rel.Dense<U>) new MutableDoubleMatrix.Rel.Dense<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Absolute Sparse DoubleMatrix
-     * @return new Relative Sparse Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Abs.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> minus(final DoubleMatrix.Abs.Sparse<U> left,
             final DoubleMatrix.Abs.Sparse<U> right) throws ValueException
     {
-        return (MutableDoubleMatrix.Rel.Sparse<U>) new MutableDoubleMatrix.Rel.Sparse<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableDoubleMatrix.Rel.Sparse<U>) new MutableDoubleMatrix.Rel.Sparse<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Absolute Dense DoubleMatrix
-     * @return new Relative Dense Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Abs.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> minus(final DoubleMatrix.Abs.Sparse<U> left,
             final DoubleMatrix.Abs.Dense<U> right) throws ValueException
     {
-        return (MutableDoubleMatrix.Rel.Dense<U>) new MutableDoubleMatrix.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
-                .decrementBy(right);
+        return (MutableDoubleMatrix.Rel.Dense<U>) new MutableDoubleMatrix.Rel.Dense<U>(left.deepCopyOfData(),
+                left.getUnit()).decrementBy(right);
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Absolute Dense DoubleMatrix
-     * @param right Relative DoubleMatrix
-     * @return new Absolute Dense Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Abs.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Dense&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> minus(final DoubleMatrix.Abs.Dense<U> left,
             final DoubleMatrix.Rel<U> right) throws ValueException
@@ -949,12 +969,26 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Relative Sparse DoubleMatrix
-     * @return new Absolute Sparse Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Abs.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
+     */
+    public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> minus(final DoubleMatrix.Abs.Sparse<U> left,
+            final DoubleMatrix.Rel.Dense<U> right) throws ValueException
+    {
+        return (MutableDoubleMatrix.Abs.Dense<U>) sparseToDense(left).decrementBy(right);
+    }
+
+    /**
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Abs.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Abs.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> minus(final DoubleMatrix.Abs.Sparse<U> left,
             final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
@@ -963,26 +997,12 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Relative Dense DoubleMatrix
-     * @return new Absolute Dense Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Dense&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> minus(final DoubleMatrix.Abs.Sparse<U> left,
-            final DoubleMatrix.Rel.Dense<U> right) throws ValueException
-    {
-        return (MutableDoubleMatrix.Abs.Sparse<U>) sparseToDense(left).decrementBy(right);
-    }
-
-    /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Relative Dense DoubleMatrix
-     * @param right Relative DoubleMatrix
-     * @return new Relative Dense Mutable DoubleMatrix
-     * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> minus(final DoubleMatrix.Rel.Dense<U> left,
             final DoubleMatrix.Rel<U> right) throws ValueException
@@ -991,26 +1011,12 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Relative Sparse DoubleMatrix
-     * @param right Relative Sparse DoubleMatrix
-     * @return new Relative Sparse Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Dense&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
      * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> minus(final DoubleMatrix.Rel.Sparse<U> left,
-            final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
-    {
-        return (MutableDoubleMatrix.Rel.Sparse<U>) left.mutable().decrementBy(right);
-    }
-
-    /**
-     * Subtract two DoubleMatrices entry by entry.
-     * @param left Relative Sparse DoubleMatrix
-     * @param right Relative Dense DoubleMatrix
-     * @return new Relative Dense Mutable DoubleMatrix
-     * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> minus(final DoubleMatrix.Rel.Sparse<U> left,
             final DoubleMatrix.Rel.Dense<U> right) throws ValueException
@@ -1019,10 +1025,25 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Multiply two DoubleMatricess entry by entry.
-     * @param left Absolute Dense DoubleMatrix
-     * @param right Absolute Dense DoubleMatrix
-     * @return new Absolute Dense Mutable DoubleMatrix
+     * Subtract two DoubleMatrices value by value and store the result in a new MutableDoubleMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Sparse&lt;U&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Sparse&lt;U&gt;; the right operand
+     * @param <U> Unit; the unit of the parameters and the result
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> minus(final DoubleMatrix.Rel.Sparse<U> left,
+            final DoubleMatrix.Rel.Sparse<U> right) throws ValueException
+    {
+        return (MutableDoubleMatrix.Rel.Sparse<U>) left.mutable().decrementBy(right);
+    }
+
+    /**
+     * Multiply two DoubleMatrices value by value and store the result in a new
+     * MutableDoubleMatrix.Abs.Dense&lt;SIUnit&gt;.
+     * @param left DoubleMatrix.Abs.Dense&lt;?&gt;; the left operand
+     * @param right DoubleMatrix.Abs.Dense&lt;?&gt;; the right operand
+     * @return MutableDoubleMatrix.Abs.Dense&lt;SIUnit&gt;
      * @throws ValueException when the matrices do not have the same size
      */
     public static MutableDoubleMatrix.Abs.Dense<SIUnit> times(final DoubleMatrix.Abs.Dense<?> left,
@@ -1038,29 +1059,31 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Multiply two DoubleMatrices entry by entry.
-     * @param left Relative Dense DoubleMatrix
-     * @param right Relative Dense DoubleMatrix
-     * @return new Relative Dense Mutable DoubleMatrix
+     * Multiply two DoubleMatrices value by value and store the result in a new
+     * MutableDoubleMatrix.Abs.Sparse&lt;SIUnit&gt;.
+     * @param left DoubleMatrix.Abs.Dense&lt;?&gt;; the left operand
+     * @param right DoubleMatrix.Abs.Sparse&lt;?&gt;; the right operand
+     * @return MutableDoubleMatrix.Abs.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the matrices do not have the same size
      */
-    public static MutableDoubleMatrix.Rel.Dense<SIUnit> times(final DoubleMatrix.Rel.Dense<?> left,
-            final DoubleMatrix.Rel.Dense<?> right) throws ValueException
+    public static MutableDoubleMatrix.Abs.Sparse<SIUnit> times(final DoubleMatrix.Abs.Dense<?> left,
+            final DoubleMatrix.Abs.Sparse<?> right) throws ValueException
     {
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
                         right.getUnit().getSICoefficients()).toString());
-        MutableDoubleMatrix.Rel.Dense<SIUnit> work =
-                new MutableDoubleMatrix.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        MutableDoubleMatrix.Abs.Sparse<SIUnit> work =
+                new MutableDoubleMatrix.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two DoubleMatrices entry by entry.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right Absolute DoubleMatrix
-     * @return new Absolute Sparse Mutable DoubleMatrix
+     * Multiply two DoubleMatrices value by value and store the result in a new
+     * MutableDoubleMatrix.Abs.Sparse&lt;SIUnit&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;?&gt;; the left operand
+     * @param right DoubleMatrix.Abs&lt;?&gt;; the right operand
+     * @return MutableDoubleMatrix.Abs.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the matrices do not have the same size
      */
     public static MutableDoubleMatrix.Abs.Sparse<SIUnit> times(final DoubleMatrix.Abs.Sparse<?> left,
@@ -1076,10 +1099,51 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Multiply two DoubleMatrices entry by entry.
-     * @param left Relative Sparse DoubleMatrix
-     * @param right Relative DoubleMatrix
-     * @return new Relative Sparse Mutable DoubleMatrix
+     * Multiply two DoubleMatrices value by value and store the result in a new
+     * MutableDoubleMatrix.Rel.Dense&lt;SIUnit&gt;.
+     * @param left DoubleMatrix.Rel.Dense&lt;?&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Dense&lt;?&gt;; the right operand
+     * @return MutableDoubleMatrix.Rel.Dense&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static MutableDoubleMatrix.Rel.Dense<SIUnit> times(final DoubleMatrix.Rel.Dense<?> left,
+            final DoubleMatrix.Rel.Dense<?> right) throws ValueException
+    {
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        MutableDoubleMatrix.Rel.Dense<SIUnit> work =
+                new MutableDoubleMatrix.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+        work.scaleValueByValue(right);
+        return work;
+    }
+
+    /**
+     * Multiply two DoubleMatrices value by value and store the result in a new
+     * MutableDoubleMatrix.Rel.Sparse&lt;SIUnit&gt;.
+     * @param left DoubleMatrix.Rel.Dense&lt;?&gt;; the left operand
+     * @param right DoubleMatrix.Rel.Sparse&lt;?&gt;; the right operand
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;SIUnit&gt;
+     * @throws ValueException when the matrices do not have the same size
+     */
+    public static MutableDoubleMatrix.Rel.Sparse<SIUnit> times(final DoubleMatrix.Rel.Dense<?> left,
+            final DoubleMatrix.Rel.Sparse<?> right) throws ValueException
+    {
+        SIUnit targetUnit =
+                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                        right.getUnit().getSICoefficients()).toString());
+        MutableDoubleMatrix.Rel.Sparse<SIUnit> work =
+                new MutableDoubleMatrix.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+        work.scaleValueByValue(right);
+        return work;
+    }
+
+    /**
+     * Multiply two DoubleMatrices value by value and store the result in a new
+     * MutableDoubleMatrix.Rel.Sparse&lt;SIUnit&gt;.
+     * @param left DoubleMatrix.Rel.Sparse&lt;?&gt;; the left operand
+     * @param right DoubleMatrix.Rel&lt;?&gt;; the right operand
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the matrices do not have the same size
      */
     public static MutableDoubleMatrix.Rel.Sparse<SIUnit> times(final DoubleMatrix.Rel.Sparse<?> left,
@@ -1095,12 +1159,13 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Multiply the values in a DoubleMatrix by the corresponding values in a 2D double array.
-     * @param left Absolute Dense DoubleMatrix
-     * @param right double[][]; the array
-     * @return new Absolute Dense Mutable DoubleMatrix
-     * @throws ValueException when the matrix and the 2D array do not have the same size
-     * @param <U> Unit; the unit
+     * Multiply the values in a DoubleMatrix and a double array value by value and store the result in a new
+     * MutableDoubleMatrix.Abs.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Dense&lt;U&gt;; the DoubleMatrix
+     * @param right double[][]; the double array
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
+     * @throws ValueException when the DoubleMatrix and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> times(final DoubleMatrix.Abs.Dense<U> left,
             final double[][] right) throws ValueException
@@ -1109,26 +1174,13 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Multiply the values in a DoubleMatrix by the corresponding values in a 2D double array.
-     * @param left Relative Dense DoubleMatrix
-     * @param right double[][]; the array
-     * @return new Relative Dense Mutable DoubleMatrix
-     * @throws ValueException when the matrices do not have the same size
-     * @param <U> Unit; the unit
-     */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> times(final DoubleMatrix.Rel.Dense<U> left,
-            final double[][] right) throws ValueException
-    {
-        return (MutableDoubleMatrix.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
-    }
-
-    /**
-     * Multiply the values in a DoubleMatrix by the corresponding values in a 2D double array.
-     * @param left Absolute Sparse DoubleMatrix
-     * @param right double[][]; the values to multiply the entries by
-     * @return new Sparse Absolute Mutable DoubleMatrix
-     * @throws ValueException when the array does not have the same size as the DoubleMatrix
-     * @param <U> Unit; the unit
+     * Multiply the values in a DoubleMatrix and a double array value by value and store the result in a new
+     * MutableDoubleMatrix.Abs.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Abs.Sparse&lt;U&gt;; the DoubleMatrix
+     * @param right double[][]; the double array
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableDoubleMatrix.Abs.Sparse&lt;U&gt;
+     * @throws ValueException when the DoubleMatrix and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> times(final DoubleMatrix.Abs.Sparse<U> left,
             final double[][] right) throws ValueException
@@ -1137,12 +1189,28 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Multiply the values in a DoubleMatrix by the corresponding values in a double array.
-     * @param left Relative Sparse DoubleMatrix
-     * @param right double[][]; the values to multiply the entries by
-     * @return new Relative Sparse Mutable DoubleMatrix
-     * @throws ValueException when the array does not have the same size as the DoubleMatrix
-     * @param <U> Unit; the unit
+     * Multiply the values in a DoubleMatrix and a double array value by value and store the result in a new
+     * MutableDoubleMatrix.Rel.Dense&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Dense&lt;U&gt;; the DoubleMatrix
+     * @param right double[][]; the double array
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
+     * @throws ValueException when the DoubleMatrix and the array do not have the same size
+     */
+    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> times(final DoubleMatrix.Rel.Dense<U> left,
+            final double[][] right) throws ValueException
+    {
+        return (MutableDoubleMatrix.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
+    }
+
+    /**
+     * Multiply the values in a DoubleMatrix and a double array value by value and store the result in a new
+     * MutableDoubleMatrix.Rel.Sparse&lt;U&gt;.
+     * @param left DoubleMatrix.Rel.Sparse&lt;U&gt;; the DoubleMatrix
+     * @param right double[][]; the double array
+     * @param <U> Unit; the unit of the left parameter and the result
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;U&gt;
+     * @throws ValueException when the DoubleMatrix and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> times(final DoubleMatrix.Rel.Sparse<U> left,
             final double[][] right) throws ValueException
@@ -1152,21 +1220,21 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Make the Sparse equivalent of a DenseDoubleMatrix2D.
-     * @param dense DenseDoubleMatrix2D
+     * @param dense DoubleMatrix2D; the Dense DoubleMatrix2D
      * @return SparseDoubleMatrix2D
      */
-    private static DoubleMatrix2D makeSparse(final DoubleMatrix2D dense)
+    private static SparseDoubleMatrix2D makeSparse(final DoubleMatrix2D dense)
     {
-        DoubleMatrix2D result = new SparseDoubleMatrix2D(dense.rows(), dense.columns());
+        SparseDoubleMatrix2D result = new SparseDoubleMatrix2D(dense.rows(), dense.columns());
         result.assign(dense);
         return result;
     }
 
     /**
-     * Create a Sparse version of this Dense DoubleMatrix.
-     * @param in DoubleMatrix.Abs.Dense the Dense DoubleMatrix
-     * @return MutableDoubleMatrix.Sparse.Abs
-     * @param <U> Unit; the unit
+     * Create a Sparse version of a Dense DoubleMatrix.
+     * @param in DoubleMatrix.Abs.Dense&lt;U&gt;; the Dense DoubleMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableDoubleMatrix.Abs.Sparse&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Sparse<U> denseToSparse(final DoubleMatrix.Abs.Dense<U> in)
     {
@@ -1174,10 +1242,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Create a Sparse version of this Dense DoubleMatrix.
-     * @param in DoubleMatrix.Rel.Dense; the Dense DoubleMatrix
-     * @return MutableDoubleMatrix.Abs.Sparse
-     * @param <U> Unit; the unit
+     * Create a Sparse version of a Dense DoubleMatrix.
+     * @param in DoubleMatrix.Rel.Dense&lt;U&gt;; the Dense DoubleMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableDoubleMatrix.Rel.Sparse&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Sparse<U> denseToSparse(final DoubleMatrix.Rel.Dense<U> in)
     {
@@ -1186,21 +1254,21 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Make the Dense equivalent of a SparseDoubleMatrix2D.
-     * @param sparse SparseDoubleMatrix2D; the Sparse DoubleMatrix
-     * @return DenseMatrix2D
+     * @param sparse DoubleMatrix2D; the Sparse DoubleMatrix2D
+     * @return DenseDoubleMatrix2D
      */
-    private static DoubleMatrix2D makeDense(final DoubleMatrix2D sparse)
+    private static DenseDoubleMatrix2D makeDense(final DoubleMatrix2D sparse)
     {
-        DoubleMatrix2D result = new SparseDoubleMatrix2D(sparse.rows(), sparse.columns());
+        DenseDoubleMatrix2D result = new DenseDoubleMatrix2D(sparse.rows(), sparse.columns());
         result.assign(sparse);
         return result;
     }
 
     /**
-     * Create a Dense version of this Sparse DoubleMatrix.
-     * @param in DoubleMatrix.Abs.Dense the Dense DoubleMatrix
-     * @return MutableDoubleMatrix.Abs.Sparse
-     * @param <U> Unit; the unit
+     * Create a Dense version of a Sparse DoubleMatrix.
+     * @param in DoubleMatrix.Abs.Sparse&lt;U&gt;; the Sparse DoubleMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> sparseToDense(final DoubleMatrix.Abs.Sparse<U> in)
     {
@@ -1208,10 +1276,10 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     }
 
     /**
-     * Create a Dense version of this Sparse DoubleMatrix.
-     * @param in DoubleMatrix.Abs.Dense the Dense DoubleMatrix
-     * @return MutableDoubleMatrix.Abs.Dense
-     * @param <U> Unit; the unit
+     * Create a Dense version of a Sparse DoubleMatrix.
+     * @param in DoubleMatrix.Rel.Sparse&lt;U&gt;; the Sparse DoubleMatrix
+     * @param <U> Unit; the unit of the parameter and the result
+     * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> sparseToDense(final DoubleMatrix.Rel.Sparse<U> in)
     {
