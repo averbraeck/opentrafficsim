@@ -450,6 +450,10 @@ public class Generator
         for (int pos = 0; pos < input.length(); pos++)
         {
             String letter = input.substring(pos, pos + 1);
+            if (letter.equals("&"))
+            {
+                construction.append("&amp;");
+            }
             if (letter.equals("<"))
             {
                 construction.append("&lt;");
@@ -819,7 +823,7 @@ public class Generator
                 "Write" + type + "VectorFunctions",
                 new String[]{"org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.ValueException",
                         "org.opentrafficsim.core.value.v" + type.toLowerCase() + ".scalar." + type + "Scalar"},
-                "Methods that modify the data stored in a " + type + "Vector",
+                "Methods that modify the data stored in a " + type + "Vector.",
                 new String[]{"<U> Unit of the vector"},
                 "<U extends Unit<U>>",
                 buildMethod(
@@ -832,7 +836,7 @@ public class Generator
                         + buildMethod(indentStep, "|void|set",
                                 "Replace the value at index by the supplied value which is in a compatible unit.",
                                 new String[]{"int|index|index of the value to replace",
-                                        type.toLowerCase() + "Scalar<U>|value|the strongly typed value to store"},
+                                        type + "Scalar<U>|value|the strongly typed value to store"},
                                 "ValueException|when index &lt; 0 or index &gt;= size()", null, null, false)
                         + buildMethod(indentStep, "|void|setInUnit",
                                 "Replace the value at index by the supplied value which is expressed in a "
@@ -953,11 +957,7 @@ public class Generator
         final String mutableType = mutable ? "Mutable" : "Immutable ";
         final String aggregateType = dimensions == 1 ? "Vector" : "Matrix";
         final String pluralAggregateType = dimensions == 1 ? "vectors" : "matrices";
-        String emptyBrackets = "";
-        for (int i = 0; i < dimensions; i++)
-        {
-            emptyBrackets += "[]";
-        }
+        final String emptyBrackets = buildEmptyBrackets(dimensions);
         final String ots = "org.opentrafficsim.core.";
         final String cc = "cern.colt.matrix.";
         ArrayList<String> imports = new ArrayList<String>();
@@ -1073,8 +1073,18 @@ public class Generator
                                                 "{",
                                                 indentStep
                                                         + "throw new ValueException(\"zSum is 0; cannot normalize\");",
-                                                "}", "checkCopyOnWrite();", "for (int i = 0; i < size(); i++)", "{",
-                                                indentStep + "safeSet(i, safeGet(i) / sum);", "}"}, false)
+                                                "}",
+                                                "checkCopyOnWrite();",
+                                                1 == dimensions ? "for (int i = 0; i < size(); i++)"
+                                                        : "for (int row = rows(); --row >= 0;)",
+                                                "{",
+                                                dimensions > 1 ? indentStep
+                                                        + "for (int column = columns(); --column >= 0;)" : null,
+                                                dimensions > 1 ? indentStep + "{" : null,
+                                                (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                                        + (1 == dimensions ? "i" : "row, column") + ", safeGet("
+                                                        + (1 == dimensions ? "i" : "row, column") + ") / sum);",
+                                                dimensions > 1 ? indentStep + "}" : null, "}"}, false)
                                 + buildSubClass(outerIndent, "Abs", "Absolute " + mutableType + type + aggregateType,
                                         "Mutable" + type + aggregateType + "<U>", "Absolute", "Mutable" + type
                                                 + aggregateType, true, dimensions)
@@ -1104,35 +1114,47 @@ public class Generator
                                         null,
                                         null,
                                         new String[]{
-                                                "if (this.isCopyOnWrite())",
+                                                "if (isCopyOnWrite())",
                                                 "{",
                                                 indentStep
                                                         + "// System.out.println(\"copyOnWrite is set: Copying data\");",
                                                 indentStep + "deepCopyData();", indentStep + "setCopyOnWrite(false);",
                                                 "}"}, false)
-                                + buildMethod(outerIndent, "public final|void|setSI", null, new String[]{
-                                        "final int|index|", "final " + type.toLowerCase() + "|valueSI"},
-                                        "ValueException|when index is invalid", null,
-                                        new String[]{"checkIndex(index);", "checkCopyOnWrite();",
-                                                "safeSet(index, valueSI);"}, false)
+                                + buildMethod(
+                                        outerIndent,
+                                        "public final|void|setSI",
+                                        null,
+                                        1 == dimensions ? new String[]{"final int|index|",
+                                                "final " + type.toLowerCase() + "|valueSI"} : new String[]{
+                                                "final int|row|", "final int|column",
+                                                "final " + type.toLowerCase() + "|valueSI"},
+                                        "ValueException|when index is / indices are invalid", null, new String[]{
+                                                "checkIndex(" + (1 == dimensions ? "index" : "row, column") + ");",
+                                                "checkCopyOnWrite();",
+                                                "safeSet(" + (1 == dimensions ? "index" : "row, column")
+                                                        + ", valueSI);"}, false)
                                 + buildMethod(outerIndent, "public final|void|set", null, new String[]{
-                                        "final int|index|", "final " + type + "Scalar<U>|value"},
-                                        "ValueException|when index is invalid", null,
-                                        new String[]{"setSI(index, value.getValueSI());"}, false)
+                                        "final int|" + (1 == dimensions ? "index" : "row") + "|",
+                                        dimensions > 1 ? "final int|column|" : null,
+                                        "final " + type + "Scalar<U>|value"}, "ValueException|when index is invalid",
+                                        null, new String[]{"setSI(" + (1 == dimensions ? "index" : "row, column")
+                                                + ", value.getValueSI());"}, false)
                                 + buildMethod(
                                         outerIndent,
                                         "public final|void|setInUnit",
                                         null,
-                                        new String[]{"final int|index|", "final " + type.toLowerCase() + "|value",
-                                                "final U|valueUnit|"},
+                                        new String[]{"final int|" + (1 == dimensions ? "index" : "row") + "|",
+                                                dimensions > 1 ? "final int|column|" : null,
+                                                "final " + type.toLowerCase() + "|value", "final U|valueUnit|"},
                                         "ValueException|when index is invalid",
                                         null,
                                         new String[]{
                                                 "// TODO: creating a "
                                                         + type
                                                         + "Scalar.Abs along the way may not be the most efficient way to do this...",
-                                                "setSI(index, new " + type
-                                                        + "Scalar.Abs<U>(value, valueUnit).getValueSI());"}, false)
+                                                "setSI(" + (1 == dimensions ? "index" : "row, column") + ", new "
+                                                        + type + "Scalar.Abs<U>(value, valueUnit).getValueSI());"},
+                                        false)
                                 + buildMethod(outerIndent, "public final|void|assign",
                                         "Execute a function on a cell by cell basis.",
                                         new String[]{"final cern.colt.function.t" + type.toLowerCase() + "." + type
@@ -1148,26 +1170,8 @@ public class Generator
                                 + buildMethod(outerIndent, "public final|void|divide", null, new String[]{"final "
                                         + type.toLowerCase() + "|constant|"}, null, null, new String[]{"assign(" + type
                                         + "Functions.div(constant));"}, false)
-                                + buildMethod(
-                                        outerIndent,
-                                        "private|Mutable" + type + aggregateType
-                                                + "<U>|incrementValueByValue|this modified Mutable" + type
-                                                + aggregateType,
-                                        "Increment the values in this Mutable" + type + aggregateType
-                                                + " by the corresponding values in a " + type + aggregateType + ".",
-                                        new String[]{"final "
-                                                + type
-                                                + aggregateType
-                                                + "<U>|increment|the values by which to increment the corresponding values in this Mutable"
-                                                + type + aggregateType}, "ValueException|when the "
-                                                + pluralAggregateType + " do not have the same size", null,
-                                        new String[]{
-                                                "checkSizeAndCopyOnWrite(increment);",
-                                                "for (int index = size(); --index >= 0;)",
-                                                "{",
-                                                indentStep
-                                                        + "safeSet(index, safeGet(index) + increment.safeGet(index));",
-                                                "}", "return this;"}, false)
+                                + buildInOrDecrementValueByValue(outerIndent, type, aggregateType, pluralAggregateType,
+                                        dimensions, true)
                                 + buildMethod(
                                         outerIndent,
                                         "public final|Mutable" + type + aggregateType
@@ -1179,26 +1183,8 @@ public class Generator
                                                 + type + aggregateType},
                                         "ValueException|when the " + pluralAggregateType + " do not have the same size",
                                         null, new String[]{"return incrementValueByValue(rel);"}, false)
-                                + buildMethod(
-                                        outerIndent,
-                                        "private|Mutable" + type + aggregateType
-                                                + "<U>|decrementValueByValue|this modified Mutable" + type
-                                                + aggregateType,
-                                        "Decrement the values in this Mutable" + type + aggregateType
-                                                + " by the corresponding values in a " + type + aggregateType + ".",
-                                        new String[]{"final "
-                                                + type
-                                                + aggregateType
-                                                + "<U>|decrement|contains the amounts by which to decrement the corresponding values in this Mutable"
-                                                + type + aggregateType}, "ValueException|when the "
-                                                + pluralAggregateType + " do not have the same size", null,
-                                        new String[]{
-                                                "checkSizeAndCopyOnWrite(decrement);",
-                                                "for (int index = size(); --index >= 0;)",
-                                                "{",
-                                                indentStep
-                                                        + "safeSet(index, safeGet(index) - decrement.safeGet(index));",
-                                                "}", "return this;"}, false)
+                                + buildInOrDecrementValueByValue(outerIndent, type, aggregateType, pluralAggregateType,
+                                        dimensions, false)
                                 + buildMethod(
                                         outerIndent,
                                         "public final|Mutable" + type + aggregateType
@@ -1235,10 +1221,19 @@ public class Generator
                                                 + "<?>|factor|contains the values by which to scale the corresponding values in this Mutable"
                                                 + type + aggregateType}, "ValueException|when the "
                                                 + pluralAggregateType + " do not have the same size", null,
-                                        new String[]{"checkSizeAndCopyOnWrite(factor);",
-                                                "for (int index = size(); --index >= 0;)", "{",
-                                                indentStep + "safeSet(index, safeGet(index) * factor.safeGet(index));",
-                                                "}"}, false)
+                                        new String[]{
+                                                "checkSizeAndCopyOnWrite(factor);",
+                                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
+                                                        : "for (int row = rows(); --row >= 0;)",
+                                                "{",
+                                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
+                                                dimensions > 1 ? indentStep + "{" : null,
+                                                (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
+                                                        + (1 == dimensions ? "index" : "row, column")
+                                                        + ") * factor.safeGet("
+                                                        + (1 == dimensions ? "index" : "row, column") + "));",
+                                                dimensions > 1 ? indentStep + "}" : null, "}"}, false)
                                 + buildMethod(
                                         outerIndent,
                                         "public final|Mutable" + type + aggregateType
@@ -1247,14 +1242,22 @@ public class Generator
                                                 + " by the corresponding values in a " + type.toLowerCase() + " array.",
                                         new String[]{"final "
                                                 + type.toLowerCase()
-                                                + "[]|factor|contains the values by which to scale the corresponding values in this Mutable"
+                                                + emptyBrackets
+                                                + "|factor|contains the values by which to scale the corresponding values in this Mutable"
                                                 + type + aggregateType},
                                         "ValueException|when the " + aggregateType.toLowerCase()
                                                 + " and the array do not have the same size", null, new String[]{
                                                 "checkSizeAndCopyOnWrite(factor);",
-                                                "for (int index = size(); --index >= 0;)", "{",
-                                                indentStep + "safeSet(index, safeGet(index) * factor[index]);", "}",
-                                                "return this;"}, false)
+                                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
+                                                        : "for (int row = rows(); --row >= 0;)",
+                                                "{",
+                                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
+                                                dimensions > 1 ? indentStep + "{" : null,
+                                                (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
+                                                        + (1 == dimensions ? "index" : "row, column") + ") * factor["
+                                                        + (1 == dimensions ? "index" : "row][column") + "]);",
+                                                dimensions > 1 ? indentStep + "}" : null, "}", "return this;"}, false)
                                 + buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
                                         "Check sizes and copy the data if the copyOnWrite flag is set.",
                                         new String[]{"final " + type + aggregateType
@@ -1263,59 +1266,60 @@ public class Generator
                                         new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
                                 + buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
                                         "Check sizes and copy the data if the copyOnWrite flag is set.",
-                                        new String[]{"final " + type.toLowerCase()
-                                                + "[]|other|partner for the size check"}, "ValueException|when the "
+                                        new String[]{"final " + type.toLowerCase() + emptyBrackets
+                                                + "|other|partner for the size check"}, "ValueException|when the "
                                                 + pluralAggregateType + " do not have the same size", null,
                                         new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
                                 // Generate 6 plus methods
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Dense", "Rel", true)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Dense", true)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Sparse", true)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Rel.Dense", "Rel", true)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Dense", true)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Sparse", true)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Dense", "Rel", dimensions,
+                                        true)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Dense",
+                                        dimensions, true)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Sparse",
+                                        dimensions, true)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Dense", "Rel", dimensions,
+                                        true)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Dense",
+                                        dimensions, true)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Sparse",
+                                        dimensions, true)
                                 // Generate 9 minus methods
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Dense", "Abs", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Sparse", "Abs.Sparse", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Sparse", "Abs.Dense", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Dense", "Rel", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Dense", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Sparse", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Rel.Dense", "Rel", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Dense", false)
-                                + buildVectorPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Sparse", false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Dense", "Abs", dimensions,
+                                        false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Abs.Sparse",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Abs.Dense",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Dense", "Rel", dimensions,
+                                        false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Dense",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Sparse",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Dense", "Rel", dimensions,
+                                        false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Dense",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Sparse",
+                                        dimensions, false)
                                 // Generate 10 times methods
                                 // TODO: Decide if you ever need multiply an Absolute with anything; I don't think so...
-                                + buildVectorTimes(outerIndent, type, "Abs.Dense", "Abs.Dense")
-                                + buildVectorTimes(outerIndent, type, "Abs.Dense", "Abs.Sparse")
-                                + buildVectorTimes(outerIndent, type, "Abs.Sparse", "Abs")
-                                + buildVectorTimes(outerIndent, type, "Rel.Dense", "Rel.Dense")
-                                + buildVectorTimes(outerIndent, type, "Rel.Dense", "Rel.Sparse")
-                                + buildVectorTimes(outerIndent, type, "Rel.Sparse", "Rel")
-                                + buildVectorTimes(outerIndent, type, "Abs.Dense", "")
-                                + buildVectorTimes(outerIndent, type, "Abs.Sparse", "")
-                                + buildVectorTimes(outerIndent, type, "Rel.Dense", "")
-                                + buildVectorTimes(outerIndent, type, "Rel.Sparse", "")
-                                + buildMethod(
-                                        outerIndent,
-                                        "private static|Sparse" + type + "Matrix1D|makeSparse",
-                                        "Make the Sparse equivalent of a Dense" + type + "Matrix1D.",
-                                        new String[]{"final " + type + "Matrix1D|dense|the Dense " + type + "Matrix1D"},
-                                        null, null, new String[]{
-                                                "Sparse" + type + "Matrix1D result = new Sparse" + type
-                                                        + "Matrix1D((int) dense.size());", "result.assign(dense);",
-                                                "return result;"}, false)
-                                + buildDenseSparseVectorConverter(outerIndent, type, "Abs", true)
-                                + buildDenseSparseVectorConverter(outerIndent, type, "Rel", true)
-                                + buildMethod(outerIndent, "private static|Dense" + type + "Matrix1D|makeDense",
-                                        "Make the Dense equivalent of a Sparse" + type + "Matrix1D.",
-                                        new String[]{"final " + type + "Matrix1D|sparse|the Sparse " + type
-                                                + "Matrix1D"}, null, null, new String[]{
-                                                "Dense" + type + "Matrix1D result = new Dense" + type
-                                                        + "Matrix1D((int) sparse.size());", "result.assign(sparse);",
-                                                "return result;"}, false)
-                                + buildDenseSparseVectorConverter(outerIndent, type, "Abs", false)
-                                + buildDenseSparseVectorConverter(outerIndent, type, "Rel", false)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Dense", "Abs.Dense", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Dense", "Abs.Sparse", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Sparse", "Abs", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Dense", "Rel.Dense", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Dense", "Rel.Sparse", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Sparse", "Rel", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Dense", "", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Sparse", "", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Dense", "", dimensions)
+                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Sparse", "", dimensions)
+                                + buildPrivateDenseSparseConverter(outerIndent, type, dimensions, true)
+                                + buildDenseSparseConverter(outerIndent, type, "Abs", true, dimensions)
+                                + buildDenseSparseConverter(outerIndent, type, "Rel", true, dimensions)
+                                + buildPrivateDenseSparseConverter(outerIndent, type, dimensions, false)
+                                + buildDenseSparseConverter(outerIndent, type, "Abs", false, dimensions)
+                                + buildDenseSparseConverter(outerIndent, type, "Rel", false, dimensions)
                         : buildField(
                                 outerIndent,
                                 "private " + type + "Matrix" + dimensions + "D " + aggregateType.toLowerCase() + "SI",
@@ -1370,7 +1374,7 @@ public class Generator
                                         null,
                                         1 == dimensions
                                                 ? new String[]{
-                                                        "this.VectorSI = createMatrix1D(values.length);",
+                                                        "this.vectorSI = createMatrix1D(values.length);",
                                                         "if (getUnit().equals(getUnit().getStandardUnit()))",
                                                         "{",
                                                         indentStep + "this." + aggregateType.toLowerCase()
@@ -1414,7 +1418,9 @@ public class Generator
                                         + " and store the values in the standard SI unit.", new String[]{"final "
                                         + type + "Scalar<U>" + emptyBrackets + "|values|"
                                         + (dimensions > 1 ? "a " + dimensions + "D " : "an ") + "array of values"},
-                                        "ValueException|when values is empty", null, 1 == dimensions ? new String[]{
+                                        1 == dimensions ? "ValueException|when values is empty"
+                                                : "ValueException|when values has zero entries, or is not rectangular",
+                                        null, 1 == dimensions ? new String[]{
                                                 "this." + aggregateType.toLowerCase()
                                                         + "SI = createMatrix1D(values.length);",
                                                 "for (int index = 0; index < values.length; index++)", "{",
@@ -1461,7 +1467,7 @@ public class Generator
                                         null,
                                         1 == dimensions ? new String[]{
                                                 type.toLowerCase() + "[] values = this.vectorSI.toArray();",
-                                                "for (int i = 0; i < values.length; i++)",
+                                                "for (int i = values.length; --i >= 0;)",
                                                 "{",
                                                 indentStep + "values[i] = " + (type.startsWith("F") ? "(float) " : "")
                                                         + "ValueUtil.expressAsUnit(values[i], targetUnit);", "}",
@@ -1476,7 +1482,7 @@ public class Generator
                                                         + (type.startsWith("F") ? "(float) " : "")
                                                         + "ValueUtil.expressAsUnit(values[row][column], targetUnit);",
                                                 indentStep + "}", "}", "return values;"}, false)
-                                + (0 == dimensions ? buildMethod(outerIndent, "public final|int|size", null, null,
+                                + (1 == dimensions ? buildMethod(outerIndent, "public final|int|size", null, null,
                                         null, null, new String[]{"return (int) this." + aggregateType.toLowerCase()
                                                 + "SI.size();"}, false) : buildMethod(outerIndent,
                                         "public final|int|rows", null, null, null, null, new String[]{"return this."
@@ -1535,13 +1541,13 @@ public class Generator
                                                         "{",
                                                         indentStep + "if (this instanceof SparseData)",
                                                         indentStep + "{",
-                                                        indentStep + indentStep
-                                                                + "return new SparseFloatAlgebra().det(this.matrixSI);",
+                                                        indentStep + indentStep + "return new Sparse" + type
+                                                                + "Algebra().det(getMatrixSI());",
                                                         indentStep + "}",
                                                         indentStep + "if (this instanceof DenseData)",
                                                         indentStep + "{",
-                                                        indentStep + indentStep
-                                                                + "return new DenseFloatAlgebra().det(this.matrixSI);",
+                                                        indentStep + indentStep + "return new Dense" + type
+                                                                + "Algebra().det(getMatrixSI());",
                                                         indentStep + "}",
                                                         "throw new ValueException(\""
                                                                 + type
@@ -1679,7 +1685,7 @@ public class Generator
                                                 "throw new ValueException(\"The "
                                                         + aggregateType.toLowerCase()
                                                         + " and the array have different sizes: \" + "
-                                                        + (0 == dimensions ? "size() + \" != \" + other.length);"
+                                                        + (1 == dimensions ? "size() + \" != \" + other.length);"
                                                                 : "rows() + \"x\" + columns()"),
                                                 dimensions > 1 ? indentStep + indentStep + indentStep
                                                         + "+ \" != \" + other.length + \"x\" + otherColumns);" : null,
@@ -1713,7 +1719,7 @@ public class Generator
                                                                 + " * empty.",
                                                         new String[]{"final " + type + "Scalar<?>" + emptyBrackets
                                                                 + "|values|the 2D array to check"},
-                                                        "ValueException|when not all rows have the same length, or contains no data",
+                                                        "ValueException|when values is not rectangular, or contains no data",
                                                         null,
                                                         new String[]{
                                                                 "if (0 == values.length || 0 == values[0].length)",
@@ -1841,11 +1847,10 @@ public class Generator
                                                         type + "Matrix2D A2D = A.getMatrixSI();",
                                                         "if (A instanceof SparseData)",
                                                         "{",
-                                                        indentStep
-                                                                + "SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());",
-                                                        indentStep
-                                                                + type
-                                                                + "Matrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);",
+                                                        indentStep + "Sparse" + type + "Matrix1D b1D = new Sparse"
+                                                                + type + "Matrix1D(b.getValuesSI());",
+                                                        indentStep + type + "Matrix1D x1D = new Sparse" + type
+                                                                + "Algebra().solve(A2D, b1D);",
                                                         indentStep
                                                                 + type
                                                                 + "Vector.Abs.Sparse<SIUnit> x = new "
@@ -1855,8 +1860,8 @@ public class Generator
                                                         "}",
                                                         "if (A instanceof DenseData)",
                                                         "{",
-                                                        indentStep
-                                                                + "DenseFloatMatrix1D b1D = new DenseFloatMatrix1D(b.getValuesSI());",
+                                                        indentStep + "Dense" + type + "Matrix1D b1D = new Dense" + type
+                                                                + "Matrix1D(b.getValuesSI());",
                                                         indentStep + type + "Matrix1D x1D = new Dense" + type
                                                                 + "Algebra().solve(A2D, b1D);",
                                                         indentStep
@@ -1918,41 +1923,113 @@ public class Generator
     }
 
     /**
+     * Generate the Jave code for the private makeDense or makeSparse method.
+     * @param outerIndent String; prefix for all output lines
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param dimensions int; 1, or 2
+     * @param toDense boolean; if true; generate makeDense; if false; generate makeSparse
+     * @return String; Java code
+     */
+    private static String buildPrivateDenseSparseConverter(String outerIndent, String type, int dimensions,
+            boolean toDense)
+    {
+        final String resultType = toDense ? "Sparse" : "Dense";
+        final String inputType = toDense ? "Dense" : "Sparse";
+        return buildMethod(outerIndent, "private static|" + resultType + type + "Matrix" + dimensions + "D|make"
+                + resultType, "Make the " + resultType + " equivalent of a " + inputType + type + "Matrix" + dimensions
+                + "D.", new String[]{"final " + type + "Matrix" + dimensions + "D|" + inputType.toLowerCase() + "|the "
+                + inputType + " " + type + "Matrix" + dimensions + "D"}, null, null, new String[]{
+                resultType
+                        + type
+                        + "Matrix"
+                        + dimensions
+                        + "D result = new "
+                        + resultType
+                        + type
+                        + "Matrix"
+                        + dimensions
+                        + "D("
+                        + (1 == dimensions ? "(int) " + inputType.toLowerCase() + ".size()" : inputType.toLowerCase()
+                                + ".rows(), " + inputType.toLowerCase() + ".columns()") + ");",
+                "result.assign(" + inputType.toLowerCase() + ");", "return result;"}, false);
+    }
+
+    /**
+     * Build Java code for incrementValueByValue or decrementValueByValue
+     * @param outerIndent String; prefix for all output lines
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param aggregateType String; either <cite>Vector</cite>, or <cite>Matrix</cite>
+     * @param pluralAggregateType String; either <cite>vectors</cite>, or <cite>matrices</cite>
+     * @param dimensions int; 1, or 2
+     * @param increment boolean; if true; the increment method is built; if false; the decrement method is built
+     * @return String; Java code
+     */
+    private static String buildInOrDecrementValueByValue(String outerIndent, String type, String aggregateType,
+            String pluralAggregateType, int dimensions, boolean increment)
+    {
+        final String inOrDecrement = increment ? "in" : "de";
+        return buildMethod(outerIndent, "private|Mutable" + type + aggregateType + "<U>|" + inOrDecrement
+                + "crementValueByValue|this modified Mutable" + type + aggregateType, (increment ? "In" : "De")
+                + "crement the values in this Mutable" + type + aggregateType + " by the corresponding values in a "
+                + type + aggregateType + ".", new String[]{"final " + type + aggregateType + "<U>|" + inOrDecrement
+                + "crement|the values by which to " + inOrDecrement
+                + "crement the corresponding values in this Mutable" + type + aggregateType},
+                "ValueException|when the " + pluralAggregateType + " do not have the same size", null, new String[]{
+                        "checkSizeAndCopyOnWrite(" + inOrDecrement + "crement);",
+                        1 == dimensions ? "for (int index = size(); --index >= 0;)"
+                                : "for (int row = rows(); --row >= 0;)",
+                        "{",
+                        dimensions > 1 ? indentStep + "for (int column = columns(); --column >= 0;)" : null,
+                        dimensions > 1 ? indentStep + "{" : null,
+                        (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                + (1 == dimensions ? "index" : "row, column") + ", safeGet("
+                                + (1 == dimensions ? "index" : "row, column") + ") " + (increment ? "+" : "-") + " "
+                                + inOrDecrement + "crement.safeGet(" + (1 == dimensions ? "index" : "row, column")
+                                + "));", dimensions > 1 ? indentStep + "}" : null, "}", "return this;"}, false);
+    }
+
+    /**
      * Generate java code for a denseToSparse vector method.
      * @param outerIndent String; prefix for all output lines
-     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param absRel String; either <cite>Abs</cite>, or <cite>Rel</cite>
      * @param toSparse boolean; if true; code for denseToSparse is generated; if false; code for sparseToDense is
      *            generated
+     * @param dimensions int; number of dimensions of the storage
      * @return String; java code
      */
-    private static String buildDenseSparseVectorConverter(String outerIndent, String vectorType, String absRel,
-            boolean toSparse)
+    private static String buildDenseSparseConverter(String outerIndent, String type, String absRel, boolean toSparse,
+            int dimensions)
     {
         final String from = toSparse ? "Dense" : "Sparse";
         final String to = toSparse ? "Sparse" : "Dense";
-        return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType + "Vector." + absRel
-                + "." + to + "<U>|" + from.toLowerCase() + "To" + to, "Create a " + to + " version of this " + from
-                + " " + vectorType + "Vector.", new String[]{
-                "final " + vectorType + "Vector." + absRel + "." + from + "<U>|in|the " + from + " " + vectorType
-                        + "Vector", "Unit|<U>|the unit of the parameter and the result"}, null, null,
-                new String[]{"return new Mutable" + vectorType + "Vector." + absRel + "." + to + "<U>(make" + to
-                        + "(in.getVectorSI()), in.getUnit());"}, false);
+        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
+        return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + type + vectorOrMatrix + "."
+                + absRel + "." + to + "<U>|" + from.toLowerCase() + "To" + to, "Create a " + to + " version of a "
+                + from + " " + type + vectorOrMatrix + ".", new String[]{
+                "final " + type + vectorOrMatrix + "." + absRel + "." + from + "<U>|in|the " + from + " " + type
+                        + vectorOrMatrix, "Unit|<U>|the unit of the parameter and the result"}, null, null,
+                new String[]{"return new Mutable" + type + vectorOrMatrix + "." + absRel + "." + to + "<U>(make" + to
+                        + "(in.get" + vectorOrMatrix + "SI()), in.getUnit());"}, false);
     }
 
     /**
      * Generate the code for the Vector times methods
      * @param outerIndent String; prefix of all output line
-     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param leftType String; type of the left operand
      * @param rightType String; type of the right operand
+     * @param dimensions int; number of dimensions of the data
      * @return String; java code
      */
-    private static String buildVectorTimes(String outerIndent, String vectorType, String leftType, String rightType)
+    private static String buildVectorOrMatrixTimes(String outerIndent, String type, String leftType, String rightType,
+            int dimensions)
     {
         final String resultType =
                 leftType.contains("Sparse") ? leftType : rightType.contains("Sparse") ? leftType.replace("Dense",
                         "Sparse") : leftType;
+        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
+        final String pluralVectorOrMatrix = 1 == dimensions ? "Vectors" : "Matrices";
         final String paramUnit = rightType.length() == 0 ? "U" : "?";
         ArrayList<String> code = new ArrayList<String>();
         if (rightType.length() > 0)
@@ -1963,65 +2040,78 @@ public class Generator
                     + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),");
             code.add(indentStep + indentStep + indentStep + indentStep
                     + "right.getUnit().getSICoefficients()).toString());");
-            code.add("Mutable" + vectorType + "Vector." + resultType + "<SIUnit> work =");
-            code.add(indentStep + indentStep + "new Mutable" + vectorType + "Vector." + resultType
+            code.add("Mutable" + type + vectorOrMatrix + "." + resultType + "<SIUnit> work =");
+            code.add(indentStep + indentStep + "new Mutable" + type + vectorOrMatrix + "." + resultType
                     + "<SIUnit>(left.deepCopyOfData(), targetUnit);");
             code.add("work.scaleValueByValue(right);");
             code.add("return work;");
         }
         else
         {
-            code.add("return (Mutable" + vectorType + "Vector." + leftType
+            code.add("return (Mutable" + type + vectorOrMatrix + "." + leftType
                     + "<U>) left.mutable().scaleValueByValue(right);");
         }
         ArrayList<String> params = new ArrayList<String>();
-        params.add("final " + vectorType + "Vector." + leftType + "<" + paramUnit + ">|left|the "
-                + (rightType.length() == 0 ? vectorType + "Vector" : "left operand"));
+        params.add("final " + type + vectorOrMatrix + "." + leftType + "<" + paramUnit + ">|left|the "
+                + (rightType.length() == 0 ? type + vectorOrMatrix : "left operand"));
         params.add("final "
-                + (rightType.length() == 0 ? vectorType.toLowerCase() + "[]" : vectorType + "Vector." + rightType + "<"
-                        + paramUnit + ">") + "|right|the "
-                + (rightType.length() == 0 ? vectorType.toLowerCase() + " array" : "right operand"));
+                + (rightType.length() == 0 ? type.toLowerCase() + buildEmptyBrackets(dimensions) : type
+                        + vectorOrMatrix + "." + rightType + "<" + paramUnit + ">") + "|right|the "
+                + (rightType.length() == 0 ? type.toLowerCase() + " array" : "right operand"));
         if (rightType.length() == 0)
         {
             params.add("Unit|<U>|the unit of the left parameter and the result");
         }
 
-        return buildMethod(outerIndent, "public static" + (rightType.length() == 0 ? " <U extends Unit<U>>" : "")
-                + "|Mutable" + vectorType + "Vector." + resultType + "<" + (rightType.length() == 0 ? "U" : "SIUnit")
-                + ">|times", (rightType.length() == 0 ? "Multiply the values in a " + vectorType + "Vector and a "
-                + vectorType.toLowerCase() + " array" : "Multiply two " + vectorType + "Vectors")
-                + " value by value and store the result in a new\r\n"
-                + outerIndent
-                + " * Mutable"
-                + vectorType
-                + "Vector." + resultType + "&lt;" + (rightType.length() == 0 ? "U" : "SIUnit") + "&gt;.",
-                arrayListToArray(params), "ValueException|when the "
-                        + (rightType.length() == 0 ? vectorType + "Vector and the array" : "vectors")
-                        + " do not have the same size", null, arrayListToArray(code), false);
+        return buildMethod(
+                outerIndent,
+                "public static" + (rightType.length() == 0 ? " <U extends Unit<U>>" : "") + "|Mutable" + type
+                        + vectorOrMatrix + "." + resultType + "<" + (rightType.length() == 0 ? "U" : "SIUnit")
+                        + ">|times",
+                (rightType.length() == 0 ? "Multiply the values in a " + type + vectorOrMatrix + " and a "
+                        + type.toLowerCase() + " array" : "Multiply two " + type + pluralVectorOrMatrix)
+                        + " value by value and store the result in a new\r\n"
+                        + outerIndent
+                        + " * Mutable"
+                        + type
+                        + vectorOrMatrix
+                        + "."
+                        + resultType
+                        + "&lt;"
+                        + (rightType.length() == 0 ? "U" : "SIUnit")
+                        + "&gt;.",
+                arrayListToArray(params),
+                "ValueException|when the "
+                        + (rightType.length() == 0 ? type + vectorOrMatrix + " and the array" : pluralVectorOrMatrix
+                                .toLowerCase()) + " do not have the same size", null, arrayListToArray(code), false);
     }
 
     /**
      * Build a vector plus or minus method.
      * @param outerIndent String; prefix for all output lines
-     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param leftType String; type of the left operand
      * @param rightType String; type of the right operand
-     * @param makePlus boolean; if true; generate code for plus; if false; generat code for minus
+     * @param dimensions int; number of dimensions of the data
+     * @param makePlus boolean; if true; generate code for plus; if false; generate code for minus
      * @return String; java code
      */
-    private static String buildVectorPlusOrMinus(String outerIndent, String vectorType, String leftType,
-            String rightType, boolean makePlus)
+    private static String buildVectorOrMatrixPlusOrMinus(String outerIndent, String type, String leftType,
+            String rightType, int dimensions, boolean makePlus)
     {
         // If either type is Dense, the result is Dense
         final String resultDenseSparse = leftType.contains("Dense") || rightType.contains("Dense") ? "Dense" : "Sparse";
         final String resultAbsRel = leftType.contains("Abs") ? (rightType.contains("Abs") ? "Rel" : "Abs") : "Rel";
-        final String castCode = "(Mutable" + vectorType + "Vector." + resultAbsRel + "." + resultDenseSparse + "<U>) ";
+        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
+        final String castCode =
+                "(Mutable" + type + vectorOrMatrix + "." + resultAbsRel + "." + resultDenseSparse + "<U>) ";
         final String operation = makePlus ? "incrementBy" : "decrementBy";
         final boolean absAbsToRel = leftType.contains("Abs") && rightType.contains("Abs");
+        final String pluralVectorOrMatrix = 1 == dimensions ? "Vectors" : "Matrices";
         ArrayList<String> code = new ArrayList<String>();
         if (absAbsToRel)
         {
-            code.add("return " + castCode + "new Mutable" + vectorType + "Vector.Rel." + resultDenseSparse
+            code.add("return " + castCode + "new Mutable" + type + vectorOrMatrix + ".Rel." + resultDenseSparse
                     + "<U>(left.deepCopyOfData(),");
             code.add(outerIndent + indentStep + indentStep + "left.getUnit())." + operation + "(right);");
         }
@@ -2035,17 +2125,23 @@ public class Generator
             // Need a sparseToDense conversion; this makes a deep copy
             code.add("return " + castCode + "sparseToDense(left)." + operation + "(right);");
         }
-        return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + vectorType + "Vector."
+        return buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + type + vectorOrMatrix + "."
                 + resultAbsRel + "." + resultDenseSparse + "<U>|" + (makePlus ? "plus" : "minus"), (makePlus ? "Add"
                 : "Subtract")
                 + " two "
-                + vectorType
-                + "Vectors value by value and store the result in a new Mutable"
-                + vectorType + "Vector." + resultAbsRel + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
-                "final " + vectorType + "Vector." + leftType + "<U>|left|the left operand",
-                "final " + vectorType + "Vector." + rightType + "<U>|right|the right operand",
-                "Unit|<U>|the unit of the parameters and the result"},
-                "ValueException|when the vectors do not have the same size", null, arrayListToArray(code), false);
+                + type
+                + pluralVectorOrMatrix
+                + " value by value and store the result in a new Mutable"
+                + type
+                + vectorOrMatrix
+                + "."
+                + resultAbsRel
+                + "." + resultDenseSparse + "&lt;U&gt;.", new String[]{
+                "final " + type + vectorOrMatrix + "." + leftType + "<U>|left|the left operand",
+                "final " + type + vectorOrMatrix + "." + rightType + "<U>|right|the right operand",
+                "Unit|<U>|the unit of the parameters and the result"}, "ValueException|when the "
+                + pluralVectorOrMatrix.toLowerCase() + " do not have the same size", null, arrayListToArray(code),
+                false);
     }
 
     /**
@@ -2126,6 +2222,33 @@ public class Generator
     }
 
     /**
+     * Build a string with the specified number of <cite>[]</cite> pairs.
+     * @param dimensions int; the number of bracket pairs to concatenate
+     * @return String
+     */
+    private static String buildEmptyBrackets(int dimensions)
+    {
+        return buildBrackets(dimensions, "");
+    }
+
+    /**
+     * Build a string with the specified number of <cite>[<b>string</b>]</cite> pairs.
+     * @param dimensions int; the number of bracket pairs with contents to concatenate
+     * @param contents String; the text that goes between each pair of brackets
+     * @return String
+     */
+    private static String buildBrackets(int dimensions, String contents)
+    {
+        String result = "";
+        for (int i = 0; i < dimensions; i++)
+        {
+            result += "[" + contents + "]";
+        }
+        return result;
+
+    }
+
+    /**
      * Generate the Java code for a vector sub sub class.
      * @param indent String; prefix of all output lines
      * @param absRel String; either <cite>Absolute</cite>, or <cite>Relative</cite>
@@ -2144,13 +2267,8 @@ public class Generator
         final String typeName = longName.replaceFirst(".* (.*)$", "$1");
         final String immutableTypeName = typeName.startsWith("Mutable") ? typeName.substring(7) : typeName;
         final String aggregateName = dimensions == 1 ? "Vector" : "Matrix";
-        String emptyBrackets = "";
-        String zeroBrackets = "";
-        for (int i = 0; i < dimensions; i++)
-        {
-            emptyBrackets += "[]";
-            zeroBrackets += "[0]";
-        }
+        final String emptyBrackets = buildEmptyBrackets(dimensions);
+        final String zeroBrackets = buildBrackets(dimensions, "0");
         StringBuilder construction = new StringBuilder();
         construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
         construction.append(indent + "public static class " + denseOrSparse + "<U extends Unit<U>> extends "
@@ -2281,7 +2399,9 @@ public class Generator
                                                 outerIndent,
                                                 "final|void|setInUnit",
                                                 "Replace the stored value by the supplied value which can be expressed in any compatible unit.",
-                                                new String[]{"final " + scalarType + "|value|the value to store",
+                                                new String[]{
+                                                        "final " + scalarType.toLowerCase()
+                                                                + "|value|the value to store",
                                                         "final U|valueUnit|the unit of the supplied value"}, null,
                                                 null, new String[]{"setValueSI(" + (cast.equals("") ? "" : cast + " ")
                                                         + "ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
@@ -2357,7 +2477,7 @@ public class Generator
                 + " * is not allowed. Adding an absolute value to an existing relative value would require the "
                 + "result to become\r\n" + indent
                 + " * absolute, which is a type change that is impossible. For that operation, use a static method.",
-                new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to add"}, null, null,
+                new String[]{"final " + scalarType + "Scalar.Rel<U>|value|the value to add"}, null, null,
                 new String[]{"setValueSI(getValueSI() + value.getValueSI());"}, false));
         construction
                 .append(buildMethod(
@@ -2369,9 +2489,9 @@ public class Generator
                                 + " * relative value is not allowed. Subtracting an absolute value from an existing absolute value "
                                 + "would require the\r\n" + indent
                                 + " * result to become relative, which is a type change that is impossible. "
-                                + "For that operation, use a static method.",
-                        new String[]{"final " + scalarType.toLowerCase() + "Scalar.Rel<U>|value|the value to subtract"},
-                        null, null, new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
+                                + "For that operation, use a static method.", new String[]{"final " + scalarType
+                                + "Scalar.Rel<U>|value|the value to subtract"}, null, null,
+                        new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
         construction.append(buildBlockComment(indent, "STATIC METHODS"));
         construction.append(buildScalarIncrementDecrement(indent, scalarType, true));
         construction.append(buildScalarPlus(indent, scalarType, true));
@@ -2512,7 +2632,7 @@ public class Generator
         return buildMethod(indent, "public static|Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>|"
                 + (multiply ? "multiply" : "divide") + "|the " + (multiply ? "product" : "ratio")
                 + " of the two values", (multiply ? "Multiply" : "Divide")
-                + " two values; the result is a new instance with a different (existing or generated) SI Unit.",
+                + " two values; the result is a new instance with a different (existing or generated) SI unit.",
                 new String[]{"final " + scalarType + "Scalar." + absRel + "<?>|left|the left operand",
                         "final " + scalarType + "Scalar." + absRel + "<?>|right|the right operand"}, null, null,
                 new String[]{
@@ -2536,9 +2656,9 @@ public class Generator
     {
         return buildMethod(indent, "protected final|" + scalarType + "Scalar<?>|" + (increment ? "in" : "de")
                 + "crementBy|the modified Mutable" + scalarType + "Scalar", (increment ? "In" : "De")
-                + "crement the stored value by a specified amount.", new String[]{"final " + scalarType.toLowerCase()
-                + "Scalar<?>|" + (increment ? "in" : "de") + "crement|the amount by which to "
-                + (increment ? "in" : "de") + "crement the stored value"}, null, null, new String[]{
+                + "crement the stored value by a specified amount.", new String[]{"final " + scalarType + "Scalar<?>|"
+                + (increment ? "in" : "de") + "crement|the amount by which to " + (increment ? "in" : "de")
+                + "crement the stored value"}, null, null, new String[]{
                 "setValueSI(getValueSI() " + (increment ? "+ in" : "- de") + "crement.getValueSI());", "return this;"},
                 false);
     }
