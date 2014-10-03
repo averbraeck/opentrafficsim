@@ -3,6 +3,7 @@ package org.opentrafficsim.core.value.vdouble;
 import org.opentrafficsim.core.value.MathFunctions;
 
 /**
+ * Force implementation of multiply and divide.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -13,15 +14,15 @@ import org.opentrafficsim.core.value.MathFunctions;
 public interface DoubleMathFunctions extends MathFunctions
 {
     /**
-     * Multiply the value(s) with a constant.
-     * @param constant the multiplier
+     * Scale the value(s) by a factor.
+     * @param factor double; the multiplier
      */
-    void multiply(double constant);
+    void multiply(double factor);
 
     /**
-     * Divide the value(s) by a constant.
-     * @param constant the divisor
+     * Scale the value(s) by the inverse of a factor; i.e. a divisor.
+     * @param divisor double; the divisor
      */
-    void divide(double constant);
+    void divide(double divisor);
 
 }

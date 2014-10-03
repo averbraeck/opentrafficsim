@@ -450,7 +450,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
      */
     protected final void checkCopyOnWrite()
     {
-        if (this.isCopyOnWrite())
+        if (isCopyOnWrite())
         {
             // System.out.println("copyOnWrite is set: Copying data");
             deepCopyData();
