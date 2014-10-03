@@ -115,7 +115,8 @@ public class ShapeFileReader
                         centroidNr = newNr.toString();
                     }
                     AreaNTM area =
-                            new AreaNTM(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint(), parametersNTM);
+                            new AreaNTM(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint(),
+                                    parametersNTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -133,7 +134,23 @@ public class ShapeFileReader
             iterator.close();
             storeAreas.dispose();
         }
+        int teller = 0;
+        for (ShpNode centroid : centroids.values())
+        {
+            boolean found = false;
 
+            if (areas.containsKey(centroid.getName()))
+            {
+                found = true;
+                teller++;
+            }
+            if (!found)
+            {
+                areas.put(centroid.getName(), NTMModel.createMissingArea(centroid));
+                System.out.println("Centroid not found: create area for " + centroid.getName());                
+            }
+        }
+        System.out.println("found : " + teller); 
         return areas;
     }
 
@@ -217,28 +234,19 @@ public class ShapeFileReader
             iterator.close();
             storeNodes.dispose();
         }
-
+        System.out.println("aantal knopen (353): geteld " + nodes.size());
         return nodes;
     }
 
-    /**
+    /*    *//**
      * @param number
      * @return nr: the number of the Node without characters
      */
-    public static String NodeCentroidNumber(String number)
-    {
-        // String nr = null;
-        number = CsvFileReader.removeQuotes(number);
-        String[] names = number.split(":");
-        String name = names[0];
-        if (name.charAt(0) == 'C')
-        {
-            name = name.substring(1);
-            // nr = (long) Long.parseLong(name);
-        }
-        return name;
-    }
-
+    /*
+     * public static String NodeCentroidNumber(String number) { // String nr = null; number =
+     * CsvFileReader.removeQuotes(number); String[] names = number.split(":"); String name = names[0]; if
+     * (name.charAt(0) == 'C') { name = name.substring(1); // nr = (long) Long.parseLong(name); } return name; }
+     */
     /**
      * @param number
      * @return nr: the number of the Node without characters
@@ -294,6 +302,7 @@ public class ShapeFileReader
         {
             url = ShapeFileReader.class.getResource(shapeFileName);
         }
+
         ShapefileDataStore storeLinks = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
         SimpleFeatureSource featureSourceLinks = storeLinks.getFeatureSource();
         SimpleFeatureCollection featureCollectionLinks = featureSourceLinks.getFeatures();

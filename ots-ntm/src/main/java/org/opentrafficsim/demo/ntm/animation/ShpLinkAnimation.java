@@ -1,7 +1,9 @@
 package org.opentrafficsim.demo.ntm.animation;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
@@ -23,16 +25,24 @@ import org.opentrafficsim.demo.ntm.ShpLink;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class ShpLinkAnimation extends Renderable2D
-{
+{ 
+    /** */
+    private float width;
+    /** */
+    private Color color;
+
+
     /**
      * @param source
      * @param simulator
      * @throws NamingException
      * @throws RemoteException
      */
-    public ShpLinkAnimation(ShpLink source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public ShpLinkAnimation(ShpLink source, OTSSimulatorInterface simulator, final float width, Color color) throws NamingException, RemoteException
     {
         super(source, simulator);
+        this.width = width;
+        this.color = color;
     }
 
     /** {@inheritDoc} */
@@ -42,7 +52,12 @@ public class ShpLinkAnimation extends Renderable2D
         graphics.setColor(Color.RED);
         for (Path2D line : ((ShpLink) getSource()).getLines())
         {
+            Stroke oldStroke = graphics.getStroke();
+            graphics.setStroke(new BasicStroke(this.width));
+            graphics.setColor(this.color);
             graphics.draw(line);
+            graphics.setStroke(oldStroke);
+
         }
     }
 

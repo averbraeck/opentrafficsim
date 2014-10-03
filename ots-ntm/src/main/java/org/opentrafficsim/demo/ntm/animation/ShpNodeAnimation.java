@@ -40,7 +40,8 @@ public class ShpNodeAnimation extends Renderable2D
     public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.ORANGE);
-        graphics.draw(new Rectangle2D.Double(-1.0, -1.0, 1.0, 1.0));
+        graphics.setBackground(Color.ORANGE);
+        graphics.draw(new Rectangle2D.Double(-5.0, -5.0, 10.0, 10.0));
     }
 
 }

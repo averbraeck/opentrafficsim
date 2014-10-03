@@ -63,7 +63,7 @@ public class ShpNode implements LocatableInterface
 
     /** NODENR class java.lang.Long 18. */
     private final long id;
-    
+
     /** NODENR class java.lang.Long 18. */
     private final String name;
 
@@ -75,13 +75,14 @@ public class ShpNode implements LocatableInterface
 
     /** */
     private static long indexNumber = 0;
+
     /**
      * @param point
-     * @param name 
+     * @param name
      * @param x
      * @param y
      */
-    public ShpNode(Point point, final String name, double x, double y)
+    public ShpNode(final Point point, final String name, final double x, final double y)
     {
         super();
         long index = indexNumber++;
@@ -152,8 +153,5 @@ public class ShpNode implements LocatableInterface
     {
         return "ShpNode [id=" + this.id + "name = " + this.name + ", x=" + this.x + ", y=" + this.y + "]";
     }
-
-
-
 
 }

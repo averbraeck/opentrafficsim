@@ -290,6 +290,37 @@ public class ShpLink implements LocatableInterface
                         + nodeB.getX());
         }
     }
+    
+    public ShpLink(ShpLink shpLink)  
+    {
+        super();
+        this.geometry = shpLink.geometry;
+        this.nr = shpLink.nr;
+        this.name = shpLink.name;
+        this.direction = shpLink.direction;
+        this.length = shpLink.length;
+        this.nodeA = shpLink.nodeA;
+        this.nodeB = shpLink.nodeB;
+        this.linkTag = shpLink.linkTag;
+        this.wegtype = shpLink.wegtype;
+        this.typeWegVak = shpLink.typeWegVak;
+        this.typeWeg = shpLink.typeWeg;
+        this.speed = shpLink.speed;
+        this.capacity = shpLink.capacity;
+        
+        Coordinate[] cc = this.geometry.getCoordinates();
+        if (cc.length == 0)
+            System.out.println("cc.length = 0 for " + nr + " (" + name + ")");
+        else
+        {
+            if (Math.abs(cc[0].x - nodeA.getX()) > 0.001 && Math.abs(cc[0].x - nodeB.getX()) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - nodeA.getX()) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - nodeB.getX()) > 0.001)
+                System.out.println("x coordinate non-match for " + nr + " (" + name + "); cc[0].x=" + cc[0].x
+                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + nodeA.getX() + ", nodeB.x="
+                        + nodeB.getX());
+        }
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -27,6 +27,7 @@ import org.opentrafficsim.demo.ntm.Area;
 public class AreaAnimation extends Renderable2D
 {
     private float width;
+    private Color color;
 
     /**
      * @param source
@@ -34,10 +35,21 @@ public class AreaAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public AreaAnimation(Area source, OTSSimulatorInterface simulator, final float width) throws NamingException, RemoteException
+    public AreaAnimation(Area source, OTSSimulatorInterface simulator, final float width) throws NamingException,
+            RemoteException
     {
         super(source, simulator);
         this.width = width;
+        if (source.getRegio() == "Missing") {
+            this.color = Color.ORANGE;
+        }
+        else if (source.getRegio() == "cordonPoint") {
+            this.color = Color.RED;
+            this.width = 5;
+        }
+        else {
+            this.color = Color.GREEN;
+        }
     }
 
     /** {@inheritDoc} */
@@ -46,16 +58,12 @@ public class AreaAnimation extends Renderable2D
     {
         for (Path2D polygon : ((Area) getSource()).getPolygons())
         {
-            // graphics.setPaint(Color.LIGHT_GRAY);
-            // graphics.fill(polygon);
             graphics.setColor(Color.BLACK);
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(this.width));
-            graphics.setColor(Color.GRAY);
-            graphics.setColor(Color.GREEN);
+            graphics.setColor(this.color);
             graphics.draw(polygon);
             graphics.setStroke(oldStroke);
         }
     }
-
 }
