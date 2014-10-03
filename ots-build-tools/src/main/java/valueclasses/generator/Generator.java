@@ -1318,7 +1318,7 @@ public class Generator
                                 + buildDenseSparseVectorConverter(outerIndent, type, "Rel", false)
                         : buildField(
                                 outerIndent,
-                                "private " + type + "Matrix1D " + aggregateType.toLowerCase() + "SI",
+                                "private " + type + "Matrix" + dimensions + "D " + aggregateType.toLowerCase() + "SI",
                                 "\r\n"
                                         + outerIndent
                                         + " * The internal storage for the "
@@ -1735,56 +1735,142 @@ public class Generator
                                 + buildMethod(
                                         outerIndent,
                                         "protected final|void|checkIndex",
-                                        "Check that a provided index is valid.",
-                                        new String[]{"final int|index|the value to check"},
-                                        "ValueException|when index is invalid",
+                                        1 == dimensions ? "Check that a provided index is valid."
+                                                : "Check that provided row and column indices are valid.",
+                                        1 == dimensions ? new String[]{"final int|index|the value to check"}
+                                                : new String[]{"final int|row|the row value to check",
+                                                        "final int|column|the column value to check"},
+                                        1 == dimensions ? "ValueException|when index is invalid"
+                                                : "ValueException|when row or column is invalid",
                                         null,
                                         new String[]{
-                                                "if (index < 0 || index >= size())",
+                                                1 == dimensions
+                                                        ? "if (index < 0 || index >= size())"
+                                                        : "if (row < 0 || row >= rows() || column < 0 || column >= columns())",
                                                 "{",
                                                 indentStep
-                                                        + "throw new ValueException(\"index out of range (valid range is 0..\" "
-                                                        + "+ (size() - 1) + \", got \" + index + \")\");", "}"}, false)
+                                                        + "throw new ValueException(\"index out of range (valid range is 0..\" + "
+                                                        + (1 == dimensions
+                                                                ? "(size() - 1) + \", got \" + index + \")\");"
+                                                                : "(rows() - 1) + \", 0..\""),
+
+                                                dimensions > 1
+                                                        ? indentStep
+                                                                + indentStep
+                                                                + indentStep
+                                                                + "+ (columns() - 1) + \", got \" + row + \", \" + column + \")\");"
+                                                        : null, "}"}, false)
                                 + buildMethod(outerIndent, "protected final|" + type.toLowerCase()
-                                        + "|safeGet|the value stored at that index", "Retrieve a value in "
-                                        + aggregateType.toLowerCase() + "SI without checking validity of the index.",
-                                        new String[]{"final int|index|the index"}, null, null,
-                                        new String[]{"return this." + aggregateType.toLowerCase()
-                                                + "SI.getQuick(index);"}, false)
+                                        + "|safeGet|the value stored at "
+                                        + (1 == dimensions ? "that index" : "the indicated row and column"),
+                                        "Retrieve a value in " + aggregateType.toLowerCase()
+                                                + "SI without checking validity of the "
+                                                + (1 == dimensions ? "index." : "indices."),
+                                        1 == dimensions ? new String[]{"final int|index|the index"} : new String[]{
+                                                "final int|row|the row where the value must be retrieved",
+                                                "final int|column|the column where the value must be retrieved"}, null,
+                                        null, new String[]{"return this." + aggregateType.toLowerCase()
+                                                + "SI.getQuick(" + (1 == dimensions ? "index);" : "row, column);")},
+                                        false)
+                                + buildMethod(outerIndent, "protected final|void|safeSet", "Modify a value in "
+                                        + aggregateType.toLowerCase() + "SI without checking validity of the "
+                                        + (1 == dimensions ? "index." : "indices."), new String[]{
+                                        1 == dimensions ? "final int|index|the index"
+                                                : "final int|row|the row where the value must be stored",
+                                        dimensions > 1 ? "final int|column|the column where the value must be stored"
+                                                : null,
+                                        "final " + type.toLowerCase() + "|valueSI|the new value for the entry in "
+                                                + aggregateType.toLowerCase() + "SI"}, null, null, new String[]{"this."
+                                        + aggregateType.toLowerCase() + "SI.setQuick("
+                                        + (1 == dimensions ? "index, " : "row, column, ") + "valueSI);"}, false)
+                                + buildMethod(outerIndent, "protected final|" + type + "Matrix" + dimensions
+                                        + "D|deepCopyOfData|deep copy of the data", "Create a deep copy of the data.",
+                                        null, null, null, new String[]{"return this." + aggregateType.toLowerCase()
+                                                + "SI.copy();"}, false)
                                 + buildMethod(
                                         outerIndent,
-                                        "protected final|void|safeSet",
-                                        "Modify a value in " + aggregateType.toLowerCase()
-                                                + "SI without checking validity of the index.",
-                                        new String[]{
-                                                "final int|index|the index",
-                                                "final " + type.toLowerCase()
-                                                        + "|valueSI|the new value for the entry in "
-                                                        + aggregateType.toLowerCase() + "SI"}, null, null,
-                                        new String[]{"this." + aggregateType.toLowerCase()
-                                                + "SI.setQuick(index, valueSI);"}, false)
-                                + buildMethod(outerIndent, "protected final|" + type
-                                        + "Matrix1D|deepCopyOfData|deep copy of the data",
-                                        "Create a deep copy of the data.", null, null, null,
-                                        new String[]{"return this." + aggregateType.toLowerCase() + "SI.copy();"},
-                                        false)
-                                + buildMethod(outerIndent, "protected static <U extends Unit<U>>|" + type
-                                        + "Scalar<U>[]|checkNonEmpty|the provided array",
+                                        "protected static <U extends Unit<U>>|" + type + "Scalar<U>" + emptyBrackets
+                                                + "|checkNonEmpty|the provided array",
                                         "Check that a provided array can be used to create some descendant of a "
-                                                + type + aggregateType + ".", new String[]{
-                                                "final " + type + "Scalar<U>[]|" + type.substring(0, 1).toLowerCase()
+                                                + type + aggregateType + ".",
+                                        new String[]{
+                                                "final " + type + "Scalar<U>" + emptyBrackets + "|"
+                                                        + type.substring(0, 1).toLowerCase()
                                                         + "sArray|the provided array",
                                                 "Unit|<U>|the unit of the " + type + "Scalar array"},
-                                        "ValueException|when the provided array has length equal to 0", null,
+                                        "ValueException|when the array has "
+                                                + (1 == dimensions ? "length equal to 0" : "zero entries"), null,
                                         new String[]{
-                                                "if (0 == " + type.substring(0, 1).toLowerCase() + "sArray.length)",
+                                                "if (0 == "
+                                                        + type.substring(0, 1).toLowerCase()
+                                                        + "sArray.length"
+                                                        + (dimensions > 1 ? " || 0 == "
+                                                                + type.substring(0, 1).toLowerCase()
+                                                                + "sArray[0].length" : "") + ")",
                                                 "{",
                                                 indentStep + "throw new ValueException(",
                                                 indentStep + indentStep + indentStep + "\"Cannot create a " + type
                                                         + aggregateType + " or Mutable" + type + aggregateType
                                                         + " from an empty array of " + type + "Scalar\");", "}",
                                                 "return " + type.substring(0, 1).toLowerCase() + "sArray;"}, false)
-                                + buildMethod(outerIndent, "public final|int|hashcode", null, null, null, null,
+                                + (2 == dimensions
+                                        ? buildMethod(
+                                                outerIndent,
+                                                "public static|" + type + "Vector<SIUnit>|solve|vector x in A*x = b",
+                                                "Solve x for A*x = b. According to Colt: x; a new independent matrix; "
+                                                        + "solution if A is square, least squares\r\n" + indentStep
+                                                        + " * solution if A.rows() &gt; A.columns(), underdetermined "
+                                                        + "system solution if A.rows() &lt; A.columns().",
+                                                new String[]{"final " + type + "Matrix<?>|A|matrix A in A*x = b",
+                                                        "final " + type + "Vector<?>|b|vector b in A*x = b"},
+                                                "ValueException|when matrix A is neither Sparse nor Dense",
+                                                null,
+                                                new String[]{
+                                                        "// TODO: is this correct? Should lookup matrix algebra "
+                                                                + "to find out unit for x when solving A*x = b ?",
+                                                        "SIUnit targetUnit =",
+                                                        indentStep
+                                                                + indentStep
+                                                                + "Unit.lookupOrCreateSIUnitWithSICoefficients("
+                                                                + "SICoefficients.divide(b.getUnit().getSICoefficients(),",
+                                                        indentStep + indentStep + indentStep + indentStep
+                                                                + "A.getUnit().getSICoefficients()).toString());",
+                                                        "",
+                                                        "// TODO: should the algorithm throw an exception when rows/"
+                                                                + "columns do not match when solving A*x = b ?",
+                                                        type + "Matrix2D A2D = A.getMatrixSI();",
+                                                        "if (A instanceof SparseData)",
+                                                        "{",
+                                                        indentStep
+                                                                + "SparseFloatMatrix1D b1D = new SparseFloatMatrix1D(b.getValuesSI());",
+                                                        indentStep
+                                                                + type
+                                                                + "Matrix1D x1D = new SparseFloatAlgebra().solve(A2D, b1D);",
+                                                        indentStep
+                                                                + type
+                                                                + "Vector.Abs.Sparse<SIUnit> x = new "
+                                                                + type
+                                                                + "Vector.Abs.Sparse<SIUnit>(x1D.toArray(), targetUnit);",
+                                                        "return x;",
+                                                        "}",
+                                                        "if (A instanceof DenseData)",
+                                                        "{",
+                                                        indentStep
+                                                                + "DenseFloatMatrix1D b1D = new DenseFloatMatrix1D(b.getValuesSI());",
+                                                        indentStep + type + "Matrix1D x1D = new Dense" + type
+                                                                + "Algebra().solve(A2D, b1D);",
+                                                        indentStep
+                                                                + type
+                                                                + "Vector.Abs.Dense<SIUnit> x = new "
+                                                                + type
+                                                                + "Vector.Abs.Dense<SIUnit>(x1D.toArray(), targetUnit);",
+                                                        indentStep + "return x;",
+                                                        "}",
+                                                        "throw new ValueException(\""
+                                                                + type
+                                                                + "Matrix.det -- matrix implements neither Sparse nor Dense\");"},
+                                                false) : "")
+                                + buildMethod(outerIndent, "public final|int|hashCode", null, null, null, null,
                                         new String[]{
                                                 "final int prime = 31;",
                                                 "int result = 1;",
