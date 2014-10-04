@@ -14,20 +14,21 @@ import org.opentrafficsim.core.unit.Unit;
  * @version Jun 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <U> the unit of the values in the constructor and for display
+ * @param <U> the Unit of the value(s) in this AbstractValue. Used for setting, getting and displaying the value(s)
  */
 public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140615L;
 
-    /** the unit of the value. */
+    /** The unit of the AbstractValue. */
     private final U unit;
 
     /**
-     * @param unit the unit of the value
+     * Construct a new AbstractValue.
+     * @param unit U; the unit of the new AbstractValue
      */
-    public AbstractValue(final U unit)
+    protected AbstractValue(final U unit)
     {
         this.unit = unit;
     }
@@ -47,8 +48,9 @@ public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Seri
     }
 
     /**
-     * @param value the value to convert in the specified unit for this scalar
-     * @return the value in the unit as specified for this scalar
+     * Convert a value in SI standard unit into the unit of this AbstractValue.
+     * @param value double; the value in standard SI unit
+     * @return double; the value in the unit as specified for this AbstractValue
      */
     protected final double expressAsSpecifiedUnit(final double value)
     {
