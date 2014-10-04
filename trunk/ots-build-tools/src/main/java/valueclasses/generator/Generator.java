@@ -798,17 +798,19 @@ public class Generator
         generateScalarClass("Double", false);
         generateScalarClass("Double", true);
 
-        generateReadOnlyVectorFunctions("Float", 1);
-        generateReadOnlyVectorFunctions("Double", 1);
-        generateWriteVectorFunctions("Float");
-        generateWriteVectorFunctions("Double");
+        generateReadOnlyFunctions("Float", 1);
+        generateReadOnlyFunctions("Double", 1);
+        generateWriteFunctions("Float", 1);
+        generateWriteFunctions("Double", 1);
         generateVectorClass("Float", false, 1);
         generateVectorClass("Float", true, 1);
         generateVectorClass("Double", false, 1);
         generateVectorClass("Double", true, 1);
 
-        generateReadOnlyVectorFunctions("Float", 2);
-        generateReadOnlyVectorFunctions("Double", 2);
+        generateReadOnlyFunctions("Float", 2);
+        generateReadOnlyFunctions("Double", 2);
+        generateWriteFunctions("Float", 2);
+        generateWriteFunctions("Double", 2);
         generateVectorClass("Float", false, 2);
         generateVectorClass("Float", true, 2);
         generateVectorClass("Double", false, 2);
@@ -817,51 +819,63 @@ public class Generator
 
     /**
      * @param type String; type of the result of the generated functions
+     * @param dimensions int; number of dimensions of the data
      */
-    private static void generateWriteVectorFunctions(String type)
+    private static void generateWriteFunctions(String type, int dimensions)
     {
+        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
+        final String valueException =
+                1 == dimensions ? "ValueException|when index out of range (index &lt; 0 or index &gt;= size())"
+                        : "ValueException|when row or column out of range (row &lt; 0 or row &gt;= rows() or "
+                                + "column &lt; 0 or column\r\n" + indentStep + " *             &gt;= columns())";
         generateInterface(
-                "value.v" + type.toLowerCase() + ".vector",
-                "Write" + type + "VectorFunctions",
+                "value.v" + type.toLowerCase() + "." + vectorOrMatrix.toLowerCase(),
+                "Write" + type + vectorOrMatrix + "Functions",
                 new String[]{"org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.ValueException",
                         "org.opentrafficsim.core.value.v" + type.toLowerCase() + ".scalar." + type + "Scalar"},
-                "Methods that modify the data stored in a " + type + "Vector.",
-                new String[]{"<U> Unit of the vector"},
+                "Methods that modify the data stored in a " + type + vectorOrMatrix + ".",
+                new String[]{"<U> Unit of the " + vectorOrMatrix.toLowerCase()},
                 "<U extends Unit<U>>",
-                buildMethod(
-                        indentStep,
-                        "|void|setSI",
-                        "Replace the value at index by the supplied value which is expressed in the standard SI unit.",
-                        new String[]{"int|index|index of the value to replace",
-                                type.toLowerCase() + "|valueSI|the value to store (expressed in the standard SI unit)"},
-                        "ValueException|when index &lt; 0 or index &gt;= size()", null, null, false)
-                        + buildMethod(indentStep, "|void|set",
-                                "Replace the value at index by the supplied value which is in a compatible unit.",
-                                new String[]{"int|index|index of the value to replace",
-                                        type + "Scalar<U>|value|the strongly typed value to store"},
-                                "ValueException|when index &lt; 0 or index &gt;= size()", null, null, false)
-                        + buildMethod(indentStep, "|void|setInUnit",
-                                "Replace the value at index by the supplied value which is expressed in a "
-                                        + "supplied (compatible) unit.", new String[]{
-                                        "int|index|index of the value to replace",
+                buildMethod(indentStep, "|void|setSI", "Replace the value at "
+                        + (1 == dimensions ? "index" : "row, column")
+                        + " by the supplied value which is expressed in the standard SI unit.", new String[]{
+                        1 == dimensions ? "int|index|index of the value to replace"
+                                : "int|row|row of the value to replace",
+                        dimensions > 1 ? "int|column|column of the value to replace" : null,
+                        type.toLowerCase() + "|valueSI|the value to store (expressed in the standard SI unit)"},
+                        valueException, null, null, false)
+                        + buildMethod(indentStep, "|void|set", "Replace the value at "
+                                + (1 == dimensions ? "index" : "row, column")
+                                + " by the supplied value which is in a compatible unit.", new String[]{
+                                1 == dimensions ? "int|index|index of the value to replace"
+                                        : "int|row|row of the value to replace",
+                                dimensions > 1 ? "int|column|column of the value to replace" : null,
+                                type + "Scalar<U>|value|the strongly typed value to store"}, valueException, null,
+                                null, false)
+                        + buildMethod(
+                                indentStep,
+                                "|void|setInUnit",
+                                "Replace the value at " + (1 == dimensions ? "index" : "row, column")
+                                        + " by the supplied value which is expressed in a "
+                                        + "supplied (compatible) unit.",
+                                new String[]{
+                                        1 == dimensions ? "int|index|index of the value to replace"
+                                                : "int|row|row of the value to replace",
+                                        dimensions > 1 ? "int|column|column of the value to replace" : null,
                                         type.toLowerCase()
                                                 + "|value|the value to store (which is expressed in valueUnit)",
-                                        "U|valueUnit|unit of the supplied value"},
-                                "ValueException|when index &lt; 0 or index &gt;= size()", null, null, false)
-                        + buildMethod(indentStep, "|void|normalize",
-                                "Normalize the vector, i.e. scale the values to make the sum equal to 1.", null,
+                                        "U|valueUnit|unit of the supplied value"}, valueException, null, null, false)
+                        + buildMethod(indentStep, "|void|normalize", "Normalize the " + vectorOrMatrix.toLowerCase()
+                                + ", i.e. scale the values to make the sum equal to 1.", null,
                                 "ValueException|when the sum of the values is zero and normalization is not possible",
-                                null, null, false)
-
-        );
-
+                                null, null, false));
     }
 
     /**
      * @param type String; type of the result of the generated functions
      * @param dimensions int; number of dimensions of the data
      */
-    private static void generateReadOnlyVectorFunctions(String type, int dimensions)
+    private static void generateReadOnlyFunctions(String type, int dimensions)
     {
         final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
         final String valueException =
