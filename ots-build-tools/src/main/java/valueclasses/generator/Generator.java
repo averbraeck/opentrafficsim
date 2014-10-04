@@ -678,16 +678,17 @@ public class Generator
                 "Value is a static interface that forces implementation of a few unit- and value-related methods.",
                 new String[]{"<U> the unit type"},
                 "<U extends Unit<U>>",
-                buildMethod(indentStep, "public final|U|getUnit", "Return the unit of the Value.", null, null, null,
-                        null, false)
-                        + buildMethod(indentStep, "|double|expressAsSIUnit", "Convert a value to the standard SI unit",
+                buildMethod(indentStep, "|U|getUnit|the unit of this Value", "Retrieve the unit of this Value.", null,
+                        null, null, null, false)
+                        + buildMethod(indentStep, "|double|expressAsSIUnit|the value in the standard SI unit",
+                                "Convert a value to the standard SI unit.",
                                 new String[]{"final double|value|the value to convert to the standard SI unit"}, null,
                                 null, null, false)
-                        + buildMethod(indentStep, "|boolean|isAbsolute", "Indicate whether this is an Absolute Value",
+                        + buildMethod(indentStep, "|boolean|isAbsolute", "Indicate whether this is an Absolute Value.",
                                 null, null, null, null, false)
-                        + buildMethod(indentStep, "|boolean|isRelative", "Indicate whether this is a Relative Value",
+                        + buildMethod(indentStep, "|boolean|isRelative", "Indicate whether this is a Relative Value.",
                                 null, null, null, null, false)
-                        + buildMethod(indentStep, "|Value<U>|copy", "Create a deep copy of this Value", null, null,
+                        + buildMethod(indentStep, "|Value<U>|copy", "Create a deep copy of this Value.", null, null,
                                 null, null, false));
 
         generateAbstractClass(
@@ -713,8 +714,8 @@ public class Generator
                                 new String[]{"return ValueUtil.expressAsUnit(value, this.unit);"}, false)
                         + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null, null, null,
                                 new String[]{"return this instanceof Absolute;"}, false)
-                                + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
-                                        new String[]{"return this instanceof Relative;"}, false)
+                        + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
+                                new String[]{"return this instanceof Relative;"}, false)
 
         );
         generateClass(
