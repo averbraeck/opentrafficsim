@@ -659,9 +659,11 @@ public class Generator
                 buildField(indentStep, "public static final int DEFAULTSIZE = 9",
                         "Default total width of formatted value.")
                         + buildField(indentStep, "public static final int DEFAULTPRECISION = 3",
-                                "Default numberof fraction digits.")
-                        + buildMethod(indentStep, "private static|String|formatString", "Build a format String.",
-                                new String[]{"final int|width|the number of characters in the result",
+                                "Default number of fraction digits.")
+                        + buildMethod(indentStep,
+                                "private static|String|formatString|suitable for formatting a float or double",
+                                "Build a format string.", new String[]{
+                                        "final int|width|the number of characters in the result",
                                         "final int|precision|the number of fractional digits in the result",
                                         "final String|converter|the format conversion specifier"}, null, null,
                                 new String[]{"return String.format(\"%%%d.%d%s\", width, precision, converter);"},
@@ -2967,18 +2969,21 @@ public class Generator
      */
     private static String buildFormatMethods(String valueType)
     {
-        return buildMethod(indentStep, "public static|String|format", "Format a floating point value.", new String[]{
-                "final " + valueType + "|value|the value to format",
-                "final int|width|the number of characters in the result",
-                "final int|precision|the number of fractional digits in the result"}, null, null,
-                new String[]{"return String.format(formatString(width, precision, \"f\"), value);"}, false)
-
-                + buildMethod(indentStep, "public static|String|format", "Format a floating point value.",
-                        new String[]{"final " + valueType + "|value|the value to format",
+        return buildMethod(indentStep, "public static|String|format|the formatted floating point value",
+                "Format a floating point value.", new String[]{"final " + valueType + "|value|the value to format",
+                        "final int|width|the number of characters in the result",
+                        "final int|precision|the number of fractional digits in the result"}, null, null, new String[]{
+                        "if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)", "{",
+                        indentStep + "return String.format(formatString(width, precision, \"f\"), value);", "}",
+                        "return String.format(formatString(width, precision, \"e\"), value);"}, false)
+                + buildMethod(indentStep, "public static|String|format|the formatted floating point value",
+                        "Format a floating point value.", new String[]{
+                                "final " + valueType + "|value|the value to format",
                                 "final int|size|the number of characters in the result"}, null, null,
                         new String[]{"return Format.format(value, size, Format.DEFAULTPRECISION);"}, false)
-                + buildMethod(indentStep, "public static|String|format", "Format a floating point value.",
-                        new String[]{"final " + valueType + "|value|the value to format",}, null, null,
+                + buildMethod(indentStep, "public static|String|format|the formatted floating point value",
+                        "Format a floating point value.", new String[]{"final " + valueType
+                                + "|value|the value to format",}, null, null,
                         new String[]{"return format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);"}, false);
     }
 
