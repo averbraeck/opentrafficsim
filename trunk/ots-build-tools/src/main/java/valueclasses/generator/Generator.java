@@ -753,27 +753,30 @@ public class Generator
         generateFinalClass(
                 "value",
                 "ValueUtil",
-                null,
+                new String[]{"org.opentrafficsim.core.unit.OffsetUnit", "org.opentrafficsim.core.unit.Unit"},
                 "ValueUtil implements a couple of unit-related static methods.",
                 null,
                 "",
-                buildMethod(indentStep, "public static|double|expressAsSIUnit",
-                        "Convert a value in a given unit into the equivalent in the standard SI unit", new String[]{
-                                "final double|value|the value to convert into standard SI unit",
+                buildMethod(indentStep, "public static|double|expressAsSIUnit|the value in the standard SI unit",
+                        "Convert a value in a given unit into the equivalent in the standard SI unit.", new String[]{
+                                "final double|value|the value to convert into the standard SI unit",
                                 "final Unit<?>|unit|the unit of the given value"}, null, null, new String[]{
                                 "if (unit instanceof OffsetUnit<?>)", "{",
                                 "    return (value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit())",
                                 "            * unit.getConversionFactorToStandardUnit();", "}",
                                 "return value * unit.getConversionFactorToStandardUnit();"}, false)
 
-                        + buildMethod(indentStep, "public static|double|expressAsUnit",
-                                "Convert a value in the standard SI unit into another unit", new String[]{
-                                        "final double|siValue|the given value in SI standard unit",
+                        + buildMethod(indentStep, "public static|double|expressAsUnit|the value in the targetUnit",
+                                "Convert a value from the standard SI unit into a compatible unit.", new String[]{
+                                        "final double|siValue|the given value in the standard SI unit",
                                         "final Unit<?>|targetUnit|the unit to convert the value into"}, null, null,
-                                new String[]{"if (targetUnit instanceof OffsetUnit<?>)", "{",
-                                        "    return siValue / targetUnit().getConversionFactorToStandardUnit()",
-                                        "            + ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit();", "}",
-                                        "return siValue / targetUnit().getConversionFactorToStandardUnit();"}, false));
+                                new String[]{
+                                        "if (targetUnit instanceof OffsetUnit<?>)",
+                                        "{",
+                                        indentStep + "return siValue / targetUnit.getConversionFactorToStandardUnit()",
+                                        indentStep + indentStep + indentStep
+                                                + "+ ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit();", "}",
+                                        "return siValue / targetUnit.getConversionFactorToStandardUnit();"}, false));
 
         generateInterface(
                 "value.vdouble",
