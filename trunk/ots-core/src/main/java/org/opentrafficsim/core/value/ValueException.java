@@ -15,7 +15,7 @@ public class ValueException extends Exception
     private static final long serialVersionUID = 20140920L;
 
     /**
-     * 
+     * Construct a new ValueException.
      */
     public ValueException()
     {
@@ -23,7 +23,8 @@ public class ValueException extends Exception
     }
 
     /**
-     * @param message Description of the problem
+     * Construct a new ValueException.
+     * @param message String; description of the problem
      */
     public ValueException(final String message)
     {
@@ -31,7 +32,7 @@ public class ValueException extends Exception
     }
 
     /**
-     * Create a new ValueException.
+     * Construct a new ValueException.
      * @param cause Throwable; the cause of this ValueException
      */
     public ValueException(final Throwable cause)
@@ -40,6 +41,7 @@ public class ValueException extends Exception
     }
 
     /**
+     * Construct a new ValueException.
      * @param message String; description of the problem
      * @param cause Throwable; the cause of the ValueException
      */
@@ -49,11 +51,11 @@ public class ValueException extends Exception
     }
 
     /**
-     * Generate a ValueException.
+     * Construct a new ValueException.
      * @param message String; description of the problem
-     * @param cause Throwable
+     * @param cause Throwable; the cause of this ValueException
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
+     * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public ValueException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)
