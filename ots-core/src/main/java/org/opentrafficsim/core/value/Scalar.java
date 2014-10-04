@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.opentrafficsim.core.unit.Unit;
 
 /**
+ * Basics of the Scalar type.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -19,11 +20,12 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     /** */
     private static final long serialVersionUID = 20140615L;
 
-    /** the unit of the value. */
+    /** The unit of the Scalar. */
     private final U unit;
 
     /**
-     * @param unit the unit of the value
+     * Construct a new Scalar.
+     * @param unit U; the unit of the new Scalar
      */
     public Scalar(final U unit)
     {
@@ -45,8 +47,9 @@ public abstract class Scalar<U extends Unit<U>> extends Number implements Value<
     }
 
     /**
-     * @param value the value to convert in the specified unit for this scalar
-     * @return the value in the unit as specified for this scalar
+     * Convert a value from the standard SI unit into the unit of this Scalar.
+     * @param value double; the value to convert
+     * @return double; the value in the unit of this Scalar
      */
     protected final double expressAsSpecifiedUnit(final double value)
     {
