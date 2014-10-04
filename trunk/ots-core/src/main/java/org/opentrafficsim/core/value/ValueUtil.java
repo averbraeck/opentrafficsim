@@ -4,9 +4,10 @@ import org.opentrafficsim.core.unit.OffsetUnit;
 import org.opentrafficsim.core.unit.Unit;
 
 /**
- * Value is a static interface that implements a couple of unit-related static methods.
+ * ValueUtil implements a couple of unit-related static methods.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 18, 2014 <br>
@@ -15,9 +16,8 @@ import org.opentrafficsim.core.unit.Unit;
  */
 public final class ValueUtil
 {
-
     /**
-     * This class should never be instantiated.
+     * This class shall never be instantiated.
      */
     private ValueUtil()
     {
@@ -25,23 +25,26 @@ public final class ValueUtil
     }
 
     /**
-     * @param value the value to convert into SI units
-     * @param unit the unit belonging to the value
-     * @return the value in SI units
+     * Convert a value in a given unit into the equivalent in the standard SI unit.
+     * @param value double; the value to convert into the standard SI unit
+     * @param unit Unit&lt;?&gt;; the unit of the given value
+     * @return double; the value in the standard SI unit
      */
     public static double expressAsSIUnit(final double value, final Unit<?> unit)
     {
         if (unit instanceof OffsetUnit<?>)
         {
-            return (value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit()) * unit.getConversionFactorToStandardUnit();
+            return (value - ((OffsetUnit<?>) unit).getOffsetToStandardUnit())
+                    * unit.getConversionFactorToStandardUnit();
         }
         return value * unit.getConversionFactorToStandardUnit();
     }
 
     /**
-     * @param siValue the value to express in target unit
-     * @param targetUnit the unit to convert the value to
-     * @return the value in the target unit
+     * Convert a value from the standard SI unit into a compatible unit.
+     * @param siValue double; the given value in the standard SI unit
+     * @param targetUnit Unit&lt;?&gt;; the unit to convert the value into
+     * @return double; the value in the targetUnit
      */
     public static double expressAsUnit(final double siValue, final Unit<?> targetUnit)
     {
