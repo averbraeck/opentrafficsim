@@ -669,7 +669,7 @@ public class Generator
                                 new String[]{"return String.format(\"%%%d.%d%s\", width, precision, converter);"},
                                 false) + buildFormatMethods("float") + buildFormatMethods("double"));
         generateInterface("value", "MathFunctions", new String[]{"java.io.Serializable"},
-                "Interface to force all functions of Math that must be implemented.", null, "extends Serializable",
+                "Interface to force all functions of Math to be implemented.", null, "extends Serializable",
                 buildAllMathFunctions());
         generateInterface(
                 "value",
@@ -690,6 +690,33 @@ public class Generator
                         + buildMethod(indentStep, "|Value<U>|copy", "Create a deep copy of this Value", null, null,
                                 null, null, false));
 
+        generateAbstractClass(
+                "value",
+                "Scalar",
+                new String[]{"java.io.Serializable", "", "org.opentrafficsim.core.unit.Unit"},
+                "Basics of the Scalar type",
+                new String[]{"<U> the unit of the values in the constructor and for display"},
+                "<U extends Unit<U>> extends Number implements Value<U>, Serializable",
+                buildField(indentStep, "private final U unit", "The unit of the Scalar.")
+                        + buildMethod(indentStep, "public||Scalar", "Construct a new Scalar.",
+                                new String[]{"final U|unit|the unit of the new Scalar"}, null, null,
+                                new String[]{"this.unit = unit;"}, true)
+                        + buildMethod(indentStep, "public final|U|getUnit", null, null, null, null,
+                                new String[]{"return this.unit;"}, false)
+                        + buildMethod(indentStep, "public final|double|expressAsSIUnit", null,
+                                new String[]{"final double|value|"}, null, null,
+                                new String[]{"return ValueUtil.expressAsSIUnit(value, this.unit);"}, false)
+                        + buildMethod(indentStep,
+                                "protected final|double|expressAsSpecifiedUnit|the value in the unit of this Scalar",
+                                "Convert a value from the standard SI unit into the unit of this Scalar.",
+                                new String[]{"final double|value|the value to convert"}, null, null,
+                                new String[]{"return ValueUtil.expressAsUnit(value, this.unit);"}, false)
+                        + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null, null, null,
+                                new String[]{"return this instanceof Absolute;"}, false)
+                                + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
+                                        new String[]{"return this instanceof Relative;"}, false)
+
+        );
         generateClass(
                 "value",
                 "ValueException",
