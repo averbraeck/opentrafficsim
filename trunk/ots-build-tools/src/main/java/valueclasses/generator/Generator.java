@@ -722,7 +722,7 @@ public class Generator
                 "value",
                 "ValueException",
                 null,
-                "Exception that is thrown for bad indices, or non-rectangular arrays, or empty arrays",
+                "Exception that is thrown for bad indices, or non-rectangular arrays, incompatible arrays or matrices, or empty arrays",
                 null,
                 "public",
                 "extends Exception",
@@ -732,6 +732,9 @@ public class Generator
                         + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
                                 new String[]{"final String|message|description of the problem"}, null, null,
                                 new String[]{"super(message);"}, true)
+                        + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
+                                new String[]{"final Throwable|cause|the cause of this ValueException"}, null, null,
+                                new String[]{"super(cause);"}, true)
                         + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
                                 new String[]{"final String|message|description of the problem",
                                         "final Throwable|cause|the cause of this ValueException"}, null, null,
