@@ -14,6 +14,14 @@ package org.opentrafficsim.core.value;
  */
 public final class Format
 {
+    /**
+     * This class shall never be instantiated.
+     */
+    private Format()
+    {
+        // Prevent instantiation of this class
+    }
+
     /** Default total width of formatted value. */
     public static final int DEFAULTSIZE = 9;
 
@@ -21,17 +29,9 @@ public final class Format
     public static final int DEFAULTPRECISION = 3;
 
     /**
-     * This class should never be instantiated.
-     */
-    private Format()
-    {
-        // Prevent instantiation of this class
-    }
-
-    /**
      * Build a format string.
-     * @param width Integer; number of characters in the result
-     * @param precision Integer; number of fractional digits in the results
+     * @param width int; the number of characters in the result
+     * @param precision int; the number of fractional digits in the result
      * @param converter String; the format conversion specifier
      * @return String; suitable for formatting a float or double
      */
@@ -42,9 +42,9 @@ public final class Format
 
     /**
      * Format a floating point value.
-     * @param value Float; the value to format
-     * @param width Integer; number of characters in the result
-     * @param precision Integer; number of fractional digits in the result
+     * @param value float; the value to format
+     * @param width int; the number of characters in the result
+     * @param precision int; the number of fractional digits in the result
      * @return String; the formatted floating point value
      */
     public static String format(final float value, final int width, final int precision)
@@ -58,8 +58,8 @@ public final class Format
 
     /**
      * Format a floating point value.
-     * @param value Float; the value to format
-     * @param size Integer; number of characters in the result
+     * @param value float; the value to format
+     * @param size int; the number of characters in the result
      * @return String; the formatted floating point value
      */
     public static String format(final float value, final int size)
@@ -69,7 +69,7 @@ public final class Format
 
     /**
      * Format a floating point value.
-     * @param value Float; the value to format
+     * @param value float; the value to format
      * @return String; the formatted floating point value
      */
     public static String format(final float value)
@@ -79,9 +79,9 @@ public final class Format
 
     /**
      * Format a floating point value.
-     * @param value Double; the value to format
-     * @param width Integer; number of characters in the result
-     * @param precision Integer; number of fractional digits in the result
+     * @param value double; the value to format
+     * @param width int; the number of characters in the result
+     * @param precision int; the number of fractional digits in the result
      * @return String; the formatted floating point value
      */
     public static String format(final double value, final int width, final int precision)
@@ -95,8 +95,8 @@ public final class Format
 
     /**
      * Format a floating point value.
-     * @param value Double; the value to format
-     * @param size Integer; number of characters in the result
+     * @param value double; the value to format
+     * @param size int; the number of characters in the result
      * @return String; the formatted floating point value
      */
     public static String format(final double value, final int size)
@@ -106,7 +106,7 @@ public final class Format
 
     /**
      * Format a floating point value.
-     * @param value Double; the value to format
+     * @param value double; the value to format
      * @return String; the formatted floating point value
      */
     public static String format(final double value)
