@@ -626,23 +626,26 @@ public class Generator
                         + " * class <i>does</i> extend Number, and implements the same interfaces from Value.",
                 new String[]{"<U> the Unit of the value(s) in this AbstractValue. Used for setting, getting and displaying the value(s)"},
                 "<U extends Unit<U>> implements Value<U>, Serializable",
-                buildField(indentStep, "private final U unit", "The unit of the AbstractValue")
-                        + buildMethod(indentStep, "public||AbstractValue", "Construct a new AbstractValue.",
+                buildField(indentStep, "private final U unit", "The unit of the AbstractValue.")
+                        + buildMethod(indentStep,
+                                "protected||AbstractValue|the value in the unit as specified for this AbstractValue",
+                                "Construct a new AbstractValue.",
                                 new String[]{"final U|unit|the unit of the new AbstractValue"}, null, null,
                                 new String[]{"this.unit = unit;"}, true)
                         + buildMethod(indentStep, "public final|U|getUnit", null, null, null, null,
                                 new String[]{"return this.unit;"}, false)
-                        + buildMethod(indentStep, "protected final|double|expressAsSIUnit", null,
+                        + buildMethod(indentStep, "public final|double|expressAsSIUnit", null,
                                 new String[]{"final double|value|"}, null, null,
                                 new String[]{"return ValueUtil.expressAsSIUnit(value, this.unit);"}, false)
-                        + buildMethod(indentStep, "protected final|double|expressAsSpecifiedUnit",
-                                "Convert a value in SI standard unit into the unit of this AbstractValue",
+                        + buildMethod(indentStep, "protected final|double|expressAsSpecifiedUnit|the value "
+                                + "in the unit as specified for this AbstractValue",
+                                "Convert a value in SI standard unit into the unit of this AbstractValue.",
                                 new String[]{"final double|value|the value in standard SI unit"}, null, null,
                                 new String[]{"return ValueUtil.expressAsUnit(value, this.unit);"}, false)
                         + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null, null, null,
-                                new String[]{"return this instanceof Absolute"}, false)
+                                new String[]{"return this instanceof Absolute;"}, false)
                         + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
-                                new String[]{"return this instanceof Relative"}, false));
+                                new String[]{"return this instanceof Relative;"}, false));
         generateFinalClass(
                 "value",
                 "Format",
@@ -798,23 +801,50 @@ public class Generator
         generateScalarClass("Double", false);
         generateScalarClass("Double", true);
 
-        generateReadOnlyFunctions("Float", 1);
-        generateReadOnlyFunctions("Double", 1);
-        generateWriteFunctions("Float", 1);
-        generateWriteFunctions("Double", 1);
-        generateVectorClass("Float", false, 1);
-        generateVectorClass("Float", true, 1);
-        generateVectorClass("Double", false, 1);
-        generateVectorClass("Double", true, 1);
+        for (int dimensions = 1; dimensions <= 2; dimensions++)
+        {
+            generateReadOnlyFunctions("Float", dimensions);
+            generateReadOnlyFunctions("Double", dimensions);
+            generateWriteFunctions("Float", dimensions);
+            generateWriteFunctions("Double", dimensions);
+            generateVectorClass("Float", false, dimensions);
+            generateVectorClass("Float", true, dimensions);
+            generateVectorClass("Double", false, dimensions);
+            generateVectorClass("Double", true, dimensions);
+        }
+        generatePackageInfo("value", "Base classes for unit-based 0-d (Scalar), 1-d (Vector) and 2-d (Matrix) values.");
+        for (String type : new String[]{"Double", "Float"})
+        {
+            String packageName = "value.v" + type.toLowerCase();
+            generatePackageInfo(packageName, "General classes for " + type + " math, used in " + type
+                    + " scalar, vector and matrix.");
+            for (String subType : new String[]{"Scalar", "Vector", "Matrix"})
+            {
+                String subPackageName = packageName + "." + subType.toLowerCase();
+                generatePackageInfo(subPackageName, type + " " + subType
+                        + " storage and calculations with units, absolute/relative"
+                        + (subType.equals("Scalar") ? "" : ", sparse/dense") + ".");
+            }
+        }
+    }
 
-        generateReadOnlyFunctions("Float", 2);
-        generateReadOnlyFunctions("Double", 2);
-        generateWriteFunctions("Float", 2);
-        generateWriteFunctions("Double", 2);
-        generateVectorClass("Float", false, 2);
-        generateVectorClass("Float", true, 2);
-        generateVectorClass("Double", false, 2);
-        generateVectorClass("Double", true, 2);
+    /**
+     * Generate a package-info.java file.
+     * @param relativePackageName String; relative package name
+     * @param contents String; contents of the package-info file
+     */
+    private static void generatePackageInfo(String relativePackageName, String contents)
+    {
+        BufferedWriter bf = openFile(relativePackageName, "package-info", null, contents, null);
+        try
+        {
+            bf.write("package org.opentrafficsim.core." + relativePackageName + ";\r\n");
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
+        closeFile(bf);
     }
 
     /**
