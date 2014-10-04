@@ -16,28 +16,34 @@ import org.opentrafficsim.core.unit.Unit;
 public interface Value<U extends Unit<U>>
 {
     /**
-     * @return unit
+     * Retrieve the unit of this Value.
+     * @return U; the unit of this Value
      */
     U getUnit();
 
     /**
-     * @param value the value to convert in SI units
-     * @return the value in SI units
+     * Convert a value to the standard SI unit.
+     * @param value double; the value to convert to the standard SI unit
+     * @return double; the value in the standard SI unit
      */
     double expressAsSIUnit(final double value);
 
     /**
-     * @return whether the value is absolute.
+     * Indicate whether this is an Absolute Value.
+     * @return boolean
      */
     boolean isAbsolute();
 
     /**
-     * @return whether the value is relative.
+     * Indicate whether this is a Relative Value.
+     * @return boolean
      */
     boolean isRelative();
 
     /**
-     * @return a copy of the object
+     * Create a deep copy of this Value.
+     * @return Value&lt;U&gt;
      */
     Value<U> copy();
+    
 }
