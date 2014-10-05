@@ -35,8 +35,22 @@ public class Generator
     /** Base directory / package */
     final static String packageBaseName = "org.opentrafficsim.core";
 
-    /** Indent step */
-    final static String indentStep = "    ";
+    /**
+     * Create an indent of N units.
+     * @param steps int; the number N
+     * @return String
+     */
+    private static String indent(int steps)
+    {
+        final String indent = "    ";
+
+        String result = "";
+        for (int i = 0; i < steps; i++)
+        {
+            result += indent;
+        }
+        return result;
+    }
 
     /**
      * Open a file and write the package line and initial block comment.
@@ -158,7 +172,7 @@ public class Generator
             writer.write(qualifiers + " class " + name + prependSpaceIfNonEmpty(typeInfo) + "\r\n{\r\n");
             if (generateSerialVersionUID)
             {
-                writer.write(buildSerialVersionUID(indentStep));
+                writer.write(buildSerialVersionUID(indent(1)));
             }
             writer.write(contents + "}\r\n");
             closeFile(writer);
@@ -208,8 +222,8 @@ public class Generator
                 "public final",
                 typeInfo,
                 false,
-                buildMethod(indentStep, "private||" + name, "This class shall never be instantiated.", null, null,
-                        null, new String[]{"// Prevent instantiation of this class"}, true) + contents);
+                buildMethod(indent(1), "private||" + name, "This class shall never be instantiated.", null, null, null,
+                        new String[]{"// Prevent instantiation of this class"}, true) + contents);
     }
 
     /**
@@ -316,7 +330,7 @@ public class Generator
                         if (line.length() + 1 + word.length() >= maxLineLength)
                         {
                             construction.append(line + "\r\n");
-                            line = indent + " *" + indentStep + indentStep + indentStep + word;
+                            line = indent + " *" + indent(3) + word;
                         }
                         else
                         {
@@ -394,7 +408,7 @@ public class Generator
                             sep = ",";
                         }
                         construction.append(line + sep + "\r\n");
-                        line = indent + indentStep + indentStep + paramText;
+                        line = indent + indent(2) + paramText;
                     }
                     else
                     {
@@ -411,14 +425,14 @@ public class Generator
             String append = " throws " + exceptions.split("[|]")[0];
             if (line.length() + append.length() > maxLineLength)
             {
-                construction.append("\r\n" + indent + indentStep + indentStep);
+                construction.append("\r\n" + indent + indent(2));
             }
             construction.append(append);
         }
         if (null != body)
         {
             construction.append("\r\n" + indent + "{\r\n");
-            final String bodyIndent = indent + indentStep;
+            final String bodyIndent = indent + indent(1);
             for (String bodyLine : body)
             {
                 if (null == bodyLine)
@@ -548,7 +562,7 @@ public class Generator
                     new MathFunctionEntry("cbrt", null, true, true, "Set the value(s) to the(ir) cube root."),
                     new MathFunctionEntry("ceil", null, false, false,
                             "Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the\r\n"
-                                    + indentStep + " * argument and equal to a mathematical integer."),
+                                    + indent(1) + " * argument and equal to a mathematical integer."),
                     new MathFunctionEntry("cos", null, true, false,
                             "Set the value(s) to the trigonometric cosine of the value(s)."),
                     new MathFunctionEntry("cosh", null, true, true,
@@ -559,7 +573,7 @@ public class Generator
                             "Set the value(s) to Euler's number e raised to the power of the value(s) minus 1 (e^x - 1)."),
                     new MathFunctionEntry("floor", null, false, false,
                             "Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the\r\n"
-                                    + indentStep + " * argument and equal to a mathematical integer."),
+                                    + indent(1) + " * argument and equal to a mathematical integer."),
                     new MathFunctionEntry("log", null, true, false,
                             "Set the value(s) to the natural logarithm (base e) of the value(s)."),
                     new MathFunctionEntry("log10", null, true, true,
@@ -574,7 +588,7 @@ public class Generator
                             "Set the value(s) to the closest long to the argument with ties rounding up."),
                     new MathFunctionEntry("signum", null, true, true,
                             "Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is\r\n"
-                                    + indentStep + "     * greater than zero, -1.0 if the argument is less than zero."),
+                                    + indent(1) + "     * greater than zero, -1.0 if the argument is less than zero."),
                     new MathFunctionEntry("sin", null, true, false,
                             "Set the value(s) to the trigonometric sine of the value(s)."),
                     new MathFunctionEntry("sinh", null, true, true,
@@ -626,25 +640,25 @@ public class Generator
                         + " * class <i>does</i> extend Number, and implements the same interfaces from Value.",
                 new String[]{"<U> the Unit of the value(s) in this AbstractValue. Used for setting, getting and displaying the value(s)"},
                 "<U extends Unit<U>> implements Value<U>, Serializable",
-                buildField(indentStep, "private final U unit", "The unit of the AbstractValue.")
-                        + buildMethod(indentStep,
+                buildField(indent(1), "private final U unit", "The unit of the AbstractValue.")
+                        + buildMethod(indent(1),
                                 "protected||AbstractValue|the value in the unit as specified for this AbstractValue",
                                 "Construct a new AbstractValue.",
                                 new String[]{"final U|unit|the unit of the new AbstractValue"}, null, null,
                                 new String[]{"this.unit = unit;"}, true)
-                        + buildMethod(indentStep, "public final|U|getUnit", null, null, null, null,
+                        + buildMethod(indent(1), "public final|U|getUnit", null, null, null, null,
                                 new String[]{"return this.unit;"}, false)
-                        + buildMethod(indentStep, "public final|double|expressAsSIUnit", null,
+                        + buildMethod(indent(1), "public final|double|expressAsSIUnit", null,
                                 new String[]{"final double|value|"}, null, null,
                                 new String[]{"return ValueUtil.expressAsSIUnit(value, this.unit);"}, false)
-                        + buildMethod(indentStep, "protected final|double|expressAsSpecifiedUnit|the value "
+                        + buildMethod(indent(1), "protected final|double|expressAsSpecifiedUnit|the value "
                                 + "in the unit as specified for this AbstractValue",
                                 "Convert a value in SI standard unit into the unit of this AbstractValue.",
                                 new String[]{"final double|value|the value in standard SI unit"}, null, null,
                                 new String[]{"return ValueUtil.expressAsUnit(value, this.unit);"}, false)
-                        + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null, null, null,
+                        + buildMethod(indent(1), "public final|boolean|isAbsolute", null, null, null, null,
                                 new String[]{"return this instanceof Absolute;"}, false)
-                        + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
+                        + buildMethod(indent(1), "public final|boolean|isRelative", null, null, null, null,
                                 new String[]{"return this instanceof Relative;"}, false));
         generateFinalClass(
                 "value",
@@ -656,11 +670,11 @@ public class Generator
                         + " * TODO: check how to always format numbers corresponding to the Locale used.",
                 null,
                 "",
-                buildField(indentStep, "public static final int DEFAULTSIZE = 9",
+                buildField(indent(1), "public static final int DEFAULTSIZE = 9",
                         "Default total width of formatted value.")
-                        + buildField(indentStep, "public static final int DEFAULTPRECISION = 3",
+                        + buildField(indent(1), "public static final int DEFAULTPRECISION = 3",
                                 "Default number of fraction digits.")
-                        + buildMethod(indentStep,
+                        + buildMethod(indent(1),
                                 "private static|String|formatString|suitable for formatting a float or double",
                                 "Build a format string.", new String[]{
                                         "final int|width|the number of characters in the result",
@@ -678,17 +692,17 @@ public class Generator
                 "Value is a static interface that forces implementation of a few unit- and value-related methods.",
                 new String[]{"<U> the unit type"},
                 "<U extends Unit<U>>",
-                buildMethod(indentStep, "|U|getUnit|the unit of this Value", "Retrieve the unit of this Value.", null,
+                buildMethod(indent(1), "|U|getUnit|the unit of this Value", "Retrieve the unit of this Value.", null,
                         null, null, null, false)
-                        + buildMethod(indentStep, "|double|expressAsSIUnit|the value in the standard SI unit",
+                        + buildMethod(indent(1), "|double|expressAsSIUnit|the value in the standard SI unit",
                                 "Convert a value to the standard SI unit.",
                                 new String[]{"final double|value|the value to convert to the standard SI unit"}, null,
                                 null, null, false)
-                        + buildMethod(indentStep, "|boolean|isAbsolute", "Indicate whether this is an Absolute Value.",
+                        + buildMethod(indent(1), "|boolean|isAbsolute", "Indicate whether this is an Absolute Value.",
                                 null, null, null, null, false)
-                        + buildMethod(indentStep, "|boolean|isRelative", "Indicate whether this is a Relative Value.",
+                        + buildMethod(indent(1), "|boolean|isRelative", "Indicate whether this is a Relative Value.",
                                 null, null, null, null, false)
-                        + buildMethod(indentStep, "|Value<U>|copy", "Create a deep copy of this Value.", null, null,
+                        + buildMethod(indent(1), "|Value<U>|copy", "Create a deep copy of this Value.", null, null,
                                 null, null, false));
 
         generateAbstractClass(
@@ -698,23 +712,23 @@ public class Generator
                 "Basics of the Scalar type",
                 new String[]{"<U> the unit of the values in the constructor and for display"},
                 "<U extends Unit<U>> extends Number implements Value<U>, Serializable",
-                buildField(indentStep, "private final U unit", "The unit of the Scalar.")
-                        + buildMethod(indentStep, "public||Scalar", "Construct a new Scalar.",
+                buildField(indent(1), "private final U unit", "The unit of the Scalar.")
+                        + buildMethod(indent(1), "public||Scalar", "Construct a new Scalar.",
                                 new String[]{"final U|unit|the unit of the new Scalar"}, null, null,
                                 new String[]{"this.unit = unit;"}, true)
-                        + buildMethod(indentStep, "public final|U|getUnit", null, null, null, null,
+                        + buildMethod(indent(1), "public final|U|getUnit", null, null, null, null,
                                 new String[]{"return this.unit;"}, false)
-                        + buildMethod(indentStep, "public final|double|expressAsSIUnit", null,
+                        + buildMethod(indent(1), "public final|double|expressAsSIUnit", null,
                                 new String[]{"final double|value|"}, null, null,
                                 new String[]{"return ValueUtil.expressAsSIUnit(value, this.unit);"}, false)
-                        + buildMethod(indentStep,
+                        + buildMethod(indent(1),
                                 "protected final|double|expressAsSpecifiedUnit|the value in the unit of this Scalar",
                                 "Convert a value from the standard SI unit into the unit of this Scalar.",
                                 new String[]{"final double|value|the value to convert"}, null, null,
                                 new String[]{"return ValueUtil.expressAsUnit(value, this.unit);"}, false)
-                        + buildMethod(indentStep, "public final|boolean|isAbsolute", null, null, null, null,
+                        + buildMethod(indent(1), "public final|boolean|isAbsolute", null, null, null, null,
                                 new String[]{"return this instanceof Absolute;"}, false)
-                        + buildMethod(indentStep, "public final|boolean|isRelative", null, null, null, null,
+                        + buildMethod(indent(1), "public final|boolean|isRelative", null, null, null, null,
                                 new String[]{"return this instanceof Relative;"}, false)
 
         );
@@ -727,20 +741,20 @@ public class Generator
                 "public",
                 "extends Exception",
                 true,
-                buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.", null, null, null,
+                buildMethod(indent(1), "public||ValueException", "Construct a new ValueException.", null, null, null,
                         new String[]{"super();"}, true)
-                        + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
+                        + buildMethod(indent(1), "public||ValueException", "Construct a new ValueException.",
                                 new String[]{"final String|message|description of the problem"}, null, null,
                                 new String[]{"super(message);"}, true)
-                        + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
+                        + buildMethod(indent(1), "public||ValueException", "Construct a new ValueException.",
                                 new String[]{"final Throwable|cause|the cause of this ValueException"}, null, null,
                                 new String[]{"super(cause);"}, true)
-                        + buildMethod(indentStep, "public||ValueException", "Construct a new ValueException.",
+                        + buildMethod(indent(1), "public||ValueException", "Construct a new ValueException.",
                                 new String[]{"final String|message|description of the problem",
                                         "final Throwable|cause|the cause of this ValueException"}, null, null,
                                 new String[]{"super(message, cause);"}, true)
                         + buildMethod(
-                                indentStep,
+                                indent(1),
                                 "public||ValueException",
                                 "Construct a new ValueException.",
                                 new String[]{
@@ -757,7 +771,7 @@ public class Generator
                 "ValueUtil implements a couple of unit-related static methods.",
                 null,
                 "",
-                buildMethod(indentStep, "public static|double|expressAsSIUnit|the value in the standard SI unit",
+                buildMethod(indent(1), "public static|double|expressAsSIUnit|the value in the standard SI unit",
                         "Convert a value in a given unit into the equivalent in the standard SI unit.", new String[]{
                                 "final double|value|the value to convert into the standard SI unit",
                                 "final Unit<?>|unit|the unit of the given value"}, null, null, new String[]{
@@ -766,16 +780,13 @@ public class Generator
                                 "            * unit.getConversionFactorToStandardUnit();", "}",
                                 "return value * unit.getConversionFactorToStandardUnit();"}, false)
 
-                        + buildMethod(indentStep, "public static|double|expressAsUnit|the value in the targetUnit",
+                        + buildMethod(indent(1), "public static|double|expressAsUnit|the value in the targetUnit",
                                 "Convert a value from the standard SI unit into a compatible unit.", new String[]{
                                         "final double|siValue|the given value in the standard SI unit",
                                         "final Unit<?>|targetUnit|the unit to convert the value into"}, null, null,
-                                new String[]{
-                                        "if (targetUnit instanceof OffsetUnit<?>)",
-                                        "{",
-                                        indentStep + "return siValue / targetUnit.getConversionFactorToStandardUnit()",
-                                        indentStep + indentStep + indentStep
-                                                + "+ ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit();", "}",
+                                new String[]{"if (targetUnit instanceof OffsetUnit<?>)", "{",
+                                        indent(1) + "return siValue / targetUnit.getConversionFactorToStandardUnit()",
+                                        indent(3) + "+ ((OffsetUnit<?>) targetUnit).getOffsetToStandardUnit();", "}",
                                         "return siValue / targetUnit.getConversionFactorToStandardUnit();"}, false));
 
         generateInterface(
@@ -785,9 +796,9 @@ public class Generator
                 "Force implementation of multiply and divide.",
                 null,
                 "extends MathFunctions",
-                buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor.",
+                buildMethod(indent(1), "|void|multiply", "Scale the value(s) by a factor.",
                         new String[]{"double|factor|the multiplier"}, null, null, null, false)
-                        + buildMethod(indentStep, "|void|divide",
+                        + buildMethod(indent(1), "|void|divide",
                                 "Scale the value(s) by the inverse of a factor; i.e. a divisor.",
                                 new String[]{"double|divisor|the divisor"}, null, null, null, false)
 
@@ -805,9 +816,9 @@ public class Generator
                 "Force implementation of multiply and divide.",
                 null,
                 "extends MathFunctions",
-                buildMethod(indentStep, "|void|multiply", "Scale the value(s) by a factor.",
+                buildMethod(indent(1), "|void|multiply", "Scale the value(s) by a factor.",
                         new String[]{"float|factor|the multiplier"}, null, null, null, false)
-                        + buildMethod(indentStep, "|void|divide",
+                        + buildMethod(indent(1), "|void|divide",
                                 "Scale the value(s) by the inverse of a factor; i.e. a divisor.",
                                 new String[]{"float|divisor|the divisor"}, null, null, null, false)
 
@@ -816,7 +827,7 @@ public class Generator
         generateFinalClass(
                 "value.vfloat",
                 "FloatMathFunctionsImpl",
-                new String[]{"import cern.colt.function.tdouble.FloatFunction"},
+                new String[]{"cern.colt.function.tfloat.FloatFunction"},
                 "FloatFunction implementations of the standard Math functions.",
                 null,
                 "",
@@ -843,10 +854,10 @@ public class Generator
             generateReadOnlyFunctions("Double", dimensions);
             generateWriteFunctions("Float", dimensions);
             generateWriteFunctions("Double", dimensions);
-            generateVectorClass("Float", false, dimensions);
-            generateVectorClass("Float", true, dimensions);
-            generateVectorClass("Double", false, dimensions);
-            generateVectorClass("Double", true, dimensions);
+            generateVectorOrMatrixClass("Float", false, dimensions);
+            generateVectorOrMatrixClass("Float", true, dimensions);
+            generateVectorOrMatrixClass("Double", false, dimensions);
+            generateVectorOrMatrixClass("Double", true, dimensions);
         }
         generatePackageInfo("value", "Base classes for unit-based 0-d (Scalar), 1-d (Vector) and 2-d (Matrix) values.");
         for (String type : new String[]{"Double", "Float"})
@@ -871,16 +882,7 @@ public class Generator
      */
     private static void generatePackageInfo(String relativePackageName, String contents)
     {
-        BufferedWriter bf = openFile(relativePackageName, "package-info", null, contents, null);
-        try
-        {
-            bf.write("package org.opentrafficsim.core." + relativePackageName + ";\r\n");
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
-        closeFile(bf);
+        closeFile(openFile(relativePackageName, "package-info", null, contents, null));
     }
 
     /**
@@ -893,7 +895,7 @@ public class Generator
         final String valueException =
                 1 == dimensions ? "ValueException|when index out of range (index &lt; 0 or index &gt;= size())"
                         : "ValueException|when row or column out of range (row &lt; 0 or row &gt;= rows() or "
-                                + "column &lt; 0 or column\r\n" + indentStep + " *             &gt;= columns())";
+                                + "column &lt; 0 or column\r\n" + indent(1) + " *             &gt;= columns())";
         generateInterface(
                 "value.v" + type.toLowerCase() + "." + vectorOrMatrix.toLowerCase(),
                 "Write" + type + vectorOrMatrix + "Functions",
@@ -902,7 +904,7 @@ public class Generator
                 "Methods that modify the data stored in a " + type + vectorOrMatrix + ".",
                 new String[]{"<U> Unit of the " + vectorOrMatrix.toLowerCase()},
                 "<U extends Unit<U>>",
-                buildMethod(indentStep, "|void|setSI", "Replace the value at "
+                buildMethod(indent(1), "|void|setSI", "Replace the value at "
                         + (1 == dimensions ? "index" : "row, column")
                         + " by the supplied value which is expressed in the standard SI unit.", new String[]{
                         1 == dimensions ? "int|index|index of the value to replace"
@@ -910,7 +912,7 @@ public class Generator
                         dimensions > 1 ? "int|column|column of the value to replace" : null,
                         type.toLowerCase() + "|valueSI|the value to store (expressed in the standard SI unit)"},
                         valueException, null, null, false)
-                        + buildMethod(indentStep, "|void|set", "Replace the value at "
+                        + buildMethod(indent(1), "|void|set", "Replace the value at "
                                 + (1 == dimensions ? "index" : "row, column")
                                 + " by the supplied value which is in a compatible unit.", new String[]{
                                 1 == dimensions ? "int|index|index of the value to replace"
@@ -919,7 +921,7 @@ public class Generator
                                 type + "Scalar<U>|value|the strongly typed value to store"}, valueException, null,
                                 null, false)
                         + buildMethod(
-                                indentStep,
+                                indent(1),
                                 "|void|setInUnit",
                                 "Replace the value at " + (1 == dimensions ? "index" : "row, column")
                                         + " by the supplied value which is expressed in a "
@@ -931,7 +933,7 @@ public class Generator
                                         type.toLowerCase()
                                                 + "|value|the value to store (which is expressed in valueUnit)",
                                         "U|valueUnit|unit of the supplied value"}, valueException, null, null, false)
-                        + buildMethod(indentStep, "|void|normalize", "Normalize the " + vectorOrMatrix.toLowerCase()
+                        + buildMethod(indent(1), "|void|normalize", "Normalize the " + vectorOrMatrix.toLowerCase()
                                 + ", i.e. scale the values to make the sum equal to 1.", null,
                                 "ValueException|when the sum of the values is zero and normalization is not possible",
                                 null, null, false));
@@ -947,7 +949,7 @@ public class Generator
         final String valueException =
                 1 == dimensions ? "ValueException|when index out of range (index &lt; 0 or index &gt;= size())"
                         : "ValueException|when row or column out of range (row &lt; 0 or row &gt;= rows() or "
-                                + "column &lt; 0 or column\r\n" + indentStep + " *             &gt;= columns())";
+                                + "column &lt; 0 or column\r\n" + indent(1) + " *             &gt;= columns())";
         generateInterface(
                 "value.v" + type.toLowerCase() + "." + vectorOrMatrix.toLowerCase(),
                 "ReadOnly" + type + vectorOrMatrix + "Functions",
@@ -957,16 +959,16 @@ public class Generator
                         + vectorOrMatrix + ".",
                 new String[]{"<U> Unit of the " + vectorOrMatrix.toLowerCase()},
                 "<U extends Unit<U>>",
-                (1 == dimensions ? buildMethod(indentStep, "|int|size|the size of the vector",
-                        "Retrieve the size of the vector.", null, null, null, null, false) : buildMethod(indentStep,
+                (1 == dimensions ? buildMethod(indent(1), "|int|size|the size of the vector",
+                        "Retrieve the size of the vector.", null, null, null, null, false) : buildMethod(indent(1),
                         "|int|rows|the number of rows of the matrix", "Retrieve the number of rows of the matrix.",
                         null, null, null, null, false)
-                        + buildMethod(indentStep, "|int|columns|the number of columns of the matrix",
+                        + buildMethod(indent(1), "|int|columns|the number of columns of the matrix",
                                 "Retrieve the number of columns of the matrix.", null, null, null, null, false))
-                        + buildMethod(indentStep, "|int|cardinality|the number of cells having non-zero value",
+                        + buildMethod(indent(1), "|int|cardinality|the number of cells having non-zero value",
                                 "Count the number of cells that have a non-zero value (ignores tolerance).", null,
                                 null, null, null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|getSI|value at position "
+                        + buildMethod(indent(1), "|" + type.toLowerCase() + "|getSI|value at position "
                                 + (1 == dimensions ? "index" : "row, column") + " in the standard SI unit",
                                 "Retrieve the value stored at a specified "
                                         + (1 == dimensions ? "position" : "row and column")
@@ -975,7 +977,7 @@ public class Generator
                                                 "int|row|row of the value to retrieve",
                                                 "int|column|column of the value to retrieve"}, valueException, null,
                                 null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|getInUnit|value at position "
+                        + buildMethod(indent(1), "|" + type.toLowerCase() + "|getInUnit|value at position "
                                 + (1 == dimensions ? "index" : "row, column") + " in the original unit",
                                 "Retrieve the value stored at a specified "
                                         + (1 == dimensions ? "position" : "row and column") + " in the original unit.",
@@ -983,7 +985,7 @@ public class Generator
                                         : new String[]{"int|row|row of the value to retrieve",
                                                 "int|column|column of the value to retrieve"}, valueException, null,
                                 null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|getInUnit|value at position "
+                        + buildMethod(indent(1), "|" + type.toLowerCase() + "|getInUnit|value at position "
                                 + (1 == dimensions ? "index" : "row, column") + " converted into the specified unit",
                                 "Retrieve the value stored at a specified "
                                         + (1 == dimensions ? "position" : "row and column")
@@ -992,7 +994,7 @@ public class Generator
                                                 : "int|row|row of the value to retrieve",
                                         dimensions > 1 ? "int|column|column of the value to retrieve" : null,
                                         "U|targetUnit|the unit for the result"}, valueException, null, null, false)
-                        + buildMethod(indentStep, "|" + type
+                        + buildMethod(indent(1), "|" + type
                                 + "Scalar<U>|get|the strongly typed value of the selected cell",
                                 "Retrieve the value stored at a specified "
                                         + (1 == dimensions ? "index" : "row and column") + " as a " + type + "Scalar.",
@@ -1000,10 +1002,10 @@ public class Generator
                                         : new String[]{"int|row|row of the value to retrieve",
                                                 "int|column|column of the value to retrieve"}, valueException, null,
                                 null, false)
-                        + buildMethod(indentStep, "|" + type.toLowerCase() + "|zSum|the sum of all values of this "
+                        + buildMethod(indent(1), "|" + type.toLowerCase() + "|zSum|the sum of all values of this "
                                 + vectorOrMatrix.toLowerCase(), "Compute the sum of all values of this "
                                 + vectorOrMatrix.toLowerCase() + ".", null, null, null, null, false)
-                        + (2 == dimensions ? buildMethod(indentStep, "|" + type.toLowerCase()
+                        + (2 == dimensions ? buildMethod(indent(1), "|" + type.toLowerCase()
                                 + "|det|the determinant of the matrix", "Compute the determinant of the matrix.", null,
                                 "ValueException|when matrix is neither sparse, nor dense, or not square", null, null,
                                 false) : "")
@@ -1044,21 +1046,21 @@ public class Generator
         StringBuilder construction = new StringBuilder();
         for (MathFunctionEntry mfu : mathFunctions)
         {
-            construction.append(buildMethod(indentStep, "|void|" + mfu.name, mfu.description, null == mfu.argument
+            construction.append(buildMethod(indent(1), "|void|" + mfu.name, mfu.description, null == mfu.argument
                     ? new String[]{} : new String[]{mfu.argument}, null, null, null, false));
         }
         return construction.toString();
     }
 
     /**
-     * Generate a class file for a vector type.
+     * Generate a class file for a vector or matrix type.
      * @param type String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
      * @param dimensions int; number of dimensions of the data (1: vector; 2: matrix)
      */
-    private static void generateVectorClass(String type, boolean mutable, int dimensions)
+    private static void generateVectorOrMatrixClass(String type, boolean mutable, int dimensions)
     {
-        final String outerIndent = indentStep;
+        final String outerIndent = indent(1);
         final String mutableType = mutable ? "Mutable" : "Immutable ";
         final String aggregateType = dimensions == 1 ? "Vector" : "Matrix";
         final String pluralAggregateType = dimensions == 1 ? "vectors" : "matrices";
@@ -1145,13 +1147,13 @@ public class Generator
                 (mutable ? "Mutable" : "") + type + aggregateType,
                 arrayListToArray(imports),
                 mutableType + type + aggregateType + ".",
-                new String[]{"<U> the Unit for this " + (mutable ? "Mutable" : "") + type + aggregateType},
+                new String[]{"<U> Unit; the unit of this " + (mutable ? "Mutable" : "") + type + aggregateType},
                 "<U extends Unit<U>> extends "
                         + (mutable ? type + aggregateType : "AbstractValue")
                         + "<U> implements "
-                        + (mutable ? "\r\n" + indentStep + indentStep + "Write" + type + aggregateType
-                                + "Functions<U>, " + type + "MathFunctions" : "Serializable,\r\n" + indentStep
-                                + "ReadOnly" + type + aggregateType + "Functions<U>"),
+                        + (mutable ? "\r\n" + indent(2) + "Write" + type + aggregateType + "Functions<U>, " + type
+                                + "MathFunctions" : "Serializable,\r\n" + indent(1) + "ReadOnly" + type + aggregateType
+                                + "Functions<U>"),
                 mutable
                         ? buildMethod(outerIndent, "protected||Mutable" + type + aggregateType,
                                 "Construct a new Mutable" + type + aggregateType + ".",
@@ -1176,20 +1178,20 @@ public class Generator
                                                 type.toLowerCase() + " sum = zSum();",
                                                 "if (0 == sum)",
                                                 "{",
-                                                indentStep
+                                                indent(1)
                                                         + "throw new ValueException(\"zSum is 0; cannot normalize\");",
                                                 "}",
                                                 "checkCopyOnWrite();",
                                                 1 == dimensions ? "for (int i = 0; i < size(); i++)"
                                                         : "for (int row = rows(); --row >= 0;)",
                                                 "{",
-                                                dimensions > 1 ? indentStep
+                                                dimensions > 1 ? indent(1)
                                                         + "for (int column = columns(); --column >= 0;)" : null,
-                                                dimensions > 1 ? indentStep + "{" : null,
-                                                (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                                dimensions > 1 ? indent(1) + "{" : null,
+                                                (dimensions > 1 ? indent(1) : "") + indent(1) + "safeSet("
                                                         + (1 == dimensions ? "i" : "row, column") + ", safeGet("
                                                         + (1 == dimensions ? "i" : "row, column") + ") / sum);",
-                                                dimensions > 1 ? indentStep + "}" : null, "}"}, false)
+                                                dimensions > 1 ? indent(1) + "}" : null, "}"}, false)
                                 + buildSubClass(outerIndent, "Abs", "Absolute " + mutableType + type + aggregateType,
                                         "Mutable" + type + aggregateType + "<U>", "Absolute", "Mutable" + type
                                                 + aggregateType, true, dimensions)
@@ -1221,9 +1223,9 @@ public class Generator
                                         new String[]{
                                                 "if (isCopyOnWrite())",
                                                 "{",
-                                                indentStep
+                                                indent(1)
                                                         + "// System.out.println(\"copyOnWrite is set: Copying data\");",
-                                                indentStep + "deepCopyData();", indentStep + "setCopyOnWrite(false);",
+                                                indent(1) + "deepCopyData();", indent(1) + "setCopyOnWrite(false);",
                                                 "}"}, false)
                                 + buildMethod(
                                         outerIndent,
@@ -1332,13 +1334,13 @@ public class Generator
                                                         : "for (int row = rows(); --row >= 0;)",
                                                 "{",
                                                 dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
-                                                dimensions > 1 ? indentStep + "{" : null,
-                                                (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                                dimensions > 1 ? indent(1) + "{" : null,
+                                                (dimensions > 1 ? indent(1) : "") + indent(1) + "safeSet("
                                                         + (1 == dimensions ? "index" : "row, column") + ", safeGet("
                                                         + (1 == dimensions ? "index" : "row, column")
                                                         + ") * factor.safeGet("
                                                         + (1 == dimensions ? "index" : "row, column") + "));",
-                                                dimensions > 1 ? indentStep + "}" : null, "}"}, false)
+                                                dimensions > 1 ? indent(1) + "}" : null, "}"}, false)
                                 + buildMethod(
                                         outerIndent,
                                         "public final|Mutable" + type + aggregateType
@@ -1357,12 +1359,12 @@ public class Generator
                                                         : "for (int row = rows(); --row >= 0;)",
                                                 "{",
                                                 dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
-                                                dimensions > 1 ? indentStep + "{" : null,
-                                                (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                                                dimensions > 1 ? indent(1) + "{" : null,
+                                                (dimensions > 1 ? indent(1) : "") + indent(1) + "safeSet("
                                                         + (1 == dimensions ? "index" : "row, column") + ", safeGet("
                                                         + (1 == dimensions ? "index" : "row, column") + ") * factor["
                                                         + (1 == dimensions ? "index" : "row][column") + "]);",
-                                                dimensions > 1 ? indentStep + "}" : null, "}", "return this;"}, false)
+                                                dimensions > 1 ? indent(1) + "}" : null, "}", "return this;"}, false)
                                 + buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
                                         "Check sizes and copy the data if the copyOnWrite flag is set.",
                                         new String[]{"final " + type + aggregateType
@@ -1482,16 +1484,16 @@ public class Generator
                                                         "this.vectorSI = createMatrix1D(values.length);",
                                                         "if (getUnit().equals(getUnit().getStandardUnit()))",
                                                         "{",
-                                                        indentStep + "this." + aggregateType.toLowerCase()
+                                                        indent(1) + "this." + aggregateType.toLowerCase()
                                                                 + "SI.assign(values);",
                                                         "}",
                                                         "else",
                                                         "{",
-                                                        indentStep + "for (int index = values.length; --index >= 0;)",
-                                                        indentStep + "{",
-                                                        indentStep + indentStep + "safeSet(index, "
+                                                        indent(1) + "for (int index = values.length; --index >= 0;)",
+                                                        indent(1) + "{",
+                                                        indent(2) + "safeSet(index, "
                                                                 + (type.startsWith("F") ? "(float) " : "")
-                                                                + "expressAsSIUnit(values[index]));", indentStep + "}",
+                                                                + "expressAsSIUnit(values[index]));", indent(1) + "}",
                                                         "}"}
                                                 : new String[]{
                                                         "ensureRectangular(values);",
@@ -1499,20 +1501,20 @@ public class Generator
                                                                 + "0 == values.length ? 0 : values[0].length);",
                                                         "if (getUnit().equals(getUnit().getStandardUnit()))",
                                                         "{",
-                                                        indentStep + "this.matrixSI.assign(values);",
+                                                        indent(1) + "this.matrixSI.assign(values);",
                                                         "}",
                                                         "else",
                                                         "{",
-                                                        indentStep + "for (int row = values.length; --row >= 0;)",
-                                                        indentStep + "{",
-                                                        indentStep
-                                                                + indentStep
+                                                        indent(1) + "for (int row = values.length; --row >= 0;)",
+                                                        indent(1) + "{",
+                                                        indent(1)
+                                                                + indent(1)
                                                                 + "for (int column = values[row].length; --column >= 0;)",
-                                                        indentStep + indentStep + "{",
-                                                        indentStep + indentStep + indentStep + "safeSet(row, column, "
+                                                        indent(2) + "{",
+                                                        indent(3) + "safeSet(row, column, "
                                                                 + (type.startsWith("F") ? "(float) " : "")
                                                                 + "expressAsSIUnit(values[row][column]));",
-                                                        indentStep + indentStep + "}", indentStep + "}", "}"}, false)
+                                                        indent(2) + "}", indent(1) + "}", "}"}, false)
                                 + buildMethod(outerIndent, "protected final|void|initialize",
                                         "Import the values from an existing " + type + "Matrix" + dimensions
                                                 + "D. This makes a shallow copy.", new String[]{"final " + type
@@ -1529,17 +1531,15 @@ public class Generator
                                                 "this." + aggregateType.toLowerCase()
                                                         + "SI = createMatrix1D(values.length);",
                                                 "for (int index = 0; index < values.length; index++)", "{",
-                                                indentStep + "safeSet(index, values[index].getValueSI());",
-                                                indentStep + "}"} : new String[]{
+                                                indent(1) + "safeSet(index, values[index].getValueSI());",
+                                                indent(1) + "}"} : new String[]{
                                                 "ensureRectangularAndNonEmpty(values);",
                                                 "this.matrixSI = createMatrix2D(values.length, values[0].length);",
-                                                "for (int row = values.length; --row >= 0;)",
-                                                "{",
-                                                indentStep + "for (int column = values[row].length; --column >= 0;)",
-                                                indentStep + "{",
-                                                indentStep + indentStep
-                                                        + "safeSet(row, column, values[row][column].getValueSI());",
-                                                indentStep + "}", "}"}, false)
+                                                "for (int row = values.length; --row >= 0;)", "{",
+                                                indent(1) + "for (int column = values[row].length; --column >= 0;)",
+                                                indent(1) + "{",
+                                                indent(2) + "safeSet(row, column, values[row][column].getValueSI());",
+                                                indent(1) + "}", "}"}, false)
                                 + buildMethod(outerIndent, "protected abstract|" + type + "Matrix" + dimensions
                                         + "D|createMatrix" + dimensions + "D|an instance of the right type of " + type
                                         + "Matrix" + dimensions + "D (absolute/relative, dense/sparse, etc.)",
@@ -1574,19 +1574,19 @@ public class Generator
                                                 type.toLowerCase() + "[] values = this.vectorSI.toArray();",
                                                 "for (int i = values.length; --i >= 0;)",
                                                 "{",
-                                                indentStep + "values[i] = " + (type.startsWith("F") ? "(float) " : "")
+                                                indent(1) + "values[i] = " + (type.startsWith("F") ? "(float) " : "")
                                                         + "ValueUtil.expressAsUnit(values[i], targetUnit);", "}",
                                                 "return values;"} : new String[]{
                                                 type.toLowerCase() + emptyBrackets
                                                         + " values = this.matrixSI.toArray();",
                                                 "for (int row = rows(); --row >= 0;)",
                                                 "{",
-                                                indentStep + "for (int column = columns(); --column >= 0;)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "values[row][column] = "
+                                                indent(1) + "for (int column = columns(); --column >= 0;)",
+                                                indent(1) + "{",
+                                                indent(2) + "values[row][column] = "
                                                         + (type.startsWith("F") ? "(float) " : "")
                                                         + "ValueUtil.expressAsUnit(values[row][column], targetUnit);",
-                                                indentStep + "}", "}", "return values;"}, false)
+                                                indent(1) + "}", "}", "return values;"}, false)
                                 + (1 == dimensions ? buildMethod(outerIndent, "public final|int|size", null, null,
                                         null, null, new String[]{"return (int) this." + aggregateType.toLowerCase()
                                                 + "SI.size();"}, false) : buildMethod(outerIndent,
@@ -1644,30 +1644,30 @@ public class Generator
                                                 new String[]{
                                                         "try",
                                                         "{",
-                                                        indentStep + "if (this instanceof SparseData)",
-                                                        indentStep + "{",
-                                                        indentStep + indentStep + "return new Sparse" + type
+                                                        indent(1) + "if (this instanceof SparseData)",
+                                                        indent(1) + "{",
+                                                        indent(2) + "return new Sparse" + type
                                                                 + "Algebra().det(getMatrixSI());",
-                                                        indentStep + "}",
-                                                        indentStep + "if (this instanceof DenseData)",
-                                                        indentStep + "{",
-                                                        indentStep + indentStep + "return new Dense" + type
+                                                        indent(1) + "}",
+                                                        indent(1) + "if (this instanceof DenseData)",
+                                                        indent(1) + "{",
+                                                        indent(2) + "return new Dense" + type
                                                                 + "Algebra().det(getMatrixSI());",
-                                                        indentStep + "}",
+                                                        indent(1) + "}",
                                                         "throw new ValueException(\""
                                                                 + type
                                                                 + "Matrix.det -- matrix implements neither Sparse nor Dense\");",
                                                         "}",
                                                         "catch (IllegalArgumentException exception)",
                                                         "{",
-                                                        indentStep
+                                                        indent(1)
                                                                 + "if (!exception.getMessage().startsWith(\"Matrix must be square\"))",
-                                                        indentStep + "{",
-                                                        indentStep + indentStep + "exception.printStackTrace();",
-                                                        indentStep + "}",
-                                                        indentStep
+                                                        indent(1) + "{",
+                                                        indent(2) + "exception.printStackTrace();",
+                                                        indent(1) + "}",
+                                                        indent(1)
                                                                 + "throw new ValueException(exception.getMessage()); // probably Matrix must be square",
-                                                        indentStep + "}"}, false) : "")
+                                                        indent(1) + "}"}, false) : "")
                                 + buildMethod(outerIndent, "public final|String|toString|printable string with the "
                                         + aggregateType.toLowerCase() + " contents", null, null, null, null,
                                         new String[]{"return toString(getUnit());"}, false)
@@ -1682,57 +1682,57 @@ public class Generator
                                                 "StringBuffer buf = new StringBuffer();",
                                                 "if (this instanceof Mutable" + type + aggregateType + ")",
                                                 "{",
-                                                indentStep + "buf.append(\"Mutable   \");",
+                                                indent(1) + "buf.append(\"Mutable   \");",
                                                 "if (this instanceof Mutable" + type + aggregateType + ".Abs.Dense)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Abs Dense  \");",
-                                                indentStep + "}",
-                                                indentStep + "else if (this instanceof Mutable" + type + aggregateType
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Abs Dense  \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else if (this instanceof Mutable" + type + aggregateType
                                                         + ".Rel.Dense)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Rel Dense  \");",
-                                                indentStep + "}",
-                                                indentStep + "else if (this instanceof Mutable" + type + aggregateType
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Rel Dense  \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else if (this instanceof Mutable" + type + aggregateType
                                                         + ".Abs.Sparse)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Abs Sparse \");",
-                                                indentStep + "}",
-                                                indentStep + "else if (this instanceof Mutable" + type + aggregateType
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Abs Sparse \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else if (this instanceof Mutable" + type + aggregateType
                                                         + ".Rel.Sparse)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Rel Sparse \");",
-                                                indentStep + "}",
-                                                indentStep + "else",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"??? \");",
-                                                indentStep + "}",
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Rel Sparse \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else",
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"??? \");",
+                                                indent(1) + "}",
                                                 "}",
                                                 "else",
                                                 "{",
-                                                indentStep + "buf.append(\"Immutable \");",
+                                                indent(1) + "buf.append(\"Immutable \");",
                                                 "if (this instanceof " + type + aggregateType + ".Abs.Dense)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Abs Dense  \");",
-                                                indentStep + "}",
-                                                indentStep + "else if (this instanceof " + type + aggregateType
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Abs Dense  \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else if (this instanceof " + type + aggregateType
                                                         + ".Rel.Dense)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Rel Dense  \");",
-                                                indentStep + "}",
-                                                indentStep + "else if (this instanceof " + type + aggregateType
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Rel Dense  \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else if (this instanceof " + type + aggregateType
                                                         + ".Abs.Sparse)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Abs Sparse \");",
-                                                indentStep + "}",
-                                                indentStep + "else if (this instanceof " + type + aggregateType
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Abs Sparse \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else if (this instanceof " + type + aggregateType
                                                         + ".Rel.Sparse)",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"Rel Sparse \");",
-                                                indentStep + "}",
-                                                indentStep + "else",
-                                                indentStep + "{",
-                                                indentStep + indentStep + "buf.append(\"??? \");",
-                                                indentStep + "}",
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"Rel Sparse \");",
+                                                indent(1) + "}",
+                                                indent(1) + "else",
+                                                indent(1) + "{",
+                                                indent(2) + "buf.append(\"??? \");",
+                                                indent(1) + "}",
                                                 "}",
                                                 "buf.append(\"[\" + displayUnit.getAbbreviation() + \"]\");",
                                                 (1 == dimensions ? "for (int i = 0; i < size(); i++)"
@@ -1742,14 +1742,14 @@ public class Generator
                                                 (dimensions > 1 ? "for (int column = 0; column < columns(); column++)"
                                                         : null),
                                                 (dimensions > 1 ? "{" : null),
-                                                indentStep + (dimensions > 1 ? indentStep : "")
+                                                indent(1) + (dimensions > 1 ? indent(1) : "")
                                                         + (type.startsWith("F") ? "float f = (float) " : "double d = ")
                                                         + "ValueUtil.expressAsUnit(safeGet("
                                                         + (1 == dimensions ? "i" : "row, column") + "), displayUnit);",
-                                                indentStep + (dimensions > 1 ? indentStep : "")
+                                                indent(1) + (dimensions > 1 ? indent(1) : "")
                                                         + "buf.append(\" \" + Format.format("
                                                         + type.substring(0, 1).toLowerCase() + "));",
-                                                (dimensions > 1 ? indentStep + "}" : null), "}",
+                                                (dimensions > 1 ? indent(1) + "}" : null), "}",
                                                 "return buf.toString();"}, false)
                                 + buildMethod(
                                         outerIndent,
@@ -1763,13 +1763,13 @@ public class Generator
                                                 1 == dimensions ? "if (size() != other.size())"
                                                         : "if (rows() != other.rows() || columns() != other.columns())",
                                                 "{",
-                                                indentStep
+                                                indent(1)
                                                         + "throw new ValueException(\"The "
                                                         + pluralAggregateType
                                                         + " have different sizes: \" + "
                                                         + (1 == dimensions ? "size() + \" != \" + other.size());"
                                                                 : "rows() + \"x\" + columns() + \" != \""),
-                                                dimensions > 1 ? indentStep + indentStep + indentStep
+                                                dimensions > 1 ? indent(3)
                                                         + "+ other.rows() + \"x\" + other.columns());" : null, "}"},
                                         false)
                                 + buildMethod(
@@ -1792,7 +1792,7 @@ public class Generator
                                                         + " and the array have different sizes: \" + "
                                                         + (1 == dimensions ? "size() + \" != \" + other.length);"
                                                                 : "rows() + \"x\" + columns()"),
-                                                dimensions > 1 ? indentStep + indentStep + indentStep
+                                                dimensions > 1 ? indent(3)
                                                         + "+ \" != \" + other.length + \"x\" + otherColumns);" : null,
                                                 "}", dimensions > 1 ? "ensureRectangular(other);" : null}, false)
                                 + (dimensions > 1
@@ -1808,12 +1808,12 @@ public class Generator
                                                 new String[]{
                                                         "for (int row = values.length; --row >= 1;)",
                                                         "{",
-                                                        indentStep + "if (values[0].length != values[row].length)",
-                                                        indentStep + "{",
-                                                        indentStep
-                                                                + indentStep
+                                                        indent(1) + "if (values[0].length != values[row].length)",
+                                                        indent(1) + "{",
+                                                        indent(1)
+                                                                + indent(1)
                                                                 + "throw new ValueException(\"Lengths of rows are not all the same\");",
-                                                        indentStep + "}", "}"}, false)
+                                                        indent(1) + "}", "}"}, false)
                                                 + buildMethod(
                                                         outerIndent,
                                                         "private static|void|ensureRectangularAndNonEmpty",
@@ -1829,20 +1829,20 @@ public class Generator
                                                         new String[]{
                                                                 "if (0 == values.length || 0 == values[0].length)",
                                                                 "{",
-                                                                indentStep
+                                                                indent(1)
                                                                         + "throw new ValueException(\"Cannot determine unit for "
                                                                         + type + "Matrix from an empty array of "
                                                                         + type + "Scalar" + "\");",
                                                                 "}",
                                                                 "for (int row = values.length; --row >= 1;)",
                                                                 "{",
-                                                                indentStep
+                                                                indent(1)
                                                                         + "if (values[0].length != values[row].length)",
-                                                                indentStep + "{",
-                                                                indentStep
-                                                                        + indentStep
+                                                                indent(1) + "{",
+                                                                indent(1)
+                                                                        + indent(1)
                                                                         + "throw new ValueException(\"Lengths of rows are not all the same\");",
-                                                                indentStep + "}", "}"}, false) : "")
+                                                                indent(1) + "}", "}"}, false) : "")
                                 + buildMethod(
                                         outerIndent,
                                         "protected final|void|checkIndex",
@@ -1859,16 +1859,16 @@ public class Generator
                                                         ? "if (index < 0 || index >= size())"
                                                         : "if (row < 0 || row >= rows() || column < 0 || column >= columns())",
                                                 "{",
-                                                indentStep
+                                                indent(1)
                                                         + "throw new ValueException(\"index out of range (valid range is 0..\" + "
                                                         + (1 == dimensions
                                                                 ? "(size() - 1) + \", got \" + index + \")\");"
                                                                 : "(rows() - 1) + \", 0..\""),
 
                                                 dimensions > 1
-                                                        ? indentStep
-                                                                + indentStep
-                                                                + indentStep
+                                                        ? indent(1)
+                                                                + indent(1)
+                                                                + indent(1)
                                                                 + "+ (columns() - 1) + \", got \" + row + \", \" + column + \")\");"
                                                         : null, "}"}, false)
                                 + buildMethod(outerIndent, "protected final|" + type.toLowerCase()
@@ -1919,17 +1919,17 @@ public class Generator
                                                                 + type.substring(0, 1).toLowerCase()
                                                                 + "sArray[0].length" : "") + ")",
                                                 "{",
-                                                indentStep + "throw new ValueException(",
-                                                indentStep + indentStep + indentStep + "\"Cannot create a " + type
-                                                        + aggregateType + " or Mutable" + type + aggregateType
-                                                        + " from an empty array of " + type + "Scalar\");", "}",
+                                                indent(1) + "throw new ValueException(",
+                                                indent(3) + "\"Cannot create a " + type + aggregateType + " or Mutable"
+                                                        + type + aggregateType + " from an empty array of " + type
+                                                        + "Scalar\");", "}",
                                                 "return " + type.substring(0, 1).toLowerCase() + "sArray;"}, false)
                                 + (2 == dimensions
                                         ? buildMethod(
                                                 outerIndent,
                                                 "public static|" + type + "Vector<SIUnit>|solve|vector x in A*x = b",
                                                 "Solve x for A*x = b. According to Colt: x; a new independent matrix; "
-                                                        + "solution if A is square, least squares\r\n" + indentStep
+                                                        + "solution if A is square, least squares\r\n" + indent(1)
                                                         + " * solution if A.rows() &gt; A.columns(), underdetermined "
                                                         + "system solution if A.rows() &lt; A.columns().",
                                                 new String[]{"final " + type + "Matrix<?>|A|matrix A in A*x = b",
@@ -1940,23 +1940,21 @@ public class Generator
                                                         "// TODO: is this correct? Should lookup matrix algebra "
                                                                 + "to find out unit for x when solving A*x = b ?",
                                                         "SIUnit targetUnit =",
-                                                        indentStep
-                                                                + indentStep
+                                                        indent(2)
                                                                 + "Unit.lookupOrCreateSIUnitWithSICoefficients("
                                                                 + "SICoefficients.divide(b.getUnit().getSICoefficients(),",
-                                                        indentStep + indentStep + indentStep + indentStep
-                                                                + "A.getUnit().getSICoefficients()).toString());",
+                                                        indent(4) + "A.getUnit().getSICoefficients()).toString());",
                                                         "",
                                                         "// TODO: should the algorithm throw an exception when rows/"
                                                                 + "columns do not match when solving A*x = b ?",
                                                         type + "Matrix2D A2D = A.getMatrixSI();",
                                                         "if (A instanceof SparseData)",
                                                         "{",
-                                                        indentStep + "Sparse" + type + "Matrix1D b1D = new Sparse"
+                                                        indent(1) + "Sparse" + type + "Matrix1D b1D = new Sparse"
                                                                 + type + "Matrix1D(b.getValuesSI());",
-                                                        indentStep + type + "Matrix1D x1D = new Sparse" + type
+                                                        indent(1) + type + "Matrix1D x1D = new Sparse" + type
                                                                 + "Algebra().solve(A2D, b1D);",
-                                                        indentStep
+                                                        indent(1)
                                                                 + type
                                                                 + "Vector.Abs.Sparse<SIUnit> x = new "
                                                                 + type
@@ -1965,16 +1963,16 @@ public class Generator
                                                         "}",
                                                         "if (A instanceof DenseData)",
                                                         "{",
-                                                        indentStep + "Dense" + type + "Matrix1D b1D = new Dense" + type
+                                                        indent(1) + "Dense" + type + "Matrix1D b1D = new Dense" + type
                                                                 + "Matrix1D(b.getValuesSI());",
-                                                        indentStep + type + "Matrix1D x1D = new Dense" + type
+                                                        indent(1) + type + "Matrix1D x1D = new Dense" + type
                                                                 + "Algebra().solve(A2D, b1D);",
-                                                        indentStep
+                                                        indent(1)
                                                                 + type
                                                                 + "Vector.Abs.Dense<SIUnit> x = new "
                                                                 + type
                                                                 + "Vector.Abs.Dense<SIUnit>(x1D.toArray(), targetUnit);",
-                                                        indentStep + "return x;",
+                                                        indent(1) + "return x;",
                                                         "}",
                                                         "throw new ValueException(\""
                                                                 + type
@@ -1996,7 +1994,7 @@ public class Generator
                                         new String[]{
                                                 "if (this == obj)",
                                                 "{",
-                                                indentStep + "return true;",
+                                                indent(1) + "return true;",
                                                 "}",
                                                 "if (obj == null)",
                                                 "{",
@@ -2004,24 +2002,24 @@ public class Generator
                                                 "}",
                                                 "if (!(obj instanceof " + type + aggregateType + "))",
                                                 "{",
-                                                indentStep + "return false;",
+                                                indent(1) + "return false;",
                                                 "}",
                                                 type + aggregateType + "<?> other = (" + type + aggregateType
                                                         + "<?>) obj;",
                                                 "// unequal if not both absolute or both relative",
                                                 "if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())",
                                                 "{",
-                                                indentStep + "return false;",
+                                                indent(1) + "return false;",
                                                 "}",
                                                 "// unequal if the standard SI units differ",
                                                 "if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))",
                                                 "{",
-                                                indentStep + "return false;",
+                                                indent(1) + "return false;",
                                                 "}",
                                                 "// Colt's equals also tests the size of the "
                                                         + aggregateType.toLowerCase(),
                                                 "if (!get" + aggregateType + "SI().equals(other.get" + aggregateType
-                                                        + "SI()))", "{", indentStep + "return false;", "}",
+                                                        + "SI()))", "{", indent(1) + "return false;", "}",
                                                 "return true;"}, false)
 
         );
@@ -2084,13 +2082,13 @@ public class Generator
                         1 == dimensions ? "for (int index = size(); --index >= 0;)"
                                 : "for (int row = rows(); --row >= 0;)",
                         "{",
-                        dimensions > 1 ? indentStep + "for (int column = columns(); --column >= 0;)" : null,
-                        dimensions > 1 ? indentStep + "{" : null,
-                        (dimensions > 1 ? indentStep : "") + indentStep + "safeSet("
+                        dimensions > 1 ? indent(1) + "for (int column = columns(); --column >= 0;)" : null,
+                        dimensions > 1 ? indent(1) + "{" : null,
+                        (dimensions > 1 ? indent(1) : "") + indent(1) + "safeSet("
                                 + (1 == dimensions ? "index" : "row, column") + ", safeGet("
                                 + (1 == dimensions ? "index" : "row, column") + ") " + (increment ? "+" : "-") + " "
                                 + inOrDecrement + "crement.safeGet(" + (1 == dimensions ? "index" : "row, column")
-                                + "));", dimensions > 1 ? indentStep + "}" : null, "}", "return this;"}, false);
+                                + "));", dimensions > 1 ? indent(1) + "}" : null, "}", "return this;"}, false);
     }
 
     /**
@@ -2140,13 +2138,12 @@ public class Generator
         if (rightType.length() > 0)
         {
             code.add("SIUnit targetUnit =");
-            code.add(indentStep
-                    + indentStep
+            code.add(indent(1)
+                    + indent(1)
                     + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),");
-            code.add(indentStep + indentStep + indentStep + indentStep
-                    + "right.getUnit().getSICoefficients()).toString());");
+            code.add(indent(4) + "right.getUnit().getSICoefficients()).toString());");
             code.add("Mutable" + type + vectorOrMatrix + "." + resultType + "<SIUnit> work =");
-            code.add(indentStep + indentStep + "new Mutable" + type + vectorOrMatrix + "." + resultType
+            code.add(indent(2) + "new Mutable" + type + vectorOrMatrix + "." + resultType
                     + "<SIUnit>(left.deepCopyOfData(), targetUnit);");
             code.add("work.scaleValueByValue(right);");
             code.add("return work;");
@@ -2218,7 +2215,7 @@ public class Generator
         {
             code.add("return " + castCode + "new Mutable" + type + vectorOrMatrix + ".Rel." + resultDenseSparse
                     + "<U>(left.deepCopyOfData(),");
-            code.add(outerIndent + indentStep + indentStep + "left.getUnit())." + operation + "(right);");
+            code.add(outerIndent + indent(2) + "left.getUnit())." + operation + "(right);");
         }
         else if (resultDenseSparse.equals("Dense") && leftType.contains("Dense") || resultDenseSparse.equals("Sparse")
                 && leftType.contains("Sparse"))
@@ -2266,18 +2263,18 @@ public class Generator
     /**
      * Generate the code for the *Functions in Mutable*Vector.
      * @param indent String; prefix for all output lines
-     * @param vectorType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @return String; java code
      */
-    private static String buildVectorFunctions(final String indent, final String vectorType)
+    private static String buildVectorFunctions(final String indent, final String type)
     {
         StringBuilder construction = new StringBuilder();
         for (MathFunctionEntry mfu : mathFunctions)
         {
             construction.append(buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
-                    ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + vectorType
+                    ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + type
                     + (mfu.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mfu.name
-                    + (null != mfu.argument ? "(" + (vectorType.startsWith("F") ? "(float) " : "") : "")
+                    + (null != mfu.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
                     + (null != mfu.argument ? "x)" : "") + ");"}, false));
         }
 
@@ -2285,7 +2282,7 @@ public class Generator
     }
 
     /**
-     * Generate the Java code for a sub class of vector
+     * Generate the Java code for a sub class of vector or matrix class
      * @param indent String; prefix for each output line
      * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
      * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatVector</cite> or
@@ -2308,7 +2305,7 @@ public class Generator
         construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
         construction.append(indent + "public abstract static class " + name + "<U extends Unit<U>> extends "
                 + extendsString + " implements " + implementsString + "\r\n" + indent + "{\r\n");
-        final String contentIndent = indent + indentStep;
+        final String contentIndent = indent + indent(1);
         construction.append(buildSerialVersionUID(contentIndent));
         construction.append(buildMethod(contentIndent, "protected||" + name, "Construct a new " + longName + ".",
                 new String[]{"final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
@@ -2354,7 +2351,7 @@ public class Generator
     }
 
     /**
-     * Generate the Java code for a vector sub sub class.
+     * Generate the Java code for a vector or matrix sub sub class.
      * @param indent String; prefix of all output lines
      * @param absRel String; either <cite>Absolute</cite>, or <cite>Relative</cite>
      * @param denseOrSparse String; either <cite>Dense</cite>, or <cite>Sparse</cite>
@@ -2379,7 +2376,7 @@ public class Generator
         construction.append(indent + "public static class " + denseOrSparse + "<U extends Unit<U>> extends "
                 + longName.split(" ")[0].substring(0, 3) + "<U>" + " implements " + denseOrSparse + "Data\r\n" + indent
                 + "{\r\n");
-        final String contentIndent = indent + indentStep;
+        final String contentIndent = indent + indent(1);
         construction.append(buildSerialVersionUID(contentIndent));
         construction.append(buildMethod(contentIndent, "public||" + denseOrSparse, "Construct a new " + fixedLongName
                 + ".", new String[]{
@@ -2445,7 +2442,7 @@ public class Generator
     private static void generateScalarClass(String scalarType, boolean mutable)
     {
         final String lowerCaseType = scalarType.toLowerCase();
-        final String outerIndent = indentStep;
+        final String outerIndent = indent(1);
         final String cast = scalarType.equals("Double") ? "" : "(float) ";
         final String mutableType = mutable ? "Mutable" : "Immutable ";
         generateAbstractClass(
@@ -2529,11 +2526,11 @@ public class Generator
                                                         + "Scalar"}, null, null, new String[]{
                                                         "if (this.getUnit().equals(this.getUnit().getStandardUnit()))",
                                                         "{",
-                                                        indentStep + "this.valueSI = value;",
+                                                        indent(1) + "this.valueSI = value;",
                                                         "}",
                                                         "else",
                                                         "{",
-                                                        indentStep + "this.valueSI = " + cast
+                                                        indent(1) + "this.valueSI = " + cast
                                                                 + "expressAsSIUnit(value);", "}"}, false)
                                         + buildMethod(
                                                 outerIndent,
@@ -2815,7 +2812,7 @@ public class Generator
                                 + "<U>("
                                 + (absoluteResult ? "valueAbs);" : "0.0" + (scalarType.startsWith("F") ? "f" : "")
                                         + ", targetUnit);"), "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)",
-                        "{", indentStep + "result.incrementBy(v);", "}", "return result;"}, false);
+                        "{", indent(1) + "result.incrementBy(v);", "}", "return result;"}, false);
     }
 
     /**
@@ -2858,7 +2855,7 @@ public class Generator
                         "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new Mutable" + scalarType
                                 + "Scalar." + absRel + "<U>(value" + absRel + ");",
                         "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)", "{",
-                        indentStep + "result.decrementBy(v);", "}", "return result;"}, false);
+                        indent(1) + "result.decrementBy(v);", "}", "return result;"}, false);
     }
 
     /**
@@ -2869,7 +2866,7 @@ public class Generator
     {
         final String cast = type.equals("Float") ? "" : "(float) ";
         final String lowerCaseType = type.toLowerCase();
-        final String indent = indentStep;
+        final String indent = indent(1);
         StringBuilder construction = new StringBuilder();
         construction.append(buildBlockComment(indent, "NUMBER METHODS"));
         construction.append(buildMethod(indent, "public final|int|intValue", null, null, null, null,
@@ -2892,31 +2889,31 @@ public class Generator
                 new String[]{"final Object|obj|the Object to compare with"}, null, null, new String[]{
                         "if (this == obj)",
                         "{",
-                        indentStep + "return true;",
+                        indent(1) + "return true;",
                         "}",
                         "if (obj == null)",
                         "{",
-                        indentStep + "return false;",
+                        indent(1) + "return false;",
                         "}",
                         "if (!(obj instanceof " + type + "Scalar))",
                         "{",
-                        indentStep + "return false;",
+                        indent(1) + "return false;",
                         "}",
                         type + "Scalar<?> other = (" + type + "Scalar<?>) obj;",
                         "// unequal if not both Absolute or both Relative",
                         "if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())",
                         "{",
-                        indentStep + "return false;",
+                        indent(1) + "return false;",
                         "}",
                         "// unequal if the underlying standard SI unit is different",
                         "if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))",
                         "{",
-                        indentStep + "return false;",
+                        indent(1) + "return false;",
                         "}",
                         "if (" + type + "." + lowerCaseType + (type.equals("Float") ? "ToIntBits" : "ToLongBits")
                                 + "(this.valueSI) != " + type + "." + lowerCaseType
                                 + (type.equals("Float") ? "ToIntBits" : "ToLongBits") + "(other.valueSI))", "{",
-                        indentStep + "return false;", "}", "return true;"}, false));
+                        indent(1) + "return false;", "}", "return true;"}, false));
 
         return construction.toString();
     }
@@ -2944,7 +2941,7 @@ public class Generator
         construction.append(indent + "public static class " + name + "<U extends Unit<U>> extends "
                 + (mutable ? "Mutable" : "") + extendsString + " implements " + implementsString + "\r\n" + indent
                 + "{\r\n");
-        final String contentIndent = indent + indentStep;
+        final String contentIndent = indent + indent(1);
         construction.append(buildSerialVersionUID(contentIndent));
         construction.append(buildMethod(contentIndent, "public||" + name, "Construct a new " + longName + ".",
                 new String[]{"final " + floatType.toLowerCase() + "|value|the value of the new " + longName,
@@ -3003,19 +3000,19 @@ public class Generator
      */
     private static String buildFormatMethods(String valueType)
     {
-        return buildMethod(indentStep, "public static|String|format|the formatted floating point value",
+        return buildMethod(indent(1), "public static|String|format|the formatted floating point value",
                 "Format a floating point value.", new String[]{"final " + valueType + "|value|the value to format",
                         "final int|width|the number of characters in the result",
                         "final int|precision|the number of fractional digits in the result"}, null, null, new String[]{
                         "if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)", "{",
-                        indentStep + "return String.format(formatString(width, precision, \"f\"), value);", "}",
+                        indent(1) + "return String.format(formatString(width, precision, \"f\"), value);", "}",
                         "return String.format(formatString(width, precision, \"e\"), value);"}, false)
-                + buildMethod(indentStep, "public static|String|format|the formatted floating point value",
+                + buildMethod(indent(1), "public static|String|format|the formatted floating point value",
                         "Format a floating point value.", new String[]{
                                 "final " + valueType + "|value|the value to format",
                                 "final int|size|the number of characters in the result"}, null, null,
                         new String[]{"return Format.format(value, size, Format.DEFAULTPRECISION);"}, false)
-                + buildMethod(indentStep, "public static|String|format|the formatted floating point value",
+                + buildMethod(indent(1), "public static|String|format|the formatted floating point value",
                         "Format a floating point value.", new String[]{"final " + valueType
                                 + "|value|the value to format",}, null, null,
                         new String[]{"return format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);"}, false);
