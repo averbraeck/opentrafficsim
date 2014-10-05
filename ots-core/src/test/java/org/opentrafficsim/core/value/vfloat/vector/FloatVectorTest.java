@@ -253,7 +253,7 @@ public abstract class FloatVectorTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 11", 11, fv.cardinality());
-        float[] in2 = { 1f, -1f, 0f };
+        float[] in2 = {1f, -1f, 0f };
         mfv = createFloatVector(in2, u, absolute).mutable();
         assertEquals("zSum should be 0", 0, mfv.zSum(), 0.00001);
         try
@@ -320,7 +320,7 @@ public abstract class FloatVectorTest
             assertFalse("fv and fvr should not be equal", fv.equals(fvr));
             assertFalse("fvr and fv should not be equal", fvr.equals(fv));
         }
-        float[] in3 = { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 };
+        float[] in3 = {-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 };
         mfv = createFloatVector(in3, LengthUnit.METER, absolute).mutable();
         mfv.abs();
         MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new FloatToFloat()
@@ -602,7 +602,7 @@ public abstract class FloatVectorTest
         if (absolute)
         {
             FloatVector<LengthUnit> fvAbsolute = createFloatVector(in3, LengthUnit.METER, true);
-            float[] in4 = { 1, 2, 3, 4 };
+            float[] in4 = {1, 2, 3, 4 };
             FloatVector<LengthUnit> fvRelative = createFloatVector(in4, LengthUnit.METER, false);
             MutableFloatVector<LengthUnit> plus = null;
             MutableFloatVector<LengthUnit> minus = null;
@@ -654,7 +654,7 @@ public abstract class FloatVectorTest
             {
                 // ignore
             }
-            float[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            float[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fvRelative = createFloatVector(in5, LengthUnit.METER, false);
             try
             {
@@ -735,7 +735,7 @@ public abstract class FloatVectorTest
 
             try
             {
-                float[] in6 = { 1, 2, 3 };
+                float[] in6 = {1, 2, 3 };
                 MutableFloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute).mutable();
                 MutableFloatVector<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -754,7 +754,7 @@ public abstract class FloatVectorTest
         // Relative
         {
             FloatVector<LengthUnit> fv1 = createFloatVector(in3, LengthUnit.METER, false);
-            float[] in4 = { 1, 2, 3, 4 };
+            float[] in4 = {1, 2, 3, 4 };
             FloatVector<LengthUnit> fv2 = createFloatVector(in4, LengthUnit.METER, false);
             MutableFloatVector<SIUnit> product = null;
             try
@@ -773,7 +773,7 @@ public abstract class FloatVectorTest
             {
                 // ignore
             }
-            float[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            float[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fv2 = createFloatVector(in5, LengthUnit.METER, false);
             try
             {
@@ -846,7 +846,7 @@ public abstract class FloatVectorTest
             assertTrue("result of a * b should be equal to result of b * a", product.equals(multiplyReverse));
             try
             {
-                float[] in6 = { 1, 2, 3 };
+                float[] in6 = {1, 2, 3 };
                 FloatVector<LengthUnit> original = createFloatVector(in6, LengthUnit.METER, absolute);
                 MutableFloatVector<LengthUnit> duplicate = original.mutable();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -862,8 +862,8 @@ public abstract class FloatVectorTest
             }
         }
         fv = createFloatVector(in, u, absolute);
-        float[] factorsTooShort = { 10, 20, 30, 40, 50, 60 };
-        float[] factorsCorrectLength = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 };
+        float[] factorsTooShort = {10, 20, 30, 40, 50, 60 };
+        float[] factorsCorrectLength = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 };
         if (absolute)
         {
             MutableFloatVector<LengthUnit> fv2 = null;
@@ -1179,8 +1179,8 @@ public abstract class FloatVectorTest
     @Test
     public final void relRel()
     {
-        float[] in1 = { 10f, 20f, 30f, 40f };
-        float[] in2 = { 110f, 120f, 130f, 140f };
+        float[] in1 = {10f, 20f, 30f, 40f };
+        float[] in2 = {110f, 120f, 130f, 140f };
         MassUnit u = MassUnit.POUND;
         FloatVector<MassUnit> fv1 = createFloatVectorRel(in1, u);
         FloatVector<MassUnit> fv2 = createFloatVectorRel(in2, u);
@@ -1245,7 +1245,7 @@ public abstract class FloatVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        float[] in3 = { 110f, 120f, 130f };
+        float[] in3 = {110f, 120f, 130f };
         FloatVector<MassUnit> fv3 = createFloatVectorRel(in3, u);
         try
         {
@@ -1362,8 +1362,8 @@ public abstract class FloatVectorTest
     @Test
     public final void absAbs()
     {
-        float[] in1 = { 10f, 20f, 30f, 40f };
-        float[] in2 = { 110f, 220f, 330f, 440f };
+        float[] in1 = {10f, 20f, 30f, 40f };
+        float[] in2 = {110f, 220f, 330f, 440f };
         MassUnit u = MassUnit.POUND;
         FloatVector<MassUnit> fv1 = createFloatVectorAbs(in1, u);
         // System.out.println("fv1: " + fv1);
@@ -1402,7 +1402,7 @@ public abstract class FloatVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        float[] in3 = { 110f, 120f, 130f };
+        float[] in3 = {110f, 120f, 130f };
         FloatVector<MassUnit> fv3 = createFloatVectorAbs(in3, u);
         try
         {

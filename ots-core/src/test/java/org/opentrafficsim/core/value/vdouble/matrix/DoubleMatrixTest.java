@@ -647,7 +647,7 @@ public abstract class DoubleMatrixTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 35", 35, dm.cardinality());
-        double[][] in2 = { { 1f, -1f, 0f } };
+        double[][] in2 = {{1f, -1f, 0f } };
         mfm = safeCreateDoubleMatrix(in2, u, absolute).mutable();
         assertEquals("Cardinality should be 2", 2, mfm.cardinality());
         assertEquals("zSum should be 0", 0, mfm.zSum(), 0.00001);
@@ -730,8 +730,8 @@ public abstract class DoubleMatrixTest
             // ignore
         }
         double[][] in3 =
-                { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 },
-                        { -1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000 } };
+                {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 },
+                        {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000 } };
         mfm = safeCreateDoubleMatrix(in3, LengthUnit.METER, absolute).mutable();
         mfm.abs();
         MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new DoubleToDouble()
@@ -1006,7 +1006,7 @@ public abstract class DoubleMatrixTest
         {
             // ignore
         }
-        double[][] singular = { { 1, 2, 3 }, { 3, 5, 7 }, { 5, 10, 0 } };
+        double[][] singular = {{1, 2, 3 }, {3, 5, 7 }, {5, 10, 0 } };
         mfm = safeCreateDoubleMatrix(singular, LengthUnit.METER, absolute).mutable();
         try
         {
@@ -1051,8 +1051,8 @@ public abstract class DoubleMatrixTest
         {
             DoubleMatrix<LengthUnit> fm1 = safeCreateDoubleMatrix(in3, LengthUnit.METER, true);
             double[][] inRowCountMismatch =
-                    { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10 }, { -1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000 } };
-            double[][] inColCountMismatch = { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 } };
+                    {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10 }, {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000 } };
+            double[][] inColCountMismatch = {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 } };
             DoubleMatrix<LengthUnit> fm2 = safeCreateDoubleMatrix(inRowCountMismatch, LengthUnit.METER, false);
             DoubleMatrix<LengthUnit> plus = null;
             DoubleMatrix<LengthUnit> minus = null;
@@ -1420,7 +1420,7 @@ public abstract class DoubleMatrixTest
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
             try
             {
-                double[][] in6 = { { 1, 2, 3 }, { 4, 5, 6 } };
+                double[][] in6 = {{1, 2, 3 }, {4, 5, 6 } };
                 MutableDoubleMatrix<LengthUnit> original = safeCreateDoubleMatrix(in6, LengthUnit.METER, absolute).mutable();
                 DoubleMatrix<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -2306,7 +2306,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Abs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 } };
+            double[][] rhs = {{1, 2, 3 }, {4, 5, 6 } };
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
@@ -2339,7 +2339,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Rel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 } };
+            double[][] rhs = {{1, 2, 3 }, {4, 5, 6 } };
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
@@ -2372,7 +2372,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Abs<LengthUnit> lhs = createDoubleMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            double[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
                 MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
@@ -2394,7 +2394,7 @@ public abstract class DoubleMatrixTest
         try
         {
             DoubleMatrix.Rel<LengthUnit> lhs = createDoubleMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            double[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            double[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
                 MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
@@ -2562,8 +2562,8 @@ public abstract class DoubleMatrixTest
     @Test
     public final void solver()
     {
-        double[][] a = { { 1, 2, 3 }, { 5, 6, 7 }, { 9, 10, 15 } };
-        double[] b = { 4, 8, 12 };
+        double[][] a = {{1, 2, 3 }, {5, 6, 7 }, {9, 10, 15 } };
+        double[] b = {4, 8, 12 };
         DoubleMatrix<LengthUnit> aMatrix = safeCreateDoubleMatrix(a, LengthUnit.METER, true);
         DoubleVector<ForceUnit> bVector = null;
         if (aMatrix instanceof SparseData)

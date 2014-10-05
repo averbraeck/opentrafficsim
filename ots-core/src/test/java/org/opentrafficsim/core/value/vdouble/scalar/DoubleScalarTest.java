@@ -433,7 +433,7 @@ public class DoubleScalarTest
     @Test
     public final void mathMethods()
     {
-        double[] inputValues = { -10f, -2f, -1f, -0.5f, -0.1f, 0f, 0.1f, 0.5f, 1f, 2f, 10f };
+        double[] inputValues = {-10f, -2f, -1f, -0.5f, -0.1f, 0f, 0.1f, 0.5f, 1f, 2f, 10f };
         for (double inputValue : inputValues)
         {
             MutableDoubleScalar.Rel<LengthUnit> fs;
@@ -701,7 +701,7 @@ public class DoubleScalarTest
                     }
                 });
             }
-            double[] constants = { -1000, -100, -10, 0, 10, 100, 1000 };
+            double[] constants = {1000, -100, -10, 0, 10, 100, 1000 };
             for (final double constant : constants)
             {
                 fs = new MutableDoubleScalar.Rel<LengthUnit>(inputValue, LengthUnit.METER);

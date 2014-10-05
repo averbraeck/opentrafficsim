@@ -21,7 +21,7 @@ public class FormatTest
     @Test
     public final void format()
     {
-        double[] baseValues = { 1, (float) (1 / 3d) };
+        double[] baseValues = {1, (float) (1 / 3d) };
         for (int width = 8; width <= 20; width++)
         {
             for (int precision = 0; precision <= 10; precision++)

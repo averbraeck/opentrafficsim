@@ -58,7 +58,7 @@ public class UnitTest
     public void getAllUnitsOfType()
     {
         Unit<?>[] baseUnits =
-                { MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, TemperatureUnit.KELVIN, /*
+                {MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, TemperatureUnit.KELVIN, /*
                                                                                                                                * LuminousIntencity
                                                                                                                                * .
                                                                                                                                * CANDELA
