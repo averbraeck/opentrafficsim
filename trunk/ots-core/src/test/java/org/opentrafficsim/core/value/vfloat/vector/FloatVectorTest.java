@@ -44,6 +44,7 @@ public abstract class FloatVectorTest
 
     /**
      * Test the FloatVectorAbs that takes a float[] and a Unit as arguments and some methods.
+     * @param absolute Boolean;
      */
     private void floatVectorTwoArgs(final Boolean absolute)
     {
@@ -1091,7 +1092,7 @@ public abstract class FloatVectorTest
          * @param function FloatToFloat encapsulating function that converts one value in inputValues to the corresponding value
          *            in resultValues
          */
-        public static void tester(final float[] inputValues, String operation, final float[] resultValues,
+        public static void tester(final float[] inputValues, final String operation, final float[] resultValues,
                 final double precision, final FloatToFloat function)
         {
             for (int i = 0; i < inputValues.length; i++)
@@ -1117,7 +1118,7 @@ public abstract class FloatVectorTest
      * Test FloatVectorAbs and FloatVectorRel creators that take an array of FloatScalar as argument.
      */
     @Test
-    public void floatVectorOneArg()
+    public final void floatVectorOneArg()
     {
         floatVectorOneArg(true); // test absolute version
         floatVectorOneArg(false); // test relative version
@@ -1125,6 +1126,7 @@ public abstract class FloatVectorTest
 
     /**
      * Test the FloatVectorAbs and FloatVectorRel that takes a FloatScalar*<U>[] as argument.
+     * @param absolute Boolean;
      */
     @SuppressWarnings("unchecked")
     private void floatVectorOneArg(final Boolean absolute)
@@ -1560,7 +1562,7 @@ public abstract class FloatVectorTest
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void floatVectorRel2()
+    public final void floatVectorRel2()
     {
         FloatVector<LengthUnit> fsa = null;
         FloatScalar.Rel<LengthUnit>[] in = new FloatScalar.Rel[0];
@@ -1594,9 +1596,10 @@ public abstract class FloatVectorTest
      * @param in float[] with values
      * @param u Unit; type for the new FloatVector
      * @param absolute Boolean; true to create a FloatVectorAbs; false to create a FloatVectorRel
+     * @param <U> Unit
      * @return FloatVector
      */
-    private <U extends Unit<U>> FloatVector<U> createFloatVector(final float[] in, final U u, boolean absolute)
+    private <U extends Unit<U>> FloatVector<U> createFloatVector(final float[] in, final U u, final boolean absolute)
     {
         if (absolute)
         {
@@ -1612,14 +1615,16 @@ public abstract class FloatVectorTest
      * Create a new FloatVectorAbs from an array of float values and Unit.
      * @param in float[] with values
      * @param u Unit; type for the new FloatVectorAbs
-     * @return
+     * @param <U> Unit
+     * @return FloatVector.Abs&lt;U&gt;;
      */
     protected abstract <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(final float[] in, final U u);
 
     /**
      * Create a new FloatVectorAbs from an array of FloatScalarAbs values.
      * @param in FloatScalar.Abs[]; the values
-     * @return
+     * @param <U> Unit
+     * @return FloatVector.Abs&lt;U&gt;;
      * @throws ValueException when the array is empty
      */
     protected abstract <U extends Unit<U>> FloatVector.Abs<U> createFloatVectorAbs(final FloatScalar.Abs<U>[] in)
@@ -1629,14 +1634,16 @@ public abstract class FloatVectorTest
      * Create a new FloatVector.*.Rel from an array of float values and Unit.
      * @param in float[] with values
      * @param u Unit; type for the new FloatVectorRel
-     * @return
+     * @param <U> Unit
+     * @return FloatVector.Rel&lt;U&gt;;
      */
     protected abstract <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(final float[] in, final U u);
 
     /**
      * Create a new FloatVector.*.Rel from an array of FloatScalarRel values.
      * @param in FloatScalar.Abs[]; the values
-     * @return
+     * @param <U> Unit
+     * @return FloatVector.Rel&lt;U&gt;;
      * @throws ValueException when the array is empty
      */
     protected abstract <U extends Unit<U>> FloatVector.Rel<U> createFloatVectorRel(final FloatScalar.Rel<U>[] in)

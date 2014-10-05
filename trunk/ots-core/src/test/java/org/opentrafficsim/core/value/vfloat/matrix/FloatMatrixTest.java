@@ -135,7 +135,7 @@ public abstract class FloatMatrixTest
     /**
      * Check that the four creators of MutableFloatMatrix work.
      */
-    @SuppressWarnings({ "static-method", "unused" })
+    @SuppressWarnings({ "static-method" })
     @Test
     public final void mutableFloatMatrixCreators()
     {
@@ -334,6 +334,7 @@ public abstract class FloatMatrixTest
 
     /**
      * Test the FloatMatrixAbs that takes a float[][] and a Unit as arguments and some methods.
+     * @param absolute Boolean;
      */
     private void floatMatrixTwoArgs(final Boolean absolute)
     {
@@ -1695,6 +1696,7 @@ public abstract class FloatMatrixTest
 
     /**
      * Test the FloatMatrixAbs and FloatMatrixRel that takes a FloatScalar*<U>[] as argument.
+     * @param absolute Boolean;
      */
     @SuppressWarnings("unchecked")
     private void floatMatrixOneArg(final Boolean absolute)
@@ -2650,7 +2652,7 @@ public abstract class FloatMatrixTest
      * @param u Unit; type for the new FloatMatrix
      * @param absolute Boolean; true to create a FloatMatrixAbs; false to create a FloatMatrixRel
      * @return FloatMatrix
-     * @throws ValueException
+     * @throws ValueException when in is not rectangular
      * @param <U> Unit; the unit
      */
     private <U extends Unit<U>> FloatMatrix<U> createFloatMatrix(final float[][] in, final U u, final boolean absolute)

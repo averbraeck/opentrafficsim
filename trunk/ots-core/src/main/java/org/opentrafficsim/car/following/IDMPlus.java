@@ -25,6 +25,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  * @version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <Line>
+ * @param <C> Car; 
  */
 public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
 {

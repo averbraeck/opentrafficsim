@@ -17,6 +17,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * <p>
  * @version Jul 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <C> Car;
  */
 public interface CarFollowingModel<C extends Car>
 {

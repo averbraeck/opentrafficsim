@@ -26,7 +26,7 @@ public class SICoefficients
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return enumMapToString(this.coefficientsMap);
     }
