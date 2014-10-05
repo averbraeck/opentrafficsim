@@ -646,7 +646,7 @@ public abstract class FloatMatrixTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 35", 35, fm.cardinality());
-        float[][] in2 = { { 1f, -1f, 0f } };
+        float[][] in2 = {{1f, -1f, 0f } };
         mfm = safeCreateFloatMatrix(in2, u, absolute).mutable();
         assertEquals("Cardinality should be 2", 2, mfm.cardinality());
         assertEquals("zSum should be 0", 0, mfm.zSum(), 0.00001);
@@ -729,8 +729,8 @@ public abstract class FloatMatrixTest
             // ignore
         }
         float[][] in3 =
-                { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 },
-                        { -1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000 } };
+                {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 },
+                        {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000, 1000000 } };
         mfm = safeCreateFloatMatrix(in3, LengthUnit.METER, absolute).mutable();
         mfm.abs();
         MathTester.tester(in3, "abs", mfm.getValuesSI(), 0.001, new FloatToFloat()
@@ -1005,7 +1005,7 @@ public abstract class FloatMatrixTest
         {
             // ignore
         }
-        float[][] singular = { { 1, 2, 3 }, { 3, 5, 7 }, { 5, 10, 0 } };
+        float[][] singular = {{1, 2, 3 }, {3, 5, 7 }, {5, 10, 0 } };
         mfm = safeCreateFloatMatrix(singular, LengthUnit.METER, absolute).mutable();
         try
         {
@@ -1050,8 +1050,8 @@ public abstract class FloatMatrixTest
         {
             FloatMatrix<LengthUnit> fm1 = safeCreateFloatMatrix(in3, LengthUnit.METER, true);
             float[][] inRowCountMismatch =
-                    { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10 }, { -1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000 } };
-            float[][] inColCountMismatch = { { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 } };
+                    {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10 }, {-1000000, -1000, -100, -0.001f, 1, 0.001f, 100, 1000 } };
+            float[][] inColCountMismatch = {{-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 } };
             FloatMatrix<LengthUnit> fm2 = safeCreateFloatMatrix(inRowCountMismatch, LengthUnit.METER, false);
             FloatMatrix<LengthUnit> plus = null;
             FloatMatrix<LengthUnit> minus = null;
@@ -1411,7 +1411,7 @@ public abstract class FloatMatrixTest
             assertTrue("result of a * b should be equal to result of b * a", multiply.equals(multiplyReverse));
             try
             {
-                float[][] in6 = { { 1, 2, 3 }, { 4, 5, 6 } };
+                float[][] in6 = {{1, 2, 3 }, {4, 5, 6 } };
                 MutableFloatMatrix<LengthUnit> original = safeCreateFloatMatrix(in6, LengthUnit.METER, absolute).mutable();
                 FloatMatrix<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -2286,7 +2286,7 @@ public abstract class FloatMatrixTest
         try
         {
             FloatMatrix.Abs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            float[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 } };
+            float[][] rhs = {{1, 2, 3 }, {4, 5, 6 } };
             MutableFloatMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
@@ -2319,7 +2319,7 @@ public abstract class FloatMatrixTest
         try
         {
             FloatMatrix.Rel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            float[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 } };
+            float[][] rhs = {{1, 2, 3 }, {4, 5, 6 } };
             MutableFloatMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
@@ -2352,7 +2352,7 @@ public abstract class FloatMatrixTest
         try
         {
             FloatMatrix.Abs<LengthUnit> lhs = createFloatMatrixAbs(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            float[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            float[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
                 MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
@@ -2374,7 +2374,7 @@ public abstract class FloatMatrixTest
         try
         {
             FloatMatrix.Rel<LengthUnit> lhs = createFloatMatrixRel(buildArray(2, 3, false, 0.5f), LengthUnit.METER);
-            float[][] rhs = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            float[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
                 MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
@@ -2539,8 +2539,8 @@ public abstract class FloatMatrixTest
     @Test
     public final void solver()
     {
-        float[][] a = { { 1, 2, 3 }, { 5, 6, 7 }, { 9, 10, 15 } };
-        float[] b = { 4, 8, 12 };
+        float[][] a = {{1, 2, 3 }, {5, 6, 7 }, {9, 10, 15 } };
+        float[] b = {4, 8, 12 };
         FloatMatrix<LengthUnit> aMatrix = safeCreateFloatMatrix(a, LengthUnit.METER, true);
         FloatVector<ForceUnit> bVector = null;
         if (aMatrix instanceof SparseData)

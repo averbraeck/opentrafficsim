@@ -253,7 +253,7 @@ public abstract class DoubleVectorTest
             fail("Unexpected exception");
         }
         assertEquals("Cardinality should be 11", 11, fv.cardinality());
-        double[] in2 = { 1f, -1f, 0f };
+        double[] in2 = {1f, -1f, 0f };
         mfv = createDoubleVector(in2, u, absolute).mutable();
         assertEquals("zSum should be 0", 0, mfv.zSum(), 0.00001);
         try
@@ -320,7 +320,7 @@ public abstract class DoubleVectorTest
             assertFalse("fv and fvr should not be equal", fv.equals(fvr));
             assertFalse("fvr and fv should not be equal", fvr.equals(fv));
         }
-        double[] in3 = { -100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 };
+        double[] in3 = {-100, -10, -1, -0.1f, 1, 0.1f, 1, 10, 100 };
         mfv = createDoubleVector(in3, LengthUnit.METER, absolute).mutable();
         mfv.abs();
         MathTester.tester(in3, "abs", mfv.getValuesSI(), 0.001, new DoubleToDouble()
@@ -602,7 +602,7 @@ public abstract class DoubleVectorTest
         if (absolute)
         {
             DoubleVector<LengthUnit> fvAbsolute = createDoubleVector(in3, LengthUnit.METER, true);
-            double[] in4 = { 1, 2, 3, 4 };
+            double[] in4 = {1, 2, 3, 4 };
             DoubleVector<LengthUnit> fvRelative = createDoubleVector(in4, LengthUnit.METER, false);
             MutableDoubleVector<LengthUnit> plus = null;
             MutableDoubleVector<LengthUnit> minus = null;
@@ -654,7 +654,7 @@ public abstract class DoubleVectorTest
             {
                 // ignore
             }
-            double[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            double[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fvRelative = createDoubleVector(in5, LengthUnit.METER, false);
             try
             {
@@ -735,7 +735,7 @@ public abstract class DoubleVectorTest
 
             try
             {
-                double[] in6 = { 1, 2, 3 };
+                double[] in6 = {1, 2, 3 };
                 MutableDoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute).mutable();
                 MutableDoubleVector<LengthUnit> duplicate = original.copy();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -754,7 +754,7 @@ public abstract class DoubleVectorTest
         // Relative
         {
             DoubleVector<LengthUnit> fv1 = createDoubleVector(in3, LengthUnit.METER, false);
-            double[] in4 = { 1, 2, 3, 4 };
+            double[] in4 = {1, 2, 3, 4 };
             DoubleVector<LengthUnit> fv2 = createDoubleVector(in4, LengthUnit.METER, false);
             MutableDoubleVector<SIUnit> product = null;
             try
@@ -773,7 +773,7 @@ public abstract class DoubleVectorTest
             {
                 // ignore
             }
-            double[] in5 = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            double[] in5 = {1, 2, 3, 4, 5, 6, 7, 8, 9 };
             fv2 = createDoubleVector(in5, LengthUnit.METER, false);
             try
             {
@@ -847,7 +847,7 @@ public abstract class DoubleVectorTest
             assertTrue("result of a * b should be equal to result of b * a", product.equals(multiplyReverse));
             try
             {
-                double[] in6 = { 1, 2, 3 };
+                double[] in6 = {1, 2, 3 };
                 DoubleVector<LengthUnit> original = createDoubleVector(in6, LengthUnit.METER, absolute);
                 MutableDoubleVector<LengthUnit> duplicate = original.mutable();
                 assertTrue("Original should be equal to duplicate", original.equals(duplicate));
@@ -863,8 +863,8 @@ public abstract class DoubleVectorTest
             }
         }
         fv = createDoubleVector(in, u, absolute);
-        double[] factorsTooShort = { 10, 20, 30, 40, 50, 60 };
-        double[] factorsCorrectLength = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 };
+        double[] factorsTooShort = {10, 20, 30, 40, 50, 60 };
+        double[] factorsCorrectLength = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 };
         if (absolute)
         {
             MutableDoubleVector<LengthUnit> fv2 = null;
@@ -887,9 +887,13 @@ public abstract class DoubleVectorTest
             try
             {
                 if (fv instanceof DoubleVector.Abs.Dense)
+                {
                     fv2 = MutableDoubleVector.times((DoubleVector.Abs.Dense<LengthUnit>) fv, factorsCorrectLength);
+                }
                 else if (fv instanceof DoubleVector.Abs.Sparse)
+                {
                     fv2 = MutableDoubleVector.times((DoubleVector.Abs.Sparse<LengthUnit>) fv, factorsCorrectLength);
+                }
             }
             catch (ValueException exception)
             {
@@ -1176,8 +1180,8 @@ public abstract class DoubleVectorTest
     @Test
     public void relRel()
     {
-        double[] in1 = { 10f, 20f, 30f, 40f };
-        double[] in2 = { 110f, 120f, 130f, 140f };
+        double[] in1 = {10f, 20f, 30f, 40f };
+        double[] in2 = {110f, 120f, 130f, 140f };
         MassUnit u = MassUnit.POUND;
         DoubleVector<MassUnit> fv1 = createDoubleVectorRel(in1, u);
         DoubleVector<MassUnit> fv2 = createDoubleVectorRel(in2, u);
@@ -1245,7 +1249,7 @@ public abstract class DoubleVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        double[] in3 = { 110f, 120f, 130f };
+        double[] in3 = {110f, 120f, 130f };
         DoubleVector<MassUnit> fv3 = createDoubleVectorRel(in3, u);
         try
         {
@@ -1368,8 +1372,8 @@ public abstract class DoubleVectorTest
     @Test
     public final void absAbs()
     {
-        double[] in1 = { 10f, 20f, 30f, 40f };
-        double[] in2 = { 110f, 220f, 330f, 440f };
+        double[] in1 = {10f, 20f, 30f, 40f };
+        double[] in2 = {110f, 220f, 330f, 440f };
         MassUnit u = MassUnit.POUND;
         DoubleVector<MassUnit> fv1 = createDoubleVectorAbs(in1, u);
         // System.out.println("fv1: " + fv1);
@@ -1409,7 +1413,7 @@ public abstract class DoubleVectorTest
             assertEquals("Each element should equal the difference of the contributing elements", in1[i] - in2[i],
                     differenceValues[i], 0.0001);
         }
-        double[] in3 = { 110f, 120f, 130f };
+        double[] in3 = {110f, 120f, 130f };
         DoubleVector<MassUnit> fv3 = createDoubleVectorAbs(in3, u);
         try
         {

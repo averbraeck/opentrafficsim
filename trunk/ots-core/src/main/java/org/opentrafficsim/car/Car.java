@@ -276,7 +276,7 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
         // quick and dirty... straight line.
         // TODO: map to a geometry model...
         return new DirectedPoint(
-                new double[] { getPosition(this.simulator.getSimulatorTime().get()).doubleValue(), 0.0d, 0.0d });
+                new double[] {getPosition(this.simulator.getSimulatorTime().get()).doubleValue(), 0.0d, 0.0d });
     }
 
     /** {@inheritDoc} */
