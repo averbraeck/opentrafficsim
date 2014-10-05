@@ -19,11 +19,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class CarTest
 {
     /**
-     * Test some basics of the Car class
+     * Test some basics of the Car class.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void carTest()
+    public final void carTest()
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(12, LengthUnit.METER);

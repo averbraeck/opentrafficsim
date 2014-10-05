@@ -35,6 +35,9 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
 {
     // TODO lots of these fields should probably be moved int the GTU class...
 
+    /** */
+    private static final long serialVersionUID = 20141005L;
+
     /** Time of last evaluation. */
     protected DoubleScalar.Abs<TimeUnit> lastEvaluationTime;
 

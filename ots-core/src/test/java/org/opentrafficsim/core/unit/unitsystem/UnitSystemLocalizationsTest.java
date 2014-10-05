@@ -24,7 +24,7 @@ public class UnitSystemLocalizationsTest
      * localizations.
      */
     @Test
-    public void checkDefinedUnitSystems()
+    public final void checkDefinedUnitSystems()
     {
         List<UnitSystem> unitSystems = new ArrayList<UnitSystem>();
         Field[] fields = UnitSystem.class.getDeclaredFields();

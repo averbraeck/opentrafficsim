@@ -135,7 +135,7 @@ public abstract class DoubleMatrixTest
     /**
      * Check that the four creators of MutableDoubleMatrix work.
      */
-    @SuppressWarnings({ "static-method", "unused" })
+    @SuppressWarnings({ "static-method" })
     @Test
     public final void mutableDoubleMatrixCreators()
     {
@@ -335,6 +335,7 @@ public abstract class DoubleMatrixTest
 
     /**
      * Test the DoubleMatrixAbs that takes a double[][] and a Unit as arguments and some methods.
+     * @param absolute Boolean;
      */
     private void doubleMatrixTwoArgs(final Boolean absolute)
     {
@@ -1704,6 +1705,7 @@ public abstract class DoubleMatrixTest
 
     /**
      * Test the DoubleMatrixAbs and DoubleMatrixRel that takes a DoubleScalar*<U>[] as argument.
+     * @param absolute Boolean;
      */
     @SuppressWarnings("unchecked")
     private void doubleMatrixOneArg(final Boolean absolute)

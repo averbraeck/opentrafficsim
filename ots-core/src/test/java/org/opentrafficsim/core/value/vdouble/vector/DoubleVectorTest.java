@@ -44,6 +44,7 @@ public abstract class DoubleVectorTest
 
     /**
      * Test the DoubleVectorAbs that takes a double[] and a Unit as arguments and some methods.
+     * @param absolute Boolean;
      */
     private void doubleVectorTwoArgs(final Boolean absolute)
     {
@@ -1126,6 +1127,7 @@ public abstract class DoubleVectorTest
 
     /**
      * Test the DoubleVectorAbs and DoubleVectorRel that takes a DoubleScalar*<U>[] as argument.
+     * @param absolute Boolean;
      */
     @SuppressWarnings("unchecked")
     private void doubleVectorOneArg(final Boolean absolute)
@@ -1178,7 +1180,7 @@ public abstract class DoubleVectorTest
      * Test adding and subtracting DoubleVectorRel.
      */
     @Test
-    public void relRel()
+    public final void relRel()
     {
         double[] in1 = {10f, 20f, 30f, 40f };
         double[] in2 = {110f, 120f, 130f, 140f };
