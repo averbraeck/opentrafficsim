@@ -30,7 +30,7 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableFloatVector
  */
-public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements 
+public abstract class MutableFloatVector <U extends Unit<U>> extends FloatVector<U> implements 
         WriteFloatVectorFunctions<U>, FloatMathFunctions
 {
     /**  */

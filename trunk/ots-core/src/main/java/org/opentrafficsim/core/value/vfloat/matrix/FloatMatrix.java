@@ -38,7 +38,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this FloatMatrix
  */
-public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+public abstract class FloatMatrix <U extends Unit<U>> extends AbstractValue<U> implements Serializable,
     ReadOnlyFloatMatrixFunctions<U>
 {
     /**  */

@@ -75,30 +75,30 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment"> * @param &lt;C&gt; Car; </span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;29</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment"> */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;30</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> IDMPlus&lt;Line, C <span class="keyword">extends</span> Car&gt; <span class="keyword">implements</span> CarFollowingModel&lt;C&gt;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;30</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> IDMPlus&lt;Line, C <span class="keyword">extends</span> Car&gt; <span class="keyword">implements</span> CarFollowingModel&lt;C&gt;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;31</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;{</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;32</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Preferred net longitudinal distance when stopped [m]. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;33</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;LengthUnit&gt; s0 = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(3, LengthUnit.METER);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;33</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;LengthUnit&gt; s0 = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(3, LengthUnit.METER);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;34</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;35</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Longitudinal acceleration [m/s^2]. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; a = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(1.25,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;37</td>  <td class="nbHitsCovered">&nbsp;1</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; a = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(1.25,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;37</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;38</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;39</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Regular longitudinal acceleration [m/s^2]. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;40</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; aMin = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(1.25,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;1</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;40</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; aMin = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(1.25,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;42</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;43</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Longitudinal deceleration [m/s^2]. (Should be a positive value even though it is a &lt;b&gt;de&lt;/b&gt;celeration.) */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;44</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; b = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(2.09,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;45</td>  <td class="nbHitsCovered">&nbsp;1</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;44</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; b = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(2.09,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;45</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;46</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;47</td>  <td class="nbHits">&nbsp;</td>
@@ -109,53 +109,53 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * it is a &lt;b&gt;de&lt;/b&gt;celeration.) [m/s^2]</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;50</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; b0 = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(0.5,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered">&nbsp;1</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;AccelerationUnit&gt; b0 = <span class="keyword">new</span> DoubleScalar.Abs&lt;AccelerationUnit&gt;(0.5,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;            AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;54</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Longitudinal regular following headway [s]. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; tMax = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(1.2, TimeUnit.SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; tMax = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(1.2, TimeUnit.SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;56</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;57</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS free lane change threshold. (Value between 0 and dSync) */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;58</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> dFree = .365;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;58</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> dFree = .365;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;59</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;60</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS synchronized lane change threshold. (Value between dFree and dCoop) */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> dSync = .577;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> dSync = .577;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;62</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;63</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS cooperative lane change threshold. (Value between dSync and 1.0) */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;64</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> dCoop = .788;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;64</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> dCoop = .788;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;65</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;66</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS mandatory lane change time [s]. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;67</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; t0 = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(43, TimeUnit.SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;67</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; t0 = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(43, TimeUnit.SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;68</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;69</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS mandatory lane change distance [m]. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;LengthUnit&gt; x0 = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(295, LengthUnit.METER);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;LengthUnit&gt; x0 = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(295, LengthUnit.METER);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;71</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;72</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS speed gain [m/s] for full desire. (The paper specifies this value in [km/h]) */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;SpeedUnit&gt; vGain = <span class="keyword">new</span> DoubleScalar.Abs&lt;SpeedUnit&gt;(69.6, SpeedUnit.KM_PER_HOUR);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;SpeedUnit&gt; vGain = <span class="keyword">new</span> DoubleScalar.Abs&lt;SpeedUnit&gt;(69.6, SpeedUnit.KM_PER_HOUR);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;74</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;75</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** LMRS critical speed [m/s] for a speed gain in the right lane. (The paper specifies this value in [km/h]) */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;SpeedUnit&gt; vCong = <span class="keyword">new</span> DoubleScalar.Abs&lt;SpeedUnit&gt;(60, SpeedUnit.KM_PER_HOUR);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;SpeedUnit&gt; vCong = <span class="keyword">new</span> DoubleScalar.Abs&lt;SpeedUnit&gt;(60, SpeedUnit.KM_PER_HOUR);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;77</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;78</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Safe time headway. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; tSafe = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(1.6, TimeUnit.SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; tSafe = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(1.6, TimeUnit.SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;80</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;81</td>  <td class="nbHits">&nbsp;</td>
@@ -166,7 +166,7 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * limit, etc.).</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;84</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;85</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> delta = 1.0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;85</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">double</span> delta = 1.0;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;86</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;87</td>  <td class="nbHits">&nbsp;</td>
@@ -177,7 +177,7 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * and accuracy).</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;90</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; stepSize = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(0.5, TimeUnit.SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> DoubleScalar.Rel&lt;TimeUnit&gt; stepSize = <span class="keyword">new</span> DoubleScalar.Rel&lt;TimeUnit&gt;(0.5, TimeUnit.SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;92</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;93</td>  <td class="nbHits">&nbsp;</td>
@@ -196,8 +196,8 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> DoubleScalar.Rel&lt;SpeedUnit&gt; vDes(<span class="keyword">final</span> C car, <span class="keyword">final</span> DoubleScalar.Abs&lt;SpeedUnit&gt; speedLimit)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;100</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;101</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> DoubleScalar.Rel&lt;SpeedUnit&gt;(Math.min(<span class="keyword">this</span>.delta * speedLimit.getValueSI(), car.vMax().getValueSI()),</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;102</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                SpeedUnit.METER_PER_SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;101</td>  <td class="nbHitsCovered">&nbsp;3735</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> DoubleScalar.Rel&lt;SpeedUnit&gt;(Math.min(<span class="keyword">this</span>.delta * speedLimit.getValueSI(), car.vMax().getValueSI()),</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;102</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                SpeedUnit.METER_PER_SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;103</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;104</td>  <td class="nbHits">&nbsp;</td>
@@ -212,82 +212,82 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> DoubleScalar.Abs&lt;SpeedUnit&gt; speedLimit)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;109</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Abs&lt;TimeUnit&gt; thisEvaluationTime = car.getNextEvaluationTime();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Abs&lt;TimeUnit&gt; thisEvaluationTime = car.getNextEvaluationTime();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;111</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("evaluation time is " + thisEvaluationTime);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;112</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("vDes is " + vDes);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;113</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Abs&lt;LengthUnit&gt; myFrontPosition = car.positionOfFront(thisEvaluationTime);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;113</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Abs&lt;LengthUnit&gt; myFrontPosition = car.positionOfFront(thisEvaluationTime);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;114</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("myFrontPosition is " + myFrontPosition);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;115</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Rel&lt;LengthUnit&gt; shortestHeadway = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(Double.MAX_VALUE, LengthUnit.METER);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;116</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        C closestLeader = <span class="keyword">null</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;117</td>  <td class="nbHitsCovered"><a title="Line 117: Conditional coverage 100% (2/2).">&nbsp;2989</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 117: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (C leader : leaders)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;115</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Rel&lt;LengthUnit&gt; shortestHeadway = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(Double.MAX_VALUE, LengthUnit.METER);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;116</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        C closestLeader = <span class="keyword">null</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;117</td>  <td class="nbHitsCovered"><a title="Line 117: Conditional coverage 100% (2/2).">&nbsp;5231</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 117: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (C leader : leaders)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;118</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;119</td>  <td class="nbHitsCovered">&nbsp;1496</td>  <td class="src"><pre class="src">&nbsp;            DoubleScalar.Rel&lt;LengthUnit&gt; s =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;120</td>  <td class="nbHitsCovered">&nbsp;748</td>  <td class="src"><pre class="src">&nbsp;                    MutableDoubleScalar.minus(leader.positionOfRear(thisEvaluationTime), myFrontPosition).immutable();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;119</td>  <td class="nbHitsCovered">&nbsp;2244</td>  <td class="src"><pre class="src">&nbsp;            DoubleScalar.Rel&lt;LengthUnit&gt; s =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;120</td>  <td class="nbHitsCovered">&nbsp;1496</td>  <td class="src"><pre class="src">&nbsp;                    MutableDoubleScalar.minus(leader.positionOfRear(thisEvaluationTime), myFrontPosition).immutable();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;121</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// System.out.println("s is " + s);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;122</td>  <td class="nbHitsCovered"><a title="Line 122: Conditional coverage 100% (2/2).">&nbsp;1496</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 122: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (s.getValueSI() &lt; 0)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;122</td>  <td class="nbHitsCovered"><a title="Line 122: Conditional coverage 100% (2/2).">&nbsp;2244</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 122: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (s.getValueSI() &lt; 0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;123</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;124</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>; <span class="comment">// Ignore cars that are behind this car</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;124</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>; <span class="comment">// Ignore cars that are behind this car</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;125</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;126</td>  <td class="nbHitsCovered"><a title="Line 126: Conditional coverage 100% (2/2).">&nbsp;1494</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 126: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (s.getValueSI() &lt; shortestHeadway.getValueSI())</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;126</td>  <td class="nbHitsCovered"><a title="Line 126: Conditional coverage 100% (2/2).">&nbsp;2241</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 126: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (s.getValueSI() &lt; shortestHeadway.getValueSI())</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;127</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;128</td>  <td class="nbHitsCovered">&nbsp;1492</td>  <td class="src"><pre class="src">&nbsp;                shortestHeadway = s;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;129</td>  <td class="nbHitsCovered">&nbsp;1492</td>  <td class="src"><pre class="src">&nbsp;                closestLeader = leader;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;128</td>  <td class="nbHitsCovered">&nbsp;2238</td>  <td class="src"><pre class="src">&nbsp;                shortestHeadway = s;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;129</td>  <td class="nbHitsCovered">&nbsp;2238</td>  <td class="src"><pre class="src">&nbsp;                closestLeader = leader;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;130</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;131</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;132</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("shortestHeadway is " + shortestHeadway);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;133</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Rel&lt;SpeedUnit&gt; myCurrentSpeed = car.getVelocity(thisEvaluationTime);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;134</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> speedIncentive = 1 - Math.pow(myCurrentSpeed.getValueSI() / vDes(car, speedLimit).getValueSI(), 4);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;133</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Rel&lt;SpeedUnit&gt; myCurrentSpeed = car.getVelocity(thisEvaluationTime);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;134</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> speedIncentive = 1 - Math.pow(myCurrentSpeed.getValueSI() / vDes(car, speedLimit).getValueSI(), 4);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;135</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("speedIncentive is " + speedIncentive);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;136</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        MutableDoubleScalar.Rel&lt;AccelerationUnit&gt; logWeightedAverageSpeedTimes2 =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;137</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> MutableDoubleScalar.Rel&lt;AccelerationUnit&gt;(Math.sqrt(<span class="keyword">this</span>.a.getValueSI() * <span class="keyword">this</span>.b.getValueSI()),</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;138</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                        AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        logWeightedAverageSpeedTimes2.multiply(2); <span class="comment">// don't forget the times 2</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;140</td>  <td class="nbHitsCovered"><a title="Line 140: Conditional coverage 100% (2/2).">&nbsp;1494</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 140: Conditional coverage 100% (2/2).">        DoubleScalar.Rel&lt;SpeedUnit&gt; dV =</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;141</td>  <td class="nbHitsCovered"><a title="Line 141: Conditional coverage 100% (2/2).">&nbsp;747</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 141: Conditional coverage 100% (2/2).">                (<span class="keyword">null</span> == closestLeader) ? <span class="keyword">new</span> DoubleScalar.Rel&lt;SpeedUnit&gt;(0, SpeedUnit.METER_PER_SECOND) : MutableDoubleScalar</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;142</td>  <td class="nbHitsCovered">&nbsp;745</td>  <td class="src"><pre class="src">&nbsp;                        .minus(car.getVelocity(thisEvaluationTime), closestLeader.getVelocity(thisEvaluationTime)).immutable();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;136</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        MutableDoubleScalar.Rel&lt;AccelerationUnit&gt; logWeightedAverageSpeedTimes2 =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;137</td>  <td class="nbHitsCovered">&nbsp;2988</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> MutableDoubleScalar.Rel&lt;AccelerationUnit&gt;(Math.sqrt(<span class="keyword">this</span>.a.getValueSI() * <span class="keyword">this</span>.b.getValueSI()),</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;138</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                        AccelerationUnit.METER_PER_SECOND_2);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        logWeightedAverageSpeedTimes2.multiply(2); <span class="comment">// don't forget the times 2</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;140</td>  <td class="nbHitsCovered"><a title="Line 140: Conditional coverage 100% (2/2).">&nbsp;2241</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 140: Conditional coverage 100% (2/2).">        DoubleScalar.Rel&lt;SpeedUnit&gt; dV =</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;141</td>  <td class="nbHitsCovered"><a title="Line 141: Conditional coverage 100% (2/2).">&nbsp;1494</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 141: Conditional coverage 100% (2/2).">                (<span class="keyword">null</span> == closestLeader) ? <span class="keyword">new</span> DoubleScalar.Rel&lt;SpeedUnit&gt;(0, SpeedUnit.METER_PER_SECOND) : MutableDoubleScalar</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;142</td>  <td class="nbHitsCovered">&nbsp;1490</td>  <td class="src"><pre class="src">&nbsp;                        .minus(car.getVelocity(thisEvaluationTime), closestLeader.getVelocity(thisEvaluationTime)).immutable();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;143</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("dV is " + dV);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;144</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println(" v is " + car.speed(thisEvaluationTime));</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;145</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("s0 is " + this.s0);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;146</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Rel&lt;LengthUnit&gt; sStar =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;147</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                MutableDoubleScalar.plus(</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;148</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                        LengthUnit.METER,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;149</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">this</span>.s0,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;150</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                        Calc.speedTimesTime(car.getVelocity(thisEvaluationTime), <span class="keyword">this</span>.tSafe),</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;151</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                        Calc.speedTimesTime(dV,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;152</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                                Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2.immutable())))</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;153</td>  <td class="nbHitsCovered">&nbsp;747</td>  <td class="src"><pre class="src">&nbsp;                        .immutable();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsCovered"><a title="Line 154: Conditional coverage 100% (2/2).">&nbsp;1494</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 154: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (sStar.getValueSI() &lt; 0) <span class="comment">// Negative value should be treated as 0</span></a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;146</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        DoubleScalar.Rel&lt;LengthUnit&gt; sStar =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;147</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                MutableDoubleScalar.plus(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;148</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                        LengthUnit.METER,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;149</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">this</span>.s0,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;150</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                        Calc.speedTimesTime(car.getVelocity(thisEvaluationTime), <span class="keyword">this</span>.tSafe),</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;151</td>  <td class="nbHitsCovered">&nbsp;2988</td>  <td class="src"><pre class="src">&nbsp;                        Calc.speedTimesTime(dV,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;152</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                                Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2.immutable())))</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;153</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;                        .immutable();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsCovered"><a title="Line 154: Conditional coverage 100% (2/2).">&nbsp;2241</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 154: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (sStar.getValueSI() &lt; 0) <span class="comment">// Negative value should be treated as 0</span></a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;155</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;156</td>  <td class="nbHitsCovered">&nbsp;56</td>  <td class="src"><pre class="src">&nbsp;            sStar = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(0, LengthUnit.METER);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;156</td>  <td class="nbHitsCovered">&nbsp;84</td>  <td class="src"><pre class="src">&nbsp;            sStar = <span class="keyword">new</span> DoubleScalar.Rel&lt;LengthUnit&gt;(0, LengthUnit.METER);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;157</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;158</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("s* is " + sStar);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;159</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;160</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        MutableDoubleScalar.Abs&lt;AccelerationUnit&gt; newAcceleration = <span class="keyword">new</span> MutableDoubleScalar.Abs&lt;AccelerationUnit&gt;(<span class="keyword">this</span>.a);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;159</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;160</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        MutableDoubleScalar.Abs&lt;AccelerationUnit&gt; newAcceleration = <span class="keyword">new</span> MutableDoubleScalar.Abs&lt;AccelerationUnit&gt;(<span class="keyword">this</span>.a);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;162</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("distanceIncentive is " + distanceIncentive);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;163</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("newAcceleration is " + newAcceleration);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;164</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        MutableDoubleScalar.Abs&lt;TimeUnit&gt; nextEvaluationTime = thisEvaluationTime.mutable();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;165</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        nextEvaluationTime.add(<span class="keyword">this</span>.stepSize);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;166</td>  <td class="nbHitsCovered">&nbsp;1494</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> CarFollowingModelResult(newAcceleration.immutable(), nextEvaluationTime.immutable(), 0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;164</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        MutableDoubleScalar.Abs&lt;TimeUnit&gt; nextEvaluationTime = thisEvaluationTime.mutable();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;165</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        nextEvaluationTime.add(<span class="keyword">this</span>.stepSize);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;166</td>  <td class="nbHitsCovered">&nbsp;2241</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> CarFollowingModelResult(newAcceleration.immutable(), nextEvaluationTime.immutable(), 0);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;167</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;168</td>  <td class="nbHits">&nbsp;</td>
@@ -596,6 +596,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 11:00.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 13:24.</div>
 </body>
 </html>

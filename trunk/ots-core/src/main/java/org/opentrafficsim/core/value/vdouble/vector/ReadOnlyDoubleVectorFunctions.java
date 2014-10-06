@@ -17,7 +17,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of the vector
  */
-public interface ReadOnlyDoubleVectorFunctions<U extends Unit<U>>
+public interface ReadOnlyDoubleVectorFunctions <U extends Unit<U>>
 {
     /**
      * Retrieve the size of the vector.

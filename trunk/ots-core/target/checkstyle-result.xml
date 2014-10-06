@@ -328,14 +328,12 @@
 <error line="486" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\ReadOnlyDoubleMatrixFunctions.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\WriteDoubleMatrixFunctions.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\DoubleScalar.java">
 </file>
@@ -361,7 +359,6 @@
 <error line="628" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\DoubleVector.java">
 </file>
@@ -369,7 +366,6 @@
 <error line="476" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\ReadOnlyDoubleVectorFunctions.java">
 </file>
@@ -400,14 +396,12 @@
 <error line="484" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\ReadOnlyFloatMatrixFunctions.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\WriteFloatMatrixFunctions.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\FloatScalar.java">
 </file>
@@ -433,7 +427,6 @@
 <error line="626" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\FloatVector.java">
 </file>
@@ -441,7 +434,6 @@
 <error line="476" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\package-info.java">
-<error line="1" severity="warning" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyleCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\ReadOnlyFloatVectorFunctions.java">
 </file>

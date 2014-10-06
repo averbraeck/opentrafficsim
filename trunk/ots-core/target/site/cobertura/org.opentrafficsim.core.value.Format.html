@@ -98,7 +98,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">static</span> String formatString(<span class="keyword">final</span> <span class="keyword">int</span> width, <span class="keyword">final</span> <span class="keyword">int</span> precision, <span class="keyword">final</span> String converter)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;42</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;43</td>  <td class="nbHitsCovered">&nbsp;35252</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> String.format(<span class="string">"%%%d.%d%s"</span>, width, precision, converter);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;43</td>  <td class="nbHitsCovered">&nbsp;52878</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> String.format(<span class="string">"%%%d.%d%s"</span>, width, precision, converter);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;44</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;45</td>  <td class="nbHits">&nbsp;</td>
@@ -121,13 +121,13 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> String format(<span class="keyword">final</span> <span class="keyword">float</span> value, <span class="keyword">final</span> <span class="keyword">int</span> width, <span class="keyword">final</span> <span class="keyword">int</span> precision)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;54</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered"><a title="Line 55: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">&nbsp;17626</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 55: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">        <span class="keyword">if</span> (0 == value || Math.abs(value) &gt; 0.01 &amp;&amp; Math.abs(value) &lt; 999.0)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered"><a title="Line 55: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">&nbsp;26439</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 55: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">        <span class="keyword">if</span> (0 == value || Math.abs(value) &gt; 0.01 &amp;&amp; Math.abs(value) &lt; 999.0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;56</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;57</td>  <td class="nbHitsCovered">&nbsp;2230</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"f"</span>), value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;57</td>  <td class="nbHitsCovered">&nbsp;3345</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"f"</span>), value);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;58</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;59</td>  <td class="nbHitsCovered">&nbsp;15396</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"e"</span>), value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;59</td>  <td class="nbHitsCovered">&nbsp;23094</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"e"</span>), value);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;60</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;61</td>  <td class="nbHits">&nbsp;</td>
@@ -167,7 +167,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> String format(<span class="keyword">final</span> <span class="keyword">float</span> value)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;1554</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;2331</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;81</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;82</td>  <td class="nbHits">&nbsp;</td>
@@ -190,13 +190,13 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> String format(<span class="keyword">final</span> <span class="keyword">double</span> value, <span class="keyword">final</span> <span class="keyword">int</span> width, <span class="keyword">final</span> <span class="keyword">int</span> precision)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;91</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;92</td>  <td class="nbHitsCovered"><a title="Line 92: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">&nbsp;17626</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 92: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">        <span class="keyword">if</span> (0 == value || Math.abs(value) &gt; 0.01 &amp;&amp; Math.abs(value) &lt; 999.0)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;92</td>  <td class="nbHitsCovered"><a title="Line 92: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">&nbsp;26439</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 92: Conditional coverage 100% (6/6) [each condition: 100%, 100%, 100%].">        <span class="keyword">if</span> (0 == value || Math.abs(value) &gt; 0.01 &amp;&amp; Math.abs(value) &lt; 999.0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;93</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;2230</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"f"</span>), value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;3345</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"f"</span>), value);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;95</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;96</td>  <td class="nbHitsCovered">&nbsp;15396</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"e"</span>), value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;96</td>  <td class="nbHitsCovered">&nbsp;23094</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> String.format(formatString(width, precision, <span class="string">"e"</span>), value);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;97</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;98</td>  <td class="nbHits">&nbsp;</td>
@@ -236,7 +236,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> String format(<span class="keyword">final</span> <span class="keyword">double</span> value)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;116</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;117</td>  <td class="nbHitsCovered">&nbsp;1554</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;117</td>  <td class="nbHitsCovered">&nbsp;2331</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;118</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;119</td>  <td class="nbHits">&nbsp;</td>
@@ -245,6 +245,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 11:00.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 13:24.</div>
 </body>
 </html>

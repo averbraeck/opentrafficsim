@@ -75,7 +75,7 @@
             </comment>
             <comment>
               <lineNumber>590</lineNumber>
-              <comment>unit coefficients / 2.</comment>
+              <comment>dimension for all SI coefficients / 2.</comment>
             </comment>
             <comment>
               <lineNumber>598</lineNumber>
@@ -263,7 +263,7 @@
             </comment>
             <comment>
               <lineNumber>588</lineNumber>
-              <comment>unit coefficients / 2.</comment>
+              <comment>dimension for all SI coefficients / 2.</comment>
             </comment>
             <comment>
               <lineNumber>596</lineNumber>

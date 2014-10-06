@@ -17,7 +17,7 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of the matrix
  */
-public interface ReadOnlyFloatMatrixFunctions<U extends Unit<U>>
+public interface ReadOnlyFloatMatrixFunctions <U extends Unit<U>>
 {
     /**
      * Retrieve the number of rows of the matrix.
