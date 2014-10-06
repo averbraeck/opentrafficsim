@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>CarFollowingModel xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../apidocs/org/opentrafficsim/car/following/CarFollowingModel.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.opentrafficsim.car.following;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.rmi.RemoteException;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> org.opentrafficsim.car.Car;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> org.opentrafficsim.core.unit.AccelerationUnit;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> org.opentrafficsim.core.unit.SpeedUnit;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> org.opentrafficsim.core.unit.TimeUnit;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> * Abstract car following model.</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_javadoccomment"> * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. &lt;br&gt;</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_javadoccomment"> * BSD-style license. See &lt;a href="<a href="http://opentrafficsim.org/node/13" target="alexandria_uri">http://opentrafficsim.org/node/13</a>"&gt;OpenTrafficSim License&lt;/a&gt;.</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_javadoccomment"> * @version Jul 2, 2014 &lt;br&gt;</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_javadoccomment"> * @author &lt;a href="<a href="http://www.tudelft.nl/pknoppers" target="alexandria_uri">http://www.tudelft.nl/pknoppers</a>"&gt;Peter Knoppers&lt;/a&gt;</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment"> * @param &lt;C&gt; Car;</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> CarFollowingModel&lt;C <strong class="jxr_keyword">extends</strong> Car&gt;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  {
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment">     * Compute the acceleration that would be used to follow a set of leaders.</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment">     * @param car the Car for which acceleration is computed</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment">     * @param leaders Set&amp;lt;Car&amp;gt;; the set of leaders to take into consideration</em>
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment">     * @param speedLimit DoubleScalarAbs&amp;lt;SpeedUnit&amp;gt;; the local speed limit</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment">     * @return CarFollowingModelResult; the result of application of the car following model</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>      <a href="../../../../org/opentrafficsim/car/following/CarFollowingModel.html">CarFollowingModelResult</a> computeAcceleration(<strong class="jxr_keyword">final</strong> C car, <strong class="jxr_keyword">final</strong> Collection&lt;C&gt; leaders,
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>              <strong class="jxr_keyword">final</strong> DoubleScalar.Abs&lt;SpeedUnit&gt; speedLimit);
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">     * Compute the acceleration and lane change.</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     * @param car Car; the Car for which the acceleration and lane change is computed</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * @param sameLaneCars Collection&amp;lt;Car&amp;gt;; the set of observable Cars in the current lane (can not be null)</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * @param preferredLaneCars Collection&amp;lt;Car&amp;gt;; the set of observable Cars in the adjacent lane where cars should drive</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     *            in the absence of other traffic (must be null if there is no such lane)</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * @param nonPreferredLaneCars Collection&amp;lt;Car&amp;gt;; the set of observable Cars in the adjacent lane into which cars should</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     *            merge to overtake other traffic (must be null if there is no such lane)</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment">     * @param speedLimit DoubleScalarAbs&amp;lt;SpeedUnit&amp;gt;; the local speed limit</em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     * @param preferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane where cars should drive in the</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     *            absence of other traffic</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     * @param nonPreferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane into which cars should merge</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     *            to overtake other traffic</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * @return CarFollowingModelResult; the result of the lane change and car following model</em>
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     * @throws RemoteException</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <a href="../../../../org/opentrafficsim/car/following/CarFollowingModel.html">CarFollowingModelResult</a> computeLaneChangeAndAcceleration(<strong class="jxr_keyword">final</strong> C car, <strong class="jxr_keyword">final</strong> Collection&lt;C&gt; sameLaneCars,
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>              <strong class="jxr_keyword">final</strong> Collection&lt;C&gt; preferredLaneCars, <strong class="jxr_keyword">final</strong> Collection&lt;C&gt; nonPreferredLaneCars,
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>              <strong class="jxr_keyword">final</strong> DoubleScalar.Abs&lt;SpeedUnit&gt; speedLimit, <strong class="jxr_keyword">double</strong> preferredLaneRouteIncentive,
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>              <strong class="jxr_keyword">double</strong> nonPreferredLaneRouteIncentive) <strong class="jxr_keyword">throws</strong> RemoteException;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     * The result of a CarFollowingModel evaluation shall be stored in an instance of this class.</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * See for project information &lt;a href="<a href="http://www.simulation.tudelft.nl/" target="alexandria_uri">http://www.simulation.tudelft.nl/</a>"&gt; www.simulation.tudelft.nl&lt;/a&gt;.</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * The OpenTrafficSim project is distributed under the following BSD-style license:&lt;br&gt;</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     * following conditions are met:</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">     * &lt;ul&gt;</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Redistributions of source code must retain the above copyright notice, this list of conditions and the following</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * disclaimer.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * disclaimer in the documentation and/or other materials provided with the distribution.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     * promote products derived from this software without specific prior written permission.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     * &lt;/ul&gt;</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     * software, even if advised of the possibility of such damage.</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     * @version Jul 9, 2014 &lt;br&gt;</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">     * @author &lt;a href="<a href="http://www.tudelft.nl/pknoppers" target="alexandria_uri">http://www.tudelft.nl/pknoppers</a>"&gt;Peter Knoppers&lt;/a&gt;</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">class</strong> <a href="../../../../org/opentrafficsim/car/following/CarFollowingModel.html">CarFollowingModelResult</a>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <em class="jxr_javadoccomment">/** Acceleration that will be maintained during the current time slot. */</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> DoubleScalar.Abs&lt;AccelerationUnit&gt; acceleration;
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <em class="jxr_javadoccomment">/** Time when the current time slot ends. */</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> DoubleScalar.Abs&lt;TimeUnit&gt; validUntil;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">         * Lane change; 0: stay in current lane; -1 merge onto adjacent overtaking lane; +1 merge towards the default lane.</em>
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> laneChange;
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">         * Create a new CarFollowingModelResult.</em>
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">         * @param acceleration DoubleScalarAbs&amp;lt;AccelerationUnit&amp;gt;; computed acceleration</em>
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">         * @param validUntil DoubleScalarAbs&amp;lt;TimeUnit&amp;gt;; time when this result expires</em>
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">         * @param laneChange Integer; the lane determined change; 0: stay in current lane; -1 merge onto adjacent overtaking</em>
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> <em class="jxr_javadoccomment">         *            lane; +1 merge towards the default lane</em>
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../org/opentrafficsim/car/following/CarFollowingModel.html">CarFollowingModelResult</a>(<strong class="jxr_keyword">final</strong> DoubleScalar.Abs&lt;AccelerationUnit&gt; acceleration,
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 <strong class="jxr_keyword">final</strong> DoubleScalar.Abs&lt;TimeUnit&gt; validUntil, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> laneChange)
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>             <strong class="jxr_keyword">this</strong>.acceleration = acceleration;
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>             <strong class="jxr_keyword">this</strong>.validUntil = validUntil;
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>             <strong class="jxr_keyword">this</strong>.laneChange = laneChange;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>     }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2014 <a href="www.opentrafficsim.org">Delft University of Technology</a>. All rights reserved.</div>
+</body>
+</html>
