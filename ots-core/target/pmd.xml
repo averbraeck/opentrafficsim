@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="5.1.2" timestamp="2014-10-06T10:59:44.146">
+<pmd version="5.1.2" timestamp="2014-10-06T13:24:10.401">
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\car\following\IDMPlus.java">
 <violation beginline="224" endline="224" begincolumn="17" endcolumn="37" rule="UnusedLocalVariable" ruleset="Unused Code" package="org.opentrafficsim.car.following" class="IDMPlus" method="computeLaneChangeAndAcceleration" variable="preferredLaneChangeOK" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.1.2/rules/java/unusedcode.html#UnusedLocalVariable" priority="3">
 Avoid unused local variables such as 'preferredLaneChangeOK'.

@@ -19,7 +19,7 @@ import org.opentrafficsim.core.value.ValueUtil;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
+public abstract class DoubleScalar <U extends Unit<U>> extends Scalar<U>
 {
     /**  */
     private static final long serialVersionUID = 20141006L;

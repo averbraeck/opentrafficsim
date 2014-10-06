@@ -18,7 +18,7 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the Unit of the value(s) in this AbstractValue. Used for setting, getting and displaying the value(s)
  */
-public abstract class AbstractValue<U extends Unit<U>> implements Value<U>, Serializable
+public abstract class AbstractValue <U extends Unit<U>> implements Value<U>, Serializable
 {
     /**  */
     private static final long serialVersionUID = 20141006L;

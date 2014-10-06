@@ -17,7 +17,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of the matrix
  */
-public interface WriteDoubleMatrixFunctions<U extends Unit<U>>
+public interface WriteDoubleMatrixFunctions <U extends Unit<U>>
 {
     /**
      * Replace the value at row, column by the supplied value which is expressed in the standard SI unit.

@@ -17,7 +17,7 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit of the vector
  */
-public interface WriteFloatVectorFunctions<U extends Unit<U>>
+public interface WriteFloatVectorFunctions <U extends Unit<U>>
 {
     /**
      * Replace the value at index by the supplied value which is expressed in the standard SI unit.

@@ -15,7 +15,7 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit type
  */
-public interface Value<U extends Unit<U>>
+public interface Value <U extends Unit<U>>
 {
     /**
      * Retrieve the unit of this Value.

@@ -30,7 +30,7 @@ import cern.jet.math.tdouble.DoubleFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableDoubleMatrix
  */
-public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatrix<U> implements 
+public abstract class MutableDoubleMatrix <U extends Unit<U>> extends DoubleMatrix<U> implements 
         WriteDoubleMatrixFunctions<U>, DoubleMathFunctions
 {
     /**  */
