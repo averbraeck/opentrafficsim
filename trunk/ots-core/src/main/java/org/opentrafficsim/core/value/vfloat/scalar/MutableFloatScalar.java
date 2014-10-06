@@ -585,7 +585,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sqrt()
     {
-        // TODO: unit coefficients / 2.
+        // TODO: dimension for all SI coefficients / 2.
         setValueSI((float) Math.sqrt(getValueSI()));
     }
 
