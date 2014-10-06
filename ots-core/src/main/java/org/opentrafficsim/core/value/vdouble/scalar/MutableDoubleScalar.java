@@ -587,7 +587,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     @Override
     public final void sqrt()
     {
-        // TODO: unit coefficients / 2.
+        // TODO: dimension for all SI coefficients / 2.
         setValueSI(Math.sqrt(getValueSI()));
     }
 
