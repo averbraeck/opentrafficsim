@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixDenseTest
 -------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 sec - in org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixDenseTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.091 sec - in org.opentrafficsim.core.value.vdouble.matrix.DoubleMatrixDenseTest

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.opentrafficsim.core.unit.ElectricalCurrentUnitTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 sec - in org.opentrafficsim.core.unit.ElectricalCurrentUnitTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec - in org.opentrafficsim.core.unit.ElectricalCurrentUnitTest
