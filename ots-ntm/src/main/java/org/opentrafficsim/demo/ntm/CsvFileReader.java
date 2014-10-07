@@ -17,6 +17,7 @@ import java.util.Map;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
@@ -60,7 +61,7 @@ public class CsvFileReader
     public static TripDemand<TripInfoTimeDynamic> readOmnitransExportDemand(final String csvFileName,
             final String csvSplitBy, final String csvSplitByTwo, final Map<String, ShpNode> centroids,
             final Map<String, ShpLink> links, final Map<String, ShpLink> connectors, final NTMSettings settingsNTM,
-            final ArrayList<DepartureTimeProfile> profiles, final Map<String, AreaNTM> areas) throws Throwable
+            final ArrayList<DepartureTimeProfile> profiles, final Map<String, Area> areas) throws Throwable
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -199,28 +200,28 @@ public class CsvFileReader
                         if (countedNodesA > countedNodesB)
                         {
                             cordonPoint = nodeB;
-                            centroidsAndCordonConnectors.put(nodeB.getName(), nodeB);
-                            orderedZones.put(index, nodeB.getName());
+                            centroidsAndCordonConnectors.put(nodeB.getNr(), nodeB);
+                            orderedZones.put(index, nodeB.getNr());
                         }
                         else
                         {
                             cordonPoint = nodeA;
-                            centroidsAndCordonConnectors.put(nodeA.getName(), nodeA);
-                            orderedZones.put(index, nodeA.getName());
+                            centroidsAndCordonConnectors.put(nodeA.getNr(), nodeA);
+                            orderedZones.put(index, nodeA.getNr());
                         }
                         if (createArea)
                         {
                             // after determining the new cordon centroid, a new area is created around this feeding
                             // link. This becomes a feeder type of area
-                            Geometry buffer = cordonPoint.getPoint().getGeometryN(0).buffer(30);
+                            Geometry buffer = cordonConnector.getGeometry().buffer(10);
                             Point centroid = buffer.getCentroid();
                             String nr = cordonConnector.getNr();
                             String newName = cordonConnector.getName();
                             String gemeente = cordonConnector.getName();
                             String gebied = cordonConnector.getName();
-                            String regio = "cordonPoint";
+                            String regio = "cordonPoint " + cordonConnector.getNr();
                             double dhb = 0.0;
-                            AreaNTM area = new AreaNTM(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid);
+                            Area area = new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid, TrafficBehaviourType.CORDON);
                             areas.put(nr, area);
                         }
 
@@ -259,7 +260,7 @@ public class CsvFileReader
                         /*
                          * String checkedName = returnNumber(dataItem); origin = checkedName;
                          */
-                        origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getName();
+                        origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getNr();
                         if (origin.contentEquals("331286"))
                         {
                             System.out.println("let op");
@@ -285,7 +286,7 @@ public class CsvFileReader
                             else
                             {
                                 String destination =
-                                        centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)).getName();
+                                        centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)).getNr();
                                 tripDemandRow.put(destination, tripInfo);
                             }
                         }

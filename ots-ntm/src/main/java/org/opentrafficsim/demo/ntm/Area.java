@@ -8,10 +8,6 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -48,10 +44,9 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Area implements LocatableInterface
+public class Area extends GeoObject implements LocatableInterface 
 {
-    /** the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ... */
-    private final Geometry geometry;
+
 
     /** AREANR class java.lang.Long 15127 */
     private final String centroidNr;
@@ -74,13 +69,29 @@ public class Area implements LocatableInterface
     /** Centroid as a Point */
     private final Point centroid;
 
-    /** touching areas */
-    private final Set<Area> touchingAreas = new HashSet<>();
-
     /** polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
+    
+    /** */
+    private TrafficBehaviourType areaType;
+  
+    /**
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version 7 Oct 2014 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+     * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
+     */
+    
+    
 
-
+    /** The number of cars within this Area. */
+    private double accumulatedCars;
     /**
      * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
      * @param centroidNr 
@@ -91,12 +102,12 @@ public class Area implements LocatableInterface
      * @param regio REGIO class java.lang.String Den_Haag
      * @param dhb DHB class java.lang.Double 70.0
      * @param centroid Centroid as a Point
+     * @param areaType 
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
-            final String regio, final double dhb, final Point centroid)
+            final String regio, final double dhb, final Point centroid, final TrafficBehaviourType behaviourType)
     {
-        super();
-        this.geometry = geometry;
+        super(geometry, behaviourType);
         this.centroidNr = centroidNr;
         this.name = name;
         this.gemeente = gemeente;
@@ -110,7 +121,7 @@ public class Area implements LocatableInterface
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
-        Point c = this.geometry.getCentroid();
+        Point c = this.getGeometry().getCentroid();
         return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
     }
 
@@ -119,7 +130,7 @@ public class Area implements LocatableInterface
     public Bounds getBounds() throws RemoteException
     {
         DirectedPoint d = getLocation();
-        Envelope envelope = this.geometry.getEnvelopeInternal();
+        Envelope envelope = this.getGeometry().getEnvelopeInternal();
         return new BoundingBox(new Point3d(envelope.getMinX() - d.x, d.y - envelope.getMinY(), 0.0d), new Point3d(
                 envelope.getMaxX() - d.x, d.y - envelope.getMaxY(), 0.0d));
     }
@@ -136,10 +147,10 @@ public class Area implements LocatableInterface
             double dx = this.getLocation().getX();
             double dy = this.getLocation().getY();
             this.polygons = new HashSet<Path2D>();
-            for (int i = 0; i < this.geometry.getNumGeometries(); i++)
+            for (int i = 0; i < this.getGeometry().getNumGeometries(); i++)
             {
                 Path2D polygon = new Path2D.Double();
-                Geometry g = this.geometry.getGeometryN(i);
+                Geometry g = this.getGeometry().getGeometryN(i);
                 boolean start = true;
                 for (Coordinate c : g.getCoordinates())
                 {
@@ -216,27 +227,42 @@ public class Area implements LocatableInterface
         return this.dhb;
     }
 
-    /**
-     * @return geometry
-     */
-    public final Geometry getGeometry()
-    {
-        return this.geometry;
-    }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
+
+    /**
+     * @return accumulatedCars.
+     */
+    public final double getAccumulatedCars()
     {
-        return "Area [nr=" + this.centroidNr + "]";
+        return this.accumulatedCars;
     }
 
     /**
-     * @return touchingAreas
+     * @param d set accumulatedCars.
      */
-    public final Set<Area> getTouchingAreas()
+    public final void setAccumulatedCars(final double d)
     {
-        return this.touchingAreas;
+        this.accumulatedCars = d;
     }
+
+
+
+    /**
+     * @return areaType.
+     */
+    public final TrafficBehaviourType getAreaType()
+    {
+        return this.areaType;
+    }
+
+    /**
+     * @param areaType set areaType.
+     */
+    public final void setAreaType(final TrafficBehaviourType areaType)
+    {
+        this.areaType = areaType;
+    }
+
+
 
 }

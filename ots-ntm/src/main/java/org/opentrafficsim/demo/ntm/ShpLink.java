@@ -199,11 +199,8 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ShpLink implements LocatableInterface
+public class ShpLink extends GeoObject implements LocatableInterface
 {
-    /** the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ... */
-    private final Geometry geometry;
-
     /** LINKNR class java.lang.Long 1 */
     private final String nr;
 
@@ -244,26 +241,26 @@ public class ShpLink implements LocatableInterface
     private Set<Path2D> lines = null;
 
     /**
-     * @param geometry
-     * @param nr
-     * @param name
-     * @param direction
-     * @param length
-     * @param nodeA
-     * @param nodeB
-     * @param linkTag
-     * @param wegtype
-     * @param typeWegVak
-     * @param typeWeg
-     * @param speed
-     * @param capacity
+     * @param geometry 
+     * @param nr 
+     * @param name 
+     * @param direction 
+     * @param length 
+     * @param nodeA 
+     * @param nodeB 
+     * @param linkTag 
+     * @param wegtype 
+     * @param typeWegVak 
+     * @param typeWeg 
+     * @param speed 
+     * @param capacity 
+     * @param behaviourType  
      */
-    public ShpLink(Geometry geometry, String nr, String name, short direction, double length, ShpNode nodeA,
-            ShpNode nodeB, String linkTag, String wegtype, String typeWegVak, String typeWeg, double speed,
-            double capacity)
+    public ShpLink(final Geometry geometry, final String nr, final String name, final short direction, final double length, final ShpNode nodeA,
+            final ShpNode nodeB, final String linkTag, final String wegtype, final String typeWegVak, final String typeWeg, final double speed,
+            final double capacity, final TrafficBehaviourType behaviourType)
     {
-        super();
-        this.geometry = geometry;
+        super(geometry, behaviourType);
         this.nr = nr;
         this.name = name;
         this.direction = direction;
@@ -277,24 +274,30 @@ public class ShpLink implements LocatableInterface
         this.speed = speed;
         this.capacity = capacity;
 
-        Coordinate[] cc = this.geometry.getCoordinates();
+        Coordinate[] cc = this.getGeometry().getCoordinates();
         if (cc.length == 0)
+        {
             System.out.println("cc.length = 0 for " + nr + " (" + name + ")");
+        }
         else
         {
             if (Math.abs(cc[0].x - nodeA.getX()) > 0.001 && Math.abs(cc[0].x - nodeB.getX()) > 0.001
                     && Math.abs(cc[cc.length - 1].x - nodeA.getX()) > 0.001
                     && Math.abs(cc[cc.length - 1].x - nodeB.getX()) > 0.001)
+            {
                 System.out.println("x coordinate non-match for " + nr + " (" + name + "); cc[0].x=" + cc[0].x
                         + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + nodeA.getX() + ", nodeB.x="
                         + nodeB.getX());
+            }
         }
     }
     
+    /**
+     * @param shpLink
+     */
     public ShpLink(ShpLink shpLink)  
     {
-        super();
-        this.geometry = shpLink.geometry;
+        super(shpLink.getGeometry(), shpLink.getBehaviourType());
         this.nr = shpLink.nr;
         this.name = shpLink.name;
         this.direction = shpLink.direction;
@@ -308,7 +311,7 @@ public class ShpLink implements LocatableInterface
         this.speed = shpLink.speed;
         this.capacity = shpLink.capacity;
         
-        Coordinate[] cc = this.geometry.getCoordinates();
+        Coordinate[] cc = this.getGeometry().getCoordinates();
         if (cc.length == 0)
             System.out.println("cc.length = 0 for " + nr + " (" + name + ")");
         else
@@ -326,7 +329,7 @@ public class ShpLink implements LocatableInterface
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
-        Point c = this.geometry.getCentroid();
+        Point c = this.getGeometry().getCentroid();
         return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
     }
 
@@ -335,7 +338,7 @@ public class ShpLink implements LocatableInterface
     public Bounds getBounds() throws RemoteException
     {
         DirectedPoint c = getLocation();
-        Envelope envelope = this.geometry.getEnvelopeInternal();
+        Envelope envelope = this.getGeometry().getEnvelopeInternal();
         return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
                 envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
     }
@@ -352,10 +355,10 @@ public class ShpLink implements LocatableInterface
             double dx = this.getLocation().getX();
             double dy = this.getLocation().getY();
             this.lines = new HashSet<Path2D>();
-            for (int i = 0; i < this.geometry.getNumGeometries(); i++)
+            for (int i = 0; i < this.getGeometry().getNumGeometries(); i++)
             {
                 Path2D line = new Path2D.Double();
-                Geometry g = this.geometry.getGeometryN(i);
+                Geometry g = this.getGeometry().getGeometryN(i);
                 boolean start = true;
                 for (Coordinate c : g.getCoordinates())
                 {
@@ -373,14 +376,6 @@ public class ShpLink implements LocatableInterface
             }
         }
         return this.lines;
-    }
-
-    /**
-     * @return geometry
-     */
-    public Geometry getGeometry()
-    {
-        return this.geometry;
     }
 
     /**

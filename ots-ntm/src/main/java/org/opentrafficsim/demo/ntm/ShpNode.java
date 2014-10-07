@@ -61,11 +61,11 @@ public class ShpNode implements LocatableInterface
     /** the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650). */
     private final Point point;
 
-    /** NODENR class java.lang.Long 18. */
+    /** NODEID class java.lang.Long 18. */
     private final long id;
 
     /** NODENR class java.lang.Long 18. */
-    private final String name;
+    private final String nr;
 
     /** X class java.lang.Double 190599.0. */
     private final double x;
@@ -78,16 +78,16 @@ public class ShpNode implements LocatableInterface
 
     /**
      * @param point
-     * @param name
+     * @param nr
      * @param x
      * @param y
      */
-    public ShpNode(final Point point, final String name, final double x, final double y)
+    public ShpNode(final Point point, final String nr, final double x, final double y)
     {
         super();
         long index = indexNumber++;
         this.point = point;
-        this.name = name;
+        this.nr = nr;
         this.id = index;
         this.x = x;
         this.y = y;
@@ -134,9 +134,9 @@ public class ShpNode implements LocatableInterface
     /**
      * @return name.
      */
-    public final String getName()
+    public final String getNr()
     {
-        return this.name;
+        return this.nr;
     }
 
     /**
@@ -151,7 +151,7 @@ public class ShpNode implements LocatableInterface
     @Override
     public String toString()
     {
-        return "ShpNode [id=" + this.id + "name = " + this.name + ", x=" + this.x + ", y=" + this.y + "]";
+        return "ShpNode [id=" + this.id + "nr = " + this.nr + ", x=" + this.x + ", y=" + this.y + "]";
     }
 
 }

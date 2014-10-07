@@ -18,6 +18,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -42,7 +43,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, AreaNTM> ReadAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
+    public static Map<String, Area> ReadAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
             throws IOException
     {
         /*-
@@ -72,7 +73,7 @@ public class ShapeFileReader
         }
         ShapefileDataStore storeAreas = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, AreaNTM> areas = new HashMap<>();
+        Map<String, Area> areas = new HashMap<>();
 
         SimpleFeatureSource featureSourceAreas = storeAreas.getFeatureSource();
         SimpleFeatureCollection featureCollectionAreas = featureSourceAreas.getFeatures();
@@ -114,9 +115,9 @@ public class ShapeFileReader
                         newNr++;
                         centroidNr = newNr.toString();
                     }
-                    AreaNTM area =
-                            new AreaNTM(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint(),
-                                    parametersNTM);
+                    Area area =
+                            new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint(),
+                                    TrafficBehaviourType.NTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -139,15 +140,15 @@ public class ShapeFileReader
         {
             boolean found = false;
 
-            if (areas.containsKey(centroid.getName()))
+            if (areas.containsKey(centroid.getNr()))
             {
                 found = true;
                 teller++;
             }
             if (!found)
             {
-                areas.put(centroid.getName(), NTMModel.createMissingArea(centroid));
-                System.out.println("Centroid not found: create area for " + centroid.getName());                
+                areas.put(centroid.getNr(), NTMModel.createMissingArea(centroid));
+                System.out.println("Centroid not found: create area for " + centroid.getNr());                
             }
         }
         System.out.println("found : " + teller); 
@@ -340,11 +341,11 @@ public class ShapeFileReader
 
                 if (centroidA == null && centroidB == null) // all normal links....
                 {
-                    if (nodeA != null && nodeB != null) // should not happen
+                    if (nodeA != null && nodeB != null) 
                     {
                         ShpLink link =
                                 new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity);
+                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
                         links.put(nr, link);
                     }
                     else
@@ -380,7 +381,7 @@ public class ShapeFileReader
                     {
                         ShpLink link =
                                 new ShpLink(geometry, nr, name, direction, length, centroidA, nodeB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity);
+                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.CENTROID);
                         connectors.put(nr, link);
 
                     }
@@ -388,7 +389,7 @@ public class ShapeFileReader
                     {
                         ShpLink link =
                                 new ShpLink(geometry, nr, name, direction, length, nodeA, centroidB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity);
+                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.CENTROID);
                         connectors.put(nr, link);
 
                     }
@@ -396,7 +397,7 @@ public class ShapeFileReader
                     {
                         ShpLink link =
                                 new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity);
+                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
                         links.put(nr, link);
                     }
                 }
