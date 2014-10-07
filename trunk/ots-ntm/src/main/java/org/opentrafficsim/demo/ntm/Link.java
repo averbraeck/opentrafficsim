@@ -12,6 +12,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.opentrafficsim.core.network.AbstractLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
 
 /**
  * <p>
@@ -32,6 +33,8 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
 
     /** speed. */
     private double speed;
+    
+    private TrafficBehaviourType behaviourType;
 
     /**
      * @param nr 
@@ -39,12 +42,14 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
      * @param nodeB the end node of the link.
      * @param length the length of the link with a unit.
      * @param name the human readable name of the link, e.g. a street name.
-     */
+     * @param behaviourType 
+     */ 
     public Link(final String nr, final AreaNode nodeA, final AreaNode nodeB, final DoubleScalar<LengthUnit> length,
-            final String name)
+            final String name, TrafficBehaviourType behaviourType)
     {
         super(nr, nodeA, nodeB, length);
         this.name = name;
+        this.setBehaviourType(behaviourType);
     }
 
     /** {@inheritDoc} */
@@ -85,6 +90,22 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
     public final void setSpeed(final double speed)
     {
         this.speed = speed;
+    }
+
+    /**
+     * @return behaviourType.
+     */
+    public TrafficBehaviourType getBehaviourType()
+    {
+        return behaviourType;
+    }
+
+    /**
+     * @param behaviourType set behaviourType.
+     */
+    public void setBehaviourType(TrafficBehaviourType behaviourType)
+    {
+        this.behaviourType = behaviourType;
     }
 
 }

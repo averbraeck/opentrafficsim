@@ -20,7 +20,7 @@ import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class CellBehaviourNTM implements CellBehaviour
+public class CellBehaviourNTM
 {
     /** */
     private static final long serialVersionUID = 20140903L;
@@ -73,7 +73,7 @@ public class CellBehaviourNTM implements CellBehaviour
                 parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getValueInUnit(SpeedUnit.KM_PER_HOUR);
     }
 
-    /**
+    /** Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
      * @return carProduction
      */
@@ -106,7 +106,7 @@ public class CellBehaviourNTM implements CellBehaviour
         this.speedDemand = this.productionDemand / accumulatedCars;
     }
 
-    /**
+    /** determines the level incoming traffic
      * @param accumulatedCars number of cars in Cell
      */
     public final void computeProductionSupply(final double accumulatedCars)
@@ -116,7 +116,7 @@ public class CellBehaviourNTM implements CellBehaviour
         this.speedSupply = this.productionSupply / accumulatedCars;
     }
 
-    /**
+    /** not used 
      * @param accumulatedCars number of cars in Cell
      */
     public final void computeProductionElse(final double accumulatedCars)
@@ -153,7 +153,7 @@ public class CellBehaviourNTM implements CellBehaviour
     /**
      * @param maxCapacity set maxCapacity.
      */
-    public void setMaxCapacity(final double maxCapacity)
+    public final void setMaxCapacity(final double maxCapacity)
     {
         this.maxCapacity = maxCapacity;
     }
@@ -231,12 +231,14 @@ public class CellBehaviourNTM implements CellBehaviour
     }
 
     /**
-     * @param demandToEnter adds demandToEnter.
+     * @param addDemandToEnter adds demandToEnter.
+
      */
-    public final void addDemandToEnter(double demandToEnter)
+    public final void addDemandToEnter(double addDemandToEnter)
     {
-        this.demandToEnter += demandToEnter;
+        this.demandToEnter += addDemandToEnter;
     }
+
 
     
 }

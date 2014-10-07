@@ -12,6 +12,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.AreaNode;
+import org.opentrafficsim.demo.ntm.AreaNodeNTM;
 
 /**
  * <p>
@@ -25,14 +26,14 @@ import org.opentrafficsim.demo.ntm.AreaNode;
 public class NodeAnimation extends Renderable2D
 {
     /**
-     * @param source
+     * @param node
      * @param simulator
      * @throws NamingException
      * @throws RemoteException
      */
-    public NodeAnimation(AreaNode source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(AreaNode node, OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
-        super(source, simulator);
+        super(node, simulator);
     }
 
     /** {@inheritDoc} */

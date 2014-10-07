@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
 import org.opentrafficsim.demo.ntm.AreaNode;
+import org.opentrafficsim.demo.ntm.AreaNodeNTM;
 
 
 /**
@@ -67,11 +68,11 @@ public class TripInfo
     }
 
     /**
-     * @param neighbour set neighbour.
+     * @param endNode set neighbour.
      */
-    public final void setNeighbour(final AreaNode neighbour)
+    public final void setNeighbour(final AreaNode endNode)
     {
-        this.neighbour = neighbour;
+        this.neighbour = endNode;
     }
 
     /**
