@@ -30,7 +30,7 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this DoubleVector
  */
-public abstract class DoubleVector <U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
     ReadOnlyDoubleVectorFunctions<U>
 {
     /**  */

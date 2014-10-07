@@ -38,7 +38,7 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this DoubleMatrix
  */
-public abstract class DoubleMatrix <U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
     ReadOnlyDoubleMatrixFunctions<U>
 {
     /**  */

@@ -30,7 +30,7 @@ import cern.jet.math.tdouble.DoubleFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableDoubleVector
  */
-public abstract class MutableDoubleVector <U extends Unit<U>> extends DoubleVector<U> implements 
+public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVector<U> implements 
         WriteDoubleVectorFunctions<U>, DoubleMathFunctions
 {
     /**  */

@@ -17,7 +17,7 @@ import org.opentrafficsim.core.unit.Unit;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the unit of the values in the constructor and for display
  */
-public abstract class Scalar <U extends Unit<U>> extends Number implements Value<U>, Serializable
+public abstract class Scalar<U extends Unit<U>> extends Number implements Value<U>, Serializable
 {
     /**  */
     private static final long serialVersionUID = 20141007L;
