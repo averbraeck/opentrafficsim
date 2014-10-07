@@ -180,7 +180,8 @@ public class CodeGenerator
         try
         {
             BufferedWriter writer = openFile(relativePackage, name, imports, description, genericParams);
-            writer.write(qualifiers + " class " + name + (typeInfo.length() == 0 ? "" : " ") + typeInfo + "\r\n{\r\n");
+            writer.write(qualifiers + " class " + name
+                    + (typeInfo.length() == 0 || typeInfo.startsWith("<") ? "" : " ") + typeInfo + "\r\n{\r\n");
             if (generateSerialVersionUID)
             {
                 writer.write(buildSerialVersionUID(indent(1)));
