@@ -1,4 +1,4 @@
-package valueclasses.generator;
+package code.generators;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Date;
  * @version 24 sep. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Generator
+public class ValueClassesGenerator
 {
     /**
      * Information about the math functions
@@ -158,7 +158,7 @@ public class Generator
     {
         Date now = new Date();
         CodeGenerator cg =
-                new CodeGenerator("the OpenTrafficSim valueclasses generator", "d:\\valueTree",
+                new CodeGenerator("the OpenTrafficSim value classes generator", "d:\\valueTree",
                         "org.opentrafficsim.core", new SimpleDateFormat("dd MMM, yyyy").format(now), new Long(
                                 new SimpleDateFormat("yyyyMMdd").format(now)));
         cg.generateInterface("value", "Absolute", null,
@@ -221,7 +221,7 @@ public class Generator
                                         "final int|precision|the number of fractional digits in the result",
                                         "final String|converter|the format conversion specifier"}, null, null,
                                 new String[]{"return String.format(\"%%%d.%d%s\", width, precision, converter);"},
-                                false) + buildFormatMethods("float", cg) + buildFormatMethods("double", cg));
+                                false) + buildFormatMethods(cg, "float") + buildFormatMethods(cg, "double"));
         cg.generateInterface("value", "MathFunctions", new String[]{"java.io.Serializable"},
                 "Interface to force all functions of Math to be implemented.", null, "extends Serializable",
                 buildAllMathFunctions(cg));
@@ -346,26 +346,26 @@ public class Generator
                         + " storage and calculations with units, absolute/relative"
                         + (subType.equals("Scalar") ? "" : ", sparse/dense") + ".");
             }
-            generateMathFunctions(type, cg);
-            generateScalarClass(type, false, cg);
-            generateScalarClass(type, true, cg);
+            generateMathFunctions(cg, type);
+            generateScalarClass(cg, type, false);
+            generateScalarClass(cg, type, true);
 
             for (int dimensions = 1; dimensions <= 2; dimensions++)
             {
-                generateReadOnlyFunctions(type, dimensions, cg);
-                generateWriteFunctions(type, dimensions, cg);
-                generateVectorOrMatrixClass(type, false, dimensions, cg);
-                generateVectorOrMatrixClass(type, true, dimensions, cg);
+                generateReadOnlyFunctions(cg, type, dimensions);
+                generateWriteFunctions(cg, type, dimensions);
+                generateVectorOrMatrixClass(cg, type, false, dimensions);
+                generateVectorOrMatrixClass(cg, type, true, dimensions);
             }
         }
     }
 
     /**
      * Write the *MathFunctions and *MathFunctionsImpl classes.
-     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>.
      * @param cg CodeGenerator; the code generator
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>.
      */
-    private static void generateMathFunctions(String type, CodeGenerator cg)
+    private static void generateMathFunctions(CodeGenerator cg, String type)
     {
         cg.generateInterface(
                 "value.v" + type.toLowerCase(),
@@ -386,11 +386,12 @@ public class Generator
     }
 
     /**
+     * Write the interface file for the functions that change the contents of a Vector or Matrix.
+     * @param cg CodeGenerator; the code generator
      * @param type String; type of the result of the generated functions
      * @param dimensions int; number of dimensions of the data
-     * @param cg CodeGenerator;
      */
-    private static void generateWriteFunctions(String type, int dimensions, CodeGenerator cg)
+    private static void generateWriteFunctions(CodeGenerator cg, String type, int dimensions)
     {
         final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
         final String valueException =
@@ -442,11 +443,13 @@ public class Generator
     }
 
     /**
+     * Write the interface file for the functions that operate on data stored in a Vector or Matrix, but do not modify
+     * the stored contents.
+     * @param cg CodeGenerator; the code generator
      * @param type String; type of the result of the generated functions
      * @param dimensions int; number of dimensions of the data
-     * @param cg CodeGenerator; the code generator
      */
-    private static void generateReadOnlyFunctions(String type, int dimensions, CodeGenerator cg)
+    private static void generateReadOnlyFunctions(CodeGenerator cg, String type, int dimensions)
     {
         final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
         final String valueException =
@@ -559,12 +562,12 @@ public class Generator
 
     /**
      * Generate a class file for a vector or matrix type.
+     * @param cg CodeGenerator; the code generator
      * @param type String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
      * @param dimensions int; number of dimensions of the data (1: vector; 2: matrix)
-     * @param cg CodeGenerator; the code generator
      */
-    private static void generateVectorOrMatrixClass(String type, boolean mutable, int dimensions, CodeGenerator cg)
+    private static void generateVectorOrMatrixClass(CodeGenerator cg, String type, boolean mutable, int dimensions)
     {
         final String outerIndent = cg.indent(1);
         final String mutableType = mutable ? "Mutable" : "Immutable ";
@@ -703,12 +706,12 @@ public class Generator
                                                         + (1 == dimensions ? "i" : "row, column") + ", safeGet("
                                                         + (1 == dimensions ? "i" : "row, column") + ") / sum);",
                                                 dimensions > 1 ? cg.indent(1) + "}" : null, "}"}, false)
-                                + buildSubClass(outerIndent, "Abs", "Absolute " + mutableType + type + vectorOrMatrix,
-                                        "Mutable" + type + vectorOrMatrix + "<U>", "Absolute", "Mutable" + type
-                                                + vectorOrMatrix, true, dimensions, cg)
-                                + buildSubClass(outerIndent, "Rel", "Relative " + mutableType + type + vectorOrMatrix,
-                                        "Mutable" + type + vectorOrMatrix + "<U>", "Relative", "Mutable" + type
-                                                + vectorOrMatrix, true, dimensions, cg)
+                                + buildSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type
+                                        + vectorOrMatrix, "Mutable" + type + vectorOrMatrix + "<U>", "Absolute",
+                                        "Mutable" + type + vectorOrMatrix, true, dimensions)
+                                + buildSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type
+                                        + vectorOrMatrix, "Mutable" + type + vectorOrMatrix + "<U>", "Relative",
+                                        "Mutable" + type + vectorOrMatrix, true, dimensions)
                                 + cg.buildMethod(outerIndent, "public abstract|" + type + vectorOrMatrix
                                         + "<U>|immutable", "Make (immutable) " + type + vectorOrMatrix
                                         + " equivalent for any type of Mutable" + type + vectorOrMatrix + ".", null,
@@ -766,15 +769,15 @@ public class Generator
                                                 "checkCopyOnWrite();",
                                                 "get" + vectorOrMatrix + "SI().assign("
                                                         + type.substring(0, 1).toLowerCase() + ");"}, false)
-                                + buildVectorFunctions(outerIndent, type, cg)
+                                + buildVectorFunctions(cg, outerIndent, type)
                                 + cg.buildMethod(outerIndent, "public final|void|multiply", null, new String[]{"final "
                                         + type.toLowerCase() + "|constant|"}, null, null, new String[]{"assign(" + type
                                         + "Functions.mult(constant));"}, false)
                                 + cg.buildMethod(outerIndent, "public final|void|divide", null, new String[]{"final "
                                         + type.toLowerCase() + "|constant|"}, null, null, new String[]{"assign(" + type
                                         + "Functions.div(constant));"}, false)
-                                + buildInOrDecrementValueByValue(outerIndent, type, vectorOrMatrix,
-                                        pluralAggregateType, dimensions, true, cg)
+                                + buildInOrDecrementValueByValue(cg, outerIndent, type, vectorOrMatrix,
+                                        pluralAggregateType, dimensions, true)
                                 + cg.buildMethod(
                                         outerIndent,
                                         "public final|Mutable" + type + vectorOrMatrix
@@ -786,8 +789,8 @@ public class Generator
                                                 + type + vectorOrMatrix},
                                         "ValueException|when the " + pluralAggregateType + " do not have the same size",
                                         null, new String[]{"return incrementValueByValue(rel);"}, false)
-                                + buildInOrDecrementValueByValue(outerIndent, type, vectorOrMatrix,
-                                        pluralAggregateType, dimensions, false, cg)
+                                + buildInOrDecrementValueByValue(cg, outerIndent, type, vectorOrMatrix,
+                                        pluralAggregateType, dimensions, false)
                                 + cg.buildMethod(
                                         outerIndent,
                                         "public final|Mutable" + type + vectorOrMatrix
@@ -873,55 +876,55 @@ public class Generator
                                                 + pluralAggregateType + " do not have the same size", null,
                                         new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
                                 // Generate 6 plus methods
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Dense", "Rel", dimensions,
-                                        true, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Dense",
-                                        dimensions, true, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Sparse",
-                                        dimensions, true, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Dense", "Rel", dimensions,
-                                        true, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Dense",
-                                        dimensions, true, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Sparse",
-                                        dimensions, true, cg)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Rel", dimensions,
+                                        true)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Dense",
+                                        dimensions, true)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Sparse",
+                                        dimensions, true)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Dense", "Rel", dimensions,
+                                        true)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Dense",
+                                        dimensions, true)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
+                                        dimensions, true)
                                 // Generate 9 minus methods
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Dense", "Abs", dimensions,
-                                        false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Abs.Sparse",
-                                        dimensions, false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Abs.Dense",
-                                        dimensions, false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Dense", "Rel", dimensions,
-                                        false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Dense",
-                                        dimensions, false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Abs.Sparse", "Rel.Sparse",
-                                        dimensions, false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Dense", "Rel", dimensions,
-                                        false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Dense",
-                                        dimensions, false, cg)
-                                + buildVectorOrMatrixPlusOrMinus(outerIndent, type, "Rel.Sparse", "Rel.Sparse",
-                                        dimensions, false, cg)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Abs", dimensions,
+                                        false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Abs.Sparse",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Abs.Dense",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Rel", dimensions,
+                                        false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Dense",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Sparse",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Dense", "Rel", dimensions,
+                                        false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Dense",
+                                        dimensions, false)
+                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
+                                        dimensions, false)
                                 // Generate 10 times methods
                                 // TODO: Decide if you ever need multiply an Absolute with anything; I don't think so...
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Dense", "Abs.Dense", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Dense", "Abs.Sparse", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Sparse", "Abs", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Dense", "Rel.Dense", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Dense", "Rel.Sparse", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Sparse", "Rel", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Dense", "", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Abs.Sparse", "", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Dense", "", dimensions, cg)
-                                + buildVectorOrMatrixTimes(outerIndent, type, "Rel.Sparse", "", dimensions, cg)
-                                + buildPrivateDenseSparseConverter(outerIndent, type, dimensions, true, cg)
-                                + buildDenseSparseConverter(outerIndent, type, "Abs", true, dimensions, cg)
-                                + buildDenseSparseConverter(outerIndent, type, "Rel", true, dimensions, cg)
-                                + buildPrivateDenseSparseConverter(outerIndent, type, dimensions, false, cg)
-                                + buildDenseSparseConverter(outerIndent, type, "Abs", false, dimensions, cg)
-                                + buildDenseSparseConverter(outerIndent, type, "Rel", false, dimensions, cg)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Dense", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Sparse", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "Abs", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "Rel.Dense", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "Rel.Sparse", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Sparse", "Rel", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "", dimensions)
+                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Sparse", "", dimensions)
+                                + buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, true)
+                                + buildDenseSparseConverter(cg, outerIndent, type, "Abs", true, dimensions)
+                                + buildDenseSparseConverter(cg, outerIndent, type, "Rel", true, dimensions)
+                                + buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, false)
+                                + buildDenseSparseConverter(cg, outerIndent, type, "Abs", false, dimensions)
+                                + buildDenseSparseConverter(cg, outerIndent, type, "Rel", false, dimensions)
                         : cg.buildField(
                                 outerIndent,
                                 "private " + type + "Matrix" + dimensions + "D " + vectorOrMatrix.toLowerCase() + "SI",
@@ -936,12 +939,12 @@ public class Generator
                                         new String[]{"super(unit);",
                                                 "// System.out.println(\"Created " + type + vectorOrMatrix + "\");"},
                                         true)
-                                + buildSubClass(outerIndent, "Abs", "Absolute " + mutableType + type + vectorOrMatrix,
-                                        type + vectorOrMatrix + "<U>", "Absolute", type + vectorOrMatrix, false,
-                                        dimensions, cg)
-                                + buildSubClass(outerIndent, "Rel", "Relative " + mutableType + type + vectorOrMatrix,
-                                        type + vectorOrMatrix + "<U>", "Relative", type + vectorOrMatrix, false,
-                                        dimensions, cg)
+                                + buildSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type
+                                        + vectorOrMatrix, type + vectorOrMatrix + "<U>", "Absolute", type
+                                        + vectorOrMatrix, false, dimensions)
+                                + buildSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type
+                                        + vectorOrMatrix, type + vectorOrMatrix + "<U>", "Relative", type
+                                        + vectorOrMatrix, false, dimensions)
                                 + cg.buildMethod(outerIndent, "protected final|" + type + "Matrix" + dimensions
                                         + "D|get" + vectorOrMatrix + "SI|the data in the internal format",
                                         "Retrieve the internal data.", null, null, null, new String[]{"return this."
@@ -1493,16 +1496,16 @@ public class Generator
     }
 
     /**
-     * Generate the Jave code for the private makeDense or makeSparse method.
+     * Generate the Java code for the private makeDense or makeSparse method.
+     * @param cg CodeGenerator; the code generator
      * @param outerIndent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param dimensions int; 1, or 2
      * @param toDense boolean; if true; generate makeDense; if false; generate makeSparse
-     * @param cg CodeGenerator; the code generator
      * @return String; Java code
      */
-    private static String buildPrivateDenseSparseConverter(String outerIndent, String type, int dimensions,
-            boolean toDense, CodeGenerator cg)
+    private static String buildPrivateDenseSparseConverter(CodeGenerator cg, String outerIndent, String type,
+            int dimensions, boolean toDense)
     {
         final String resultType = toDense ? "Sparse" : "Dense";
         final String inputType = toDense ? "Dense" : "Sparse";
@@ -1526,18 +1529,44 @@ public class Generator
     }
 
     /**
+     * Generate java code for the public denseToSparse or sparseToDense vector or matrix method.
+     * @param cg CodeGenerator; the code generator
+     * @param outerIndent String; prefix for all output lines
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param absRel String; either <cite>Abs</cite>, or <cite>Rel</cite>
+     * @param toSparse boolean; if true; code for denseToSparse is generated; if false; code for sparseToDense is
+     *            generated
+     * @param dimensions int; number of dimensions of the storage
+     * @return String; java code
+     */
+    private static String buildDenseSparseConverter(CodeGenerator cg, String outerIndent, String type, String absRel,
+            boolean toSparse, int dimensions)
+    {
+        final String from = toSparse ? "Dense" : "Sparse";
+        final String to = toSparse ? "Sparse" : "Dense";
+        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
+        return cg.buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + type + vectorOrMatrix + "."
+                + absRel + "." + to + "<U>|" + from.toLowerCase() + "To" + to, "Create a " + to + " version of a "
+                + from + " " + type + vectorOrMatrix + ".", new String[]{
+                "final " + type + vectorOrMatrix + "." + absRel + "." + from + "<U>|in|the " + from + " " + type
+                        + vectorOrMatrix, "Unit|<U>|the unit of the parameter and the result"}, null, null,
+                new String[]{"return new Mutable" + type + vectorOrMatrix + "." + absRel + "." + to + "<U>(make" + to
+                        + "(in.get" + vectorOrMatrix + "SI()), in.getUnit());"}, false);
+    }
+
+    /**
      * Build Java code for incrementValueByValue or decrementValueByValue
+     * @param cg CodeGenerator; the code generator
      * @param outerIndent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param aggregateType String; either <cite>Vector</cite>, or <cite>Matrix</cite>
      * @param pluralAggregateType String; either <cite>vectors</cite>, or <cite>matrices</cite>
      * @param dimensions int; 1, or 2
      * @param increment boolean; if true; the increment method is built; if false; the decrement method is built
-     * @param cg CodeGenerator; the code generator
      * @return String; Java code
      */
-    private static String buildInOrDecrementValueByValue(String outerIndent, String type, String aggregateType,
-            String pluralAggregateType, int dimensions, boolean increment, CodeGenerator cg)
+    private static String buildInOrDecrementValueByValue(CodeGenerator cg, String outerIndent, String type,
+            String aggregateType, String pluralAggregateType, int dimensions, boolean increment)
     {
         final String inOrDecrement = increment ? "in" : "de";
         return cg.buildMethod(outerIndent, "private|Mutable" + type + aggregateType + "<U>|" + inOrDecrement
@@ -1561,43 +1590,17 @@ public class Generator
     }
 
     /**
-     * Generate java code for a denseToSparse vector method.
-     * @param outerIndent String; prefix for all output lines
-     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
-     * @param absRel String; either <cite>Abs</cite>, or <cite>Rel</cite>
-     * @param toSparse boolean; if true; code for denseToSparse is generated; if false; code for sparseToDense is
-     *            generated
-     * @param dimensions int; number of dimensions of the storage
-     * @param cg CodeGenerator; the code generator
-     * @return String; java code
-     */
-    private static String buildDenseSparseConverter(String outerIndent, String type, String absRel, boolean toSparse,
-            int dimensions, CodeGenerator cg)
-    {
-        final String from = toSparse ? "Dense" : "Sparse";
-        final String to = toSparse ? "Sparse" : "Dense";
-        final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
-        return cg.buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + type + vectorOrMatrix + "."
-                + absRel + "." + to + "<U>|" + from.toLowerCase() + "To" + to, "Create a " + to + " version of a "
-                + from + " " + type + vectorOrMatrix + ".", new String[]{
-                "final " + type + vectorOrMatrix + "." + absRel + "." + from + "<U>|in|the " + from + " " + type
-                        + vectorOrMatrix, "Unit|<U>|the unit of the parameter and the result"}, null, null,
-                new String[]{"return new Mutable" + type + vectorOrMatrix + "." + absRel + "." + to + "<U>(make" + to
-                        + "(in.get" + vectorOrMatrix + "SI()), in.getUnit());"}, false);
-    }
-
-    /**
      * Generate the code for the Vector times methods
+     * @param cg CodeGenerator; the code generator
      * @param outerIndent String; prefix of all output line
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param leftType String; type of the left operand
      * @param rightType String; type of the right operand
      * @param dimensions int; number of dimensions of the data
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildVectorOrMatrixTimes(String outerIndent, String type, String leftType, String rightType,
-            int dimensions, CodeGenerator cg)
+    private static String buildVectorOrMatrixTimes(CodeGenerator cg, String outerIndent, String type, String leftType,
+            String rightType, int dimensions)
     {
         final String resultType =
                 leftType.contains("Sparse") ? leftType : rightType.contains("Sparse") ? leftType.replace("Dense",
@@ -1660,18 +1663,18 @@ public class Generator
     }
 
     /**
-     * Build a vector plus or minus method.
+     * Build a vector or matrix plus or minus method.
+     * @param cg CodeGenerator; the code generator
      * @param outerIndent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param leftType String; type of the left operand
      * @param rightType String; type of the right operand
      * @param dimensions int; number of dimensions of the data
      * @param makePlus boolean; if true; generate code for plus; if false; generate code for minus
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildVectorOrMatrixPlusOrMinus(String outerIndent, String type, String leftType,
-            String rightType, int dimensions, boolean makePlus, CodeGenerator cg)
+    private static String buildVectorOrMatrixPlusOrMinus(CodeGenerator cg, String outerIndent, String type,
+            String leftType, String rightType, int dimensions, boolean makePlus)
     {
         // If either type is Dense, the result is Dense
         final String resultDenseSparse = leftType.contains("Dense") || rightType.contains("Dense") ? "Dense" : "Sparse";
@@ -1734,12 +1737,12 @@ public class Generator
 
     /**
      * Generate the code for the *Functions in Mutable*Vector.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildVectorFunctions(final String indent, final String type, CodeGenerator cg)
+    private static String buildVectorFunctions(CodeGenerator cg, final String indent, final String type)
     {
         StringBuilder construction = new StringBuilder();
         for (MathFunctionEntry mfu : mathFunctions)
@@ -1754,50 +1757,7 @@ public class Generator
     }
 
     /**
-     * Generate the Java code for a sub class of vector or matrix class
-     * @param indent String; prefix for each output line
-     * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
-     * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatVector</cite> or
-     *            <cite>Relative Mutable DoubleVector</cite>
-     * @param extendsString String; something like <cite>DoubleScalar&lt;U&gt;</cite>
-     * @param implementsString String; something like <cite>Absolute, Comparable&lt;Abs&lt;U&gt;&gt;</cite>
-     * @param parentClassName String; name of the class that is being sub-classed
-     * @param mutable boolean; if true; the class file for the mutable version is generated; if false; the class file
-     *            for the immutable version is generated
-     * @param dimensions int; number of dimensions of the storage
-     * @param cg CodeGenerator; the code generator
-     * @return String; Java code implementing the sub class
-     */
-    private static String buildSubClass(final String indent, final String name, final String longName,
-            final String extendsString, final String implementsString, final String parentClassName, boolean mutable,
-            int dimensions, CodeGenerator cg)
-    {
-        final String absRelType = longName.split(" ")[0];
-        final String floatType = extendsString.contains("Float") ? "Float" : "Double";
-        StringBuilder construction = new StringBuilder();
-        construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
-        construction.append(indent + "public abstract static class " + name + "<U extends Unit<U>> extends "
-                + extendsString + " implements " + implementsString + "\r\n" + indent + "{\r\n");
-        final String contentIndent = indent + cg.indent(1);
-        construction.append(cg.buildSerialVersionUID(contentIndent));
-        construction.append(cg.buildMethod(contentIndent, "protected||" + name, "Construct a new " + longName + ".",
-                new String[]{"final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
-                        "// System.out.println(\"Created " + name + "\");"}, true));
-        construction.append(buildSubSubClass(contentIndent, absRelType, "Dense", absRelType + " Dense "
-                + parentClassName, mutable, dimensions, cg));
-        construction.append(buildSubSubClass(contentIndent, absRelType, "Sparse", absRelType + " Sparse "
-                + parentClassName, mutable, dimensions, cg));
-        construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name + "<U>|get",
-                null, 1 == dimensions ? new String[]{"final int|index|"} : new String[]{"final int|row|",
-                        "final int|column|"}, "ValueException|when index < 0 or index >= size()", null,
-                new String[]{"return new " + floatType + "Scalar." + name + "<U>(getInUnit("
-                        + (1 == dimensions ? "index" : "row, column") + ", getUnit()), getUnit());"}, false));
-        construction.append(indent + "}\r\n\r\n");
-        return construction.toString();
-    }
-
-    /**
-     * Build a string with the specified number of <cite>[]</cite> pairs.
+     * Build a string with the specified number of <cite>[]</cite> (square bracket) pairs.
      * @param dimensions int; the number of bracket pairs to concatenate
      * @return String
      */
@@ -1807,7 +1767,7 @@ public class Generator
     }
 
     /**
-     * Build a string with the specified number of <cite>[<b>string</b>]</cite> pairs.
+     * Build a string with the specified number of <cite>[<b>string</b>]</cite> (square bracket with content) pairs.
      * @param dimensions int; the number of bracket pairs with contents to concatenate
      * @param contents String; the text that goes between each pair of brackets
      * @return String
@@ -1823,7 +1783,51 @@ public class Generator
     }
 
     /**
+     * Generate the Java code for a sub class of vector or matrix class
+     * @param cg CodeGenerator; the code generator
+     * @param indent String; prefix for each output line
+     * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
+     * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatVector</cite> or
+     *            <cite>Relative Mutable DoubleVector</cite>
+     * @param extendsString String; something like <cite>DoubleScalar&lt;U&gt;</cite>
+     * @param implementsString String; something like <cite>Absolute, Comparable&lt;Abs&lt;U&gt;&gt;</cite>
+     * @param parentClassName String; name of the class that is being sub-classed
+     * @param mutable boolean; if true; the class file for the mutable version is generated; if false; the class file
+     *            for the immutable version is generated
+     * @param dimensions int; number of dimensions of the storage
+     * @return String; Java code implementing the sub class
+     */
+    private static String buildSubClass(CodeGenerator cg, final String indent, final String name,
+            final String longName, final String extendsString, final String implementsString,
+            final String parentClassName, boolean mutable, int dimensions)
+    {
+        final String absRelType = longName.split(" ")[0];
+        final String floatType = extendsString.contains("Float") ? "Float" : "Double";
+        StringBuilder construction = new StringBuilder();
+        construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
+        construction.append(indent + "public abstract static class " + name + "<U extends Unit<U>> extends "
+                + extendsString + " implements " + implementsString + "\r\n" + indent + "{\r\n");
+        final String contentIndent = indent + cg.indent(1);
+        construction.append(cg.buildSerialVersionUID(contentIndent));
+        construction.append(cg.buildMethod(contentIndent, "protected||" + name, "Construct a new " + longName + ".",
+                new String[]{"final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
+                        "// System.out.println(\"Created " + name + "\");"}, true));
+        construction.append(buildSubSubClass(cg, contentIndent, absRelType, "Dense", absRelType + " Dense "
+                + parentClassName, mutable, dimensions));
+        construction.append(buildSubSubClass(cg, contentIndent, absRelType, "Sparse", absRelType + " Sparse "
+                + parentClassName, mutable, dimensions));
+        construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name + "<U>|get",
+                null, 1 == dimensions ? new String[]{"final int|index|"} : new String[]{"final int|row|",
+                        "final int|column|"}, "ValueException|when index < 0 or index >= size()", null,
+                new String[]{"return new " + floatType + "Scalar." + name + "<U>(getInUnit("
+                        + (1 == dimensions ? "index" : "row, column") + ", getUnit()), getUnit());"}, false));
+        construction.append(indent + "}\r\n\r\n");
+        return construction.toString();
+    }
+
+    /**
      * Generate the Java code for a vector or matrix sub sub class.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prefix of all output lines
      * @param absRel String; either <cite>Absolute</cite>, or <cite>Relative</cite>
      * @param denseOrSparse String; either <cite>Dense</cite>, or <cite>Sparse</cite>
@@ -1831,11 +1835,10 @@ public class Generator
      * @param mutable boolean; if true; the code for the mutable version is generated; if false; the code for the
      *            immutable version is generated
      * @param dimensions int; number of dimensions of the storage
-     * @param cg CodeGenerator; the code generator
      * @return String; Java code
      */
-    private static String buildSubSubClass(final String indent, final String absRel, final String denseOrSparse,
-            final String longName, boolean mutable, int dimensions, CodeGenerator cg)
+    private static String buildSubSubClass(CodeGenerator cg, final String indent, final String absRel,
+            final String denseOrSparse, final String longName, boolean mutable, int dimensions)
     {
         final String fixedLongName = mutable ? longName : longName.replaceFirst("( \\S*$)", " Immutable$1");
         final String type = longName.replaceFirst(".* (.*)(Vector|Matrix)", "$1").replace("Mutable", "");
@@ -1909,11 +1912,11 @@ public class Generator
 
     /**
      * Generate a class file for a scalar type.
+     * @param cg CodeGenerator; the code generator
      * @param type String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
-     * @param cg CodeGenerator; the code generator
      */
-    private static void generateScalarClass(String type, boolean mutable, CodeGenerator cg)
+    private static void generateScalarClass(CodeGenerator cg, String type, boolean mutable)
     {
         final String lowerCaseType = type.toLowerCase();
         final String outerIndent = cg.indent(1);
@@ -1928,10 +1931,10 @@ public class Generator
                         "org.opentrafficsim.core.value.ValueUtil",
                         "org.opentrafficsim.core.value.v" + lowerCaseType + "." + type + "MathFunctions"}
                         : new String[]{"org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.Absolute",
-                                "org.opentrafficsim.core.value.Relative", "org.opentrafficsim.core.value.Scalar",
-                                "org.opentrafficsim.core.value.ValueUtil"},
+                                "org.opentrafficsim.core.value.Format", "org.opentrafficsim.core.value.Relative",
+                                "org.opentrafficsim.core.value.Scalar", "org.opentrafficsim.core.value.ValueUtil"},
                 (mutable ? "Mutable" : "Immutable ") + type + "Scalar.",
-                new String[]{"<U> the unit of the values in the constructor and for display"},
+                new String[]{"<U> Unit; the unit of this " + type + "Scalar"},
                 "<U extends Unit<U>> extends " + (mutable ? type : "") + "Scalar<U>"
                         + (mutable ? " implements " + type + "MathFunctions" : ""),
                 (mutable ? "" : cg.buildField(outerIndent, "private " + lowerCaseType + " valueSI",
@@ -1940,10 +1943,10 @@ public class Generator
                                 "Construct a new " + mutableType + type + "Scalar.",
                                 new String[]{"final U|unit|the unit of the new " + (mutable ? "Mutable" : "") + type
                                         + "Scalar"}, null, null, new String[]{"super(unit);"}, true)
-                        + buildScalarSubClass(outerIndent, "Abs", "Absolute " + mutableType + type + "Scalar", type
-                                + "Scalar<U>", "Absolute, Comparable<Abs<U>>", type + "Scalar", mutable, cg)
-                        + buildScalarSubClass(outerIndent, "Rel", "Relative " + mutableType + type + "Scalar", type
-                                + "Scalar<U>", "Relative, Comparable<Rel<U>>", type + "Scalar", mutable, cg)
+                        + buildScalarSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type + "Scalar", type
+                                + "Scalar<U>", "Absolute, Comparable<Abs<U>>", type + "Scalar", mutable)
+                        + buildScalarSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type + "Scalar", type
+                                + "Scalar<U>", "Relative, Comparable<Rel<U>>", type + "Scalar", mutable)
                         + (mutable ? cg.buildMethod(outerIndent, "public abstract|" + type
                                 + "Scalar<U>|immutable|immutable version of this " + type + "Scalar",
                                 "Construct an immutable version of this Mutable" + type + "Scalar. <br>\r\n"
@@ -1968,7 +1971,7 @@ public class Generator
                                                 "final U|valueUnit|the unit of the supplied value"}, null, null,
                                         new String[]{"setValueSI(" + (cast.equals("") ? "" : cast + " ")
                                                 + "ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
-                                + buildOtherMutatingScalarMethods(outerIndent, type, cg)
+                                + buildOtherMutatingScalarMethods(cg, outerIndent, type)
                                 : cg.buildMethod(outerIndent, "public abstract|Mutable" + type + "Scalar<U>|mutable",
                                         "Create a mutable version of this " + type + "Scalar. <br>\r\n" + outerIndent
                                                 + " * The mutable version is created as a deep copy of this. "
@@ -2016,12 +2019,12 @@ public class Generator
 
     /**
      * Generate most of the java code that modifies MutableScalar values.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prepended to output lines on the outermost level of the generated code
      * @param type String; either <cite>Float</cite> or <cite>Double</cite>
-     * @param cg CodeGenerator; the code generator
      * @return String
      */
-    private static String buildOtherMutatingScalarMethods(String indent, String type, CodeGenerator cg)
+    private static String buildOtherMutatingScalarMethods(CodeGenerator cg, String indent, String type)
     {
         final String cast = (type.startsWith("F") ? "(float)" : null);
         StringBuilder construction = new StringBuilder();
@@ -2043,13 +2046,13 @@ public class Generator
                         + "Scalar.Rel<U>|value|the value to subtract"}, null, null,
                 new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
         construction.append(cg.buildBlockComment(indent, "STATIC METHODS"));
-        construction.append(buildScalarIncrementDecrement(indent, type, true, cg));
-        construction.append(buildScalarPlus(indent, type, true, cg));
-        construction.append(buildScalarPlus(indent, type, false, cg));
-        construction.append(buildScalarIncrementDecrement(indent, type, false, cg));
-        construction.append(buildScalarMinus(indent, type, true, cg));
-        construction.append(buildScalarMinus(indent, type, false, cg));
-        // abs minus abs -> rel
+        construction.append(buildScalarIncrementDecrement(cg, indent, type, true));
+        construction.append(buildScalarPlus(cg, indent, type, true));
+        construction.append(buildScalarPlus(cg, indent, type, false));
+        construction.append(buildScalarIncrementDecrement(cg, indent, type, false));
+        construction.append(buildScalarMinus(cg, indent, type, true));
+        construction.append(buildScalarMinus(cg, indent, type, false));
+        // abs minus abs -> rel is a special case because the result differs from both input types
         construction.append(cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + type
                 + "Scalar.Rel<U>|minus|the difference of the two absolute values as a relative value",
                 "Subtract two absolute values. Return a new instance of a relative value of the difference. The unit "
@@ -2061,10 +2064,10 @@ public class Generator
                         indent + indent + "new Mutable" + type
                                 + "Scalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());",
                         "result.decrementBy(valueAbs2);", "return result;"}, false));
-        construction.append(buildScalarMultiplyOrDivide(indent, type, true, true, cg));
-        construction.append(buildScalarMultiplyOrDivide(indent, type, false, true, cg));
-        construction.append(buildScalarMultiplyOrDivide(indent, type, true, false, cg));
-        construction.append(buildScalarMultiplyOrDivide(indent, type, false, false, cg));
+        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, true, true));
+        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, false, true));
+        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, true, false));
+        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, false, false));
         construction.append(cg.buildBlockComment(indent, "MATH METHODS"));
         for (MathFunctionEntry mfe : mathFunctions)
         {
@@ -2093,16 +2096,16 @@ public class Generator
 
     /**
      * Generate the code for scalar multiply or divide.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
      * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param absolute boolean; if true; the code for handling two absolutes is generated; if false; the code for
      *            handling two relatives is generated
      * @param multiply boolean; if true; the code for multiply is generated; if false; the code for divide is generated
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildScalarMultiplyOrDivide(final String indent, final String scalarType, boolean absolute,
-            boolean multiply, CodeGenerator cg)
+    private static String buildScalarMultiplyOrDivide(CodeGenerator cg, final String indent, final String scalarType,
+            boolean absolute, boolean multiply)
     {
         final String absRel = absolute ? "Abs" : "Rel";
         return cg.buildMethod(indent, "public static|Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>|"
@@ -2122,15 +2125,15 @@ public class Generator
 
     /**
      * Generate the code for scalar incrementBy and decrementBy.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
      * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param increment boolean; if true; the code for incrementBy is generated; if false; the code for decrementBy is
      *            generated
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildScalarIncrementDecrement(String indent, String scalarType, boolean increment,
-            CodeGenerator cg)
+    private static String buildScalarIncrementDecrement(CodeGenerator cg, String indent, String scalarType,
+            boolean increment)
     {
         return cg.buildMethod(indent, "protected final|" + scalarType + "Scalar<?>|" + (increment ? "in" : "de")
                 + "crementBy|the modified Mutable" + scalarType + "Scalar", (increment ? "In" : "De")
@@ -2143,15 +2146,15 @@ public class Generator
 
     /**
      * Build the plus method for adding an array of relative scalars to an absolute or relative scalar.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prepended to each line
      * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param absoluteResult boolean; if true the first operand and the result are absolute; if false, the first operand
      *            and the result are relative
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildScalarPlus(final String indent, final String scalarType, boolean absoluteResult,
-            CodeGenerator cg)
+    private static String buildScalarPlus(CodeGenerator cg, final String indent, final String scalarType,
+            boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
         return cg.buildMethod(
@@ -2193,16 +2196,16 @@ public class Generator
     }
 
     /**
-     * Build the minus method for adding an array of relative scalars to an absolute or relative scalar.
+     * Build the minus method for subtracting an array of relative scalars from an absolute or relative scalar.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prepended to each line
      * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param absoluteResult boolean; if true the first operand and the result are absolute; if false, the first operand
      *            and the result are relative
-     * @param cg CodeGenerator; the code generator
      * @return String; java code
      */
-    private static String buildScalarMinus(final String indent, final String scalarType, boolean absoluteResult,
-            CodeGenerator cg)
+    private static String buildScalarMinus(CodeGenerator cg, final String indent, final String scalarType,
+            boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
         return cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar." + absRel
@@ -2252,7 +2255,54 @@ public class Generator
         construction.append(cg.buildMethod(indent, "public final|double|doubleValue", null, null, null, null,
                 new String[]{"return this.valueSI;"}, false));
         construction.append(cg.buildMethod(indent, "public final|String|toString", null, null, null, null,
-                new String[]{"return this.getValueInUnit() + \" \" + this.getUnit().getAbbreviationKey();"}, false));
+                new String[]{"return toString(getUnit());"}, false));
+        construction.append(cg.buildMethod(
+                indent,
+                "public final|String|toString|printable string with the scalar contents",
+                "Print this " + type + "Scalar with the value expressed in the specified unit.",
+                new String[]{"final U|displayUnit|the unit into which the value is converted for display"},
+                null,
+                null,
+                new String[]{
+                        "StringBuffer buf = new StringBuffer();",
+                        "if (this instanceof Mutable" + type + "Scalar)",
+                        "{",
+                        cg.indent(1) + "buf.append(\"Mutable   \");",
+                        cg.indent(1) + "if (this instanceof Mutable" + type + "Scalar.Abs)",
+                        cg.indent(1) + "{",
+                        cg.indent(2) + "buf.append(\"Abs \");",
+                        cg.indent(1) + "}",
+                        cg.indent(1) + "else if (this instanceof Mutable" + type + "Scalar.Rel)",
+                        cg.indent(1) + "{",
+                        cg.indent(2) + "buf.append(\"Rel \");",
+                        cg.indent(1) + "}",
+                        cg.indent(1) + "else",
+                        cg.indent(1) + "{",
+                        cg.indent(2) + "buf.append(\"??? \");",
+                        cg.indent(1) + "}",
+                        "}",
+                        "else",
+                        "{",
+                        cg.indent(1) + "buf.append(\"Immutable \");",
+                        cg.indent(1) + "if (this instanceof " + type + "Scalar.Abs)",
+                        cg.indent(1) + "{",
+                        cg.indent(2) + "buf.append(\"Abs \");",
+                        cg.indent(1) + "}",
+                        cg.indent(1) + "else if (this instanceof " + type + "Scalar.Rel)",
+                        cg.indent(1) + "{",
+                        cg.indent(2) + "buf.append(\"Rel \");",
+                        cg.indent(1) + "}",
+                        cg.indent(1) + "else",
+                        cg.indent(1) + "{",
+                        cg.indent(2) + "buf.append(\"??? \");",
+                        cg.indent(1) + "}",
+                        "}",
+                        "buf.append(\"[\" + displayUnit.getAbbreviation() + \"] \");",
+                        type.toLowerCase() + " " + type.substring(0, 1).toLowerCase() + " = "
+                                + (type.startsWith("F") ? "(float) " : "")
+                                + "ValueUtil.expressAsUnit(getValueSI(), displayUnit);",
+                        "buf.append(Format.format(" + type.substring(0, 1).toLowerCase() + "));",
+                        "return buf.toString();"}, false));
         construction.append(cg.buildMethod(indent, "public final|int|hashCode", null, null, null, null, type
                 .equals("Float") ? new String[]{"final int prime = 31;", "int result = 1;",
                 "result = prime * result + Float.floatToIntBits(this.valueSI);", "return result;"} : new String[]{
@@ -2298,7 +2348,8 @@ public class Generator
     }
 
     /**
-     * Generate the Java code for a sub class of scalar
+     * Generate the Java code for a sub class of scalar.
+     * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for each output line
      * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
      * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatScalar</cite> or
@@ -2308,12 +2359,11 @@ public class Generator
      * @param parentClassName String; name of the class that is being sub-classed
      * @param mutable boolean; if true; the class file for the mutable version is generated; if false; the class file
      *            for the immutable version is generated
-     * @param cg CodeGenerator; the code generator
      * @return String; java code implementing the sub class
      */
-    private static String buildScalarSubClass(final String indent, final String name, final String longName,
-            final String extendsString, final String implementsString, final String parentClassName, boolean mutable,
-            CodeGenerator cg)
+    private static String buildScalarSubClass(CodeGenerator cg, final String indent, final String name,
+            final String longName, final String extendsString, final String implementsString,
+            final String parentClassName, boolean mutable)
     {
         final String absRelType = longName.split(" ")[0];
         final String floatType = extendsString.contains("Float") ? "Float" : "Double";
@@ -2359,11 +2409,11 @@ public class Generator
 
     /**
      * Generate the three format functions for either float or double typed value.
-     * @param valueType String; should be <cite>float</cite> or <cite>double</cite>
      * @param cg CodeGenerator; the code generator
+     * @param valueType String; should be <cite>float</cite> or <cite>double</cite>
      * @return String; java code for the three format functions
      */
-    private static String buildFormatMethods(String valueType, CodeGenerator cg)
+    private static String buildFormatMethods(CodeGenerator cg, String valueType)
     {
         return cg.buildMethod(cg.indent(1), "public static|String|format|the formatted floating point value",
                 "Format a floating point value.", new String[]{"final " + valueType + "|value|the value to format",

@@ -1,4 +1,4 @@
-package valueclasses.generator;
+package code.generators;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,6 +30,9 @@ public class CodeGenerator
 
     /** Description of the day on which the files were generated */
     final String when;
+
+    /** Name of the package-info file(s). */
+    final static String packageInfoName = "package-info";
 
     /**
      * Create a new CodeGenerator
@@ -88,7 +91,7 @@ public class CodeGenerator
         try
         {
             writer = new BufferedWriter(new FileWriter(new File(fileName)));
-            if (!name.equals("package-info"))
+            if (!name.equals(packageInfoName))
             {
                 writer.write(packageLine + "\r\n");
             }
@@ -120,7 +123,7 @@ public class CodeGenerator
                 }
             }
             writer.write(" */\r\n");
-            if (name.equals("package-info"))
+            if (name.equals(packageInfoName))
             {
                 writer.write(packageLine);
             }
@@ -288,22 +291,22 @@ public class CodeGenerator
      * Create a String that defines one method.
      * @param indent String; prefix for all output lines
      * @param qualifiersTypeAndName String; the qualifiers, the type and the name of the method separated by vertical
-     *            bars, e.g. <cite>final public|double|getDoubleValue</cite>. If this method overrides a method in a
-     *            parent class set this parameter to null.
+     *            bars, e.g. <cite>final public|double|getDoubleValue</cite>. If the method that must be generated
+     *            overrides a method in a parent class set this parameter to null.
      * @param description String; description of the method
-     * @param params String[]; one String for each parameter of the method. Each parameter string consists of
+     * @param parameters String[]; one String for each parameter of the method. Each parameter string consists of
      *            qualifiers, type, name separated by vertical bars, e.g. <cite>final int|index|index of the
-     *            entry</cite>
+     *            entry</cite>. Null entries in the parameters array are silently ignored.
      * @param exceptions String; exception type and description separated by a vertical bar, or null if this method does
      *            not throw exceptions
      * @param pragma String; text that goes after the JavaDoc, but before the start of the method code
      * @param body String[]; the lines of the body of the method. Lines on the outermost level should start with 0
-     *            spaces
+     *            spaces. Null entries in the body array are silently ignored
      * @param constructor boolean; if true; the new method is a constructor; if false; the new method is not a
      *            constructor
      * @return String; the Java source code of the method.
      */
-    public String buildMethod(String indent, String qualifiersTypeAndName, String description, String[] params,
+    public String buildMethod(String indent, String qualifiersTypeAndName, String description, String[] parameters,
             String exceptions, String pragma, String[] body, boolean constructor)
     {
         final int maxLineLength = 121;
@@ -314,9 +317,9 @@ public class CodeGenerator
             construction.append(indent + "/**\r\n" + indent + " * ");
             construction.append(description);
             construction.append("\r\n");
-            if (null != params)
+            if (null != parameters)
             {
-                for (String param : params)
+                for (String param : parameters)
                 {
                     if (null == param)
                     {
@@ -398,9 +401,9 @@ public class CodeGenerator
         }
         line += fields[2] + "(";
         String sep = "";
-        if (null != params)
+        if (null != parameters)
         {
-            for (String param : params)
+            for (String param : parameters)
             {
                 if (null == param)
                 {
@@ -513,7 +516,8 @@ public class CodeGenerator
         try
         {
             BufferedWriter writer = openFile(relativePackage, name, imports, description, genericParams);
-            writer.write("public interface " + name + (typeInfo.length() == 0 ? "" : " ") + typeInfo + "\r\n{\r\n");
+            writer.write("public interface " + name + (typeInfo.length() > 0 && typeInfo.startsWith("<") ? "" : " ")
+                    + typeInfo + "\r\n{\r\n");
             if (null != body)
             {
                 writer.write(body);
@@ -539,7 +543,7 @@ public class CodeGenerator
      */
     public void generatePackageInfo(String relativePackageName, String contents)
     {
-        closeFile(openFile(relativePackageName, "package-info", null, contents, null));
+        closeFile(openFile(relativePackageName, packageInfoName, null, contents, null));
     }
 
 }
