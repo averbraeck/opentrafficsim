@@ -1,5 +1,7 @@
 /**
- * Code generator for the value classes.
+ * Code generators. <br/>
+ * Code generators should be used whenever a software architect runs into major "DRY" (Don't Repeat Yourself" problems 
+ * that cannot be fixed by better use of generics, sub-classing, etc.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.
@@ -34,4 +36,4 @@
  * possibility of such damage.
  */
 
-package valueclasses.generator;
+package code.generators;
