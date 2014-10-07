@@ -502,7 +502,7 @@
       <codefragment><![CDATA[    public abstract static class Abs<U extends Unit<U>> extends DoubleMatrix<U> implements Absolute
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Absolute Immutable DoubleMatrix.
@@ -520,7 +520,7 @@
         public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Dense Immutable DoubleMatrix.
@@ -565,7 +565,7 @@
       <codefragment><![CDATA[    public abstract static class Rel<U extends Unit<U>> extends DoubleMatrix<U> implements Relative
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Relative Immutable DoubleMatrix.
@@ -583,7 +583,7 @@
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Dense Immutable DoubleMatrix.
@@ -628,7 +628,7 @@
       <codefragment><![CDATA[    public abstract static class Abs<U extends Unit<U>> extends FloatMatrix<U> implements Absolute
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Absolute Immutable FloatMatrix.
@@ -646,7 +646,7 @@
         public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Dense Immutable FloatMatrix.
@@ -691,7 +691,7 @@
       <codefragment><![CDATA[    public abstract static class Rel<U extends Unit<U>> extends FloatMatrix<U> implements Relative
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Relative Immutable FloatMatrix.
@@ -709,7 +709,7 @@
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Dense Immutable FloatMatrix.
@@ -754,7 +754,7 @@
       <codefragment><![CDATA[    public abstract static class Abs<U extends Unit<U>> extends DoubleVector<U> implements Absolute
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Absolute Immutable DoubleVector.
@@ -772,7 +772,7 @@
         public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Dense Immutable DoubleVector.
@@ -816,7 +816,7 @@
       <codefragment><![CDATA[    public abstract static class Rel<U extends Unit<U>> extends DoubleVector<U> implements Relative
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Relative Immutable DoubleVector.
@@ -834,7 +834,7 @@
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Dense Immutable DoubleVector.
@@ -878,7 +878,7 @@
       <codefragment><![CDATA[    public abstract static class Abs<U extends Unit<U>> extends FloatVector<U> implements Absolute
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Absolute Immutable FloatVector.
@@ -896,7 +896,7 @@
         public static class Dense<U extends Unit<U>> extends Abs<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Dense Immutable FloatVector.
@@ -940,7 +940,7 @@
       <codefragment><![CDATA[    public abstract static class Rel<U extends Unit<U>> extends FloatVector<U> implements Relative
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Relative Immutable FloatVector.
@@ -958,7 +958,7 @@
         public static class Dense<U extends Unit<U>> extends Rel<U> implements DenseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Dense Immutable FloatVector.
@@ -995,14 +995,14 @@
                 super(unit);]]></codefragment>
    </duplication>
    <duplication lines="49" tokens="124">
-      <file line="42"
+      <file line="43"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\DoubleScalar.java"/>
       <file line="41"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\MutableDoubleScalar.java"/>
       <codefragment><![CDATA[    public static class Abs<U extends Unit<U>> extends DoubleScalar<U> implements Absolute, Comparable<Abs<U>>
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Absolute Immutable DoubleScalar.
@@ -1050,14 +1050,14 @@
         public final int compareTo(final Abs<U> o)]]></codefragment>
    </duplication>
    <duplication lines="49" tokens="124">
-      <file line="107"
+      <file line="108"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\DoubleScalar.java"/>
       <file line="113"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\MutableDoubleScalar.java"/>
       <codefragment><![CDATA[    public static class Rel<U extends Unit<U>> extends DoubleScalar<U> implements Relative, Comparable<Rel<U>>
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Relative Immutable DoubleScalar.
@@ -1105,14 +1105,14 @@
         public final int compareTo(final Rel<U> o)]]></codefragment>
    </duplication>
    <duplication lines="49" tokens="124">
-      <file line="42"
+      <file line="43"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\FloatScalar.java"/>
       <file line="41"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\MutableFloatScalar.java"/>
       <codefragment><![CDATA[    public static class Abs<U extends Unit<U>> extends FloatScalar<U> implements Absolute, Comparable<Abs<U>>
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Absolute Immutable FloatScalar.
@@ -1160,14 +1160,14 @@
         public final int compareTo(final Abs<U> o)]]></codefragment>
    </duplication>
    <duplication lines="49" tokens="124">
-      <file line="107"
+      <file line="108"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\FloatScalar.java"/>
       <file line="113"
             path="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\MutableFloatScalar.java"/>
       <codefragment><![CDATA[    public static class Rel<U extends Unit<U>> extends FloatScalar<U> implements Relative, Comparable<Rel<U>>
     {
         /**  */
-        private static final long serialVersionUID = 20141006L;
+        private static final long serialVersionUID = 20141007L;
 
         /**
          * Construct a new Relative Immutable FloatScalar.
@@ -1268,7 +1268,7 @@
         public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Sparse Immutable DoubleMatrix.
@@ -1320,7 +1320,7 @@
         public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Sparse Immutable DoubleMatrix.
@@ -1372,7 +1372,7 @@
         public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Sparse Immutable FloatMatrix.
@@ -1424,7 +1424,7 @@
         public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Sparse Immutable FloatMatrix.
@@ -1547,7 +1547,7 @@
         public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Sparse Immutable DoubleVector.
@@ -1598,7 +1598,7 @@
         public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Sparse Immutable DoubleVector.
@@ -1649,7 +1649,7 @@
         public static class Sparse<U extends Unit<U>> extends Abs<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Absolute Sparse Immutable FloatVector.
@@ -1700,7 +1700,7 @@
         public static class Sparse<U extends Unit<U>> extends Rel<U> implements SparseData
         {
             /**  */
-            private static final long serialVersionUID = 20141006L;
+            private static final long serialVersionUID = 20141007L;
 
             /**
              * Construct a new Relative Sparse Immutable FloatVector.

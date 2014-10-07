@@ -277,7 +277,6 @@
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\Absolute.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\AbstractValue.java">
-<error line="21" column="36" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\conversions\Calc.java">
 </file>
@@ -295,12 +294,10 @@
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\Relative.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\Scalar.java">
-<error line="20" column="29" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\SparseData.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\Value.java">
-<error line="18" column="23" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\ValueException.java">
 </file>
@@ -322,31 +319,25 @@
 <error line="150" column="40" severity="warning" message="Name &apos;toRadians&apos; must match pattern &apos;^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\DoubleMatrix.java">
-<error line="41" column="35" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="806" column="68" severity="warning" message="Name &apos;A&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ParameterNameCheck"/>
 <error line="808" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="813" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="814" column="24" severity="warning" message="Name &apos;A2D&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableNameCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\MutableDoubleMatrix.java">
-<error line="33" column="42" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="486" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\ReadOnlyDoubleMatrixFunctions.java">
-<error line="20" column="47" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\matrix\WriteDoubleMatrixFunctions.java">
-<error line="20" column="44" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\DoubleScalar.java">
-<error line="22" column="35" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\MutableDoubleScalar.java">
-<error line="24" column="42" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="442" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="450" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="458" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
@@ -370,19 +361,15 @@
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\scalar\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\DoubleVector.java">
-<error line="33" column="35" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\MutableDoubleVector.java">
-<error line="33" column="42" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="476" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\ReadOnlyDoubleVectorFunctions.java">
-<error line="20" column="47" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vdouble\vector\WriteDoubleVectorFunctions.java">
-<error line="20" column="44" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\FloatMathFunctions.java">
 </file>
@@ -400,31 +387,25 @@
 <error line="150" column="39" severity="warning" message="Name &apos;toRadians&apos; must match pattern &apos;^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\FloatMatrix.java">
-<error line="41" column="34" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="806" column="66" severity="warning" message="Name &apos;A&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ParameterNameCheck"/>
 <error line="808" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="813" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="814" column="23" severity="warning" message="Name &apos;A2D&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableNameCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\MutableFloatMatrix.java">
-<error line="33" column="41" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="484" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\ReadOnlyFloatMatrixFunctions.java">
-<error line="20" column="46" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\matrix\WriteFloatMatrixFunctions.java">
-<error line="20" column="43" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\FloatScalar.java">
-<error line="22" column="34" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\MutableFloatScalar.java">
-<error line="24" column="41" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="440" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="448" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 <error line="456" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
@@ -448,19 +429,15 @@
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\scalar\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\FloatVector.java">
-<error line="33" column="34" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\MutableFloatVector.java">
-<error line="33" column="41" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 <error line="476" severity="warning" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\package-info.java">
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\ReadOnlyFloatVectorFunctions.java">
-<error line="20" column="46" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\core\value\vfloat\vector\WriteFloatVectorFunctions.java">
-<error line="20" column="43" severity="warning" message="&apos;&lt;&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.GenericWhitespaceCheck"/>
 </file>
 <file name="D:\Java\ots-core\src\main\java\org\opentrafficsim\graphs\AccelerationContourPlot.java">
 </file>
