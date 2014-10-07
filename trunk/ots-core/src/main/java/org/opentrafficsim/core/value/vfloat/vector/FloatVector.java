@@ -30,7 +30,7 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix1D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this FloatVector
  */
-public abstract class FloatVector <U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
     ReadOnlyFloatVectorFunctions<U>
 {
     /**  */

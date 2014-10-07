@@ -30,7 +30,7 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableFloatMatrix
  */
-public abstract class MutableFloatMatrix <U extends Unit<U>> extends FloatMatrix<U> implements 
+public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements 
         WriteFloatMatrixFunctions<U>, FloatMathFunctions
 {
     /**  */

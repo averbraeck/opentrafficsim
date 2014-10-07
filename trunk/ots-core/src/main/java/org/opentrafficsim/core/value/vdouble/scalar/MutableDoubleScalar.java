@@ -21,7 +21,7 @@ import org.opentrafficsim.core.value.vdouble.DoubleMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this DoubleScalar
  */
-public abstract class MutableDoubleScalar <U extends Unit<U>> extends DoubleScalar<U> implements DoubleMathFunctions
+public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScalar<U> implements DoubleMathFunctions
 {
     /**  */
     private static final long serialVersionUID = 20141007L;

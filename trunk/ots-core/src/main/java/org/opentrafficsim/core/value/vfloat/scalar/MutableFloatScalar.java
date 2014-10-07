@@ -21,7 +21,7 @@ import org.opentrafficsim.core.value.vfloat.FloatMathFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this FloatScalar
  */
-public abstract class MutableFloatScalar <U extends Unit<U>> extends FloatScalar<U> implements FloatMathFunctions
+public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<U> implements FloatMathFunctions
 {
     /**  */
     private static final long serialVersionUID = 20141007L;
