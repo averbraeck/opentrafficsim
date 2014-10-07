@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.opentrafficsim.core.unit.AreaUnitTest" time="0.002" tests="2" errors="0" skipped="0" failures="0">
+<testsuite name="org.opentrafficsim.core.unit.AreaUnitTest" time="0.006" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.7.0_67\jre\bin"/>
@@ -27,7 +27,7 @@
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 7"/>
     <property name="net.sourceforge.cobertura.datafile" value="D:\Java\ots-core\target\cobertura\cobertura.ser"/>
-    <property name="classworlds.conf" value="D:\Java\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf6037928622074426305.tmp"/>
+    <property name="classworlds.conf" value="D:\Java\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf1882029796412276740.tmp"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
     <property name="java.library.path" value="C:\Program Files\Java\jdk1.7.0_67\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Program Files\Dell\DW WLAN Card;;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Common Files\DivX Shared\;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files\WIDCOMM\Bluetooth Software\;C:\Program Files\WIDCOMM\Bluetooth Software\syswow64;C:\Manually_Installed\apache-maven-3.2.3\bin;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -64,6 +64,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase name="conversions" classname="org.opentrafficsim.core.unit.AreaUnitTest" time="0.002"/>
+  <testcase name="conversions" classname="org.opentrafficsim.core.unit.AreaUnitTest" time="0.006"/>
   <testcase name="keys" classname="org.opentrafficsim.core.unit.AreaUnitTest" time="0"/>
 </testsuite>

@@ -84,14 +84,14 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> expressAsSIUnit(<span class="keyword">final</span> <span class="keyword">double</span> value, <span class="keyword">final</span> Unit&lt;?&gt; unit)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;35</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered"><a title="Line 36: Conditional coverage 100% (2/2).">&nbsp;9843</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 36: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (unit <span class="keyword">instanceof</span> OffsetUnit&lt;?&gt;)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered"><a title="Line 36: Conditional coverage 100% (2/2).">&nbsp;13124</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 36: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (unit <span class="keyword">instanceof</span> OffsetUnit&lt;?&gt;)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;37</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;38</td>  <td class="nbHitsCovered">&nbsp;90</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> (value - ((OffsetUnit&lt;?&gt;) unit).getOffsetToStandardUnit())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;39</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                    * unit.getConversionFactorToStandardUnit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;38</td>  <td class="nbHitsCovered">&nbsp;126</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> (value - ((OffsetUnit&lt;?&gt;) unit).getOffsetToStandardUnit())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;39</td>  <td class="nbHitsCovered">&nbsp;54</td>  <td class="src"><pre class="src">&nbsp;                    * unit.getConversionFactorToStandardUnit();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;40</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;9789</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> value * unit.getConversionFactorToStandardUnit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;13052</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> value * unit.getConversionFactorToStandardUnit();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;42</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;43</td>  <td class="nbHits">&nbsp;</td>
@@ -112,14 +112,14 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> expressAsUnit(<span class="keyword">final</span> <span class="keyword">double</span> siValue, <span class="keyword">final</span> Unit&lt;?&gt; targetUnit)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;51</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered"><a title="Line 52: Conditional coverage 100% (2/2).">&nbsp;57937389</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 52: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (targetUnit <span class="keyword">instanceof</span> OffsetUnit&lt;?&gt;)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered"><a title="Line 52: Conditional coverage 100% (2/2).">&nbsp;77249852</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 52: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (targetUnit <span class="keyword">instanceof</span> OffsetUnit&lt;?&gt;)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;90</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> siValue / targetUnit.getConversionFactorToStandardUnit()</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                    + ((OffsetUnit&lt;?&gt;) targetUnit).getOffsetToStandardUnit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;126</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> siValue / targetUnit.getConversionFactorToStandardUnit()</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered">&nbsp;54</td>  <td class="src"><pre class="src">&nbsp;                    + ((OffsetUnit&lt;?&gt;) targetUnit).getOffsetToStandardUnit();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;56</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;57</td>  <td class="nbHitsCovered">&nbsp;57937335</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> siValue / targetUnit.getConversionFactorToStandardUnit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;57</td>  <td class="nbHitsCovered">&nbsp;77249780</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> siValue / targetUnit.getConversionFactorToStandardUnit();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;58</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;59</td>  <td class="nbHits">&nbsp;</td>
@@ -128,6 +128,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 13:24.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 14:39.</div>
 </body>
 </html>
