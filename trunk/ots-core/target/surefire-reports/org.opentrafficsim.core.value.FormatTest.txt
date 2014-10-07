@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.opentrafficsim.core.value.FormatTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.512 sec - in org.opentrafficsim.core.value.FormatTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.531 sec - in org.opentrafficsim.core.value.FormatTest

@@ -53,7 +53,7 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment"> * @author &lt;a href="http://www.tbm.tudelft.nl/averbraeck"&gt;Alexander Verbraeck&lt;/a&gt;</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;18</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment"> */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;19</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> VolumeUnit <span class="keyword">extends</span> Unit&lt;VolumeUnit&gt;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;19</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> VolumeUnit <span class="keyword">extends</span> Unit&lt;VolumeUnit&gt;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;20</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;{</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;21</td>  <td class="nbHits">&nbsp;</td>
@@ -174,48 +174,48 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">static</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_METER = <span class="keyword">new</span> VolumeUnit(LengthUnit.METER, <span class="string">"VolumeUnit.cubic_meter"</span>, <span class="string">"VolumeUnit.m^3"</span>, SI_DERIVED);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;81</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_DECIMETER =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_METER = <span class="keyword">new</span> VolumeUnit(LengthUnit.METER, <span class="string">"VolumeUnit.cubic_meter"</span>, <span class="string">"VolumeUnit.m^3"</span>, SI_DERIVED);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;81</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_DECIMETER =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;82</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(LengthUnit.DECIMETER, <span class="string">"VolumeUnit.cubic_decimeter"</span>, <span class="string">"VolumeUnit.dm^3"</span>, SI_DERIVED);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;83</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        LITER = <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.liter"</span>, <span class="string">"VolumeUnit.L"</span>, SI_ACCEPTED, CUBIC_DECIMETER, 1.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;84</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_CENTIMETER =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;83</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        LITER = <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.liter"</span>, <span class="string">"VolumeUnit.L"</span>, SI_ACCEPTED, CUBIC_DECIMETER, 1.0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;84</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_CENTIMETER =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;85</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(LengthUnit.CENTIMETER, <span class="string">"VolumeUnit.cubic_centimeter"</span>, <span class="string">"VolumeUnit.cm^3"</span>, SI_DERIVED);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_KM = <span class="keyword">new</span> VolumeUnit(LengthUnit.KILOMETER, <span class="string">"VolumeUnit.cubic_kilometer"</span>, <span class="string">"VolumeUnit.km^3"</span>, SI_DERIVED);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;87</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_MILE = <span class="keyword">new</span> VolumeUnit(LengthUnit.MILE, <span class="string">"VolumeUnit.cubic_mile"</span>, <span class="string">"VolumeUnit.mi^3"</span>, IMPERIAL);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;88</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_FOOT = <span class="keyword">new</span> VolumeUnit(LengthUnit.FOOT, <span class="string">"VolumeUnit.cubic_foot"</span>, <span class="string">"VolumeUnit.ft^3"</span>, IMPERIAL);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;89</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_INCH = <span class="keyword">new</span> VolumeUnit(LengthUnit.INCH, <span class="string">"VolumeUnit.cubic_inch"</span>, <span class="string">"VolumeUnit.in^3"</span>, IMPERIAL);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_YARD = <span class="keyword">new</span> VolumeUnit(LengthUnit.YARD, <span class="string">"VolumeUnit.cubic_yard"</span>, <span class="string">"VolumeUnit.yd^3"</span>, IMPERIAL);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        GALLON_US_FLUID =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_KM = <span class="keyword">new</span> VolumeUnit(LengthUnit.KILOMETER, <span class="string">"VolumeUnit.cubic_kilometer"</span>, <span class="string">"VolumeUnit.km^3"</span>, SI_DERIVED);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;87</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_MILE = <span class="keyword">new</span> VolumeUnit(LengthUnit.MILE, <span class="string">"VolumeUnit.cubic_mile"</span>, <span class="string">"VolumeUnit.mi^3"</span>, IMPERIAL);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;88</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_FOOT = <span class="keyword">new</span> VolumeUnit(LengthUnit.FOOT, <span class="string">"VolumeUnit.cubic_foot"</span>, <span class="string">"VolumeUnit.ft^3"</span>, IMPERIAL);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;89</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_INCH = <span class="keyword">new</span> VolumeUnit(LengthUnit.INCH, <span class="string">"VolumeUnit.cubic_inch"</span>, <span class="string">"VolumeUnit.in^3"</span>, IMPERIAL);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        CUBIC_YARD = <span class="keyword">new</span> VolumeUnit(LengthUnit.YARD, <span class="string">"VolumeUnit.cubic_yard"</span>, <span class="string">"VolumeUnit.yd^3"</span>, IMPERIAL);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        GALLON_US_FLUID =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;92</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.gallon_(US)"</span>, <span class="string">"VolumeUnit.gal(US)"</span>, US_CUSTOMARY, CUBIC_INCH, 231.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;93</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        GALLON_IMP = <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.gallon_(imp)"</span>, <span class="string">"VolumeUnit.gal(imp)"</span>, IMPERIAL, LITER, 4.5409);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        OUNCE_US_FLUID =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;93</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        GALLON_IMP = <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.gallon_(imp)"</span>, <span class="string">"VolumeUnit.gal(imp)"</span>, IMPERIAL, LITER, 4.5409);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        OUNCE_US_FLUID =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;95</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.ounce_(fluid_US)"</span>, <span class="string">"VolumeUnit.US_fl_oz"</span>, US_CUSTOMARY, GALLON_US_FLUID,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;96</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                        1.0 / 128.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;97</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        OUNCE_IMP_FLUID =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;97</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        OUNCE_IMP_FLUID =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;98</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.ounce_(fluid_imperial)"</span>, <span class="string">"VolumeUnit.fl_oz_(imp)"</span>, IMPERIAL, GALLON_IMP,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;99</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                        1.0 / 160.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;100</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        PINT_US_FLUID =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;100</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        PINT_US_FLUID =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;101</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.pint_(US_fluid)"</span>, <span class="string">"VolumeUnit.pt(US_fl)"</span>, US_CUSTOMARY, GALLON_US_FLUID,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;102</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                        1.0 / 8.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;103</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        PINT_IMP = <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.pint_(imperial)"</span>, <span class="string">"VolumeUnit.pt_(imp)"</span>, IMPERIAL, GALLON_IMP, 1.0 / 8.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;104</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        QUART_US_FLUID =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;103</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        PINT_IMP = <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.pint_(imperial)"</span>, <span class="string">"VolumeUnit.pt_(imp)"</span>, IMPERIAL, GALLON_IMP, 1.0 / 8.0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;104</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        QUART_US_FLUID =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;105</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.quart_(US_fluid)"</span>, <span class="string">"VolumeUnit.qt(US_fl)"</span>, US_CUSTOMARY, GALLON_US_FLUID,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;106</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                        1.0 / 4.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;107</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        QUART_IMP =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;107</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        QUART_IMP =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;108</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> VolumeUnit(<span class="string">"VolumeUnit.quart_(imperial)"</span>, <span class="string">"VolumeUnit.qt_(imp)"</span>, IMPERIAL, GALLON_IMP, 1.0 / 4.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;109</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;109</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;110</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;111</td>  <td class="nbHits">&nbsp;</td>
@@ -238,11 +238,11 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> UnitSystem unitSystem)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;120</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;121</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">super</span>(nameKey, abbreviationKey, unitSystem, CUBIC_METER, Math.pow(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;121</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">super</span>(nameKey, abbreviationKey, unitSystem, CUBIC_METER, Math.pow(</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;122</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                lengthUnit.getConversionFactorToStandardUnit(), 3), <span class="keyword">true</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;123</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.lengthUnit = lengthUnit;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;124</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;123</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.lengthUnit = lengthUnit;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;124</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;125</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;126</td>  <td class="nbHits">&nbsp;</td>
@@ -269,9 +269,9 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> VolumeUnit referenceUnit, <span class="keyword">final</span> <span class="keyword">double</span> conversionFactorToReferenceUnit)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;137</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;138</td>  <td class="nbHitsCovered">&nbsp;30</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">super</span>(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, <span class="keyword">true</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsCovered">&nbsp;30</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.lengthUnit = referenceUnit.getLengthUnit();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;140</td>  <td class="nbHitsCovered">&nbsp;30</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;138</td>  <td class="nbHitsCovered">&nbsp;40</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">super</span>(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, <span class="keyword">true</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsCovered">&nbsp;40</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.lengthUnit = referenceUnit.getLengthUnit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;140</td>  <td class="nbHitsCovered">&nbsp;40</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;141</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;142</td>  <td class="nbHits">&nbsp;</td>
@@ -284,7 +284,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> LengthUnit getLengthUnit()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;146</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;147</td>  <td class="nbHitsCovered">&nbsp;54</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.lengthUnit;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;147</td>  <td class="nbHitsCovered">&nbsp;72</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.lengthUnit;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;148</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;149</td>  <td class="nbHits">&nbsp;</td>
@@ -297,7 +297,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> VolumeUnit getStandardUnit()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;153</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> CUBIC_METER;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> CUBIC_METER;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;155</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;156</td>  <td class="nbHits">&nbsp;</td>
@@ -310,7 +310,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> String getSICoefficientsString()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;160</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;54</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="string">"m3"</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;72</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="string">"m3"</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;162</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;163</td>  <td class="nbHits">&nbsp;</td>
@@ -319,6 +319,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 13:24.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 14:39.</div>
 </body>
 </html>

@@ -18,7 +18,7 @@
 </table>
 <div class="separator">&nbsp;</div>
 <table cellspacing="0" cellpadding="0" class="src">
-<tr>  <td class="numLineCover">&nbsp;1</td>  <td class="nbHitsCovered">&nbsp;8</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">package</span> org.opentrafficsim.graphs;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;1</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">package</span> org.opentrafficsim.graphs;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;2</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;3</td>  <td class="nbHits">&nbsp;</td>
@@ -137,7 +137,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> ChartPanel getChartPanel()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;60</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.chartPanel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.chartPanel;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;62</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;63</td>  <td class="nbHits">&nbsp;</td>
@@ -162,7 +162,7 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;73</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Time granularity values. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span>[] STANDARDTIMEGRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span>[] STANDARDTIMEGRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;75</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;76</td>  <td class="nbHits">&nbsp;</td>
@@ -173,7 +173,7 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Distance granularity values. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span>[] STANDARDDISTANCEGRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span>[] STANDARDDISTANCEGRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;81</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;82</td>  <td class="nbHits">&nbsp;</td>
@@ -184,14 +184,14 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;85</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Initial lower bound for the time scale. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; INITIALLOWERTIMEBOUND = <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(0,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;87</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;            TimeUnit.SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;7</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; INITIALLOWERTIMEBOUND = <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(0,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;87</td>  <td class="nbHitsCovered">&nbsp;3</td>  <td class="src"><pre class="src">&nbsp;            TimeUnit.SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;88</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;89</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** Initial upper bound for the time scale. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;5</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; INITIALUPPERTIMEBOUND = <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(300,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;            TimeUnit.SECOND);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;7</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; INITIALUPPERTIMEBOUND = <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(300,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;6</td>  <td class="src"><pre class="src">&nbsp;            TimeUnit.SECOND);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;92</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;93</td>  <td class="nbHits">&nbsp;</td>
@@ -218,18 +218,18 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @param legendStep Double; increment between color legend entries</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;104</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;105</td>  <td class="nbHitsCovered">&nbsp;8</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> ContourPlot(<span class="keyword">final</span> String caption, <span class="keyword">final</span> Axis xAxis, <span class="keyword">final</span> Axis yAxis, <span class="keyword">final</span> <span class="keyword">double</span> redValue,</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;105</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> ContourPlot(<span class="keyword">final</span> String caption, <span class="keyword">final</span> Axis xAxis, <span class="keyword">final</span> Axis yAxis, <span class="keyword">final</span> <span class="keyword">double</span> redValue,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;106</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">double</span> yellowValue, <span class="keyword">final</span> <span class="keyword">double</span> greenValue, <span class="keyword">final</span> String valueFormat, <span class="keyword">final</span> String legendFormat,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;107</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">double</span> legendStep)</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;108</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;109</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.xAxis = xAxis;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.yAxis = yAxis;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;111</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        extendXRange(xAxis.getMaximumValue());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;112</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span>[] boundaries = {redValue, yellowValue, greenValue};</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;113</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel = <span class="keyword">new</span> ChartPanel(createChart(caption, valueFormat, <span class="keyword">this</span>, boundaries, legendFormat, legendStep));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;114</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> PointerHandler ph = <span class="keyword">new</span> PointerHandler()</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;109</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.xAxis = xAxis;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.yAxis = yAxis;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;111</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        extendXRange(xAxis.getMaximumValue());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;112</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span>[] boundaries = {redValue, yellowValue, greenValue};</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;113</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel = <span class="keyword">new</span> ChartPanel(createChart(caption, valueFormat, <span class="keyword">this</span>, boundaries, legendFormat, legendStep));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;114</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> PointerHandler ph = <span class="keyword">new</span> PointerHandler()</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;115</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;116</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">/** {@inheritDoc} */</span></pre></td></tr>
@@ -239,35 +239,35 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">void</span> updateHint(<span class="keyword">final</span> <span class="keyword">double</span> domainValue, <span class="keyword">final</span> <span class="keyword">double</span> rangeValue)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;119</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;120</td>  <td class="nbHitsCovered"><a title="Line 120: Conditional coverage 100% (2/2).">&nbsp;24</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 120: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (Double.isNaN(domainValue))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;120</td>  <td class="nbHitsCovered"><a title="Line 120: Conditional coverage 100% (2/2).">&nbsp;32</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 120: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (Double.isNaN(domainValue))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;121</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;122</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                    setStatusText(<span class="string">" "</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;123</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">return</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;122</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                    setStatusText(<span class="string">" "</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;123</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">return</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;124</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;125</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                XYPlot plot = (XYPlot) getChartPanel().getChart().getPlot();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;126</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                XYZDataset dataset = (XYZDataset) plot.getDataset();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;127</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                String value = <span class="string">""</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;128</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">double</span> roundedTime = domainValue;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;129</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">double</span> roundedDistance = rangeValue;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;130</td>  <td class="nbHitsCovered"><a title="Line 130: Conditional coverage 100% (2/2).">&nbsp;1748</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 130: Conditional coverage 100% (2/2).">                <span class="keyword">for</span> (<span class="keyword">int</span> item = dataset.getItemCount(0); --item &gt;= 0;)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;125</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                XYPlot plot = (XYPlot) getChartPanel().getChart().getPlot();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;126</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                XYZDataset dataset = (XYZDataset) plot.getDataset();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;127</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                String value = <span class="string">""</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;128</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">double</span> roundedTime = domainValue;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;129</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">double</span> roundedDistance = rangeValue;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;130</td>  <td class="nbHitsCovered"><a title="Line 130: Conditional coverage 100% (2/2).">&nbsp;2620</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 130: Conditional coverage 100% (2/2).">                <span class="keyword">for</span> (<span class="keyword">int</span> item = dataset.getItemCount(0); --item &gt;= 0;)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;131</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;132</td>  <td class="nbHitsCovered">&nbsp;2592</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> x = dataset.getXValue(0, item);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;133</td>  <td class="nbHitsUncovered"><a title="Line 133: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;2592</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 133: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">                    <span class="keyword">if</span> (x + xAxis.getCurrentGranularity() / 2 &lt; domainValue</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;134</td>  <td class="nbHitsCovered"><a title="Line 134: Conditional coverage 100% (2/2).">&nbsp;1728</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 134: Conditional coverage 100% (2/2).">                            || x - xAxis.getCurrentGranularity() / 2 &gt;= domainValue)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;132</td>  <td class="nbHitsCovered">&nbsp;3456</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> x = dataset.getXValue(0, item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;133</td>  <td class="nbHitsUncovered"><a title="Line 133: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;3456</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 133: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">                    <span class="keyword">if</span> (x + xAxis.getCurrentGranularity() / 2 &lt; domainValue</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;134</td>  <td class="nbHitsCovered"><a title="Line 134: Conditional coverage 100% (2/2).">&nbsp;2592</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 134: Conditional coverage 100% (2/2).">                            || x - xAxis.getCurrentGranularity() / 2 &gt;= domainValue)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;135</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;136</td>  <td class="nbHitsCovered">&nbsp;2448</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">continue</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;136</td>  <td class="nbHitsCovered">&nbsp;3264</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">continue</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;137</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;138</td>  <td class="nbHitsCovered">&nbsp;144</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> y = dataset.getYValue(0, item);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsUncovered"><a title="Line 139: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;144</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 139: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">                    <span class="keyword">if</span> (y + yAxis.getCurrentGranularity() / 2 &lt; rangeValue</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;140</td>  <td class="nbHitsUncovered"><a title="Line 140: Conditional coverage 50% (1/2).">&nbsp;96</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 140: Conditional coverage 50% (1/2).">                            || y - yAxis.getCurrentGranularity() / 2 &gt;= rangeValue)</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;138</td>  <td class="nbHitsCovered">&nbsp;192</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> y = dataset.getYValue(0, item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsUncovered"><a title="Line 139: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;192</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 139: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">                    <span class="keyword">if</span> (y + yAxis.getCurrentGranularity() / 2 &lt; rangeValue</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;140</td>  <td class="nbHitsUncovered"><a title="Line 140: Conditional coverage 50% (1/2).">&nbsp;144</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 140: Conditional coverage 50% (1/2).">                            || y - yAxis.getCurrentGranularity() / 2 &gt;= rangeValue)</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;141</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;142</td>  <td class="nbHitsCovered">&nbsp;144</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">continue</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;142</td>  <td class="nbHitsCovered">&nbsp;192</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">continue</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;143</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;144</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    roundedTime = x;</span></pre></td></tr>
@@ -286,27 +286,27 @@
 <tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                                    .getFormat();</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;155</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    value = String.format(format, valueUnderMouse);</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;156</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                }</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;157</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                setStatusText(String.format(<span class="string">"time %.0fs, distance %.0fm, %s"</span>, roundedTime, roundedDistance, value));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;158</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;157</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                setStatusText(String.format(<span class="string">"time %.0fs, distance %.0fm, %s"</span>, roundedTime, roundedDistance, value));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;158</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;159</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;160</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        };</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel.addMouseMotionListener(ph);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;162</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel.addMouseListener(ph);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;163</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel.setMouseWheelEnabled(<span class="keyword">true</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;164</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        add(<span class="keyword">this</span>.chartPanel, BorderLayout.CENTER);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;165</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.statusLabel = <span class="keyword">new</span> JLabel(<span class="string">" "</span>, SwingConstants.CENTER);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;166</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        add(<span class="keyword">this</span>.statusLabel, BorderLayout.SOUTH);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;167</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> JPopupMenu popupMenu = <span class="keyword">this</span>.chartPanel.getPopupMenu();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;168</td>  <td class="nbHitsCovered">&nbsp;20</td>  <td class="src"><pre class="src">&nbsp;        popupMenu.insert(</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;169</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                buildMenu(<span class="string">"Distance granularity"</span>, <span class="string">"%.0f m"</span>, <span class="string">"setDistanceGranularity"</span>, yAxis.getGranularities(),</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;170</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                        yAxis.getCurrentGranularity()), 0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;171</td>  <td class="nbHitsCovered">&nbsp;20</td>  <td class="src"><pre class="src">&nbsp;        popupMenu.insert(</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;172</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                buildMenu(<span class="string">"Time granularity"</span>, <span class="string">"%.0f s"</span>, <span class="string">"setTimeGranularity"</span>, xAxis.getGranularities(),</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;173</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                        xAxis.getCurrentGranularity()), 1);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;174</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        reGraph();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;175</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel.addMouseMotionListener(ph);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;162</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel.addMouseListener(ph);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;163</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.chartPanel.setMouseWheelEnabled(<span class="keyword">true</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;164</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        add(<span class="keyword">this</span>.chartPanel, BorderLayout.CENTER);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;165</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.statusLabel = <span class="keyword">new</span> JLabel(<span class="string">" "</span>, SwingConstants.CENTER);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;166</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        add(<span class="keyword">this</span>.statusLabel, BorderLayout.SOUTH);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;167</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> JPopupMenu popupMenu = <span class="keyword">this</span>.chartPanel.getPopupMenu();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;168</td>  <td class="nbHitsCovered">&nbsp;28</td>  <td class="src"><pre class="src">&nbsp;        popupMenu.insert(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;169</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                buildMenu(<span class="string">"Distance granularity"</span>, <span class="string">"%.0f m"</span>, <span class="string">"setDistanceGranularity"</span>, yAxis.getGranularities(),</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;170</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                        yAxis.getCurrentGranularity()), 0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;171</td>  <td class="nbHitsCovered">&nbsp;28</td>  <td class="src"><pre class="src">&nbsp;        popupMenu.insert(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;172</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                buildMenu(<span class="string">"Time granularity"</span>, <span class="string">"%.0f s"</span>, <span class="string">"setTimeGranularity"</span>, xAxis.getGranularities(),</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;173</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                        xAxis.getCurrentGranularity()), 1);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;174</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        reGraph();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;175</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;176</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;177</td>  <td class="nbHits">&nbsp;</td>
@@ -321,8 +321,8 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> setStatusText(<span class="keyword">final</span> String newText)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;182</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;183</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.statusLabel.setText(newText);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;184</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;183</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.statusLabel.setText(newText);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;184</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;185</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;186</td>  <td class="nbHits">&nbsp;</td>
@@ -351,22 +351,22 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">double</span>[] values, <span class="keyword">final</span> <span class="keyword">double</span> currentValue)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;198</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;199</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> JMenu result = <span class="keyword">new</span> JMenu(caption);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;199</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> JMenu result = <span class="keyword">new</span> JMenu(caption);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;200</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;201</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ButtonGroup group = <span class="keyword">new</span> ButtonGroup();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;202</td>  <td class="nbHitsCovered"><a title="Line 202: Conditional coverage 100% (2/2).">&nbsp;228</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 202: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">double</span> value : values)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;201</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ButtonGroup group = <span class="keyword">new</span> ButtonGroup();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;202</td>  <td class="nbHitsCovered"><a title="Line 202: Conditional coverage 100% (2/2).">&nbsp;304</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 202: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">double</span> value : values)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;203</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;204</td>  <td class="nbHitsCovered">&nbsp;204</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> JRadioButtonMenuItem item = <span class="keyword">new</span> JRadioButtonMenuItem(String.format(format, value));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;205</td>  <td class="nbHitsCovered"><a title="Line 205: Conditional coverage 100% (2/2).">&nbsp;204</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 205: Conditional coverage 100% (2/2).">            item.setSelected(value == currentValue);</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;206</td>  <td class="nbHitsCovered">&nbsp;204</td>  <td class="src"><pre class="src">&nbsp;            item.setActionCommand(commandPrefix + String.format(Locale.US, <span class="string">" %f"</span>, value));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;207</td>  <td class="nbHitsCovered">&nbsp;204</td>  <td class="src"><pre class="src">&nbsp;            item.addActionListener(<span class="keyword">this</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;208</td>  <td class="nbHitsCovered">&nbsp;204</td>  <td class="src"><pre class="src">&nbsp;            result.add(item);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;209</td>  <td class="nbHitsCovered">&nbsp;204</td>  <td class="src"><pre class="src">&nbsp;            group.add(item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;204</td>  <td class="nbHitsCovered">&nbsp;272</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> JRadioButtonMenuItem item = <span class="keyword">new</span> JRadioButtonMenuItem(String.format(format, value));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;205</td>  <td class="nbHitsCovered"><a title="Line 205: Conditional coverage 100% (2/2).">&nbsp;272</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 205: Conditional coverage 100% (2/2).">            item.setSelected(value == currentValue);</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;206</td>  <td class="nbHitsCovered">&nbsp;272</td>  <td class="src"><pre class="src">&nbsp;            item.setActionCommand(commandPrefix + String.format(Locale.US, <span class="string">" %f"</span>, value));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;207</td>  <td class="nbHitsCovered">&nbsp;272</td>  <td class="src"><pre class="src">&nbsp;            item.addActionListener(<span class="keyword">this</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;208</td>  <td class="nbHitsCovered">&nbsp;272</td>  <td class="src"><pre class="src">&nbsp;            result.add(item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;209</td>  <td class="nbHitsCovered">&nbsp;272</td>  <td class="src"><pre class="src">&nbsp;            group.add(item);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;210</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;211</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> result;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;211</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> result;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;212</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;213</td>  <td class="nbHits">&nbsp;</td>
@@ -399,42 +399,42 @@
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> <span class="keyword">double</span>[] boundaries, <span class="keyword">final</span> String legendFormat, <span class="keyword">final</span> <span class="keyword">double</span> legendStep)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;227</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;228</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NumberAxis xAxis = <span class="keyword">new</span> NumberAxis(<span class="string">"\u2192 "</span> + <span class="string">"time [s]"</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;229</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        xAxis.setLowerMargin(0.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;230</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        xAxis.setUpperMargin(0.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;231</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NumberAxis yAxis = <span class="keyword">new</span> NumberAxis(<span class="string">"\u2192 "</span> + <span class="string">"Distance [m]"</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;232</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setAutoRangeIncludesZero(<span class="keyword">false</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;233</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setLowerMargin(0.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;234</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setUpperMargin(0.0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;235</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;236</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        XYBlockRenderer renderer = <span class="keyword">new</span> XYBlockRenderer();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;237</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;238</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ContinuousColorPaintScale paintScale =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;239</td>  <td class="nbHitsCovered">&nbsp;8</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> ContinuousColorPaintScale(valueFormat, boundaries, colorValues);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;240</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        renderer.setPaintScale(paintScale);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;241</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> XYPlot plot = <span class="keyword">new</span> XYPlot(dataset, xAxis, yAxis, renderer);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;242</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> LegendItemCollection legend = <span class="keyword">new</span> LegendItemCollection();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;243</td>  <td class="nbHitsCovered">&nbsp;102</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">for</span> (<span class="keyword">int</span> i = 0;; i++)</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;228</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NumberAxis xAxis = <span class="keyword">new</span> NumberAxis(<span class="string">"\u2192 "</span> + <span class="string">"time [s]"</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;229</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        xAxis.setLowerMargin(0.0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;230</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        xAxis.setUpperMargin(0.0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;231</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NumberAxis yAxis = <span class="keyword">new</span> NumberAxis(<span class="string">"\u2192 "</span> + <span class="string">"Distance [m]"</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;232</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setAutoRangeIncludesZero(<span class="keyword">false</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;233</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setLowerMargin(0.0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;234</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setUpperMargin(0.0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;235</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;236</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        XYBlockRenderer renderer = <span class="keyword">new</span> XYBlockRenderer();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;237</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;238</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ContinuousColorPaintScale paintScale =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;239</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> ContinuousColorPaintScale(valueFormat, boundaries, colorValues);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;240</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        renderer.setPaintScale(paintScale);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;241</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> XYPlot plot = <span class="keyword">new</span> XYPlot(dataset, xAxis, yAxis, renderer);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;242</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> LegendItemCollection legend = <span class="keyword">new</span> LegendItemCollection();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;243</td>  <td class="nbHitsCovered">&nbsp;136</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">for</span> (<span class="keyword">int</span> i = 0;; i++)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;244</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;245</td>  <td class="nbHitsCovered">&nbsp;102</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> value = paintScale.getLowerBound() + i * legendStep;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;246</td>  <td class="nbHitsCovered"><a title="Line 246: Conditional coverage 100% (2/2).">&nbsp;102</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 246: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (value &gt; paintScale.getUpperBound())</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;245</td>  <td class="nbHitsCovered">&nbsp;136</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> value = paintScale.getLowerBound() + i * legendStep;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;246</td>  <td class="nbHitsCovered"><a title="Line 246: Conditional coverage 100% (2/2).">&nbsp;136</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 246: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (value &gt; paintScale.getUpperBound())</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;247</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">break</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;249</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;250</td>  <td class="nbHitsCovered">&nbsp;90</td>  <td class="src"><pre class="src">&nbsp;            legend.add(<span class="keyword">new</span> LegendItem(String.format(legendFormat, value), paintScale.getPaint(value)));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;250</td>  <td class="nbHitsCovered">&nbsp;120</td>  <td class="src"><pre class="src">&nbsp;            legend.add(<span class="keyword">new</span> LegendItem(String.format(legendFormat, value), paintScale.getPaint(value)));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;251</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;252</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        legend.add(<span class="keyword">new</span> LegendItem(<span class="string">"No data"</span>, Color.BLACK));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;253</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        plot.setFixedLegendItems(legend);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;254</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        plot.setBackgroundPaint(Color.lightGray);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;255</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        plot.setDomainGridlinePaint(Color.white);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;256</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        plot.setRangeGridlinePaint(Color.white);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;257</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> JFreeChart chart = <span class="keyword">new</span> JFreeChart(caption, plot);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;258</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        chart.setBackgroundPaint(Color.white);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;259</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> chart;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;252</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        legend.add(<span class="keyword">new</span> LegendItem(<span class="string">"No data"</span>, Color.BLACK));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;253</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        plot.setFixedLegendItems(legend);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;254</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        plot.setBackgroundPaint(Color.lightGray);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;255</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        plot.setDomainGridlinePaint(Color.white);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;256</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        plot.setRangeGridlinePaint(Color.white);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;257</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> JFreeChart chart = <span class="keyword">new</span> JFreeChart(caption, plot);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;258</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        chart.setBackgroundPaint(Color.white);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;259</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> chart;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;260</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;261</td>  <td class="nbHits">&nbsp;</td>
@@ -447,54 +447,54 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> actionPerformed(<span class="keyword">final</span> ActionEvent actionEvent)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;265</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;266</td>  <td class="nbHitsCovered">&nbsp;1032</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> String command = actionEvent.getActionCommand();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;266</td>  <td class="nbHitsCovered">&nbsp;1376</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> String command = actionEvent.getActionCommand();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;267</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println("command is \"" + command + "\"");</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;268</td>  <td class="nbHitsCovered">&nbsp;1032</td>  <td class="src"><pre class="src">&nbsp;        String[] fields = command.split(<span class="string">"[ ]"</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;269</td>  <td class="nbHitsCovered"><a title="Line 269: Conditional coverage 100% (2/2).">&nbsp;1032</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 269: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (fields.length == 2)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;268</td>  <td class="nbHitsCovered">&nbsp;1376</td>  <td class="src"><pre class="src">&nbsp;        String[] fields = command.split(<span class="string">"[ ]"</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;269</td>  <td class="nbHitsCovered"><a title="Line 269: Conditional coverage 100% (2/2).">&nbsp;1376</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 269: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (fields.length == 2)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;270</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;271</td>  <td class="nbHitsCovered">&nbsp;1020</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> NumberFormat nf = NumberFormat.getInstance(Locale.US);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;271</td>  <td class="nbHitsCovered">&nbsp;1360</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> NumberFormat nf = NumberFormat.getInstance(Locale.US);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;272</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> value;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;273</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">try</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;274</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;275</td>  <td class="nbHitsCovered">&nbsp;1020</td>  <td class="src"><pre class="src">&nbsp;                value = nf.parse(fields[1]).doubleValue();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsCovered">&nbsp;672</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">catch</span> (ParseException e)</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;275</td>  <td class="nbHitsCovered">&nbsp;1360</td>  <td class="src"><pre class="src">&nbsp;                value = nf.parse(fields[1]).doubleValue();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsCovered">&nbsp;1008</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">catch</span> (ParseException e)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;278</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;279</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Bad value: "</span> + fields[1]);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;279</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Bad value: "</span> + fields[1]);</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;280</td>  <td class="nbHitsCovered">&nbsp;336</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsCovered"><a title="Line 281: Conditional coverage 100% (2/2).">&nbsp;1008</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 281: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (fields[0].equalsIgnoreCase(<span class="string">"setDistanceGranularity"</span>))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsCovered"><a title="Line 281: Conditional coverage 100% (2/2).">&nbsp;1344</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 281: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (fields[0].equalsIgnoreCase(<span class="string">"setDistanceGranularity"</span>))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;282</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;283</td>  <td class="nbHitsCovered">&nbsp;864</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">this</span>.getYAxis().setCurrentGranularity(value);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;284</td>  <td class="nbHitsCovered">&nbsp;568</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;285</td>  <td class="nbHitsCovered"><a title="Line 285: Conditional coverage 100% (2/2).">&nbsp;144</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 285: Conditional coverage 100% (2/2).">            <span class="keyword">else</span> <span class="keyword">if</span> (fields[0].equalsIgnoreCase(<span class="string">"setTimeGranularity"</span>))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;283</td>  <td class="nbHitsCovered">&nbsp;1152</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">this</span>.getYAxis().setCurrentGranularity(value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;284</td>  <td class="nbHitsCovered">&nbsp;852</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;285</td>  <td class="nbHitsCovered"><a title="Line 285: Conditional coverage 100% (2/2).">&nbsp;192</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 285: Conditional coverage 100% (2/2).">            <span class="keyword">else</span> <span class="keyword">if</span> (fields[0].equalsIgnoreCase(<span class="string">"setTimeGranularity"</span>))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;286</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;287</td>  <td class="nbHitsCovered">&nbsp;132</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">this</span>.getXAxis().setCurrentGranularity(value);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;288</td>  <td class="nbHitsCovered">&nbsp;88</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;287</td>  <td class="nbHitsCovered">&nbsp;176</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">this</span>.getXAxis().setCurrentGranularity(value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;288</td>  <td class="nbHitsCovered">&nbsp;132</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;289</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">else</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;290</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;291</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Unknown ActionEvent"</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;291</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Unknown ActionEvent"</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;292</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;293</td>  <td class="nbHitsCovered">&nbsp;984</td>  <td class="src"><pre class="src">&nbsp;            reGraph();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;294</td>  <td class="nbHitsCovered">&nbsp;984</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;293</td>  <td class="nbHitsCovered">&nbsp;1312</td>  <td class="src"><pre class="src">&nbsp;            reGraph();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;294</td>  <td class="nbHitsCovered">&nbsp;1312</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;295</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">else</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;296</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;297</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Unknown ActionEvent: "</span> + command);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;297</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Unknown ActionEvent: "</span> + command);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;298</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;299</td>  <td class="nbHitsCovered">&nbsp;984</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;299</td>  <td class="nbHitsCovered">&nbsp;1312</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;300</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;301</td>  <td class="nbHits">&nbsp;</td>
@@ -507,13 +507,13 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> reGraph()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;305</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;306</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;        notifyListeners(<span class="keyword">new</span> DatasetChangeEvent(<span class="keyword">this</span>, <span class="keyword">null</span>)); <span class="comment">// This guess work actually works!</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;307</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> XYPlot plot = <span class="keyword">this</span>.chartPanel.getChart().getXYPlot();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;308</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;        plot.notifyListeners(<span class="keyword">new</span> PlotChangeEvent(plot));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;309</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;310</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;        blockRenderer.setBlockHeight(<span class="keyword">this</span>.getYAxis().getCurrentGranularity());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;311</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;        blockRenderer.setBlockWidth(<span class="keyword">this</span>.getXAxis().getCurrentGranularity());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;312</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;306</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;        notifyListeners(<span class="keyword">new</span> DatasetChangeEvent(<span class="keyword">this</span>, <span class="keyword">null</span>)); <span class="comment">// This guess work actually works!</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;307</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> XYPlot plot = <span class="keyword">this</span>.chartPanel.getChart().getXYPlot();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;308</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;        plot.notifyListeners(<span class="keyword">new</span> PlotChangeEvent(plot));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;309</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;310</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;        blockRenderer.setBlockHeight(<span class="keyword">this</span>.getYAxis().getCurrentGranularity());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;311</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;        blockRenderer.setBlockWidth(<span class="keyword">this</span>.getXAxis().getCurrentGranularity());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;312</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;313</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;314</td>  <td class="nbHits">&nbsp;</td>
@@ -528,18 +528,18 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">void</span> notifyListeners(<span class="keyword">final</span> DatasetChangeEvent event)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;319</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;320</td>  <td class="nbHitsCovered"><a title="Line 320: Conditional coverage 100% (2/2).">&nbsp;3696</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 320: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (DatasetChangeListener dcl : <span class="keyword">this</span>.listenerList.getListeners(DatasetChangeListener.<span class="keyword">class</span>))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;320</td>  <td class="nbHitsCovered"><a title="Line 320: Conditional coverage 100% (2/2).">&nbsp;4928</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 320: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (DatasetChangeListener dcl : <span class="keyword">this</span>.listenerList.getListeners(DatasetChangeListener.<span class="keyword">class</span>))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;321</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;322</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;            dcl.datasetChanged(event);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;322</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;            dcl.datasetChanged(event);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;323</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;324</td>  <td class="nbHitsCovered">&nbsp;1848</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;324</td>  <td class="nbHitsCovered">&nbsp;2464</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;325</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;326</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/** List of parties interested in changes of this ContourPlot. */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;327</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">transient</span> EventListenerList listenerList = <span class="keyword">new</span> EventListenerList();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;327</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">transient</span> EventListenerList listenerList = <span class="keyword">new</span> EventListenerList();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;328</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;329</td>  <td class="nbHits">&nbsp;</td>
@@ -550,7 +550,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> getSeriesCount()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;332</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;333</td>  <td class="nbHitsCovered">&nbsp;3768</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> 1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;333</td>  <td class="nbHitsCovered">&nbsp;5024</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> 1;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;334</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;335</td>  <td class="nbHits">&nbsp;</td>
@@ -567,7 +567,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> yAxisBins()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;341</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;342</td>  <td class="nbHitsCovered">&nbsp;349186632</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getYAxis().getAggregatedBinCount();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;342</td>  <td class="nbHitsCovered">&nbsp;465582176</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getYAxis().getAggregatedBinCount();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;343</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;344</td>  <td class="nbHits">&nbsp;</td>
@@ -588,13 +588,13 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> yAxisBin(<span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;352</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;353</td>  <td class="nbHitsCovered"><a title="Line 353: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;87273024</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 353: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">        <span class="keyword">if</span> (item &lt; 0 || item &gt;= getItemCount(0))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;353</td>  <td class="nbHitsCovered"><a title="Line 353: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;116364032</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 353: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">        <span class="keyword">if</span> (item &lt; 0 || item &gt;= getItemCount(0))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;354</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;355</td>  <td class="nbHitsCovered">&nbsp;1680</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"yAxisBin: item out of range (value is "</span> + item + <span class="string">"), valid range is 0.."</span> + getItemCount(0));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;355</td>  <td class="nbHitsCovered">&nbsp;2240</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"yAxisBin: item out of range (value is "</span> + item + <span class="string">"), valid range is 0.."</span> + getItemCount(0));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;356</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;357</td>  <td class="nbHitsCovered">&nbsp;87271344</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> item % yAxisBins();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;357</td>  <td class="nbHitsCovered">&nbsp;116361792</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> item % yAxisBins();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;358</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;359</td>  <td class="nbHits">&nbsp;</td>
@@ -615,13 +615,13 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> xAxisBin(<span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;367</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;368</td>  <td class="nbHitsCovered"><a title="Line 368: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;87318384</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 368: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">        <span class="keyword">if</span> (item &lt; 0 || item &gt;= getItemCount(0))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;368</td>  <td class="nbHitsCovered"><a title="Line 368: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;116424512</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 368: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">        <span class="keyword">if</span> (item &lt; 0 || item &gt;= getItemCount(0))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;369</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;370</td>  <td class="nbHitsCovered">&nbsp;1680</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"xAxisBin: item out of range (value is "</span> + item + <span class="string">"), valid range is 0.."</span> + getItemCount(0));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;370</td>  <td class="nbHitsCovered">&nbsp;2240</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"xAxisBin: item out of range (value is "</span> + item + <span class="string">"), valid range is 0.."</span> + getItemCount(0));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;371</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;372</td>  <td class="nbHitsCovered">&nbsp;87316704</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> item / yAxisBins();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;372</td>  <td class="nbHitsCovered">&nbsp;116422272</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> item / yAxisBins();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;373</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;374</td>  <td class="nbHits">&nbsp;</td>
@@ -638,7 +638,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> xAxisBins()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;380</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;381</td>  <td class="nbHitsCovered">&nbsp;174598596</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getXAxis().getAggregatedBinCount();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;381</td>  <td class="nbHitsCovered">&nbsp;232798128</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getXAxis().getAggregatedBinCount();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;382</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;383</td>  <td class="nbHits">&nbsp;</td>
@@ -651,7 +651,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> getItemCount(<span class="keyword">final</span> <span class="keyword">int</span> series)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;387</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;388</td>  <td class="nbHitsCovered">&nbsp;174597732</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> yAxisBins() * xAxisBins();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;388</td>  <td class="nbHitsCovered">&nbsp;232796976</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> yAxisBins() * xAxisBins();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;389</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;390</td>  <td class="nbHits">&nbsp;</td>
@@ -664,7 +664,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> Number getX(<span class="keyword">final</span> <span class="keyword">int</span> series, <span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;394</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;395</td>  <td class="nbHitsCovered">&nbsp;14451480</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getXValue(series, item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;395</td>  <td class="nbHitsCovered">&nbsp;19268640</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getXValue(series, item);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;396</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;397</td>  <td class="nbHits">&nbsp;</td>
@@ -677,12 +677,12 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">double</span> getXValue(<span class="keyword">final</span> <span class="keyword">int</span> series, <span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;401</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;402</td>  <td class="nbHitsCovered">&nbsp;58415424</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> result = <span class="keyword">this</span>.getXAxis().getValue(xAxisBin(item));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;402</td>  <td class="nbHitsCovered">&nbsp;77887232</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> result = <span class="keyword">this</span>.getXAxis().getValue(xAxisBin(item));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;403</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println(String.format("XValue(%d, %d) -&gt; %.3f, binCount=%d", series, item, result,</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;404</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// this.yAxisDefinition.getAggregatedBinCount()));</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;405</td>  <td class="nbHitsCovered">&nbsp;58413744</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> result;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;405</td>  <td class="nbHitsCovered">&nbsp;77884992</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> result;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;406</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;407</td>  <td class="nbHits">&nbsp;</td>
@@ -695,7 +695,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> Number getY(<span class="keyword">final</span> <span class="keyword">int</span> series, <span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;411</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;412</td>  <td class="nbHitsCovered">&nbsp;14451480</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getYValue(series, item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;412</td>  <td class="nbHitsCovered">&nbsp;19268640</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getYValue(series, item);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;413</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;414</td>  <td class="nbHits">&nbsp;</td>
@@ -708,7 +708,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">double</span> getYValue(<span class="keyword">final</span> <span class="keyword">int</span> series, <span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;418</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;419</td>  <td class="nbHitsCovered">&nbsp;58368384</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getYAxis().getValue(yAxisBin(item));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;419</td>  <td class="nbHitsCovered">&nbsp;77824512</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.getYAxis().getValue(yAxisBin(item));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;420</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;421</td>  <td class="nbHits">&nbsp;</td>
@@ -721,7 +721,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> Number getZ(<span class="keyword">final</span> <span class="keyword">int</span> series, <span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;425</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;426</td>  <td class="nbHitsCovered">&nbsp;14451480</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getZValue(series, item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;426</td>  <td class="nbHitsCovered">&nbsp;19268640</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> getZValue(series, item);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;427</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;428</td>  <td class="nbHits">&nbsp;</td>
@@ -734,8 +734,8 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> addChangeListener(<span class="keyword">final</span> DatasetChangeListener listener)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;432</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;433</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.listenerList.add(DatasetChangeListener.<span class="keyword">class</span>, listener);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;434</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;433</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.listenerList.add(DatasetChangeListener.<span class="keyword">class</span>, listener);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;434</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;435</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;436</td>  <td class="nbHits">&nbsp;</td>
@@ -758,7 +758,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> DatasetGroup getGroup()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;446</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;447</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">null</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;447</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">null</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;448</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;449</td>  <td class="nbHits">&nbsp;</td>
@@ -786,7 +786,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> indexOf(<span class="keyword">final</span> Comparable seriesKey)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;461</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;462</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> 0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;462</td>  <td class="nbHitsCovered">&nbsp;32</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> 0;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;463</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;464</td>  <td class="nbHits">&nbsp;</td>
@@ -799,7 +799,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> DomainOrder getDomainOrder()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;468</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;469</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> DomainOrder.ASCENDING;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;469</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> DomainOrder.ASCENDING;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;470</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;471</td>  <td class="nbHits">&nbsp;</td>
@@ -816,16 +816,16 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> addData(<span class="keyword">final</span> Car car)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;477</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;478</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; fromTime = car.getLastEvaluationTime();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;479</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; toTime = car.getNextEvaluationTime();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;480</td>  <td class="nbHitsCovered"><a title="Line 480: Conditional coverage 100% (2/2).">&nbsp;36</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 480: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (toTime.getValueSI() &gt; <span class="keyword">this</span>.getXAxis().getMaximumValue().getValueSI())</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;478</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; fromTime = car.getLastEvaluationTime();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;479</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DoubleScalar.Abs&lt;TimeUnit&gt; toTime = car.getNextEvaluationTime();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;480</td>  <td class="nbHitsCovered"><a title="Line 480: Conditional coverage 100% (2/2).">&nbsp;48</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 480: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (toTime.getValueSI() &gt; <span class="keyword">this</span>.getXAxis().getMaximumValue().getValueSI())</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;481</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;482</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;            extendXRange(toTime);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;483</td>  <td class="nbHitsCovered">&nbsp;12</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">this</span>.getXAxis().adjustMaximumValue(toTime);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;482</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;            extendXRange(toTime);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;483</td>  <td class="nbHitsCovered">&nbsp;16</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">this</span>.getXAxis().adjustMaximumValue(toTime);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;484</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;485</td>  <td class="nbHitsUncovered"><a title="Line 485: Conditional coverage 50% (1/2).">&nbsp;36</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 485: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (toTime.getValueSI() &lt;= fromTime.getValueSI()) <span class="comment">// degenerate sample???</span></a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;485</td>  <td class="nbHitsUncovered"><a title="Line 485: Conditional coverage 50% (1/2).">&nbsp;48</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 485: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (toTime.getValueSI() &lt;= fromTime.getValueSI()) <span class="comment">// degenerate sample???</span></a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;486</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;487</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">return</span>;</span></pre></td></tr>
@@ -843,78 +843,78 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">         */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;494</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// The "relative" values are "counting" distance or time in the minimum bin size unit</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;495</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">double</span> relativeFromDistance =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;496</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;                (car.getPosition(fromTime).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;497</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;498</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">double</span> relativeToDistance =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;499</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;                (car.getPosition(toTime).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;500</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;501</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> relativeFromTime =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;502</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;                (fromTime.getValueSI() - <span class="keyword">this</span>.getXAxis().getMinimumValue().getValueSI())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;503</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getXAxis().getGranularities()[0];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;504</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">double</span> relativeToTime =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;505</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;                (toTime.getValueSI() - <span class="keyword">this</span>.getXAxis().getMinimumValue().getValueSI())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;506</td>  <td class="nbHitsCovered">&nbsp;24</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getXAxis().getGranularities()[0];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;507</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> fromTimeBin = (<span class="keyword">int</span>) Math.floor(relativeFromTime);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;508</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> toTimeBin = (<span class="keyword">int</span>) Math.floor(relativeToTime) + 1;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;509</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;495</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">double</span> relativeFromDistance =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;496</td>  <td class="nbHitsCovered">&nbsp;72</td>  <td class="src"><pre class="src">&nbsp;                (car.getPosition(fromTime).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;497</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;498</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">double</span> relativeToDistance =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;499</td>  <td class="nbHitsCovered">&nbsp;72</td>  <td class="src"><pre class="src">&nbsp;                (car.getPosition(toTime).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;500</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;501</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> relativeFromTime =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;502</td>  <td class="nbHitsCovered">&nbsp;72</td>  <td class="src"><pre class="src">&nbsp;                (fromTime.getValueSI() - <span class="keyword">this</span>.getXAxis().getMinimumValue().getValueSI())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;503</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getXAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;504</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">double</span> relativeToTime =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;505</td>  <td class="nbHitsCovered">&nbsp;72</td>  <td class="src"><pre class="src">&nbsp;                (toTime.getValueSI() - <span class="keyword">this</span>.getXAxis().getMinimumValue().getValueSI())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;506</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                        / <span class="keyword">this</span>.getXAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;507</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> fromTimeBin = (<span class="keyword">int</span>) Math.floor(relativeFromTime);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;508</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> toTimeBin = (<span class="keyword">int</span>) Math.floor(relativeToTime) + 1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;509</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;510</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;511</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// wrong for other car following algorithms).</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;512</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> acceleration = car.getAcceleration(car.getLastEvaluationTime()).getValueSI();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;513</td>  <td class="nbHitsCovered"><a title="Line 513: Conditional coverage 100% (2/2).">&nbsp;5112</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 513: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> timeBin = fromTimeBin; timeBin &lt; toTimeBin; timeBin++)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;512</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">double</span> acceleration = car.getAcceleration(car.getLastEvaluationTime()).getValueSI();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;513</td>  <td class="nbHitsCovered"><a title="Line 513: Conditional coverage 100% (2/2).">&nbsp;6816</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 513: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> timeBin = fromTimeBin; timeBin &lt; toTimeBin; timeBin++)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;514</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;515</td>  <td class="nbHitsUncovered"><a title="Line 515: Conditional coverage 50% (1/2).">&nbsp;5076</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 515: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (timeBin &lt; 0)</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;515</td>  <td class="nbHitsUncovered"><a title="Line 515: Conditional coverage 50% (1/2).">&nbsp;6768</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 515: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (timeBin &lt; 0)</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;516</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;517</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">continue</span>;</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;518</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;519</td>  <td class="nbHitsCovered">&nbsp;5076</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> binEndTime = timeBin + 1;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;520</td>  <td class="nbHitsCovered"><a title="Line 520: Conditional coverage 100% (2/2).">&nbsp;5076</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 520: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (binEndTime &gt; relativeToTime)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;519</td>  <td class="nbHitsCovered">&nbsp;6768</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> binEndTime = timeBin + 1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;520</td>  <td class="nbHitsCovered"><a title="Line 520: Conditional coverage 100% (2/2).">&nbsp;6768</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 520: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (binEndTime &gt; relativeToTime)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;521</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;522</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                binEndTime = relativeToTime;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;522</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;                binEndTime = relativeToTime;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;523</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;524</td>  <td class="nbHitsCovered"><a title="Line 524: Conditional coverage 100% (2/2).">&nbsp;5076</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 524: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (binEndTime &lt;= relativeFromTime)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;524</td>  <td class="nbHitsCovered"><a title="Line 524: Conditional coverage 100% (2/2).">&nbsp;6768</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 524: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (binEndTime &lt;= relativeFromTime)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;525</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;526</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>; <span class="comment">// no time spent in this timeBin</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;526</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">continue</span>; <span class="comment">// no time spent in this timeBin</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;527</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;528</td>  <td class="nbHitsCovered">&nbsp;5040</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> binDistanceStart =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;529</td>  <td class="nbHitsCovered">&nbsp;13440</td>  <td class="src"><pre class="src">&nbsp;                    (car.getPosition(</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;530</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;                            <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(relativeFromTime * <span class="keyword">this</span>.getXAxis().getGranularities()[0],</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;531</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;                                    TimeUnit.SECOND)).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;532</td>  <td class="nbHitsCovered">&nbsp;3360</td>  <td class="src"><pre class="src">&nbsp;                            / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;533</td>  <td class="nbHitsCovered">&nbsp;5040</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> binDistanceEnd =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;534</td>  <td class="nbHitsCovered">&nbsp;13440</td>  <td class="src"><pre class="src">&nbsp;                    (car.getPosition(</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;535</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;                            <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(binEndTime * <span class="keyword">this</span>.getXAxis().getGranularities()[0],</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;536</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;                                    TimeUnit.SECOND)).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;537</td>  <td class="nbHitsCovered">&nbsp;3360</td>  <td class="src"><pre class="src">&nbsp;                            / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;528</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> binDistanceStart =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;529</td>  <td class="nbHitsCovered">&nbsp;20160</td>  <td class="src"><pre class="src">&nbsp;                    (car.getPosition(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;530</td>  <td class="nbHitsCovered">&nbsp;10080</td>  <td class="src"><pre class="src">&nbsp;                            <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(relativeFromTime * <span class="keyword">this</span>.getXAxis().getGranularities()[0],</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;531</td>  <td class="nbHitsCovered">&nbsp;10080</td>  <td class="src"><pre class="src">&nbsp;                                    TimeUnit.SECOND)).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;532</td>  <td class="nbHitsCovered">&nbsp;5040</td>  <td class="src"><pre class="src">&nbsp;                            / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;533</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">double</span> binDistanceEnd =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;534</td>  <td class="nbHitsCovered">&nbsp;20160</td>  <td class="src"><pre class="src">&nbsp;                    (car.getPosition(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;535</td>  <td class="nbHitsCovered">&nbsp;10080</td>  <td class="src"><pre class="src">&nbsp;                            <span class="keyword">new</span> DoubleScalar.Abs&lt;TimeUnit&gt;(binEndTime * <span class="keyword">this</span>.getXAxis().getGranularities()[0],</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;536</td>  <td class="nbHitsCovered">&nbsp;10080</td>  <td class="src"><pre class="src">&nbsp;                                    TimeUnit.SECOND)).getValueSI() - <span class="keyword">this</span>.getYAxis().getMinimumValue().getValueSI())</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;537</td>  <td class="nbHitsCovered">&nbsp;5040</td>  <td class="src"><pre class="src">&nbsp;                            / <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;538</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;539</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Compute the time in each distanceBin</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;540</td>  <td class="nbHitsCovered"><a title="Line 540: Conditional coverage 100% (2/2).">&nbsp;17076</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 540: Conditional coverage 100% (2/2).">            <span class="keyword">for</span> (<span class="keyword">int</span> distanceBin = (<span class="keyword">int</span>) Math.floor(binDistanceStart); distanceBin &lt;= binDistanceEnd; distanceBin++)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;540</td>  <td class="nbHitsCovered"><a title="Line 540: Conditional coverage 100% (2/2).">&nbsp;22768</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 540: Conditional coverage 100% (2/2).">            <span class="keyword">for</span> (<span class="keyword">int</span> distanceBin = (<span class="keyword">int</span>) Math.floor(binDistanceStart); distanceBin &lt;= binDistanceEnd; distanceBin++)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;541</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;542</td>  <td class="nbHitsCovered">&nbsp;12036</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">double</span> relativeDuration = 1;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;543</td>  <td class="nbHitsCovered"><a title="Line 543: Conditional coverage 100% (2/2).">&nbsp;12036</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 543: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (relativeFromTime &gt; timeBin)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;542</td>  <td class="nbHitsCovered">&nbsp;16048</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">double</span> relativeDuration = 1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;543</td>  <td class="nbHitsCovered"><a title="Line 543: Conditional coverage 100% (2/2).">&nbsp;16048</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 543: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (relativeFromTime &gt; timeBin)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;544</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;545</td>  <td class="nbHitsCovered">&nbsp;6996</td>  <td class="src"><pre class="src">&nbsp;                    relativeDuration -= relativeFromTime - timeBin;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;545</td>  <td class="nbHitsCovered">&nbsp;9328</td>  <td class="src"><pre class="src">&nbsp;                    relativeDuration -= relativeFromTime - timeBin;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;546</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;547</td>  <td class="nbHitsCovered"><a title="Line 547: Conditional coverage 100% (2/2).">&nbsp;12036</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 547: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (distanceBin == (<span class="keyword">int</span>) Math.floor(binDistanceEnd))</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;547</td>  <td class="nbHitsCovered"><a title="Line 547: Conditional coverage 100% (2/2).">&nbsp;16048</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 547: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (distanceBin == (<span class="keyword">int</span>) Math.floor(binDistanceEnd))</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;548</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;549</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// This GTU does not move out of this distanceBin before the binEndTime</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;550</td>  <td class="nbHitsUncovered"><a title="Line 550: Conditional coverage 50% (1/2).">&nbsp;5040</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 550: Conditional coverage 50% (1/2).">                    <span class="keyword">if</span> (binEndTime &lt; timeBin + 1)</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;550</td>  <td class="nbHitsUncovered"><a title="Line 550: Conditional coverage 50% (1/2).">&nbsp;6720</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 550: Conditional coverage 50% (1/2).">                    <span class="keyword">if</span> (binEndTime &lt; timeBin + 1)</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;551</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    {</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;552</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                        relativeDuration -= timeBin + 1 - binEndTime;</span></pre></td></tr>
@@ -931,13 +931,13 @@
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// Interpolate the time when this GTU crosses into the next distanceBin</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;559</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// Using f.i. Newton-Rhaphson interpolation would yield a slightly more precise result...</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;560</td>  <td class="nbHitsCovered">&nbsp;6996</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> timeToBinBoundary = (distanceBin + 1 - binDistanceStart) / relativeMeanSpeed;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;561</td>  <td class="nbHitsCovered">&nbsp;6996</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> endTime = relativeFromTime + timeToBinBoundary;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;562</td>  <td class="nbHitsCovered">&nbsp;6996</td>  <td class="src"><pre class="src">&nbsp;                    relativeDuration -= timeBin + 1 - endTime;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;560</td>  <td class="nbHitsCovered">&nbsp;9328</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> timeToBinBoundary = (distanceBin + 1 - binDistanceStart) / relativeMeanSpeed;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;561</td>  <td class="nbHitsCovered">&nbsp;9328</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">double</span> endTime = relativeFromTime + timeToBinBoundary;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;562</td>  <td class="nbHitsCovered">&nbsp;9328</td>  <td class="src"><pre class="src">&nbsp;                    relativeDuration -= timeBin + 1 - endTime;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;563</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;564</td>  <td class="nbHitsCovered">&nbsp;12036</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> <span class="keyword">double</span> duration = relativeDuration * <span class="keyword">this</span>.getXAxis().getGranularities()[0];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;565</td>  <td class="nbHitsCovered">&nbsp;12036</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> <span class="keyword">double</span> distance = duration * relativeMeanSpeed * <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;564</td>  <td class="nbHitsCovered">&nbsp;16048</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> <span class="keyword">double</span> duration = relativeDuration * <span class="keyword">this</span>.getXAxis().getGranularities()[0];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;565</td>  <td class="nbHitsCovered">&nbsp;16048</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> <span class="keyword">double</span> distance = duration * relativeMeanSpeed * <span class="keyword">this</span>.getYAxis().getGranularities()[0];</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;566</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">/*-</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;567</td>  <td class="nbHits">&nbsp;</td>
@@ -946,17 +946,17 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">                        distance));</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;569</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">                 */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;570</td>  <td class="nbHitsCovered">&nbsp;12036</td>  <td class="src"><pre class="src">&nbsp;                incrementBinData(timeBin, distanceBin, duration, distance, acceleration);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;571</td>  <td class="nbHitsCovered">&nbsp;12036</td>  <td class="src"><pre class="src">&nbsp;                relativeFromTime += relativeDuration;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;572</td>  <td class="nbHitsCovered">&nbsp;12036</td>  <td class="src"><pre class="src">&nbsp;                binDistanceStart = distanceBin + 1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;570</td>  <td class="nbHitsCovered">&nbsp;16048</td>  <td class="src"><pre class="src">&nbsp;                incrementBinData(timeBin, distanceBin, duration, distance, acceleration);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;571</td>  <td class="nbHitsCovered">&nbsp;16048</td>  <td class="src"><pre class="src">&nbsp;                relativeFromTime += relativeDuration;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;572</td>  <td class="nbHitsCovered">&nbsp;16048</td>  <td class="src"><pre class="src">&nbsp;                binDistanceStart = distanceBin + 1;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;573</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;574</td>  <td class="nbHitsCovered">&nbsp;5040</td>  <td class="src"><pre class="src">&nbsp;            relativeFromTime = timeBin + 1;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;574</td>  <td class="nbHitsCovered">&nbsp;6720</td>  <td class="src"><pre class="src">&nbsp;            relativeFromTime = timeBin + 1;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;575</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;576</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;577</td>  <td class="nbHitsCovered">&nbsp;36</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;577</td>  <td class="nbHitsCovered">&nbsp;48</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;578</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;579</td>  <td class="nbHits">&nbsp;</td>
@@ -1003,21 +1003,21 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">double</span> getZValue(<span class="keyword">final</span> <span class="keyword">int</span> series, <span class="keyword">final</span> <span class="keyword">int</span> item)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;600</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;601</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> timeBinGroup = xAxisBin(item);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;602</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> distanceBinGroup = yAxisBin(item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;601</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> timeBinGroup = xAxisBin(item);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;602</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> distanceBinGroup = yAxisBin(item);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;603</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// System.out.println(String.format("getZValue(s=%d, i=%d) -&gt; tbg=%d, dbg=%d", series, item, timeBinGroup,</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;604</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// distanceBinGroup));</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;605</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> timeGroupSize =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;606</td>  <td class="nbHitsCovered">&nbsp;19268640</td>  <td class="src"><pre class="src">&nbsp;                (<span class="keyword">int</span>) (<span class="keyword">this</span>.getXAxis().getCurrentGranularity() / <span class="keyword">this</span>.getXAxis().getGranularities()[0]);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;607</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> firstTimeBin = timeBinGroup * timeGroupSize;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;608</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> distanceGroupSize =</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;609</td>  <td class="nbHitsCovered">&nbsp;19268640</td>  <td class="src"><pre class="src">&nbsp;                (<span class="keyword">int</span>) (<span class="keyword">this</span>.getYAxis().getCurrentGranularity() / <span class="keyword">this</span>.getYAxis().getGranularities()[0]);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;610</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> firstDistanceBin = distanceBinGroup * distanceGroupSize;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;611</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> endTimeBin = Math.min(firstTimeBin + timeGroupSize, <span class="keyword">this</span>.getXAxis().getBinCount());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;612</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> endDistanceBin = Math.min(firstDistanceBin + distanceGroupSize, <span class="keyword">this</span>.getYAxis().getBinCount());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;613</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> computeZValue(firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;605</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> timeGroupSize =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;606</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;                (<span class="keyword">int</span>) (<span class="keyword">this</span>.getXAxis().getCurrentGranularity() / <span class="keyword">this</span>.getXAxis().getGranularities()[0]);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;607</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> firstTimeBin = timeBinGroup * timeGroupSize;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;608</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> distanceGroupSize =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;609</td>  <td class="nbHitsCovered">&nbsp;28902960</td>  <td class="src"><pre class="src">&nbsp;                (<span class="keyword">int</span>) (<span class="keyword">this</span>.getYAxis().getCurrentGranularity() / <span class="keyword">this</span>.getYAxis().getGranularities()[0]);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;610</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> firstDistanceBin = distanceBinGroup * distanceGroupSize;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;611</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> endTimeBin = Math.min(firstTimeBin + timeGroupSize, <span class="keyword">this</span>.getXAxis().getBinCount());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;612</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> endDistanceBin = Math.min(firstDistanceBin + distanceGroupSize, <span class="keyword">this</span>.getYAxis().getBinCount());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;613</td>  <td class="nbHitsCovered">&nbsp;38537280</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> computeZValue(firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;614</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;615</td>  <td class="nbHits">&nbsp;</td>
@@ -1054,7 +1054,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> Axis getXAxis()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;631</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;632</td>  <td class="nbHitsCovered">&nbsp;334198740</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.xAxis;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;632</td>  <td class="nbHitsCovered">&nbsp;445598320</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.xAxis;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;633</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;634</td>  <td class="nbHits">&nbsp;</td>
@@ -1071,7 +1071,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> Axis getYAxis()</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;640</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;641</td>  <td class="nbHitsCovered">&nbsp;509040774</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.yAxis;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;641</td>  <td class="nbHitsCovered">&nbsp;678721032</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">this</span>.yAxis;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;642</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;643</td>  <td class="nbHits">&nbsp;</td>
@@ -1080,6 +1080,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 13:24.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.0.3 on 6-10-14 14:39.</div>
 </body>
 </html>
