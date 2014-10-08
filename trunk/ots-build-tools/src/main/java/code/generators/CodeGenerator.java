@@ -16,34 +16,34 @@ import java.io.IOException;
  */
 public class CodeGenerator
 {
-    /** Name of this program */
+    /** Name of this program. */
     final String generatorName;
 
-    /** Directory where the tree of files will be built */
+    /** Directory where the tree of files will be built. */
     final String buildDir;
 
-    /** The serialVersionUID to put in the generated classes */
+    /** The serialVersionUID to put in the generated classes. */
     final String serialVersionUID;
 
-    /** Base directory / package */
+    /** Base directory / package. */
     final String packageBaseName;
 
-    /** Description of the day on which the files were generated */
+    /** Description of the day on which the files were generated. */
     final String when;
 
     /** Name of the package-info file(s). */
     final static String packageInfoName = "package-info";
 
     /**
-     * Create a new CodeGenerator
+     * Create a new CodeGenerator.
      * @param generatorName String; name of the program that uses this CodeGenerator
      * @param buildDir String; path to directory for generated files and sub-directories
      * @param packageBaseName String; prepended to all package names
      * @param when String; textual description of the date that this CodeGenerator is used
      * @param serialVersionUID String; serialVersionID to put in the generated class files
      */
-    public CodeGenerator(String generatorName, final String buildDir, final String packageBaseName, String when,
-            final Long serialVersionUID)
+    public CodeGenerator(final String generatorName, final String buildDir, final String packageBaseName,
+            final String when, final Long serialVersionUID)
     {
         this.generatorName = generatorName;
         this.buildDir = buildDir;
@@ -70,8 +70,8 @@ public class CodeGenerator
      * @param genericParams String[]; descriptions of the generic parameters of the class
      * @return BufferedWriter; the open file
      */
-    public BufferedWriter openFile(String relativePackage, String name, String[] imports, String description,
-            String[] genericParams)
+    public final BufferedWriter openFile(final String relativePackage, final String name, final String[] imports,
+            final String description, final String[] genericParams)
     {
         BufferedWriter writer = null;
         String dirList = relativePackage;
@@ -139,7 +139,7 @@ public class CodeGenerator
      * Close a file that was opened with openFile.
      * @param writer BufferedWriter; the result of the preceding call to openFile
      */
-    public static void closeFile(BufferedWriter writer)
+    public static void closeFile(final BufferedWriter writer)
     {
         try
         {
@@ -156,7 +156,7 @@ public class CodeGenerator
      * @param indent String; prepended to each output line
      * @return String
      */
-    public String buildSerialVersionUID(final String indent)
+    public final String buildSerialVersionUID(final String indent)
     {
         return buildField(indent, "private static final long serialVersionUID = " + this.serialVersionUID + "L", "");
     }
@@ -173,9 +173,9 @@ public class CodeGenerator
      * @param generateSerialVersionUID boolean; if true a serialVersionUID is put in the result
      * @param contents String; the text that goes in the class
      */
-    public void generateClass(String relativePackage, String name, String[] imports, String description,
-            String[] genericParams, String qualifiers, String typeInfo, boolean generateSerialVersionUID,
-            String contents)
+    public final void generateClass(final String relativePackage, final String name, final String[] imports,
+            final String description, final String[] genericParams, final String qualifiers, final String typeInfo,
+            final boolean generateSerialVersionUID, final String contents)
     {
         try
         {
@@ -205,8 +205,8 @@ public class CodeGenerator
      * @param typeInfo String; the text that goes immediately after the class name
      * @param contents String; the text that goes in the class
      */
-    public void generateAbstractClass(String relativePackage, String name, String[] imports, String description,
-            String[] genericParams, String typeInfo, String contents)
+    public final void generateAbstractClass(final String relativePackage, final String name, final String[] imports,
+            final String description, final String[] genericParams, final String typeInfo, final String contents)
     {
         generateClass(relativePackage, name, imports, description, genericParams, "public abstract", typeInfo, true,
                 contents);
@@ -222,8 +222,8 @@ public class CodeGenerator
      * @param typeInfo String; the text that goes immediately after the class name
      * @param contents String; the text that goes in the class
      */
-    public void generateFinalClass(String relativePackage, String name, String[] imports, String description,
-            String[] genericParams, String typeInfo, String contents)
+    public final void generateFinalClass(final String relativePackage, final String name, final String[] imports,
+            final String description, final String[] genericParams, final String typeInfo, final String contents)
     {
         generateClass(
                 relativePackage,
@@ -245,7 +245,7 @@ public class CodeGenerator
      * @param description String; the description of the field
      * @return String
      */
-    public String buildField(String indent, String field, String description)
+    public final String buildField(final String indent, final String field, final String description)
     {
         return indent + "/** " + description + " */\r\n" + indent + field + ";\r\n\r\n";
     }
@@ -256,7 +256,7 @@ public class CodeGenerator
      * @param comment String; the text to center in the block comment
      * @return String; java code
      */
-    public String buildBlockComment(final String indent, String comment)
+    public final String buildBlockComment(final String indent, String comment)
     {
         comment = " " + comment + " ";
         StringBuffer construction = new StringBuffer();
@@ -276,7 +276,7 @@ public class CodeGenerator
      * @param steps int; the number N
      * @return String
      */
-    public String indent(int steps)
+    public final String indent(final int steps)
     {
         final String indent = "    ";
 
@@ -307,8 +307,9 @@ public class CodeGenerator
      *            constructor
      * @return String; the Java source code of the method.
      */
-    public String buildMethod(String indent, String qualifiersTypeAndName, String description, String[] parameters,
-            String exceptions, String pragma, String[] body, boolean constructor)
+    public final String buildMethod(final String indent, final String qualifiersTypeAndName, final String description,
+            final String[] parameters, final String exceptions, final String pragma, final String[] body,
+            final boolean constructor)
     {
         final int maxLineLength = 121;
         StringBuilder construction = new StringBuilder();
@@ -388,7 +389,9 @@ public class CodeGenerator
         if (null != pragma)
         {
             if (pragma.length() == 0)
+            {
                 throw new Error("pragma should not be the empty string");
+            }
             construction.append(indent + pragma + "\r\n");
         }
         String line = indent;
@@ -511,8 +514,8 @@ public class CodeGenerator
      * @param typeInfo String; the text that goes immediately after the class name
      * @param body String; the body of the interface file
      */
-    public void generateInterface(String relativePackage, String name, String[] imports, String description,
-            String[] genericParams, String typeInfo, String body)
+    public final void generateInterface(final String relativePackage, final String name, final String[] imports,
+            final String description, final String[] genericParams, final String typeInfo, final String body)
     {
         try
         {
@@ -542,7 +545,7 @@ public class CodeGenerator
      * @param relativePackageName String; relative package name
      * @param contents String; contents of the package-info file
      */
-    public void generatePackageInfo(String relativePackageName, String contents)
+    public final void generatePackageInfo(final String relativePackageName, final String contents)
     {
         closeFile(openFile(relativePackageName, packageInfoName, null, contents, null));
     }

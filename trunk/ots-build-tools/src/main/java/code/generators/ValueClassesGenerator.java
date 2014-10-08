@@ -14,10 +14,16 @@ import java.util.Date;
  * @version 24 sep. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ValueClassesGenerator
+public final class ValueClassesGenerator
 {
+    /** This class shall never be instantiated. */
+    private ValueClassesGenerator()
+    {
+        // This class should not be instantiated
+    }
+    
     /**
-     * Information about the math functions
+     * Information about the math functions.
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
@@ -28,22 +34,22 @@ public class ValueClassesGenerator
      */
     static class MathFunctionEntry
     {
-        /** Name of the function */
+        /** Name of the function. */
         public final String name;
 
-        /** Additional argument with description */
+        /** Additional argument with description. */
         public final String argument;
 
-        /** If set, the result of the function is always double (regardless of the argument) */
+        /** If set, the result of the function is always double (regardless of the argument). */
         public final boolean castToFloatRequired;
 
-        /** Description of the function */
+        /** Description of the function. */
         public final String description;
 
-        /** If set this function also appears in *MathFunctionsImpl */
+        /** If set this function also appears in *MathFunctionsImpl. */
         public final boolean appearsInMathFunctionsImpl;
 
-        /** Generate this text in a to do if not null */
+        /** Generate this text in a to do if not null. */
         public final String toDoText;
 
         /**
@@ -59,7 +65,7 @@ public class ValueClassesGenerator
          * @param toDoText String; if non-null a to do comment containing this text is generated with the implementation
          */
         public MathFunctionEntry(final String name, final String argument, final boolean castToFloatRequired,
-                boolean appearsInMathFunctionsImpl, final String comment, final String toDoText)
+                final boolean appearsInMathFunctionsImpl, final String comment, final String toDoText)
         {
             this.name = name;
             this.argument = argument;
@@ -70,7 +76,7 @@ public class ValueClassesGenerator
         }
     }
 
-    /** The math functions */
+    /** The math functions. */
     public static MathFunctionEntry[] mathFunctions =
             {
                     new MathFunctionEntry("abs", null, false, false, "Set the value(s) to their absolute value.", null),
@@ -148,13 +154,13 @@ public class ValueClassesGenerator
                             "Set the value(s) to approximately equivalent angle(s) measured in radians.", null),
                     new MathFunctionEntry("inv", null, true, false,
                             "Set the value(s) to the complement (1.0/x) of the value(s).",
-                            "negate all coefficients in the Unit."),};
+                            "negate all coefficients in the Unit.")};
 
     /**
      * Generate the code for the value classes.
      * @param args String[]; the command line arguments (not used)
      */
-    public static void main(String args[])
+    public static void main(final String[] args)
     {
         Date now = new Date();
         CodeGenerator cg =
@@ -365,7 +371,7 @@ public class ValueClassesGenerator
      * @param cg CodeGenerator; the code generator
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>.
      */
-    private static void generateMathFunctions(CodeGenerator cg, String type)
+    private static void generateMathFunctions(final CodeGenerator cg, final String type)
     {
         cg.generateInterface(
                 "value.v" + type.toLowerCase(),
@@ -391,7 +397,7 @@ public class ValueClassesGenerator
      * @param type String; type of the result of the generated functions
      * @param dimensions int; number of dimensions of the data
      */
-    private static void generateWriteFunctions(CodeGenerator cg, String type, int dimensions)
+    private static void generateWriteFunctions(final CodeGenerator cg, final String type, final int dimensions)
     {
         final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
         final String valueException =
@@ -449,7 +455,7 @@ public class ValueClassesGenerator
      * @param type String; type of the result of the generated functions
      * @param dimensions int; number of dimensions of the data
      */
-    private static void generateReadOnlyFunctions(CodeGenerator cg, String type, int dimensions)
+    private static void generateReadOnlyFunctions(final CodeGenerator cg, final String type, final int dimensions)
     {
         final String vectorOrMatrix = 1 == dimensions ? "Vector" : "Matrix";
         final String valueException =
@@ -525,7 +531,7 @@ public class ValueClassesGenerator
      * @param type String; type of the result of the generated functions
      * @return String; Java code
      */
-    private static String buildMathFunctionImpl(String type)
+    private static String buildMathFunctionImpl(final String type)
     {
         String useCast = (type.startsWith("D") ? "" : "(" + type.toLowerCase() + ") "); // append a space
         StringBuilder construction = new StringBuilder();
@@ -545,11 +551,11 @@ public class ValueClassesGenerator
     }
 
     /**
-     * Generate the Java code that declares all the math functions
+     * Generate the Java code that declares all the math functions.
      * @param cg CodeGenerator; the code generator
      * @return String; Java code
      */
-    private static String buildAllMathFunctions(CodeGenerator cg)
+    private static String buildAllMathFunctions(final CodeGenerator cg)
     {
         StringBuilder construction = new StringBuilder();
         for (MathFunctionEntry mfu : mathFunctions)
@@ -567,7 +573,8 @@ public class ValueClassesGenerator
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
      * @param dimensions int; number of dimensions of the data (1: vector; 2: matrix)
      */
-    private static void generateVectorOrMatrixClass(CodeGenerator cg, String type, boolean mutable, int dimensions)
+    private static void generateVectorOrMatrixClass(final CodeGenerator cg, final String type, final boolean mutable,
+            final int dimensions)
     {
         final String outerIndent = cg.indent(1);
         final String mutableType = mutable ? "Mutable" : "Immutable ";
@@ -1007,7 +1014,7 @@ public class ValueClassesGenerator
                                 + cg.buildMethod(outerIndent, "protected final|void|initialize",
                                         "Import the values from an existing " + type + "Matrix" + dimensions
                                                 + "D. This makes a shallow copy.", new String[]{"final " + type
-                                                + "Matrix" + dimensions + "D|values|the values",}, null, null,
+                                                + "Matrix" + dimensions + "D|values|the values"}, null, null,
                                         new String[]{"this." + vectorOrMatrix.toLowerCase() + "SI = values;"}, false)
                                 + cg.buildMethod(
                                         outerIndent,
@@ -1504,8 +1511,8 @@ public class ValueClassesGenerator
      * @param toDense boolean; if true; generate makeDense; if false; generate makeSparse
      * @return String; Java code
      */
-    private static String buildPrivateDenseSparseConverter(CodeGenerator cg, String outerIndent, String type,
-            int dimensions, boolean toDense)
+    private static String buildPrivateDenseSparseConverter(final CodeGenerator cg, final String outerIndent,
+            final String type, final int dimensions, final boolean toDense)
     {
         final String resultType = toDense ? "Sparse" : "Dense";
         final String inputType = toDense ? "Dense" : "Sparse";
@@ -1539,8 +1546,8 @@ public class ValueClassesGenerator
      * @param dimensions int; number of dimensions of the storage
      * @return String; java code
      */
-    private static String buildDenseSparseConverter(CodeGenerator cg, String outerIndent, String type, String absRel,
-            boolean toSparse, int dimensions)
+    private static String buildDenseSparseConverter(final CodeGenerator cg, final String outerIndent,
+            final String type, final String absRel, final boolean toSparse, final int dimensions)
     {
         final String from = toSparse ? "Dense" : "Sparse";
         final String to = toSparse ? "Sparse" : "Dense";
@@ -1555,7 +1562,7 @@ public class ValueClassesGenerator
     }
 
     /**
-     * Build Java code for incrementValueByValue or decrementValueByValue
+     * Build Java code for incrementValueByValue or decrementValueByValue.
      * @param cg CodeGenerator; the code generator
      * @param outerIndent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
@@ -1565,8 +1572,9 @@ public class ValueClassesGenerator
      * @param increment boolean; if true; the increment method is built; if false; the decrement method is built
      * @return String; Java code
      */
-    private static String buildInOrDecrementValueByValue(CodeGenerator cg, String outerIndent, String type,
-            String aggregateType, String pluralAggregateType, int dimensions, boolean increment)
+    private static String buildInOrDecrementValueByValue(final CodeGenerator cg, final String outerIndent,
+            final String type, final String aggregateType, final String pluralAggregateType, final int dimensions,
+            final boolean increment)
     {
         final String inOrDecrement = increment ? "in" : "de";
         return cg.buildMethod(outerIndent, "private|Mutable" + type + aggregateType + "<U>|" + inOrDecrement
@@ -1590,7 +1598,7 @@ public class ValueClassesGenerator
     }
 
     /**
-     * Generate the code for the Vector times methods
+     * Generate the code for the Vector times methods.
      * @param cg CodeGenerator; the code generator
      * @param outerIndent String; prefix of all output line
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
@@ -1599,8 +1607,8 @@ public class ValueClassesGenerator
      * @param dimensions int; number of dimensions of the data
      * @return String; java code
      */
-    private static String buildVectorOrMatrixTimes(CodeGenerator cg, String outerIndent, String type, String leftType,
-            String rightType, int dimensions)
+    private static String buildVectorOrMatrixTimes(final CodeGenerator cg, final String outerIndent, final String type,
+            final String leftType, final String rightType, final int dimensions)
     {
         final String resultType =
                 leftType.contains("Sparse") ? leftType : rightType.contains("Sparse") ? leftType.replace("Dense",
@@ -1673,8 +1681,9 @@ public class ValueClassesGenerator
      * @param makePlus boolean; if true; generate code for plus; if false; generate code for minus
      * @return String; java code
      */
-    private static String buildVectorOrMatrixPlusOrMinus(CodeGenerator cg, String outerIndent, String type,
-            String leftType, String rightType, int dimensions, boolean makePlus)
+    private static String buildVectorOrMatrixPlusOrMinus(final CodeGenerator cg, final String outerIndent,
+            final String type, final String leftType, final String rightType, final int dimensions,
+            final boolean makePlus)
     {
         // If either type is Dense, the result is Dense
         final String resultDenseSparse = leftType.contains("Dense") || rightType.contains("Dense") ? "Dense" : "Sparse";
@@ -1722,10 +1731,11 @@ public class ValueClassesGenerator
     }
 
     /**
-     * @param code
-     * @return
+     * Convert an ArrayList&ltString&gt; into an array of String.
+     * @param code ArrayList<String>; the lines to convert to an array of string
+     * @return String[]; array containing the strings from the ArrayList
      */
-    private static String[] arrayListToArray(ArrayList<String> code)
+    private static String[] arrayListToArray(final ArrayList<String> code)
     {
         String[] codeLines = new String[code.size()];
         for (int line = 0; line < code.size(); line++)
@@ -1742,7 +1752,7 @@ public class ValueClassesGenerator
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @return String; java code
      */
-    private static String buildVectorFunctions(CodeGenerator cg, final String indent, final String type)
+    private static String buildVectorFunctions(final CodeGenerator cg, final String indent, final String type)
     {
         StringBuilder construction = new StringBuilder();
         for (MathFunctionEntry mfu : mathFunctions)
@@ -1761,7 +1771,7 @@ public class ValueClassesGenerator
      * @param dimensions int; the number of bracket pairs to concatenate
      * @return String
      */
-    private static String buildEmptyBrackets(int dimensions)
+    private static String buildEmptyBrackets(final int dimensions)
     {
         return buildBrackets(dimensions, "");
     }
@@ -1772,7 +1782,7 @@ public class ValueClassesGenerator
      * @param contents String; the text that goes between each pair of brackets
      * @return String
      */
-    private static String buildBrackets(int dimensions, String contents)
+    private static String buildBrackets(final int dimensions, final String contents)
     {
         String result = "";
         for (int i = 0; i < dimensions; i++)
@@ -1783,7 +1793,7 @@ public class ValueClassesGenerator
     }
 
     /**
-     * Generate the Java code for a sub class of vector or matrix class
+     * Generate the Java code for a sub class of vector or matrix class.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for each output line
      * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
@@ -1797,9 +1807,9 @@ public class ValueClassesGenerator
      * @param dimensions int; number of dimensions of the storage
      * @return String; Java code implementing the sub class
      */
-    private static String buildSubClass(CodeGenerator cg, final String indent, final String name,
+    private static String buildSubClass(final CodeGenerator cg, final String indent, final String name,
             final String longName, final String extendsString, final String implementsString,
-            final String parentClassName, boolean mutable, int dimensions)
+            final String parentClassName, final boolean mutable, final int dimensions)
     {
         final String absRelType = longName.split(" ")[0];
         final String floatType = extendsString.contains("Float") ? "Float" : "Double";
@@ -1837,8 +1847,8 @@ public class ValueClassesGenerator
      * @param dimensions int; number of dimensions of the storage
      * @return String; Java code
      */
-    private static String buildSubSubClass(CodeGenerator cg, final String indent, final String absRel,
-            final String denseOrSparse, final String longName, boolean mutable, int dimensions)
+    private static String buildSubSubClass(final CodeGenerator cg, final String indent, final String absRel,
+            final String denseOrSparse, final String longName, final boolean mutable, final int dimensions)
     {
         final String fixedLongName = mutable ? longName : longName.replaceFirst("( \\S*$)", " Immutable$1");
         final String type = longName.replaceFirst(".* (.*)(Vector|Matrix)", "$1").replace("Mutable", "");
@@ -1916,7 +1926,7 @@ public class ValueClassesGenerator
      * @param type String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
      */
-    private static void generateScalarClass(CodeGenerator cg, String type, boolean mutable)
+    private static void generateScalarClass(final CodeGenerator cg, final String type, final boolean mutable)
     {
         final String lowerCaseType = type.toLowerCase();
         final String outerIndent = cg.indent(1);
@@ -2014,7 +2024,7 @@ public class ValueClassesGenerator
                                                 new String[]{"final U|targetUnit|the unit to convert the value into"},
                                                 null, null, new String[]{"return " + cast
                                                         + "ValueUtil.expressAsUnit(this.valueSI, targetUnit);"}, false)
-                                        + buildNumberMethods(type, cg)));
+                                        + buildNumberMethods(cg, type)));
     }
 
     /**
@@ -2024,7 +2034,7 @@ public class ValueClassesGenerator
      * @param type String; either <cite>Float</cite> or <cite>Double</cite>
      * @return String
      */
-    private static String buildOtherMutatingScalarMethods(CodeGenerator cg, String indent, String type)
+    private static String buildOtherMutatingScalarMethods(final CodeGenerator cg, final String indent, final String type)
     {
         final String cast = (type.startsWith("F") ? "(float)" : null);
         StringBuilder construction = new StringBuilder();
@@ -2104,8 +2114,8 @@ public class ValueClassesGenerator
      * @param multiply boolean; if true; the code for multiply is generated; if false; the code for divide is generated
      * @return String; java code
      */
-    private static String buildScalarMultiplyOrDivide(CodeGenerator cg, final String indent, final String scalarType,
-            boolean absolute, boolean multiply)
+    private static String buildScalarMultiplyOrDivide(final CodeGenerator cg, final String indent,
+            final String scalarType, final boolean absolute, final boolean multiply)
     {
         final String absRel = absolute ? "Abs" : "Rel";
         return cg.buildMethod(indent, "public static|Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>|"
@@ -2132,8 +2142,8 @@ public class ValueClassesGenerator
      *            generated
      * @return String; java code
      */
-    private static String buildScalarIncrementDecrement(CodeGenerator cg, String indent, String scalarType,
-            boolean increment)
+    private static String buildScalarIncrementDecrement(final CodeGenerator cg, final String indent,
+            final String scalarType, final boolean increment)
     {
         return cg.buildMethod(indent, "protected final|" + scalarType + "Scalar<?>|" + (increment ? "in" : "de")
                 + "crementBy|the modified Mutable" + scalarType + "Scalar", (increment ? "In" : "De")
@@ -2153,8 +2163,8 @@ public class ValueClassesGenerator
      *            and the result are relative
      * @return String; java code
      */
-    private static String buildScalarPlus(CodeGenerator cg, final String indent, final String scalarType,
-            boolean absoluteResult)
+    private static String buildScalarPlus(final CodeGenerator cg, final String indent, final String scalarType,
+            final boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
         return cg.buildMethod(
@@ -2199,16 +2209,16 @@ public class ValueClassesGenerator
      * Build the minus method for subtracting an array of relative scalars from an absolute or relative scalar.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prepended to each line
-     * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
      * @param absoluteResult boolean; if true the first operand and the result are absolute; if false, the first operand
      *            and the result are relative
      * @return String; java code
      */
-    private static String buildScalarMinus(CodeGenerator cg, final String indent, final String scalarType,
-            boolean absoluteResult)
+    private static String buildScalarMinus(final CodeGenerator cg, final String indent, final String type,
+            final boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
-        return cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar." + absRel
+        return cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + type + "Scalar." + absRel
                 + "<U>|minus|the resulting value as " + (absoluteResult ? "an absolute" : "a relative") + " value",
                 absoluteResult
                         ? "Subtract a number of relative values from an absolute value. Return a new instance of the "
@@ -2223,23 +2233,24 @@ public class ValueClassesGenerator
                                 + "the method cannot check whether an\r\n" + indent
                                 + " * array of arguments submitted to the varargs has a "
                                 + "mixed-unit content at runtime.", new String[]{
-                        "final " + scalarType + "Scalar." + absRel + "<U>|value" + absRel + "|the "
+                        "final " + type + "Scalar." + absRel + "<U>|value" + absRel + "|the "
                                 + (absoluteResult ? "absolute" : "relative") + " base value",
-                        "final " + scalarType + "Scalar.Rel<U>...|valuesRel|zero or more relative values to subtract "
+                        "final " + type + "Scalar.Rel<U>...|valuesRel|zero or more relative values to subtract "
                                 + (absoluteResult ? "from the absolute value" : "from the first value"),
                         "Unit|<U>|the unit of the parameters and the result"}, null, "@SafeVarargs", new String[]{
-                        "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new Mutable" + scalarType
+                        "Mutable" + type + "Scalar." + absRel + "<U> result = new Mutable" + type
                                 + "Scalar." + absRel + "<U>(value" + absRel + ");",
-                        "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)", "{",
+                        "for (" + type + "Scalar.Rel<U> v : valuesRel)", "{",
                         cg.indent(1) + "result.decrementBy(v);", "}", "return result;"}, false);
     }
 
     /**
      * Generate the Java code that implements the Number methods.
      * @param cg CodeGenerator; the code generator
-     * @return
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @return String; Java code
      */
-    private static String buildNumberMethods(String type, CodeGenerator cg)
+    private static String buildNumberMethods(final CodeGenerator cg, final String type)
     {
         final String cast = type.equals("Float") ? "" : "(float) ";
         final String lowerCaseType = type.toLowerCase();
@@ -2361,9 +2372,9 @@ public class ValueClassesGenerator
      *            for the immutable version is generated
      * @return String; java code implementing the sub class
      */
-    private static String buildScalarSubClass(CodeGenerator cg, final String indent, final String name,
+    private static String buildScalarSubClass(final CodeGenerator cg, final String indent, final String name,
             final String longName, final String extendsString, final String implementsString,
-            final String parentClassName, boolean mutable)
+            final String parentClassName, final boolean mutable)
     {
         final String absRelType = longName.split(" ")[0];
         final String floatType = extendsString.contains("Float") ? "Float" : "Double";
@@ -2413,7 +2424,7 @@ public class ValueClassesGenerator
      * @param valueType String; should be <cite>float</cite> or <cite>double</cite>
      * @return String; java code for the three format functions
      */
-    private static String buildFormatMethods(CodeGenerator cg, String valueType)
+    private static String buildFormatMethods(final CodeGenerator cg, final String valueType)
     {
         return cg.buildMethod(cg.indent(1), "public static|String|format|the formatted floating point value",
                 "Format a floating point value.", new String[]{"final " + valueType + "|value|the value to format",
@@ -2429,7 +2440,7 @@ public class ValueClassesGenerator
                         new String[]{"return Format.format(value, size, Format.DEFAULTPRECISION);"}, false)
                 + cg.buildMethod(cg.indent(1), "public static|String|format|the formatted floating point value",
                         "Format a floating point value.", new String[]{"final " + valueType
-                                + "|value|the value to format",}, null, null,
+                                + "|value|the value to format"}, null, null,
                         new String[]{"return format(value, Format.DEFAULTSIZE, Format.DEFAULTPRECISION);"}, false);
     }
 
