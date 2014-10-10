@@ -16,9 +16,8 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -43,7 +42,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, Area> ReadAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
+    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
             throws IOException
     {
         /*-
@@ -81,9 +80,7 @@ public class ShapeFileReader
         Long newNr = 100000000L;
         int numberOfAreasWithoutCentroid = 0;
         int numberOfAreasWithCentroid = 0;
-        DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(10, LengthUnit.KILOMETER);
-        ParametersNTM parametersNTM = new ParametersNTM(25.0, 50.0, 100, speed, roadLength);
+
         try
         {
             while (iterator.hasNext())
@@ -252,7 +249,7 @@ public class ShapeFileReader
      * @param number
      * @return nr: the number of the Node without characters
      */
-    public static boolean InspectNodeCentroid(String number)
+    public static boolean inspectNodeCentroid(String number)
     {
         boolean isCentroid = false;
         number = CsvFileReader.removeQuotes(number);
@@ -273,7 +270,7 @@ public class ShapeFileReader
      * @param centroids the centroids to check start and end Node
      * @throws IOException on error
      */
-    public static void ReadLinks(final String shapeFileName, Map<String, ShpLink> links,
+    public static void readLinks(final String shapeFileName, Map<String, ShpLink> links,
             Map<String, ShpLink> connectors, Map<String, ShpNode> nodes, Map<String, ShpNode> centroids)
             throws IOException
     {

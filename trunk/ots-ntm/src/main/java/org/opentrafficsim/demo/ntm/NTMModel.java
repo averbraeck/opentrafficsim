@@ -2,23 +2,17 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
-import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -26,11 +20,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
 import org.opentrafficsim.demo.ntm.animation.LinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
@@ -40,11 +32,15 @@ import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
+import com.vividsolutions.jts.index.SpatialIndex;
+import com.vividsolutions.jts.index.strtree.STRtree;
+import com.vividsolutions.jts.linearref.LinearLocation;
+import com.vividsolutions.jts.linearref.LocationIndexedLine;
 
 /**
  * <p>
@@ -92,10 +88,10 @@ public class NTMModel implements OTSModelInterface
     private ArrayList<DepartureTimeProfile> departureTimeProfiles;
 
     /** graph containing the original network. */
-    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> linkGraph;
+    private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> linkGraph;
 
     /** graph containing the simplified network. */
-    private SimpleWeightedGraph<AreaNode, LinkEdge<Link>> areaGraph;
+    private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
 
     /** debug information?. */
     private static final boolean DEBUG = true;
@@ -108,9 +104,9 @@ public class NTMModel implements OTSModelInterface
     {
         LinkEdge<Link> l = new LinkEdge<Link>(null);
         this.linkGraph =
-                new SimpleWeightedGraph<AreaNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+                new SimpleWeightedGraph<BoundedNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
         this.areaGraph =
-                new SimpleWeightedGraph<AreaNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+                new SimpleWeightedGraph<BoundedNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
     }
 
     /** {@inheritDoc} */
@@ -135,7 +131,7 @@ public class NTMModel implements OTSModelInterface
             // false: mixed file with centroids (number starts with "C") and normal nodes
 
             this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
-            this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
+            this.areas = ShapeFileReader.readAreas("/gis/areas.shp", this.centroids);
             this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
 
             // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
@@ -144,7 +140,7 @@ public class NTMModel implements OTSModelInterface
 
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
-            ShapeFileReader.ReadLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+            ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                     this.shpNodes, this.centroids);
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
@@ -193,23 +189,23 @@ public class NTMModel implements OTSModelInterface
         // At time zero, there are no cars in the network
         // we start the simulation by injecting traffic into the areas, based on the traffic demand input
         // The trips are put in the "stock" of the area, but keep a reference to the destination and to the first Area
-        // they encounter (a neighbour) on their shortest path towards that destination.
+        // they encounter (neighbour) on their shortest path towards that destination.
 
         // Initiate the simulation by creating the paths
         boolean floyd = true;
         @SuppressWarnings("unchecked")
-        Collection<GraphPath<AreaNode, LinkEdge<Link>>> sp1 = null;
+        Collection<GraphPath<BoundedNode, LinkEdge<Link>>> sp1 = null;
 
         long initial = System.currentTimeMillis();
 
         if (floyd)
         {
             sp1 = new FloydWarshallShortestPaths(this.areaGraph).getShortestPaths();
-            for (GraphPath<AreaNode, LinkEdge<Link>> path : sp1)
+            for (GraphPath<BoundedNode, LinkEdge<Link>> path : sp1)
             {
-                AreaNode origin = path.getStartVertex();
-                AreaNode endNode = path.getEdgeList().get(0).getLink().getEndNode();
-                AreaNode startNode = path.getEdgeList().get(0).getLink().getStartNode();
+                BoundedNode origin = path.getStartVertex();
+                BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
+                BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
 
                 if (origin.equals(endNode))
                 {
@@ -236,6 +232,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * 
      */
+    @SuppressWarnings("unchecked")
     protected final void ntmFlowTimestep()
     {
         double accumulatedCars = 0;
@@ -243,87 +240,123 @@ public class NTMModel implements OTSModelInterface
 
         // Initiate trips from OD to first Area (Origin)
         Map<String, Map<String, TripInfoTimeDynamic>> trips = this.tripDemand.getTripInfo();
-        for (Area areaFrom : this.areas.values())
+        // retrieve information from the Area Graph containing the NTM areas and the selected highways
+        for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
         {
-            // at every iteration: initiate with value 0
-            if (areaFrom.getCellBehaviourNTM() == null)
+            try
             {
-                System.out.println(" area null");
-            }
-
-            areaFrom.getCellBehaviourNTM().setDemandToEnter(0);
-
-            accumulatedCars = areaFrom.getAccumulatedCars();
-            if (trips.containsKey(areaFrom.getCentroidNr()))
-            {
-                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom.getCentroidNr());
-                for (Area areaTo : this.areas.values())
+                if (nodefromNTM.getBehaviourType() == TrafficBehaviourType.NTM)
                 {
-                    if (tripsFrom.containsKey(areaTo.getCentroidNr()))
+                    // first loop through the NTM and Cordon Area "nodes" that generate traffic from the trip demand
+                    // file
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) nodefromNTM.getCellBehaviour();
+                    // double cars = cellBehaviour.retrieveDemand(nodeFromNTM.getDemandToEnter(),
+                    // nodeFromNTM.getMaxCapacity(), nodeFromNTM.getParametersNTM());
+                    accumulatedCars = cellBehaviour.getAccumulatedCars();
+                    if (trips.containsKey(nodefromNTM.getArea().getCentroidNr()))
                     {
-                        // adjust next formulae wit time dependant variable
-                        double startingTrips = tripsFrom.get(areaTo.getCentroidNr()).getNumberOfTrips();
-                        tripsFrom.get(areaTo.getCentroidNr()).addToPassingTrips(startingTrips);
-                        accumulatedCars += startingTrips;
+                        Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(nodefromNTM.getArea().getCentroidNr());
+                        for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                        {
+                            if (tripsFrom.containsKey(nodeTo.getId()))
+                            {
+                                // adjust next formulae wit time dependant variable
+                                double startingTrips = tripsFrom.get(nodeTo.getId()).getNumberOfTrips();
+                                tripsFrom.get(nodeTo.getId()).addToPassingTrips(startingTrips);
+                                accumulatedCars += startingTrips;
+                            }
+                        }
                     }
+                    // put these trips in the stock of the Area (added the new Trips)
+                    cellBehaviour.setAccumulatedCars(accumulatedCars);
+                    // compute the total production from an Area to all other Destinations (based on the accumulation
+                    // NFD)
+                    cellBehaviour.setDemand(cellBehaviour.retrieveDemand(accumulatedCars,
+                            cellBehaviour.getMaxCapacity(), cellBehaviour.getParametersNTM()));
+                    // compute the total supply (maximum) from neighbours to an Area (based on the accumulation NFD)
+                    cellBehaviour.setSupply(cellBehaviour.retrieveSupply(accumulatedCars,
+                            cellBehaviour.getMaxCapacity(), cellBehaviour.getParametersNTM()));
                 }
             }
-            // put these trips in the stock of the Area (added the new Trips)
-            areaFrom.setAccumulatedCars(accumulatedCars);
-
-            // compute the total production from an Area to all other Destinations (based on the accumulation NFD)
-            areaFrom.getCellBehaviourNTM().computeProductionDemand(accumulatedCars);
-
-            // compute the total supply (maximum) from neighbours to an Area (based on the accumulation NFD)
-            areaFrom.getCellBehaviourNTM().computeProductionSupply(accumulatedCars);
-
-        }
-
-        // compute the flows if no restrictions on the supply side
-        // these will be corrected if supply poses restrictions!
-        for (Area areaFrom : this.areas.values())
-        {
-            accumulatedCars = areaFrom.getAccumulatedCars();
-            if (trips.containsKey(areaFrom.getCentroidNr()))
+            catch (Exception e)
             {
-                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom.getCentroidNr());
-                for (Area areaTo : this.areas.values())
-                {
-                    if (tripsFrom.containsKey(areaTo.getCentroidNr()))
-                    {
-                        // retrieve the number of cars that want to leave to a neighbouring cell
-                        Area neighbour = findArea(tripsFrom.get(areaTo.getCentroidNr()).getNeighbour().getPoint());
-                        double share =
-                                tripsFrom.get(areaTo.getCentroidNr()).getPassingTrips() / areaFrom.getAccumulatedCars();
-                        double flowFromDemand = share * areaFrom.getCellBehaviourNTM().getProductionDemand();
-                        tripsFrom.get(neighbour.getCentroidNr()).setFlow(flowFromDemand);
-                        neighbour.getCellBehaviourNTM().addDemandToEnter(flowFromDemand);
-                    }
-                }
+                e.printStackTrace();
             }
         }
 
-        // compute the flows if no restrictions on the supply side
-        // these will be corrected if supply poses restrictions!
-        for (Area areaFrom : this.areas.values())
+        // compute the flows if no restrictions on the supply side // these will be corrected if supply poses
+        // restrictions!
+        for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
         {
-            accumulatedCars = areaFrom.getAccumulatedCars();
-            if (trips.containsKey(areaFrom.getCentroidNr()))
+            try
             {
-                Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(areaFrom.getCentroidNr());
-                for (Area areaTo : this.areas.values())
+                if (nodefromNTM.getBehaviourType() == TrafficBehaviourType.NTM)
                 {
-                    if (tripsFrom.containsKey(areaTo.getCentroidNr()))
+                    // first loop through the NTM and Cordon Area "nodes" that generate traffic from the trip demand
+                    // file
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) nodefromNTM.getCellBehaviour();
+                    accumulatedCars = cellBehaviour.getAccumulatedCars();
+                    if (trips.containsKey(nodefromNTM.getArea().getCentroidNr()))
                     {
-                        // retrieve the number of cars that want to leave to a neighbouring cell
-                        Area neighbour = findArea(tripsFrom.get(areaTo.getCentroidNr()).getNeighbour().getPoint());
-                        double share =
-                                tripsFrom.get(areaTo.getCentroidNr()).getFlow()
-                                        / neighbour.getCellBehaviourNTM().getDemandToEnter();
-                        double flowFromDemand = share * neighbour.getCellBehaviourNTM().getProductionSupply();
-                        tripsFrom.get(neighbour.getCentroidNr()).setFlow(flowFromDemand);
+                        Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(nodefromNTM.getArea().getCentroidNr());
+                        for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                        {
+                            if (tripsFrom.containsKey(nodeTo.getId()))
+                            {
+                                // retrieve the number of cars that want to leave to a neighbouring cell
+                                BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
+                                double share =
+                                        tripsFrom.get(nodeTo.getId()).getPassingTrips()
+                                                / cellBehaviour.getAccumulatedCars();
+                                double flowFromDemand = share * cellBehaviour.getDemand();
+                                tripsFrom.get(neighbour.getId()).setFlow(flowFromDemand);
+                                ((CellBehaviourNTM) neighbour.getCellBehaviour()).addDemandToEnter(flowFromDemand);
+                            }
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        // compute the flows if no restrictions on the supply side
+        // these will be corrected if supply poses restrictions!
+        for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
+        {
+            try
+            {
+                if (nodefromNTM.getBehaviourType() == TrafficBehaviourType.NTM)
+                {
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) nodefromNTM.getCellBehaviour();
+                    // double cars = cellBehaviour.retrieveDemand(nodeFromNTM.getDemandToEnter(),
+                    // nodeFromNTM.getMaxCapacity(), nodeFromNTM.getParametersNTM());
+                    accumulatedCars = cellBehaviour.getAccumulatedCars();
+                    if (trips.containsKey(nodefromNTM.getArea().getCentroidNr()))
+                    {
+                        Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(nodefromNTM.getArea().getCentroidNr());
+                        for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                        {
+                            if (tripsFrom.containsKey(nodeTo.getId()))
+                            {
+                                // retrieve the number of cars that want to leave to a neighbouring cell
+                                BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
+                                CellBehaviourNTM cellBehaviourNeighbour =
+                                        (CellBehaviourNTM) neighbour.getCellBehaviour();
+                                double share =
+                                        cellBehaviourNeighbour.getFlow() / cellBehaviourNeighbour.getDemandToEnter();
+                                double flowFromDemand = share * cellBehaviourNeighbour.getSupply();
+                                cellBehaviourNeighbour.setFlow(flowFromDemand);
+                                tripsFrom.get(neighbour.getId()).setFlow(flowFromDemand);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         }
 
@@ -355,7 +388,7 @@ public class NTMModel implements OTSModelInterface
         // First, add all GIS-like objects in an array
         ArrayList<GeoObject> gisObjects = new ArrayList<GeoObject>();
         gisObjects.addAll(this.areas.values());
-        gisObjects.addAll(this.flowLinks.values());
+        // gisObjects.addAll(this.flowLinks.values());
         // then find out if they touch
         for (GeoObject gis1 : gisObjects)
         {
@@ -379,20 +412,9 @@ public class NTMModel implements OTSModelInterface
             }
         }
 
-        for (Area area : this.areas.values())
-        {
-            if (area.getTouchingAreas() == null)
-            {
-                System.out.println("no touching area for number " + area.getCentroidNr() + ", Area type: "
-                        + area.getAreaType());
-                // find the nearest areas and connect them (HERE? of further down this Class...)
-                // TODO make the code
-            }
-        }
-
         // temporary storage for nodes and edges mapped from the number to the node
-        Map<String, AreaNode> nodeMap = new HashMap<>();
-        Map<Area, AreaNode> areaNodeCentroidMap = new HashMap<>();
+        Map<String, BoundedNode> nodeMap = new HashMap<>();
+        Map<Area, BoundedNode> areaNodeCentroidMap = new HashMap<>();
         Map<String, LinkEdge<Link>> linkMap = new HashMap<>();
         ArrayList<ShpLink> allLinks = new ArrayList<ShpLink>();
 
@@ -405,8 +427,8 @@ public class NTMModel implements OTSModelInterface
         {
             // area node: copies a node from a link and connects the area
             // the nodeMap connects the shpNodes to these new AreaNode
-            AreaNode n1 = nodeMap.get(shpLink.getNodeA().getNr());
-            if (n1 == null)
+            BoundedNode nA = nodeMap.get(shpLink.getNodeA().getNr());
+            if (nA == null)
             {
                 Area areaA = findArea(shpLink.getNodeA().getPoint());
                 if (areaA == null)
@@ -414,65 +436,160 @@ public class NTMModel implements OTSModelInterface
                     System.err.println("Could not find area for NodeA of shapeLink " + shpLink);
                 }
 
-                n1 = new AreaNode(shpLink.getNodeA().getNr(), shpLink.getNodeA().getPoint(), areaA);
-                nodeMap.put(shpLink.getNodeA().getNr(), n1);
-                this.linkGraph.addVertex(n1);
+                nA = new BoundedNode(shpLink.getNodeA().getPoint(), shpLink.getNodeA().getNr(), areaA, null);
+                nodeMap.put(shpLink.getNodeA().getNr(), nA);
+                this.linkGraph.addVertex(nA);
             }
             if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
             {
-                if (!this.areaGraph.containsVertex(n1))
+                Area areaA = findArea(shpLink.getNodeA().getPoint());
+                nA = new BoundedNode(shpLink.getNodeA().getPoint(), shpLink.getNodeA().getNr(), areaA, null);
+                if (!this.areaGraph.containsVertex(nA))
                 {
-                    this.areaGraph.addVertex(n1);
+                    this.areaGraph.addVertex(nA);
                 }
-                // areaNodeCentroidMap.put(areaA, n1);
             }
 
-            AreaNode n2 = nodeMap.get(shpLink.getNodeB().getNr());
-            if (n2 == null)
+            BoundedNode nB = nodeMap.get(shpLink.getNodeB().getNr());
+            if (nB == null)
             {
                 Area areaB = findArea(shpLink.getNodeB().getPoint());
                 if (areaB == null)
                 {
                     System.err.println("Could not find area for NodeB of shapeLink " + shpLink);
                 }
-                n2 = new AreaNode(shpLink.getNodeB().getNr(), shpLink.getNodeB().getPoint(), areaB);
-                nodeMap.put(shpLink.getNodeB().getNr(), n2);
-                this.linkGraph.addVertex(n2);
+                nB = new BoundedNode(shpLink.getNodeB().getPoint(), shpLink.getNodeA().getNr(), areaB, null);
+                nodeMap.put(shpLink.getNodeB().getNr(), nB);
+                this.linkGraph.addVertex(nB);
             }
             if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
             {
-                if (!this.areaGraph.containsVertex(n2))
+                Area areaB = findArea(shpLink.getNodeB().getPoint());
+                nB = new BoundedNode(shpLink.getNodeB().getPoint(), shpLink.getNodeA().getNr(), areaB, null);
+                if (!this.areaGraph.containsVertex(nB))
                 {
-                    this.areaGraph.addVertex(n2);
+                    this.areaGraph.addVertex(nB);
                 }
-                // areaNodeCentroidMap.put(areaA, n1);
             }
 
             // TODO: direction of a road?
             // TODO: is the length in ShapeFiles in meters or in kilometers? I believe in km.
-            if (n1 != null && n2 != null)
+            if (nA != null && nB != null)
             {
                 DoubleScalar<LengthUnit> length =
                         new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
-                Link link = new Link(shpLink.getNr(), n1, n2, length, shpLink.getName(), shpLink.getBehaviourType());
+                Link link = new Link(shpLink.getNr(), nA, nB, length, shpLink.getName(), shpLink.getBehaviourType());
                 LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-                this.linkGraph.addEdge(n1, n2, linkEdge);
+                this.linkGraph.addEdge(nA, nB, linkEdge);
                 this.linkGraph.setEdgeWeight(linkEdge, length.doubleValue());
                 linkMap.put(shpLink.getNr(), linkEdge);
                 if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
-                    this.areaGraph.addEdge(n1, n2, linkEdge);
+                    this.areaGraph.addEdge(nA, nB, linkEdge);
                     this.areaGraph.setEdgeWeight(linkEdge, length.doubleValue());
                 }
+            }
+        }
+
+        // put all centroids in the Graph as nodes
+        for (Area area : this.areas.values())
+        {
+            BoundedNode nc =
+                    new BoundedNode(area.getCentroid(), area.getCentroidNr(), area, area.getTrafficBehaviourType());
+            this.areaGraph.addVertex(nc);
+            areaNodeCentroidMap.put(area, nc);
+        }
+
+        // find the unconnected Areas and connect them!!
+        final SpatialIndex index = new STRtree();
+        for (Area areaIndex : this.areas.values())
+        {
+            Geometry geom = areaIndex.getGeometry();
+            if (geom != null)
+            {
+                Envelope env = geom.getEnvelopeInternal();
+                if (!env.isNull())
+                {
+                    index.insert(env, areaIndex);
+                }
+            }
+        }
+
+        final double MAX_SEARCH_DISTANCE = 2000.0; // meters?
+        final int NUMBER_OF_AREAS = 6;
+        for (Area isolatedArea : this.areas.values())
+        {
+            if (isolatedArea.getTouchingAreas().size() == 0)
+            {
+                System.out.println("no touching area for number " + isolatedArea.getCentroidNr() + ", Area type: "
+                        + isolatedArea.getTrafficBehaviourType());
+                connectIsolatedAreaToNearest();
+
+                // Get point and create search envelope
+                Geometry geom = isolatedArea.getGeometry();
+                Envelope search = geom.getEnvelopeInternal();
+                double searchDistance = MAX_SEARCH_DISTANCE;
+                search.expandBy(searchDistance);
+                /*
+                 * Query the spatial index for objects within the search envelope. Note that this just compares the
+                 * point envelope to the line envelopes so it is possible that the point is actually more distant than
+                 * MAX_SEARCH_DISTANCE from a line.
+                 */
+                @SuppressWarnings("unchecked")
+                List<Area> nearestAreas = index.query(search);
+                while (nearestAreas.size() > NUMBER_OF_AREAS)
+                {
+                    double decreaseBy = -0.2 * searchDistance;
+                    searchDistance += decreaseBy;
+                    search.expandBy(decreaseBy);
+                    nearestAreas = index.query(search);
+                }
+
+                // now find the nearest Areas that are connected by a road
+                // / TODO the next part contains errors!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                BoundedNode nodeIsolated = areaNodeCentroidMap.get(isolatedArea);
+                for (Area nearArea : nearestAreas)
+                {
+                    BoundedNode nodeNear = areaNodeCentroidMap.get(nearArea);
+                    try
+                    {
+                        DijkstraShortestPath<BoundedNode, LinkEdge<Link>> sp =
+                                new DijkstraShortestPath<>(this.linkGraph, nodeIsolated, nodeNear);
+                        List<LinkEdge<Link>> spList = sp.getPathEdgeList();
+                        if (spList != null)
+                        {
+                            for (LinkEdge<Link> le : spList)
+                            {
+                                Area enteredArea = nodeMap.get(le.getLink().getEndNode()).getArea();
+                                if (enteredArea != null)
+                                {
+                                    BoundedNode centroidEntered = areaNodeCentroidMap.get(enteredArea);
+                                    addLinkEdge(nodeIsolated, centroidEntered, isolatedArea.getCentroidNr(),
+                                            enteredArea.getCentroidNr(), le, TrafficBehaviourType.NTM, this.areaGraph);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                // find the nearest areas and connect them (HERE? of further down this Class...)
+                // TODO make the code
             }
         }
 
         if (DEBUG)
         {
             // test: from node 314071 (Scheveningen) to node 78816 (Voorburg)
-            AreaNode nSch = nodeMap.get("314071");
-            AreaNode nVb = nodeMap.get("78816");
-            DijkstraShortestPath<AreaNode, LinkEdge<Link>> sp = new DijkstraShortestPath<>(this.linkGraph, nSch, nVb);
+            BoundedNode nSch = nodeMap.get("314071");
+            BoundedNode nVb = nodeMap.get("78816");
+
+            DijkstraShortestPath<BoundedNode, LinkEdge<Link>> sp =
+                    new DijkstraShortestPath<>(this.linkGraph, nSch, nVb);
             System.out.println("\nScheveningen -> Voorburg");
             System.out.println("Length=" + sp.getPathLength());
             List<LinkEdge<Link>> spList = sp.getPathEdgeList();
@@ -483,41 +600,38 @@ public class NTMModel implements OTSModelInterface
                     System.out.println(le.getLink().getName());
                 }
             }
+
         }
 
-        // put all centroids in the Graph as nodes
-
-        // add all the cordon points that don't have an area
-        for (Area area : this.areas.values())
-        {
-            AreaNode nc = new AreaNode(area.getCentroidNr(), area.getCentroid(), area);
-            this.areaGraph.addVertex(nc);
-            areaNodeCentroidMap.put(area, nc);
-        }
+        // add all the cordon points that don't have an area TODO????
 
         // iterate over the roads and map them on the area centroids
         // long uniqueNr = 0;
         for (LinkEdge<Link> le : linkMap.values())
         {
-            AreaNode cA = null;
-            AreaNode cB = null;
-            Area aA = le.getLink().getStartNode().getArea();
-            Area aB = le.getLink().getEndNode().getArea();
+            BoundedNode cA = null;
+            BoundedNode cB = null;
+            Area aA = findArea(le.getLink().getStartNode().getPoint());
+            Area aB = findArea(le.getLink().getEndNode().getPoint());
+            cA = areaNodeCentroidMap.get(aA);
+            cB = areaNodeCentroidMap.get(aB);
+
+            // Area aA = le.getLink().getStartNode().getArea();
+            // Area aB = le.getLink().getEndNode().getArea();
             // if the nodes are in adjacent areas, create a link between their centroids
             // otherwise, discard the link (either in same area, or in non-adjacent areas)
 
             // inspect if these flow links connect to urban roads (in/out going)
             if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
             {
-                AreaNode flowNodeA = le.getLink().getStartNode();
-                cA = areaNodeCentroidMap.get(flowNodeA.getArea());
+                BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
+                // cA = areaNodeCentroidMap.get(flowNodeA.getArea());
                 String centroidNrA = flowNodeA.getId();
-
-                AreaNode flowNodeB = le.getLink().getEndNode();
-                cB = areaNodeCentroidMap.get(flowNodeB);
+                BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
+                // cB = areaNodeCentroidMap.get(flowNodeB);
                 String centroidNrB = flowNodeA.getId();
-
-                addLinkEdge(flowNodeA, flowNodeB, centroidNrA, centroidNrB, le, TrafficBehaviourType.FLOW);
+                addLinkEdge(flowNodeA, flowNodeB, centroidNrA, centroidNrB, le, TrafficBehaviourType.FLOW,
+                        this.areaGraph);
 
                 for (LinkEdge<Link> urbanLink : linkMap.values())
                 {
@@ -526,36 +640,40 @@ public class NTMModel implements OTSModelInterface
                         if (urbanLink.getLink().getEndNode().equals(flowNodeA))
                         {
                             // from urban (Area) to Highway (flow)
-                            aA = urbanLink.getLink().getEndNode().getArea();
+                            aA = findArea(urbanLink.getLink().getStartNode().getPoint());
+                            // aA = urbanLink.getLink().getEndNode().getArea();
                             cA = areaNodeCentroidMap.get(aA);
                             centroidNrB = flowNodeA.getId();
                             if (aA != null)
                             {
                                 centroidNrA = aA.getCentroidNr();
-                                addLinkEdge(cA, flowNodeA, centroidNrA, centroidNrB, le, TrafficBehaviourType.NTM);
+                                addLinkEdge(cA, flowNodeA, centroidNrA, centroidNrB, le, TrafficBehaviourType.NTM,
+                                        this.areaGraph);
                             }
                             else
                             {
                                 centroidNrA = "unknown";
                             }
-                            
+
                         }
                         if (urbanLink.getLink().getStartNode().equals(flowNodeB))
                         {
                             // from Highway (flow) to urban (Area)
-                            aB = urbanLink.getLink().getStartNode().getArea();
+                            aB = findArea(urbanLink.getLink().getStartNode().getPoint());
+                            // aB = urbanLink.getLink().getStartNode().getArea();
                             cB = areaNodeCentroidMap.get(aB);
                             centroidNrA = flowNodeB.getId();
                             if (aB != null)
                             {
                                 centroidNrB = aB.getCentroidNr();
-                                addLinkEdge(flowNodeB, cB, centroidNrA, centroidNrB, le, TrafficBehaviourType.NTM);
+                                addLinkEdge(flowNodeB, cB, centroidNrA, centroidNrB, le, TrafficBehaviourType.NTM,
+                                        this.areaGraph);
                             }
                             else
                             {
                                 centroidNrB = "unknown";
                             }
-                            
+
                         }
                     }
                 }
@@ -563,15 +681,18 @@ public class NTMModel implements OTSModelInterface
 
             else if (aA != null && aB != null && aA.getTouchingAreas().contains(aB))
             {
-                cA = areaNodeCentroidMap.get(aA);
-                cB = areaNodeCentroidMap.get(aB);
+                // cA = areaNodeCentroidMap.get(aA);
+                // cB = areaNodeCentroidMap.get(aB);
                 if (this.areaGraph.containsEdge(cA, cB))
                 {
                     // TODO: if the link between these areas already exists, add the capacity to the link
                 }
                 else
                 {
-                    addLinkEdge(cA, cB, aA.getCentroidNr(), aB.getCentroidNr(), le, TrafficBehaviourType.NTM);
+                    le.getLink().setStartNode(cA);
+                    le.getLink().setEndNode(cB);
+                    addLinkEdge(cA, cB, aA.getCentroidNr(), aB.getCentroidNr(), le, TrafficBehaviourType.NTM,
+                            this.areaGraph);
                     // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
                 }
             }
@@ -600,9 +721,9 @@ public class NTMModel implements OTSModelInterface
             }
             else
             {
-                AreaNode cSch = areaNodeCentroidMap.get(aSch);
-                AreaNode cVb = areaNodeCentroidMap.get(aVb);
-                DijkstraShortestPath<AreaNode, LinkEdge<Link>> sp =
+                BoundedNode cSch = areaNodeCentroidMap.get(aSch);
+                BoundedNode cVb = areaNodeCentroidMap.get(aVb);
+                DijkstraShortestPath<BoundedNode, LinkEdge<Link>> sp =
                         new DijkstraShortestPath<>(this.areaGraph, cSch, cVb);
                 System.out.println("Length=" + sp.getPathLength());
                 List<LinkEdge<Link>> spList = sp.getPathEdgeList();
@@ -620,17 +741,25 @@ public class NTMModel implements OTSModelInterface
 
     }
 
-    private void addLinkEdge(AreaNode cA, AreaNode cB, String centroidA, String centroidB, LinkEdge<Link> le,
-            TrafficBehaviourType type)
+    /**
+     * @param flowNodeA
+     * @param flowNodeB
+     * @param centroidA
+     * @param centroidB
+     * @param le
+     * @param type
+     */
+    private void addLinkEdge(BoundedNode flowNodeA, BoundedNode flowNodeB, String centroidA, String centroidB,
+            LinkEdge<Link> le, TrafficBehaviourType type, SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> graph)
     {
         // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
         DoubleScalar<LengthUnit> length =
-                new DoubleScalar.Abs<LengthUnit>(cA.getPoint().distance(cB.getPoint()), LengthUnit.METER);
-        Link link = new Link(le.getLink().getId(), cA, cB, length, centroidA + " - " + centroidA, type);
+                new DoubleScalar.Abs<LengthUnit>(flowNodeA.getPoint().distance(flowNodeB.getPoint()), LengthUnit.METER);
+        Link link = new Link(le.getLink().getId(), flowNodeA, flowNodeB, length, centroidA + " - " + centroidA, type);
         LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-        this.areaGraph.addEdge(cA, cB, linkEdge);
+        graph.addEdge(flowNodeA, flowNodeB, linkEdge);
         // TODO: average length? straight distance? straight distance + 20%?
-        this.areaGraph.setEdgeWeight(linkEdge, length.doubleValue());
+        graph.setEdgeWeight(linkEdge, length.doubleValue());
     }
 
     /**
@@ -653,6 +782,14 @@ public class NTMModel implements OTSModelInterface
             }
         }
         return area;
+    }
+
+    /**
+     * 
+     */
+    private void connectIsolatedAreaToNearest()
+    {
+
     }
 
     /**
@@ -744,12 +881,20 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
-            boolean showConnectors = true;
+            boolean showLinks = false;
+            boolean showFlowLinks = false;
+            boolean showConnectors = false;
             boolean showNodes = false;
-            for (Area area : this.areas.values())
-            {
-                new AreaAnimation(area, this.simulator, 5f);
+            boolean showEdges = true;
+            boolean showAreaNode = true;
+            boolean showArea = true;
+            
+            if (showArea)
+            {    
+                for (Area area : this.areas.values())
+                {
+                    new AreaAnimation(area, this.simulator, 5f);
+                }
             }
             if (showLinks)
             {
@@ -765,9 +910,13 @@ public class NTMModel implements OTSModelInterface
                     new ShpLinkAnimation(shpConnector, this.simulator, 5.0F, Color.BLUE);
                 }
             }
-            for (ShpLink flowLink : this.flowLinks.values())
+            
+            if (showFlowLinks)
             {
-                new ShpLinkAnimation(flowLink, this.simulator, 5.0F, Color.RED);
+                for (ShpLink flowLink : this.flowLinks.values())
+                {
+                    new ShpLinkAnimation(flowLink, this.simulator, 5.0F, Color.RED);
+                }
             }
             if (showNodes)
             {
@@ -776,17 +925,23 @@ public class NTMModel implements OTSModelInterface
                     new ShpNodeAnimation(shpNode, this.simulator);
                 }
             }
-            /*
-             * for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet()) { new LinkAnimation(linkEdge.getEdge(),
-             * this.simulator, 0.5f); }
-             */
-            for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
+             // for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet())
+             // { 
+             //      new LinkAnimation(linkEdge.getEdge(), this.simulator, 0.5f);
+             // }
+            if (showEdges)
             {
-                new LinkAnimation(linkEdge.getLink(), this.simulator, 2.5f);
+                for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
+                {
+                    new LinkAnimation(linkEdge.getLink(), this.simulator, 2.5f);
+                }
             }
-            for (AreaNode node : this.areaGraph.vertexSet())
+            if (showAreaNode)
             {
-                new NodeAnimation(node, this.simulator);
+                for (Node node : this.areaGraph.vertexSet())
+                {
+                    new NodeAnimation(node, this.simulator);
+                }
             }
         }
         catch (NamingException | RemoteException exception)

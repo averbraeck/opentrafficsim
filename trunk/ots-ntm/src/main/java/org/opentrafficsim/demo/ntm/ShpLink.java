@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -239,6 +241,10 @@ public class ShpLink extends GeoObject implements LocatableInterface
 
     /** the lines for the animation, relative to the centroid */
     private Set<Path2D> lines = null;
+    
+    
+    /** traffic behaviour */
+    private TrafficBehaviourType behaviourType;
 
     /**
      * @param geometry 
@@ -260,7 +266,7 @@ public class ShpLink extends GeoObject implements LocatableInterface
             final ShpNode nodeB, final String linkTag, final String wegtype, final String typeWegVak, final String typeWeg, final double speed,
             final double capacity, final TrafficBehaviourType behaviourType)
     {
-        super(geometry, behaviourType);
+        super(geometry);
         this.nr = nr;
         this.name = name;
         this.direction = direction;
@@ -273,6 +279,7 @@ public class ShpLink extends GeoObject implements LocatableInterface
         this.typeWeg = typeWeg;
         this.speed = speed;
         this.capacity = capacity;
+        this.setBehaviourType(behaviourType);
 
         Coordinate[] cc = this.getGeometry().getCoordinates();
         if (cc.length == 0)
@@ -297,7 +304,7 @@ public class ShpLink extends GeoObject implements LocatableInterface
      */
     public ShpLink(ShpLink shpLink)  
     {
-        super(shpLink.getGeometry(), shpLink.getBehaviourType());
+        super(shpLink.getGeometry());
         this.nr = shpLink.nr;
         this.name = shpLink.name;
         this.direction = shpLink.direction;
@@ -313,15 +320,15 @@ public class ShpLink extends GeoObject implements LocatableInterface
         
         Coordinate[] cc = this.getGeometry().getCoordinates();
         if (cc.length == 0)
-            System.out.println("cc.length = 0 for " + nr + " (" + name + ")");
+            System.out.println("cc.length = 0 for " + this.nr + " (" + this.name + ")");
         else
         {
-            if (Math.abs(cc[0].x - nodeA.getX()) > 0.001 && Math.abs(cc[0].x - nodeB.getX()) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - nodeA.getX()) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - nodeB.getX()) > 0.001)
-                System.out.println("x coordinate non-match for " + nr + " (" + name + "); cc[0].x=" + cc[0].x
-                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + nodeA.getX() + ", nodeB.x="
-                        + nodeB.getX());
+            if (Math.abs(cc[0].x - this.nodeA.getX()) > 0.001 && Math.abs(cc[0].x - this.nodeB.getX()) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - this.nodeA.getX()) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - this.nodeB.getX()) > 0.001)
+                System.out.println("x coordinate non-match for " + this.nr + " (" + this.name + "); cc[0].x=" + cc[0].x
+                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + this.nodeA.getX() + ", nodeB.x="
+                        + this.nodeB.getX());
         }
     }
 
@@ -472,6 +479,22 @@ public class ShpLink extends GeoObject implements LocatableInterface
     public double getCapacity()
     {
         return this.capacity;
+    }
+
+    /**
+     * @return behaviourType.
+     */
+    public TrafficBehaviourType getBehaviourType()
+    {
+        return this.behaviourType;
+    }
+
+    /**
+     * @param behaviourType set behaviourType.
+     */
+    public void setBehaviourType(TrafficBehaviourType behaviourType)
+    {
+        this.behaviourType = behaviourType;
     }
 
     /** {@inheritDoc} */

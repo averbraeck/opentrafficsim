@@ -17,7 +17,7 @@ import java.util.Map;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
-import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
@@ -142,7 +142,7 @@ public class CsvFileReader
                 {
                     // first we inspect if it is a centroid
                     name = CsvFileReader.removeQuotes(name);
-                    boolean isCentroid = ShapeFileReader.InspectNodeCentroid(name);
+                    boolean isCentroid = ShapeFileReader.inspectNodeCentroid(name);
                     ShpNode cordonPoint = null;
                     if (isCentroid)
                     {

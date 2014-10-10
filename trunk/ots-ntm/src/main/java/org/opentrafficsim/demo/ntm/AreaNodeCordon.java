@@ -16,17 +16,19 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class AreaNodeCordon extends AreaNode
+public class AreaNodeCordon extends BoundedNode
 {
 
     /**
+     * @param centroid
      * @param nr
-     * @param point
+     * @param area
+     * @param behaviourType
      */
-    public AreaNodeCordon(String nr, Point point, Area area)
+    public AreaNodeCordon(Point centroid, String nr, Area area, TrafficBehaviourType behaviourType)
     {
-        super(nr, point, area);
-        
+        super(centroid, nr, area, behaviourType);
     }
+
 
 }

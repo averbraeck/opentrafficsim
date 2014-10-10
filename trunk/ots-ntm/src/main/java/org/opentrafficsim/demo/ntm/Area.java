@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -48,6 +50,19 @@ public class Area extends GeoObject implements LocatableInterface
 {
 
 
+    /**
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version 10 Oct 2014 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+     * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
+     */
+
     /** AREANR class java.lang.Long 15127 */
     private final String centroidNr;
 
@@ -73,8 +88,11 @@ public class Area extends GeoObject implements LocatableInterface
     private Set<Path2D> polygons = null;
     
     /** */
-    private TrafficBehaviourType areaType;
+    private TrafficBehaviourType trafficBehaviourType;
   
+    /** The parameters for the NFD. */
+
+    
     /**
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -95,7 +113,6 @@ public class Area extends GeoObject implements LocatableInterface
     /**
      * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
      * @param centroidNr 
-     * @param nr AREANR class java.lang.Long 15127
      * @param name NAME class java.lang.String 70 Oostduinen
      * @param gemeente GEMEENTEVM class java.lang.String sGravenhage
      * @param gebied GEBIEDSNAA class java.lang.String Studiegebied
@@ -103,11 +120,12 @@ public class Area extends GeoObject implements LocatableInterface
      * @param dhb DHB class java.lang.Double 70.0
      * @param centroid Centroid as a Point
      * @param areaType 
+
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
-            final String regio, final double dhb, final Point centroid, final TrafficBehaviourType behaviourType)
+            final String regio, final double dhb, final Point centroid, final TrafficBehaviourType trafficBehaviourType)
     {
-        super(geometry, behaviourType);
+        super(geometry);
         this.centroidNr = centroidNr;
         this.name = name;
         this.gemeente = gemeente;
@@ -115,6 +133,7 @@ public class Area extends GeoObject implements LocatableInterface
         this.regio = regio;
         this.dhb = dhb;
         this.centroid = centroid;
+        this.trafficBehaviourType = trafficBehaviourType;
     }
 
     /** {@inheritDoc} */
@@ -249,19 +268,20 @@ public class Area extends GeoObject implements LocatableInterface
 
     /**
      * @return areaType.
-     */
-    public final TrafficBehaviourType getAreaType()
+     */ 
+    public final TrafficBehaviourType getTrafficBehaviourType()
     {
-        return this.areaType;
+        return this.trafficBehaviourType;
     }
 
     /**
      * @param areaType set areaType.
      */
-    public final void setAreaType(final TrafficBehaviourType areaType)
+    public final void setTrafficBehaviourType(final TrafficBehaviourType areaType)
     {
-        this.areaType = areaType;
+        this.trafficBehaviourType = areaType;
     }
+
 
 
 
