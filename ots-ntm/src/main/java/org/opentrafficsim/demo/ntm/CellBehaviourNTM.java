@@ -20,15 +20,14 @@ import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class CellBehaviourNTM
+public class CellBehaviourNTM extends CellBehaviour
 {
     /** */
     private static final long serialVersionUID = 20140903L;
 
+    /** */
+    private double accumulatedCars;
 
-    /** The parameters for the NFD. */
-    private ParametersNTM parametersNTM;
-    
     /** currentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
 
@@ -36,16 +35,13 @@ public class CellBehaviourNTM
     private double maxCapacity;
 
     /** */
-    private double productionSupply;
+    private double supply;
 
     /** */
-    private double productionDemand;
+    private double demand;
 
     /** The number of cars that are heading for this Cell. */
     private double demandToEnter;
-    
-    /** */
-    private double productionElse;
 
     /** */
     private double speedSupply;
@@ -53,93 +49,139 @@ public class CellBehaviourNTM
     /** */
     private double speedDemand;
 
+
     /** */
-    private double speedElse;
+    private double flow;
 
     /**
-     * @param parametersNTM are: 
-     * - id ID
-     * - accCritical1 low param
-     * - accCritical2 high param
-     * - accJam jam param
-     * - freeSpeed uncongested speed
-     * - roadLength length of all roads
+     * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
+     * uncongested speed - roadLength length of all roads
      */
-    public CellBehaviourNTM(final ParametersNTM parametersNTM)
+    private ParametersNTM parametersNTM;
+
+    @SuppressWarnings("javadoc")
+    private Area area;
+
+    /**
+     * @param parametersNTM contains a set of params
+     * @param area that contains this behaviour
+     */
+    public CellBehaviourNTM(Area area, ParametersNTM parametersNTM)
     {
-        super();
         this.parametersNTM = parametersNTM;
         this.maxCapacity =
-                parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getValueInUnit(SpeedUnit.KM_PER_HOUR);
+                parametersNTM.getAccCritical1()
+                        * parametersNTM.getFreeSpeed().getValueInUnit(SpeedUnit.KM_PER_HOUR);
     }
 
-    /** Retrieves car production from network fundamental diagram.
+    /** {@inheritDoc} */
+    //@Override
+    public double retrieveSupply(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
+    {
+        double carProduction = retrieveCarProduction(accumulatedCars, maxCapacity, param);
+        double productionSupply = Math.min(maxCapacity, carProduction); // supply
+        return productionSupply;
+
+    }
+
+    /** {@inheritDoc} */
+    //@Override
+    public double retrieveDemand(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
+    {
+        double maxDemand = param.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
+        double productionDemand = Math.min(maxDemand, maxCapacity); // / demand
+        return productionDemand;
+    }
+
+    /** {@inheritDoc} */
+    //@Override
+    public double computeAccumulation()
+    {
+        double accumulation = 0.0;
+        return accumulation;
+    }
+
+    /**
+     * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
+     * @param maxCapacity
+     * @param param
      * @return carProduction
      */
-    public final double retrieveCarProduction(final double accumulatedCars)
+    public final double retrieveCarProduction(final double accumulatedCars, final double maxCapacity,
+            final ParametersNTM param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(this.parametersNTM.getAccCritical1(), this.maxCapacity);
+        p.setLocation(param.getAccCritical1(), maxCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(this.parametersNTM.getAccCritical2(), this.maxCapacity);
+        p.setLocation(param.getAccCritical2(), maxCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(this.parametersNTM.getAccJam(), 0);
+        p.setLocation(param.getAccJam(), 0);
         xyPairs.add(p);
         double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
         return carProduction;
     }
 
     /**
-     * @param accumulatedCars number of cars in Cell
+     * @return parametersNTM.
      */
-    public final void computeProductionDemand(final double accumulatedCars)
+    public final ParametersNTM getParametersNTM()
     {
-        double maxDemand = this.parametersNTM.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
-        this.productionDemand = Math.min(maxDemand, this.maxCapacity); // / demand
-        this.speedDemand = this.productionDemand / accumulatedCars;
+        return this.parametersNTM;
     }
 
-    /** determines the level incoming traffic
-     * @param accumulatedCars number of cars in Cell
+    /**
+     * @param parametersNTM set parametersNTM.
      */
-    public final void computeProductionSupply(final double accumulatedCars)
+    public void setParametersNTM(ParametersNTM parametersNTM)
     {
-        double carProduction = retrieveCarProduction(accumulatedCars);
-        this.productionSupply = Math.min(this.maxCapacity, carProduction); // supply
-        this.speedSupply = this.productionSupply / accumulatedCars;
+        this.parametersNTM = parametersNTM;
     }
 
-    /** not used 
-     * @param accumulatedCars number of cars in Cell
+    /**
+     * @return area.
      */
-    public final void computeProductionElse(final double accumulatedCars)
+    public Area getArea()
     {
-        double carProduction = retrieveCarProduction(accumulatedCars);
-        double production = Math.min(this.maxCapacity, carProduction); // supply
-     
-        double lowerBoundProduction = Math.max(0.05 * this.maxCapacity, production);
-        double maxDemand = this.parametersNTM.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
-        double demand = Math.min(maxDemand, this.maxCapacity); // / demand
-     
-        this.productionElse = Math.min(lowerBoundProduction, demand); // / else
-        this.speedElse = this.productionElse / accumulatedCars;
-        // if (accumulationCars > 0) {
-        // this.currentSpeed = new DoubleScalarAbs<SpeedUnit>(carProduction / accumulatedCars, SpeedUnit.KM_PER_HOUR);
-        // }
-    } 
+        return this.area;
+    }
+
+    /**
+     * @param area set area.
+     */
+    public void setArea(Area area)
+    {
+        this.area = area;
+    }
+
     /**
      * @return averageSpeed
      */
     public final DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
     {
         return this.currentSpeed;
+    }
+
+    /**
+     * @return accumulatedCars.
+     */
+    public double getAccumulatedCars()
+    {
+        return this.accumulatedCars;
+    }
+
+    /**
+     * @param accumulatedCars set accumulatedCars.
+     */
+    public void setAccumulatedCars(double accumulatedCars)
+    {
+        this.accumulatedCars = accumulatedCars;
     }
 
     /**
@@ -161,27 +203,52 @@ public class CellBehaviourNTM
     /**
      * @return productionSupply
      */
-    public final double getProductionSupply()
+    public final double getSupply()
     {
-        return this.productionSupply;
+        return this.supply;
+    }
+
+    /**
+     * @param currentSpeed set currentSpeed.
+     */
+    public void setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    {
+        this.currentSpeed = currentSpeed;
+    }
+
+    /**
+     * @param supply set supply.
+     */
+    public void setSupply(double supply)
+    {
+        this.supply = supply;
+    }
+
+    /**
+     * @param demand set demand.
+     */
+    public void setDemand(double demand)
+    {
+        this.demand = demand;
+    }
+
+    /**
+     * @param speedSupply set speedSupply.
+     */
+    public void setSpeedSupply(double speedSupply)
+    {
+        this.speedSupply = speedSupply;
     }
 
     /**
      * @return productionDemand
      */
-    public final double getProductionDemand()
+    public final double getDemand()
     {
-        return this.productionDemand;
+        return this.demand;
     }
 
-    /**
-     * @return productionElse
-     */
-    public final double getProductionElse()
-    {
-        return this.productionElse;
-    }
-
+    // this.speedSupply = this.productionSupply / accumulatedCars;
     /**
      * @return speedSupply
      */
@@ -190,6 +257,7 @@ public class CellBehaviourNTM
         return this.speedSupply;
     }
 
+    // this.speedDemand = this.productionDemand / accumulatedCars;
     /**
      * @return speedDemand
      */
@@ -207,19 +275,27 @@ public class CellBehaviourNTM
     }
 
     /**
-     * @return speedElse
-     */
-    public final double getSpeedElse()
-    {
-        return this.speedElse;
-    }
-
-    /**
      * @return demandToEnter.
      */
     public final double getDemandToEnter()
     {
         return this.demandToEnter;
+    }
+
+    /**
+     * @return flow.
+     */
+    public double getFlow()
+    {
+        return flow;
+    }
+
+    /**
+     * @param flow set flow.
+     */
+    public void setFlow(double flow)
+    {
+        this.flow = flow;
     }
 
     /**
@@ -232,13 +308,24 @@ public class CellBehaviourNTM
 
     /**
      * @param addDemandToEnter adds demandToEnter.
-
      */
-    public final void addDemandToEnter(double addDemandToEnter)
+    public final void addDemandToEnter(final double addDemandToEnter)
     {
         this.demandToEnter += addDemandToEnter;
     }
 
-
-    
+    /*    *//**
+     * not used
+     * @param accumulatedCars number of cars in Cell
+     */
+    /*
+     * public final void computeProductionElse(final double accumulatedCars) { double carProduction =
+     * retrieveCarProduction(accumulatedCars); double production = Math.min(this.maxCapacity, carProduction); // supply
+     * double lowerBoundProduction = Math.max(0.05 * this.maxCapacity, production); double maxDemand =
+     * this.parametersNTM.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor double demand =
+     * Math.min(maxDemand, this.maxCapacity); // / demand this.productionElse = Math.min(lowerBoundProduction, demand);
+     * // / else this.speedElse = this.productionElse / accumulatedCars; // if (accumulationCars > 0) { //
+     * this.currentSpeed = new DoubleScalarAbs<SpeedUnit>(carProduction / accumulatedCars, SpeedUnit.KM_PER_HOUR); // }
+     * }
+     */
 }

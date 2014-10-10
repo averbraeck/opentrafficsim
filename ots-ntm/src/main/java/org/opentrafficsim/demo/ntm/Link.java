@@ -12,7 +12,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.opentrafficsim.core.network.AbstractLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ import org.opentrafficsim.demo.ntm.GeoObject.TrafficBehaviourType;
  * @version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class Link extends AbstractLink<String, AreaNode> implements LocatableInterface
+public class Link extends AbstractLink<String, Node> implements LocatableInterface
 {
     /** */
     private static final long serialVersionUID = 20140921L;
@@ -34,6 +34,7 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
     /** speed. */
     private double speed;
     
+    /** */
     private TrafficBehaviourType behaviourType;
 
     /**
@@ -44,14 +45,29 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
      * @param name the human readable name of the link, e.g. a street name.
      * @param behaviourType 
      */ 
-    public Link(final String nr, final AreaNode nodeA, final AreaNode nodeB, final DoubleScalar<LengthUnit> length,
-            final String name, TrafficBehaviourType behaviourType)
+    public Link(final String nr, final Node nodeA, final Node nodeB, final DoubleScalar<LengthUnit> length,
+            final String name, final TrafficBehaviourType behaviourType)
     {
         super(nr, nodeA, nodeB, length);
         this.name = name;
         this.setBehaviourType(behaviourType);
     }
 
+    /**
+     * @param nr 
+     * @param nodeA the start node of the link.
+     * @param nodeB the end node of the link.
+     * @param length the length of the link with a unit.
+     * @param name the human readable name of the link, e.g. a street name.
+     * @param behaviourType 
+     */ 
+    public Link(final String nr, final BoundedNode nodeA, final BoundedNode nodeB, final DoubleScalar<LengthUnit> length,
+            final String name, final TrafficBehaviourType behaviourType)
+    {
+        super(nr, nodeA, nodeB, length);
+        this.name = name;
+        this.setBehaviourType(behaviourType);
+    }
     /** {@inheritDoc} */
     @Override
     public final DirectedPoint getLocation() throws RemoteException
@@ -95,15 +111,15 @@ public class Link extends AbstractLink<String, AreaNode> implements LocatableInt
     /**
      * @return behaviourType.
      */
-    public TrafficBehaviourType getBehaviourType()
+    public final TrafficBehaviourType getBehaviourType()
     {
-        return behaviourType;
+        return this.behaviourType;
     }
 
     /**
      * @param behaviourType set behaviourType.
      */
-    public void setBehaviourType(TrafficBehaviourType behaviourType)
+    public final void setBehaviourType(final TrafficBehaviourType behaviourType)
     {
         this.behaviourType = behaviourType;
     }

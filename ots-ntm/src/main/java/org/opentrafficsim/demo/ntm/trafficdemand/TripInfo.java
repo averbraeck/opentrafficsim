@@ -1,7 +1,8 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import org.opentrafficsim.demo.ntm.AreaNode;
-import org.opentrafficsim.demo.ntm.AreaNodeNTM;
+import org.opentrafficsim.demo.ntm.BoundedNode;
+import org.opentrafficsim.demo.ntm.BoundedNode;
+import org.opentrafficsim.demo.ntm.Node;
 
 
 /**
@@ -23,7 +24,7 @@ public class TripInfo
     private double numberOfTrips;
 
     /** the first AreaNode encountered on the path to Destination.*/
-    private AreaNode neighbour;
+    private Node neighbour;
     
     /** trips on their journey passing an area.*/
     private double passingTrips;
@@ -62,7 +63,7 @@ public class TripInfo
     /**
      * @return neighbour.
      */
-    public final AreaNode getNeighbour()
+    public final Node getNeighbour()
     {
         return this.neighbour;
     }
@@ -70,7 +71,7 @@ public class TripInfo
     /**
      * @param endNode set neighbour.
      */
-    public final void setNeighbour(final AreaNode endNode)
+    public final void setNeighbour(final Node endNode)
     {
         this.neighbour = endNode;
     }

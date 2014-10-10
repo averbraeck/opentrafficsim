@@ -7,7 +7,8 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 7 Oct 2014 <br>
@@ -21,7 +22,8 @@ public class GeoObject
 {
     /**
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version 7 Oct 2014 <br>
@@ -31,28 +33,22 @@ public class GeoObject
      * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
      */
-    
-    
-    enum TrafficBehaviourType {NTM, CORDON, FLOW, CENTROID, ROAD};
 
     /** */
     private Geometry geometry;
+
     /** touching areas. */
     private final Set<GeoObject> touchingAreas = new HashSet<>();
-    /** */
-    private TrafficBehaviourType behaviourType;    
-    
+
     /**
-     * @param geometry 
-     * @param behaviourType 
+     * @param geometry
      */
-    public GeoObject(final Geometry geometry, final TrafficBehaviourType behaviourType)
+    public GeoObject(final Geometry geometry)
     {
         super();
         this.geometry = geometry;
-        this.setBehaviourType(behaviourType);
-    }
 
+    }
 
     /**
      * @return geometry
@@ -61,7 +57,7 @@ public class GeoObject
     {
         return this.geometry;
     }
-    
+
     /**
      * @return touchingAreas
      */
@@ -70,21 +66,4 @@ public class GeoObject
         return this.touchingAreas;
     }
 
-
-    /**
-     * @return behaviourType.
-     */
-    public final TrafficBehaviourType getBehaviourType()
-    {
-        return behaviourType;
-    }
-
-
-    /**
-     * @param behaviourType set behaviourType.
-     */
-    public final void setBehaviourType(final TrafficBehaviourType behaviourType)
-    {
-        this.behaviourType = behaviourType;
-    }
 }
