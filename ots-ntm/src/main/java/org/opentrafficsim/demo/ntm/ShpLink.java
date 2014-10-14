@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.geom.Path2D;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -216,10 +217,26 @@ public class ShpLink extends GeoObject implements LocatableInterface
     private final double length;
 
     /** ANODE class java.lang.Long 684088 */
-    private final ShpNode nodeA;
+    private  ShpNode nodeA;
 
     /** BNODE class java.lang.Long 1090577263 */
-    private final ShpNode nodeB;
+    private  ShpNode nodeB;
+
+    /**
+     * @param nodeA set nodeA.
+     */
+    public void setNodeA(ShpNode nodeA)
+    {
+        this.nodeA = nodeA;
+    }
+
+    /**
+     * @param nodeB set nodeB.
+     */
+    public void setNodeB(ShpNode nodeB)
+    {
+        this.nodeB = nodeB;
+    }
 
     /** LINKTAG class java.lang.String 967536 */
     private final String linkTag;
@@ -246,6 +263,8 @@ public class ShpLink extends GeoObject implements LocatableInterface
     /** traffic behaviour */
     private TrafficBehaviourType behaviourType;
 
+    private ArrayList<FlowCell> flowCells;
+    
     /**
      * @param geometry 
      * @param nr 

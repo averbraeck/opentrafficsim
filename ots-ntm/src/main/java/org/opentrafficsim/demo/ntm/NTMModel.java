@@ -94,7 +94,7 @@ public class NTMModel implements OTSModelInterface
     private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
 
     /** debug information?. */
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -207,6 +207,7 @@ public class NTMModel implements OTSModelInterface
                 BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
                 BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
 
+                // the order of endNode and startNode seems to be not consistent!!!!!!
                 if (origin.equals(endNode))
                 {
                     endNode = startNode;
@@ -378,44 +379,20 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * Build the graph using roads between touching areas (real ones), flowLinks and Cordon areas.
+     * Build the graph using roads between touching areas, flowLinks and Cordon areas (artificially created).
      */
     private void buildGraph()
     {
-        // iterate over the GIS objects and find boundary areas
-        // these can be "real" areas, flowLinks or the Cordon-areas
-
-        // First, add all GIS-like objects in an array
-        ArrayList<GeoObject> gisObjects = new ArrayList<GeoObject>();
-        gisObjects.addAll(this.areas.values());
-        // gisObjects.addAll(this.flowLinks.values());
-        // then find out if they touch
-        for (GeoObject gis1 : gisObjects)
-        {
-            Geometry geom1 = gis1.getGeometry();
-            for (GeoObject gis2 : gisObjects)
-            {
-                Geometry geom2 = gis2.getGeometry();
-                if (findBoundaryAreas(geom1, geom2))
-                {
-                    gis1.getTouchingAreas().add(gis2);
-                }
-            }
-        }
-
-        // inspect, if there are objects without neighbours
-        for (GeoObject gis1 : gisObjects)
-        {
-            if (gis1.getTouchingAreas() == null)
-            {
-                System.out.println("no touching area for this one");
-            }
-        }
 
         // temporary storage for nodes and edges mapped from the number to the node
         Map<String, BoundedNode> nodeMap = new HashMap<>();
+        Map<String, BoundedNode> nodeGraphMap = new HashMap<>();
         Map<Area, BoundedNode> areaNodeCentroidMap = new HashMap<>();
         Map<String, LinkEdge<Link>> linkMap = new HashMap<>();
+
+        // collect the areaGraphNodes and test whether they are connected
+        Map<BoundedNode, Boolean> connectedNodeMap = new HashMap<>();
+
         ArrayList<ShpLink> allLinks = new ArrayList<ShpLink>();
 
         allLinks.addAll(this.shpLinks.values());
@@ -423,164 +400,90 @@ public class NTMModel implements OTSModelInterface
         allLinks.addAll(this.shpConnectors.values());
 
         // make a directed graph of the entire network
+
+        // FIRST, add ALL VERTICES
         for (ShpLink shpLink : allLinks)
         {
             // area node: copies a node from a link and connects the area
             // the nodeMap connects the shpNodes to these new AreaNode
-            BoundedNode nA = nodeMap.get(shpLink.getNodeA().getNr());
-            if (nA == null)
+            BoundedNode nodeA = nodeMap.get(shpLink.getNodeA().getNr());
+            if (nodeA == null)
             {
-                Area areaA = findArea(shpLink.getNodeA().getPoint());
-                if (areaA == null)
-                {
-                    System.err.println("Could not find area for NodeA of shapeLink " + shpLink);
-                }
-
-                nA = new BoundedNode(shpLink.getNodeA().getPoint(), shpLink.getNodeA().getNr(), areaA, null);
-                nodeMap.put(shpLink.getNodeA().getNr(), nA);
-                this.linkGraph.addVertex(nA);
+                nodeA = addNodeToLinkGraph(shpLink, shpLink.getNodeA(), nodeA, nodeMap);
             }
-            if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
+            BoundedNode nodeB = nodeMap.get(shpLink.getNodeB().getNr());
+            if (nodeB == null)
             {
-                Area areaA = findArea(shpLink.getNodeA().getPoint());
-                nA = new BoundedNode(shpLink.getNodeA().getPoint(), shpLink.getNodeA().getNr(), areaA, null);
-                if (!this.areaGraph.containsVertex(nA))
-                {
-                    this.areaGraph.addVertex(nA);
-                }
-            }
-
-            BoundedNode nB = nodeMap.get(shpLink.getNodeB().getNr());
-            if (nB == null)
-            {
-                Area areaB = findArea(shpLink.getNodeB().getPoint());
-                if (areaB == null)
-                {
-                    System.err.println("Could not find area for NodeB of shapeLink " + shpLink);
-                }
-                nB = new BoundedNode(shpLink.getNodeB().getPoint(), shpLink.getNodeA().getNr(), areaB, null);
-                nodeMap.put(shpLink.getNodeB().getNr(), nB);
-                this.linkGraph.addVertex(nB);
-            }
-            if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
-            {
-                Area areaB = findArea(shpLink.getNodeB().getPoint());
-                nB = new BoundedNode(shpLink.getNodeB().getPoint(), shpLink.getNodeA().getNr(), areaB, null);
-                if (!this.areaGraph.containsVertex(nB))
-                {
-                    this.areaGraph.addVertex(nB);
-                }
+                nodeB = addNodeToLinkGraph(shpLink, shpLink.getNodeB(), nodeB, nodeMap);
             }
 
             // TODO: direction of a road?
             // TODO: is the length in ShapeFiles in meters or in kilometers? I believe in km.
-            if (nA != null && nB != null)
+            if (nodeA != null && nodeB != null)
             {
                 DoubleScalar<LengthUnit> length =
                         new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
-                Link link = new Link(shpLink.getNr(), nA, nB, length, shpLink.getName(), shpLink.getBehaviourType());
+                Link link =
+                        new Link(shpLink.getNr(), nodeA, nodeB, length, shpLink.getName(), shpLink.getBehaviourType());
                 LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-                this.linkGraph.addEdge(nA, nB, linkEdge);
+                this.linkGraph.addEdge(nodeA, nodeB, linkEdge);
                 this.linkGraph.setEdgeWeight(linkEdge, length.doubleValue());
                 linkMap.put(shpLink.getNr(), linkEdge);
-                if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
+            }
+            else
+            {
+                System.out.println("look out!!! line 434"); 
+            }
+            // 
+            if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
+            {
+                nodeA = nodeGraphMap.get(shpLink.getNodeA().getNr());
+                if (nodeA == null)
                 {
-                    this.areaGraph.addEdge(nA, nB, linkEdge);
-                    this.areaGraph.setEdgeWeight(linkEdge, length.doubleValue());
+                    nodeA = addNodeToAreaGraph(shpLink, shpLink.getNodeA(), nodeA, nodeGraphMap, areaNodeCentroidMap);
+                }
+    
+                nodeB = nodeGraphMap.get(shpLink.getNodeB().getNr());
+                if (nodeB == null)
+                {
+                    nodeB = addNodeToAreaGraph(shpLink, shpLink.getNodeB(), nodeB, nodeGraphMap, areaNodeCentroidMap);
                 }
             }
+
         }
 
-        // put all centroids in the Graph as nodes
+        // and finally put all centroids in the Graph as vertices
         for (Area area : this.areas.values())
         {
-            BoundedNode nc =
-                    new BoundedNode(area.getCentroid(), area.getCentroidNr(), area, area.getTrafficBehaviourType());
-            this.areaGraph.addVertex(nc);
-            areaNodeCentroidMap.put(area, nc);
-        }
-
-        // find the unconnected Areas and connect them!!
-        final SpatialIndex index = new STRtree();
-        for (Area areaIndex : this.areas.values())
-        {
-            Geometry geom = areaIndex.getGeometry();
-            if (geom != null)
+            BoundedNode node = nodeMap.get(area.getCentroidNr());
+            if (node != null)
             {
-                Envelope env = geom.getEnvelopeInternal();
-                if (!env.isNull())
-                {
-                    index.insert(env, areaIndex);
-                }
+                areaNodeCentroidMap.put(area, node);
+                nodeGraphMap.put(node.getId(), node);
+                this.areaGraph.addVertex(node);
+                this.linkGraph.addVertex(node);
             }
-        }
-
-        final double MAX_SEARCH_DISTANCE = 2000.0; // meters?
-        final int NUMBER_OF_AREAS = 6;
-        for (Area isolatedArea : this.areas.values())
-        {
-            if (isolatedArea.getTouchingAreas().size() == 0)
+            else
             {
-                System.out.println("no touching area for number " + isolatedArea.getCentroidNr() + ", Area type: "
-                        + isolatedArea.getTrafficBehaviourType());
-                connectIsolatedAreaToNearest();
-
-                // Get point and create search envelope
-                Geometry geom = isolatedArea.getGeometry();
-                Envelope search = geom.getEnvelopeInternal();
-                double searchDistance = MAX_SEARCH_DISTANCE;
-                search.expandBy(searchDistance);
-                /*
-                 * Query the spatial index for objects within the search envelope. Note that this just compares the
-                 * point envelope to the line envelopes so it is possible that the point is actually more distant than
-                 * MAX_SEARCH_DISTANCE from a line.
-                 */
-                @SuppressWarnings("unchecked")
-                List<Area> nearestAreas = index.query(search);
-                while (nearestAreas.size() > NUMBER_OF_AREAS)
-                {
-                    double decreaseBy = -0.2 * searchDistance;
-                    searchDistance += decreaseBy;
-                    search.expandBy(decreaseBy);
-                    nearestAreas = index.query(search);
-                }
-
-                // now find the nearest Areas that are connected by a road
-                // / TODO the next part contains errors!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                BoundedNode nodeIsolated = areaNodeCentroidMap.get(isolatedArea);
-                for (Area nearArea : nearestAreas)
-                {
-                    BoundedNode nodeNear = areaNodeCentroidMap.get(nearArea);
-                    try
-                    {
-                        DijkstraShortestPath<BoundedNode, LinkEdge<Link>> sp =
-                                new DijkstraShortestPath<>(this.linkGraph, nodeIsolated, nodeNear);
-                        List<LinkEdge<Link>> spList = sp.getPathEdgeList();
-                        if (spList != null)
-                        {
-                            for (LinkEdge<Link> le : spList)
-                            {
-                                Area enteredArea = nodeMap.get(le.getLink().getEndNode()).getArea();
-                                if (enteredArea != null)
-                                {
-                                    BoundedNode centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                    addLinkEdge(nodeIsolated, centroidEntered, isolatedArea.getCentroidNr(),
-                                            enteredArea.getCentroidNr(), le, TrafficBehaviourType.NTM, this.areaGraph);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-
-                // find the nearest areas and connect them (HERE? of further down this Class...)
-                // TODO make the code
+                System.out.println("look out!!! line 459");                
             }
+
         }
+
+        // ///////////////////////////////////////
+        // SECOND part of the graph creation:
+        // The next section creates the EDGES
+
+        // First, add all GIS-like objects in an array
+        ArrayList<GeoObject> gisObjects = new ArrayList<GeoObject>();
+        gisObjects.addAll(this.areas.values());
+        // gisObjects.addAll(this.flowLinks.values());
+
+        findTouching(gisObjects);
+
+        // Secondly, find the Areas that do not touch any other area and connect them with the nearest areas!!
+
+         connectIsolatedAreas(this.areas, this.linkGraph, this.areaGraph, areaNodeCentroidMap);
 
         if (DEBUG)
         {
@@ -603,100 +506,52 @@ public class NTMModel implements OTSModelInterface
 
         }
 
-        // add all the cordon points that don't have an area TODO????
-
-        // iterate over the roads and map them on the area centroids
-        // long uniqueNr = 0;
+        // iterate over the roads and create the areaGraph
+        // this connects the areas and highways
+        // map them on the area centroids
         for (LinkEdge<Link> le : linkMap.values())
         {
-            BoundedNode cA = null;
-            BoundedNode cB = null;
             Area aA = findArea(le.getLink().getStartNode().getPoint());
             Area aB = findArea(le.getLink().getEndNode().getPoint());
-            cA = areaNodeCentroidMap.get(aA);
-            cB = areaNodeCentroidMap.get(aB);
 
-            // Area aA = le.getLink().getStartNode().getArea();
-            // Area aB = le.getLink().getEndNode().getArea();
-            // if the nodes are in adjacent areas, create a link between their centroids
-            // otherwise, discard the link (either in same area, or in non-adjacent areas)
-
-            // inspect if these flow links connect to urban roads (in/out going)
+            // When this is a flow link, inspect if they connect to urban roads
+            // if so, create a GraphEdge that connects flow roads with urban roads / areas (in/out going)
             if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
             {
-                BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
-                // cA = areaNodeCentroidMap.get(flowNodeA.getArea());
-                String centroidNrA = flowNodeA.getId();
-                BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
-                // cB = areaNodeCentroidMap.get(flowNodeB);
-                String centroidNrB = flowNodeA.getId();
-                addLinkEdge(flowNodeA, flowNodeB, centroidNrA, centroidNrB, le, TrafficBehaviourType.FLOW,
-                        this.areaGraph);
-
-                for (LinkEdge<Link> urbanLink : linkMap.values())
+                // make connectors (in the areaGraph!!)
+                createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap);
+            }
+            // for all other links, inspect if they connect areas
+            else if (aA != null && aB != null && aA.getTouchingAreas().contains(aB))
+            {
+                BoundedNode cA = null;
+                BoundedNode cB = null;
+                cA = areaNodeCentroidMap.get(aA);
+                cB = areaNodeCentroidMap.get(aB);
+                // first, test if these links connect two different areas (not within one area)
+                if (cA != cB)
                 {
-                    if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD)
+                    if (this.areaGraph.containsEdge(cA, cB))
                     {
-                        if (urbanLink.getLink().getEndNode().equals(flowNodeA))
+                        // TODO: if the link between these areas already exists, add the capacity to the link
+                    }
+                    else
+                    {
+                        if (cA == null || cB == null)
                         {
-                            // from urban (Area) to Highway (flow)
-                            aA = findArea(urbanLink.getLink().getStartNode().getPoint());
-                            // aA = urbanLink.getLink().getEndNode().getArea();
-                            cA = areaNodeCentroidMap.get(aA);
-                            centroidNrB = flowNodeA.getId();
-                            if (aA != null)
-                            {
-                                centroidNrA = aA.getCentroidNr();
-                                addLinkEdge(cA, flowNodeA, centroidNrA, centroidNrB, le, TrafficBehaviourType.NTM,
-                                        this.areaGraph);
-                            }
-                            else
-                            {
-                                centroidNrA = "unknown";
-                            }
-
+                            System.out.println("test");
                         }
-                        if (urbanLink.getLink().getStartNode().equals(flowNodeB))
+                        else
                         {
-                            // from Highway (flow) to urban (Area)
-                            aB = findArea(urbanLink.getLink().getStartNode().getPoint());
-                            // aB = urbanLink.getLink().getStartNode().getArea();
-                            cB = areaNodeCentroidMap.get(aB);
-                            centroidNrA = flowNodeB.getId();
-                            if (aB != null)
-                            {
-                                centroidNrB = aB.getCentroidNr();
-                                addLinkEdge(flowNodeB, cB, centroidNrA, centroidNrB, le, TrafficBehaviourType.NTM,
-                                        this.areaGraph);
-                            }
-                            else
-                            {
-                                centroidNrB = "unknown";
-                            }
-
+                            le.getLink().setStartNode(cA);
+                            le.getLink().setEndNode(cB);
+                            addLinkEdge(cA, cB, le, TrafficBehaviourType.NTM, this.areaGraph);
                         }
+                        // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in
+                        // km?
                     }
                 }
             }
-
-            else if (aA != null && aB != null && aA.getTouchingAreas().contains(aB))
-            {
-                // cA = areaNodeCentroidMap.get(aA);
-                // cB = areaNodeCentroidMap.get(aB);
-                if (this.areaGraph.containsEdge(cA, cB))
-                {
-                    // TODO: if the link between these areas already exists, add the capacity to the link
-                }
-                else
-                {
-                    le.getLink().setStartNode(cA);
-                    le.getLink().setEndNode(cB);
-                    addLinkEdge(cA, cB, aA.getCentroidNr(), aB.getCentroidNr(), le, TrafficBehaviourType.NTM,
-                            this.areaGraph);
-                    // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
-                }
-            }
-
         }
 
         // add the flowLinks and their A and B nodes as special types of areaNodes and edges
@@ -711,8 +566,6 @@ public class NTMModel implements OTSModelInterface
             System.out.println("\nScheveningen -> Voorburg via centroids");
             Point pSch = nodeMap.get("314071").getPoint();
             Point pVb = nodeMap.get("78816").getPoint();
-            // Point pSch = nodeMap.get("C1").getPoint();
-            // Point pVb = nodeMap.get("C71").getPoint();
             Area aSch = findArea(pSch);
             Area aVb = findArea(pVb);
             if (aSch == null || aVb == null)
@@ -749,17 +602,77 @@ public class NTMModel implements OTSModelInterface
      * @param le
      * @param type
      */
-    private void addLinkEdge(BoundedNode flowNodeA, BoundedNode flowNodeB, String centroidA, String centroidB,
-            LinkEdge<Link> le, TrafficBehaviourType type, SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> graph)
+    private void addLinkEdge(BoundedNode flowNodeA, BoundedNode flowNodeB, LinkEdge<Link> le,
+            TrafficBehaviourType type, SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> graph)
     {
         // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
         DoubleScalar<LengthUnit> length =
                 new DoubleScalar.Abs<LengthUnit>(flowNodeA.getPoint().distance(flowNodeB.getPoint()), LengthUnit.METER);
-        Link link = new Link(le.getLink().getId(), flowNodeA, flowNodeB, length, centroidA + " - " + centroidA, type);
+        Link link =
+                new Link(le.getLink().getId(), flowNodeA, flowNodeB, length, flowNodeA.getId() + " - "
+                        + flowNodeB.getId(), type);
         LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-        graph.addEdge(flowNodeA, flowNodeB, linkEdge);
+        if (!graph.containsEdge(flowNodeA, flowNodeB))
+        {
+            if (graph.containsVertex(flowNodeA) && graph.containsVertex(flowNodeB))
+            {
+                if (flowNodeA != flowNodeB)
+                {
+                    graph.addEdge(flowNodeA, flowNodeB, linkEdge);
+
+                }
+                else
+                {
+                    System.out.println("same nodes????");
+                }
+
+            }
+            else
+            {
+                System.out.println("missing");
+            }
+        }
         // TODO: average length? straight distance? straight distance + 20%?
         graph.setEdgeWeight(linkEdge, length.doubleValue());
+    }
+
+    /**
+     * @param shpLink link
+     * @param node node
+     * @param map receives node
+     */
+    private BoundedNode addNodeToLinkGraph(ShpLink shpLink, ShpNode shpLinkNode, BoundedNode node, Map<String, BoundedNode> map)
+    {
+            Area area = findArea(shpLinkNode.getPoint());
+            if (area == null)
+            {
+                System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode);
+            }
+
+            node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getNr(), area, shpLink.getBehaviourType());
+            map.put(shpLinkNode.getNr(), node);
+            this.linkGraph.addVertex(node);
+            return node;
+    }
+
+    /**
+     * @param shpLink link
+     * @param node node
+     * @param nodeGraphMap receives node
+     */
+    private BoundedNode addNodeToAreaGraph(ShpLink shpLink, ShpNode shpLinkNode, BoundedNode node,
+            Map<String, BoundedNode> nodeGraphMap, Map<Area, BoundedNode> areaNodeCentroidMap)
+    {
+            Area area = findArea(shpLinkNode.getPoint());
+            if (area == null)
+            {
+                System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode);
+            }
+            node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getNr(), area, shpLink.getBehaviourType());
+            nodeGraphMap.put(shpLinkNode.getNr(), node);
+            areaNodeCentroidMap.put(area, node);
+            this.areaGraph.addVertex(node);
+            return node;
     }
 
     /**
@@ -782,14 +695,6 @@ public class NTMModel implements OTSModelInterface
             }
         }
         return area;
-    }
-
-    /**
-     * 
-     */
-    private void connectIsolatedAreaToNearest()
-    {
-
     }
 
     /**
@@ -822,6 +727,212 @@ public class NTMModel implements OTSModelInterface
                     + geom2);
         }
         return touch;
+    }
+
+    /**
+     * finds the Areas that do not touch any other area and connects them with the nearest areas!!
+     * @param areaNodeCentroidMap
+     * @param areaGraph2
+     * @param linkGraph2
+     * @param areas2
+     */
+    private void connectIsolatedAreas(Map<String, Area> areasAll,
+            SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> linkGraphIn,
+            SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraphIn, Map<Area, BoundedNode> areaNodeCentroidMap)
+    {
+        final SpatialIndex index = new STRtree();
+        for (Area areaIndex : areasAll.values())
+        {
+            Geometry geom = areaIndex.getGeometry();
+            if (geom != null)
+            {
+                Envelope env = geom.getEnvelopeInternal();
+                if (!env.isNull())
+                {
+                    index.insert(env, areaIndex);
+                }
+            }
+        }
+
+        // try and find
+        final double MAX_SEARCH_DISTANCE = 2000.0; // meters?
+        final int NUMBER_OF_AREAS = 6;
+        for (Area isolatedArea : areasAll.values())
+        {
+            if (isolatedArea.getTouchingAreas().size() == 0)
+            {
+                System.out.println("no touching area for number " + isolatedArea.getCentroidNr() + ", Area type: "
+                        + isolatedArea.getTrafficBehaviourType());
+
+                // Get point and create search envelope
+                Geometry geom = isolatedArea.getGeometry();
+                Envelope search = geom.getEnvelopeInternal();
+                double searchDistance = MAX_SEARCH_DISTANCE;
+                search.expandBy(searchDistance);
+                /*
+                 * Query the spatial index for objects within the search envelope. Note that this just compares the
+                 * point envelope to the line envelopes so it is possible that the point is actually more distant than
+                 * MAX_SEARCH_DISTANCE from a line.
+                 */
+                @SuppressWarnings("unchecked")
+                List<Area> nearestAreas = index.query(search);
+                while (nearestAreas.size() > NUMBER_OF_AREAS)
+                {
+                    double decreaseBy = -0.2 * searchDistance;
+                    searchDistance += decreaseBy;
+                    search.expandBy(decreaseBy);
+                    nearestAreas = index.query(search);
+                }
+
+                // now find the nearest Areas that are connected by a road
+                // / TODO the next part contains errors!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                BoundedNode nodeIsolated = areaNodeCentroidMap.get(isolatedArea);
+                for (Area nearArea : nearestAreas)
+                {
+                    BoundedNode nodeNear = areaNodeCentroidMap.get(nearArea);
+                    try
+                    {
+                        if (!this.linkGraph.containsVertex(nodeNear))
+                        {
+                            System.out.println("No nodeNear");
+                        }
+                        else if (!this.linkGraph.containsVertex(nodeIsolated))
+                        {
+                            System.out.println("No nodeNear");
+                        }
+                        else
+                        {
+                            DijkstraShortestPath<BoundedNode, LinkEdge<Link>> sp =
+                                    new DijkstraShortestPath<>(linkGraphIn, nodeIsolated, nodeNear);
+                            List<LinkEdge<Link>> spList = sp.getPathEdgeList();
+                            if (spList != null)
+                            {
+                                for (LinkEdge<Link> le : spList)
+                                {
+                                    Area enteredArea = findArea(le.getLink().getEndNode().getPoint());
+                                    if (enteredArea != null && enteredArea != isolatedArea)
+                                    {
+                                        isolatedArea.getTouchingAreas().add(enteredArea);
+                                        BoundedNode centroidEntered = areaNodeCentroidMap.get(enteredArea);
+                                        addLinkEdge(nodeIsolated, centroidEntered, le, TrafficBehaviourType.NTM,
+                                                areaGraphIn);
+                                        break;
+                                    }
+                                    else if (le.getLink().getBehaviourType().equals(TrafficBehaviourType.FLOW))
+                                    {
+                                        // BoundedNode bN = (BoundedNode) le.getLink().getStartNode();
+                                        // addLinkEdge(nodeIsolated, bN, isolatedArea.getCentroidNr(), bN.getId(), le,
+                                        // TrafficBehaviourType.NTM, areaGraphIn);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                // find the nearest areas and connect them (HERE? of further down this Class...)
+                // TODO make the code
+            }
+        }
+    }
+
+    /**
+     * @param aA
+     * @param aB
+     * @param le
+     * @param linkMap
+     * @param areaNodeCentroidMap
+     */
+    private void createFlowConnectors(Area aA, Area aB, LinkEdge<Link> le, Map<String, LinkEdge<Link>> linkMap,
+            Map<Area, BoundedNode> areaNodeCentroidMap)
+    {
+        BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
+        BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
+        addLinkEdge(flowNodeA, flowNodeB, le, TrafficBehaviourType.FLOW, this.areaGraph);
+        // loop through the other links to find the links that connect
+        BoundedNode cA = null;
+        BoundedNode cB = null;
+        cA = areaNodeCentroidMap.get(aA);
+        cB = areaNodeCentroidMap.get(aB);
+
+        for (LinkEdge<Link> urbanLink : linkMap.values())
+        {
+            if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD)
+            {
+                if (urbanLink.getLink().getEndNode().getId().equals(flowNodeA.getId()))
+                {
+                    // from urban (Area) to Highway (flow)
+                    aA = findArea(urbanLink.getLink().getStartNode().getPoint());
+                    cA = areaNodeCentroidMap.get(aA);
+                    if (aA != null)
+                    {
+                        if (cA == null || flowNodeA == null)
+                        {
+                            System.out.println("Stop");
+                        }
+                        addLinkEdge(cA, flowNodeA, urbanLink, TrafficBehaviourType.NTM, this.areaGraph);
+                    }
+                    else
+                    {
+                        System.out.println("aA == Null................");
+                    }
+
+                }
+                if (urbanLink.getLink().getStartNode().getId().equals(flowNodeB.getId()))
+                {
+                    // from Highway (flow) to urban (Area)
+                    aB = findArea(urbanLink.getLink().getEndNode().getPoint());
+                    cB = areaNodeCentroidMap.get(aB);
+                    if (aB != null)
+                    {
+                        addLinkEdge(flowNodeB, cB, urbanLink, TrafficBehaviourType.NTM, this.areaGraph);
+                    }
+                    else
+                    {
+                        System.out.println("aB == Null................");
+                    }
+
+                }
+            }
+
+            else if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.CORDON)
+            {
+                if (urbanLink.getLink().getEndNode().getId().equals(flowNodeA.getId()))
+                {
+                    // from urban (Area) to Highway (flow)
+                    cA = (BoundedNode) urbanLink.getLink().getStartNode();
+                    if (cA != null)
+                    {
+                        addLinkEdge(cA, flowNodeA, urbanLink, TrafficBehaviourType.CORDON, this.areaGraph);
+                    }
+                    else
+                    {
+                        System.out.println("cA == Null................");
+                    }
+
+                }
+                else if (urbanLink.getLink().getStartNode().getId().equals(flowNodeB.getId()))
+                {
+                    // from Highway (flow) to urban (Area)
+                    cB = (BoundedNode) urbanLink.getLink().getStartNode();
+                    if (cB != null)
+                    {
+                        addLinkEdge(flowNodeB, cB, urbanLink, TrafficBehaviourType.CORDON, this.areaGraph);
+                    }
+                    else
+                    {
+                        System.out.println("cB == Null................");
+                    }
+
+                }
+            }
+
+        }
     }
 
     /**
@@ -862,7 +973,7 @@ public class NTMModel implements OTSModelInterface
     {
         Geometry buffer = centroid.getPoint().getGeometryN(0).buffer(30);
         Point centroid1 = buffer.getCentroid();
-        String nr = String.valueOf(centroid.getId());
+        String nr = centroid.getNr();
         String name = centroid.getNr();
         String gemeente = "Area is missing for: " + centroid.getNr();
         String gebied = "Area is missing for: " + centroid.getNr();
@@ -870,6 +981,38 @@ public class NTMModel implements OTSModelInterface
         double dhb = 0.0;
         Area area = new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1, TrafficBehaviourType.NTM);
         return area;
+    }
+
+    /**
+     * For every area, find the touching areas
+     * @param gisObjects
+     */
+    private void findTouching(ArrayList<GeoObject> gisObjects)
+    {
+        // then find out if they touch
+        for (GeoObject gis1 : gisObjects)
+        {
+            Geometry geom1 = gis1.getGeometry();
+            for (GeoObject gis2 : gisObjects)
+            {
+                Geometry geom2 = gis2.getGeometry();
+                // if the areas geometrically touch or intersect:
+                if (findBoundaryAreas(geom1, geom2))
+                {
+                    gis1.getTouchingAreas().add(gis2);
+                }
+            }
+        }
+
+        // inspect, if there are objects without neighbours
+        for (GeoObject gis1 : gisObjects)
+        {
+            if (gis1.getTouchingAreas() == null)
+            {
+                Area noTouch = (Area) gis1;
+                System.out.println("no touching area for this one" + noTouch.getCentroidNr());
+            }
+        }
     }
 
     /**
@@ -881,16 +1024,16 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = false;
-            boolean showFlowLinks = false;
-            boolean showConnectors = false;
-            boolean showNodes = false;
+            boolean showLinks = true;
+            boolean showFlowLinks = true;
+            boolean showConnectors = true;
+            boolean showNodes = true;
             boolean showEdges = true;
             boolean showAreaNode = true;
             boolean showArea = true;
-            
+
             if (showArea)
-            {    
+            {
                 for (Area area : this.areas.values())
                 {
                     new AreaAnimation(area, this.simulator, 5f);
@@ -910,7 +1053,7 @@ public class NTMModel implements OTSModelInterface
                     new ShpLinkAnimation(shpConnector, this.simulator, 5.0F, Color.BLUE);
                 }
             }
-            
+
             if (showFlowLinks)
             {
                 for (ShpLink flowLink : this.flowLinks.values())
@@ -925,10 +1068,10 @@ public class NTMModel implements OTSModelInterface
                     new ShpNodeAnimation(shpNode, this.simulator);
                 }
             }
-             // for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet())
-             // { 
-             //      new LinkAnimation(linkEdge.getEdge(), this.simulator, 0.5f);
-             // }
+            // for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet())
+            // {
+            // new LinkAnimation(linkEdge.getEdge(), this.simulator, 0.5f);
+            // }
             if (showEdges)
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())

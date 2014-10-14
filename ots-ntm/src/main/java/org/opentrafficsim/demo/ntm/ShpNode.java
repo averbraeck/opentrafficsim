@@ -5,10 +5,14 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.geotools.geometry.jts.JTSFactoryFinder;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -93,6 +97,21 @@ public class ShpNode implements LocatableInterface
         this.y = y;
     }
 
+    /** create a ShpNode Point
+     * @param x1 coord
+     * @param y1 coord
+     * @return new Point
+     */
+    public static Point createPoint(double x1, double y1)
+    {
+        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        Coordinate coord = new Coordinate(x1, y1);
+        Point newPoint = geometryFactory.createPoint(coord);
+        return newPoint;
+    }
+    
+    
+    
     /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException

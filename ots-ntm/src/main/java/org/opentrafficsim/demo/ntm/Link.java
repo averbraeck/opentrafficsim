@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -36,6 +37,8 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     
     /** */
     private TrafficBehaviourType behaviourType;
+    
+   
 
     /**
      * @param nr 
