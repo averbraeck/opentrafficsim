@@ -1,4 +1,4 @@
-package floatVectorDemo;
+package floatvectordemo;
 
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;

@@ -36,5 +36,5 @@
  * @version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-package floatVectorDemo;
+package floatvectordemo;
 
