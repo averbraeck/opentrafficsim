@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
@@ -23,7 +24,10 @@ import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegme
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -150,7 +154,7 @@ public class CsvFileReader
                         orderedZones.put(index, name);
                     }
                     // otherwise it is a cordon link: detect the "zoneConnector" node (at the cordon)
-                    // this is by definition a dangling link
+                    // this is often a dangling link, but not always!
                     // we add the Node of the cordon Link to the "centroidsAndCordonConnectors"
                     else if (links.get(name) != null || connectors.get(name) != null)
                     {
@@ -162,11 +166,14 @@ public class CsvFileReader
                             createArea = true;
                             // remove cordonLink from normal links to connectors!!
                             links.remove(cordonConnector.getNr());
+                            cordonConnector.setBehaviourType(TrafficBehaviourType.CORDON);
                             connectors.put(name, cordonConnector);
                         }
                         else if (connectors.get(name) != null)
                         {
+                            System.out.println("Strange: connector already defined???");
                             cordonConnector = connectors.get(name);
+                            createArea = true;
                         }
                         if (cordonConnector == null)
                         {
@@ -199,29 +206,67 @@ public class CsvFileReader
                         }
                         if (countedNodesA > countedNodesB)
                         {
-                            cordonPoint = nodeB;
-                            centroidsAndCordonConnectors.put(nodeB.getNr(), nodeB);
-                            orderedZones.put(index, nodeB.getNr());
+                            ShpNode node = null;
+                            // there could be more connectors attached to this node. If so, create a new Node
+                            if (centroidsAndCordonConnectors.get(nodeB.getNr()) != null)
+                            {
+                                double x = nodeB.getX() + 3;
+                                double y = nodeB.getY() + 3;
+                                Point point = ShpNode.createPoint(x, y);
+                                String nr = nodeB.getNr() + "_" + nodeA.getNr();
+                                node = new ShpNode(point, nr, x, y);
+                                centroids.put(nr, node);
+                                cordonConnector.setNodeB(node);
+                                centroidsAndCordonConnectors.put(node.getNr(), node);
+                                orderedZones.put(index, node.getNr());
+                                cordonPoint = node;
+                            }
+                            else
+                            {
+                                centroidsAndCordonConnectors.put(nodeB.getNr(), nodeB);
+                                orderedZones.put(index, nodeB.getNr());
+                                cordonPoint = nodeB;
+                            }
                         }
                         else
                         {
-                            cordonPoint = nodeA;
-                            centroidsAndCordonConnectors.put(nodeA.getNr(), nodeA);
-                            orderedZones.put(index, nodeA.getNr());
+                            ShpNode node = null;
+                            // there could be more connectors attached to this node. If so, create a new Node
+                            if (centroidsAndCordonConnectors.get(nodeA.getNr()) != null)
+                            {
+                                double x = nodeA.getX() + 3;
+                                double y = nodeA.getY() + 3;
+                                Point point = ShpNode.createPoint(x, y);
+                                String nr = nodeA.getNr() + "_" + nodeB.getNr();
+                                node = new ShpNode(point, nr, x, y);
+                                centroids.put(nr, node);
+                                cordonConnector.setNodeA(node);
+                                centroidsAndCordonConnectors.put(node.getNr(), node);
+                                orderedZones.put(index, node.getNr());
+                                cordonPoint = node;
+                            }
+                            else
+                            {
+                                centroidsAndCordonConnectors.put(nodeA.getNr(), nodeA);
+                                orderedZones.put(index, nodeA.getNr());
+                                cordonPoint = nodeA;
+                            }
                         }
                         if (createArea)
                         {
                             // after determining the new cordon centroid, a new area is created around this feeding
                             // link. This becomes a feeder type of area
                             Geometry buffer = cordonConnector.getGeometry().buffer(10);
-                            Point centroid = buffer.getCentroid();
-                            String nr = cordonConnector.getNr();
+                            Point centroid = cordonPoint.getPoint();
+                            String nr = cordonPoint.getNr();
                             String newName = cordonConnector.getName();
                             String gemeente = cordonConnector.getName();
                             String gebied = cordonConnector.getName();
-                            String regio = "cordonPoint " + cordonConnector.getNr();
+                            String regio = "cordonPoint " + nr;
                             double dhb = 0.0;
-                            Area area = new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid, TrafficBehaviourType.CORDON);
+                            Area area =
+                                    new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid,
+                                            TrafficBehaviourType.CORDON);
                             areas.put(nr, area);
                         }
 
@@ -261,10 +306,6 @@ public class CsvFileReader
                          * String checkedName = returnNumber(dataItem); origin = checkedName;
                          */
                         origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getNr();
-                        if (origin.contentEquals("331286"))
-                        {
-                            System.out.println("let op");
-                        }
                         originLinknr = numberOfTrips;
                         firstElement = false;
                     }

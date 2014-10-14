@@ -194,22 +194,22 @@ public class ShapeFileReader
             {
                 SimpleFeature feature = iterator.next();
                 Point point = (Point) feature.getAttribute("the_geom");
-                String name = CsvFileReader.removeQuotes(String.valueOf(feature.getAttribute(numberType)));
+                String nr = CsvFileReader.removeQuotes(String.valueOf(feature.getAttribute(numberType)));
                 boolean addThisNode = false;
                 if (returnCentroid)
                 {
-                    if (name.substring(0, 1).equals("C") || allCentroids)
+                    if (nr.substring(0, 1).equals("C") || allCentroids)
                     {
                         addThisNode = true;
                     }
                 }
                 else
                 {
-                    if (name == null)
+                    if (nr == null)
                     {
                         System.out.println("null found");
                     }
-                    if (!name.substring(0, 1).equals("C"))
+                    if (!nr.substring(0, 1).equals("C"))
                     {
                         addThisNode = true;
                     }
@@ -218,8 +218,8 @@ public class ShapeFileReader
                 {
                     double x = (double) feature.getAttribute("X");
                     double y = (double) feature.getAttribute("Y");
-                    ShpNode node = new ShpNode(point, name, x, y);
-                    nodes.put(name, node);
+                    ShpNode node = new ShpNode(point, nr, x, y);
+                    nodes.put(nr, node);
                 }
             }
         }
@@ -340,10 +340,28 @@ public class ShapeFileReader
                 {
                     if (nodeA != null && nodeB != null) 
                     {
-                        ShpLink link =
-                                new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
-                        links.put(nr, link);
+                        ShpLink linkAB = null;
+                        ShpLink linkBA = null;
+                        linkAB =
+                            new ShpLink(geometry, nr, name, (short) 1, length, nodeA, nodeB, linkTag, wegtype,
+                                    typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
+                        linkBA =
+                            new ShpLink(geometry, nr, name + "_BA", (short) 1, length, nodeB, nodeA, linkTag, wegtype,
+                                    typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
+                        if (direction == 1)
+                        {
+                            links.put(nr, linkAB);                            
+                        }                        
+                        else if (direction == 2)
+                        {
+                            links.put(nr, linkBA);                            
+                        }
+                        else if (direction == 3)
+                        {
+                            links.put(nr, linkAB);                            
+                            links.put(nr, linkBA);                            
+                        }
+                        
                     }
                     else
                     {
