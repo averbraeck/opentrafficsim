@@ -37,14 +37,14 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     @Override
     public final void add(final DoubleScalar.Rel<TimeUnit> simTime)
     {
-        this.time.add(simTime);
+        this.time.incrementBy(simTime);
     }
 
     /** {@inheritDoc} */
     @Override
     public final void subtract(final DoubleScalar.Rel<TimeUnit> simTime)
     {
-        this.time.subtract(simTime);
+        this.time.decrementBy(simTime);
     }
 
     /** {@inheritDoc} */
@@ -66,7 +66,7 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     @Override
     public OTSSimTimeDouble copy()
     {
-        return new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(this.time.getValueInUnit(), this.time.getUnit()));
+        return new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(this.time.getInUnit(), this.time.getUnit()));
     }
 
     /** {@inheritDoc} */

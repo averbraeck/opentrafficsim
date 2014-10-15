@@ -48,7 +48,7 @@ public final class FollowAcceleration
         {
             MutableDoubleScalar.Rel<LengthUnit> headway =
                     MutableDoubleScalar.minus(leader.positionOfRear(when), follower.positionOfFront(when));
-            if (headway.getValueSI() <= 0)
+            if (headway.getSI() <= 0)
             { // Immediate collision; return a prohibitive negative value
                 return new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY, AccelerationUnit.METER_PER_SECOND_2);
             }

@@ -35,17 +35,17 @@ public class FloatScalarTest
         float value = 38.0f;
         FloatScalar.Abs<TemperatureUnit> temperatureFS = new FloatScalar.Abs<TemperatureUnit>(value, tempUnit);
         assertEquals("Unit should be Celsius", tempUnit, temperatureFS.getUnit());
-        assertEquals("Value is what we put in", value, temperatureFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.05);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
+        assertEquals("Value is what we put in", value, temperatureFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.05);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
                 0.1);
         FloatScalar.Abs<TemperatureUnit> u2 = new FloatScalar.Abs<TemperatureUnit>(temperatureFS);
         // temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
         // assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
         // assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(),
         // 0.05);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.1);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.1);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
                 0.1);
         assertTrue("Value is absolute", temperatureFS.isAbsolute());
         assertFalse("Value is absolute", temperatureFS.isRelative());
@@ -56,13 +56,13 @@ public class FloatScalarTest
         FloatScalar.Abs<LengthUnit> lengthFS = new FloatScalar.Abs<LengthUnit>(value, lengthUnit);
         // System.out.println("lengthFS is " + lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, lengthFS.getUnit());
-        assertEquals("Value is what we put in", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, lengthFS.getInUnit(LengthUnit.FOOT), 0.0001);
         FloatScalar.Abs<LengthUnit> copy = lengthFS.copy();
         assertEquals("compareTo should return 0", 0, copy.compareTo(lengthFS));
         FloatScalar.Abs<LengthUnit> bigger =
-                new FloatScalar.Abs<LengthUnit>(lengthFS.getValueInUnit() + 100, lengthFS.getUnit());
+                new FloatScalar.Abs<LengthUnit>(lengthFS.getInUnit() + 100, lengthFS.getUnit());
         assertEquals("compareTo should return 1", 1, bigger.compareTo(lengthFS));
         assertEquals("compareTo should return -1", -1, lengthFS.compareTo(bigger));
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
@@ -73,15 +73,15 @@ public class FloatScalarTest
 
         FloatScalar.Abs<LengthUnit> scalarFromScalar = new FloatScalar.Abs<LengthUnit>(lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, scalarFromScalar.getUnit());
-        assertEquals("Value is what we put in", value, scalarFromScalar.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, scalarFromScalar.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, scalarFromScalar.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, scalarFromScalar.getInUnit(LengthUnit.FOOT), 0.0001);
 
         MutableFloatScalar.Abs<LengthUnit> m = lengthFS.mutable();
         assertEquals("Unit should be Inch", lengthUnit, m.getUnit());
-        assertEquals("Value is what we put in", value, m.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, m.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, m.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, m.getInUnit(LengthUnit.FOOT), 0.0001);
         assertTrue("mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("mutable version should have same hashCode as original", m.hashCode(), lengthFS.hashCode());
         MutableFloatScalar.Abs<LengthUnit> mm = m.copy();
@@ -89,41 +89,41 @@ public class FloatScalarTest
         assertEquals("compareTo should return 0", 0, m.compareTo(mm));
         assertEquals("compareTo should return 0", 0, mm.compareTo(m));
         // Modify the mutable
-        m.setSI(m.getValueSI() + 1);
+        m.setSI(m.getSI() + 1);
         assertFalse("modified version should NOT be equal to original", m.equals(lengthFS));
         assertTrue("HashCode of modified version should not be equal to hashCode of original",
                 m.hashCode() != lengthFS.hashCode());
-        assertEquals("original should have the original value", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("copy of mutable version should have the original value", value, mm.getValueInUnit(), 0.0001);
+        assertEquals("original should have the original value", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("copy of mutable version should have the original value", value, mm.getInUnit(), 0.0001);
         assertEquals("immutable variant of mutable version should have the original value", value,
-                imm.getValueInUnit(), 0.0001);
+                imm.getInUnit(), 0.0001);
         assertEquals("compareTo should return 1", 1, m.compareTo(mm));
         assertEquals("compareTo should return -1", -1, mm.compareTo(m));
         // undo change
-        m.setSI(lengthFS.getValueSI());
+        m.setSI(lengthFS.getSI());
         assertTrue("restored mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("restored mutable version should have same hashCode as original", m.hashCode(),
                 lengthFS.hashCode());
         FloatScalar.Abs<LengthUnit> differentUnit =
-                new FloatScalar.Abs<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+                new FloatScalar.Abs<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertTrue("floatScalar with different unit, but same SI value and also absolute should be equal",
                 lengthFS.equals(differentUnit));
         assertEquals("floatScalar with different unit, but same SI value should have same hashCode",
                 lengthFS.hashCode(), differentUnit.hashCode());
         FloatScalar.Rel<LengthUnit> differentUnitRel =
-                new FloatScalar.Rel<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+                new FloatScalar.Rel<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertFalse("floatScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 lengthFS.equals(differentUnitRel));
         assertFalse("floatScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 differentUnitRel.equals(lengthFS));
 
-        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getValueSI()),
+        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getSI()),
                 lengthFS.intValue(), 0.0001);
-        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getValueSI()),
+        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getSI()),
                 lengthFS.longValue(), 0.0001);
-        assertEquals("floatValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.floatValue(),
+        assertEquals("floatValue should return rounded value in SI", lengthFS.getSI(), lengthFS.floatValue(),
                 0.0001);
-        assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(),
+        assertEquals("doubleValue should return rounded value in SI", lengthFS.getSI(), lengthFS.doubleValue(),
                 0.0001);
         assertFalse("equals to null should return false", lengthFS.equals(null));
     }
@@ -139,17 +139,17 @@ public class FloatScalarTest
         float value = 38.0f;
         FloatScalar.Rel<TemperatureUnit> temperatureFS = new FloatScalar.Rel<TemperatureUnit>(value, tempUnit);
         assertEquals("Unit should be Celsius", tempUnit, temperatureFS.getUnit());
-        assertEquals("Value is what we put in", value, temperatureFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.05);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
+        assertEquals("Value is what we put in", value, temperatureFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.05);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
                 0.1);
         FloatScalar.Rel<TemperatureUnit> u2 = new FloatScalar.Rel<TemperatureUnit>(temperatureFS);
         // temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
         // assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
         // assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(),
         // 0.05);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.1);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.1);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
                 0.1);
         assertFalse("Value is relative", temperatureFS.isAbsolute());
         assertTrue("Value is absolute", temperatureFS.isRelative());
@@ -160,13 +160,13 @@ public class FloatScalarTest
         FloatScalar.Rel<LengthUnit> lengthFS = new FloatScalar.Rel<LengthUnit>(value, lengthUnit);
         // System.out.println("lengthFS is " + lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, lengthFS.getUnit());
-        assertEquals("Value is what we put in", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, lengthFS.getInUnit(LengthUnit.FOOT), 0.0001);
         FloatScalar.Rel<LengthUnit> copy = lengthFS.copy();
         assertEquals("compareTo should return 0", 0, copy.compareTo(lengthFS));
         FloatScalar.Rel<LengthUnit> bigger =
-                new FloatScalar.Rel<LengthUnit>(lengthFS.getValueInUnit() + 100, lengthFS.getUnit());
+                new FloatScalar.Rel<LengthUnit>(lengthFS.getInUnit() + 100, lengthFS.getUnit());
         assertEquals("compareTo should return 1", 1, bigger.compareTo(lengthFS));
         assertEquals("compareTo should return -1", -1, lengthFS.compareTo(bigger));
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
@@ -177,15 +177,15 @@ public class FloatScalarTest
 
         FloatScalar.Rel<LengthUnit> scalarFromScalar = new FloatScalar.Rel<LengthUnit>(lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, scalarFromScalar.getUnit());
-        assertEquals("Value is what we put in", value, scalarFromScalar.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, scalarFromScalar.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, scalarFromScalar.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, scalarFromScalar.getInUnit(LengthUnit.FOOT), 0.0001);
 
         MutableFloatScalar.Rel<LengthUnit> m = lengthFS.mutable();
         assertEquals("Unit should be Inch", lengthUnit, m.getUnit());
-        assertEquals("Value is what we put in", value, m.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, m.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, m.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, m.getInUnit(LengthUnit.FOOT), 0.0001);
         assertTrue("mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("HashCode of mutable version should be equal to hash code of original", m.hashCode(),
                 lengthFS.hashCode());
@@ -194,39 +194,39 @@ public class FloatScalarTest
         assertEquals("compareTo should return 0", 0, m.compareTo(mm));
         assertEquals("compareTo should return 0", 0, mm.compareTo(m));
         // Modify the mutable
-        m.setSI(m.getValueSI() + 1);
+        m.setSI(m.getSI() + 1);
         assertFalse("modified version should NOT be equal to original", m.equals(lengthFS));
-        assertEquals("original should have the original value", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("copy of mutable version should have the original value", value, mm.getValueInUnit(), 0.0001);
+        assertEquals("original should have the original value", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("copy of mutable version should have the original value", value, mm.getInUnit(), 0.0001);
         assertEquals("immutable variant of mutable version should have the original value", value,
-                imm.getValueInUnit(), 0.0001);
+                imm.getInUnit(), 0.0001);
         assertEquals("compareTo should return 1", 1, m.compareTo(mm));
         assertEquals("compareTo should return -1", -1, mm.compareTo(m));
         // undo change
-        m.setSI(lengthFS.getValueSI());
+        m.setSI(lengthFS.getSI());
         assertTrue("restored mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("HashCode of restored mutable version should be equal to hash code of original", m.hashCode(),
                 lengthFS.hashCode());
         FloatScalar.Rel<LengthUnit> differentUnit =
-                new FloatScalar.Rel<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+                new FloatScalar.Rel<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertTrue("floatScalar with different unit, but same SI value and also absolute should be equal",
                 lengthFS.equals(differentUnit));
         assertEquals("hashCode of floatScalar with different unit, but same SI value should be same",
                 lengthFS.hashCode(), differentUnit.hashCode());
         FloatScalar.Abs<LengthUnit> differentUnitAbs =
-                new FloatScalar.Abs<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+                new FloatScalar.Abs<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertFalse("floatScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 lengthFS.equals(differentUnitAbs));
         assertFalse("floatScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 differentUnitAbs.equals(lengthFS));
 
-        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getValueSI()),
+        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getSI()),
                 lengthFS.intValue(), 0.0001);
-        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getValueSI()),
+        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getSI()),
                 lengthFS.longValue(), 0.0001);
-        assertEquals("floatValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.floatValue(),
+        assertEquals("floatValue should return rounded value in SI", lengthFS.getSI(), lengthFS.floatValue(),
                 0.0001);
-        assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(),
+        assertEquals("doubleValue should return rounded value in SI", lengthFS.getSI(), lengthFS.doubleValue(),
                 0.0001);
         assertFalse("equals to null should return false", lengthFS.equals(null));
     }
@@ -243,17 +243,17 @@ public class FloatScalarTest
         MutableFloatScalar.Abs<TemperatureUnit> temperatureFS =
                 new MutableFloatScalar.Abs<TemperatureUnit>(value, tempUnit);
         assertEquals("Unit should be Celsius", tempUnit, temperatureFS.getUnit());
-        assertEquals("Value is what we put in", value, temperatureFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.05);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
+        assertEquals("Value is what we put in", value, temperatureFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.05);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
                 0.1);
         MutableFloatScalar.Abs<TemperatureUnit> u2 = new MutableFloatScalar.Abs<TemperatureUnit>(temperatureFS);
         // temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
         // assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
         // assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(),
         // 0.05);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.1);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.1);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT),
                 0.1);
         assertTrue("Value is absolute", temperatureFS.isAbsolute());
         assertFalse("Value is absolute", temperatureFS.isRelative());
@@ -264,18 +264,18 @@ public class FloatScalarTest
         MutableFloatScalar.Rel<LengthUnit> lengthFS = new MutableFloatScalar.Rel<LengthUnit>(value, lengthUnit);
         // System.out.println("lengthFS is " + lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, lengthFS.getUnit());
-        assertEquals("Value is what we put in", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, lengthFS.getInUnit(LengthUnit.FOOT), 0.0001);
         MutableFloatScalar.Rel<LengthUnit> copy = lengthFS.copy();
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
-        assertEquals("value of copy should match original", lengthFS.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("value of copy should match original", lengthFS.getSI(), copy.getSI(), 0.0001);
         copy = lengthFS.mutable();
         assertEquals("Unit of mutable should still be in Inch", LengthUnit.INCH, copy.getUnit());
-        assertEquals("value of new mutable should match original", lengthFS.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("value of new mutable should match original", lengthFS.getSI(), copy.getSI(), 0.0001);
         MutableFloatScalar.Abs<TemperatureUnit> mabs = new MutableFloatScalar.Abs<TemperatureUnit>(value, tempUnit);
         MutableFloatScalar.Abs<TemperatureUnit> mmabs = mabs.mutable();
-        assertEquals("duplicate has same value", mabs.getValueSI(), mmabs.getValueSI(), 0.0001);
+        assertEquals("duplicate has same value", mabs.getSI(), mmabs.getSI(), 0.0001);
         assertTrue("duplicate is equal to original", mmabs.equals(mabs));
         assertEquals("hashCode of duplicate should be equal to hashcode of original", mmabs.hashCode(), mabs.hashCode());
 
@@ -283,7 +283,7 @@ public class FloatScalarTest
         mmabs.setInUnit(123, TemperatureUnit.DEGREE_FAHRENHEIT);
         // System.out.println("mmabs: " + mmabs);
         // System.out.println("in Fahrenheit: " + mmabs.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT));
-        assertEquals("modified temperature should be equal to 323.706K", 323.706, mmabs.getValueSI(), 0.001);
+        assertEquals("modified temperature should be equal to 323.706K", 323.706, mmabs.getSI(), 0.001);
     }
 
     /**
@@ -296,11 +296,11 @@ public class FloatScalarTest
         MutableFloatScalar.Abs<TemperatureUnit> value =
                 new MutableFloatScalar.Abs<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
         MutableFloatScalar.Abs<TemperatureUnit> copy = value.copy();
-        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("Copy should have same value", value.getSI(), copy.getSI(), 0.0001);
         assertTrue("Copy should be equal to value", value.equals(copy));
         assertTrue("Value should be equal to copy", copy.equals(value));
         value.set(new FloatScalar.Abs<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
-        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should have same value", value.getSI() == copy.getSI());
         assertFalse("Copy should be equal to value", value.equals(copy));
         assertFalse("Value should be equal to copy", copy.equals(value));
     }
@@ -315,11 +315,11 @@ public class FloatScalarTest
         MutableFloatScalar.Rel<TemperatureUnit> value =
                 new MutableFloatScalar.Rel<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
         MutableFloatScalar.Rel<TemperatureUnit> copy = value.copy();
-        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("Copy should have same value", value.getSI(), copy.getSI(), 0.0001);
         assertTrue("Copy should be equal to value", value.equals(copy));
         assertTrue("Value should be equal to copy", copy.equals(value));
         value.set(new MutableFloatScalar.Rel<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
-        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should have same value", value.getSI() == copy.getSI());
         assertFalse("Copy should be equal to value", value.equals(copy));
         assertFalse("Value should be equal to copy", copy.equals(value));
     }
@@ -340,67 +340,67 @@ public class FloatScalarTest
         MutableFloatScalar.Abs<LengthUnit> sum = MutableFloatScalar.plus(leftAbs, right);
         assertEquals("result should be in METER", LengthUnit.METER, sum.getUnit());
         assertEquals("value of result should be sum of meter equivalent of values", leftValue + rightValue * 0.0254,
-                sum.getValueSI(), 0.0001);
+                sum.getSI(), 0.0001);
         FloatScalar.Rel<LengthUnit> leftRel = new FloatScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         MutableFloatScalar.Rel<LengthUnit> sum2 =
                 MutableFloatScalar.plus(LengthUnit.MILLIMETER, leftRel, right, right2);
         assertEquals("result should be in MILLIMETER", LengthUnit.MILLIMETER, sum2.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue + rightValue * 0.0254
-                + rightValue2 / 1000, sum2.getValueSI(), 0.0001);
+                + rightValue2 / 1000, sum2.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in MILLIMETER", 1000
-                * (leftValue + rightValue * 0.0254) + rightValue2, sum2.getValueInUnit(), 0.1);
+                * (leftValue + rightValue * 0.0254) + rightValue2, sum2.getInUnit(), 0.1);
         MutableFloatScalar.Abs<LengthUnit> difference = MutableFloatScalar.minus(leftAbs, right, right2);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue - rightValue * 0.0254
-                - rightValue2 / 1000, difference.getValueSI(), 0.0001);
+                - rightValue2 / 1000, difference.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in METER", leftValue - rightValue * 0.0254
-                - rightValue2 / 1000, difference.getValueInUnit(), 0.1);
+                - rightValue2 / 1000, difference.getInUnit(), 0.1);
         MutableFloatScalar.Rel<LengthUnit> differenceRel = MutableFloatScalar.minus(leftRel, right, right2);
         assertEquals("result should be in METER", LengthUnit.METER, differenceRel.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue - rightValue * 0.0254
-                - rightValue2 / 1000, differenceRel.getValueSI(), 0.0001);
+                - rightValue2 / 1000, differenceRel.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in METER", leftValue - rightValue * 0.0254
-                - rightValue2 / 1000, differenceRel.getValueInUnit(), 0.001);
+                - rightValue2 / 1000, differenceRel.getInUnit(), 0.001);
         differenceRel = MutableFloatScalar.minus(sum.immutable(), leftAbs);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
-        assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getValueSI(),
+        assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getSI(),
                 0.0001);
         differenceRel =
                 MutableFloatScalar.minus(new FloatScalar.Abs<LengthUnit>(1, LengthUnit.FOOT),
                         new FloatScalar.Abs<LengthUnit>(1, LengthUnit.INCH));
-        assertEquals("result should be 11 inches", 11 * 0.0254, differenceRel.getValueSI(), 0.0001);
+        assertEquals("result should be 11 inches", 11 * 0.0254, differenceRel.getSI(), 0.0001);
         MutableFloatScalar.Abs<?> surface = MutableFloatScalar.multiply(leftAbs, difference.immutable());
         // System.out.println("surface is " + surface);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), surface
                 .getUnit().getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values",
-                leftAbs.getValueSI() * difference.getValueSI(), surface.getValueSI(), 0.05);
+                leftAbs.getSI() * difference.getSI(), surface.getSI(), 0.05);
         MutableFloatScalar.Rel<?> relSurface = MutableFloatScalar.multiply(right, right2);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), relSurface
                 .getUnit().getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values",
-                right.getValueSI() * right2.getValueSI(), relSurface.getValueSI(), 0.00000005);
+                right.getSI() * right2.getSI(), relSurface.getSI(), 0.00000005);
         assertTrue("FloatScalar should be equal to itself", leftAbs.equals(leftAbs));
         FloatScalar<?> copy = new FloatScalar.Abs<LengthUnit>(leftAbs);
         assertTrue("Copy of FloatScalar should be equal to itself", leftAbs.equals(copy));
-        copy = new FloatScalar.Rel<LengthUnit>(leftAbs.getValueInUnit(), leftAbs.getUnit());
+        copy = new FloatScalar.Rel<LengthUnit>(leftAbs.getInUnit(), leftAbs.getUnit());
         assertTrue("this copy should be relative", copy instanceof Relative);
         assertFalse("Relative can not be equal to (otherwise equal) absolute", leftAbs.equals(copy));
         assertFalse("FloatScalar is not a String", copy.equals("String"));
         FloatScalar.Abs<TimeUnit> timeScalar = new FloatScalar.Abs<TimeUnit>(leftValue, TimeUnit.SECOND);
-        assertEquals("Value should match", leftAbs.getValueSI(), timeScalar.getValueSI(), 0.0001);
+        assertEquals("Value should match", leftAbs.getSI(), timeScalar.getSI(), 0.0001);
         assertTrue("Both are absolute", leftAbs.isAbsolute() && timeScalar.isAbsolute());
         assertFalse("Absolute length is not equal to absolute time with same value", leftAbs.equals(timeScalar));
         MutableFloatScalar<LengthUnit> left = new MutableFloatScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
-        left.add(right);
+        left.incrementBy(right);
         assertEquals("after add-and-becomes the type should not be changed", LengthUnit.METER, left.getUnit());
         assertEquals("after add-and-becomes the value should be changed", leftValue + rightValue * 0.0254,
-                left.getValueSI(), 0.0001);
+                left.getSI(), 0.0001);
         left = new MutableFloatScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
-        left.subtract(right);
+        left.decrementBy(right);
         assertEquals("after subtract-and-becomes the type should not be changed", LengthUnit.METER, left.getUnit());
         assertEquals("after subtract-and-becomes the value should be changed", leftValue - rightValue * 0.0254,
-                left.getValueSI(), 0.0001);
+                left.getSI(), 0.0001);
     }
 
     /**
@@ -426,7 +426,7 @@ public class FloatScalarTest
         }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
-                ratio.getValueSI(), 0.0001);
+                ratio.getSI(), 0.0001);
         FloatScalar.Rel<LengthUnit> leftRel = new FloatScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         FloatScalar.Rel<SpeedUnit> rightRel = new FloatScalar.Rel<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
         MutableFloatScalar.Rel<SIUnit> ratioRel = MutableFloatScalar.divide(leftRel, rightRel);
@@ -441,7 +441,7 @@ public class FloatScalarTest
         }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
-                ratioRel.getValueSI(), 0.0001);
+                ratioRel.getSI(), 0.0001);
     }
 
     /**
@@ -829,9 +829,9 @@ public class FloatScalarTest
             float expectedResult = function.function(inputValue);
             String description =
                     String.format("%s(%f)->%f should be equal to %f with precision %f", operation, inputValue,
-                            expectedResult, actualResult.getValueSI(), precision);
+                            expectedResult, actualResult.getSI(), precision);
             // System.out.println(description);
-            assertEquals(description, expectedResult, actualResult.getValueSI(), precision);
+            assertEquals(description, expectedResult, actualResult.getSI(), precision);
 
         }
 

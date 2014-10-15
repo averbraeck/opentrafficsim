@@ -477,12 +477,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     {
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();
-        if (toTime.getValueSI() > this.getXAxis().getMaximumValue().getValueSI())
+        if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
         {
             extendXRange(toTime);
             this.getXAxis().adjustMaximumValue(toTime);
         }
-        if (toTime.getValueSI() <= fromTime.getValueSI()) // degenerate sample???
+        if (toTime.getSI() <= fromTime.getSI()) // degenerate sample???
         {
             return;
         }
@@ -493,23 +493,23 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
          */
         // The "relative" values are "counting" distance or time in the minimum bin size unit
         final double relativeFromDistance =
-                (car.getPosition(fromTime).getValueSI() - this.getYAxis().getMinimumValue().getValueSI())
+                (car.getPosition(fromTime).getSI() - this.getYAxis().getMinimumValue().getSI())
                         / this.getYAxis().getGranularities()[0];
         final double relativeToDistance =
-                (car.getPosition(toTime).getValueSI() - this.getYAxis().getMinimumValue().getValueSI())
+                (car.getPosition(toTime).getSI() - this.getYAxis().getMinimumValue().getSI())
                         / this.getYAxis().getGranularities()[0];
         double relativeFromTime =
-                (fromTime.getValueSI() - this.getXAxis().getMinimumValue().getValueSI())
+                (fromTime.getSI() - this.getXAxis().getMinimumValue().getSI())
                         / this.getXAxis().getGranularities()[0];
         final double relativeToTime =
-                (toTime.getValueSI() - this.getXAxis().getMinimumValue().getValueSI())
+                (toTime.getSI() - this.getXAxis().getMinimumValue().getSI())
                         / this.getXAxis().getGranularities()[0];
         final int fromTimeBin = (int) Math.floor(relativeFromTime);
         final int toTimeBin = (int) Math.floor(relativeToTime) + 1;
         double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
         // The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
         // wrong for other car following algorithms).
-        double acceleration = car.getAcceleration(car.getLastEvaluationTime()).getValueSI();
+        double acceleration = car.getAcceleration(car.getLastEvaluationTime()).getSI();
         for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
         {
             if (timeBin < 0)
@@ -528,12 +528,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             double binDistanceStart =
                     (car.getPosition(
                             new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.getXAxis().getGranularities()[0],
-                                    TimeUnit.SECOND)).getValueSI() - this.getYAxis().getMinimumValue().getValueSI())
+                                    TimeUnit.SECOND)).getSI() - this.getYAxis().getMinimumValue().getSI())
                             / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
                     (car.getPosition(
                             new DoubleScalar.Abs<TimeUnit>(binEndTime * this.getXAxis().getGranularities()[0],
-                                    TimeUnit.SECOND)).getValueSI() - this.getYAxis().getMinimumValue().getValueSI())
+                                    TimeUnit.SECOND)).getSI() - this.getYAxis().getMinimumValue().getSI())
                             / this.getYAxis().getGranularities()[0];
 
             // Compute the time in each distanceBin

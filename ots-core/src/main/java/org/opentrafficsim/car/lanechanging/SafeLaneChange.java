@@ -46,13 +46,13 @@ public final class SafeLaneChange
     {
         DoubleScalar.Abs<TimeUnit> when = referenceCar.getNextEvaluationTime();
         CarFollowingModel carFollowingModel = referenceCar.getCarFollowingModel();
-        if (referenceCar.getPosition(when).getValueSI() > otherCar.getPosition(when).getValueSI())
+        if (referenceCar.getPosition(when).getSI() > otherCar.getPosition(when).getSI())
         { // The referenceCar is ahead of the otherCar
             return FollowAcceleration.acceleration(otherCar, referenceCar, when, carFollowingModel, speedLimit)
-                    .getValueSI() >= -maximumDeceleration.getValueSI();
+                    .getSI() >= -maximumDeceleration.getSI();
         }
         // The otherCar is exactly parallel or ahead of the referenceCar
         return FollowAcceleration.acceleration(referenceCar, otherCar, when, carFollowingModel, speedLimit)
-                .getValueSI() >= -maximumDeceleration.getValueSI();
+                .getSI() >= -maximumDeceleration.getSI();
     }
 }

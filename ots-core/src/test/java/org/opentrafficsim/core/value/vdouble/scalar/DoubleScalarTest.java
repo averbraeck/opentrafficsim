@@ -34,16 +34,16 @@ public class DoubleScalarTest
         double value = 38.0f;
         DoubleScalar.Abs<TemperatureUnit> temperatureFS = new DoubleScalar.Abs<TemperatureUnit>(value, tempUnit);
         assertEquals("Unit should be Celsius", tempUnit, temperatureFS.getUnit());
-        assertEquals("Value is what we put in", value, temperatureFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.05);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+        assertEquals("Value is what we put in", value, temperatureFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.05);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         DoubleScalar.Abs<TemperatureUnit> u2 = new DoubleScalar.Abs<TemperatureUnit>(temperatureFS);
         // temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
         // assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
         // assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(),
         // 0.05);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.1);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.1);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         assertTrue("Value is absolute", temperatureFS.isAbsolute());
         assertFalse("Value is absolute", temperatureFS.isRelative());
         assertEquals("Unit of copy made before calling setUnit should be unchanged", tempUnit, u2.getUnit());
@@ -53,13 +53,13 @@ public class DoubleScalarTest
         DoubleScalar.Abs<LengthUnit> lengthFS = new DoubleScalar.Abs<LengthUnit>(value, lengthUnit);
         // System.out.println("lengthFS is " + lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, lengthFS.getUnit());
-        assertEquals("Value is what we put in", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, lengthFS.getInUnit(LengthUnit.FOOT), 0.0001);
         DoubleScalar.Abs<LengthUnit> copy = lengthFS.copy();
         assertEquals("compareTo should return 0", 0, copy.compareTo(lengthFS));
         DoubleScalar.Abs<LengthUnit> bigger =
-                new DoubleScalar.Abs<LengthUnit>(lengthFS.getValueInUnit() + 100, lengthFS.getUnit());
+                new DoubleScalar.Abs<LengthUnit>(lengthFS.getInUnit() + 100, lengthFS.getUnit());
         assertEquals("compareTo should return 1", 1, bigger.compareTo(lengthFS));
         assertEquals("compareTo should return -1", -1, lengthFS.compareTo(bigger));
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
@@ -70,15 +70,15 @@ public class DoubleScalarTest
 
         DoubleScalar.Abs<LengthUnit> scalarFromScalar = new DoubleScalar.Abs<LengthUnit>(lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, scalarFromScalar.getUnit());
-        assertEquals("Value is what we put in", value, scalarFromScalar.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, scalarFromScalar.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, scalarFromScalar.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, scalarFromScalar.getInUnit(LengthUnit.FOOT), 0.0001);
 
         MutableDoubleScalar.Abs<LengthUnit> m = lengthFS.mutable();
         assertEquals("Unit should be Inch", lengthUnit, m.getUnit());
-        assertEquals("Value is what we put in", value, m.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, m.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, m.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, m.getInUnit(LengthUnit.FOOT), 0.0001);
         assertTrue("mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("mutable version should have same hashCode as original", m.hashCode(), lengthFS.hashCode());
         MutableDoubleScalar.Abs<LengthUnit> mm = m.copy();
@@ -86,37 +86,37 @@ public class DoubleScalarTest
         assertEquals("compareTo should return 0", 0, m.compareTo(mm));
         assertEquals("compareTo should return 0", 0, mm.compareTo(m));
         // Modify the mutable
-        m.setSI(m.getValueSI() + 1);
+        m.setSI(m.getSI() + 1);
         assertFalse("modified version should NOT be equal to original", m.equals(lengthFS));
         assertTrue("HashCode of modified version should not be equal to hashCode of original",
                 m.hashCode() != lengthFS.hashCode());
-        assertEquals("original should have the original value", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("copy of mutable version should have the original value", value, mm.getValueInUnit(), 0.0001);
-        assertEquals("immutable variant of mutable version should have the original value", value, imm.getValueInUnit(), 0.0001);
+        assertEquals("original should have the original value", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("copy of mutable version should have the original value", value, mm.getInUnit(), 0.0001);
+        assertEquals("immutable variant of mutable version should have the original value", value, imm.getInUnit(), 0.0001);
         assertEquals("compareTo should return 1", 1, m.compareTo(mm));
         assertEquals("compareTo should return -1", -1, mm.compareTo(m));
         // undo change
-        m.setSI(lengthFS.getValueSI());
+        m.setSI(lengthFS.getSI());
         assertTrue("restored mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("restored mutable version should have same hashCode as original", m.hashCode(), lengthFS.hashCode());
-        DoubleScalar.Abs<LengthUnit> differentUnit = new DoubleScalar.Abs<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> differentUnit = new DoubleScalar.Abs<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertTrue("doubleScalar with different unit, but same SI value and also absolute should be equal",
                 lengthFS.equals(differentUnit));
         assertEquals("doubleScalar with different unit, but same SI value should have same hashCode", lengthFS.hashCode(),
                 differentUnit.hashCode());
         DoubleScalar.Rel<LengthUnit> differentUnitRel =
-                new DoubleScalar.Rel<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+                new DoubleScalar.Rel<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertFalse("doubleScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 lengthFS.equals(differentUnitRel));
         assertFalse("doubleScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 differentUnitRel.equals(lengthFS));
 
-        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getValueSI()), lengthFS.intValue(),
+        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getSI()), lengthFS.intValue(),
                 0.0001);
-        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getValueSI()), lengthFS.longValue(),
+        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getSI()), lengthFS.longValue(),
                 0.0001);
-        assertEquals("floatValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.floatValue(), 0.0001);
-        assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(), 0.0001);
+        assertEquals("floatValue should return rounded value in SI", lengthFS.getSI(), lengthFS.floatValue(), 0.0001);
+        assertEquals("doubleValue should return rounded value in SI", lengthFS.getSI(), lengthFS.doubleValue(), 0.0001);
         assertFalse("equals to null should return false", lengthFS.equals(null));
     }
 
@@ -131,16 +131,16 @@ public class DoubleScalarTest
         double value = 38.0f;
         DoubleScalar.Rel<TemperatureUnit> temperatureFS = new DoubleScalar.Rel<TemperatureUnit>(value, tempUnit);
         assertEquals("Unit should be Celsius", tempUnit, temperatureFS.getUnit());
-        assertEquals("Value is what we put in", value, temperatureFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.05);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+        assertEquals("Value is what we put in", value, temperatureFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.05);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         DoubleScalar.Rel<TemperatureUnit> u2 = new DoubleScalar.Rel<TemperatureUnit>(temperatureFS);
         // temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
         // assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
         // assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(),
         // 0.05);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.1);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.1);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         assertFalse("Value is relative", temperatureFS.isAbsolute());
         assertTrue("Value is absolute", temperatureFS.isRelative());
         assertEquals("Unit of copy made before calling setUnit should be unchanged", tempUnit, u2.getUnit());
@@ -150,13 +150,13 @@ public class DoubleScalarTest
         DoubleScalar.Rel<LengthUnit> lengthFS = new DoubleScalar.Rel<LengthUnit>(value, lengthUnit);
         // System.out.println("lengthFS is " + lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, lengthFS.getUnit());
-        assertEquals("Value is what we put in", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, lengthFS.getInUnit(LengthUnit.FOOT), 0.0001);
         DoubleScalar.Rel<LengthUnit> copy = lengthFS.copy();
         assertEquals("compareTo should return 0", 0, copy.compareTo(lengthFS));
         DoubleScalar.Rel<LengthUnit> bigger =
-                new DoubleScalar.Rel<LengthUnit>(lengthFS.getValueInUnit() + 100, lengthFS.getUnit());
+                new DoubleScalar.Rel<LengthUnit>(lengthFS.getInUnit() + 100, lengthFS.getUnit());
         assertEquals("compareTo should return 1", 1, bigger.compareTo(lengthFS));
         assertEquals("compareTo should return -1", -1, lengthFS.compareTo(bigger));
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
@@ -167,15 +167,15 @@ public class DoubleScalarTest
 
         DoubleScalar.Rel<LengthUnit> scalarFromScalar = new DoubleScalar.Rel<LengthUnit>(lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, scalarFromScalar.getUnit());
-        assertEquals("Value is what we put in", value, scalarFromScalar.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, scalarFromScalar.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, scalarFromScalar.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, scalarFromScalar.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, scalarFromScalar.getInUnit(LengthUnit.FOOT), 0.0001);
 
         MutableDoubleScalar.Rel<LengthUnit> m = lengthFS.mutable();
         assertEquals("Unit should be Inch", lengthUnit, m.getUnit());
-        assertEquals("Value is what we put in", value, m.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, m.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, m.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, m.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, m.getInUnit(LengthUnit.FOOT), 0.0001);
         assertTrue("mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("HashCode of mutable version should be equal to hash code of original", m.hashCode(), lengthFS.hashCode());
         MutableDoubleScalar.Rel<LengthUnit> mm = m.copy();
@@ -183,36 +183,36 @@ public class DoubleScalarTest
         assertEquals("compareTo should return 0", 0, m.compareTo(mm));
         assertEquals("compareTo should return 0", 0, mm.compareTo(m));
         // Modify the mutable
-        m.setSI(m.getValueSI() + 1);
+        m.setSI(m.getSI() + 1);
         assertFalse("modified version should NOT be equal to original", m.equals(lengthFS));
-        assertEquals("original should have the original value", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("copy of mutable version should have the original value", value, mm.getValueInUnit(), 0.0001);
-        assertEquals("immutable variant of mutable version should have the original value", value, imm.getValueInUnit(), 0.0001);
+        assertEquals("original should have the original value", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("copy of mutable version should have the original value", value, mm.getInUnit(), 0.0001);
+        assertEquals("immutable variant of mutable version should have the original value", value, imm.getInUnit(), 0.0001);
         assertEquals("compareTo should return 1", 1, m.compareTo(mm));
         assertEquals("compareTo should return -1", -1, mm.compareTo(m));
         // undo change
-        m.setSI(lengthFS.getValueSI());
+        m.setSI(lengthFS.getSI());
         assertTrue("restored mutable version should be equal to original", m.equals(lengthFS));
         assertEquals("HashCode of restored mutable version should be equal to hash code of original", m.hashCode(),
                 lengthFS.hashCode());
-        DoubleScalar.Rel<LengthUnit> differentUnit = new DoubleScalar.Rel<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> differentUnit = new DoubleScalar.Rel<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertTrue("doubleScalar with different unit, but same SI value and also absolute should be equal",
                 lengthFS.equals(differentUnit));
         assertEquals("hashCode of doubleScalar with different unit, but same SI value should be same", lengthFS.hashCode(),
                 differentUnit.hashCode());
         DoubleScalar.Abs<LengthUnit> differentUnitAbs =
-                new DoubleScalar.Abs<LengthUnit>(lengthFS.getValueSI(), LengthUnit.METER);
+                new DoubleScalar.Abs<LengthUnit>(lengthFS.getSI(), LengthUnit.METER);
         assertFalse("doubleScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 lengthFS.equals(differentUnitAbs));
         assertFalse("doubleScalar with different unit, but same SI value but not also absolute should NOT be equal",
                 differentUnitAbs.equals(lengthFS));
 
-        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getValueSI()), lengthFS.intValue(),
+        assertEquals("intValue should return rounded value in SI", Math.round(lengthFS.getSI()), lengthFS.intValue(),
                 0.0001);
-        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getValueSI()), lengthFS.longValue(),
+        assertEquals("longValue should return rounded value in SI", Math.round(lengthFS.getSI()), lengthFS.longValue(),
                 0.0001);
-        assertEquals("floatValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.floatValue(), 0.0001);
-        assertEquals("doubleValue should return rounded value in SI", lengthFS.getValueSI(), lengthFS.doubleValue(), 0.0001);
+        assertEquals("floatValue should return rounded value in SI", lengthFS.getSI(), lengthFS.floatValue(), 0.0001);
+        assertEquals("doubleValue should return rounded value in SI", lengthFS.getSI(), lengthFS.doubleValue(), 0.0001);
         assertFalse("equals to null should return false", lengthFS.equals(null));
     }
 
@@ -227,16 +227,16 @@ public class DoubleScalarTest
         double value = 38.0f;
         MutableDoubleScalar.Abs<TemperatureUnit> temperatureFS = new MutableDoubleScalar.Abs<TemperatureUnit>(value, tempUnit);
         assertEquals("Unit should be Celsius", tempUnit, temperatureFS.getUnit());
-        assertEquals("Value is what we put in", value, temperatureFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.05);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+        assertEquals("Value is what we put in", value, temperatureFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.05);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         MutableDoubleScalar.Abs<TemperatureUnit> u2 = new MutableDoubleScalar.Abs<TemperatureUnit>(temperatureFS);
         // temperatureFS.setDisplayUnit(TemperatureUnit.DEGREE_FAHRENHEIT);
         // assertEquals("Unit should now be Fahrenheit", TemperatureUnit.DEGREE_FAHRENHEIT, temperatureFS.getUnit());
         // assertEquals("Value in unit is now the equivalent in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(),
         // 0.05);
-        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getValueSI(), 0.1);
-        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+        assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFS.getSI(), 0.1);
+        assertEquals("Value in Fahrenheit", 100.4f, temperatureFS.getInUnit(TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
         assertTrue("Value is absolute", temperatureFS.isAbsolute());
         assertFalse("Value is absolute", temperatureFS.isRelative());
         assertEquals("Unit of copy made before calling setUnit should be unchanged", tempUnit, u2.getUnit());
@@ -246,18 +246,18 @@ public class DoubleScalarTest
         MutableDoubleScalar.Rel<LengthUnit> lengthFS = new MutableDoubleScalar.Rel<LengthUnit>(value, lengthUnit);
         // System.out.println("lengthFS is " + lengthFS);
         assertEquals("Unit should be Inch", lengthUnit, lengthFS.getUnit());
-        assertEquals("Value is what we put in", value, lengthFS.getValueInUnit(), 0.0001);
-        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getValueSI(), 0.0005);
-        assertEquals("Value in Foot", 1f, lengthFS.getValueInUnit(LengthUnit.FOOT), 0.0001);
+        assertEquals("Value is what we put in", value, lengthFS.getInUnit(), 0.0001);
+        assertEquals("Value in SI is equivalent in Meter", 0.3048f, lengthFS.getSI(), 0.0005);
+        assertEquals("Value in Foot", 1f, lengthFS.getInUnit(LengthUnit.FOOT), 0.0001);
         MutableDoubleScalar.Rel<LengthUnit> copy = lengthFS.copy();
         assertEquals("Unit of copy should still be in Inch", LengthUnit.INCH, copy.getUnit());
-        assertEquals("value of copy should match original", lengthFS.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("value of copy should match original", lengthFS.getSI(), copy.getSI(), 0.0001);
         copy = lengthFS.mutable();
         assertEquals("Unit of mutable should still be in Inch", LengthUnit.INCH, copy.getUnit());
-        assertEquals("value of new mutable should match original", lengthFS.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("value of new mutable should match original", lengthFS.getSI(), copy.getSI(), 0.0001);
         MutableDoubleScalar.Abs<TemperatureUnit> mabs = new MutableDoubleScalar.Abs<TemperatureUnit>(value, tempUnit);
         MutableDoubleScalar.Abs<TemperatureUnit> mmabs = mabs.mutable();
-        assertEquals("duplicate has same value", mabs.getValueSI(), mmabs.getValueSI(), 0.0001);
+        assertEquals("duplicate has same value", mabs.getSI(), mmabs.getSI(), 0.0001);
         assertTrue("duplicate is equal to original", mmabs.equals(mabs));
         assertEquals("hashCode of duplicate should be equal to hashcode of original", mmabs.hashCode(), mabs.hashCode());
 
@@ -265,7 +265,7 @@ public class DoubleScalarTest
         mmabs.setInUnit(123, TemperatureUnit.DEGREE_FAHRENHEIT);
         // System.out.println("mmabs: " + mmabs);
         // System.out.println("in Fahrenheit: " + mmabs.getValueInUnit(TemperatureUnit.DEGREE_FAHRENHEIT));
-        assertEquals("modified temperature should be equal to 323.706K", 323.706, mmabs.getValueSI(), 0.001);
+        assertEquals("modified temperature should be equal to 323.706K", 323.706, mmabs.getSI(), 0.001);
     }
 
     /**
@@ -278,11 +278,11 @@ public class DoubleScalarTest
         MutableDoubleScalar.Abs<TemperatureUnit> value =
                 new MutableDoubleScalar.Abs<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
         MutableDoubleScalar.Abs<TemperatureUnit> copy = value.copy();
-        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("Copy should have same value", value.getSI(), copy.getSI(), 0.0001);
         assertTrue("Copy should be equal to value", value.equals(copy));
         assertTrue("Value should be equal to copy", copy.equals(value));
         value.set(new DoubleScalar.Abs<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
-        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should have same value", value.getSI() == copy.getSI());
         assertFalse("Copy should be equal to value", value.equals(copy));
         assertFalse("Value should be equal to copy", copy.equals(value));
     }
@@ -297,11 +297,11 @@ public class DoubleScalarTest
         MutableDoubleScalar.Rel<TemperatureUnit> value =
                 new MutableDoubleScalar.Rel<TemperatureUnit>(10, TemperatureUnit.DEGREE_CELSIUS);
         MutableDoubleScalar.Rel<TemperatureUnit> copy = value.copy();
-        assertEquals("Copy should have same value", value.getValueSI(), copy.getValueSI(), 0.0001);
+        assertEquals("Copy should have same value", value.getSI(), copy.getSI(), 0.0001);
         assertTrue("Copy should be equal to value", value.equals(copy));
         assertTrue("Value should be equal to copy", copy.equals(value));
         value.set(new MutableDoubleScalar.Rel<TemperatureUnit>(20, TemperatureUnit.DEGREE_CELSIUS));
-        assertFalse("Copy should have same value", value.getValueSI() == copy.getValueSI());
+        assertFalse("Copy should have same value", value.getSI() == copy.getSI());
         assertFalse("Copy should be equal to value", value.equals(copy));
         assertFalse("Value should be equal to copy", copy.equals(value));
     }
@@ -322,65 +322,65 @@ public class DoubleScalarTest
         MutableDoubleScalar.Abs<LengthUnit> sum = MutableDoubleScalar.plus(leftAbs, right);
         assertEquals("result should be in METER", LengthUnit.METER, sum.getUnit());
         assertEquals("value of result should be sum of meter equivalent of values", leftValue + rightValue * 0.0254,
-                sum.getValueSI(), 0.0001);
+                sum.getSI(), 0.0001);
         DoubleScalar.Rel<LengthUnit> leftRel = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         MutableDoubleScalar.Rel<LengthUnit> sum2 = MutableDoubleScalar.plus(LengthUnit.MILLIMETER, leftRel, right, right2);
         assertEquals("result should be in MILLIMETER", LengthUnit.MILLIMETER, sum2.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue + rightValue * 0.0254 + rightValue2
-                / 1000, sum2.getValueSI(), 0.0001);
+                / 1000, sum2.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in MILLIMETER", 1000 * (leftValue + rightValue * 0.0254)
-                + rightValue2, sum2.getValueInUnit(), 0.1);
+                + rightValue2, sum2.getInUnit(), 0.1);
         MutableDoubleScalar.Abs<LengthUnit> difference = MutableDoubleScalar.minus(leftAbs, right, right2);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue - rightValue * 0.0254 - rightValue2
-                / 1000, difference.getValueSI(), 0.0001);
+                / 1000, difference.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in METER", leftValue - rightValue * 0.0254 - rightValue2
-                / 1000, difference.getValueInUnit(), 0.1);
+                / 1000, difference.getInUnit(), 0.1);
         MutableDoubleScalar.Rel<LengthUnit> differenceRel = MutableDoubleScalar.minus(leftRel, right, right2);
         assertEquals("result should be in METER", LengthUnit.METER, differenceRel.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue - rightValue * 0.0254 - rightValue2
-                / 1000, differenceRel.getValueSI(), 0.0001);
+                / 1000, differenceRel.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in METER", leftValue - rightValue * 0.0254 - rightValue2
-                / 1000, differenceRel.getValueInUnit(), 0.001);
+                / 1000, differenceRel.getInUnit(), 0.001);
         differenceRel = MutableDoubleScalar.minus(sum.immutable(), leftAbs);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
-        assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getValueSI(), 0.0001);
+        assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getSI(), 0.0001);
         differenceRel =
                 MutableDoubleScalar.minus(new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.FOOT),
                         new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.INCH));
-        assertEquals("result should be 11 inches", 11 * 0.0254, differenceRel.getValueSI(), 0.0001);
+        assertEquals("result should be 11 inches", 11 * 0.0254, differenceRel.getSI(), 0.0001);
         MutableDoubleScalar.Abs<?> surface = MutableDoubleScalar.multiply(leftAbs, difference.immutable());
         // System.out.println("surface is " + surface);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), surface.getUnit()
                 .getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values",
-                leftAbs.getValueSI() * difference.getValueSI(), surface.getValueSI(), 0.05);
+                leftAbs.getSI() * difference.getSI(), surface.getSI(), 0.05);
         MutableDoubleScalar.Rel<?> relSurface = MutableDoubleScalar.multiply(right, right2);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), relSurface.getUnit()
                 .getSICoefficientsString());
-        assertEquals("Surface should be equal to the product of contributing values", right.getValueSI() * right2.getValueSI(),
-                relSurface.getValueSI(), 0.00000005);
+        assertEquals("Surface should be equal to the product of contributing values", right.getSI() * right2.getSI(),
+                relSurface.getSI(), 0.00000005);
         assertTrue("DoubleScalar should be equal to itself", leftAbs.equals(leftAbs));
         DoubleScalar<?> copy = new DoubleScalar.Abs<LengthUnit>(leftAbs);
         assertTrue("Copy of DoubleScalar should be equal to itself", leftAbs.equals(copy));
-        copy = new DoubleScalar.Rel<LengthUnit>(leftAbs.getValueInUnit(), leftAbs.getUnit());
+        copy = new DoubleScalar.Rel<LengthUnit>(leftAbs.getInUnit(), leftAbs.getUnit());
         assertTrue("this copy should be relative", copy instanceof Relative);
         assertFalse("Relative can not be equal to (otherwise equal) absolute", leftAbs.equals(copy));
         assertFalse("DoubleScalar is not a String", copy.equals("String"));
         DoubleScalar.Abs<TimeUnit> timeScalar = new DoubleScalar.Abs<TimeUnit>(leftValue, TimeUnit.SECOND);
-        assertEquals("Value should match", leftAbs.getValueSI(), timeScalar.getValueSI(), 0.0001);
+        assertEquals("Value should match", leftAbs.getSI(), timeScalar.getSI(), 0.0001);
         assertTrue("Both are absolute", leftAbs.isAbsolute() && timeScalar.isAbsolute());
         assertFalse("Absolute length is not equal to absolute time with same value", leftAbs.equals(timeScalar));
         MutableDoubleScalar<LengthUnit> left = new MutableDoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
-        left.add(right);
+        left.incrementBy(right);
         assertEquals("after add-and-becomes the type should not be changed", LengthUnit.METER, left.getUnit());
-        assertEquals("after add-and-becomes the value should be changed", leftValue + rightValue * 0.0254, left.getValueSI(),
+        assertEquals("after add-and-becomes the value should be changed", leftValue + rightValue * 0.0254, left.getSI(),
                 0.0001);
         left = new MutableDoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
-        left.subtract(right);
+        left.decrementBy(right);
         assertEquals("after subtract-and-becomes the type should not be changed", LengthUnit.METER, left.getUnit());
         assertEquals("after subtract-and-becomes the value should be changed", leftValue - rightValue * 0.0254,
-                left.getValueSI(), 0.0001);
+                left.getSI(), 0.0001);
     }
 
     /**
@@ -406,7 +406,7 @@ public class DoubleScalarTest
         }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
-                ratio.getValueSI(), 0.0001);
+                ratio.getSI(), 0.0001);
         DoubleScalar.Rel<LengthUnit> leftRel = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> rightRel = new DoubleScalar.Rel<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
         MutableDoubleScalar.Rel<SIUnit> ratioRel = MutableDoubleScalar.divide(leftRel, rightRel);
@@ -421,7 +421,7 @@ public class DoubleScalarTest
         }
         assertEquals("result should be in SECOND", TimeUnit.SECOND.toString(), unitString);
         assertEquals("value in SI should be ratio of SI equivalent of values", leftValue / rightValue * 3.600,
-                ratioRel.getValueSI(), 0.0001);
+                ratioRel.getSI(), 0.0001);
     }
 
     /**
@@ -807,9 +807,9 @@ public class DoubleScalarTest
             double expectedResult = function.function(inputValue);
             String description =
                     String.format("%s(%f)->%f should be equal to %f with precision %f", operation, inputValue, expectedResult,
-                            actualResult.getValueSI(), precision);
+                            actualResult.getSI(), precision);
             // System.out.println(description);
-            assertEquals(description, expectedResult, actualResult.getValueSI(), precision);
+            assertEquals(description, expectedResult, actualResult.getSI(), precision);
 
         }
 

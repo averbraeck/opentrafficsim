@@ -113,11 +113,11 @@ public class ContourPlotTest
         int yBins = cp.yAxisBins();
         int expectedXBins =
                 (int) Math.ceil((MutableDoubleScalar
-                        .minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getValueSI())
+                        .minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getSI())
                         / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins =
-                (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
+                (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getSI())
                         / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
@@ -132,11 +132,11 @@ public class ContourPlotTest
                 cp.reGraph();
                 expectedXBins =
                         (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
-                                ContourPlot.INITIALLOWERTIMEBOUND).getValueSI()) / timeGranularity);
+                                ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins =
-                        (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getValueSI())
+                        (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getSI())
                                 / distanceGranularity);
                 yBins = cp.yAxisBins();
                 assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
@@ -146,15 +146,15 @@ public class ContourPlotTest
                 {
                     double x = cp.getXValue(0, item);
                     assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
-                            x >= ContourPlot.INITIALLOWERTIMEBOUND.getValueSI());
+                            x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
                     assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
-                            x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
+                            x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
                     Number alternateX = cp.getX(0, item);
                     assertEquals("getXValue and getX should return things that have the same value", x,
                             alternateX.doubleValue(), 0.000001);
                     double y = cp.getYValue(0, item);
-                    assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getValueSI());
-                    assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getValueSI());
+                    assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getSI());
+                    assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getSI());
                     Number alternateY = cp.getY(0, item);
                     assertEquals("getYValue and getY should return things that have the same value", y,
                             alternateY.doubleValue(), 0.000001);
@@ -269,7 +269,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for one minute
         car.setState(new CarFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
-                        initialTime.getValueSI() + 60, TimeUnit.SECOND), 0));
+                        initialTime.getSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
@@ -281,15 +281,15 @@ public class ContourPlotTest
         {
             double x = cp.getXValue(0, item);
             assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
-                    x >= ContourPlot.INITIALLOWERTIMEBOUND.getValueSI());
+                    x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
             assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
-                    x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
+                    x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
             Number alternateX = cp.getX(0, item);
             assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
                     0.000001);
             double y = cp.getYValue(0, item);
-            assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getValueSI());
-            assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getValueSI());
+            assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getSI());
+            assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getSI());
             Number alternateY = cp.getY(0, item);
             assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
                     0.000001);
@@ -315,7 +315,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for another minute
         car.setState(new CarFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
-                        car.getNextEvaluationTime().getValueSI() + 60, TimeUnit.SECOND), 0));
+                        car.getNextEvaluationTime().getSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
@@ -325,15 +325,15 @@ public class ContourPlotTest
         {
             double x = cp.getXValue(0, item);
             assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
-                    x >= ContourPlot.INITIALLOWERTIMEBOUND.getValueSI());
+                    x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
             assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
-                    x <= ContourPlot.INITIALUPPERTIMEBOUND.getValueSI());
+                    x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
             Number alternateX = cp.getX(0, item);
             assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
                     0.000001);
             double y = cp.getYValue(0, item);
-            assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getValueSI());
-            assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getValueSI());
+            assertTrue("Y should be >= " + minimumDistance, y >= minimumDistance.getSI());
+            assertTrue("Y should be <= " + maximumDistance, y <= maximumDistance.getSI());
             Number alternateY = cp.getY(0, item);
             assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
                     0.000001);
@@ -344,17 +344,17 @@ public class ContourPlotTest
             // expectedZValue, car.getLastEvaluationTime().getValueSI(), car.getNextEvaluationTime()
             // .getValueSI()));
             boolean hit = false;
-            if (x + useTimeGranularity >= car.getLastEvaluationTime().getValueSI()
-                    && x <= car.getNextEvaluationTime().getValueSI())
+            if (x + useTimeGranularity >= car.getLastEvaluationTime().getSI()
+                    && x <= car.getNextEvaluationTime().getSI())
             {
                 // the car MAY have hit contributed to this cell
                 DoubleScalar.Abs<TimeUnit> cellStartTime =
-                        new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getValueSI(), x), TimeUnit.SECOND);
+                        new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getSI(), x), TimeUnit.SECOND);
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
-                        new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getValueSI(), x
+                        new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
-                if (car.getPosition(cellStartTime).getValueSI() <= y + useDistanceGranularity
-                        && car.getPosition(cellEndTime).getValueSI() >= y)
+                if (car.getPosition(cellStartTime).getSI() <= y + useDistanceGranularity
+                        && car.getPosition(cellEndTime).getSI() >= y)
                 {
                     hit = true;
                 }
@@ -401,7 +401,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for five more minutes
         car.setState(new CarFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
-                        car.getNextEvaluationTime().getValueSI() + 300, TimeUnit.SECOND), 0));
+                        car.getNextEvaluationTime().getSI() + 300, TimeUnit.SECOND), 0));
         cp.addData(car);
         // Check that the time range has expanded
         xBins = cp.xAxisBins();
@@ -416,7 +416,7 @@ public class ContourPlotTest
             }
         }
         DoubleScalar.Abs<TimeUnit> carEndTime = car.getNextEvaluationTime();
-        double expectedHighestTime = Math.floor(carEndTime.getValueSI() / useTimeGranularity) * useTimeGranularity;
+        double expectedHighestTime = Math.floor(carEndTime.getSI() / useTimeGranularity) * useTimeGranularity;
         assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime, 0.0001);
         // Check the updateHint method in the PointerHandler
         // First get the panel that stores the result of updateHint (this is ugly)

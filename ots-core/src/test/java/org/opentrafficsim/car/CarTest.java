@@ -30,11 +30,11 @@ public class CarTest
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         Car referenceCar = new Car(12345, null, null, initialTime, initialPosition, initialSpeed);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getID());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getValueSI(), referenceCar
-                .getPosition(initialTime).getValueSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getValueSI(), referenceCar
-                .getVelocity(initialTime).getValueSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.acceleration.getValueSI(),
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
+                .getPosition(initialTime).getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar
+                .getVelocity(initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.acceleration.getSI(),
                 0.0001);
     }
 }

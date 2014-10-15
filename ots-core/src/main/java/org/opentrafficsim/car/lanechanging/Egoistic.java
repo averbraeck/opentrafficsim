@@ -60,9 +60,9 @@ public final class Egoistic
         {
             DoubleScalar.Rel<LengthUnit> headway =
                     MutableDoubleScalar.minus(c.getPosition(when), referenceCarPosition).immutable();
-            if (headway.getValueSI() < 0)
+            if (headway.getSI() < 0)
             {
-                if (null == follower || followerHeadway.getValueSI() > headway.getValueSI())
+                if (null == follower || followerHeadway.getSI() > headway.getSI())
                 {
                     follower = c;
                     followerHeadway = headway;
@@ -70,7 +70,7 @@ public final class Egoistic
             }
             else
             {
-                if (null == leader || leaderHeadway.getValueSI() < headway.getValueSI())
+                if (null == leader || leaderHeadway.getSI() < headway.getSI())
                 {
                     leader = c;
                     leaderHeadway = headway;
@@ -80,13 +80,13 @@ public final class Egoistic
         CarFollowingModel carFollowingModel = referenceCar.getCarFollowingModel();
         DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
                 FollowAcceleration.acceleration(follower, referenceCar, when, carFollowingModel, speedLimit);
-        if (followerAcceleration.getValueSI() < -maximumDeceleration.getValueSI())
+        if (followerAcceleration.getSI() < -maximumDeceleration.getSI())
         {
             return new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY, AccelerationUnit.METER_PER_SECOND_2);
         }
         DoubleScalar.Abs<AccelerationUnit> referenceAcceleration =
                 FollowAcceleration.acceleration(referenceCar, leader, when, carFollowingModel, speedLimit);
-        if (followerAcceleration.getValueSI() < referenceAcceleration.getValueSI())
+        if (followerAcceleration.getSI() < referenceAcceleration.getSI())
         {
             return followerAcceleration;
         }

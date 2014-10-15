@@ -59,7 +59,7 @@ public class TrajectoryPlotTest
         // Create a car running 50 km.h
         Car car = new Car(1, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 500 seconds
-        DoubleScalar.Abs<TimeUnit> endTime = new DoubleScalar.Abs<TimeUnit>(initialTime.getValueSI() + 400, TimeUnit.SECOND);
+        DoubleScalar.Abs<TimeUnit> endTime = new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 400, TimeUnit.SECOND);
         car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
@@ -168,24 +168,24 @@ public class TrajectoryPlotTest
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
                 MutableDoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
-        int expectedNumberOfSamples = (int) (duration.getValueSI() / this.sampleInterval.getValueSI());
+        int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
         for (int sample = 0; sample < expectedNumberOfSamples; sample++)
         {
             DoubleScalar.Rel<TimeUnit> deltaTime =
-                    new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getValueSI() * sample, TimeUnit.SECOND);
+                    new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
             DoubleScalar.Abs<TimeUnit> sampleTime = MutableDoubleScalar.plus(initialTime, deltaTime).immutable();
             double sampledTime = tp.getXValue(series, sample);
-            assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getValueSI(), sampledTime, 0.0001);
+            assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
-            assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getValueSI(), sampledTime, 0.0001);
+            assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             DoubleScalar.Abs<LengthUnit> actualPosition = car.getPosition(sampleTime);
             double sampledPosition = tp.getYValue(series, sample);
-            assertEquals("Sample position should have been " + actualPosition, actualPosition.getValueSI(), sampledPosition,
+            assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                     0.0001);
             sampledPosition = tp.getY(series, sample).doubleValue();
-            assertEquals("Sample position should have been " + actualPosition, actualPosition.getValueSI(), sampledPosition,
+            assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                     0.0001);
         }
     }

@@ -65,7 +65,7 @@ public class FundamentalDiagramPlotTest
         {
             fd = new FundamentalDiagram("Fundamental Diagram", numberOfLanes, aggregationTime, position);
             assertEquals("SeriesCount should match numberOfLanes", numberOfLanes, fd.getSeriesCount());
-            assertEquals("Position should match the supplied position", position.getValueSI(), fd.getPosition().getValueSI(),
+            assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(),
                     0.0001);
             try
             {
@@ -97,7 +97,7 @@ public class FundamentalDiagramPlotTest
             ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
             DoubleScalar.Rel<SpeedUnit> speed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
             DoubleScalar.Abs<TimeUnit> time = new DoubleScalar.Abs<TimeUnit>(123, TimeUnit.SECOND);
-            int bucket = (int) Math.floor(time.getValueSI() / aggregationTime.getValueSI());
+            int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
             for (int lane = 0; lane < numberOfLanes; lane++)
             {
                 Car car = new Car(1 + lane, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
@@ -110,7 +110,7 @@ public class FundamentalDiagramPlotTest
                         value = fd.getXValue(readBackLane, sample);
                         if (shouldHaveData)
                         {
-                            double expectedDensity = 3600 / aggregationTime.getValueSI() / speed.getValueSI();
+                            double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
                             assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
                         }
                         else
@@ -120,7 +120,7 @@ public class FundamentalDiagramPlotTest
                         value = fd.getX(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
-                            double expectedDensity = 3600 / aggregationTime.getValueSI() / speed.getValueSI();
+                            double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
                             assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
                         }
                         else
@@ -132,7 +132,7 @@ public class FundamentalDiagramPlotTest
                         if (shouldHaveData)
                         {
                             double expectedFlow =
-                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getValueSI() : 0;
+                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
@@ -143,7 +143,7 @@ public class FundamentalDiagramPlotTest
                         if (shouldHaveData)
                         {
                             double expectedFlow =
-                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getValueSI() : 0;
+                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
@@ -154,7 +154,7 @@ public class FundamentalDiagramPlotTest
                         value = fd.getYValue(readBackLane, sample);
                         if (shouldHaveData)
                         {
-                            double expectedSpeed = readBackLane <= lane && sample == bucket ? speed.getValueInUnit() : 0;
+                            double expectedSpeed = readBackLane <= lane && sample == bucket ? speed.getInUnit() : 0;
                             assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
                         }
                         else
@@ -164,7 +164,7 @@ public class FundamentalDiagramPlotTest
                         value = fd.getY(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
-                            double expectedSpeed = readBackLane <= lane && sample == bucket ? speed.getValueInUnit() : 0;
+                            double expectedSpeed = readBackLane <= lane && sample == bucket ? speed.getInUnit() : 0;
                             assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
                         }
                         else
