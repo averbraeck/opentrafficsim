@@ -216,9 +216,9 @@ public abstract class DoubleVectorTest
             assertEquals("original value should not be altered", out[0], fv.getSI(0), 0.001);
             DoubleScalar<LengthUnit> value = mfv.get(1);
             assertTrue("value cannot be null", null != value);
-            assertEquals("value should be same as SI value", mfv.getSI(1), value.getValueSI(), 0.0001);
+            assertEquals("value should be same as SI value", mfv.getSI(1), value.getSI(), 0.0001);
             mfv.set(2, value);
-            assertEquals("value should be same as SI value", mfv.getSI(2), value.getValueSI(), 0.0001);
+            assertEquals("value should be same as SI value", mfv.getSI(2), value.getSI(), 0.0001);
         }
         catch (ValueException exception)
         {

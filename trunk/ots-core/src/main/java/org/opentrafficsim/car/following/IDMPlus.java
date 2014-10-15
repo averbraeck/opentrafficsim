@@ -98,7 +98,7 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
      */
     private DoubleScalar.Rel<SpeedUnit> vDes(final C car, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
-        return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getValueSI(), car.vMax().getValueSI()),
+        return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getSI(), car.vMax().getSI()),
                 SpeedUnit.METER_PER_SECOND);
     }
 
@@ -119,11 +119,11 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             DoubleScalar.Rel<LengthUnit> s =
                     MutableDoubleScalar.minus(leader.positionOfRear(thisEvaluationTime), myFrontPosition).immutable();
             // System.out.println("s is " + s);
-            if (s.getValueSI() < 0)
+            if (s.getSI() < 0)
             {
                 continue; // Ignore cars that are behind this car
             }
-            if (s.getValueSI() < shortestHeadway.getValueSI())
+            if (s.getSI() < shortestHeadway.getSI())
             {
                 shortestHeadway = s;
                 closestLeader = leader;
@@ -131,10 +131,10 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
         }
         // System.out.println("shortestHeadway is " + shortestHeadway);
         DoubleScalar.Rel<SpeedUnit> myCurrentSpeed = car.getVelocity(thisEvaluationTime);
-        double speedIncentive = 1 - Math.pow(myCurrentSpeed.getValueSI() / vDes(car, speedLimit).getValueSI(), 4);
+        double speedIncentive = 1 - Math.pow(myCurrentSpeed.getSI() / vDes(car, speedLimit).getSI(), 4);
         // System.out.println("speedIncentive is " + speedIncentive);
         MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAverageSpeedTimes2 =
-                new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getValueSI() * this.b.getValueSI()),
+                new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
                         AccelerationUnit.METER_PER_SECOND_2);
         logWeightedAverageSpeedTimes2.multiply(2); // don't forget the times 2
         DoubleScalar.Rel<SpeedUnit> dV =
@@ -151,18 +151,18 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
                         Calc.speedTimesTime(dV,
                                 Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2.immutable())))
                         .immutable();
-        if (sStar.getValueSI() < 0) // Negative value should be treated as 0
+        if (sStar.getSI() < 0) // Negative value should be treated as 0
         {
             sStar = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         }
         // System.out.println("s* is " + sStar);
-        double distanceIncentive = 1 - Math.pow(sStar.getValueSI() / shortestHeadway.getValueSI(), 2);
+        double distanceIncentive = 1 - Math.pow(sStar.getSI() / shortestHeadway.getSI(), 2);
         MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration = new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
         newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));
         // System.out.println("distanceIncentive is " + distanceIncentive);
         // System.out.println("newAcceleration is " + newAcceleration);
         MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = thisEvaluationTime.mutable();
-        nextEvaluationTime.add(this.stepSize);
+        nextEvaluationTime.incrementBy(this.stepSize);
         return new CarFollowingModelResult(newAcceleration.immutable(), nextEvaluationTime.immutable(), 0);
     }
 
@@ -179,9 +179,9 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
                 preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
         DoubleScalar.Abs<SpeedUnit> vAntStraight = anticipatedSpeed(speedLimit, car, sameLaneCars);
         double aGain =
-                (this.a.getValueSI() - Math
-                        .max(computeAcceleration(car, sameLaneCars, speedLimit).acceleration.getValueSI(), 0))
-                        / this.a.getValueSI();
+                (this.a.getSI() - Math
+                        .max(computeAcceleration(car, sameLaneCars, speedLimit).acceleration.getSI(), 0))
+                        / this.a.getSI();
         System.out.println(String.format("aGain: %.3f", aGain));
         double nonPreferredLaneSpeedIncentive = 0;
         if (null != nonPreferredLaneCars)
@@ -189,17 +189,17 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             nonPreferredLaneSpeedIncentive =
                     aGain
                             * MutableDoubleScalar.minus(anticipatedSpeed(speedLimit, car, nonPreferredLaneCars), vAntStraight)
-                                    .getValueSI() / this.vGain.getValueSI();
+                                    .getSI() / this.vGain.getSI();
         }
         double dBias = 0;
         double preferredLaneSpeedIncentive = 0;
         if (null != preferredLaneCars)
         {
             DoubleScalar.Abs<SpeedUnit> vAnt = anticipatedSpeed(speedLimit, car, preferredLaneCars);
-            if (vAnt.getValueSI() > this.vCong.getValueSI())
+            if (vAnt.getSI() > this.vCong.getSI())
             {
                 preferredLaneSpeedIncentive =
-                        MutableDoubleScalar.minus(vAnt, vAntStraight).getValueSI() / this.vGain.getValueSI();
+                        MutableDoubleScalar.minus(vAnt, vAntStraight).getSI() / this.vGain.getSI();
                 if (preferredLaneSpeedIncentive > 0)
                 {
                     preferredLaneSpeedIncentive = 0; // changing lane to overtake "on the right" is not permitted
@@ -208,10 +208,10 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             else
             {
                 preferredLaneSpeedIncentive =
-                        aGain * MutableDoubleScalar.minus(vAnt, vAntStraight).getValueSI() / this.vGain.getValueSI();
+                        aGain * MutableDoubleScalar.minus(vAnt, vAntStraight).getSI() / this.vGain.getSI();
             }
             // FIXME: comparing double values for equality is not "reliable"
-            if (preferredLaneRouteIncentive >= 0 && vAnt.getValueSI() == vDes(car, speedLimit).getValueSI())
+            if (preferredLaneRouteIncentive >= 0 && vAnt.getSI() == vDes(car, speedLimit).getSI())
             {
                 dBias = this.dFree;
             }
@@ -249,9 +249,9 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
         for (C c : carsInOtherLane)
         {
             DoubleScalar.Rel<LengthUnit> headway = car.headway(c);
-            if (headway.getValueSI() > 0)
+            if (headway.getSI() > 0)
             {
-                if (null == leader || headway.getValueSI() < leaderHeadway.getValueSI())
+                if (null == leader || headway.getSI() < leaderHeadway.getSI())
                 {
                     leader = c;
                     leaderHeadway = headway;
@@ -259,7 +259,7 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             }
             else
             {
-                if (null == follower || headway.getValueSI() > followerHeadway.getValueSI())
+                if (null == follower || headway.getSI() > followerHeadway.getSI())
                 {
                     follower = c;
                     followerHeadway = headway;
@@ -272,7 +272,7 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             leaders.add(leader);
         }
         DoubleScalar.Abs<AccelerationUnit> carAcceleration = computeAcceleration(car, leaders, speedLimit).acceleration;
-        if (carAcceleration.getValueSI() < this.b.getValueSI())
+        if (carAcceleration.getSI() < this.b.getSI())
         {
             return false; // leader would be too close
         }
@@ -283,7 +283,7 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             DoubleScalar.Abs<AccelerationUnit> otherCarAcceleration =
                     computeAcceleration(follower, referenceCarGroup, speedLimit).acceleration;
             // This assumes that the follower also uses IDMPlus (which is not unreasonable)
-            if (otherCarAcceleration.getValueSI() < this.b.getValueSI())
+            if (otherCarAcceleration.getSI() < this.b.getSI())
             {
                 return false; // follower would be too close
             }
@@ -344,18 +344,18 @@ public class IDMPlus<Line, C extends Car> implements CarFollowingModel<C>
             DoubleScalar.Rel<LengthUnit> headway =
                     MutableDoubleScalar.minus(leader.positionOfRear(car.getNextEvaluationTime()), frontPositionOfCar)
                             .immutable();
-            if (headway.getValueSI() < 0)
+            if (headway.getSI() < 0)
             {
                 continue;
             }
-            if (headway.getValueSI() > this.x0.getValueSI())
+            if (headway.getSI() > this.x0.getSI())
             {
                 continue;
             }
             DoubleScalar.Rel<SpeedUnit> leaderSpeed = leader.getVelocity(car.getNextEvaluationTime());
-            if (leaderSpeed.getValueSI() < result.getValueSI())
+            if (leaderSpeed.getSI() < result.getSI())
             {
-                result = new DoubleScalar.Abs<SpeedUnit>(leaderSpeed.getValueSI(), leaderSpeed.getUnit());
+                result = new DoubleScalar.Abs<SpeedUnit>(leaderSpeed.getSI(), leaderSpeed.getUnit());
             }
         }
         return result;

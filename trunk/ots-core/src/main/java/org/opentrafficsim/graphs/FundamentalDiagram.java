@@ -167,7 +167,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         {
             throw new Error("Number of lanes must be > 0 (got " + numberOfLanes + ")");
         }
-        if (aggregationTime.getValueSI() <= 0)
+        if (aggregationTime.getSI() <= 0)
         {
             throw new Error("Aggregation time must be > 0 (got " + aggregationTime + ")");
         }
@@ -191,7 +191,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             @Override
             public String generateLabel(final XYDataset dataset, final int series, final int item)
             {
-                return String.format("%.0fs", item * aggregationTime.getValueSI());
+                return String.format("%.0fs", item * aggregationTime.getSI());
             }
         });
         renderer.setBaseItemLabelsVisible(true);
@@ -280,7 +280,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
-        final int timeBin = (int) Math.floor(detectionTime.getValueSI() / this.aggregationTime.getValueSI());
+        final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
         // Extend storage if needed
         while (timeBin >= laneData.size())
         {
@@ -298,7 +298,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private static void configureAxis(final ValueAxis valueAxis, final Axis axis)
     {
         valueAxis.setLabel("\u2192 " + axis.getName());
-        valueAxis.setRange(axis.getMinimumValue().getValueInUnit(), axis.getMaximumValue().getValueInUnit());
+        valueAxis.setRange(axis.getMinimumValue().getInUnit(), axis.getMaximumValue().getInUnit());
     }
 
     /**
@@ -497,11 +497,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         {
             if (axis == getDensityAxis())
             {
-                return this.flow * 3600 / getAggregationTime().getValueSI() / this.harmonicMeanSpeed;
+                return this.flow * 3600 / getAggregationTime().getSI() / this.harmonicMeanSpeed;
             }
             else if (axis == getFlowAxis())
             {
-                return this.flow * 3600 / getAggregationTime().getValueSI();
+                return this.flow * 3600 / getAggregationTime().getSI();
             }
             else if (axis == getSpeedAxis())
             {
@@ -525,7 +525,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
                 sumReciprocalSpeeds = this.flow / this.harmonicMeanSpeed;
             }
             this.flow += 1;
-            sumReciprocalSpeeds += 1d / speed.getValueSI();
+            sumReciprocalSpeeds += 1d / speed.getSI();
             this.harmonicMeanSpeed = this.flow / sumReciprocalSpeeds;
         }
     }

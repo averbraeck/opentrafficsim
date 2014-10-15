@@ -605,9 +605,9 @@ public abstract class DoubleMatrixTest
             assertEquals("original value should not be altered", out[0][0], dm.getSI(0, 0), 0.001);
             DoubleScalar<LengthUnit> value = mcopy.get(1, 0);
             assertTrue("value cannot be null", null != value);
-            assertEquals("value should be same as SI value", mcopy.getSI(1, 0), value.getValueSI(), 0.0001);
+            assertEquals("value should be same as SI value", mcopy.getSI(1, 0), value.getSI(), 0.0001);
             mcopy.set(2, 0, value);
-            assertEquals("value should be same as SI value", mcopy.getSI(2, 0), value.getValueSI(), 0.0001);
+            assertEquals("value should be same as SI value", mcopy.getSI(2, 0), value.getSI(), 0.0001);
         }
         catch (ValueException exception)
         {
@@ -2329,8 +2329,8 @@ public abstract class DoubleMatrixTest
             {
                 for (int column = 0; column < 3; column++)
                 {
-                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column).getValueSI()
-                            * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column).getSI()
+                            * rhs[row][column], result.get(row, column).getSI(), 0.0001);
                 }
             }
         }
@@ -2362,8 +2362,8 @@ public abstract class DoubleMatrixTest
             {
                 for (int column = 0; column < 3; column++)
                 {
-                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column).getValueSI()
-                            * rhs[row][column], result.get(row, column).getValueSI(), 0.0001);
+                    assertEquals("Cell should contain product of contributing cell values", lhs.get(row, column).getSI()
+                            * rhs[row][column], result.get(row, column).getSI(), 0.0001);
                 }
             }
         }

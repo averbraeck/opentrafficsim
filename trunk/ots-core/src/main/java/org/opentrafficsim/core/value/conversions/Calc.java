@@ -34,7 +34,7 @@ public final class Calc
     public static DoubleScalar.Rel<LengthUnit> speedTimesTime(final DoubleScalar.Rel<SpeedUnit> speed,
             final DoubleScalar.Rel<TimeUnit> time)
     {
-        return new DoubleScalar.Rel<LengthUnit>(speed.getValueSI() * time.getValueSI(), LengthUnit.METER);
+        return new DoubleScalar.Rel<LengthUnit>(speed.getSI() * time.getSI(), LengthUnit.METER);
     }
 
     /**
@@ -47,8 +47,8 @@ public final class Calc
     public static DoubleScalar.Rel<LengthUnit> accelerationTimesTimeSquaredDiv2(
             final DoubleScalar.Abs<AccelerationUnit> acceleration, final DoubleScalar.Rel<TimeUnit> time)
     {
-        double t = time.getValueSI();
-        return new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getValueSI() * t * t, LengthUnit.METER);
+        double t = time.getSI();
+        return new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI() * t * t, LengthUnit.METER);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class Calc
     public static DoubleScalar.Rel<SpeedUnit> accelerationTimesTime(final DoubleScalar.Abs<AccelerationUnit> acceleration,
             final DoubleScalar.Rel<TimeUnit> time)
     {
-        return new DoubleScalar.Rel<SpeedUnit>(acceleration.getValueSI() * time.getValueSI(), SpeedUnit.METER_PER_SECOND);
+        return new DoubleScalar.Rel<SpeedUnit>(acceleration.getSI() * time.getSI(), SpeedUnit.METER_PER_SECOND);
     }
 
     /**
@@ -75,7 +75,7 @@ public final class Calc
     public static DoubleScalar.Rel<TimeUnit> speedDividedByAcceleration(final DoubleScalar.Rel<SpeedUnit> speed,
             final DoubleScalar.Rel<AccelerationUnit> acceleration)
     {
-        return new DoubleScalar.Rel<TimeUnit>(speed.getValueSI() / acceleration.getValueSI(), TimeUnit.SECOND);
+        return new DoubleScalar.Rel<TimeUnit>(speed.getSI() / acceleration.getSI(), TimeUnit.SECOND);
     }
 
     /**
@@ -88,7 +88,7 @@ public final class Calc
     public static DoubleScalar.Abs<AccelerationUnit> deltaSpeedDividedByTime(final DoubleScalar.Rel<SpeedUnit> speedDifference,
             final DoubleScalar.Rel<TimeUnit> timeDifference)
     {
-        return new DoubleScalar.Abs<AccelerationUnit>(speedDifference.getValueSI() / timeDifference.getValueSI(),
+        return new DoubleScalar.Abs<AccelerationUnit>(speedDifference.getSI() / timeDifference.getSI(),
                 AccelerationUnit.METER_PER_SECOND_2);
     }
 }

@@ -67,7 +67,7 @@ class Axis
      */
     public double getRelativeBin(final DoubleScalar<?> value)
     {
-        return (value.getValueSI() - this.getMinimumValue().getValueSI()) / this.getGranularities()[0];
+        return (value.getSI() - this.getMinimumValue().getSI()) / this.getGranularities()[0];
     }
 
     /**
@@ -87,7 +87,7 @@ class Axis
      */
     public double getValue(final int aggregatedBin)
     {
-        return this.getMinimumValue().getValueSI() + 1.0 * aggregatedBin * this.getCurrentGranularity();
+        return this.getMinimumValue().getSI() + 1.0 * aggregatedBin * this.getCurrentGranularity();
     }
 
     /**
@@ -95,7 +95,7 @@ class Axis
      */
     public int getAggregatedBinCount()
     {
-        return (int) Math.ceil((this.getMaximumValue().getValueSI() - this.getMinimumValue().getValueSI())
+        return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
                 / this.getCurrentGranularity());
     }
 
@@ -104,7 +104,7 @@ class Axis
      */
     public int getBinCount()
     {
-        return (int) Math.ceil((this.getMaximumValue().getValueSI() - this.getMinimumValue().getValueSI())
+        return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
                 / this.getGranularities()[0]);
     }
 
@@ -151,7 +151,7 @@ class Axis
      */
     public void setMaximumValue(final DoubleScalar<?> newMaximumValue)
     {
-        if (null != this.maximumValue && newMaximumValue.getValueSI() < this.maximumValue.getValueSI())
+        if (null != this.maximumValue && newMaximumValue.getSI() < this.maximumValue.getSI())
         {
             throw new Error("maximum value may not be decreased");
         }

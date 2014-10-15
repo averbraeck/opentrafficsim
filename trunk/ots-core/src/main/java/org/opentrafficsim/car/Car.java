@@ -207,8 +207,8 @@ public class Car implements GTU<Integer, LocationRelative<Line<String>>, DoubleS
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.id,
-                this.lastEvaluationTime.getValueSI(), this.nextEvaluationTime.getValueSI(),
-                this.getPosition(when).getValueSI(), this.getVelocity(when).getValueSI(), this.acceleration.getValueSI());
+                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(),
+                this.getPosition(when).getSI(), this.getVelocity(when).getSI(), this.acceleration.getSI());
     }
 
     /**

@@ -136,7 +136,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         this.chartPanel.getXYPlot().setDomainAxis(xAxis);
         this.chartPanel.getXYPlot().setRangeAxis(yAxis);
         configureAxis(this.chartPanel.getXYPlot().getRangeAxis(),
-                MutableDoubleScalar.minus(maximumPosition, minimumPosition).getValueSI());
+                MutableDoubleScalar.minus(maximumPosition, minimumPosition).getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
@@ -242,7 +242,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      */
     public final void reGraph()
     {
-        configureAxis(this.chartPanel.getXYPlot().getDomainAxis(), this.maximumTime.getValueSI());
+        configureAxis(this.chartPanel.getXYPlot().getDomainAxis(), this.maximumTime.getSI());
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
     }
 
@@ -296,8 +296,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
         {
-            if (t.getCurrentEndTime().getValueSI() == startTime.getValueSI()
-                    && t.getCurrentEndPosition().getValueSI() == startPosition.getValueSI())
+            if (t.getCurrentEndTime().getSI() == startTime.getSI()
+                    && t.getCurrentEndPosition().getSI() == startPosition.getSI())
             {
                 if (null != carTrajectory)
                 {
@@ -379,19 +379,19 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         public final void addSegment(final Car car)
         {
             final int startSample =
-                    (int) Math.ceil(car.getLastEvaluationTime().getValueSI() / getSampleInterval().getValueSI());
+                    (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
             final int endSample =
-                    (int) (Math.ceil(car.getNextEvaluationTime().getValueSI() / getSampleInterval().getValueSI()));
+                    (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
-                        new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getValueSI(), TimeUnit.SECOND);
+                        new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
                 DoubleScalar.Abs<LengthUnit> position = car.getPosition(sampleTime);
-                if (position.getValueSI() < getMinimumPosition().getValueSI())
+                if (position.getSI() < getMinimumPosition().getSI())
                 {
                     continue;
                 }
-                if (position.getValueSI() > getMaximumPosition().getValueSI())
+                if (position.getSI() > getMaximumPosition().getSI())
                 {
                     continue;
                 }
@@ -404,11 +404,11 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                     this.positions.add(null); // insert nulls as place holders for unsampled data (because vehicle was
                                               // temporarily out of range?)
                 }
-                this.positions.add(position.getValueSI());
+                this.positions.add(position.getSI());
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition = car.getPosition(this.currentEndTime);
-            if (car.getNextEvaluationTime().getValueSI() > getMaximumTime().getValueSI())
+            if (car.getNextEvaluationTime().getSI() > getMaximumTime().getSI())
             {
                 setMaximumTime(car.getNextEvaluationTime());
             }
@@ -429,7 +429,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
          */
         public double getTime(final int item)
         {
-            return (item + this.firstSample) * getSampleInterval().getValueSI();
+            return (item + this.firstSample) * getSampleInterval().getSI();
         }
 
         /**
