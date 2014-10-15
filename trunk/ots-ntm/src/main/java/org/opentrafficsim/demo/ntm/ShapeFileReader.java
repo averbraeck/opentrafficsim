@@ -327,9 +327,10 @@ public class ShapeFileReader
                 String wegtype = (String) feature.getAttribute("WEGTYPEAB");
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
-                double speed = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
-                double cap = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
-                DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+                Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
+                DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
+                double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
+                DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
 //                      new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
                 Node centroidA = centroids.get(lNodeA);
@@ -421,6 +422,9 @@ public class ShapeFileReader
 
             }
 
+            joinEqualLinks(links);
+            
+
         }
         catch (Exception problem)
         {
@@ -433,6 +437,8 @@ public class ShapeFileReader
         }
 
     }
+
+
 
     /**
      * @param coordinate

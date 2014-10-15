@@ -23,6 +23,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
@@ -433,7 +434,7 @@ public class NTMModel implements OTSModelInterface
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 LinkEdge<Link> linkEdge = new LinkEdge<>(shpLink);
                 this.linkGraph.addEdge(nodeA, nodeB, linkEdge);
-                this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLenght().doubleValue());
+                this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLength().doubleValue());
                 linkMap.put(shpLink.getId(), linkEdge);
             }
             else
@@ -551,9 +552,9 @@ public class NTMModel implements OTSModelInterface
                         }
                         else
                         {
-                            double speed = 70.0;
                             DoubleScalar<FrequencyUnit> capacity =
                                     new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                            DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                             Link newLink = Link.createLink(cA, cB, capacity, speed);
                             LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                             addLinkEdge(cA, cB, newLinkEdge, TrafficBehaviourType.NTM, this.areaGraph);
@@ -639,7 +640,7 @@ public class NTMModel implements OTSModelInterface
             }
         }
         // TODO: average length? straight distance? straight distance + 20%?
-        graph.setEdgeWeight(linkEdge, linkEdge.getLink().getLenght().doubleValue());
+        graph.setEdgeWeight(linkEdge, linkEdge.getLink().getLength().doubleValue());
     }
 
     /**
@@ -821,7 +822,7 @@ public class NTMModel implements OTSModelInterface
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         BoundedNode centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                        double speed = 70.0;
+                                        DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                                         DoubleScalar<FrequencyUnit> capacity =
                                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                                         Link newLink = Link.createLink(nodeIsolated, centroidEntered, capacity, speed);
@@ -891,7 +892,7 @@ public class NTMModel implements OTSModelInterface
                         {
                             System.out.println("Stop");
                         }
-                        double speed = 70.0;
+                        DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(cA, flowNodeA, capacity, speed);
@@ -912,7 +913,7 @@ public class NTMModel implements OTSModelInterface
                     cB = areaNodeCentroidMap.get(aB);
                     if (aB != null)
                     {
-                        double speed = 70.0;
+                        DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(flowNodeB, cB, capacity, speed);
@@ -937,7 +938,7 @@ public class NTMModel implements OTSModelInterface
                     //cA = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cA != null)
                     {
-                        double speed = 70.0;
+                        DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(cA, flowNodeA, capacity, speed);
@@ -958,7 +959,7 @@ public class NTMModel implements OTSModelInterface
                     //cB = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cB != null)
                     {
-                        double speed = 70.0;
+                        DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(flowNodeB, cB, capacity, speed);
@@ -987,7 +988,7 @@ public class NTMModel implements OTSModelInterface
         for (Link shpLink : shpLinks.values())
         {
             DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(3000, FrequencyUnit.PER_HOUR);
-            if (shpLink.getSpeed() >= 65 && shpLink.getCapacity().doubleValue() > capacity.doubleValue())
+            if (shpLink.getSpeed().doubleValue() >= 65 && shpLink.getCapacity().doubleValue() > capacity.doubleValue())
             {
                 Link flowLink = new Link(shpLink);
                 if (flowLink.getGeometry() == null)
@@ -1001,7 +1002,7 @@ public class NTMModel implements OTSModelInterface
 
         for (Link flowLink : flowLinks.values())
         {
-            if (flowLink.getSpeed() >= 65 && flowLink.getCapacity().doubleValue() > 3000)
+            if (flowLink.getSpeed().doubleValue() >= 65 && flowLink.getCapacity().doubleValue() > 3000)
             {
                 shpLinks.remove(flowLink.getId());
             }
