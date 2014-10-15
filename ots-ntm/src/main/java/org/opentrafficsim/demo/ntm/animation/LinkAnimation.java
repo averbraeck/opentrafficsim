@@ -32,16 +32,16 @@ public class LinkAnimation extends Renderable2D
     private final float width;
 
     /**
-     * @param source
+     * @param link
      * @param simulator
      * @param width
      * @throws NamingException
      * @throws RemoteException
      */
-    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
+    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width)
             throws NamingException, RemoteException
     {
-        super(source, simulator);
+        super(link, simulator);
         this.width = width;
     }
 
