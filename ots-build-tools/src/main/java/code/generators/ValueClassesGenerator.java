@@ -360,8 +360,8 @@ public final class ValueClassesGenerator
             {
                 generateReadOnlyFunctions(cg, type, dimensions);
                 generateWriteFunctions(cg, type, dimensions);
-                generateVectorOrMatrixClass(cg, type, false, dimensions);
-                generateVectorOrMatrixClass(cg, type, true, dimensions);
+                generateScalarVectorOrMatrixClass(cg, type, false, dimensions);
+                generateScalarVectorOrMatrixClass(cg, type, true, dimensions);
             }
         }
     }
@@ -573,8 +573,8 @@ public final class ValueClassesGenerator
      * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
      * @param dimensions int; number of dimensions of the data (1: vector; 2: matrix)
      */
-    private static void generateVectorOrMatrixClass(final CodeGenerator cg, final String type, final boolean mutable,
-            final int dimensions)
+    private static void generateScalarVectorOrMatrixClass(final CodeGenerator cg, final String type,
+            final boolean mutable, final int dimensions)
     {
         final String outerIndent = cg.indent(1);
         final String mutableType = mutable ? "Mutable" : "Immutable ";
