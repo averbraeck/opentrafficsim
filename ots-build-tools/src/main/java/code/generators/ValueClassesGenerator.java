@@ -21,7 +21,7 @@ public final class ValueClassesGenerator
     {
         // This class should not be instantiated
     }
-    
+
     /**
      * Information about the math functions.
      * <p>
@@ -353,10 +353,10 @@ public final class ValueClassesGenerator
                         + (subType.equals("Scalar") ? "" : ", sparse/dense") + ".");
             }
             generateMathFunctions(cg, type);
-            generateScalarClass(cg, type, false);
-            generateScalarClass(cg, type, true);
+            // generateScalarClass(cg, type, false);
+            // generateScalarClass(cg, type, true);
 
-            for (int dimensions = 1; dimensions <= 2; dimensions++)
+            for (int dimensions = 0; dimensions <= 2; dimensions++)
             {
                 generateReadOnlyFunctions(cg, type, dimensions);
                 generateWriteFunctions(cg, type, dimensions);
@@ -578,13 +578,13 @@ public final class ValueClassesGenerator
     {
         final String outerIndent = cg.indent(1);
         final String mutableType = mutable ? "Mutable" : "Immutable ";
-        final String vectorOrMatrix = dimensions == 1 ? "Vector" : "Matrix";
+        final String vectorOrMatrix = 0 == dimensions ? "Scalar" : 1 == dimensions ? "Vector" : "Matrix";
         final String pluralAggregateType = dimensions == 1 ? "vectors" : "matrices";
         final String emptyBrackets = buildEmptyBrackets(dimensions);
         final String ots = "org.opentrafficsim.core.";
         final String cc = "cern.colt.matrix.";
         ArrayList<String> imports = new ArrayList<String>();
-        if (!mutable)
+        if (dimensions > 0 && !mutable)
         {
             imports.add("java.io.Serializable");
             imports.add("");
@@ -596,34 +596,53 @@ public final class ValueClassesGenerator
         }
         imports.add(ots + "unit.Unit");
         imports.add(ots + "value.Absolute");
-        if (!mutable)
+        if (dimensions > 0 && !mutable)
         {
             imports.add(ots + "value.AbstractValue");
         }
-        imports.add(ots + "value.DenseData");
+        if (dimensions > 0)
+        {
+            imports.add(ots + "value.DenseData");
+        }
         if (!mutable)
         {
             imports.add(ots + "value.Format");
         }
         imports.add(ots + "value.Relative");
-        imports.add(ots + "value.SparseData");
-        imports.add(ots + "value.ValueException");
-        if (mutable)
+        if (dimensions > 0)
         {
-            imports.add(ots + "value.v" + type.toLowerCase() + "." + type + "MathFunctions");
-            imports.add(ots + "value.v" + type.toLowerCase() + "." + type + "MathFunctionsImpl");
+            imports.add(ots + "value.SparseData");
+            imports.add(ots + "value.ValueException");
         }
-        if (!mutable)
+        if (0 == dimensions && !mutable)
+        {
+            imports.add(ots + "value.Scalar");
+        }
+        if (0 == dimensions || !mutable || (dimensions > 0 && mutable))
         {
             imports.add(ots + "value.ValueUtil");
         }
-        imports.add(ots + "value.v" + type.toLowerCase() + ".scalar." + type + "Scalar");
+        if (mutable)
+        {
+            imports.add(ots + "value.v" + type.toLowerCase() + "." + type + "MathFunctions");
+        }
+        if (dimensions > 0 && mutable)
+        {
+            imports.add(ots + "value.v" + type.toLowerCase() + "." + type + "MathFunctionsImpl");
+        }
+        if (dimensions > 0)
+        {
+            imports.add(ots + "value.v" + type.toLowerCase() + ".scalar." + type + "Scalar");
+        }
         if (2 == dimensions && !mutable)
         {
             imports.add(ots + "value.v" + type.toLowerCase() + ".vector." + type + "Vector");
         }
-        imports.add("");
-        if (1 == dimensions || !mutable)
+        if (dimensions > 0)
+        {
+            imports.add("");
+        }
+        if (1 == dimensions || 2 == dimensions && !mutable)
         {
             imports.add(cc + "t" + type.toLowerCase() + "." + type + "Matrix1D");
         }
@@ -636,7 +655,7 @@ public final class ValueClassesGenerator
             imports.add(cc + "t" + type.toLowerCase() + ".algo.Dense" + type + "Algebra");
             imports.add(cc + "t" + type.toLowerCase() + ".algo.Sparse" + type + "Algebra");
         }
-        if (mutable)
+        if (dimensions > 0 && mutable)
         {
             imports.add(cc + "t" + type.toLowerCase() + ".impl.Dense" + type + "Matrix" + dimensions + "D");
             imports.add(cc + "t" + type.toLowerCase() + ".impl.Sparse" + type + "Matrix" + dimensions + "D");
@@ -653,853 +672,987 @@ public final class ValueClassesGenerator
             imports.add(cc + "t" + type.toLowerCase() + ".impl.Sparse" + type + "Matrix1D");
             imports.add(cc + "t" + type.toLowerCase() + ".impl.Sparse" + type + "Matrix2D");
         }
-        if (mutable)
+        if (dimensions > 0 && mutable)
         {
             imports.add("cern.jet.math.t" + type.toLowerCase() + "." + type + "Functions");
         }
 
-        cg.generateAbstractClass(
-                "value.v" + type.toLowerCase() + "." + vectorOrMatrix.toLowerCase(),
-                (mutable ? "Mutable" : "") + type + vectorOrMatrix,
-                arrayListToArray(imports),
-                mutableType + type + vectorOrMatrix + ".",
-                new String[]{"<U> Unit; the unit of this " + (mutable ? "Mutable" : "") + type + vectorOrMatrix},
-                "<U extends Unit<U>> extends "
-                        + (mutable ? type + vectorOrMatrix : "AbstractValue")
-                        + "<U> implements "
-                        + (mutable ? "\r\n" + cg.indent(2) + "Write" + type + vectorOrMatrix + "Functions<U>, " + type
-                                + "MathFunctions" : "Serializable,\r\n" + cg.indent(1) + "ReadOnly" + type
-                                + vectorOrMatrix + "Functions<U>"),
-                mutable
-                        ? cg.buildMethod(outerIndent, "protected||Mutable" + type + vectorOrMatrix,
-                                "Construct a new Mutable" + type + vectorOrMatrix + ".",
-                                new String[]{"final U|unit|the unit of the new Mutable" + type + vectorOrMatrix}, null,
-                                null, new String[]{"super(unit);",
-                                        "// System.out.println(\"Created Mutable" + type + vectorOrMatrix + "\");"},
-                                true)
-                                + cg.buildField(outerIndent, "private boolean copyOnWrite = false",
-                                        "If set, any modification of the data must be preceded by replacing the data "
-                                                + "with a local copy.")
-                                + cg.buildMethod(outerIndent, "private|boolean|isCopyOnWrite",
-                                        "Retrieve the value of the copyOnWrite flag.", null, null, null,
-                                        new String[]{"return this.copyOnWrite;"}, false)
-                                + cg.buildMethod(outerIndent, "final|void|setCopyOnWrite",
-                                        "Change the copyOnWrite flag.",
-                                        new String[]{"final boolean|copyOnWrite|the new value for the copyOnWrite "
-                                                + "flag"}, null, null, new String[]{"this.copyOnWrite = copyOnWrite;"},
-                                        false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|void|normalize",
-                                        null,
-                                        null,
-                                        "ValueException|when zSum is 0",
-                                        null,
-                                        new String[]{
-                                                type.toLowerCase() + " sum = zSum();",
-                                                "if (0 == sum)",
-                                                "{",
-                                                cg.indent(1)
-                                                        + "throw new ValueException(\"zSum is 0; cannot normalize\");",
-                                                "}",
-                                                "checkCopyOnWrite();",
-                                                1 == dimensions ? "for (int i = 0; i < size(); i++)"
-                                                        : "for (int row = rows(); --row >= 0;)",
-                                                "{",
-                                                dimensions > 1 ? cg.indent(1)
-                                                        + "for (int column = columns(); --column >= 0;)" : null,
-                                                dimensions > 1 ? cg.indent(1) + "{" : null,
-                                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
-                                                        + (1 == dimensions ? "i" : "row, column") + ", safeGet("
-                                                        + (1 == dimensions ? "i" : "row, column") + ") / sum);",
-                                                dimensions > 1 ? cg.indent(1) + "}" : null, "}"}, false)
-                                + buildSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type
-                                        + vectorOrMatrix, "Mutable" + type + vectorOrMatrix + "<U>", "Absolute",
-                                        "Mutable" + type + vectorOrMatrix, true, dimensions)
-                                + buildSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type
-                                        + vectorOrMatrix, "Mutable" + type + vectorOrMatrix + "<U>", "Relative",
-                                        "Mutable" + type + vectorOrMatrix, true, dimensions)
-                                + cg.buildMethod(outerIndent, "public abstract|" + type + vectorOrMatrix
-                                        + "<U>|immutable", "Make (immutable) " + type + vectorOrMatrix
-                                        + " equivalent for any type of Mutable" + type + vectorOrMatrix + ".", null,
-                                        null, null, null, false)
-                                + cg.buildMethod(outerIndent, "public final|Mutable" + type + vectorOrMatrix
-                                        + "<U>|copy", null, null, null, null,
-                                        new String[]{
-                                                "return immutable().mutable();",
-                                                "// FIXME: This may cause both the original and the copy to be deep "
-                                                        + "copied later",
-                                                "// Maybe it is better to make one deep copy now..."}, false)
-                                + cg.buildMethod(outerIndent, "protected final|void|checkCopyOnWrite",
-                                        "Check the copyOnWrite flag and, if it is set, make a deep copy of the data "
-                                                + "and clear the flag.", null, null, null, new String[]{
-                                                "if (isCopyOnWrite())",
-                                                "{",
-                                                cg.indent(1) + "// System.out.println(\"copyOnWrite is set: Copying "
-                                                        + "data\");", cg.indent(1) + "deepCopyData();",
-                                                cg.indent(1) + "setCopyOnWrite(false);", "}"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|void|setSI",
-                                        null,
-                                        1 == dimensions ? new String[]{"final int|index|",
-                                                "final " + type.toLowerCase() + "|valueSI"} : new String[]{
-                                                "final int|row|", "final int|column",
-                                                "final " + type.toLowerCase() + "|valueSI"},
-                                        "ValueException|when index is / indices are invalid", null, new String[]{
-                                                "checkIndex(" + (1 == dimensions ? "index" : "row, column") + ");",
-                                                "checkCopyOnWrite();",
-                                                "safeSet(" + (1 == dimensions ? "index" : "row, column")
-                                                        + ", valueSI);"}, false)
-                                + cg.buildMethod(outerIndent, "public final|void|set", null, new String[]{
-                                        "final int|" + (1 == dimensions ? "index" : "row") + "|",
-                                        dimensions > 1 ? "final int|column|" : null,
-                                        "final " + type + "Scalar<U>|value"}, "ValueException|when index is invalid",
-                                        null, new String[]{"setSI(" + (1 == dimensions ? "index" : "row, column")
-                                                + ", value.getValueSI());"}, false)
-                                + cg.buildMethod(outerIndent, "public final|void|setInUnit", null, new String[]{
-                                        "final int|" + (1 == dimensions ? "index" : "row") + "|",
-                                        dimensions > 1 ? "final int|column|" : null,
-                                        "final " + type.toLowerCase() + "|value", "final U|valueUnit|"},
-                                        "ValueException|when index is invalid", null, new String[]{
-                                                "// TODO: creating a " + type
-                                                        + "Scalar.Abs along the way may not be the most efficient "
-                                                        + "way to do this...",
-                                                "setSI(" + (1 == dimensions ? "index" : "row, column") + ", new "
-                                                        + type + "Scalar.Abs<U>(value, valueUnit).getValueSI());"},
-                                        false)
-                                + cg.buildMethod(outerIndent, "public final|void|assign",
-                                        "Execute a function on a cell by cell basis.",
-                                        new String[]{"final cern.colt.function.t" + type.toLowerCase() + "." + type
-                                                + "Function|" + type.substring(0, 1).toLowerCase()
-                                                + "|the function to apply"}, null, null, new String[]{
-                                                "checkCopyOnWrite();",
-                                                "get" + vectorOrMatrix + "SI().assign("
-                                                        + type.substring(0, 1).toLowerCase() + ");"}, false)
-                                + buildVectorFunctions(cg, outerIndent, type)
-                                + cg.buildMethod(outerIndent, "public final|void|multiply", null, new String[]{"final "
-                                        + type.toLowerCase() + "|constant|"}, null, null, new String[]{"assign(" + type
-                                        + "Functions.mult(constant));"}, false)
-                                + cg.buildMethod(outerIndent, "public final|void|divide", null, new String[]{"final "
-                                        + type.toLowerCase() + "|constant|"}, null, null, new String[]{"assign(" + type
-                                        + "Functions.div(constant));"}, false)
-                                + buildInOrDecrementValueByValue(cg, outerIndent, type, vectorOrMatrix,
-                                        pluralAggregateType, dimensions, true)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|Mutable" + type + vectorOrMatrix
-                                                + "<U>|incrementBy|this modified Mutable" + type + vectorOrMatrix,
-                                        "Increment the values in this Mutable" + type + vectorOrMatrix
-                                                + " by the corresponding values in a Relative " + type + vectorOrMatrix
-                                                + ".",
-                                        new String[]{"final " + type + vectorOrMatrix + ".Rel<U>|rel|the Relative "
-                                                + type + vectorOrMatrix},
-                                        "ValueException|when the " + pluralAggregateType + " do not have the same size",
-                                        null, new String[]{"return incrementValueByValue(rel);"}, false)
-                                + buildInOrDecrementValueByValue(cg, outerIndent, type, vectorOrMatrix,
-                                        pluralAggregateType, dimensions, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|Mutable" + type + vectorOrMatrix
-                                                + "<U>|decrementBy|this modified Mutable" + type + vectorOrMatrix,
-                                        "Decrement the values in this Mutable" + type + vectorOrMatrix
-                                                + " by the corresponding values in a Relative " + type + vectorOrMatrix
-                                                + ".",
-                                        new String[]{"final " + type + vectorOrMatrix + ".Rel<U>|rel|the Relative "
-                                                + type + vectorOrMatrix},
-                                        "ValueException|when the " + pluralAggregateType + " do not have the same size",
-                                        null, new String[]{"return decrementValueByValue(rel);"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "protected final|Mutable" + type + vectorOrMatrix
-                                                + ".Rel<U>|decrementBy|this modified Relative Mutable" + type
-                                                + vectorOrMatrix,
-                                        "Decrement the values in this Relative Mutable" + type + vectorOrMatrix
-                                                + " by the corresponding values in an Absolute"
-                                                + (type.startsWith("D") ? "\r\n" + outerIndent + " * " : " ") + type
-                                                + vectorOrMatrix + ".",
-                                        new String[]{"final " + type + vectorOrMatrix + ".Abs<U>|abs|the Absolute "
-                                                + type + vectorOrMatrix},
-                                        "ValueException|when the " + pluralAggregateType + " do not have the same size",
-                                        null, new String[]{"return (Mutable" + type + vectorOrMatrix
-                                                + ".Rel<U>) decrementValueByValue(abs);"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|void|scaleValueByValue",
-                                        "Scale the values in this Mutable" + type + vectorOrMatrix
-                                                + " by the corresponding values in a " + type + vectorOrMatrix + ".",
-                                        new String[]{"final " + type + vectorOrMatrix
-                                                + "<?>|factor|contains the values by which to scale the corresponding "
-                                                + "values in this Mutable" + type + vectorOrMatrix},
-                                        "ValueException|when the " + pluralAggregateType + " do not have the same size",
-                                        null,
-                                        new String[]{
-                                                "checkSizeAndCopyOnWrite(factor);",
-                                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
-                                                        : "for (int row = rows(); --row >= 0;)",
-                                                "{",
-                                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
-                                                dimensions > 1 ? cg.indent(1) + "{" : null,
-                                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
-                                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
-                                                        + (1 == dimensions ? "index" : "row, column")
-                                                        + ") * factor.safeGet("
-                                                        + (1 == dimensions ? "index" : "row, column") + "));",
-                                                dimensions > 1 ? cg.indent(1) + "}" : null, "}"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|Mutable" + type + vectorOrMatrix
-                                                + "<U>|scaleValueByValue|this modified Mutable" + type + vectorOrMatrix,
-                                        "Scale the values in this Mutable" + type + vectorOrMatrix
-                                                + " by the corresponding values in a " + type.toLowerCase() + " array.",
-                                        new String[]{"final " + type.toLowerCase() + emptyBrackets
-                                                + "|factor|contains the values by which to scale the corresponding "
-                                                + "values in this Mutable" + type + vectorOrMatrix},
-                                        "ValueException|when the " + vectorOrMatrix.toLowerCase()
-                                                + " and the array do not have the same size",
-                                        null,
-                                        new String[]{
-                                                "checkSizeAndCopyOnWrite(factor);",
-                                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
-                                                        : "for (int row = rows(); --row >= 0;)",
-                                                "{",
-                                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
-                                                dimensions > 1 ? cg.indent(1) + "{" : null,
-                                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
-                                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
-                                                        + (1 == dimensions ? "index" : "row, column") + ") * factor["
-                                                        + (1 == dimensions ? "index" : "row][column") + "]);",
-                                                dimensions > 1 ? cg.indent(1) + "}" : null, "}", "return this;"}, false)
-                                + cg.buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
-                                        "Check sizes and copy the data if the copyOnWrite flag is set.",
-                                        new String[]{"final " + type + vectorOrMatrix
-                                                + "<?>|other|partner for the size check"}, "ValueException|when the "
-                                                + pluralAggregateType + " do not have the same size", null,
-                                        new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
-                                + cg.buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
-                                        "Check sizes and copy the data if the copyOnWrite flag is set.",
-                                        new String[]{"final " + type.toLowerCase() + emptyBrackets
-                                                + "|other|partner for the size check"}, "ValueException|when the "
-                                                + pluralAggregateType + " do not have the same size", null,
-                                        new String[]{"checkSize(other);", "checkCopyOnWrite();"}, false)
-                                // Generate 6 plus methods
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Rel", dimensions,
-                                        true)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Dense",
-                                        dimensions, true)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Sparse",
-                                        dimensions, true)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Dense", "Rel", dimensions,
-                                        true)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Dense",
-                                        dimensions, true)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
-                                        dimensions, true)
-                                // Generate 9 minus methods
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Abs", dimensions,
-                                        false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Abs.Sparse",
-                                        dimensions, false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Abs.Dense",
-                                        dimensions, false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Rel", dimensions,
-                                        false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Dense",
-                                        dimensions, false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Sparse",
-                                        dimensions, false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Dense", "Rel", dimensions,
-                                        false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Dense",
-                                        dimensions, false)
-                                + buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
-                                        dimensions, false)
-                                // Generate 10 times methods
-                                // TODO: Decide if you ever need multiply an Absolute with anything; I don't think so...
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Dense", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Sparse", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "Abs", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "Rel.Dense", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "Rel.Sparse", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Sparse", "Rel", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "", dimensions)
-                                + buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Sparse", "", dimensions)
-                                + buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, true)
-                                + buildDenseSparseConverter(cg, outerIndent, type, "Abs", true, dimensions)
-                                + buildDenseSparseConverter(cg, outerIndent, type, "Rel", true, dimensions)
-                                + buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, false)
-                                + buildDenseSparseConverter(cg, outerIndent, type, "Abs", false, dimensions)
-                                + buildDenseSparseConverter(cg, outerIndent, type, "Rel", false, dimensions)
-                        : cg.buildField(
-                                outerIndent,
-                                "private " + type + "Matrix" + dimensions + "D " + vectorOrMatrix.toLowerCase() + "SI",
-                                "\r\n" + outerIndent + " * The internal storage for the "
-                                        + vectorOrMatrix.toLowerCase()
-                                        + "; internally the values are stored in standard SI unit; storage can be "
-                                        + "dense\r\n" + outerIndent + " * or sparse.\r\n" + outerIndent)
-                                + cg.buildMethod(outerIndent, "protected||" + (mutable ? "Mutable" : " ") + type
-                                        + vectorOrMatrix, "Construct a new " + mutableType + type + vectorOrMatrix
-                                        + ".", new String[]{"final U|unit|the unit of the new "
-                                        + (mutable ? "Mutable" : "") + type + vectorOrMatrix}, null, null,
-                                        new String[]{"super(unit);",
-                                                "// System.out.println(\"Created " + type + vectorOrMatrix + "\");"},
-                                        true)
-                                + buildSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type
-                                        + vectorOrMatrix, type + vectorOrMatrix + "<U>", "Absolute", type
-                                        + vectorOrMatrix, false, dimensions)
-                                + buildSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type
-                                        + vectorOrMatrix, type + vectorOrMatrix + "<U>", "Relative", type
-                                        + vectorOrMatrix, false, dimensions)
-                                + cg.buildMethod(outerIndent, "protected final|" + type + "Matrix" + dimensions
-                                        + "D|get" + vectorOrMatrix + "SI|the data in the internal format",
-                                        "Retrieve the internal data.", null, null, null, new String[]{"return this."
-                                                + vectorOrMatrix.toLowerCase() + "SI;"}, false)
-                                + cg.buildMethod(outerIndent, "protected final|void|deepCopyData",
-                                        "Make a deep copy of the data (used ONLY in the Mutable" + type
-                                                + vectorOrMatrix + " sub class).", null, null, null,
-                                        new String[]{"this." + vectorOrMatrix.toLowerCase() + "SI = get"
-                                                + vectorOrMatrix
-                                                + "SI().copy(); // makes a deep copy, using multithreading"}, false)
-                                + cg.buildMethod(outerIndent, "public abstract|Mutable" + type + vectorOrMatrix
-                                        + "<U>|mutable|mutable version of this " + type + vectorOrMatrix,
-                                        "Create a mutable version of this " + type + vectorOrMatrix + ". <br>\r\n"
-                                                + outerIndent
-                                                + " * The mutable version is created with a shallow copy of the data "
-                                                + "and the internal copyOnWrite flag set. The first\r\n" + outerIndent
-                                                + " * operation in the mutable version that modifies the data shall "
-                                                + "trigger a deep copy of the data.", null, null, null, null, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "protected final|void|initialize",
-                                        "Import the values and convert them into the SI standard unit.",
-                                        new String[]{"final " + type.toLowerCase() + emptyBrackets
-                                                + "|values|an array of values"},
-                                        dimensions > 1 ? "ValueException|when values is not rectangular" : null,
-                                        null,
-                                        1 == dimensions ? new String[]{
-                                                "this.vectorSI = createMatrix1D(values.length);",
-                                                "if (getUnit().equals(getUnit().getStandardUnit()))",
-                                                "{",
-                                                cg.indent(1) + "this." + vectorOrMatrix.toLowerCase()
-                                                        + "SI.assign(values);",
-                                                "}",
-                                                "else",
-                                                "{",
-                                                cg.indent(1) + "for (int index = values.length; --index >= 0;)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "safeSet(index, "
-                                                        + (type.startsWith("F") ? "(float) " : "")
-                                                        + "expressAsSIUnit(values[index]));", cg.indent(1) + "}", "}"}
-                                                : new String[]{
-                                                        "ensureRectangular(values);",
-                                                        "this.matrixSI = createMatrix2D(values.length, "
-                                                                + "0 == values.length ? 0 : values[0].length);",
-                                                        "if (getUnit().equals(getUnit().getStandardUnit()))",
-                                                        "{",
-                                                        cg.indent(1) + "this.matrixSI.assign(values);",
-                                                        "}",
-                                                        "else",
-                                                        "{",
-                                                        cg.indent(1) + "for (int row = values.length; --row >= 0;)",
-                                                        cg.indent(1) + "{",
-                                                        cg.indent(2) + "for (int column = values[row].length; "
-                                                                + "--column >= 0;)",
-                                                        cg.indent(2) + "{",
-                                                        cg.indent(3) + "safeSet(row, column, "
-                                                                + (type.startsWith("F") ? "(float) " : "")
-                                                                + "expressAsSIUnit(values[row][column]));",
-                                                        cg.indent(2) + "}", cg.indent(1) + "}", "}"}, false)
-                                + cg.buildMethod(outerIndent, "protected final|void|initialize",
-                                        "Import the values from an existing " + type + "Matrix" + dimensions
-                                                + "D. This makes a shallow copy.", new String[]{"final " + type
-                                                + "Matrix" + dimensions + "D|values|the values"}, null, null,
-                                        new String[]{"this." + vectorOrMatrix.toLowerCase() + "SI = values;"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "protected final|void|initialize",
-                                        "Construct the " + vectorOrMatrix.toLowerCase()
-                                                + " and store the values in the standard SI unit.",
-                                        new String[]{"final " + type + "Scalar<U>" + emptyBrackets + "|values|"
-                                                + (dimensions > 1 ? "a " + dimensions + "D " : "an ")
-                                                + "array of values"},
-                                        1 == dimensions ? "ValueException|when values is empty"
-                                                : "ValueException|when values has zero entries, or is not rectangular",
-                                        null,
-                                        1 == dimensions ? new String[]{
-                                                "this." + vectorOrMatrix.toLowerCase()
-                                                        + "SI = createMatrix1D(values.length);",
-                                                "for (int index = 0; index < values.length; index++)", "{",
-                                                cg.indent(1) + "safeSet(index, values[index].getValueSI());",
-                                                cg.indent(1) + "}"} : new String[]{
-                                                "ensureRectangularAndNonEmpty(values);",
-                                                "this.matrixSI = createMatrix2D(values.length, values[0].length);",
-                                                "for (int row = values.length; --row >= 0;)",
-                                                "{",
-                                                cg.indent(1) + "for (int column = values[row].length; --column >= 0;)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2)
-                                                        + "safeSet(row, column, values[row][column].getValueSI());",
-                                                cg.indent(1) + "}", "}"}, false)
-                                + cg.buildMethod(outerIndent, "protected abstract|" + type + "Matrix" + dimensions
-                                        + "D|createMatrix" + dimensions + "D|an instance of the right type of " + type
-                                        + "Matrix" + dimensions + "D (absolute/relative, dense/sparse, etc.)",
-                                        "Create storage for the data. <br/>\r\n" + outerIndent
-                                                + " * This method must be implemented by each leaf class.",
-                                        1 == dimensions ? new String[]{"final int|size|the number of cells in the "
-                                                + vectorOrMatrix.toLowerCase()} : new String[]{
-                                                "final int|rows|the number of rows in the matrix",
-                                                "final int|columns|the number of columns in the matrix"}, null, null,
-                                        null, false)
-                                + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + emptyBrackets
-                                        + "|getValuesSI|array of values in the standard SI unit",
-                                        "Create a " + type.toLowerCase() + emptyBrackets
-                                                + " array filled with the values in the standard SI unit.", null, null,
-                                        null, new String[]{"return this." + vectorOrMatrix.toLowerCase()
-                                                + "SI.toArray(); // this makes a deep copy"}, false)
-                                + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + emptyBrackets
-                                        + "|getValuesInUnit|the values in the original unit",
-                                        "Create a " + type.toLowerCase() + emptyBrackets
-                                                + " array filled with the values in the original unit.", null, null,
-                                        null, new String[]{"return getValuesInUnit(getUnit());"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|" + type.toLowerCase() + emptyBrackets
-                                                + "|getValuesInUnit|the values converted into the specified unit",
-                                        "Create a " + type.toLowerCase() + emptyBrackets
-                                                + " array filled with the values converted into a specified unit.",
-                                        new String[]{"final U|targetUnit|the unit into which the values are converted "
-                                                + "for use"},
-                                        null,
-                                        null,
-                                        1 == dimensions ? new String[]{
-                                                type.toLowerCase() + "[] values = this.vectorSI.toArray();",
-                                                "for (int i = values.length; --i >= 0;)",
-                                                "{",
-                                                cg.indent(1) + "values[i] = "
-                                                        + (type.startsWith("F") ? "(float) " : "")
-                                                        + "ValueUtil.expressAsUnit(values[i], targetUnit);", "}",
-                                                "return values;"} : new String[]{
-                                                type.toLowerCase() + emptyBrackets
-                                                        + " values = this.matrixSI.toArray();",
-                                                "for (int row = rows(); --row >= 0;)",
-                                                "{",
-                                                cg.indent(1) + "for (int column = columns(); --column >= 0;)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "values[row][column] = "
-                                                        + (type.startsWith("F") ? "(float) " : "")
-                                                        + "ValueUtil.expressAsUnit(values[row][column], targetUnit);",
-                                                cg.indent(1) + "}", "}", "return values;"}, false)
-                                + (1 == dimensions ? cg.buildMethod(outerIndent, "public final|int|size", null, null,
-                                        null, null, new String[]{"return (int) this." + vectorOrMatrix.toLowerCase()
-                                                + "SI.size();"}, false) : cg.buildMethod(outerIndent,
-                                        "public final|int|rows", null, null, null, null, new String[]{"return this."
-                                                + vectorOrMatrix.toLowerCase() + "SI.rows();"}, false)
-                                        + cg.buildMethod(outerIndent, "public final|int|columns", null, null, null,
-                                                null, new String[]{"return this." + vectorOrMatrix.toLowerCase()
-                                                        + "SI.columns();"}, false))
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|" + type.toLowerCase() + "|getSI",
-                                        null,
-                                        1 == dimensions ? new String[]{"final int|index|"} : new String[]{
-                                                "final int|row|", "final int|column|"},
-                                        "ValueException|",
-                                        null,
-                                        new String[]{
-                                                "checkIndex(" + (1 == dimensions ? "index" : "row, column") + ");",
-                                                "return safeGet(" + (1 == dimensions ? "index" : "row, column") + ");"},
-                                        false)
-                                + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + "|getInUnit",
-                                        null, 1 == dimensions ? new String[]{"final int|index|"} : new String[]{
-                                                "final int|row|", "final int|column|"}, "ValueException", null,
-                                        new String[]{"return " + (type.startsWith("F") ? "(float) " : "")
-                                                + "expressAsSpecifiedUnit(getSI("
-                                                + (1 == dimensions ? "index" : "row, column") + "));"}, false)
-                                + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + "|getInUnit",
-                                        null, 1 == dimensions ? new String[]{"final int|index|", "final U|targetUnit|"}
-                                                : new String[]{"final int|row|", "final int|column|",
-                                                        "final U|targetUnit|"}, "ValueException", null,
-                                        new String[]{"return " + (type.startsWith("F") ? "(float) " : "")
-                                                + "ValueUtil.expressAsUnit(getSI("
-                                                + (1 == dimensions ? "index" : "row, column") + "), targetUnit);"},
-                                        false)
-                                + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + "|zSum", null,
-                                        null, null, null, new String[]{"return this." + vectorOrMatrix.toLowerCase()
-                                                + "SI.zSum();"}, false)
-                                + cg.buildMethod(outerIndent, "public final|int|cardinality", null, null, null, null,
-                                        new String[]{"return this." + vectorOrMatrix.toLowerCase()
-                                                + "SI.cardinality();"}, false)
-                                + (2 == dimensions ? cg.buildMethod(
-                                        outerIndent,
-                                        "public final|" + type.toLowerCase() + "|det",
-                                        null,
-                                        null,
-                                        "ValueException|",
-                                        null,
-                                        new String[]{
-                                                "try",
-                                                "{",
-                                                cg.indent(1) + "if (this instanceof SparseData)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "return new Sparse" + type
-                                                        + "Algebra().det(getMatrixSI());",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "if (this instanceof DenseData)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "return new Dense" + type
-                                                        + "Algebra().det(getMatrixSI());",
-                                                cg.indent(1) + "}",
-                                                "throw new ValueException(\"" + type
-                                                        + "Matrix.det -- matrix implements neither Sparse nor "
-                                                        + "Dense\");",
-                                                "}",
-                                                "catch (IllegalArgumentException exception)",
-                                                "{",
-                                                cg.indent(1) + "if (!exception.getMessage().startsWith(\"Matrix "
-                                                        + "must be square\"))",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "exception.printStackTrace();",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "throw new ValueException(exception.getMessage()); "
-                                                        + "// probably Matrix must be square", cg.indent(1) + "}"},
-                                        false) : "")
-                                + cg.buildMethod(outerIndent, "public final|String|toString|printable string with the "
-                                        + vectorOrMatrix.toLowerCase() + " contents", null, null, null, null,
-                                        new String[]{"return toString(getUnit());"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|String|toString|printable string with the "
-                                                + vectorOrMatrix.toLowerCase() + " contents",
-                                        "Print this " + type + vectorOrMatrix
-                                                + " with the values expressed in the specified unit.",
-                                        new String[]{"final U|displayUnit|the unit into which the values are "
-                                                + "converted for display"},
-                                        null,
-                                        null,
-                                        new String[]{
-                                                "StringBuffer buf = new StringBuffer();",
-                                                "if (this instanceof Mutable" + type + vectorOrMatrix + ")",
-                                                "{",
-                                                cg.indent(1) + "buf.append(\"Mutable   \");",
-                                                "if (this instanceof Mutable" + type + vectorOrMatrix + ".Abs.Dense)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Abs Dense  \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else if (this instanceof Mutable" + type
-                                                        + vectorOrMatrix + ".Rel.Dense)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Rel Dense  \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else if (this instanceof Mutable" + type
-                                                        + vectorOrMatrix + ".Abs.Sparse)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Abs Sparse \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else if (this instanceof Mutable" + type
-                                                        + vectorOrMatrix + ".Rel.Sparse)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Rel Sparse \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"??? \");",
-                                                cg.indent(1) + "}",
-                                                "}",
-                                                "else",
-                                                "{",
-                                                cg.indent(1) + "buf.append(\"Immutable \");",
-                                                "if (this instanceof " + type + vectorOrMatrix + ".Abs.Dense)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Abs Dense  \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else if (this instanceof " + type + vectorOrMatrix
-                                                        + ".Rel.Dense)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Rel Dense  \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else if (this instanceof " + type + vectorOrMatrix
-                                                        + ".Abs.Sparse)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Abs Sparse \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else if (this instanceof " + type + vectorOrMatrix
-                                                        + ".Rel.Sparse)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"Rel Sparse \");",
-                                                cg.indent(1) + "}",
-                                                cg.indent(1) + "else",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "buf.append(\"??? \");",
-                                                cg.indent(1) + "}",
-                                                "}",
-                                                "buf.append(\"[\" + displayUnit.getAbbreviation() + \"]\");",
-                                                (1 == dimensions ? "for (int i = 0; i < size(); i++)"
-                                                        : "for (int row = 0; row < rows(); row++)"),
-                                                "{",
-                                                (dimensions > 1 ? "buf.append(\"\\r\\n\\t\");" : null),
-                                                (dimensions > 1 ? "for (int column = 0; column < columns(); column++)"
-                                                        : null),
-                                                (dimensions > 1 ? "{" : null),
-                                                cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "")
-                                                        + (type.startsWith("F") ? "float f = (float) " : "double d = ")
-                                                        + "ValueUtil.expressAsUnit(safeGet("
-                                                        + (1 == dimensions ? "i" : "row, column") + "), displayUnit);",
-                                                cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "")
-                                                        + "buf.append(\" \" + Format.format("
-                                                        + type.substring(0, 1).toLowerCase() + "));",
-                                                (dimensions > 1 ? cg.indent(1) + "}" : null), "}",
-                                                "return buf.toString();"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "protected final|void|checkSize",
-                                        "Centralized size equality check.",
-                                        new String[]{"final " + type + vectorOrMatrix + "<?>|other|other " + type
-                                                + vectorOrMatrix},
-                                        "ValueException|when " + pluralAggregateType + " have unequal size",
-                                        null,
-                                        new String[]{
-                                                1 == dimensions ? "if (size() != other.size())"
-                                                        : "if (rows() != other.rows() || columns() != other.columns())",
-                                                "{",
-                                                cg.indent(1)
-                                                        + "throw new ValueException(\"The "
-                                                        + pluralAggregateType
-                                                        + " have different sizes: \" + "
-                                                        + (1 == dimensions ? "size() + \" != \" + other.size());"
-                                                                : "rows() + \"x\" + columns() + \" != \""),
-                                                dimensions > 1 ? cg.indent(3)
-                                                        + "+ other.rows() + \"x\" + other.columns());" : null, "}"},
-                                        false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "protected final|void|checkSize",
-                                        "Centralized size equality check.",
-                                        new String[]{"final " + type.toLowerCase() + emptyBrackets + "|other|array of "
-                                                + type.toLowerCase()},
-                                        "ValueException|when " + pluralAggregateType + " have unequal size",
-                                        null,
-                                        new String[]{
-                                                (dimensions > 1 ? "final int otherColumns = 0 == other.length ? 0 : "
-                                                        + "other[0].length;" : null),
-                                                dimensions == 1 ? "if (size() != other.length)"
-                                                        : "if (rows() != other.length || columns() != otherColumns)",
-                                                "{",
-                                                "throw new ValueException(\"The "
-                                                        + vectorOrMatrix.toLowerCase()
-                                                        + " and the array have different sizes: \" + "
-                                                        + (1 == dimensions ? "size() + \" != \" + other.length);"
-                                                                : "rows() + \"x\" + columns()"),
-                                                dimensions > 1 ? cg.indent(3)
-                                                        + "+ \" != \" + other.length + \"x\" + otherColumns);" : null,
-                                                "}", dimensions > 1 ? "ensureRectangular(other);" : null}, false)
-                                + (dimensions > 1 ? cg.buildMethod(
-                                        outerIndent,
-                                        "private static|void|ensureRectangular",
-                                        "Check that a 2D array of " + type.toLowerCase()
-                                                + " is rectangular; i.e. all rows have the same length.",
-                                        new String[]{"final " + type.toLowerCase() + emptyBrackets
-                                                + "|values|the 2D array to check"},
-                                        "ValueException|when not all rows have the same length",
-                                        null,
-                                        new String[]{
-                                                "for (int row = values.length; --row >= 1;)",
-                                                "{",
-                                                cg.indent(1) + "if (values[0].length != values[row].length)",
-                                                cg.indent(1) + "{",
-                                                cg.indent(2) + "throw new ValueException(\"Lengths of rows are "
-                                                        + "not all the same\");", cg.indent(1) + "}", "}"}, false)
-                                        + cg.buildMethod(outerIndent,
-                                                "private static|void|ensureRectangularAndNonEmpty",
-                                                "Check that a 2D array of " + type
-                                                        + "Scalar&lt;?&gt; is rectangular; i.e. all rows have "
-                                                        + "the same length and is non\r\n" + outerIndent + " * empty.",
-                                                new String[]{"final " + type + "Scalar<?>" + emptyBrackets
-                                                        + "|values|the 2D array to check"},
-                                                "ValueException|when values is not rectangular, or contains "
-                                                        + "no data", null,
-                                                new String[]{
-                                                        "if (0 == values.length || 0 == values[0].length)",
-                                                        "{",
-                                                        cg.indent(1) + "throw new ValueException(\"Cannot "
-                                                                + "determine unit for " + type
-                                                                + "Matrix from an empty array of " + type + "Scalar"
-                                                                + "\");",
-                                                        "}",
-                                                        "for (int row = values.length; --row >= 1;)",
-                                                        "{",
-                                                        cg.indent(1) + "if (values[0].length != values[row].length)",
-                                                        cg.indent(1) + "{",
-                                                        cg.indent(2) + "throw new ValueException(\"Lengths of rows "
-                                                                + "are not all the same\");", cg.indent(1) + "}", "}"},
-                                                false) : "")
-                                + cg.buildMethod(outerIndent, "protected final|void|checkIndex", 1 == dimensions
-                                        ? "Check that a provided index is valid."
-                                        : "Check that provided row and column indices are valid.", 1 == dimensions
-                                        ? new String[]{"final int|index|the value to check"} : new String[]{
-                                                "final int|row|the row value to check",
-                                                "final int|column|the column value to check"}, 1 == dimensions
-                                        ? "ValueException|when index is invalid"
-                                        : "ValueException|when row or column is invalid", null, new String[]{
-                                        1 == dimensions ? "if (index < 0 || index >= size())"
-                                                : "if (row < 0 || row >= rows() || column < 0 || "
-                                                        + "column >= columns())",
-                                        "{",
-                                        cg.indent(1)
-                                                + "throw new ValueException(\"index out of range (valid "
-                                                + "range is 0..\" + "
-                                                + (1 == dimensions ? "(size() - 1) + \", got \" + index + \")\");"
-                                                        : "(rows() - 1) + \", 0..\""),
+        StringBuilder code = new StringBuilder();
+        if (mutable)
+        {
+            code.append(cg.buildMethod(outerIndent, "protected||Mutable" + type + vectorOrMatrix,
+                    "Construct a new Mutable" + type + vectorOrMatrix + ".",
+                    new String[]{"final U|unit|the unit of the new Mutable" + type + vectorOrMatrix}, null, null,
+                    new String[]{"super(unit);",
+                            "// System.out.println(\"Created Mutable" + type + vectorOrMatrix + "\");"}, true));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildField(outerIndent, "private boolean copyOnWrite = false",
+                        "If set, any modification of the data must be preceded by replacing the data "
+                                + "with a local copy."));
 
-                                        dimensions > 1 ? cg.indent(3)
-                                                + "+ (columns() - 1) + \", got \" + row + \", \" + column + \")\");"
-                                                : null, "}"}, false)
-                                + cg.buildMethod(outerIndent, "protected final|" + type.toLowerCase()
-                                        + "|safeGet|the value stored at "
-                                        + (1 == dimensions ? "that index" : "the indicated row and column"),
-                                        "Retrieve a value in " + vectorOrMatrix.toLowerCase()
-                                                + "SI without checking validity of the "
-                                                + (1 == dimensions ? "index." : "indices."),
-                                        1 == dimensions ? new String[]{"final int|index|the index"} : new String[]{
-                                                "final int|row|the row where the value must be retrieved",
-                                                "final int|column|the column where the value must be retrieved"}, null,
-                                        null, new String[]{"return this." + vectorOrMatrix.toLowerCase()
-                                                + "SI.getQuick(" + (1 == dimensions ? "index);" : "row, column);")},
-                                        false)
-                                + cg.buildMethod(outerIndent, "protected final|void|safeSet", "Modify a value in "
-                                        + vectorOrMatrix.toLowerCase() + "SI without checking validity of the "
-                                        + (1 == dimensions ? "index." : "indices."), new String[]{
-                                        1 == dimensions ? "final int|index|the index"
-                                                : "final int|row|the row where the value must be stored",
-                                        dimensions > 1 ? "final int|column|the column where the value must be stored"
-                                                : null,
-                                        "final " + type.toLowerCase() + "|valueSI|the new value for the entry in "
-                                                + vectorOrMatrix.toLowerCase() + "SI"}, null, null,
-                                        new String[]{"this." + vectorOrMatrix.toLowerCase() + "SI.setQuick("
-                                                + (1 == dimensions ? "index, " : "row, column, ") + "valueSI);"}, false)
-                                + cg.buildMethod(outerIndent, "protected final|" + type + "Matrix" + dimensions
-                                        + "D|deepCopyOfData|deep copy of the data", "Create a deep copy of the data.",
-                                        null, null, null, new String[]{"return this." + vectorOrMatrix.toLowerCase()
-                                                + "SI.copy();"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "protected static <U extends Unit<U>>|" + type + "Scalar<U>" + emptyBrackets
-                                                + "|checkNonEmpty|the provided array",
-                                        "Check that a provided array can be used to create some descendant of a "
-                                                + type + vectorOrMatrix + ".",
-                                        new String[]{
-                                                "final " + type + "Scalar<U>" + emptyBrackets + "|"
-                                                        + type.substring(0, 1).toLowerCase()
-                                                        + "sArray|the provided array",
-                                                "Unit|<U>|the unit of the " + type + "Scalar array"},
-                                        "ValueException|when the array has "
-                                                + (1 == dimensions ? "length equal to 0" : "zero entries"), null,
-                                        new String[]{
-                                                "if (0 == "
-                                                        + type.substring(0, 1).toLowerCase()
-                                                        + "sArray.length"
-                                                        + (dimensions > 1 ? " || 0 == "
-                                                                + type.substring(0, 1).toLowerCase()
-                                                                + "sArray[0].length" : "") + ")",
-                                                "{",
-                                                cg.indent(1) + "throw new ValueException(",
-                                                cg.indent(3) + "\"Cannot create a " + type + vectorOrMatrix
-                                                        + " or Mutable" + type + vectorOrMatrix
-                                                        + " from an empty array of " + type + "Scalar\");", "}",
-                                                "return " + type.substring(0, 1).toLowerCase() + "sArray;"}, false)
-                                + (2 == dimensions
-                                        ? cg.buildMethod(outerIndent, "public static|" + type
-                                                + "Vector<SIUnit>|solve|vector x in A*x = b",
-                                                "Solve x for A*x = b. According to Colt: x; a new independent matrix; "
-                                                        + "solution if A is square, least squares\r\n" + cg.indent(1)
-                                                        + " * solution if A.rows() &gt; A.columns(), underdetermined "
-                                                        + "system solution if A.rows() &lt; A.columns().",
-                                                new String[]{"final " + type + "Matrix<?>|A|matrix A in A*x = b",
-                                                        "final " + type + "Vector<?>|b|vector b in A*x = b"},
-                                                "ValueException|when matrix A is neither Sparse nor Dense", null,
-                                                new String[]{
-                                                        "// TODO: is this correct? Should lookup matrix algebra "
-                                                                + "to find out unit for x when solving A*x = b ?",
-                                                        "SIUnit targetUnit =",
-                                                        cg.indent(2) + "Unit.lookupOrCreateSIUnitWithSICoefficients("
-                                                                + "SICoefficients.divide(b.getUnit()."
-                                                                + "getSICoefficients(),",
-                                                        cg.indent(4) + "A.getUnit().getSICoefficients()).toString());",
-                                                        "",
-                                                        "// TODO: should the algorithm throw an exception when rows/"
-                                                                + "columns do not match when solving A*x = b ?",
-                                                        type + "Matrix2D A2D = A.getMatrixSI();",
-                                                        "if (A instanceof SparseData)",
-                                                        "{",
-                                                        cg.indent(1) + "Sparse" + type + "Matrix1D b1D = new Sparse"
-                                                                + type + "Matrix1D(b.getValuesSI());",
-                                                        cg.indent(1) + type + "Matrix1D x1D = new Sparse" + type
-                                                                + "Algebra().solve(A2D, b1D);",
-                                                        cg.indent(1) + type + "Vector.Abs.Sparse<SIUnit> x = new "
-                                                                + type + "Vector.Abs.Sparse<SIUnit>(x1D.toArray(), "
-                                                                + "targetUnit);",
-                                                        "return x;",
-                                                        "}",
-                                                        "if (A instanceof DenseData)",
-                                                        "{",
-                                                        cg.indent(1) + "Dense" + type + "Matrix1D b1D = new Dense"
-                                                                + type + "Matrix1D(b.getValuesSI());",
-                                                        cg.indent(1) + type + "Matrix1D x1D = new Dense" + type
-                                                                + "Algebra().solve(A2D, b1D);",
-                                                        cg.indent(1) + type + "Vector.Abs.Dense<SIUnit> x = new "
-                                                                + type + "Vector.Abs.Dense<SIUnit>(x1D.toArray(), "
-                                                                + "targetUnit);",
-                                                        cg.indent(1) + "return x;",
-                                                        "}",
-                                                        "throw new ValueException(\"" + type
-                                                                + "Matrix.det -- matrix implements neither Sparse nor "
-                                                                + "Dense\");"}, false) : "")
-                                + cg.buildMethod(outerIndent, "public final|int|hashCode", null, null, null, null,
-                                        new String[]{
-                                                "final int prime = 31;",
-                                                "int result = 1;",
-                                                "result = prime * result + this." + vectorOrMatrix.toLowerCase()
-                                                        + "SI.hashCode();", "return result;"}, false)
-                                + cg.buildMethod(
-                                        outerIndent,
-                                        "public final|boolean|equals",
-                                        null,
-                                        new String[]{"final Object|obj|"},
-                                        null,
-                                        null,
-                                        new String[]{
-                                                "if (this == obj)",
-                                                "{",
-                                                cg.indent(1) + "return true;",
-                                                "}",
-                                                "if (obj == null)",
-                                                "{",
-                                                "return false;",
-                                                "}",
-                                                "if (!(obj instanceof " + type + vectorOrMatrix + "))",
-                                                "{",
-                                                cg.indent(1) + "return false;",
-                                                "}",
-                                                type + vectorOrMatrix + "<?> other = (" + type + vectorOrMatrix
-                                                        + "<?>) obj;",
-                                                "// unequal if not both absolute or both relative",
-                                                "if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != "
-                                                        + "other.isRelative())",
-                                                "{",
-                                                cg.indent(1) + "return false;",
-                                                "}",
-                                                "// unequal if the standard SI units differ",
-                                                "if (!this.getUnit().getStandardUnit().equals(other.getUnit()."
-                                                        + "getStandardUnit()))",
-                                                "{",
-                                                cg.indent(1) + "return false;",
-                                                "}",
-                                                "// Colt's equals also tests the size of the "
-                                                        + vectorOrMatrix.toLowerCase(),
-                                                "if (!get" + vectorOrMatrix + "SI().equals(other.get" + vectorOrMatrix
-                                                        + "SI()))", "{", cg.indent(1) + "return false;", "}",
-                                                "return true;"}, false));
+                code.append(cg.buildMethod(outerIndent, "private|boolean|isCopyOnWrite",
+                        "Retrieve the value of the copyOnWrite flag.", null, null, null,
+                        new String[]{"return this.copyOnWrite;"}, false));
+                code.append(cg.buildMethod(outerIndent, "final|void|setCopyOnWrite", "Change the copyOnWrite flag.",
+                        new String[]{"final boolean|copyOnWrite|the new value for the copyOnWrite " + "flag"}, null,
+                        null, new String[]{"this.copyOnWrite = copyOnWrite;"}, false));
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public final|void|normalize",
+                        null,
+                        null,
+                        "ValueException|when zSum is 0",
+                        null,
+                        new String[]{
+                                type.toLowerCase() + " sum = zSum();",
+                                "if (0 == sum)",
+                                "{",
+                                cg.indent(1) + "throw new ValueException(\"zSum is 0; cannot normalize\");",
+                                "}",
+                                "checkCopyOnWrite();",
+                                1 == dimensions ? "for (int i = 0; i < size(); i++)"
+                                        : "for (int row = rows(); --row >= 0;)",
+                                "{",
+                                dimensions > 1 ? cg.indent(1) + "for (int column = columns(); --column >= 0;)" : null,
+                                dimensions > 1 ? cg.indent(1) + "{" : null,
+                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
+                                        + (1 == dimensions ? "i" : "row, column") + ", safeGet("
+                                        + (1 == dimensions ? "i" : "row, column") + ") / sum);",
+                                dimensions > 1 ? cg.indent(1) + "}" : null, "}"}, false));
+            }
+            code.append(buildSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type + vectorOrMatrix,
+                    "Mutable" + type + vectorOrMatrix + "<U>", "Absolute", "Mutable" + type + vectorOrMatrix, true,
+                    dimensions));
+            code.append(buildSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type + vectorOrMatrix,
+                    "Mutable" + type + vectorOrMatrix + "<U>", "Relative", "Mutable" + type + vectorOrMatrix, true,
+                    dimensions));
+            code.append(cg.buildMethod(outerIndent, "public abstract|" + type + vectorOrMatrix
+                    + "<U>|immutable|immutable version of this " + type + vectorOrMatrix, "Make (immutable) "
+                    + type
+                    + vectorOrMatrix
+                    + " equivalent for any type of Mutable"
+                    + type
+                    + vectorOrMatrix
+                    + "."
+                    + (0 == dimensions ? " <br>\r\n" + outerIndent
+                            + " * The immutable version is created as a deep copy "
+                            + "of this. Delayed copying is not worthwhile for a Scalar." : ""), null, null, null, null,
+                    false));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + vectorOrMatrix + "<U>|copy",
+                        null, null, null, null, new String[]{"return immutable().mutable();",
+                                "// FIXME: This may cause both the original and the copy to be deep " + "copied later",
+                                "// Maybe it is better to make one deep copy now..."}, false));
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "protected final|void|checkCopyOnWrite",
+                        "Check the copyOnWrite flag and, if it is set, make a deep "
+                                + "copy of the data and clear the flag.",
+                        null,
+                        null,
+                        null,
+                        new String[]{
+                                "if (isCopyOnWrite())",
+                                "{",
+                                cg.indent(1) + "// System.out.println(\"copyOnWrite is " + "set: Copying " + "data\");",
+                                cg.indent(1) + "deepCopyData();", cg.indent(1) + "setCopyOnWrite(false);", "}"}, false));
+            }
+            code.append(cg.buildMethod(outerIndent, (0 == dimensions ? "" : "public") + " final|void|setSI",
+                    0 == dimensions ? "Replace the stored value by the supplied value which is expressed "
+                            + "in the standard SI unit." : null, new String[]{
+                            1 == dimensions ? "final int|index|" : null,
+                            2 == dimensions ? "final int|row|" : null,
+                            2 == dimensions ? "final int|column" : null,
+                            "final " + type.toLowerCase() + "|valueSI|the value to store (value must "
+                                    + "already be in the standard SI unit)"}, 0 == dimensions ? null
+                            : "ValueException|when index is / indices are invalid", null, new String[]{
+                            dimensions > 0 ? "checkIndex(" + (1 == dimensions ? "index" : "row, column") + ");" : null,
+                            dimensions > 0 ? "checkCopyOnWrite();" : null,
+                            dimensions == 0 ? "setValueSI(valueSI);" : "safeSet("
+                                    + (1 == dimensions ? "index" : "row, column") + ", valueSI);"}, false));
+            code.append(cg.buildMethod(outerIndent, (dimensions > 0 ? "public " : "") + "final|void|set",
+                    0 == dimensions ? "Replace the stored value by the supplied value." : null, new String[]{
+                            dimensions > 0 ? "final int|" + (1 == dimensions ? "index" : "row") + "|" : null,
+                            dimensions > 1 ? "final int|column|" : null,
+                            "final " + type + "Scalar<U>|value|the strongly typed value to store"}, dimensions > 0
+                            ? "ValueException|when index is invalid" : null, null, new String[]{(0 == dimensions
+                            ? "setValueSI(" : "setSI(")
+                            + (0 == dimensions ? "" : 1 == dimensions ? "index, " : "row, column, ")
+                            + "value.getSI());"}, false));
+            code.append(cg.buildMethod(
+                    outerIndent,
+                    (0 == dimensions ? "" : "public ") + "final|void|setInUnit",
+                    dimensions == 0 ? "Replace the stored value by the supplied value which can be "
+                            + "expressed in any compatible unit." : null,
+                    new String[]{dimensions == 1 ? "final int|index|" : null, dimensions > 1 ? "final int|row|" : null,
+                            dimensions > 1 ? "final int|column|" : null,
+                            "final " + type.toLowerCase() + "|value|the value to store",
+                            "final U|valueUnit|the unit of the supplied value"},
+                    dimensions > 0 ? "ValueException|when index is invalid" : null,
+                    null,
+                    new String[]{(0 == dimensions ? "setValueSI" : "setSI") + "("
+                            + (0 == dimensions ? "" : 1 == dimensions ? "index, " : "row, column, ")
+                            + (type.startsWith("F") ? "(float) " : "")
+                            + "ValueUtil.expressAsSIUnit(value, valueUnit));"}, false));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public final|void|assign",
+                        "Execute a function on a cell by cell basis.",
+                        new String[]{"final cern.colt.function.t" + type.toLowerCase() + "." + type + "Function|"
+                                + type.substring(0, 1).toLowerCase() + "|the function to apply"},
+                        null,
+                        null,
+                        new String[]{"checkCopyOnWrite();",
+                                "get" + vectorOrMatrix + "SI().assign(" + type.substring(0, 1).toLowerCase() + ");"},
+                        false));
+            }
+            code.append(cg.buildBlockComment(outerIndent, "MATH METHODS"));
+            code.append(buildVectorFunctions(cg, outerIndent, type, dimensions));
+            code.append(cg.buildMethod(outerIndent, "public final|void|multiply", null,
+                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null,
+                    new String[]{0 == dimensions ? "setValueSI(getSI() * constant);" : "assign(" + type
+                            + "Functions.mult(constant));"}, false));
+            code.append(cg.buildMethod(outerIndent, "public final|void|divide", null,
+                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null,
+                    new String[]{0 == dimensions ? "setValueSI(getSI() / constant);" : "assign(" + type
+                            + "Functions.div(constant));"}, false));
+            code.append(cg.buildBlockComment(outerIndent, "NON-STATIC METHODS"));
+            code.append(buildInOrDecrementValueByValue(cg, outerIndent, type, vectorOrMatrix, pluralAggregateType,
+                    dimensions, true));
+            code.append(buildInOrDecrementValueByValue(cg, outerIndent, type, vectorOrMatrix, pluralAggregateType,
+                    dimensions, false));
+            code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + vectorOrMatrix
+                    + "<U>|incrementBy|this modified Mutable" + type + vectorOrMatrix, "Increment the value"
+                    + (0 == dimensions ? "" : "s") + " in this Mutable" + type + vectorOrMatrix + " by the "
+                    + (0 == dimensions ? "value" : "corresponding values") + " in a Relative " + type + vectorOrMatrix
+                    + ". <br>\r\n" + outerIndent + " * Only Relative values are allowed; adding an Absolute value to "
+                    + "an Absolute value is not allowed. Adding an\r\n" + outerIndent
+                    + " * Absolute value to an existing Relative value would require the "
+                    + "result to become Absolute, which is a type change\r\n" + outerIndent
+                    + " * that is impossible. For that operation use a static method.", new String[]{"final " + type
+                    + vectorOrMatrix + ".Rel<U>|rel|the Relative " + type + vectorOrMatrix}, dimensions > 0
+                    ? "ValueException|when the " + pluralAggregateType + " do not have the same size" : null, null,
+                    new String[]{
+                            0 == dimensions ? "setValueSI(getSI() + rel.getSI());"
+                                    : "return incrementValueByValue(rel);", 0 == dimensions ? "return this;" : null},
+                    false));
+            code.append(cg
+                    .buildMethod(outerIndent, "public final|Mutable" + type + vectorOrMatrix
+                            + "<U>|decrementBy|this modified Mutable" + type + vectorOrMatrix, "Decrement the "
+                            + (0 == dimensions ? "value" : "corresponding values") + " of a Relative " + type
+                            + vectorOrMatrix + " from the value" + (0 == dimensions ? "" : "s") + " of this Mutable"
+                            + type + vectorOrMatrix + ". <br>\r\n" + outerIndent
+                            + " * Only Relative values are allowed; subtracting an Absolute value "
+                            + "from a Relative value is not allowed. Subtracting\r\n" + outerIndent
+                            + " * an Absolute value from an existing Absolute value would require "
+                            + "the result to become Relative, which is a type\r\n" + outerIndent
+                            + " * change that is impossible. For that operation use a static " + "method.",
+                            new String[]{"final " + type + vectorOrMatrix + ".Rel<U>|rel|the Relative " + type
+                                    + vectorOrMatrix}, dimensions > 0 ? "ValueException|when the "
+                                    + pluralAggregateType + " do not have the same size" : null, null, new String[]{
+                                    0 == dimensions ? "setValueSI(getSI() - rel.getSI());"
+                                            : "return decrementValueByValue(rel);",
+                                    0 == dimensions ? "return this;" : null}, false));
+            if (dimensions > 0)
+            {
+                code.append(outerIndent + "// FIXME It makes no sense to subtract an Absolute from a Relative\r\n");
+                code.append(cg.buildMethod(outerIndent, "protected final|Mutable" + type + vectorOrMatrix
+                        + ".Rel<U>|decrementBy|this modified Relative Mutable" + type + vectorOrMatrix,
+                        "Decrement the values in this Relative Mutable" + type + vectorOrMatrix
+                                + " by the corresponding values in an Absolute"
+                                + (type.startsWith("D") ? "\r\n" + outerIndent + " * " : " ") + type + vectorOrMatrix
+                                + ".", new String[]{"final " + type + vectorOrMatrix + ".Abs<U>|abs|the Absolute "
+                                + type + vectorOrMatrix}, "ValueException|when the " + pluralAggregateType
+                                + " do not have the same size", null, new String[]{"return (Mutable" + type
+                                + vectorOrMatrix + ".Rel<U>) decrementValueByValue(abs);"}, false));
+            }
+            code.append(cg.buildBlockComment(outerIndent, "STATIC METHODS"));
+            if (0 == dimensions)
+            {
+                code.append(buildScalarPlus(cg, outerIndent, type, true));
+                code.append(buildScalarPlus(cg, outerIndent, type, false));
+                code.append(buildScalarMinus(cg, outerIndent, type, true));
+                code.append(buildScalarMinus(cg, outerIndent, type, false));
+                // abs minus abs -> rel is a special case because the result differs from both input types
+                code.append(cg.buildMethod(outerIndent, "public static <U extends Unit<U>>|Mutable" + type
+                        + "Scalar.Rel<U>|minus|the difference of the two absolute values as a relative value",
+                        "Subtract two absolute values. Return a new instance of a relative value of the difference. The unit "
+                                + "of the value\r\n" + outerIndent + " * will be the unit of the first argument.",
+                        new String[]{"final " + type + "Scalar.Abs<U>|valueAbs1|value 1",
+                                "final " + type + "Scalar.Abs<U>|valueAbs2|value 2",
+                                "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
+                                "Mutable" + type + "Scalar.Rel<U> result = new Mutable" + type
+                                        + "Scalar.Rel<U>(valueAbs1.getInUnit(), valueAbs1.getUnit());",
+                                "result.decrementBy(valueAbs2);", "return result;"}, false));
+                code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, true, true));
+                code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, false, true));
+                code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, true, false));
+                code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, false, false));
+            }
+            else
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public final|void|scaleValueByValue",
+                        "Scale the values in this Mutable" + type + vectorOrMatrix
+                                + " by the corresponding values in a " + type + vectorOrMatrix + ".",
+                        new String[]{"final " + type + vectorOrMatrix
+                                + "<?>|factor|contains the values by which to scale the corresponding "
+                                + "values in this Mutable" + type + vectorOrMatrix},
+                        "ValueException|when the " + pluralAggregateType + " do not have the same size",
+                        null,
+                        new String[]{
+                                "checkSizeAndCopyOnWrite(factor);",
+                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
+                                        : "for (int row = rows(); --row >= 0;)",
+                                "{",
+                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
+                                dimensions > 1 ? cg.indent(1) + "{" : null,
+                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
+                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
+                                        + (1 == dimensions ? "index" : "row, column") + ") * factor.safeGet("
+                                        + (1 == dimensions ? "index" : "row, column") + "));",
+                                dimensions > 1 ? cg.indent(1) + "}" : null, "}"}, false));
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public final|Mutable" + type + vectorOrMatrix + "<U>|scaleValueByValue|this modified Mutable"
+                                + type + vectorOrMatrix,
+                        "Scale the values in this Mutable" + type + vectorOrMatrix
+                                + " by the corresponding values in a " + type.toLowerCase() + " array.",
+                        new String[]{"final " + type.toLowerCase() + emptyBrackets
+                                + "|factor|contains the values by which to scale the corresponding "
+                                + "values in this Mutable" + type + vectorOrMatrix},
+                        "ValueException|when the " + vectorOrMatrix.toLowerCase()
+                                + " and the array do not have the same size",
+                        null,
+                        new String[]{
+                                "checkSizeAndCopyOnWrite(factor);",
+                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
+                                        : "for (int row = rows(); --row >= 0;)",
+                                "{",
+                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
+                                dimensions > 1 ? cg.indent(1) + "{" : null,
+                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
+                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
+                                        + (1 == dimensions ? "index" : "row, column") + ") * factor["
+                                        + (1 == dimensions ? "index" : "row][column") + "]);",
+                                dimensions > 1 ? cg.indent(1) + "}" : null, "}", "return this;"}, false));
+                code.append(cg.buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
+                        "Check sizes and copy the data if the copyOnWrite flag is set.", new String[]{"final " + type
+                                + vectorOrMatrix + "<?>|other|partner for the size check"}, "ValueException|when the "
+                                + pluralAggregateType + " do not have the same size", null, new String[]{
+                                "checkSize(other);", "checkCopyOnWrite();"}, false));
+                code.append(cg.buildMethod(outerIndent, "private|void|checkSizeAndCopyOnWrite",
+                        "Check sizes and copy the data if the copyOnWrite flag is set.",
+                        new String[]{"final " + type.toLowerCase() + emptyBrackets
+                                + "|other|partner for the size check"}, "ValueException|when the "
+                                + pluralAggregateType + " do not have the same size", null, new String[]{
+                                "checkSize(other);", "checkCopyOnWrite();"}, false));
+                // Generate 6 plus methods
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Rel", dimensions, true));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Dense",
+                        dimensions, true));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Sparse",
+                        dimensions, true));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Dense", "Rel", dimensions, true));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Dense",
+                        dimensions, true));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
+                        dimensions, true));
+                // Generate 9 minus methods
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Abs", dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Abs.Sparse",
+                        dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Abs.Dense",
+                        dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Dense", "Rel", dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Dense",
+                        dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Abs.Sparse", "Rel.Sparse",
+                        dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Dense", "Rel", dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Dense",
+                        dimensions, false));
+                code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
+                        dimensions, false));
+                // Generate 10 times methods
+                // TODO: Decide if you ever need multiply an Absolute with anything; I don't think so...
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Dense", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Sparse", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "Abs", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "Rel.Dense", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "Rel.Sparse", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Sparse", "Rel", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Dense", "", dimensions));
+                code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Rel.Sparse", "", dimensions));
+                code.append(buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, true));
+                code.append(buildDenseSparseConverter(cg, outerIndent, type, "Abs", true, dimensions));
+                code.append(buildDenseSparseConverter(cg, outerIndent, type, "Rel", true, dimensions));
+                code.append(buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, false));
+                code.append(buildDenseSparseConverter(cg, outerIndent, type, "Abs", false, dimensions));
+                code.append(buildDenseSparseConverter(cg, outerIndent, type, "Rel", false, dimensions));
+            }
+        }
+        else
+        {
+            code.append(cg.buildField(outerIndent, "private "
+                    + (0 == dimensions ? type.toLowerCase() + " value" : type)
+                    + (dimensions > 0 ? "Matrix" + dimensions + "D " + vectorOrMatrix.toLowerCase() : "") + "SI",
+                    (0 == dimensions ? "The value, stored in the standard SI unit." : "\r\n" + outerIndent
+                            + " * The internal storage for the " + vectorOrMatrix.toLowerCase() + "; internally the "
+                            + "values are stored in standard SI unit; storage can be " + "dense\r\n" + outerIndent
+                            + " * or sparse.\r\n" + outerIndent))
+                    + cg.buildMethod(outerIndent, "protected||" + (mutable ? "Mutable" : " ") + type + vectorOrMatrix,
+                            "Construct a new " + mutableType + type + vectorOrMatrix + ".",
+                            new String[]{"final U|unit|the unit of the new " + (mutable ? "Mutable" : "") + type
+                                    + vectorOrMatrix}, null, null, new String[]{"super(unit);",
+                                    "// System.out.println(\"Created " + type + vectorOrMatrix + "\");"}, true));
+            code.append(buildSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type + vectorOrMatrix, type
+                    + vectorOrMatrix + "<U>", "Absolute", type + vectorOrMatrix, false, dimensions));
+            code.append(buildSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type + vectorOrMatrix, type
+                    + vectorOrMatrix + "<U>", "Relative", type + vectorOrMatrix, false, dimensions));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(outerIndent, "protected final|" + type
+                        + (0 == dimensions ? type + "Scalar" : "Matrix" + dimensions + "D") + "|get" + vectorOrMatrix
+                        + "SI|the data in the internal format", "Retrieve the internal data.", null, null, null,
+                        new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI;"}, false)
+                        + cg.buildMethod(outerIndent, "protected final|void|deepCopyData",
+                                "Make a deep copy of the data (used ONLY in the Mutable" + type + vectorOrMatrix
+                                        + " sub class).", null, null, null,
+                                new String[]{"this." + vectorOrMatrix.toLowerCase() + "SI = get" + vectorOrMatrix
+                                        + "SI().copy(); // makes a deep copy, using multithreading"}, false));
+            }
+            if (0 == dimensions)
+            {
+                code.append(cg.buildMethod(outerIndent, "public abstract|Mutable" + type + "Scalar<U>|mutable",
+                        "Create a mutable version of this " + type + "Scalar. <br>\r\n" + outerIndent
+                                + " * The mutable version is created as a deep copy of this. "
+                                + "Delayed copying is not worthwhile for a Scalar.", null, null, null, null, false));
+            }
+            else
+            {
+                code.append(cg.buildMethod(outerIndent, "public abstract|Mutable" + type + vectorOrMatrix
+                        + "<U>|mutable|mutable version of this " + type + vectorOrMatrix,
+                        "Create a mutable version of this " + type + vectorOrMatrix + ". <br>\r\n" + outerIndent
+                                + " * The mutable version is created with a shallow copy of the data "
+                                + "and the internal copyOnWrite flag set. The first\r\n" + outerIndent
+                                + " * operation in the mutable version that modifies the data shall "
+                                + "trigger a deep copy of the data.", null, null, null, null, false));
+            }
+            code.append(cg.buildMethod(
+                    outerIndent,
+                    "protected final|void|initialize",
+                    (0 == dimensions ? "Initialize the valueSI field (performing conversion to the SI "
+                            + "standard unit if needed)."
+                            : "Import the values and convert them into the SI standard unit."),
+                    new String[]{"final "
+                            + type.toLowerCase()
+                            + emptyBrackets
+                            + (0 == dimensions ? "|value|the value in the unit of this " + type + "Scalar"
+                                    : "|values|an array of values")},
+                    dimensions > 1 ? "ValueException|when values is not rectangular" : null,
+                    null,
+                    0 == dimensions ? new String[]{
+                            "if (this.getUnit().equals(this.getUnit()." + "getStandardUnit()))",
+                            "{",
+                            cg.indent(1) + "setValueSI(value);",
+                            "}",
+                            "else",
+                            "{",
+                            cg.indent(1) + "setValueSI(" + (type.startsWith("F") ? "(float) " : "")
+                                    + "expressAsSIUnit(value));", "}"} : 1 == dimensions ? new String[]{
+                            "this.vectorSI = createMatrix1D(values.length);",
+                            "if (getUnit().equals(getUnit().getStandardUnit()))",
+                            "{",
+                            cg.indent(1) + "this." + vectorOrMatrix.toLowerCase() + "SI.assign(values);",
+                            "}",
+                            "else",
+                            "{",
+                            cg.indent(1) + "for (int index = values.length; --index >= 0;)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "safeSet(index, " + (type.startsWith("F") ? "(float) " : "")
+                                    + "expressAsSIUnit(values[index]));", cg.indent(1) + "}", "}"} : new String[]{
+                            "ensureRectangular(values);",
+                            "this.matrixSI = createMatrix2D(values.length, "
+                                    + "0 == values.length ? 0 : values[0].length);",
+                            "if (getUnit().equals(getUnit().getStandardUnit()))",
+                            "{",
+                            cg.indent(1) + "this.matrixSI.assign(values);",
+                            "}",
+                            "else",
+                            "{",
+                            cg.indent(1) + "for (int row = values.length; --row >= 0;)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "for (int column = values[row].length; " + "--column >= 0;)",
+                            cg.indent(2) + "{",
+                            cg.indent(3) + "safeSet(row, column, " + (type.startsWith("F") ? "(float) " : "")
+                                    + "expressAsSIUnit(values[row][column]));", cg.indent(2) + "}", cg.indent(1) + "}",
+                            "}"}, false));
+            code.append(cg.buildMethod(outerIndent, "protected final|void|initialize", (0 == dimensions
+                    ? "Initialize the valueSI field. As the provided value is already in "
+                            + "the SI standard unit, conversion is never necessary."
+                    : "Import the values from an existing " + type + "Matrix" + dimensions
+                            + "D. This makes a shallow copy."), new String[]{"final "
+                    + type
+                    + (0 == dimensions ? "Scalar<U>|value|the value to use for initialization" : "Matrix" + dimensions
+                            + "D|values|the values")}, null, null, new String[]{(0 == dimensions
+                    ? "setValueSI(value.getSI());" : "this." + vectorOrMatrix.toLowerCase() + "SI = values;")}, false));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "protected final|void|initialize",
+                        "Construct the " + vectorOrMatrix.toLowerCase()
+                                + " and store the values in the standard SI unit.",
+                        new String[]{"final " + type + "Scalar<U>" + emptyBrackets + "|values|"
+                                + (dimensions > 1 ? "a " + dimensions + "D " : "an ") + "array of values"},
+                        1 == dimensions ? "ValueException|when values is empty"
+                                : "ValueException|when values has zero entries, or is not rectangular",
+                        null,
+                        1 == dimensions ? new String[]{
+                                "this." + vectorOrMatrix.toLowerCase() + "SI = createMatrix1D(values.length);",
+                                "for (int index = 0; index < values.length; index++)", "{",
+                                cg.indent(1) + "safeSet(index, values[index].getSI());", cg.indent(1) + "}"}
+                                : new String[]{"ensureRectangularAndNonEmpty(values);",
+                                        "this.matrixSI = createMatrix2D(values.length, values[0].length);",
+                                        "for (int row = values.length; --row >= 0;)", "{",
+                                        cg.indent(1) + "for (int column = values[row].length; --column >= 0;)",
+                                        cg.indent(1) + "{",
+                                        cg.indent(2) + "safeSet(row, column, values[row][column].getSI());",
+                                        cg.indent(1) + "}", "}"}, false));
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "protected abstract|" + type + "Matrix" + dimensions + "D|createMatrix" + dimensions
+                                + "D|an instance of the right type of " + type + "Matrix" + dimensions
+                                + "D (absolute/relative, dense/sparse, etc.)",
+                        "Create storage for the data. <br/>\r\n" + outerIndent
+                                + " * This method must be implemented by each leaf class.",
+                        1 == dimensions ? new String[]{"final int|size|the number of cells in the "
+                                + vectorOrMatrix.toLowerCase()} : new String[]{
+                                "final int|rows|the number of rows in the matrix",
+                                "final int|columns|the number of columns in the matrix"}, null, null, null, false));
+                code.append(cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + emptyBrackets
+                        + "|getValuesSI|array of values in the standard SI unit", "Create a " + type.toLowerCase()
+                        + emptyBrackets + " array filled with the values in the standard SI unit.", null, null, null,
+                        new String[]{"return this." + vectorOrMatrix.toLowerCase()
+                                + "SI.toArray(); // this makes a deep copy"}, false));
+                code.append(cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + emptyBrackets
+                        + "|getValuesInUnit|the values in the original unit", "Create a " + type.toLowerCase()
+                        + emptyBrackets + " array filled with the values in the original unit.", null, null, null,
+                        new String[]{"return getValuesInUnit(getUnit());"}, false));
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public final|" + type.toLowerCase() + emptyBrackets
+                                + "|getValuesInUnit|the values converted into the specified unit",
+                        "Create a " + type.toLowerCase() + emptyBrackets
+                                + " array filled with the values converted into a specified unit.",
+                        new String[]{"final U|targetUnit|the unit into which the values are converted " + "for use"},
+                        null,
+                        null,
+                        1 == dimensions ? new String[]{
+                                type.toLowerCase() + "[] values = this.vectorSI.toArray();",
+                                "for (int i = values.length; --i >= 0;)",
+                                "{",
+                                cg.indent(1) + "values[i] = " + (type.startsWith("F") ? "(float) " : "")
+                                        + "ValueUtil.expressAsUnit(values[i], targetUnit);", "}", "return values;"}
+                                : new String[]{
+                                        type.toLowerCase() + emptyBrackets + " values = this.matrixSI.toArray();",
+                                        "for (int row = rows(); --row >= 0;)",
+                                        "{",
+                                        cg.indent(1) + "for (int column = columns(); --column >= 0;)",
+                                        cg.indent(1) + "{",
+                                        cg.indent(2) + "values[row][column] = "
+                                                + (type.startsWith("F") ? "(float) " : "")
+                                                + "ValueUtil.expressAsUnit(values[row][column], targetUnit);",
+                                        cg.indent(1) + "}", "}", "return values;"}, false));
+                if (1 == dimensions)
+                {
+                    code.append(cg.buildMethod(outerIndent, "public final|int|size", null, null, null, null,
+                            new String[]{"return (int) this." + vectorOrMatrix.toLowerCase() + "SI.size();"}, false));
+                }
+                else
+                {
+                    code.append(cg.buildMethod(outerIndent, "public final|int|rows", null, null, null, null,
+                            new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI.rows();"}, false)
+                            + cg.buildMethod(outerIndent, "public final|int|columns", null, null, null, null,
+                                    new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI.columns();"},
+                                    false));
+                }
+            }
+            code.append(cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + "|getSI", 0 == dimensions
+                    ? "Retrieve the value in the underlying SI unit." : null, 0 == dimensions ? null : 1 == dimensions
+                    ? new String[]{"final int|index|"} : new String[]{"final int|row|", "final int|column|"},
+                    0 == dimensions ? null : "ValueException|", null, 0 == dimensions
+                            ? new String[]{"return this.valueSI;"} : new String[]{
+                                    "checkIndex(" + (1 == dimensions ? "index" : "row, column") + ");",
+                                    "return safeGet(" + (1 == dimensions ? "index" : "row, column") + ");"}, false));
+            if (0 == dimensions)
+            {
+                code.append(cg.buildMethod(outerIndent, "protected final|void|setValueSI",
+                        "Set the value in the underlying SI unit.", new String[]{"final " + type.toLowerCase()
+                                + "|value|the new value in the underlying SI unit"}, null, null,
+                        new String[]{"this.valueSI = value;"}, false));
+            }
+            code.append(cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + "|getInUnit",
+                    0 == dimensions ? "Retrieve the value in the original unit." : null, 0 == dimensions ? null
+                            : 1 == dimensions ? new String[]{"final int|index|"} : new String[]{"final int|row|",
+                                    "final int|column|"}, 0 == dimensions ? null : "ValueException", null,
+                    new String[]{"return " + (type.startsWith("F") ? "(float) " : "") + "expressAsSpecifiedUnit(getSI("
+                            + (0 == dimensions ? "" : 1 == dimensions ? "index" : "row, column") + "));"}, false));
+            code.append(cg.buildMethod(
+                    outerIndent,
+                    "public final|" + type.toLowerCase() + "|getInUnit",
+                    0 == dimensions ? "Retrieve the value converted into some specified unit." : null,
+                    new String[]{1 == dimensions ? "final int|index|" : null,
+                            2 == dimensions ? "final int|row|" : null, 2 == dimensions ? "final int|column|" : null,
+                            "final U|targetUnit|the unit to convert the value into"},
+                    dimensions > 0 ? "ValueException" : null,
+                    null,
+                    new String[]{"return " + (type.startsWith("F") ? "(float) " : "")
+                            + "ValueUtil.expressAsUnit(getSI("
+                            + (0 == dimensions ? "" : (1 == dimensions ? "index" : "row, column")) + "), targetUnit);"},
+                    false));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(outerIndent, "public final|" + type.toLowerCase() + "|zSum", null, null,
+                        null, null, new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI.zSum();"}, false));
+                code.append(cg.buildMethod(outerIndent, "public final|int|cardinality", null, null, null, null,
+                        new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI.cardinality();"}, false));
+            }
+            if (2 == dimensions)
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public final|" + type.toLowerCase() + "|det",
+                        null,
+                        null,
+                        "ValueException|",
+                        null,
+                        new String[]{
+                                "try",
+                                "{",
+                                cg.indent(1) + "if (this instanceof SparseData)",
+                                cg.indent(1) + "{",
+                                cg.indent(2) + "return new Sparse" + type + "Algebra().det(getMatrixSI());",
+                                cg.indent(1) + "}",
+                                cg.indent(1) + "if (this instanceof DenseData)",
+                                cg.indent(1) + "{",
+                                cg.indent(2) + "return new Dense" + type + "Algebra().det(getMatrixSI());",
+                                cg.indent(1) + "}",
+                                "throw new ValueException(\"" + type
+                                        + "Matrix.det -- matrix implements neither Sparse nor " + "Dense\");",
+                                "}",
+                                "catch (IllegalArgumentException exception)",
+                                "{",
+                                cg.indent(1) + "if (!exception.getMessage().startsWith(\"Matrix "
+                                        + "must be square\"))",
+                                cg.indent(1) + "{",
+                                cg.indent(2) + "exception.printStackTrace();",
+                                cg.indent(1) + "}",
+                                cg.indent(1) + "throw new ValueException(exception.getMessage()); "
+                                        + "// probably Matrix must be square", cg.indent(1) + "}"}, false));
+            }
+            if (0 == dimensions)
+            {
+                code.append(cg.buildBlockComment(outerIndent, "NUMBER METHODS"));
+                code.append(cg.buildMethod(outerIndent, "public final|int|intValue", null, null, null, null,
+                        new String[]{"return " + (type.equals("Float") ? "" : "(int) ") + "Math.round(getSI());"},
+                        false));
+                code.append(cg.buildMethod(outerIndent, "public final|long|longValue", null, null, null, null,
+                        new String[]{"return Math.round(getSI());"}, false));
+                code.append(cg.buildMethod(outerIndent, "public final|float|floatValue", null, null, null, null,
+                        new String[]{"return " + (type.startsWith("D") ? "(float) " : "") + "getSI();"}, false));
+                code.append(cg.buildMethod(outerIndent, "public final|double|doubleValue", null, null, null, null,
+                        new String[]{"return getSI();"}, false));
+            }
+            code.append(cg.buildMethod(outerIndent, "public final|String|toString|printable string with the "
+                    + vectorOrMatrix.toLowerCase() + " contents", null, null, null, null,
+                    new String[]{"return toString(getUnit());"}, false));
+            code.append(cg.buildMethod(
+                    outerIndent,
+                    "public final|String|toString|printable string with the " + vectorOrMatrix.toLowerCase()
+                            + " contents",
+                    "Print this " + type + vectorOrMatrix + " with the value" + (dimensions > 0 ? "s" : "")
+                            + " expressed in the specified unit.",
+                    new String[]{"final U|displayUnit|the unit into which the value"
+                            + (0 == dimensions ? " is" : "s are") + " converted for display"},
+                    null,
+                    null,
+                    dimensions == 0 ? new String[]{
+                            "StringBuffer buf = new StringBuffer();",
+                            "if (this instanceof Mutable" + type + vectorOrMatrix + ")",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Mutable   \");",
+                            "if (this instanceof Mutable" + type + vectorOrMatrix + ".Abs)",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Abs \");",
+                            "}",
+                            "else if (this instanceof Mutable" + type + vectorOrMatrix + ".Rel)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"??? \");",
+                            cg.indent(1) + "}",
+                            "}",
+                            "else",
+                            "{",
+                            "buf.append(\"Immutable \");",
+                            "if (this instanceof " + type + vectorOrMatrix + ".Abs)",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Abs \");",
+                            "}",
+                            "else if (this instanceof " + type + vectorOrMatrix + ".Rel)",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Rel \");",
+                            "}",
+                            cg.indent(1) + "else",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"??? \");",
+                            cg.indent(1) + "}",
+                            "}",
+                            "buf.append(\"[\" + displayUnit.getAbbreviation() + \"] \");",
+                            cg.indent(1) + (type.startsWith("F") ? "float f = (float) " : "double d = ")
+                                    + "ValueUtil.expressAsUnit(getSI(), displayUnit);",
+                            cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "") + "buf.append(Format.format("
+                                    + type.substring(0, 1).toLowerCase() + "));", "return buf.toString();"
+
+                    } : new String[]{
+                            "StringBuffer buf = new StringBuffer();",
+                            "if (this instanceof Mutable" + type + vectorOrMatrix + ")",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Mutable   \");",
+                            "if (this instanceof Mutable" + type + vectorOrMatrix + ".Abs.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + vectorOrMatrix + ".Rel.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + vectorOrMatrix + ".Abs.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + vectorOrMatrix + ".Rel.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"??? \");",
+                            cg.indent(1) + "}",
+                            "}",
+                            "else",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Immutable \");",
+                            "if (this instanceof " + type + vectorOrMatrix + ".Abs.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + vectorOrMatrix + ".Rel.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + vectorOrMatrix + ".Abs.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + vectorOrMatrix + ".Rel.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"??? \");",
+                            cg.indent(1) + "}",
+                            "}",
+                            "buf.append(\"[\" + displayUnit.getAbbreviation() + \"]\");",
+                            (1 == dimensions ? "for (int i = 0; i < size(); i++)"
+                                    : "for (int row = 0; row < rows(); row++)"),
+                            "{",
+                            (dimensions > 1 ? "buf.append(\"\\r\\n\\t\");" : null),
+                            (dimensions > 1 ? "for (int column = 0; column < columns(); column++)" : null),
+                            (dimensions > 1 ? "{" : null),
+                            cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "")
+                                    + (type.startsWith("F") ? "float f = (float) " : "double d = ")
+                                    + "ValueUtil.expressAsUnit(safeGet(" + (1 == dimensions ? "i" : "row, column")
+                                    + "), displayUnit);",
+                            cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "") + "buf.append(\" \" + Format.format("
+                                    + type.substring(0, 1).toLowerCase() + "));",
+                            (dimensions > 1 ? cg.indent(1) + "}" : null), "}", "return buf.toString();"}, false));
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "protected final|void|checkSize",
+                        "Centralized size equality check.",
+                        new String[]{"final " + type + vectorOrMatrix + "<?>|other|other " + type + vectorOrMatrix},
+                        "ValueException|when " + pluralAggregateType + " have unequal size",
+                        null,
+                        new String[]{
+                                1 == dimensions ? "if (size() != other.size())"
+                                        : "if (rows() != other.rows() || columns() != other.columns())",
+                                "{",
+                                cg.indent(1)
+                                        + "throw new ValueException(\"The "
+                                        + pluralAggregateType
+                                        + " have different sizes: \" + "
+                                        + (1 == dimensions ? "size() + \" != \" + other.size());"
+                                                : "rows() + \"x\" + columns() + \" != \""),
+                                dimensions > 1 ? cg.indent(3) + "+ other.rows() + \"x\" + other.columns());" : null,
+                                "}"}, false));
+                code.append(cg.buildMethod(outerIndent, "protected final|void|checkSize",
+                        "Centralized size equality check.", new String[]{"final " + type.toLowerCase() + emptyBrackets
+                                + "|other|array of " + type.toLowerCase()}, "ValueException|when "
+                                + pluralAggregateType + " have unequal size", null, new String[]{
+                                (dimensions > 1 ? "final int otherColumns = 0 == other.length ? 0 : "
+                                        + "other[0].length;" : null),
+                                dimensions == 1 ? "if (size() != other.length)"
+                                        : "if (rows() != other.length || columns() != otherColumns)",
+                                "{",
+                                "throw new ValueException(\"The "
+                                        + vectorOrMatrix.toLowerCase()
+                                        + " and the array have different sizes: \" + "
+                                        + (1 == dimensions ? "size() + \" != \" + other.length);"
+                                                : "rows() + \"x\" + columns()"),
+                                dimensions > 1 ? cg.indent(3) + "+ \" != \" + other.length + \"x\" + otherColumns);"
+                                        : null, "}", dimensions > 1 ? "ensureRectangular(other);" : null}, false));
+            }
+            if (dimensions > 1)
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "private static|void|ensureRectangular",
+                        "Check that a 2D array of " + type.toLowerCase()
+                                + " is rectangular; i.e. all rows have the same length.",
+                        new String[]{"final " + type.toLowerCase() + emptyBrackets + "|values|the 2D array to check"},
+                        "ValueException|when not all rows have the same length",
+                        null,
+                        new String[]{
+                                "for (int row = values.length; --row >= 1;)",
+                                "{",
+                                cg.indent(1) + "if (values[0].length != values[row].length)",
+                                cg.indent(1) + "{",
+                                cg.indent(2) + "throw new ValueException(\"Lengths of rows are "
+                                        + "not all the same\");", cg.indent(1) + "}", "}"}, false));
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "private static|void|ensureRectangularAndNonEmpty",
+                        "Check that a 2D array of " + type + "Scalar&lt;?&gt; is rectangular; i.e. all rows have "
+                                + "the same length and is non\r\n" + outerIndent + " * empty.",
+                        new String[]{"final " + type + "Scalar<?>" + emptyBrackets + "|values|the 2D array to check"},
+                        "ValueException|when values is not rectangular, or contains " + "no data",
+                        null,
+                        new String[]{
+                                "if (0 == values.length || 0 == values[0].length)",
+                                "{",
+                                cg.indent(1) + "throw new ValueException(\"Cannot " + "determine unit for " + type
+                                        + "Matrix from an empty array of " + type + "Scalar" + "\");",
+                                "}",
+                                "for (int row = values.length; --row >= 1;)",
+                                "{",
+                                cg.indent(1) + "if (values[0].length != values[row].length)",
+                                cg.indent(1) + "{",
+                                cg.indent(2) + "throw new ValueException(\"Lengths of rows "
+                                        + "are not all the same\");", cg.indent(1) + "}", "}"}, false));
+            }
+            if (dimensions > 0)
+            {
+                code.append(cg.buildMethod(outerIndent, "protected final|void|checkIndex", 1 == dimensions
+                        ? "Check that a provided index is valid."
+                        : "Check that provided row and column indices are valid.", 1 == dimensions
+                        ? new String[]{"final int|index|the value to check"} : new String[]{
+                                "final int|row|the row value to check", "final int|column|the column value to check"},
+                        1 == dimensions ? "ValueException|when index is invalid"
+                                : "ValueException|when row or column is invalid", null, new String[]{
+                                1 == dimensions ? "if (index < 0 || index >= size())"
+                                        : "if (row < 0 || row >= rows() || column < 0 || " + "column >= columns())",
+                                "{",
+                                cg.indent(1)
+                                        + "throw new ValueException(\"index out of range (valid "
+                                        + "range is 0..\" + "
+                                        + (1 == dimensions ? "(size() - 1) + \", got \" + index + \")\");"
+                                                : "(rows() - 1) + \", 0..\""),
+
+                                dimensions > 1 ? cg.indent(3)
+                                        + "+ (columns() - 1) + \", got \" + row + \", \" + column + \")\");" : null,
+                                "}"}, false));
+                code.append(cg.buildMethod(outerIndent, "protected final|" + type.toLowerCase()
+                        + "|safeGet|the value stored at "
+                        + (1 == dimensions ? "that index" : "the indicated row and column"), "Retrieve a value in "
+                        + vectorOrMatrix.toLowerCase() + "SI without checking validity of the "
+                        + (1 == dimensions ? "index." : "indices."), 1 == dimensions
+                        ? new String[]{"final int|index|the index"} : new String[]{
+                                "final int|row|the row where the value must be retrieved",
+                                "final int|column|the column where the value must be retrieved"}, null, null,
+                        new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI.getQuick("
+                                + (1 == dimensions ? "index);" : "row, column);")}, false));
+                code.append(cg.buildMethod(outerIndent, "protected final|void|safeSet", "Modify a value in "
+                        + vectorOrMatrix.toLowerCase() + "SI without checking validity of the "
+                        + (1 == dimensions ? "index." : "indices."),
+                        new String[]{
+                                1 == dimensions ? "final int|index|the index"
+                                        : "final int|row|the row where the value must be stored",
+                                dimensions > 1 ? "final int|column|the column where the value must be stored" : null,
+                                "final " + type.toLowerCase() + "|valueSI|the new value for the entry in "
+                                        + vectorOrMatrix.toLowerCase() + "SI"}, null, null, new String[]{"this."
+                                + vectorOrMatrix.toLowerCase() + "SI.setQuick("
+                                + (1 == dimensions ? "index, " : "row, column, ") + "valueSI);"}, false));
+                code.append(cg.buildMethod(outerIndent, "protected final|" + type + "Matrix" + dimensions
+                        + "D|deepCopyOfData|deep copy of the data", "Create a deep copy of the data.", null, null,
+                        null, new String[]{"return this." + vectorOrMatrix.toLowerCase() + "SI.copy();"}, false));
+                code.append(cg
+                        .buildMethod(outerIndent, "protected static <U extends Unit<U>>|" + type + "Scalar<U>"
+                                + emptyBrackets + "|checkNonEmpty|the provided array",
+                                "Check that a provided array can be used to create some descendant of a " + type
+                                        + vectorOrMatrix + ".", new String[]{
+                                        "final " + type + "Scalar<U>" + emptyBrackets + "|"
+                                                + type.substring(0, 1).toLowerCase() + "sArray|the provided array",
+                                        "Unit|<U>|the unit of the " + type + "Scalar array"},
+                                "ValueException|when the array has "
+                                        + (1 == dimensions ? "length equal to 0" : "zero entries"), null, new String[]{
+                                        "if (0 == "
+                                                + type.substring(0, 1).toLowerCase()
+                                                + "sArray.length"
+                                                + (dimensions > 1 ? " || 0 == " + type.substring(0, 1).toLowerCase()
+                                                        + "sArray[0].length" : "") + ")",
+                                        "{",
+                                        cg.indent(1) + "throw new ValueException(",
+                                        cg.indent(3) + "\"Cannot create a " + type + vectorOrMatrix + " or Mutable"
+                                                + type + vectorOrMatrix + " from an empty array of " + type
+                                                + "Scalar\");", "}",
+                                        "return " + type.substring(0, 1).toLowerCase() + "sArray;"}, false));
+            }
+            if (2 == dimensions)
+            {
+                code.append(cg.buildMethod(
+                        outerIndent,
+                        "public static|" + type + "Vector<SIUnit>|solve|vector x in A*x = b",
+                        "Solve x for A*x = b. According to Colt: x; a new independent matrix; "
+                                + "solution if A is square, least squares\r\n" + cg.indent(1)
+                                + " * solution if A.rows() &gt; A.columns(), underdetermined "
+                                + "system solution if A.rows() &lt; A.columns().",
+                        new String[]{"final " + type + "Matrix<?>|A|matrix A in A*x = b",
+                                "final " + type + "Vector<?>|b|vector b in A*x = b"},
+                        "ValueException|when matrix A is neither Sparse nor Dense",
+                        null,
+                        new String[]{
+                                "// TODO: is this correct? Should lookup matrix algebra "
+                                        + "to find out unit for x when solving A*x = b ?",
+                                "SIUnit targetUnit =",
+                                cg.indent(2) + "Unit.lookupOrCreateSIUnitWithSICoefficients("
+                                        + "SICoefficients.divide(b.getUnit()." + "getSICoefficients(),",
+                                cg.indent(4) + "A.getUnit().getSICoefficients()).toString());",
+                                "",
+                                "// TODO: should the algorithm throw an exception when rows/"
+                                        + "columns do not match when solving A*x = b ?",
+                                type + "Matrix2D A2D = A.getMatrixSI();",
+                                "if (A instanceof SparseData)",
+                                "{",
+                                cg.indent(1) + "Sparse" + type + "Matrix1D b1D = new Sparse" + type
+                                        + "Matrix1D(b.getValuesSI());",
+                                cg.indent(1) + type + "Matrix1D x1D = new Sparse" + type + "Algebra().solve(A2D, b1D);",
+                                cg.indent(1) + type + "Vector.Abs.Sparse<SIUnit> x = new " + type
+                                        + "Vector.Abs.Sparse<SIUnit>(x1D.toArray(), " + "targetUnit);",
+                                "return x;",
+                                "}",
+                                "if (A instanceof DenseData)",
+                                "{",
+                                cg.indent(1) + "Dense" + type + "Matrix1D b1D = new Dense" + type
+                                        + "Matrix1D(b.getValuesSI());",
+                                cg.indent(1) + type + "Matrix1D x1D = new Dense" + type + "Algebra().solve(A2D, b1D);",
+                                cg.indent(1) + type + "Vector.Abs.Dense<SIUnit> x = new " + type
+                                        + "Vector.Abs.Dense<SIUnit>(x1D.toArray(), " + "targetUnit);",
+                                cg.indent(1) + "return x;",
+                                "}",
+                                "throw new ValueException(\"" + type
+                                        + "Matrix.det -- matrix implements neither Sparse nor " + "Dense\");"}, false));
+            }
+            code.append(cg.buildMethod(
+                    outerIndent,
+                    "public final|int|hashCode",
+                    null,
+                    null,
+                    null,
+                    null,
+                    new String[]{
+                            "final int prime = 31;",
+                            "int result = 1;",
+                            0 == dimensions && type.startsWith("D") ? "long temp;" : "result = prime * result + "
+                                    + (0 == dimensions ? (type.startsWith("F") ? "Float.floatToIntBits"
+                                            : "Double.doubleToLongBits") + "(this.valueSI);" : "this."
+                                            + vectorOrMatrix.toLowerCase() + "SI.hashCode();"),
+                            0 == dimensions && type.startsWith("D") ? "temp = Double.doubleToLongBits(this.valueSI);"
+                                    : null,
+                            0 == dimensions && type.startsWith("D")
+                                    ? "result = prime * result + (int) (temp ^ (temp >>> 32));" : null,
+                            "return result;"}, false));
+            code.append(cg.buildMethod(
+                    outerIndent,
+                    "public final|boolean|equals",
+                    null,
+                    new String[]{"final Object|obj|"},
+                    null,
+                    null,
+                    new String[]{
+                            "if (this == obj)",
+                            "{",
+                            cg.indent(1) + "return true;",
+                            "}",
+                            "if (obj == null)",
+                            "{",
+                            "return false;",
+                            "}",
+                            "if (!(obj instanceof " + type + vectorOrMatrix + "))",
+                            "{",
+                            cg.indent(1) + "return false;",
+                            "}",
+                            type + vectorOrMatrix + "<?> other = (" + type + vectorOrMatrix + "<?>) obj;",
+                            "// unequal if not both Absolute or both Relative",
+                            "if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != "
+                                    + "other.isRelative())",
+                            "{",
+                            cg.indent(1) + "return false;",
+                            "}",
+                            "// unequal if the standard SI units differ",
+                            "if (!this.getUnit().getStandardUnit().equals(other.getUnit()." + "getStandardUnit()))",
+                            "{",
+                            cg.indent(1) + "return false;",
+                            "}",
+                            dimensions > 0 ? "// Colt's equals also tests the size of the "
+                                    + vectorOrMatrix.toLowerCase() : null,
+                            dimensions == 0 ? "if ("
+                                    + (type.startsWith("F") ? "Float.floatToIntBits" : "Double.doubleToLongBits")
+                                    + "(this.valueSI) != "
+                                    + (type.startsWith("F") ? "Float.floatToIntBits" : "Double.doubleToLongBits")
+                                    + "(other.valueSI))" : "if (!get" + vectorOrMatrix + "SI().equals(other.get"
+                                    + vectorOrMatrix + "SI()))", "{", cg.indent(1) + "return false;", "}",
+                            "return true;"}, false));
+        }
+
+        cg.generateAbstractClass("value.v" + type.toLowerCase() + "." + vectorOrMatrix.toLowerCase(), (mutable
+                ? "Mutable" : "") + type + vectorOrMatrix, arrayListToArray(imports), mutableType + type
+                + vectorOrMatrix + ".", new String[]{"<U> Unit; the unit of this " + (mutable ? "Mutable" : "") + type
+                + vectorOrMatrix},
+                "<U extends Unit<U>> extends "
+                        + (mutable ? type + vectorOrMatrix : 0 == dimensions ? "Scalar" : "AbstractValue")
+                        + "<U>"
+                        + (dimensions > 0 || mutable ? " implements "
+                                + (0 == dimensions ? type + "MathFunctions" : (mutable ? "\r\n" + cg.indent(2)
+                                        + "Write" + type + vectorOrMatrix + "Functions<U>, " + type + "MathFunctions"
+                                        : "Serializable,\r\n" + cg.indent(1) + "ReadOnly" + type + vectorOrMatrix
+                                                + "Functions<U>")) : ""),
+
+                code.toString());
     }
 
     /**
@@ -1577,24 +1730,38 @@ public final class ValueClassesGenerator
             final boolean increment)
     {
         final String inOrDecrement = increment ? "in" : "de";
-        return cg.buildMethod(outerIndent, "private|Mutable" + type + aggregateType + "<U>|" + inOrDecrement
-                + "crementValueByValue|this modified Mutable" + type + aggregateType, (increment ? "In" : "De")
-                + "crement the values in this Mutable" + type + aggregateType + " by the corresponding values in a "
-                + type + aggregateType + ".", new String[]{"final " + type + aggregateType + "<U>|" + inOrDecrement
-                + "crement|the values by which to " + inOrDecrement
-                + "crement the corresponding values in this Mutable" + type + aggregateType},
-                "ValueException|when the " + pluralAggregateType + " do not have the same size", null, new String[]{
-                        "checkSizeAndCopyOnWrite(" + inOrDecrement + "crement);",
-                        1 == dimensions ? "for (int index = size(); --index >= 0;)"
-                                : "for (int row = rows(); --row >= 0;)",
-                        "{",
-                        dimensions > 1 ? cg.indent(1) + "for (int column = columns(); --column >= 0;)" : null,
-                        dimensions > 1 ? cg.indent(1) + "{" : null,
-                        (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
-                                + (1 == dimensions ? "index" : "row, column") + ", safeGet("
-                                + (1 == dimensions ? "index" : "row, column") + ") " + (increment ? "+" : "-") + " "
-                                + inOrDecrement + "crement.safeGet(" + (1 == dimensions ? "index" : "row, column")
-                                + "));", dimensions > 1 ? cg.indent(1) + "}" : null, "}", "return this;"}, false);
+        return cg
+                .buildMethod(
+                        outerIndent,
+                        (0 == dimensions ? "protected final" : "private") + "|Mutable" + type + aggregateType + "<U>|"
+                                + inOrDecrement + "crement" + (0 == dimensions ? "By" : "ValueByValue")
+                                + "|this modified Mutable" + type + aggregateType,
+                        (increment ? "In" : "De") + "crement the value" + (0 == dimensions ? "" : "s")
+                                + " in this Mutable" + type + aggregateType + " by the "
+                                + (0 == dimensions ? "value" : "corresponding values") + " in a " + type
+                                + aggregateType + ".",
+                        new String[]{"final " + type + aggregateType + "<U>|" + inOrDecrement + "crement|the "
+                                + (0 == dimensions ? "amount" : "values") + " by which to " + inOrDecrement
+                                + "crement the " + (0 == dimensions ? "value" : "corresponding values")
+                                + " in this Mutable" + type + aggregateType},
+                        dimensions > 0 ? "ValueException|when the " + pluralAggregateType
+                                + " do not have the same size" : null,
+                        null,
+                        0 == dimensions ? new String[]{
+                                "setValueSI(getSI() " + (increment ? "+ in" : "- de") + "crement.getSI());",
+                                "return this;"} : new String[]{
+                                "checkSizeAndCopyOnWrite(" + inOrDecrement + "crement);",
+                                1 == dimensions ? "for (int index = size(); --index >= 0;)"
+                                        : "for (int row = rows(); --row >= 0;)",
+                                "{",
+                                dimensions > 1 ? cg.indent(1) + "for (int column = columns(); --column >= 0;)" : null,
+                                dimensions > 1 ? cg.indent(1) + "{" : null,
+                                (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
+                                        + (1 == dimensions ? "index" : "row, column") + ", safeGet("
+                                        + (1 == dimensions ? "index" : "row, column") + ") " + (increment ? "+" : "-")
+                                        + " " + inOrDecrement + "crement.safeGet("
+                                        + (1 == dimensions ? "index" : "row, column") + "));",
+                                dimensions > 1 ? cg.indent(1) + "}" : null, "}", "return this;"}, false);
     }
 
     /**
@@ -1750,18 +1917,41 @@ public final class ValueClassesGenerator
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param dimensions int; number of dimensions of the value
      * @return String; java code
      */
-    private static String buildVectorFunctions(final CodeGenerator cg, final String indent, final String type)
+    private static String buildVectorFunctions(final CodeGenerator cg, final String indent, final String type,
+            final int dimensions)
     {
         StringBuilder construction = new StringBuilder();
+        final String cast = (type.startsWith("F") ? "(float)" : null);
         for (MathFunctionEntry mfu : mathFunctions)
         {
-            construction.append(cg.buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
-                    ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + type
-                    + (mfu.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mfu.name
-                    + (null != mfu.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
-                    + (null != mfu.argument ? "x)" : "") + ");"}, false));
+            if (0 == dimensions)
+            {
+                String code;
+                if ("inv".equals(mfu.name))
+                {
+                    code = "setValueSI(1.0" + (type.startsWith("F") ? "f" : "") + " / getSI());";
+                }
+                else
+                {
+                    code =
+                            "setValueSI(" + (null != cast && mfu.castToFloatRequired ? cast + " " : "") + "Math."
+                                    + mfu.name + "(" + "getSI()" + (null != mfu.argument ? ", x" : "") + ")" + ");";
+                }
+                construction.append(cg.buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
+                        ? new String[]{"final double|x|"} : null, null, null, new String[]{
+                        null != mfu.toDoText ? "// TODO: " + mfu.toDoText : null, code}, false));
+            }
+            else
+            {
+                construction.append(cg.buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
+                        ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + type
+                        + (mfu.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mfu.name
+                        + (null != mfu.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
+                        + (null != mfu.argument ? "x)" : "") + ");"}, false));
+            }
         }
         return construction.toString();
     }
@@ -1815,22 +2005,68 @@ public final class ValueClassesGenerator
         final String floatType = extendsString.contains("Float") ? "Float" : "Double";
         StringBuilder construction = new StringBuilder();
         construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
-        construction.append(indent + "public abstract static class " + name + "<U extends Unit<U>> extends "
-                + extendsString + " implements " + implementsString + "\r\n" + indent + "{\r\n");
+        construction.append(indent + "public " + (dimensions > 0 ? "abstract " : "") + "static class " + name
+                + "<U extends Unit<U>> extends " + extendsString + " implements " + implementsString
+                + (0 == dimensions ? ", Comparable<" + name + "<U>>" : "") + "\r\n" + indent + "{\r\n");
         final String contentIndent = indent + cg.indent(1);
         construction.append(cg.buildSerialVersionUID(contentIndent));
-        construction.append(cg.buildMethod(contentIndent, "protected||" + name, "Construct a new " + longName + ".",
-                new String[]{"final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
-                        "// System.out.println(\"Created " + name + "\");"}, true));
-        construction.append(buildSubSubClass(cg, contentIndent, absRelType, "Dense", absRelType + " Dense "
-                + parentClassName, mutable, dimensions));
-        construction.append(buildSubSubClass(cg, contentIndent, absRelType, "Sparse", absRelType + " Sparse "
-                + parentClassName, mutable, dimensions));
-        construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name + "<U>|get",
-                null, 1 == dimensions ? new String[]{"final int|index|"} : new String[]{"final int|row|",
-                        "final int|column|"}, "ValueException|when index < 0 or index >= size()", null,
-                new String[]{"return new " + floatType + "Scalar." + name + "<U>(getInUnit("
-                        + (1 == dimensions ? "index" : "row, column") + ", getUnit()), getUnit());"}, false));
+        construction.append(cg.buildMethod(contentIndent, (dimensions == 0 ? "public" : "protected") + "||" + name,
+                "Construct a new " + longName + ".", new String[]{
+                        0 == dimensions ? "final " + floatType.toLowerCase() + "|value|the value of the new "
+                                + longName : null, "final U|unit|the unit of the new " + longName}, null, null,
+                new String[]{"super(unit);", "// System.out.println(\"Created " + name + "\");",
+                        (0 == dimensions ? "initialize(value);" : null)}, true));
+        if (dimensions > 0)
+        {
+            construction.append(buildSubSubClass(cg, contentIndent, absRelType, "Dense", absRelType + " Dense "
+                    + parentClassName, mutable, dimensions));
+            construction.append(buildSubSubClass(cg, contentIndent, absRelType, "Sparse", absRelType + " Sparse "
+                    + parentClassName, mutable, dimensions));
+        }
+        else
+        {
+            // Scalar; build the constructors
+            final String immutableName = floatType + "Scalar." + name + "<U>";
+            final String immutableLongName =
+                    (name.startsWith("Abs") ? "Absolute" : "Relative") + " Immutable " + floatType + "Scalar";
+            final String mutableName = "Mutable" + immutableName;
+            final String mutableLongName =
+                    (name.startsWith("Abs") ? "Absolute" : "Relative") + " Mutable" + floatType + "Scalar";
+            construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
+                    + " from an existing " + immutableLongName + ".", new String[]{"final " + immutableName
+                    + "|value|the reference"}, null, null, new String[]{"super(value.getUnit());",
+                    "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
+            construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
+                    + " from an existing " + mutableLongName + ".", new String[]{"final " + mutableName
+                    + "|value|the reference"}, null, null, new String[]{"super(value.getUnit());",
+                    "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
+            // Make a mutable of an immutable
+            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + "Scalar." + name
+                    + "<U>|mutable", null, null, null, null, new String[]{"return new Mutable" + floatType + "Scalar."
+                    + name + "<U>(this);"}, false));
+            if (mutable)
+            {
+                construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name
+                        + "<U>|immutable", null, null, null, null, new String[]{"return new " + floatType + "Scalar."
+                        + name + "<U>(this);"}, false));
+            }
+            // compareTo
+            construction.append(cg.buildMethod(contentIndent, "public final|int|compareTo", null, new String[]{"final "
+                    + name + "<U>|o|"}, null, null, new String[]{"return new " + floatType
+                    + "(getSI()).compareTo(o.getSI());"}, false));
+            // copy
+            construction.append(cg.buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "") + floatType
+                    + "Scalar." + name + "<U>|copy", null, null, null, null, new String[]{mutable
+                    ? "return new Mutable" + floatType + "Scalar." + name + "<U>(this);" : "return this;"}, false));
+        }
+        if (dimensions > 0)
+        {
+            construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name
+                    + "<U>|get", null, 1 == dimensions ? new String[]{"final int|index|"} : new String[]{
+                    "final int|row|", "final int|column|"}, "ValueException|when index < 0 or index >= size()", null,
+                    new String[]{"return new " + floatType + "Scalar." + name + "<U>(getInUnit("
+                            + (1 == dimensions ? "index" : "row, column") + ", getUnit()), getUnit());"}, false));
+        }
         construction.append(indent + "}\r\n\r\n");
         return construction.toString();
     }
@@ -1921,190 +2157,6 @@ public final class ValueClassesGenerator
     }
 
     /**
-     * Generate a class file for a scalar type.
-     * @param cg CodeGenerator; the code generator
-     * @param type String; must be <cite>Float</cite>, or <cite>Double</cite> (starting with a capital latter)
-     * @param mutable boolean; if true the mutable class is generated; of false the immutable class is generated
-     */
-    private static void generateScalarClass(final CodeGenerator cg, final String type, final boolean mutable)
-    {
-        final String lowerCaseType = type.toLowerCase();
-        final String outerIndent = cg.indent(1);
-        final String cast = type.equals("Double") ? "" : "(float) ";
-        final String mutableType = mutable ? "Mutable" : "Immutable ";
-        cg.generateAbstractClass(
-                "value.v" + lowerCaseType + ".scalar",
-                (mutable ? "Mutable" : "") + type + "Scalar",
-                mutable ? new String[]{"org.opentrafficsim.core.unit.SICoefficients",
-                        "org.opentrafficsim.core.unit.SIUnit", "org.opentrafficsim.core.unit.Unit",
-                        "org.opentrafficsim.core.value.Absolute", "org.opentrafficsim.core.value.Relative",
-                        "org.opentrafficsim.core.value.ValueUtil",
-                        "org.opentrafficsim.core.value.v" + lowerCaseType + "." + type + "MathFunctions"}
-                        : new String[]{"org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.Absolute",
-                                "org.opentrafficsim.core.value.Format", "org.opentrafficsim.core.value.Relative",
-                                "org.opentrafficsim.core.value.Scalar", "org.opentrafficsim.core.value.ValueUtil"},
-                (mutable ? "Mutable" : "Immutable ") + type + "Scalar.",
-                new String[]{"<U> Unit; the unit of this " + type + "Scalar"},
-                "<U extends Unit<U>> extends " + (mutable ? type : "") + "Scalar<U>"
-                        + (mutable ? " implements " + type + "MathFunctions" : ""),
-                (mutable ? "" : cg.buildField(outerIndent, "private " + lowerCaseType + " valueSI",
-                        "The value, stored in the standard SI unit."))
-                        + cg.buildMethod(outerIndent, "protected||" + (mutable ? "Mutable" : " ") + type + "Scalar",
-                                "Construct a new " + mutableType + type + "Scalar.",
-                                new String[]{"final U|unit|the unit of the new " + (mutable ? "Mutable" : "") + type
-                                        + "Scalar"}, null, null, new String[]{"super(unit);"}, true)
-                        + buildScalarSubClass(cg, outerIndent, "Abs", "Absolute " + mutableType + type + "Scalar", type
-                                + "Scalar<U>", "Absolute, Comparable<Abs<U>>", type + "Scalar", mutable)
-                        + buildScalarSubClass(cg, outerIndent, "Rel", "Relative " + mutableType + type + "Scalar", type
-                                + "Scalar<U>", "Relative, Comparable<Rel<U>>", type + "Scalar", mutable)
-                        + (mutable ? cg.buildMethod(outerIndent, "public abstract|" + type
-                                + "Scalar<U>|immutable|immutable version of this " + type + "Scalar",
-                                "Construct an immutable version of this Mutable" + type + "Scalar. <br>\r\n"
-                                        + outerIndent + " * The immutable version is created as a deep copy of this. "
-                                        + "Delayed copying is not worthwhile for a Scalar.", null, null, null, null,
-                                false)
-                                + cg.buildMethod(outerIndent, "final|void|setSI",
-                                        "Replace the stored value by the supplied value which is expressed "
-                                                + "in the standard SI unit.",
-                                        new String[]{"final " + type.toLowerCase()
-                                                + "|valueSI|the value to store (value must already be in the "
-                                                + "standard SI unit)"}, null, null,
-                                        new String[]{"setValueSI(valueSI);"}, false)
-                                + cg.buildMethod(outerIndent, "final|void|set|",
-                                        "Replace the stored value by the supplied value.", new String[]{"final " + type
-                                                + "Scalar<U>|value|the strongly typed value to store"}, null, null,
-                                        new String[]{"setValueSI(value.getValueSI());"}, false)
-                                + cg.buildMethod(outerIndent, "final|void|setInUnit",
-                                        "Replace the stored value by the supplied value which can be "
-                                                + "expressed in any compatible unit.",
-                                        new String[]{"final " + type.toLowerCase() + "|value|the value to store",
-                                                "final U|valueUnit|the unit of the supplied value"}, null, null,
-                                        new String[]{"setValueSI(" + (cast.equals("") ? "" : cast + " ")
-                                                + "ValueUtil.expressAsSIUnit(value, valueUnit));"}, false)
-                                + buildOtherMutatingScalarMethods(cg, outerIndent, type)
-                                : cg.buildMethod(outerIndent, "public abstract|Mutable" + type + "Scalar<U>|mutable",
-                                        "Create a mutable version of this " + type + "Scalar. <br>\r\n" + outerIndent
-                                                + " * The mutable version is created as a deep copy of this. "
-                                                + "Delayed copying is not worthwhile for a Scalar.", null, null, null,
-                                        null, false)
-                                        + cg.buildMethod(outerIndent, "protected final|void|initialize",
-                                                "Initialize the valueSI field (performing conversion to the SI "
-                                                        + "standard unit if needed).", new String[]{"final "
-                                                        + lowerCaseType + "|value|the value in the unit of this "
-                                                        + type + "Scalar"}, null, null, new String[]{
-                                                        "if (this.getUnit().equals(this.getUnit().getStandardUnit()))",
-                                                        "{",
-                                                        cg.indent(1) + "this.valueSI = value;",
-                                                        "}",
-                                                        "else",
-                                                        "{",
-                                                        cg.indent(1) + "this.valueSI = " + cast
-                                                                + "expressAsSIUnit(value);", "}"}, false)
-                                        + cg.buildMethod(outerIndent, "protected final|void|initialize",
-                                                "Initialize the valueSI field. As the provided value is already in "
-                                                        + "the SI standard unit, conversion is never necessary.",
-                                                new String[]{"final " + type
-                                                        + "Scalar<U>|value|the value to use for initialization"}, null,
-                                                null, new String[]{"setValueSI(value.getValueSI());"}, false)
-                                        + cg.buildMethod(outerIndent, "public final|" + lowerCaseType + "|getValueSI",
-                                                "Retrieve the value in the underlying SI unit.", null, null, null,
-                                                new String[]{"return this.valueSI;"}, false)
-                                        + cg.buildMethod(outerIndent, "protected final|void|setValueSI",
-                                                "Set the value in the underlying SI unit.", new String[]{"final "
-                                                        + type.toLowerCase()
-                                                        + "|value|the new value in the underlying SI unit"}, null,
-                                                null, new String[]{"this.valueSI = value;"}, false)
-                                        + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase()
-                                                + "|getValueInUnit", "Retrieve the value in the original unit.", null,
-                                                null, null, new String[]{"return " + cast
-                                                        + "expressAsSpecifiedUnit(this.valueSI);"}, false)
-                                        + cg.buildMethod(outerIndent, "public final|" + type.toLowerCase()
-                                                + "|getValueInUnit",
-                                                "Retrieve the value converted into some specified unit.",
-                                                new String[]{"final U|targetUnit|the unit to convert the value into"},
-                                                null, null, new String[]{"return " + cast
-                                                        + "ValueUtil.expressAsUnit(this.valueSI, targetUnit);"}, false)
-                                        + buildNumberMethods(cg, type)));
-    }
-
-    /**
-     * Generate most of the java code that modifies MutableScalar values.
-     * @param cg CodeGenerator; the code generator
-     * @param indent String; prepended to output lines on the outermost level of the generated code
-     * @param type String; either <cite>Float</cite> or <cite>Double</cite>
-     * @return String
-     */
-    private static String buildOtherMutatingScalarMethods(final CodeGenerator cg, final String indent, final String type)
-    {
-        final String cast = (type.startsWith("F") ? "(float)" : null);
-        StringBuilder construction = new StringBuilder();
-        construction.append(cg.buildBlockComment(indent, "NON-STATIC METHODS"));
-        construction.append(cg.buildMethod(indent, "public final|void|add", "Add another value to this value. "
-                + "Only Relative values are allowed; adding an absolute value to an absolute value\r\n" + indent
-                + " * is not allowed. Adding an absolute value to an existing relative value would require the "
-                + "result to become\r\n" + indent
-                + " * absolute, which is a type change that is impossible. For that operation, use a static method.",
-                new String[]{"final " + type + "Scalar.Rel<U>|value|the value to add"}, null, null,
-                new String[]{"setValueSI(getValueSI() + value.getValueSI());"}, false));
-        construction.append(cg.buildMethod(indent, "public final|void|subtract",
-                "Subtract another value from this value. "
-                        + "Only relative values are allowed; subtracting an absolute value from a\r\n" + indent
-                        + " * relative value is not allowed. Subtracting an absolute value from an existing "
-                        + "absolute value would require the\r\n" + indent
-                        + " * result to become relative, which is a type change that is impossible. "
-                        + "For that operation, use a static method.", new String[]{"final " + type
-                        + "Scalar.Rel<U>|value|the value to subtract"}, null, null,
-                new String[]{"setValueSI(getValueSI() - value.getValueSI());"}, false));
-        construction.append(cg.buildBlockComment(indent, "STATIC METHODS"));
-        construction.append(buildScalarIncrementDecrement(cg, indent, type, true));
-        construction.append(buildScalarPlus(cg, indent, type, true));
-        construction.append(buildScalarPlus(cg, indent, type, false));
-        construction.append(buildScalarIncrementDecrement(cg, indent, type, false));
-        construction.append(buildScalarMinus(cg, indent, type, true));
-        construction.append(buildScalarMinus(cg, indent, type, false));
-        // abs minus abs -> rel is a special case because the result differs from both input types
-        construction.append(cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + type
-                + "Scalar.Rel<U>|minus|the difference of the two absolute values as a relative value",
-                "Subtract two absolute values. Return a new instance of a relative value of the difference. The unit "
-                        + "of the value\r\n" + indent + " * will be the unit of the first argument.", new String[]{
-                        "final " + type + "Scalar.Abs<U>|valueAbs1|value 1",
-                        "final " + type + "Scalar.Abs<U>|valueAbs2|value 2",
-                        "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
-                        "Mutable" + type + "Scalar.Rel<U> result = ",
-                        indent + indent + "new Mutable" + type
-                                + "Scalar.Rel<U>(valueAbs1.getValueInUnit(), valueAbs1.getUnit());",
-                        "result.decrementBy(valueAbs2);", "return result;"}, false));
-        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, true, true));
-        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, false, true));
-        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, true, false));
-        construction.append(buildScalarMultiplyOrDivide(cg, indent, type, false, false));
-        construction.append(cg.buildBlockComment(indent, "MATH METHODS"));
-        for (MathFunctionEntry mfe : mathFunctions)
-        {
-            String code;
-            if ("inv".equals(mfe.name))
-            {
-                code = "setValueSI(1.0" + (type.startsWith("F") ? "f" : "") + " / getValueSI());";
-            }
-            else
-            {
-                code =
-                        "setValueSI(" + (null != cast && mfe.castToFloatRequired ? cast + " " : "") + "Math."
-                                + mfe.name + "(" + "getValueSI()" + (null != mfe.argument ? ", x" : "") + ")" + ");";
-            }
-            construction.append(cg.buildMethod(indent, "public final|void|" + mfe.name, null, null != mfe.argument
-                    ? new String[]{"final double|x|"} : null, null, null, new String[]{
-                    null != mfe.toDoText ? "// TODO: " + mfe.toDoText : null, code}, false));
-        }
-        final String typeCast = (cast == null ? "double" : cast.substring(1, cast.length() - 1));
-        construction.append(cg.buildMethod(indent, "public final|void|multiply", null, new String[]{"final " + typeCast
-                + "|constant|"}, null, null, new String[]{"setValueSI(getValueSI() * constant);"}, false));
-        construction.append(cg.buildMethod(indent, "public final|void|divide", null, new String[]{"final " + typeCast
-                + "|constant|"}, null, null, new String[]{"setValueSI(getValueSI() / constant);"}, false));
-        return construction.toString();
-    }
-
-    /**
      * Generate the code for scalar multiply or divide.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
@@ -2129,29 +2181,8 @@ public final class ValueClassesGenerator
                         indent + indent + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients."
                                 + (multiply ? "multiply" : "divide") + "(left.getUnit().getSICoefficients(),",
                         indent + indent + indent + indent + "right.getUnit().getSICoefficients()).toString());",
-                        "return new Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>(left.getValueSI() "
-                                + (multiply ? "*" : "/") + " right.getValueSI(), targetUnit);"}, false);
-    }
-
-    /**
-     * Generate the code for scalar incrementBy and decrementBy.
-     * @param cg CodeGenerator; the code generator
-     * @param indent String; prefix for all output lines
-     * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
-     * @param increment boolean; if true; the code for incrementBy is generated; if false; the code for decrementBy is
-     *            generated
-     * @return String; java code
-     */
-    private static String buildScalarIncrementDecrement(final CodeGenerator cg, final String indent,
-            final String scalarType, final boolean increment)
-    {
-        return cg.buildMethod(indent, "protected final|" + scalarType + "Scalar<?>|" + (increment ? "in" : "de")
-                + "crementBy|the modified Mutable" + scalarType + "Scalar", (increment ? "In" : "De")
-                + "crement the stored value by a specified amount.", new String[]{"final " + scalarType + "Scalar<?>|"
-                + (increment ? "in" : "de") + "crement|the amount by which to " + (increment ? "in" : "de")
-                + "crement the stored value"}, null, null, new String[]{
-                "setValueSI(getValueSI() " + (increment ? "+ in" : "- de") + "crement.getValueSI());", "return this;"},
-                false);
+                        "return new Mutable" + scalarType + "Scalar." + absRel + "<SIUnit>(left.getSI() "
+                                + (multiply ? "*" : "/") + " right.getSI(), targetUnit);"}, false);
     }
 
     /**
@@ -2218,8 +2249,11 @@ public final class ValueClassesGenerator
             final boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
-        return cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + type + "Scalar." + absRel
-                + "<U>|minus|the resulting value as " + (absoluteResult ? "an absolute" : "a relative") + " value",
+        return cg.buildMethod(
+                indent,
+                "public static <U extends Unit<U>>|Mutable" + type + "Scalar." + absRel
+                        + "<U>|minus|the resulting value as " + (absoluteResult ? "an absolute" : "a relative")
+                        + " value",
                 absoluteResult
                         ? "Subtract a number of relative values from an absolute value. Return a new instance of the "
                                 + "value. The unit of the\r\n" + indent
@@ -2232,190 +2266,19 @@ public final class ValueClassesGenerator
                                 + " * value will be the unit of the first argument. Due to type erasure of generics, "
                                 + "the method cannot check whether an\r\n" + indent
                                 + " * array of arguments submitted to the varargs has a "
-                                + "mixed-unit content at runtime.", new String[]{
+                                + "mixed-unit content at runtime.",
+                new String[]{
                         "final " + type + "Scalar." + absRel + "<U>|value" + absRel + "|the "
                                 + (absoluteResult ? "absolute" : "relative") + " base value",
                         "final " + type + "Scalar.Rel<U>...|valuesRel|zero or more relative values to subtract "
                                 + (absoluteResult ? "from the absolute value" : "from the first value"),
-                        "Unit|<U>|the unit of the parameters and the result"}, null, "@SafeVarargs", new String[]{
-                        "Mutable" + type + "Scalar." + absRel + "<U> result = new Mutable" + type
-                                + "Scalar." + absRel + "<U>(value" + absRel + ");",
-                        "for (" + type + "Scalar.Rel<U> v : valuesRel)", "{",
+                        "Unit|<U>|the unit of the parameters and the result"},
+                null,
+                "@SafeVarargs",
+                new String[]{
+                        "Mutable" + type + "Scalar." + absRel + "<U> result = new Mutable" + type + "Scalar." + absRel
+                                + "<U>(value" + absRel + ");", "for (" + type + "Scalar.Rel<U> v : valuesRel)", "{",
                         cg.indent(1) + "result.decrementBy(v);", "}", "return result;"}, false);
-    }
-
-    /**
-     * Generate the Java code that implements the Number methods.
-     * @param cg CodeGenerator; the code generator
-     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
-     * @return String; Java code
-     */
-    private static String buildNumberMethods(final CodeGenerator cg, final String type)
-    {
-        final String cast = type.equals("Float") ? "" : "(float) ";
-        final String lowerCaseType = type.toLowerCase();
-        final String indent = cg.indent(1);
-        StringBuilder construction = new StringBuilder();
-        construction.append(cg.buildBlockComment(indent, "NUMBER METHODS"));
-        construction.append(cg.buildMethod(indent, "public final|int|intValue", null, null, null, null,
-                new String[]{"return " + (type.equals("Float") ? "" : "(int) ") + "Math.round(this.valueSI);"}, false));
-        construction.append(cg.buildMethod(indent, "public final|long|longValue", null, null, null, null,
-                new String[]{"return Math.round(this.valueSI);"}, false));
-        construction.append(cg.buildMethod(indent, "public final|float|floatValue", null, null, null, null,
-                new String[]{"return " + cast + "this.valueSI;"}, false));
-        construction.append(cg.buildMethod(indent, "public final|double|doubleValue", null, null, null, null,
-                new String[]{"return this.valueSI;"}, false));
-        construction.append(cg.buildMethod(indent, "public final|String|toString", null, null, null, null,
-                new String[]{"return toString(getUnit());"}, false));
-        construction.append(cg.buildMethod(
-                indent,
-                "public final|String|toString|printable string with the scalar contents",
-                "Print this " + type + "Scalar with the value expressed in the specified unit.",
-                new String[]{"final U|displayUnit|the unit into which the value is converted for display"},
-                null,
-                null,
-                new String[]{
-                        "StringBuffer buf = new StringBuffer();",
-                        "if (this instanceof Mutable" + type + "Scalar)",
-                        "{",
-                        cg.indent(1) + "buf.append(\"Mutable   \");",
-                        cg.indent(1) + "if (this instanceof Mutable" + type + "Scalar.Abs)",
-                        cg.indent(1) + "{",
-                        cg.indent(2) + "buf.append(\"Abs \");",
-                        cg.indent(1) + "}",
-                        cg.indent(1) + "else if (this instanceof Mutable" + type + "Scalar.Rel)",
-                        cg.indent(1) + "{",
-                        cg.indent(2) + "buf.append(\"Rel \");",
-                        cg.indent(1) + "}",
-                        cg.indent(1) + "else",
-                        cg.indent(1) + "{",
-                        cg.indent(2) + "buf.append(\"??? \");",
-                        cg.indent(1) + "}",
-                        "}",
-                        "else",
-                        "{",
-                        cg.indent(1) + "buf.append(\"Immutable \");",
-                        cg.indent(1) + "if (this instanceof " + type + "Scalar.Abs)",
-                        cg.indent(1) + "{",
-                        cg.indent(2) + "buf.append(\"Abs \");",
-                        cg.indent(1) + "}",
-                        cg.indent(1) + "else if (this instanceof " + type + "Scalar.Rel)",
-                        cg.indent(1) + "{",
-                        cg.indent(2) + "buf.append(\"Rel \");",
-                        cg.indent(1) + "}",
-                        cg.indent(1) + "else",
-                        cg.indent(1) + "{",
-                        cg.indent(2) + "buf.append(\"??? \");",
-                        cg.indent(1) + "}",
-                        "}",
-                        "buf.append(\"[\" + displayUnit.getAbbreviation() + \"] \");",
-                        type.toLowerCase() + " " + type.substring(0, 1).toLowerCase() + " = "
-                                + (type.startsWith("F") ? "(float) " : "")
-                                + "ValueUtil.expressAsUnit(getValueSI(), displayUnit);",
-                        "buf.append(Format.format(" + type.substring(0, 1).toLowerCase() + "));",
-                        "return buf.toString();"}, false));
-        construction.append(cg.buildMethod(indent, "public final|int|hashCode", null, null, null, null, type
-                .equals("Float") ? new String[]{"final int prime = 31;", "int result = 1;",
-                "result = prime * result + Float.floatToIntBits(this.valueSI);", "return result;"} : new String[]{
-                "final int prime = 31;", "int result = 1;", "long temp;",
-                "temp = Double.doubleToLongBits(this.valueSI);",
-                "result = prime * result + (int) (temp ^ (temp >>> 32));", "return result;"}, false));
-        construction.append(cg.buildMethod(
-                indent,
-                "public final|boolean|equals",
-                null,
-                new String[]{"final Object|obj|the Object to compare with"},
-                null,
-                null,
-                new String[]{
-                        "if (this == obj)",
-                        "{",
-                        cg.indent(1) + "return true;",
-                        "}",
-                        "if (obj == null)",
-                        "{",
-                        cg.indent(1) + "return false;",
-                        "}",
-                        "if (!(obj instanceof " + type + "Scalar))",
-                        "{",
-                        cg.indent(1) + "return false;",
-                        "}",
-                        type + "Scalar<?> other = (" + type + "Scalar<?>) obj;",
-                        "// unequal if not both Absolute or both Relative",
-                        "if (this.isAbsolute() != other.isAbsolute() || this.isRelative() != other.isRelative())",
-                        "{",
-                        cg.indent(1) + "return false;",
-                        "}",
-                        "// unequal if the underlying standard SI unit is different",
-                        "if (!this.getUnit().getStandardUnit().equals(other.getUnit().getStandardUnit()))",
-                        "{",
-                        cg.indent(1) + "return false;",
-                        "}",
-                        "if (" + type + "." + lowerCaseType + (type.equals("Float") ? "ToIntBits" : "ToLongBits")
-                                + "(this.valueSI) != " + type + "." + lowerCaseType
-                                + (type.equals("Float") ? "ToIntBits" : "ToLongBits") + "(other.valueSI))", "{",
-                        cg.indent(1) + "return false;", "}", "return true;"}, false));
-        return construction.toString();
-    }
-
-    /**
-     * Generate the Java code for a sub class of scalar.
-     * @param cg CodeGenerator; the code generator
-     * @param indent String; prefix for each output line
-     * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
-     * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatScalar</cite> or
-     *            <cite>Relative Mutable DoubleScalar</cite>
-     * @param extendsString String; something like <cite>DoubleScalar&lt;U&gt;</cite>
-     * @param implementsString String; something like <cite>Absolute, Comparable&lt;Abs&lt;U&gt;&gt;</cite>
-     * @param parentClassName String; name of the class that is being sub-classed
-     * @param mutable boolean; if true; the class file for the mutable version is generated; if false; the class file
-     *            for the immutable version is generated
-     * @return String; java code implementing the sub class
-     */
-    private static String buildScalarSubClass(final CodeGenerator cg, final String indent, final String name,
-            final String longName, final String extendsString, final String implementsString,
-            final String parentClassName, final boolean mutable)
-    {
-        final String absRelType = longName.split(" ")[0];
-        final String floatType = extendsString.contains("Float") ? "Float" : "Double";
-        StringBuilder construction = new StringBuilder();
-        construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
-        construction.append(indent + "public static class " + name + "<U extends Unit<U>> extends "
-                + (mutable ? "Mutable" : "") + extendsString + " implements " + implementsString + "\r\n" + indent
-                + "{\r\n");
-        final String contentIndent = indent + cg.indent(1);
-        construction.append(cg.buildSerialVersionUID(contentIndent));
-        construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName + ".",
-                new String[]{"final " + floatType.toLowerCase() + "|value|the value of the new " + longName,
-                        "final U|unit|the unit of the new " + longName}, null, null, new String[]{"super(unit);",
-                        "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
-        construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
-                + " from an existing " + absRelType + " Immutable " + floatType + "Scalar.", new String[]{"final "
-                + parentClassName + "." + name + "<U>|value|the reference"}, null, null, new String[]{
-                "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"},
-                true));
-        construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
-                + " from an existing " + absRelType + " Mutable" + floatType + "Scalar.", new String[]{"final "
-                + " Mutable" + floatType + "Scalar." + name + "<U>|value|the reference"}, null, null, new String[]{
-                "super(value.getUnit());", "// System.out.println(\"Created " + name + "\");", "initialize(value);"},
-                true));
-        construction.append(cg.buildMethod(contentIndent, "public final|" + "Mutable" + floatType + "Scalar." + name
-                + "<U>|mutable", null, null, null, null, new String[]{"return new Mutable" + floatType + "Scalar."
-                + name + "<U>(this);"}, false));
-        if (mutable)
-        {
-            construction.append(cg.buildMethod(contentIndent, "public final|" + parentClassName + "." + name
-                    + "<U>|immutable", null, null, null, null, new String[]{"return new " + parentClassName + "."
-                    + name + "<U>(this);"}, false));
-        }
-        construction.append(cg.buildMethod(contentIndent, "public final|int|compareTo", null, new String[]{"final|"
-                + name + "<U> o|"}, null, null, new String[]{"return new " + floatType
-                + "(getValueSI()).compareTo(o.getValueSI());"}, false));
-        construction.append(cg.buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "")
-                + parentClassName + "." + name + "<U>|copy", null, null, null, null, new String[]{mutable
-                ? "return new Mutable" + floatType + "Scalar." + name + "<U>(this);" : "return this;"}, false));
-        construction.append(indent + "}\r\n\r\n");
-        return construction.toString();
     }
 
     /**
