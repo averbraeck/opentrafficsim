@@ -4,6 +4,7 @@ import java.awt.geom.Path2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
@@ -13,6 +14,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opentrafficsim.core.network.AbstractLink;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
@@ -212,13 +214,13 @@ import com.vividsolutions.jts.geom.Point;
 public class Link extends AbstractLink<String, Node> implements LocatableInterface
 {
     /** SPEEDAB class java.lang.Double 120.0 */
-    private final double speed;
-
+    private DoubleScalar<SpeedUnit> speed;
 
     /** the lines for the animation, relative to the centroid */
     private Set<Path2D> lines = null;
 
     private LinkData linkData;
+
     /** traffic behaviour */
     private TrafficBehaviourType behaviourType;
 
@@ -235,16 +237,12 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param length
      * @param startNode
      * @param endNode
-     * @param linkTag
-     * @param wegtype
-     * @param typeWegVak
-     * @param typeWeg
      * @param speed
      * @param capacity
      * @param behaviourType
      */
-    public Link(final Geometry geometry, final String nr, final DoubleScalar<LengthUnit> length,
-            final Node startNode, final Node endNode, final double speed, final DoubleScalar<FrequencyUnit> capacity,
+    public Link(final Geometry geometry, final String nr, final DoubleScalar<LengthUnit> length, final Node startNode,
+            final Node endNode, DoubleScalar<SpeedUnit> speed, final DoubleScalar<FrequencyUnit> capacity,
             final TrafficBehaviourType behaviourType, LinkData linkData)
     {
         super(nr, startNode, endNode, length, capacity);
@@ -290,12 +288,12 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
                     && Math.abs(cc[0].x - this.getEndNode().getPoint().getX()) > 0.001
                     && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().getX()) > 0.001
                     && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().getX()) > 0.001)
-                System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x=" + cc[0].x
-                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + this.getStartNode().getPoint().getX()
-                        + ", nodeB.x=" + this.getEndNode().getPoint().getX());
+                System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x="
+                        + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
+                        + this.getStartNode().getPoint().getX() + ", nodeB.x=" + this.getEndNode().getPoint().getX());
         }
     }
-    
+
     /**
      * @param startNode
      * @param endNode
@@ -303,7 +301,8 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param speed
      * @return
      */
-    public static Link createLink(Node startNode, Node endNode, DoubleScalar<FrequencyUnit> capacity, Double speed)
+    public static Link createLink(Node startNode, Node endNode, DoubleScalar<FrequencyUnit> capacity,
+            DoubleScalar<SpeedUnit> speed)
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate coordStart = new Coordinate(startNode.getPoint().getX(), startNode.getPoint().getY());
@@ -313,14 +312,20 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         Geometry geometry = line.getGeometryN(0);
         DoubleScalar<LengthUnit> length =
                 new DoubleScalar.Abs<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
+
         String nr = startNode.getId() + " - " + endNode.getId();
         Link newLink =
-                new Link(geometry, nr, length, startNode, endNode, 70.0, capacity, TrafficBehaviourType.NTM,
-                        null);
+                new Link(geometry, nr, length, startNode, endNode, speed, capacity, TrafficBehaviourType.NTM, null);
         return newLink;
     }
-    
-    
+
+    /**
+     * @param links
+     */
+    private static void joinEqualLinks(Map<String, Link> links)
+    {
+        ;
+    }
     /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
@@ -354,8 +359,8 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         {
             double dx = this.getLocation().getX();
             double dy = this.getLocation().getY();
-            //double dx = 0;
-            //double dy = 0;
+            // double dx = 0;
+            // double dy = 0;
             this.lines = new HashSet<Path2D>();
             for (int i = 0; i < this.getGeometry().getNumGeometries(); i++)
             {
@@ -383,7 +388,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     /**
      * @return speed
      */
-    public double getSpeed()
+    public DoubleScalar<SpeedUnit> getSpeed()
     {
         return this.speed;
     }

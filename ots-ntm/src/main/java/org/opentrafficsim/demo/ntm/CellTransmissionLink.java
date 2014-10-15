@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -43,10 +46,21 @@ public class CellTransmissionLink extends Link
      * @param cells
      */
     public CellTransmissionLink(Geometry geometry, String nr, DoubleScalar<LengthUnit> length, Node startNode,
-            Node endNode, double speed, DoubleScalar<FrequencyUnit> capacity, TrafficBehaviourType behaviourType,
-            LinkData linkData, ArrayList<FlowCell> cells)
+            Node endNode, DoubleScalar<SpeedUnit> speed, DoubleScalar<FrequencyUnit> capacity,
+            TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells)
     {
         super(geometry, nr, length, startNode, endNode, speed, capacity, behaviourType, linkData);
+        this.cells = cells;
+    }
+    
+    /**
+     * @param link original Link
+     * @param cells to add
+     */
+    public CellTransmissionLink(final Link link, final ArrayList<FlowCell> cells)
+    {
+        super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), 
+                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }
 
@@ -64,6 +78,30 @@ public class CellTransmissionLink extends Link
     public final void setCells(final ArrayList<FlowCell> cells)
     {
         this.cells = cells;
+    }
+
+    /**
+     * @param link
+     * @param timeStepDurationCellTransmission
+     * @return
+     */
+    public ArrayList<FlowCell> createCells(CellTransmissionLink link, Rel<TimeUnit> timeStepDurationCellTransmission)
+    {
+        ArrayList<FlowCell> flowCells = new ArrayList<FlowCell>();
+        // the length of the cell depends on the speed and simulation time step
+        DoubleScalar<SpeedUnit> speed = link.getSpeed();
+        Rel<TimeUnit> timeStep = timeStepDurationCellTransmission;
+        DoubleScalar<LengthUnit> cellLength =
+                new DoubleScalar.Abs<LengthUnit>(speed.getValueSI() * timeStep.getValueSI(), LengthUnit.KILOMETER);
+        // find out how many Cells fit into this Link
+        double numberOfCells = Math.rint(link.getLength().getValueSI() / cellLength.getValueSI());
+        //compute the amount of cells 
+        for (int i = 0; i < numberOfCells; i++)
+        {
+            FlowCell cell = new FlowCell(cellLength, link.getCapacity());
+            flowCells.add(cell);
+        }
+        return flowCells;
     }
 
 }

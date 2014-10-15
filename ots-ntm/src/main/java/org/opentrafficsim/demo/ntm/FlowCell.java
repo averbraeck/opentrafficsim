@@ -41,7 +41,7 @@ public class FlowCell implements LocatableInterface
      * @param cellLength
      * @param capacity
      */
-    public FlowCell(Geometry geometry, DoubleScalar<LengthUnit> cellLength, DoubleScalar<FrequencyUnit> capacity)
+    public FlowCell(DoubleScalar<LengthUnit> cellLength, DoubleScalar<FrequencyUnit> capacity)
     {
         this.setCellLength(cellLength);
         this.setCapacity(capacity);
