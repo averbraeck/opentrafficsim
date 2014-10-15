@@ -14,6 +14,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -42,7 +43,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, ShpNode> centroids)
+    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids)
             throws IOException
     {
         /*-
@@ -95,7 +96,7 @@ public class ShapeFileReader
                 String regio = (String) feature.getAttribute("REGIO");
                 double dhb = (double) feature.getAttribute("DHB");
                 // search for areas within the centroids (from the "points")
-                ShpNode centroid = centroids.get(centroidNr);
+                Node centroid = centroids.get(centroidNr);
                 if (centroid == null)
                 {
                     // System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" +
@@ -133,19 +134,19 @@ public class ShapeFileReader
             storeAreas.dispose();
         }
         int teller = 0;
-        for (ShpNode centroid : centroids.values())
+        for (Node centroid : centroids.values())
         {
             boolean found = false;
 
-            if (areas.containsKey(centroid.getNr()))
+            if (areas.containsKey(centroid.getId()))
             {
                 found = true;
                 teller++;
             }
             if (!found)
             {
-                areas.put(centroid.getNr(), NTMModel.createMissingArea(centroid));
-                System.out.println("Centroid not found: create area for " + centroid.getNr());                
+                areas.put(centroid.getId(), NTMModel.createMissingArea(centroid));
+                System.out.println("Centroid not found: create area for " + centroid.getId());                
             }
         }
         System.out.println("found : " + teller); 
@@ -160,7 +161,7 @@ public class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
+    public static Map<String, Node> ReadNodes(final String shapeFileName, final String numberType,
             boolean returnCentroid, boolean allCentroids) throws IOException
     {
         /*-
@@ -183,7 +184,7 @@ public class ShapeFileReader
         }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, ShpNode> nodes = new HashMap<>();
+        Map<String, Node> nodes = new HashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();
@@ -218,7 +219,7 @@ public class ShapeFileReader
                 {
                     double x = (double) feature.getAttribute("X");
                     double y = (double) feature.getAttribute("Y");
-                    ShpNode node = new ShpNode(point, nr, x, y);
+                    Node node = new Node(nr, point, null);
                     nodes.put(nr, node);
                 }
             }
@@ -270,8 +271,8 @@ public class ShapeFileReader
      * @param centroids the centroids to check start and end Node
      * @throws IOException on error
      */
-    public static void readLinks(final String shapeFileName, Map<String, ShpLink> links,
-            Map<String, ShpLink> connectors, Map<String, ShpNode> nodes, Map<String, ShpNode> centroids)
+    public static void readLinks(final String shapeFileName, Map<String, Link> links,
+            Map<String, Link> connectors, Map<String, Node> nodes, Map<String, Node> centroids)
             throws IOException
     {
         /*-
@@ -316,7 +317,8 @@ public class ShapeFileReader
                 String name = String.valueOf(feature.getAttribute("NAME"));
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
-                double length = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
+                double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
+                DoubleScalar<LengthUnit> length = new DoubleScalar.Abs<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -326,13 +328,14 @@ public class ShapeFileReader
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
                 double speed = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
-                double capacity = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
-
+                double cap = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
+                DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+//                      new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
-                ShpNode centroidA = centroids.get(lNodeA);
-                ShpNode centroidB = centroids.get(lNodeB);
-                ShpNode nodeA = nodes.get(lNodeA);
-                ShpNode nodeB = nodes.get(lNodeB);
+                Node centroidA = centroids.get(lNodeA);
+                Node centroidB = centroids.get(lNodeB);
+                Node nodeA = nodes.get(lNodeA);
+                Node nodeB = nodes.get(lNodeB);
                 boolean nodeACentroid = false;
                 boolean nodeBCentroid = false;
 
@@ -340,14 +343,15 @@ public class ShapeFileReader
                 {
                     if (nodeA != null && nodeB != null) 
                     {
-                        ShpLink linkAB = null;
-                        ShpLink linkBA = null;
+                        Link linkAB = null;
+                        Link linkBA = null;
+
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                            new ShpLink(geometry, nr, name, (short) 1, length, nodeA, nodeB, linkTag, wegtype,
-                                    typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
+                            new Link(geometry, nr, length, nodeA, nodeB, speed, capacity, TrafficBehaviourType.ROAD, linkData);
+                        linkData = new LinkData(name+ "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                            new ShpLink(geometry, nr, name + "_BA", (short) 1, length, nodeB, nodeA, linkTag, wegtype,
-                                    typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
+                            new Link(geometry, nr, length, nodeB, nodeA, speed, capacity, TrafficBehaviourType.ROAD, linkData);
                         if (direction == 1)
                         {
                             links.put(nr, linkAB);                            
@@ -372,6 +376,7 @@ public class ShapeFileReader
                 else
                 { // possibly a link that connects to a centroid
                   // but first test the geometry of the node/centroid: is it a node or is it a centroid?
+                    LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                     if (centroidA != null)
                     {
                         if (testGeometry(geometry.getCoordinates()[0], centroidA.getPoint()))
@@ -394,25 +399,22 @@ public class ShapeFileReader
                     }
                     else if (nodeACentroid)
                     {
-                        ShpLink link =
-                                new ShpLink(geometry, nr, name, direction, length, centroidA, nodeB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.CENTROID);
+                        Link link =
+                                new Link(geometry, nr, length, centroidA, nodeB, speed, capacity,  TrafficBehaviourType.CENTROID, linkData);
                         connectors.put(nr, link);
 
                     }
                     else if (nodeBCentroid)
                     {
-                        ShpLink link =
-                                new ShpLink(geometry, nr, name, direction, length, nodeA, centroidB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.CENTROID);
+                        Link link =
+                                new Link(geometry, nr, length, nodeA, centroidB, speed, capacity,  TrafficBehaviourType.CENTROID, linkData);
                         connectors.put(nr, link);
 
                     }
                     else
                     {
-                        ShpLink link =
-                                new ShpLink(geometry, nr, name, direction, length, nodeA, nodeB, linkTag, wegtype,
-                                        typeWegVak, typeWeg, speed, capacity, TrafficBehaviourType.ROAD);
+                        Link link =
+                                new Link(geometry, nr, length, nodeA, nodeB, speed, capacity,  TrafficBehaviourType.ROAD, linkData);
                         links.put(nr, link);
                     }
                 }

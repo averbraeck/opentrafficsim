@@ -22,7 +22,7 @@ public class NTMSettings
 {
 
     /**
-     * Start time of the simulation since Midnight, translated from Calendar to seconds since
+     * Start time of the simulation since Midnight, translated from Calendar to seconds since.
      */
     private DoubleScalar.Abs<TimeUnit> startTimeSinceMidnight;
 
@@ -33,7 +33,10 @@ public class NTMSettings
     private String descriptionProject;
 
     /** */
-    private DoubleScalar.Rel<TimeUnit> timeStepDuration;
+    private DoubleScalar.Rel<TimeUnit> timeStepDurationNTM;
+
+    /** */
+    private DoubleScalar.Rel<TimeUnit> timeStepDurationCTM;
 
     /** */
     private DoubleScalar.Abs<TimeUnit> absoluteStartTime;
@@ -42,10 +45,11 @@ public class NTMSettings
      * @param startTime
      * @param durationOfSimulation
      * @param descriptionProject
-     * @param timeStepDuration
+     * @param timeStepDurationNTM 
+     * @param timeStepDurationCTM 
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
-            Rel<TimeUnit> timeStepDuration)
+            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -57,7 +61,8 @@ public class NTMSettings
         this.startTimeSinceMidnight = new DoubleScalar.Abs<TimeUnit>(time, TimeUnit.SECOND);
         this.durationOfSimulation = durationOfSimulation;
         this.setDescriptionProject(descriptionProject);
-        this.timeStepDuration = timeStepDuration;
+        this.timeStepDurationNTM = timeStepDurationNTM;
+        this.timeStepDurationNTM = timeStepDurationCTM;        
     }
 
     /**
@@ -66,9 +71,9 @@ public class NTMSettings
      * @param descriptionProject
      * @param timeStepDuration
      */
-    public NTMSettings(Rel<TimeUnit> timeStepDuration)
+    public NTMSettings(Rel<TimeUnit> timeStepDurationNTM)
     {
-        this.timeStepDuration = timeStepDuration;
+        this.timeStepDurationNTM = timeStepDurationNTM;
     }
     
     /**
@@ -106,17 +111,33 @@ public class NTMSettings
     /**
      * @return timeStepDuration
      */
-    public Rel<TimeUnit> getTimeStepDuration()
+    public Rel<TimeUnit> getTimeStepDurationNTM()
     {
-        return this.timeStepDuration;
+        return this.timeStepDurationNTM;
     }
 
     /**
      * @param timeStepDuration set timeStepDuration
      */
-    public void setTimeStepDuration(Rel<TimeUnit> timeStepDuration)
+    public void setTimeStepDurationNTM(Rel<TimeUnit> timeStepDuration)
     {
-        this.timeStepDuration = timeStepDuration;
+        this.timeStepDurationNTM = timeStepDuration;
+    }
+
+    /**
+     * @return timeStepDurationCTM.
+     */
+    public DoubleScalar.Rel<TimeUnit> getTimeStepDurationCTM()
+    {
+        return timeStepDurationCTM;
+    }
+
+    /**
+     * @param timeStepDurationCTM set timeStepDurationCTM.
+     */
+    public void setTimeStepDurationCTM(DoubleScalar.Rel<TimeUnit> timeStepDurationCTM)
+    {
+        this.timeStepDurationCTM = timeStepDurationCTM;
     }
 
     /**

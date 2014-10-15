@@ -1,8 +1,15 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import javax.media.j3d.Bounds;
+
+import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -22,57 +29,46 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class FlowCell extends GeoObject implements LocatableInterface
+public class FlowCell implements LocatableInterface
 {
+    /** link length in a length unit. */
+    private DoubleScalar<LengthUnit> cellLength;
 
-    /** */
-    private double cellLength;
-
-    /** */
-    private double capacity;
-
+    /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
+    private DoubleScalar<FrequencyUnit> capacity;
     /**
      * @param geometry
      * @param cellLength
      * @param capacity
      */
-    public FlowCell(Geometry geometry, double cellLength, double capacity)
+    public FlowCell(Geometry geometry, DoubleScalar<LengthUnit> cellLength, DoubleScalar<FrequencyUnit> capacity)
     {
-        super(geometry);
-        this.cellLength = cellLength;
-        this.capacity = capacity;
+        this.setCellLength(cellLength);
+        this.setCapacity(capacity);
     }
 
     /**
-     * @return cellLength.
+     * Retrieves car production from network fundamental diagram.
+     * @param accumulatedCars number of cars in Cell
+     * @param maxCapacity
+     * @param param
+     * @return carProduction
      */
-    public double getCellLength()
+    public final double retrieveCellTransmissionProduction(final double accumulatedCars, final double maxCapacity,
+            final ParametersFundamentalDiagram param)
     {
-        return this.cellLength;
-    }
-
-    /**
-     * @param cellLength set cellLength.
-     */
-    public void setCellLength(double cellLength)
-    {
-        this.cellLength = cellLength;
-    }
-
-    /**
-     * @return capacity.
-     */
-    public double getCapacity()
-    {
-        return this.capacity;
-    }
-
-    /**
-     * @param capacity set capacity.
-     */
-    public void setCapacity(double capacity)
-    {
-        this.capacity = capacity;
+        ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
+        Point2D p = new Point2D.Double();
+        p.setLocation(0, 0);
+        xyPairs.add(p);
+        p = new Point2D.Double();
+        p.setLocation(param.getAccCritical1(), maxCapacity);
+        xyPairs.add(p);
+        p = new Point2D.Double();
+        p.setLocation(param.getAccJam(), 0);
+        xyPairs.add(p);
+        double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
+        return carProduction;
     }
 
     /** {@inheritDoc} */
@@ -87,6 +83,38 @@ public class FlowCell extends GeoObject implements LocatableInterface
     public Bounds getBounds() throws RemoteException
     {
         return null;
+    }
+
+    /**
+     * @return cellLength.
+     */
+    public DoubleScalar<LengthUnit> getCellLength()
+    {
+        return this.cellLength;
+    }
+
+    /**
+     * @param cellLength set cellLength.
+     */
+    public void setCellLength(DoubleScalar<LengthUnit> cellLength)
+    {
+        this.cellLength = cellLength;
+    }
+
+    /**
+     * @return capacity.
+     */
+    public DoubleScalar<FrequencyUnit> getCapacity()
+    {
+        return this.capacity;
+    }
+
+    /**
+     * @param capacity set capacity.
+     */
+    public void setCapacity(DoubleScalar<FrequencyUnit> capacity)
+    {
+        this.capacity = capacity;
     }
 
 }

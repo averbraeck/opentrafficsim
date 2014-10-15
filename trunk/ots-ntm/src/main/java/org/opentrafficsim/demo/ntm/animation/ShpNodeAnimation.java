@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.demo.ntm.ShpNode;
+import org.opentrafficsim.demo.ntm.Node;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ public class ShpNodeAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public ShpNodeAnimation(ShpNode source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public ShpNodeAnimation(Node source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(source, simulator);
     }

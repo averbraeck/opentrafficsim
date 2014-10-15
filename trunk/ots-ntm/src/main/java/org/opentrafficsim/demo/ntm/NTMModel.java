@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
@@ -19,6 +21,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.LinkEdge;
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -35,6 +38,8 @@ import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.index.SpatialIndex;
@@ -64,19 +69,19 @@ public class NTMModel implements OTSModelInterface
     private Map<String, Area> areas;
 
     /** nodes from shape file. */
-    private Map<String, ShpNode> shpNodes;
+    private Map<String, Node> nodes;
 
     /** connectors from shape file. */
-    private Map<String, ShpLink> shpConnectors;
+    private Map<String, Link> shpConnectors;
 
     /** links from shape file. */
-    private Map<String, ShpLink> shpLinks;
+    private Map<String, Link> shpLinks;
 
     /** subset of links from shape file used as flow links. */
-    private Map<String, ShpLink> flowLinks;
+    private Map<String, Link> flowLinks;
 
     /** the centroids. */
-    private Map<String, ShpNode> centroids;
+    private Map<String, Node> centroids;
 
     /** the demand of trips by Origin and Destination. */
     private TripDemand<TripInfoTimeDynamic> tripDemand;
@@ -132,7 +137,7 @@ public class NTMModel implements OTSModelInterface
 
             this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
             this.areas = ShapeFileReader.readAreas("/gis/areas.shp", this.centroids);
-            this.shpNodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
+            this.nodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
 
             // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
             // this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
@@ -141,7 +146,7 @@ public class NTMModel implements OTSModelInterface
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
             ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
-                    this.shpNodes, this.centroids);
+                    this.nodes, this.centroids);
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
 
@@ -154,6 +159,7 @@ public class NTMModel implements OTSModelInterface
             this.setTripDemand(CsvFileReader.readOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
+
 
             this.flowLinks = createFlowLinks(this.shpLinks);
             // connect time profiles to the trips:
@@ -204,8 +210,14 @@ public class NTMModel implements OTSModelInterface
             for (GraphPath<BoundedNode, LinkEdge<Link>> path : sp1)
             {
                 BoundedNode origin = path.getStartVertex();
-                BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
-                BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
+
+                Node node =path.getEdgeList().get(0).getLink().getStartNode();
+                BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
+                node =path.getEdgeList().get(0).getLink().getEndNode();
+                BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
+
+                //BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
+                //BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
 
                 // the order of endNode and startNode seems to be not consistent!!!!!!
                 if (origin.equals(endNode))
@@ -370,7 +382,7 @@ public class NTMModel implements OTSModelInterface
         try
         {
             this.simulator
-                    .scheduleEventRel(this.settingsNTM.getTimeStepDuration(), this, this, "ntmFlowTimestep", null);
+                    .scheduleEventRel(this.settingsNTM.getTimeStepDurationNTM(), this, this, "ntmFlowTimestep", null);
         }
         catch (Exception e)
         {
@@ -389,11 +401,7 @@ public class NTMModel implements OTSModelInterface
         Map<String, BoundedNode> nodeGraphMap = new HashMap<>();
         Map<Area, BoundedNode> areaNodeCentroidMap = new HashMap<>();
         Map<String, LinkEdge<Link>> linkMap = new HashMap<>();
-
-        // collect the areaGraphNodes and test whether they are connected
-        Map<BoundedNode, Boolean> connectedNodeMap = new HashMap<>();
-
-        ArrayList<ShpLink> allLinks = new ArrayList<ShpLink>();
+        ArrayList<Link> allLinks = new ArrayList<Link>();
 
         allLinks.addAll(this.shpLinks.values());
         allLinks.addAll(this.flowLinks.values());
@@ -402,51 +410,51 @@ public class NTMModel implements OTSModelInterface
         // make a directed graph of the entire network
 
         // FIRST, add ALL VERTICES
-        for (ShpLink shpLink : allLinks)
+        for (Link shpLink : allLinks)
         {
             // area node: copies a node from a link and connects the area
             // the nodeMap connects the shpNodes to these new AreaNode
-            BoundedNode nodeA = nodeMap.get(shpLink.getNodeA().getNr());
+            BoundedNode nodeA = nodeMap.get(shpLink.getStartNode().getId());
             if (nodeA == null)
             {
-                nodeA = addNodeToLinkGraph(shpLink, shpLink.getNodeA(), nodeA, nodeMap);
+                nodeA = addNodeToLinkGraph(shpLink, shpLink.getStartNode(), nodeA, nodeMap);
             }
-            BoundedNode nodeB = nodeMap.get(shpLink.getNodeB().getNr());
+            BoundedNode nodeB = nodeMap.get(shpLink.getEndNode().getId());
             if (nodeB == null)
             {
-                nodeB = addNodeToLinkGraph(shpLink, shpLink.getNodeB(), nodeB, nodeMap);
+                nodeB = addNodeToLinkGraph(shpLink, shpLink.getEndNode(), nodeB, nodeMap);
             }
 
             // TODO: direction of a road?
             // TODO: is the length in ShapeFiles in meters or in kilometers? I believe in km.
             if (nodeA != null && nodeB != null)
             {
-                DoubleScalar<LengthUnit> length =
-                        new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
-                Link link =
-                        new Link(shpLink.getNr(), nodeA, nodeB, length, shpLink.getName(), shpLink.getBehaviourType());
-                LinkEdge<Link> linkEdge = new LinkEdge<>(link);
+                // DoubleScalar<LengthUnit> length =
+                // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
+                LinkEdge<Link> linkEdge = new LinkEdge<>(shpLink);
                 this.linkGraph.addEdge(nodeA, nodeB, linkEdge);
-                this.linkGraph.setEdgeWeight(linkEdge, length.doubleValue());
-                linkMap.put(shpLink.getNr(), linkEdge);
+                this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLenght().doubleValue());
+                linkMap.put(shpLink.getId(), linkEdge);
             }
             else
             {
-                System.out.println("look out!!! line 434"); 
+                System.out.println("look out!!! line 434");
             }
-            // 
+            //
             if (shpLink.getBehaviourType() == TrafficBehaviourType.FLOW)
             {
-                nodeA = nodeGraphMap.get(shpLink.getNodeA().getNr());
+                nodeA = nodeGraphMap.get(shpLink.getStartNode().getId());
                 if (nodeA == null)
                 {
-                    nodeA = addNodeToAreaGraph(shpLink, shpLink.getNodeA(), nodeA, nodeGraphMap, areaNodeCentroidMap);
+                    nodeA =
+                            addNodeToAreaGraph(shpLink, shpLink.getStartNode(), nodeA, nodeGraphMap,
+                                    areaNodeCentroidMap);
                 }
-    
-                nodeB = nodeGraphMap.get(shpLink.getNodeB().getNr());
+
+                nodeB = nodeGraphMap.get(shpLink.getEndNode().getId());
                 if (nodeB == null)
                 {
-                    nodeB = addNodeToAreaGraph(shpLink, shpLink.getNodeB(), nodeB, nodeGraphMap, areaNodeCentroidMap);
+                    nodeB = addNodeToAreaGraph(shpLink, shpLink.getEndNode(), nodeB, nodeGraphMap, areaNodeCentroidMap);
                 }
             }
 
@@ -465,7 +473,7 @@ public class NTMModel implements OTSModelInterface
             }
             else
             {
-                System.out.println("look out!!! line 459");                
+                System.out.println("look out!!! line 459");
             }
 
         }
@@ -483,7 +491,7 @@ public class NTMModel implements OTSModelInterface
 
         // Secondly, find the Areas that do not touch any other area and connect them with the nearest areas!!
 
-         connectIsolatedAreas(this.areas, this.linkGraph, this.areaGraph, areaNodeCentroidMap);
+        connectIsolatedAreas(this.areas, this.linkGraph, this.areaGraph, areaNodeCentroidMap);
 
         if (DEBUG)
         {
@@ -500,7 +508,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (LinkEdge<Link> le : spList)
                 {
-                    System.out.println(le.getLink().getName());
+                    System.out.println(le.getLink().getLinkData().getName());
                 }
             }
 
@@ -543,9 +551,12 @@ public class NTMModel implements OTSModelInterface
                         }
                         else
                         {
-                            le.getLink().setStartNode(cA);
-                            le.getLink().setEndNode(cB);
-                            addLinkEdge(cA, cB, le, TrafficBehaviourType.NTM, this.areaGraph);
+                            double speed = 70.0;
+                            DoubleScalar<FrequencyUnit> capacity =
+                                    new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                            Link newLink = Link.createLink(cA, cB, capacity, speed);
+                            LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                            addLinkEdge(cA, cB, newLinkEdge, TrafficBehaviourType.NTM, this.areaGraph);
                         }
                         // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in
                         // km?
@@ -584,7 +595,7 @@ public class NTMModel implements OTSModelInterface
                 {
                     for (LinkEdge<Link> le : spList)
                     {
-                        System.out.println(le.getLink().getName());
+                        System.out.println(le.getLink().getLinkData().getName());
                     }
                 }
                 System.out.println("Length = " + System.currentTimeMillis());
@@ -602,16 +613,11 @@ public class NTMModel implements OTSModelInterface
      * @param le
      * @param type
      */
-    private void addLinkEdge(BoundedNode flowNodeA, BoundedNode flowNodeB, LinkEdge<Link> le,
+    private void addLinkEdge(BoundedNode flowNodeA, BoundedNode flowNodeB, LinkEdge<Link> linkEdge,
             TrafficBehaviourType type, SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> graph)
     {
         // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
-        DoubleScalar<LengthUnit> length =
-                new DoubleScalar.Abs<LengthUnit>(flowNodeA.getPoint().distance(flowNodeB.getPoint()), LengthUnit.METER);
-        Link link =
-                new Link(le.getLink().getId(), flowNodeA, flowNodeB, length, flowNodeA.getId() + " - "
-                        + flowNodeB.getId(), type);
-        LinkEdge<Link> linkEdge = new LinkEdge<>(link);
+
         if (!graph.containsEdge(flowNodeA, flowNodeB))
         {
             if (graph.containsVertex(flowNodeA) && graph.containsVertex(flowNodeB))
@@ -633,7 +639,7 @@ public class NTMModel implements OTSModelInterface
             }
         }
         // TODO: average length? straight distance? straight distance + 20%?
-        graph.setEdgeWeight(linkEdge, length.doubleValue());
+        graph.setEdgeWeight(linkEdge, linkEdge.getLink().getLenght().doubleValue());
     }
 
     /**
@@ -641,18 +647,19 @@ public class NTMModel implements OTSModelInterface
      * @param node node
      * @param map receives node
      */
-    private BoundedNode addNodeToLinkGraph(ShpLink shpLink, ShpNode shpLinkNode, BoundedNode node, Map<String, BoundedNode> map)
+    private BoundedNode addNodeToLinkGraph(Link shpLink, Node shpLinkNode, BoundedNode node,
+            Map<String, BoundedNode> map)
     {
-            Area area = findArea(shpLinkNode.getPoint());
-            if (area == null)
-            {
-                System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode);
-            }
+        Area area = findArea(shpLinkNode.getPoint());
+        if (area == null)
+        {
+            System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode);
+        }
 
-            node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getNr(), area, shpLink.getBehaviourType());
-            map.put(shpLinkNode.getNr(), node);
-            this.linkGraph.addVertex(node);
-            return node;
+        node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
+        map.put(shpLinkNode.getId(), node);
+        this.linkGraph.addVertex(node);
+        return node;
     }
 
     /**
@@ -660,19 +667,19 @@ public class NTMModel implements OTSModelInterface
      * @param node node
      * @param nodeGraphMap receives node
      */
-    private BoundedNode addNodeToAreaGraph(ShpLink shpLink, ShpNode shpLinkNode, BoundedNode node,
+    private BoundedNode addNodeToAreaGraph(Link shpLink, Node shpLinkNode, BoundedNode node,
             Map<String, BoundedNode> nodeGraphMap, Map<Area, BoundedNode> areaNodeCentroidMap)
     {
-            Area area = findArea(shpLinkNode.getPoint());
-            if (area == null)
-            {
-                System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode);
-            }
-            node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getNr(), area, shpLink.getBehaviourType());
-            nodeGraphMap.put(shpLinkNode.getNr(), node);
-            areaNodeCentroidMap.put(area, node);
-            this.areaGraph.addVertex(node);
-            return node;
+        Area area = findArea(shpLinkNode.getPoint());
+        if (area == null)
+        {
+            System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode);
+        }
+        node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
+        nodeGraphMap.put(shpLinkNode.getId(), node);
+        areaNodeCentroidMap.put(area, node);
+        this.areaGraph.addVertex(node);
+        return node;
     }
 
     /**
@@ -814,8 +821,13 @@ public class NTMModel implements OTSModelInterface
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         BoundedNode centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                        addLinkEdge(nodeIsolated, centroidEntered, le, TrafficBehaviourType.NTM,
-                                                areaGraphIn);
+                                        double speed = 70.0;
+                                        DoubleScalar<FrequencyUnit> capacity =
+                                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                                        Link newLink = Link.createLink(nodeIsolated, centroidEntered, capacity, speed);
+                                        LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                                        addLinkEdge(nodeIsolated, centroidEntered, newLinkEdge,
+                                                TrafficBehaviourType.NTM, areaGraphIn);
                                         break;
                                     }
                                     else if (le.getLink().getBehaviourType().equals(TrafficBehaviourType.FLOW))
@@ -851,8 +863,12 @@ public class NTMModel implements OTSModelInterface
     private void createFlowConnectors(Area aA, Area aB, LinkEdge<Link> le, Map<String, LinkEdge<Link>> linkMap,
             Map<Area, BoundedNode> areaNodeCentroidMap)
     {
-        BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
-        BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
+        Node node = le.getLink().getStartNode();
+        BoundedNode flowNodeA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
+        node = le.getLink().getEndNode();
+        BoundedNode flowNodeB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
+        //BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
+        //BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
         addLinkEdge(flowNodeA, flowNodeB, le, TrafficBehaviourType.FLOW, this.areaGraph);
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
@@ -875,7 +891,13 @@ public class NTMModel implements OTSModelInterface
                         {
                             System.out.println("Stop");
                         }
-                        addLinkEdge(cA, flowNodeA, urbanLink, TrafficBehaviourType.NTM, this.areaGraph);
+                        double speed = 70.0;
+                        DoubleScalar<FrequencyUnit> capacity =
+                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Link newLink = Link.createLink(cA, flowNodeA, capacity, speed);
+                        LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                        addLinkEdge(cA, flowNodeA, newLinkEdge, TrafficBehaviourType.NTM, this.areaGraph);
+
                     }
                     else
                     {
@@ -890,7 +912,12 @@ public class NTMModel implements OTSModelInterface
                     cB = areaNodeCentroidMap.get(aB);
                     if (aB != null)
                     {
-                        addLinkEdge(flowNodeB, cB, urbanLink, TrafficBehaviourType.NTM, this.areaGraph);
+                        double speed = 70.0;
+                        DoubleScalar<FrequencyUnit> capacity =
+                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Link newLink = Link.createLink(flowNodeB, cB, capacity, speed);
+                        LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                        addLinkEdge(flowNodeB, cB, newLinkEdge, TrafficBehaviourType.NTM, this.areaGraph);
                     }
                     else
                     {
@@ -905,10 +932,17 @@ public class NTMModel implements OTSModelInterface
                 if (urbanLink.getLink().getEndNode().getId().equals(flowNodeA.getId()))
                 {
                     // from urban (Area) to Highway (flow)
-                    cA = (BoundedNode) urbanLink.getLink().getStartNode();
+                    node = urbanLink.getLink().getStartNode();
+                    cA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
+                    //cA = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cA != null)
                     {
-                        addLinkEdge(cA, flowNodeA, urbanLink, TrafficBehaviourType.CORDON, this.areaGraph);
+                        double speed = 70.0;
+                        DoubleScalar<FrequencyUnit> capacity =
+                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Link newLink = Link.createLink(cA, flowNodeA, capacity, speed);
+                        LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                        addLinkEdge(cA, flowNodeA, newLinkEdge, TrafficBehaviourType.CORDON, this.areaGraph);
                     }
                     else
                     {
@@ -919,10 +953,17 @@ public class NTMModel implements OTSModelInterface
                 else if (urbanLink.getLink().getStartNode().getId().equals(flowNodeB.getId()))
                 {
                     // from Highway (flow) to urban (Area)
-                    cB = (BoundedNode) urbanLink.getLink().getStartNode();
+                    node = urbanLink.getLink().getEndNode();
+                    cB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
+                    //cB = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cB != null)
                     {
-                        addLinkEdge(flowNodeB, cB, urbanLink, TrafficBehaviourType.CORDON, this.areaGraph);
+                        double speed = 70.0;
+                        DoubleScalar<FrequencyUnit> capacity =
+                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Link newLink = Link.createLink(flowNodeB, cB, capacity, speed);
+                        LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                        addLinkEdge(flowNodeB, cB, newLinkEdge, TrafficBehaviourType.CORDON, this.areaGraph);
                     }
                     else
                     {
@@ -940,24 +981,29 @@ public class NTMModel implements OTSModelInterface
      * @param shpLinks the links of this model
      * @return the flowLinks
      */
-    public static Map<String, ShpLink> createFlowLinks(final Map<String, ShpLink> shpLinks)
+    public static Map<String, Link> createFlowLinks(final Map<String, Link> shpLinks)
     {
-        Map<String, ShpLink> flowLinks = new HashMap<String, ShpLink>();
-        for (ShpLink shpLink : shpLinks.values())
+        Map<String, Link> flowLinks = new HashMap<String, Link>();
+        for (Link shpLink : shpLinks.values())
         {
-            if (shpLink.getSpeed() >= 65 && shpLink.getCapacity() > 3000)
+            DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(3000, FrequencyUnit.PER_HOUR);
+            if (shpLink.getSpeed() >= 65 && shpLink.getCapacity().doubleValue() > capacity.doubleValue())
             {
-                ShpLink flowLink = new ShpLink(shpLink);
+                Link flowLink = new Link(shpLink);
+                if (flowLink.getGeometry() == null)
+                {
+                    System.out.println("nnn");
+                }
                 flowLink.setBehaviourType(TrafficBehaviourType.FLOW);
-                flowLinks.put(flowLink.getNr(), flowLink);
+                flowLinks.put(flowLink.getId(), flowLink);
             }
         }
 
-        for (ShpLink flowLink : flowLinks.values())
+        for (Link flowLink : flowLinks.values())
         {
-            if (flowLink.getSpeed() >= 65 && flowLink.getCapacity() > 3000)
+            if (flowLink.getSpeed() >= 65 && flowLink.getCapacity().doubleValue() > 3000)
             {
-                shpLinks.remove(flowLink.getNr());
+                shpLinks.remove(flowLink.getId());
             }
         }
 
@@ -969,14 +1015,14 @@ public class NTMModel implements OTSModelInterface
      * @param centroid
      * @return the additional areas
      */
-    public static Area createMissingArea(final ShpNode centroid)
+    public static Area createMissingArea(final Node centroid)
     {
         Geometry buffer = centroid.getPoint().getGeometryN(0).buffer(30);
         Point centroid1 = buffer.getCentroid();
-        String nr = centroid.getNr();
-        String name = centroid.getNr();
-        String gemeente = "Area is missing for: " + centroid.getNr();
-        String gebied = "Area is missing for: " + centroid.getNr();
+        String nr = centroid.getId();
+        String name = centroid.getId();
+        String gemeente = "Area is missing for: " + centroid.getId();
+        String gebied = "Area is missing for: " + centroid.getId();
         String regio = "Missing";
         double dhb = 0.0;
         Area area = new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1, TrafficBehaviourType.NTM);
@@ -1024,13 +1070,13 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
-            boolean showFlowLinks = true;
-            boolean showConnectors = true;
-            boolean showNodes = true;
+            boolean showLinks = false;
+            boolean showFlowLinks = false;
+            boolean showConnectors = false;
+            boolean showNodes = false;
             boolean showEdges = true;
             boolean showAreaNode = true;
-            boolean showArea = true;
+            boolean showArea = false;
 
             if (showArea)
             {
@@ -1041,14 +1087,14 @@ public class NTMModel implements OTSModelInterface
             }
             if (showLinks)
             {
-                for (ShpLink shpLink : this.shpLinks.values())
+                for (Link shpLink : this.shpLinks.values())
                 {
                     new ShpLinkAnimation(shpLink, this.simulator, 2.0F, Color.GRAY);
                 }
             }
             if (showConnectors)
             {
-                for (ShpLink shpConnector : this.shpConnectors.values())
+                for (Link shpConnector : this.shpConnectors.values())
                 {
                     new ShpLinkAnimation(shpConnector, this.simulator, 5.0F, Color.BLUE);
                 }
@@ -1056,16 +1102,16 @@ public class NTMModel implements OTSModelInterface
 
             if (showFlowLinks)
             {
-                for (ShpLink flowLink : this.flowLinks.values())
+                for (Link flowLink : this.flowLinks.values())
                 {
                     new ShpLinkAnimation(flowLink, this.simulator, 5.0F, Color.RED);
                 }
             }
             if (showNodes)
             {
-                for (ShpNode shpNode : this.shpNodes.values())
+                for (Node Node : this.nodes.values())
                 {
-                    new ShpNodeAnimation(shpNode, this.simulator);
+                    new ShpNodeAnimation(Node, this.simulator);
                 }
             }
             // for (LinkEdge<Link> linkEdge : this.linkGraph.edgeSet())
@@ -1076,7 +1122,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
                 {
-                    new LinkAnimation(linkEdge.getLink(), this.simulator, 2.5f);
+                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 2.5f, Color.BLACK);
                 }
             }
             if (showAreaNode)
@@ -1152,7 +1198,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return flowLinks.
      */
-    public final Map<String, ShpLink> getFlowLinks()
+    public final Map<String, Link> getFlowLinks()
     {
         return this.flowLinks;
     }
@@ -1160,7 +1206,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param flowLinks set flowLinks.
      */
-    public final void setFlowLinks(final Map<String, ShpLink> flowLinks)
+    public final void setFlowLinks(final Map<String, Link> flowLinks)
     {
         this.flowLinks = flowLinks;
     }
