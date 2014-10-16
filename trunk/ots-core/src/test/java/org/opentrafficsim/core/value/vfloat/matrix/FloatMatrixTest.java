@@ -1060,20 +1060,20 @@ public abstract class FloatMatrixTest
             {
                 if (fm1 instanceof DenseData)
                 {
-                    plus = MutableFloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
+                    plus = FloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1095,20 +1095,20 @@ public abstract class FloatMatrixTest
             {
                 if (fm1 instanceof DenseData)
                 {
-                    plus = MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
+                    plus = FloatMatrix.minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1131,20 +1131,20 @@ public abstract class FloatMatrixTest
             {
                 if (fm1 instanceof DenseData)
                 {
-                    plus = MutableFloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
+                    plus = FloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1167,7 +1167,7 @@ public abstract class FloatMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     minus =
-                            MutableFloatMatrix
+                            FloatMatrix
                                     .minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1175,13 +1175,13 @@ public abstract class FloatMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         minus =
-                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         minus =
-                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1205,9 +1205,9 @@ public abstract class FloatMatrixTest
             {
                 if (fm1 instanceof DenseData)
                 {
-                    plus = MutableFloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
+                    plus = FloatMatrix.plus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
                     minus =
-                            MutableFloatMatrix
+                            FloatMatrix
                                     .minus((FloatMatrix.Abs.Dense<LengthUnit>) fm1, (FloatMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1215,19 +1215,19 @@ public abstract class FloatMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                         minus =
-                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableFloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.plus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                         minus =
-                                MutableFloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                FloatMatrix.minus((FloatMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1303,13 +1303,13 @@ public abstract class FloatMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     multiply =
-                            MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm1,
+                            FloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm1,
                                     (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     multiply =
-                            MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm1,
+                            FloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm1,
                                     (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                 }
                 else
@@ -1329,13 +1329,13 @@ public abstract class FloatMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     multiply =
-                            MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm1,
+                            FloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm1,
                                     (FloatMatrix.Rel.Dense<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     multiply =
-                            MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm1,
+                            FloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm1,
                                     (FloatMatrix.Rel.Sparse<LengthUnit>) fm2);
                 }
                 else
@@ -1388,13 +1388,13 @@ public abstract class FloatMatrixTest
                 if (fm2 instanceof DenseData)
                 {
                     multiplyReverse =
-                            MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm2,
+                            FloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) fm2,
                                     (FloatMatrix.Rel.Dense<LengthUnit>) fm1);
                 }
                 else if (fm2 instanceof SparseData)
                 {
                     multiplyReverse =
-                            MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm2,
+                            FloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) fm2,
                                     (FloatMatrix.Rel.Sparse<LengthUnit>) fm1);
                 }
                 else
@@ -1432,11 +1432,11 @@ public abstract class FloatMatrixTest
             MutableFloatMatrix<LengthUnit> fm2 = null;
             if (fm instanceof Absolute)
             {
-                fm2 = MutableFloatMatrix.denseToSparse((FloatMatrix.Abs.Dense<LengthUnit>) fm);
+                fm2 = FloatMatrix.denseToSparse((FloatMatrix.Abs.Dense<LengthUnit>) fm);
             }
             else
             {
-                fm2 = MutableFloatMatrix.denseToSparse((FloatMatrix.Rel.Dense<LengthUnit>) fm);
+                fm2 = FloatMatrix.denseToSparse((FloatMatrix.Rel.Dense<LengthUnit>) fm);
             }
             assertTrue("dense version is  equal to sparse version", fm.equals(fm2));
             assertEquals("unit should be same", fm.getUnit(), fm2.getUnit());
@@ -1461,11 +1461,11 @@ public abstract class FloatMatrixTest
             MutableFloatMatrix<LengthUnit> fm2 = null;
             if (fm instanceof Absolute)
             {
-                fm2 = MutableFloatMatrix.sparseToDense((FloatMatrix.Abs.Sparse<LengthUnit>) fm);
+                fm2 = FloatMatrix.sparseToDense((FloatMatrix.Abs.Sparse<LengthUnit>) fm);
             }
             else
             {
-                fm2 = MutableFloatMatrix.sparseToDense((FloatMatrix.Rel.Sparse<LengthUnit>) fm);
+                fm2 = FloatMatrix.sparseToDense((FloatMatrix.Rel.Sparse<LengthUnit>) fm);
             }
             assertTrue("dense version is equal to sparse version", fm.equals(fm2));
             assertEquals("unit should be same", fm.getUnit(), fm2.getUnit());
@@ -1841,11 +1841,11 @@ public abstract class FloatMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+                sum = FloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
             }
             else if (fm1 instanceof SparseData)
             {
-                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+                sum = FloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
             {
@@ -1875,12 +1875,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm2);
+                        FloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -1919,11 +1919,11 @@ public abstract class FloatMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+                sum = FloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm3);
             }
             else if (fm1 instanceof SparseData)
             {
-                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
+                sum = FloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
             }
             else
             {
@@ -1939,12 +1939,12 @@ public abstract class FloatMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                difference = MutableFloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+                difference = FloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
             }
             else
@@ -1970,11 +1970,11 @@ public abstract class FloatMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+                sum = FloatMatrix.plus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
             }
             else if (fm1 instanceof SparseData)
             {
-                sum = MutableFloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
+                sum = FloatMatrix.plus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
             {
@@ -2011,12 +2011,12 @@ public abstract class FloatMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                difference = MutableFloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+                difference = FloatMatrix.minus((FloatMatrix.Rel.Dense<MassUnit>) fm1, fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Rel.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -2070,12 +2070,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Abs.Dense<MassUnit>) fm2);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Abs.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1, (FloatMatrix.Abs.Sparse<MassUnit>) fm2);
             }
             else
@@ -2115,12 +2115,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Abs.Dense<MassUnit>) fm3);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Abs.Dense<MassUnit>) fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1, (FloatMatrix.Abs.Sparse<MassUnit>) fm3);
             }
             else
@@ -2147,12 +2147,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Abs.Dense<MassUnit>) fm2);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Abs.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1, (FloatMatrix.Abs.Sparse<MassUnit>) fm2);
             }
             else
@@ -2183,12 +2183,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm2, (FloatMatrix.Abs.Dense<MassUnit>) fm1);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm2, (FloatMatrix.Abs.Dense<MassUnit>) fm1);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm2, (FloatMatrix.Abs.Sparse<MassUnit>) fm1);
             }
             else
@@ -2234,13 +2234,13 @@ public abstract class FloatMatrixTest
             if (fm4 instanceof DenseData)
             {
                 product =
-                        MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) fm4,
+                        FloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) fm4,
                                 (FloatMatrix.Abs.Dense<ForceUnit>) fm5);
             }
             else if (fm4 instanceof SparseData)
             {
                 product =
-                        MutableFloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) fm4,
+                        FloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) fm4,
                                 (FloatMatrix.Abs.Sparse<ForceUnit>) fm5);
             }
             else
@@ -2292,11 +2292,11 @@ public abstract class FloatMatrixTest
             MutableFloatMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
-                result = MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+                result = FloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                result = MutableFloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+                result = FloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2325,11 +2325,11 @@ public abstract class FloatMatrixTest
             MutableFloatMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
-                result = MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+                result = FloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                result = MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+                result = FloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2357,11 +2357,11 @@ public abstract class FloatMatrixTest
             float[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
-                MutableFloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+                FloatMatrix.times((FloatMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                MutableFloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+                FloatMatrix.times((FloatMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2379,11 +2379,11 @@ public abstract class FloatMatrixTest
             float[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
-                MutableFloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+                FloatMatrix.times((FloatMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                MutableFloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+                FloatMatrix.times((FloatMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2425,12 +2425,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm2);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -2470,12 +2470,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm3);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm3);
             }
             else
@@ -2502,12 +2502,12 @@ public abstract class FloatMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableFloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm2);
+                        FloatMatrix.minus((FloatMatrix.Abs.Dense<MassUnit>) fm1, (FloatMatrix.Rel.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableFloatMatrix
+                        FloatMatrix
                                 .minus((FloatMatrix.Abs.Sparse<MassUnit>) fm1, (FloatMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
