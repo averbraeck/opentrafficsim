@@ -168,9 +168,12 @@ public final class ValueClassesGenerator
                         "org.opentrafficsim.core", new SimpleDateFormat("dd MMM, yyyy").format(now), new Long(
                                 new SimpleDateFormat("yyyyMMdd").format(now)));
         cg.generateInterface("value", "Absolute", null,
-                "Absolute values are quantities that are measured from some agreed upon reference point.", null, "",
-                null);
-        cg.generateInterface("value", "Relative", null, "Relative values express differences.", null, "", null);
+                "Absolute values are quantities that are measured from some agreed upon reference point. <br>\r\n"
+                        + " * Values are Absolute when the sum of two values makes no sense, but the difference does "
+                        + "(but results in a Relative).", null, "", null);
+        cg.generateInterface("value", "Relative", null, "Relative values express differences. <br>\r\n"
+                + " * Values are Relative when adding or subtracting two values does make sense and results in a value "
+                + "of that same type.", null, "", null);
         cg.generateInterface("value", "DenseData", null, "Values are stored densely.", null, "", null);
         cg.generateInterface("value", "SparseData", null, "Values are stored sparsely (lots of zero values expected).",
                 null, "", null);
