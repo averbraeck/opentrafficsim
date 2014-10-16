@@ -612,13 +612,13 @@ public abstract class DoubleVectorTest
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
                 {
                     plus =
-                            MutableDoubleVector.plus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
+                            DoubleVector.plus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
                 }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
                 {
                     plus =
-                            MutableDoubleVector.plus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
+                            DoubleVector.plus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
                 }
                 else
@@ -636,13 +636,13 @@ public abstract class DoubleVectorTest
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
                 {
                     minus =
-                            MutableDoubleVector.minus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
+                            DoubleVector.minus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
                 }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
                 {
                     minus =
-                            MutableDoubleVector.minus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
+                            DoubleVector.minus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
                 }
                 else
@@ -662,13 +662,13 @@ public abstract class DoubleVectorTest
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
                 {
                     plus =
-                            MutableDoubleVector.plus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
+                            DoubleVector.plus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
                 }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
                 {
                     plus =
-                            MutableDoubleVector.plus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
+                            DoubleVector.plus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
                 }
                 else
@@ -678,13 +678,13 @@ public abstract class DoubleVectorTest
                 if (fvAbsolute instanceof DoubleVector.Abs.Dense)
                 {
                     minus =
-                            MutableDoubleVector.minus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
+                            DoubleVector.minus((DoubleVector.Abs.Dense<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Dense<LengthUnit>) fvRelative);
                 }
                 else if (fvAbsolute instanceof DoubleVector.Abs.Sparse)
                 {
                     minus =
-                            MutableDoubleVector.minus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
+                            DoubleVector.minus((DoubleVector.Abs.Sparse<LengthUnit>) fvAbsolute,
                                     (DoubleVector.Rel.Sparse<LengthUnit>) fvRelative);
                 }
                 else
@@ -762,11 +762,11 @@ public abstract class DoubleVectorTest
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
                 {
-                    product = MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
+                    product = DoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
                 }
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
                 {
-                    product = MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
+                    product = DoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
                 }
                 fail("Multiplying DoubleVectors of unequal length should have thrown a ValueException");
             }
@@ -780,11 +780,11 @@ public abstract class DoubleVectorTest
             {
                 if (fv1 instanceof DoubleVector.Rel.Dense)
                 {
-                    product = MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
+                    product = DoubleVector.times((DoubleVector.Rel.Dense<?>) fv1, (DoubleVector.Rel.Dense<?>) fv2);
                 }
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
                 {
-                    product = MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
+                    product = DoubleVector.times((DoubleVector.Rel.Sparse<?>) fv1, (DoubleVector.Rel.Sparse<?>) fv2);
                 }
             }
             catch (ValueException exception)
@@ -830,12 +830,12 @@ public abstract class DoubleVectorTest
                 if (fv1 instanceof DoubleVector.Rel.Dense)
                 {
                     multiplyReverse =
-                            MutableDoubleVector.times((DoubleVector.Rel.Dense<?>) fv2, (DoubleVector.Rel.Dense<?>) fv1);
+                            DoubleVector.times((DoubleVector.Rel.Dense<?>) fv2, (DoubleVector.Rel.Dense<?>) fv1);
                 }
                 else if (fv1 instanceof DoubleVector.Rel.Sparse)
                 {
                     multiplyReverse =
-                            MutableDoubleVector.times((DoubleVector.Rel.Sparse<?>) fv2, (DoubleVector.Rel.Sparse<?>) fv1);
+                            DoubleVector.times((DoubleVector.Rel.Sparse<?>) fv2, (DoubleVector.Rel.Sparse<?>) fv1);
                 }
             }
             catch (ValueException exception)
@@ -873,11 +873,11 @@ public abstract class DoubleVectorTest
             {
                 if (fv instanceof DoubleVector.Abs.Dense)
                 {
-                    MutableDoubleVector.times((DoubleVector.Abs.Dense<LengthUnit>) fv, factorsTooShort);
+                    DoubleVector.times((DoubleVector.Abs.Dense<LengthUnit>) fv, factorsTooShort);
                 }
                 else if (fv instanceof DoubleVector.Abs.Sparse)
                 {
-                    MutableDoubleVector.times((DoubleVector.Abs.Sparse<LengthUnit>) fv, factorsTooShort);
+                    DoubleVector.times((DoubleVector.Abs.Sparse<LengthUnit>) fv, factorsTooShort);
                 }
                 fail("Multiplication array of wrong length should have thrown a ValueException");
             }
@@ -889,11 +889,11 @@ public abstract class DoubleVectorTest
             {
                 if (fv instanceof DoubleVector.Abs.Dense)
                 {
-                    fv2 = MutableDoubleVector.times((DoubleVector.Abs.Dense<LengthUnit>) fv, factorsCorrectLength);
+                    fv2 = DoubleVector.times((DoubleVector.Abs.Dense<LengthUnit>) fv, factorsCorrectLength);
                 }
                 else if (fv instanceof DoubleVector.Abs.Sparse)
                 {
-                    fv2 = MutableDoubleVector.times((DoubleVector.Abs.Sparse<LengthUnit>) fv, factorsCorrectLength);
+                    fv2 = DoubleVector.times((DoubleVector.Abs.Sparse<LengthUnit>) fv, factorsCorrectLength);
                 }
             }
             catch (ValueException exception)
@@ -922,11 +922,11 @@ public abstract class DoubleVectorTest
             {
                 if (fv instanceof DoubleVector.Rel.Dense)
                 {
-                    MutableDoubleVector.times((DoubleVector.Rel.Dense<LengthUnit>) fv, factorsTooShort);
+                    DoubleVector.times((DoubleVector.Rel.Dense<LengthUnit>) fv, factorsTooShort);
                 }
                 else if (fv instanceof DoubleVector.Rel.Sparse)
                 {
-                    MutableDoubleVector.times((DoubleVector.Rel.Sparse<LengthUnit>) fv, factorsTooShort);
+                    DoubleVector.times((DoubleVector.Rel.Sparse<LengthUnit>) fv, factorsTooShort);
                 }
                 fail("Multiplication array of wrong length should have thrown a ValueException");
             }
@@ -938,11 +938,11 @@ public abstract class DoubleVectorTest
             {
                 if (fv instanceof DoubleVector.Rel.Dense)
                 {
-                    fv2 = MutableDoubleVector.times((DoubleVector.Rel.Dense<LengthUnit>) fv, factorsCorrectLength);
+                    fv2 = DoubleVector.times((DoubleVector.Rel.Dense<LengthUnit>) fv, factorsCorrectLength);
                 }
                 else if (fv instanceof DoubleVector.Rel.Sparse)
                 {
-                    fv2 = MutableDoubleVector.times((DoubleVector.Rel.Sparse<LengthUnit>) fv, factorsCorrectLength);
+                    fv2 = DoubleVector.times((DoubleVector.Rel.Sparse<LengthUnit>) fv, factorsCorrectLength);
                 }
             }
             catch (ValueException exception)
@@ -968,11 +968,11 @@ public abstract class DoubleVectorTest
             MutableDoubleVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)
             {
-                fv2 = MutableDoubleVector.denseToSparse((DoubleVector.Abs.Dense<LengthUnit>) fv);
+                fv2 = DoubleVector.denseToSparse((DoubleVector.Abs.Dense<LengthUnit>) fv);
             }
             else
             {
-                fv2 = MutableDoubleVector.denseToSparse((DoubleVector.Rel.Dense<LengthUnit>) fv);
+                fv2 = DoubleVector.denseToSparse((DoubleVector.Rel.Dense<LengthUnit>) fv);
             }
             // System.out.println("fv:  " + fv);
             // System.out.println("fv2: " + fv2);
@@ -996,11 +996,11 @@ public abstract class DoubleVectorTest
             MutableDoubleVector<LengthUnit> fv2 = null;
             if (fv instanceof Absolute)
             {
-                fv2 = MutableDoubleVector.sparseToDense((DoubleVector.Abs.Sparse<LengthUnit>) fv);
+                fv2 = DoubleVector.sparseToDense((DoubleVector.Abs.Sparse<LengthUnit>) fv);
             }
             else
             {
-                fv2 = MutableDoubleVector.sparseToDense((DoubleVector.Rel.Sparse<LengthUnit>) fv);
+                fv2 = DoubleVector.sparseToDense((DoubleVector.Rel.Sparse<LengthUnit>) fv);
             }
             assertTrue("dense version is  equal to sparse version", fv.equals(fv2));
             assertEquals("unit should be same", fv.getUnit(), fv2.getUnit());
@@ -1192,12 +1192,12 @@ public abstract class DoubleVectorTest
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
-                sum = MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv2);
+                sum = DoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
                 sum =
-                        MutableDoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
+                        DoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
@@ -1224,13 +1224,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
@@ -1257,12 +1257,12 @@ public abstract class DoubleVectorTest
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
-                sum = MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv3);
+                sum = DoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
                 sum =
-                        MutableDoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
+                        DoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv3);
             }
             else
@@ -1280,13 +1280,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv3);
             }
             else
@@ -1305,12 +1305,12 @@ public abstract class DoubleVectorTest
         {
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
-                sum = MutableDoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv2);
+                sum = DoubleVector.plus((DoubleVector.Rel.Dense<MassUnit>) fv1, (DoubleVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
                 sum =
-                        MutableDoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
+                        DoubleVector.plus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
@@ -1338,13 +1338,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Rel.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Rel.Dense<MassUnit>) fv1,
                                 (DoubleVector.Rel.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Rel.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Rel.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Rel.Sparse<MassUnit>) fv2);
             }
             else
@@ -1387,13 +1387,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Abs.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv2);
             }
             else
@@ -1422,13 +1422,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Abs.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv3);
             }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv3);
             }
             else
@@ -1448,13 +1448,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Abs.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv1,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv2);
             }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
+                        DoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv1,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv2);
             }
             else
@@ -1481,13 +1481,13 @@ public abstract class DoubleVectorTest
             if (fv1 instanceof DoubleVector.Abs.Dense)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv2,
+                        DoubleVector.minus((DoubleVector.Abs.Dense<MassUnit>) fv2,
                                 (DoubleVector.Abs.Dense<MassUnit>) fv1);
             }
             else if (fv1 instanceof DoubleVector.Abs.Sparse)
             {
                 difference =
-                        MutableDoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv2,
+                        DoubleVector.minus((DoubleVector.Abs.Sparse<MassUnit>) fv2,
                                 (DoubleVector.Abs.Sparse<MassUnit>) fv1);
             }
             else
@@ -1523,11 +1523,11 @@ public abstract class DoubleVectorTest
         {
             if (fv4 instanceof DoubleVector.Abs.Dense)
             {
-                product = MutableDoubleVector.times((DoubleVector.Abs.Dense<?>) fv4, (DoubleVector.Abs.Dense<?>) fv5);
+                product = DoubleVector.times((DoubleVector.Abs.Dense<?>) fv4, (DoubleVector.Abs.Dense<?>) fv5);
             }
             else if (fv4 instanceof DoubleVector.Abs.Sparse)
             {
-                product = MutableDoubleVector.times((DoubleVector.Abs.Sparse<?>) fv4, (DoubleVector.Abs.Sparse<?>) fv5);
+                product = DoubleVector.times((DoubleVector.Abs.Sparse<?>) fv4, (DoubleVector.Abs.Sparse<?>) fv5);
             }
             else
             {

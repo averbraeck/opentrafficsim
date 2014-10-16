@@ -1062,7 +1062,7 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     plus =
-                            MutableDoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1070,13 +1070,13 @@ public abstract class DoubleMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1099,7 +1099,7 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     plus =
-                            MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1107,13 +1107,13 @@ public abstract class DoubleMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1137,7 +1137,7 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     plus =
-                            MutableDoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1145,13 +1145,13 @@ public abstract class DoubleMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1174,7 +1174,7 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     minus =
-                            MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1182,13 +1182,13 @@ public abstract class DoubleMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         minus =
-                                MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         minus =
-                                MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1213,10 +1213,10 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     plus =
-                            MutableDoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.plus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
                     minus =
-                            MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.minus((DoubleMatrix.Abs.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
@@ -1224,19 +1224,19 @@ public abstract class DoubleMatrixTest
                     if (fm2 instanceof DenseData)
                     {
                         plus =
-                                MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                         minus =
-                                MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                     }
                     else if (fm2 instanceof SparseData)
                     {
                         plus =
-                                MutableDoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.plus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                         minus =
-                                MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
+                                DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<LengthUnit>) fm1,
                                         (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                     }
                     else
@@ -1312,13 +1312,13 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     multiply =
-                            MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     multiply =
-                            MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm1,
+                            DoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                 }
                 else
@@ -1338,13 +1338,13 @@ public abstract class DoubleMatrixTest
                 if (fm1 instanceof DenseData)
                 {
                     multiply =
-                            MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm1,
+                            DoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Dense<LengthUnit>) fm2);
                 }
                 else if (fm1 instanceof SparseData)
                 {
                     multiply =
-                            MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm1,
+                            DoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm1,
                                     (DoubleMatrix.Rel.Sparse<LengthUnit>) fm2);
                 }
                 else
@@ -1397,13 +1397,13 @@ public abstract class DoubleMatrixTest
                 if (fm2 instanceof DenseData)
                 {
                     multiplyReverse =
-                            MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm2,
+                            DoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) fm2,
                                     (DoubleMatrix.Rel.Dense<LengthUnit>) fm1);
                 }
                 else if (fm2 instanceof SparseData)
                 {
                     multiplyReverse =
-                            MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm2,
+                            DoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) fm2,
                                     (DoubleMatrix.Rel.Sparse<LengthUnit>) fm1);
                 }
                 else
@@ -1441,11 +1441,11 @@ public abstract class DoubleMatrixTest
             MutableDoubleMatrix<LengthUnit> fm2 = null;
             if (dm instanceof Absolute)
             {
-                fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Abs.Dense<LengthUnit>) dm);
+                fm2 = DoubleMatrix.denseToSparse((DoubleMatrix.Abs.Dense<LengthUnit>) dm);
             }
             else
             {
-                fm2 = MutableDoubleMatrix.denseToSparse((DoubleMatrix.Rel.Dense<LengthUnit>) dm);
+                fm2 = DoubleMatrix.denseToSparse((DoubleMatrix.Rel.Dense<LengthUnit>) dm);
             }
             assertTrue("dense version is  equal to sparse version", dm.equals(fm2));
             assertEquals("unit should be same", dm.getUnit(), fm2.getUnit());
@@ -1470,11 +1470,11 @@ public abstract class DoubleMatrixTest
             MutableDoubleMatrix<LengthUnit> fm2 = null;
             if (dm instanceof Absolute)
             {
-                fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Abs.Sparse<LengthUnit>) dm);
+                fm2 = DoubleMatrix.sparseToDense((DoubleMatrix.Abs.Sparse<LengthUnit>) dm);
             }
             else
             {
-                fm2 = MutableDoubleMatrix.sparseToDense((DoubleMatrix.Rel.Sparse<LengthUnit>) dm);
+                fm2 = DoubleMatrix.sparseToDense((DoubleMatrix.Rel.Sparse<LengthUnit>) dm);
             }
             assertTrue("dense version is equal to sparse version", dm.equals(fm2));
             assertEquals("unit should be same", dm.getUnit(), fm2.getUnit());
@@ -1850,12 +1850,12 @@ public abstract class DoubleMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                sum = MutableDoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+                sum = DoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 sum =
-                        MutableDoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -1886,13 +1886,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -1931,12 +1931,12 @@ public abstract class DoubleMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                sum = MutableDoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+                sum = DoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 sum =
-                        MutableDoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm3);
             }
             else
@@ -1953,12 +1953,12 @@ public abstract class DoubleMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                difference = MutableDoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm3);
+                difference = DoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm3);
             }
             else
@@ -1984,12 +1984,12 @@ public abstract class DoubleMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                sum = MutableDoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+                sum = DoubleMatrix.plus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 sum =
-                        MutableDoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.plus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -2027,12 +2027,12 @@ public abstract class DoubleMatrixTest
         {
             if (fm1 instanceof DenseData)
             {
-                difference = MutableDoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
+                difference = DoubleMatrix.minus((DoubleMatrix.Rel.Dense<MassUnit>) fm1, fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Rel.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -2086,13 +2086,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm2);
             }
             else
@@ -2132,13 +2132,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm3);
             }
             else
@@ -2165,13 +2165,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm2);
             }
             else
@@ -2202,13 +2202,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm2,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm2,
                                 (DoubleMatrix.Abs.Dense<MassUnit>) fm1);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm2,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm2,
                                 (DoubleMatrix.Abs.Sparse<MassUnit>) fm1);
             }
             else
@@ -2254,13 +2254,13 @@ public abstract class DoubleMatrixTest
             if (fm4 instanceof DenseData)
             {
                 product =
-                        MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) fm4,
+                        DoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) fm4,
                                 (DoubleMatrix.Abs.Dense<ForceUnit>) fm5);
             }
             else if (fm4 instanceof SparseData)
             {
                 product =
-                        MutableDoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) fm4,
+                        DoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) fm4,
                                 (DoubleMatrix.Abs.Sparse<ForceUnit>) fm5);
             }
             else
@@ -2312,11 +2312,11 @@ public abstract class DoubleMatrixTest
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
-                result = MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+                result = DoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                result = MutableDoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+                result = DoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2345,11 +2345,11 @@ public abstract class DoubleMatrixTest
             MutableDoubleMatrix<LengthUnit> result = null;
             if (lhs instanceof DenseData)
             {
-                result = MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+                result = DoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                result = MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+                result = DoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2377,11 +2377,11 @@ public abstract class DoubleMatrixTest
             double[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
-                MutableDoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
+                DoubleMatrix.times((DoubleMatrix.Abs.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                MutableDoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
+                DoubleMatrix.times((DoubleMatrix.Abs.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2399,11 +2399,11 @@ public abstract class DoubleMatrixTest
             double[][] rhs = {{1, 2, 3 }, {4, 5, 6 }, {7, 8, 9 } };
             if (lhs instanceof DenseData)
             {
-                MutableDoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
+                DoubleMatrix.times((DoubleMatrix.Rel.Dense<LengthUnit>) lhs, rhs);
             }
             else if (lhs instanceof SparseData)
             {
-                MutableDoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
+                DoubleMatrix.times((DoubleMatrix.Rel.Sparse<LengthUnit>) lhs, rhs);
             }
             else
             {
@@ -2445,13 +2445,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else
@@ -2491,13 +2491,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm3);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm3);
             }
             else
@@ -2524,13 +2524,13 @@ public abstract class DoubleMatrixTest
             if (fm1 instanceof DenseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Dense<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Dense<MassUnit>) fm2);
             }
             else if (fm1 instanceof SparseData)
             {
                 difference =
-                        MutableDoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
+                        DoubleMatrix.minus((DoubleMatrix.Abs.Sparse<MassUnit>) fm1,
                                 (DoubleMatrix.Rel.Sparse<MassUnit>) fm2);
             }
             else

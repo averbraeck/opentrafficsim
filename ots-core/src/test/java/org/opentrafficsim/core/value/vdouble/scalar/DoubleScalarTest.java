@@ -319,43 +319,43 @@ public class DoubleScalarTest
         DoubleScalar.Abs<LengthUnit> leftAbs = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.INCH);
         DoubleScalar.Rel<LengthUnit> right2 = new DoubleScalar.Rel<LengthUnit>(rightValue2, LengthUnit.MILLIMETER);
-        MutableDoubleScalar.Abs<LengthUnit> sum = MutableDoubleScalar.plus(leftAbs, right);
+        MutableDoubleScalar.Abs<LengthUnit> sum = DoubleScalar.plus(leftAbs, right);
         assertEquals("result should be in METER", LengthUnit.METER, sum.getUnit());
         assertEquals("value of result should be sum of meter equivalent of values", leftValue + rightValue * 0.0254,
                 sum.getSI(), 0.0001);
         DoubleScalar.Rel<LengthUnit> leftRel = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
-        MutableDoubleScalar.Rel<LengthUnit> sum2 = MutableDoubleScalar.plus(LengthUnit.MILLIMETER, leftRel, right, right2);
+        MutableDoubleScalar.Rel<LengthUnit> sum2 = DoubleScalar.plus(LengthUnit.MILLIMETER, leftRel, right, right2);
         assertEquals("result should be in MILLIMETER", LengthUnit.MILLIMETER, sum2.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue + rightValue * 0.0254 + rightValue2
                 / 1000, sum2.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in MILLIMETER", 1000 * (leftValue + rightValue * 0.0254)
                 + rightValue2, sum2.getInUnit(), 0.1);
-        MutableDoubleScalar.Abs<LengthUnit> difference = MutableDoubleScalar.minus(leftAbs, right, right2);
+        MutableDoubleScalar.Abs<LengthUnit> difference = DoubleScalar.minus(leftAbs, right, right2);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue - rightValue * 0.0254 - rightValue2
                 / 1000, difference.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in METER", leftValue - rightValue * 0.0254 - rightValue2
                 / 1000, difference.getInUnit(), 0.1);
-        MutableDoubleScalar.Rel<LengthUnit> differenceRel = MutableDoubleScalar.minus(leftRel, right, right2);
+        MutableDoubleScalar.Rel<LengthUnit> differenceRel = DoubleScalar.minus(leftRel, right, right2);
         assertEquals("result should be in METER", LengthUnit.METER, differenceRel.getUnit());
         assertEquals("value in SI should be sum of meter equivalent of values", leftValue - rightValue * 0.0254 - rightValue2
                 / 1000, differenceRel.getSI(), 0.0001);
         assertEquals("value in \"own\" unit should be equivalent in METER", leftValue - rightValue * 0.0254 - rightValue2
                 / 1000, differenceRel.getInUnit(), 0.001);
-        differenceRel = MutableDoubleScalar.minus(sum.immutable(), leftAbs);
+        differenceRel = DoubleScalar.minus(sum.immutable(), leftAbs);
         assertEquals("result should be in METER", LengthUnit.METER, difference.getUnit());
         assertEquals("value of result should be minus leftValue", rightValue * 0.0254, differenceRel.getSI(), 0.0001);
         differenceRel =
-                MutableDoubleScalar.minus(new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.FOOT),
+                DoubleScalar.minus(new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.FOOT),
                         new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.INCH));
         assertEquals("result should be 11 inches", 11 * 0.0254, differenceRel.getSI(), 0.0001);
-        MutableDoubleScalar.Abs<?> surface = MutableDoubleScalar.multiply(leftAbs, difference.immutable());
+        MutableDoubleScalar.Abs<?> surface = DoubleScalar.multiply(leftAbs, difference.immutable());
         // System.out.println("surface is " + surface);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), surface.getUnit()
                 .getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values",
                 leftAbs.getSI() * difference.getSI(), surface.getSI(), 0.05);
-        MutableDoubleScalar.Rel<?> relSurface = MutableDoubleScalar.multiply(right, right2);
+        MutableDoubleScalar.Rel<?> relSurface = DoubleScalar.multiply(right, right2);
         assertEquals("Surface should be in square meter", AreaUnit.SQUARE_METER.getSICoefficientsString(), relSurface.getUnit()
                 .getSICoefficientsString());
         assertEquals("Surface should be equal to the product of contributing values", right.getSI() * right2.getSI(),
@@ -394,7 +394,7 @@ public class DoubleScalarTest
         double rightValue = 21.098f;
         DoubleScalar.Abs<LengthUnit> leftAbs = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> rightAbs = new DoubleScalar.Abs<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
-        MutableDoubleScalar.Abs<SIUnit> ratio = MutableDoubleScalar.divide(leftAbs, rightAbs);
+        MutableDoubleScalar.Abs<SIUnit> ratio = DoubleScalar.divide(leftAbs, rightAbs);
         String unitString = ratio.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
         {
@@ -409,7 +409,7 @@ public class DoubleScalarTest
                 ratio.getSI(), 0.0001);
         DoubleScalar.Rel<LengthUnit> leftRel = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> rightRel = new DoubleScalar.Rel<SpeedUnit>(rightValue, SpeedUnit.KM_PER_HOUR);
-        MutableDoubleScalar.Rel<SIUnit> ratioRel = MutableDoubleScalar.divide(leftRel, rightRel);
+        MutableDoubleScalar.Rel<SIUnit> ratioRel = DoubleScalar.divide(leftRel, rightRel);
         unitString = ratioRel.getUnit().getAbbreviation();
         if (unitString.endsWith("!"))
         {
