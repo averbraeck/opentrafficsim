@@ -26,6 +26,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
 import org.opentrafficsim.demo.ntm.animation.LinkAnimation;
@@ -100,7 +101,7 @@ public class NTMModel implements OTSModelInterface
     private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
 
     /** debug information?. */
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -125,8 +126,9 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // set the time step value at ten seconds;
-            DoubleScalar.Rel<TimeUnit> timeStep = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
-            this.settingsNTM = new NTMSettings(timeStep);
+            DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
+            DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel = new DoubleScalar.Rel<TimeUnit>(2, TimeUnit.SECOND);
+            this.settingsNTM = new NTMSettings(timeStepNTM, timeStepCellTransmissionModel);
 
             // Read the shape files with the function:
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
@@ -150,7 +152,7 @@ public class NTMModel implements OTSModelInterface
                     this.nodes, this.centroids);
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
-
+     
             // read the time profile curves: these will be attached to the demands
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
 
@@ -164,12 +166,12 @@ public class NTMModel implements OTSModelInterface
             this.flowLinks = createFlowLinks(this.shpLinks);
             Link.findSequentialLinks(this.flowLinks, this.nodes);
             Link.findSequentialLinks(this.shpLinks, this.nodes);
-            
+
             // connect time profiles to the trips:
 
             // build the higher level map and the graph
             buildGraph();
-
+            
             // shortest paths creation
             initiateSimulationNTM();
 
@@ -257,6 +259,15 @@ public class NTMModel implements OTSModelInterface
         // Initiate trips from OD to first Area (Origin)
         Map<String, Map<String, TripInfoTimeDynamic>> trips = this.tripDemand.getTripInfo();
         // retrieve information from the Area Graph containing the NTM areas and the selected highways
+        // The AreaGraph contains edges that contain:
+        // - "NTM"-links between these NTM areas
+        // - "Flow" links representing a highway
+        // The vertices (type: BoundedNode) represent the NTM areas, or the entrance / exit of a Flow link
+        // NTM nodes and FlowLink entrances are connected by a "Transfer" link that connects them
+        // 
+        // The "NTM" links from a certain node, visualize the connection of that node to its "neighbours"
+        // 
+        
         for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
         {
             try
@@ -484,7 +495,7 @@ public class NTMModel implements OTSModelInterface
             }
             else
             {
-                System.out.println("look out!!! line 459");
+                System.out.println("look out!!! line 489");
             }
 
         }
@@ -537,7 +548,9 @@ public class NTMModel implements OTSModelInterface
             // if so, create a GraphEdge that connects flow roads with urban roads / areas (in/out going)
             if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
             {
-                // make connectors (in the areaGraph!!)
+                // make FLOW connectors (in the areaGraph!!)
+                // create cellTransmissionLinks for the edges of the real FLOW connectors 
+                // every CTM link receives a set of FlowCells that will be simulated as a nested process within the Network Transmission Model
                 createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap);
             }
             // for all other links, inspect if they connect areas
@@ -606,7 +619,7 @@ public class NTMModel implements OTSModelInterface
                 {
                     for (LinkEdge<Link> le : spList)
                     {
-                        System.out.println(le.getLink().getLinkData().getName());
+                        System.out.println(le.getLink().getId());
                     }
                 }
                 System.out.println("Length = " + System.currentTimeMillis());
@@ -881,6 +894,10 @@ public class NTMModel implements OTSModelInterface
         BoundedNode flowNodeB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
         // BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
         // BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
+        Link link = le.getLink();
+        ArrayList<FlowCell> cells = LinkCellTransmission.createCells(link, this.getSettingsNTM().getTimeStepDurationCellTransmissionModel());
+        LinkCellTransmission linkCTM  = new LinkCellTransmission(link, cells);
+        le.setLink(linkCTM);
         addLinkEdge(flowNodeA, flowNodeB, le, TrafficBehaviourType.FLOW, this.areaGraph);
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
@@ -958,7 +975,7 @@ public class NTMModel implements OTSModelInterface
                     }
                     else
                     {
-                        System.out.println("cA == Null................");
+                        System.out.println("cA == Null");
                     }
 
                 }
@@ -979,7 +996,7 @@ public class NTMModel implements OTSModelInterface
                     }
                     else
                     {
-                        System.out.println("cB == Null................");
+                        System.out.println("cB == Null");
                     }
 
                 }
@@ -989,7 +1006,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * Links that show typical highway or mainroad behaviour are specified explicitly as roads
+     * Links that show typical highway or mainroad behaviour are specified explicitly as roads.
      * @param shpLinks the links of this model
      * @return the flowLinks
      */
@@ -1001,7 +1018,8 @@ public class NTMModel implements OTSModelInterface
         for (Link shpLink : shpLinks.values())
         {
 
-            if (shpLink.getSpeed().doubleValue() >= maxSpeed.doubleValue() && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
+            if (shpLink.getSpeed().doubleValue() >= maxSpeed.doubleValue()
+                    && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 Link flowLink = new Link(shpLink);
                 if (flowLink.getGeometry() == null)
@@ -1016,7 +1034,8 @@ public class NTMModel implements OTSModelInterface
         for (Link flowLink : flowLinks.values())
         {
 
-            if (flowLink.getSpeed().doubleValue() >= maxSpeed.doubleValue() && flowLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
+            if (flowLink.getSpeed().doubleValue() >= maxSpeed.doubleValue()
+                    && flowLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 shpLinks.remove(flowLink.getId());
             }

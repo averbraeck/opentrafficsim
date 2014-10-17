@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class CellTransmissionLink extends Link
+public class LinkCellTransmission extends Link
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class CellTransmissionLink extends Link
      * @param linkData
      * @param cells
      */
-    public CellTransmissionLink(Geometry geometry, String nr, DoubleScalar<LengthUnit> length, Node startNode,
+    public LinkCellTransmission(Geometry geometry, String nr, DoubleScalar<LengthUnit> length, Node startNode,
             Node endNode, DoubleScalar<SpeedUnit> speed, DoubleScalar<FrequencyUnit> capacity,
             TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells)
     {
@@ -57,7 +57,7 @@ public class CellTransmissionLink extends Link
      * @param link original Link
      * @param cells to add
      */
-    public CellTransmissionLink(final Link link, final ArrayList<FlowCell> cells)
+    public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
     {
         super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), 
                 link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
@@ -85,14 +85,13 @@ public class CellTransmissionLink extends Link
      * @param timeStepDurationCellTransmission
      * @return
      */
-    public ArrayList<FlowCell> createCells(CellTransmissionLink link, Rel<TimeUnit> timeStepDurationCellTransmission)
+    public final static ArrayList<FlowCell> createCells(final Link link, Rel<TimeUnit> timeStepDurationCellTransmission)
     {
         ArrayList<FlowCell> flowCells = new ArrayList<FlowCell>();
         // the length of the cell depends on the speed and simulation time step
         DoubleScalar<SpeedUnit> speed = link.getSpeed();
-        Rel<TimeUnit> timeStep = timeStepDurationCellTransmission;
         DoubleScalar<LengthUnit> cellLength =
-                new DoubleScalar.Abs<LengthUnit>(speed.getSI() * timeStep.getSI(), LengthUnit.KILOMETER);
+                new DoubleScalar.Abs<LengthUnit>(speed.getSI() * timeStepDurationCellTransmission.getSI(), LengthUnit.METER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.rint(link.getLength().getSI() / cellLength.getSI());
         //compute the amount of cells 

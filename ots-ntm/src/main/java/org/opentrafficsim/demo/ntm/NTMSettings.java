@@ -36,7 +36,7 @@ public class NTMSettings
     private DoubleScalar.Rel<TimeUnit> timeStepDurationNTM;
 
     /** */
-    private DoubleScalar.Rel<TimeUnit> timeStepDurationCTM;
+    private DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel;
 
     /** */
     private DoubleScalar.Abs<TimeUnit> absoluteStartTime;
@@ -62,9 +62,21 @@ public class NTMSettings
         this.durationOfSimulation = durationOfSimulation;
         this.setDescriptionProject(descriptionProject);
         this.timeStepDurationNTM = timeStepDurationNTM;
-        this.timeStepDurationNTM = timeStepDurationCTM;        
+        this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);        
     }
 
+    /**
+     * @param startTime
+     * @param durationOfSimulation
+     * @param descriptionProject
+     * @param timeStepDuration
+     */
+    public NTMSettings(Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM)
+    {
+        this.timeStepDurationNTM = timeStepDurationNTM;
+        this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);
+    }
+    
     /**
      * @param startTime
      * @param durationOfSimulation
@@ -75,6 +87,8 @@ public class NTMSettings
     {
         this.timeStepDurationNTM = timeStepDurationNTM;
     }
+    
+    
     
     /**
      * @return startTimeSinceMidnight
@@ -124,21 +138,6 @@ public class NTMSettings
         this.timeStepDurationNTM = timeStepDuration;
     }
 
-    /**
-     * @return timeStepDurationCTM.
-     */
-    public DoubleScalar.Rel<TimeUnit> getTimeStepDurationCTM()
-    {
-        return timeStepDurationCTM;
-    }
-
-    /**
-     * @param timeStepDurationCTM set timeStepDurationCTM.
-     */
-    public void setTimeStepDurationCTM(DoubleScalar.Rel<TimeUnit> timeStepDurationCTM)
-    {
-        this.timeStepDurationCTM = timeStepDurationCTM;
-    }
 
     /**
      * @return startTime
@@ -154,6 +153,22 @@ public class NTMSettings
     public void setStartTime(DoubleScalar.Abs<TimeUnit> startTime)
     {
         this.absoluteStartTime = startTime;
+    }
+
+    /**
+     * @return timeStepDurationCellTransmissionModel.
+     */
+    public DoubleScalar.Rel<TimeUnit> getTimeStepDurationCellTransmissionModel()
+    {
+        return timeStepDurationCellTransmissionModel;
+    }
+
+    /**
+     * @param timeStepDurationCellTransmissionModel set timeStepDurationCellTransmissionModel.
+     */
+    public void setTimeStepDurationCellTransmissionModel(DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel)
+    {
+        this.timeStepDurationCellTransmissionModel = timeStepDurationCellTransmissionModel;
     }
 
     /**
