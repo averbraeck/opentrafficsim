@@ -151,7 +151,7 @@ public class TrajectoriesModel implements OTSModelInterface
         {
             System.out.println("move " + this.getID());
             DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            if (getPosition(now).getValueSI() > TrajectoriesModel.this.maximumDistance.getValueSI())
+            if (getPosition(now).getSI() > TrajectoriesModel.this.maximumDistance.getSI())
             {
                 TrajectoriesModel.this.cars.remove(this);
                 return;
@@ -163,7 +163,7 @@ public class TrajectoriesModel implements OTSModelInterface
                 leaders.add(TrajectoriesModel.this.cars.get(carIndex + 1));
             }
             // Add a stationary car at 4000m to simulate an opening bridge
-            if (now.getValueSI() >= 300 && now.getValueSI() < 500)
+            if (now.getSI() >= 300 && now.getSI() < 500)
             {
                 Car block =
                         new Car(99999, null, TrajectoriesModel.this.carFollowingModel, now,

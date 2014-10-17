@@ -36,7 +36,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param nodeB the end node of the link.
      * @param length the length of the link with a unit.
      */
-    public Link(final String id, final Node nodeA, final Node nodeB, final DoubleScalar<LengthUnit> length)
+    public Link(final String id, final Node nodeA, final Node nodeB, final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, nodeA, nodeB, length);
     }

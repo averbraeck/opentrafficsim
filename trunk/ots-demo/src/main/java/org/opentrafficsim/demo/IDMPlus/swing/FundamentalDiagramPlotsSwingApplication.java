@@ -100,7 +100,7 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
             DoubleScalar.Abs<LengthUnit> detectorLocation =
                     new DoubleScalar.Abs<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
             FundamentalDiagram fd =
-                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
+                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", 1,
                             new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
             fd.setTitle("Density Contour Graph");
             fd.setExtendedState(MAXIMIZED_BOTH);
