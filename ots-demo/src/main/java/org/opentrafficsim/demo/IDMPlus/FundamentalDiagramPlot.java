@@ -61,7 +61,7 @@ public final class FundamentalDiagramPlot
         DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
         DoubleScalar.Abs<LengthUnit> detectorLocation = new DoubleScalar.Abs<LengthUnit>(3500, LengthUnit.METER);
         FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getValueSI() + "m", 1,
+                new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", 1,
                         new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
         fd.setTitle("Fundamental Diagram Graph");
         fd.setBounds(0, 0, 600, 400);
@@ -112,7 +112,7 @@ public final class FundamentalDiagramPlot
                 {
                     DoubleScalar.Abs<TimeUnit> now = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
-                    if (car.getPosition(now).getValueSI() > maximumDistance.getValueSI())
+                    if (car.getPosition(now).getSI() > maximumDistance.getSI())
                     {
                         cars.remove(carIndex);
                         break;
@@ -135,21 +135,21 @@ public final class FundamentalDiagramPlot
                     car.setState(cfmr);
                     DoubleScalar.Abs<TimeUnit> lowerBound = car.getLastEvaluationTime();
                     DoubleScalar.Abs<TimeUnit> upperBound = car.getNextEvaluationTime();
-                    if (car.getPosition(lowerBound).getValueSI() <= detectorLocation.getValueSI()
-                            && car.getPosition(upperBound).getValueSI() > detectorLocation.getValueSI())
+                    if (car.getPosition(lowerBound).getSI() <= detectorLocation.getSI()
+                            && car.getPosition(upperBound).getSI() > detectorLocation.getSI())
                     {
                         // This car passes the detector; add the movement of this Car to the fundamental diagram plot
                         // Figure out at what time the car passes the detector.
                         // For this demo we use bisection to converge to the correct time.
                         final double maximumTimeError = 0.01; // [s]
                         DoubleScalar.Abs<TimeUnit> passingTime = lowerBound;
-                        while (upperBound.getValueSI() - lowerBound.getValueSI() > maximumTimeError)
+                        while (upperBound.getSI() - lowerBound.getSI() > maximumTimeError)
                         {
                             passingTime =
                                     new DoubleScalar.Abs<TimeUnit>(
-                                            (lowerBound.getValueSI() + upperBound.getValueSI()) / 2, TimeUnit.SECOND);
+                                            (lowerBound.getSI() + upperBound.getSI()) / 2, TimeUnit.SECOND);
                             DoubleScalar.Abs<LengthUnit> position = car.getPosition(passingTime);
-                            if (position.getValueSI() > detectorLocation.getValueSI())
+                            if (position.getSI() > detectorLocation.getSI())
                             {
                                 lowerBound = passingTime;
                             }

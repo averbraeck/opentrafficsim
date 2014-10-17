@@ -125,7 +125,7 @@ public class ContourPlotsModel implements OTSModelInterface
             // let's make several layers with the different types of information
             Node nodeA = new Node("A", new Point2d(0.0d, 0.0d));
             Node nodeB = new Node("B", new Point2d(5000.0d, 0.0d));
-            Link link = new Link("Road", nodeA, nodeB, new DoubleScalar.Abs<LengthUnit>(5000.0d, LengthUnit.METER));
+            Link link = new Link("Road", nodeA, nodeB, new DoubleScalar.Rel<LengthUnit>(5000.0d, LengthUnit.METER));
             new LinkAnimation(link, this.simulator, 5.0f);
         }
         catch (NamingException | RemoteException exception)
@@ -250,7 +250,7 @@ public class ContourPlotsModel implements OTSModelInterface
         {
             System.out.println("move " + this.getID());
             DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            if (getPosition(now).getValueSI() > ContourPlotsModel.this.maximumDistance.getValueSI())
+            if (getPosition(now).getSI() > ContourPlotsModel.this.maximumDistance.getSI())
             {
                 ContourPlotsModel.this.cars.remove(this);
                 return;
@@ -262,7 +262,7 @@ public class ContourPlotsModel implements OTSModelInterface
                 leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
             }
             // Add a stationary car at 4000m to simulate an opening bridge
-            if (now.getValueSI() >= 300 && now.getValueSI() < 500)
+            if (now.getSI() >= 300 && now.getSI() < 500)
             {
                 AnimatedCar block =
                         new AnimatedCar(99999, null, ContourPlotsModel.this.carFollowingModel, now,

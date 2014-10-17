@@ -171,7 +171,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
         {
             System.out.println("move " + this.getID());
             DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            if (getPosition(now).getValueSI() > FundamentalDiagramPlotsModel.this.maximumDistance.getValueSI())
+            if (getPosition(now).getSI() > FundamentalDiagramPlotsModel.this.maximumDistance.getSI())
             {
                 FundamentalDiagramPlotsModel.this.cars.remove(this);
                 return;
@@ -183,7 +183,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
                 leaders.add(FundamentalDiagramPlotsModel.this.cars.get(carIndex + 1));
             }
             // Add a stationary car at 4000m to simulate an opening bridge
-            if (now.getValueSI() >= 300 && now.getValueSI() < 500)
+            if (now.getSI() >= 300 && now.getSI() < 500)
             {
                 Car block =
                         new Car(99999, null, FundamentalDiagramPlotsModel.this.carFollowingModel, now,
@@ -220,21 +220,21 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
             for (FundamentalDiagram fd : getFundamentalDiagrams())
             {
                 DoubleScalar.Abs<LengthUnit> detectorPosition = fd.getPosition();
-                if (idmCar.getPosition(lowerBound).getValueSI() <= detectorPosition.getValueSI()
-                        && idmCar.getPosition(upperBound).getValueSI() > detectorPosition.getValueSI())
+                if (idmCar.getPosition(lowerBound).getSI() <= detectorPosition.getSI()
+                        && idmCar.getPosition(upperBound).getSI() > detectorPosition.getSI())
                 {
                     // This car passes the detector; add the movement of this Car to the fundamental diagram plot
                     // Figure out at what time the car passes the detector.
                     // For this demo we use bisection to converge to the correct time.
                     final double maximumTimeError = 0.01; // [s]
                     DoubleScalar.Abs<TimeUnit> passingTime = lowerBound;
-                    while (upperBound.getValueSI() - lowerBound.getValueSI() > maximumTimeError)
+                    while (upperBound.getSI() - lowerBound.getSI() > maximumTimeError)
                     {
                         passingTime =
-                                new DoubleScalar.Abs<TimeUnit>((lowerBound.getValueSI() + upperBound.getValueSI()) / 2,
+                                new DoubleScalar.Abs<TimeUnit>((lowerBound.getSI() + upperBound.getSI()) / 2,
                                         TimeUnit.SECOND);
                         DoubleScalar.Abs<LengthUnit> position = idmCar.getPosition(passingTime);
-                        if (position.getValueSI() > detectorPosition.getValueSI())
+                        if (position.getSI() > detectorPosition.getSI())
                         {
                             lowerBound = passingTime;
                         }

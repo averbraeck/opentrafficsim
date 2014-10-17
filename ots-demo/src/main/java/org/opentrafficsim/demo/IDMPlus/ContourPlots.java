@@ -138,7 +138,7 @@ public final class ContourPlots
                 {
                     DoubleScalar.Abs<TimeUnit> now = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
                     Car car = cars.get(carIndex);
-                    if (car.getPosition(now).getValueSI() > maximumDistance.getValueSI())
+                    if (car.getPosition(now).getSI() > maximumDistance.getSI())
                     {
                         cars.remove(carIndex);
                         break;
