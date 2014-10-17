@@ -67,8 +67,8 @@ public class DepartureTimeProfile
             DoubleScalar.Abs<TimeUnit> endTimeOfSimulation =
                     MutableDoubleScalar.plus(startSimulationTimeSinceMidnight, durationOfSimulation).immutable();
 
-            if (segment.getTimeSinceMidnight().getValueInUnit() < startSimulationTimeSinceMidnight.getValueInUnit()
-                    && endTimeOfSegment.getValueInUnit() > startSimulationTimeSinceMidnight.getValueInUnit())
+            if (segment.getTimeSinceMidnight().getInUnit() < startSimulationTimeSinceMidnight.getInUnit()
+                    && endTimeOfSegment.getInUnit() > startSimulationTimeSinceMidnight.getInUnit())
             // first segment from the departureTimeProfile that starts before the start of the simulation, but ends
             // within this simulation
             {
@@ -76,7 +76,7 @@ public class DepartureTimeProfile
                         MutableDoubleScalar.minus(segment.getTimeSinceMidnight(), startSimulationTimeSinceMidnight)
                                 .immutable();
                 double shareFirstSegment =
-                        durationWithinSimulation.getValueSI() / segment.getDuration().getValueSI()
+                        durationWithinSimulation.getSI() / segment.getDuration().getSI()
                                 * segment.getShareOfDemand();
                 FractionOfTripDemandByTimeSegment newSegment =
                         new FractionOfTripDemandByTimeSegment(startSimulationTimeSinceMidnight, durationWithinSimulation,
@@ -86,13 +86,13 @@ public class DepartureTimeProfile
             }
             // detects that this segment segment from the departureTimeProfile starts beyond the simulation period
             // this is the last segment to be inspected!
-            else if (segment.getTimeSinceMidnight().getValueInUnit() < endTimeOfSimulation.getValueInUnit()
-                    && endTimeOfSegment.getValueInUnit() >= endTimeOfSimulation.getValueInUnit())
+            else if (segment.getTimeSinceMidnight().getInUnit() < endTimeOfSimulation.getInUnit()
+                    && endTimeOfSegment.getInUnit() >= endTimeOfSimulation.getInUnit())
             {
                 @SuppressWarnings("static-access")
                 DoubleScalar.Rel<TimeUnit> durationWithinSimulation =
                         MutableDoubleScalar.Rel.minus(endTimeOfSimulation, segment.getTimeSinceMidnight()).immutable();
-                double share = durationWithinSimulation.getValueSI() / segment.getDuration().getValueSI();
+                double share = durationWithinSimulation.getSI() / segment.getDuration().getSI();
                 double newShare = share * segment.getShareOfDemand();
                 FractionOfTripDemandByTimeSegment newSegment =
                         new FractionOfTripDemandByTimeSegment(startSimulationTimeSinceMidnight, durationWithinSimulation,
@@ -102,8 +102,8 @@ public class DepartureTimeProfile
                 // now leave this loop: we have passed all segments of this simulation period
                 break;
             }
-            else if (segment.getTimeSinceMidnight().getValueInUnit() >= startSimulationTimeSinceMidnight
-                    .getValueInUnit() && endTimeOfSegment.getValueInUnit() <= endTimeOfSimulation.getValueInUnit())
+            else if (segment.getTimeSinceMidnight().getInUnit() >= startSimulationTimeSinceMidnight
+                    .getInUnit() && endTimeOfSegment.getInUnit() <= endTimeOfSimulation.getInUnit())
             // all segments from the departureTimeProfile that are within the simulation period
             {
                 FractionOfTripDemandByTimeSegment newSegment =

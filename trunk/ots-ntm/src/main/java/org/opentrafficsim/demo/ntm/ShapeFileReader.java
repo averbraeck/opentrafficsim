@@ -146,10 +146,10 @@ public class ShapeFileReader
             if (!found)
             {
                 areas.put(centroid.getId(), NTMModel.createMissingArea(centroid));
-                System.out.println("Centroid not found: create area for " + centroid.getId());                
+                System.out.println("Centroid not found: create area for " + centroid.getId());
             }
         }
-        System.out.println("found : " + teller); 
+        System.out.println("found : " + teller);
         return areas;
     }
 
@@ -271,9 +271,8 @@ public class ShapeFileReader
      * @param centroids the centroids to check start and end Node
      * @throws IOException on error
      */
-    public static void readLinks(final String shapeFileName, Map<String, Link> links,
-            Map<String, Link> connectors, Map<String, Node> nodes, Map<String, Node> centroids)
-            throws IOException
+    public static void readLinks(final String shapeFileName, Map<String, Link> links, Map<String, Link> connectors,
+            Map<String, Node> nodes, Map<String, Node> centroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -314,11 +313,12 @@ public class ShapeFileReader
 
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
                 String nr = String.valueOf(feature.getAttribute("LINKNR"));
+                String nrBA = nr + "_BA";
                 String name = String.valueOf(feature.getAttribute("NAME"));
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar<LengthUnit> length = new DoubleScalar.Abs<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -330,8 +330,9 @@ public class ShapeFileReader
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
                 DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
-                DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
-//                      new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
+                DoubleScalar<FrequencyUnit> capacity =
+                        new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
+                // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
                 Node centroidA = centroids.get(lNodeA);
                 Node centroidB = centroids.get(lNodeB);
@@ -342,31 +343,36 @@ public class ShapeFileReader
 
                 if (centroidA == null && centroidB == null) // all normal links....
                 {
-                    if (nodeA != null && nodeB != null) 
+                    if (nodeA != null && nodeB != null)
                     {
                         Link linkAB = null;
                         Link linkBA = null;
-
+                        if (lNodeA.equals("362917") || lNodeB.equals("362917"))
+                        {
+                            System.out.println("test");
+                        }
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                            new Link(geometry, nr, length, nodeA, nodeB, speed, capacity, TrafficBehaviourType.ROAD, linkData);
-                        linkData = new LinkData(name+ "_BA", linkTag, wegtype, typeWegVak, typeWeg);
+                                new Link(geometry, nr, length, nodeA, nodeB, speed, capacity,
+                                        TrafficBehaviourType.ROAD, linkData);
+                        linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                            new Link(geometry, nr, length, nodeB, nodeA, speed, capacity, TrafficBehaviourType.ROAD, linkData);
+                                new Link(geometry, nrBA, length, nodeB, nodeA, speed, capacity,
+                                        TrafficBehaviourType.ROAD, linkData);
                         if (direction == 1)
                         {
-                            links.put(nr, linkAB);                            
-                        }                        
+                            links.put(nr, linkAB);
+                        }
                         else if (direction == 2)
                         {
-                            links.put(nr, linkBA);                            
+                            links.put(nrBA, linkBA);
                         }
                         else if (direction == 3)
                         {
-                            links.put(nr, linkAB);                            
-                            links.put(nr, linkBA);                            
+                            links.put(nr, linkAB);
+                            links.put(nrBA, linkBA);
                         }
-                        
+
                     }
                     else
                     {
@@ -401,29 +407,29 @@ public class ShapeFileReader
                     else if (nodeACentroid)
                     {
                         Link link =
-                                new Link(geometry, nr, length, centroidA, nodeB, speed, capacity,  TrafficBehaviourType.CENTROID, linkData);
+                                new Link(geometry, nr, length, centroidA, nodeB, speed, capacity,
+                                        TrafficBehaviourType.CENTROID, linkData);
                         connectors.put(nr, link);
 
                     }
                     else if (nodeBCentroid)
                     {
                         Link link =
-                                new Link(geometry, nr, length, nodeA, centroidB, speed, capacity,  TrafficBehaviourType.CENTROID, linkData);
+                                new Link(geometry, nr, length, nodeA, centroidB, speed, capacity,
+                                        TrafficBehaviourType.CENTROID, linkData);
                         connectors.put(nr, link);
 
                     }
                     else
                     {
                         Link link =
-                                new Link(geometry, nr, length, nodeA, nodeB, speed, capacity,  TrafficBehaviourType.ROAD, linkData);
+                                new Link(geometry, nr, length, nodeA, nodeB, speed, capacity,
+                                        TrafficBehaviourType.ROAD, linkData);
                         links.put(nr, link);
                     }
                 }
 
             }
-
-            joinEqualLinks(links);
-            
 
         }
         catch (Exception problem)
@@ -437,8 +443,6 @@ public class ShapeFileReader
         }
 
     }
-
-
 
     /**
      * @param coordinate

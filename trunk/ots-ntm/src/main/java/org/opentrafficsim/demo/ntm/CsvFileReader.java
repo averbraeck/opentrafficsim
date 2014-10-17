@@ -145,6 +145,7 @@ public class CsvFileReader
                 {
                     // first we inspect if it is a centroid
                     name = CsvFileReader.removeQuotes(name);
+                    String nameBA = name + "_BA";
                     boolean isCentroid = ShapeFileReader.inspectNodeCentroid(name);
                     Node cordonPoint = null;
                     if (isCentroid)
@@ -155,8 +156,13 @@ public class CsvFileReader
                     // otherwise it is a cordon link: detect the "zoneConnector" node (at the cordon)
                     // this is often a dangling link, but not always!
                     // we add the Node of the cordon Link to the "centroidsAndCordonConnectors"
-                    else if (links.get(name) != null || connectors.get(name) != null)
+                    else if (links.get(name) != null || connectors.get(name) != null || links.get(nameBA) != null
+                            || connectors.get(nameBA) != null)
                     {
+                        if (links.get(name) == null && connectors.get(name) == null)
+                        {
+                            name = nameBA;
+                        }
                         Link cordonConnector = null;
                         boolean createArea = false;
                         if (links.get(name) != null)
@@ -176,7 +182,7 @@ public class CsvFileReader
                         }
                         if (cordonConnector == null)
                         {
-                            System.out.println("Strange: no connector found!!!!");
+                            System.out.println("Strange: no connector found ??????????!!!!");
                         }
 
                         Node nodeA = cordonConnector.getStartNode();
@@ -304,6 +310,8 @@ public class CsvFileReader
                         /*
                          * String checkedName = returnNumber(dataItem); origin = checkedName;
                          */
+                        System.out.println("I " + indexRow + "  name: "
+                                + centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId());
                         origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId();
                         originLinknr = numberOfTrips;
                         firstElement = false;
