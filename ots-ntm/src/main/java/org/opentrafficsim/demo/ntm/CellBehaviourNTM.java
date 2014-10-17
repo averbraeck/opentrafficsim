@@ -71,7 +71,7 @@ public class CellBehaviourNTM extends CellBehaviour
         this.parametersNTM = parametersNTM;
         this.maxCapacity =
                 parametersNTM.getAccCritical1()
-                        * parametersNTM.getFreeSpeed().getValueInUnit(SpeedUnit.KM_PER_HOUR);
+                        * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }
 
     /** {@inheritDoc} */
@@ -88,7 +88,7 @@ public class CellBehaviourNTM extends CellBehaviour
     //@Override
     public double retrieveDemand(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
     {
-        double maxDemand = param.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
+        double maxDemand = param.getFreeSpeed().getSI() * accumulatedCars; // ask Victor
         double productionDemand = Math.min(maxDemand, maxCapacity); // / demand
         return productionDemand;
     }

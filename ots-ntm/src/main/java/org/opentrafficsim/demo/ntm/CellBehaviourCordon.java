@@ -41,7 +41,7 @@ public class CellBehaviourCordon extends CellBehaviour
     //@Override
     public double retrieveDemand(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
     {
-        double maxDemand = param.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor
+        double maxDemand = param.getFreeSpeed().getSI() * accumulatedCars; // ask Victor
         double productionDemand = Math.min(maxDemand, maxCapacity); // / demand
         return productionDemand;
     }

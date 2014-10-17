@@ -161,8 +161,10 @@ public class NTMModel implements OTSModelInterface
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
 
-
             this.flowLinks = createFlowLinks(this.shpLinks);
+            Link.findSequentialLinks(this.flowLinks, this.nodes);
+            Link.findSequentialLinks(this.shpLinks, this.nodes);
+            
             // connect time profiles to the trips:
 
             // build the higher level map and the graph
@@ -212,13 +214,13 @@ public class NTMModel implements OTSModelInterface
             {
                 BoundedNode origin = path.getStartVertex();
 
-                Node node =path.getEdgeList().get(0).getLink().getStartNode();
+                Node node = path.getEdgeList().get(0).getLink().getStartNode();
                 BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
-                node =path.getEdgeList().get(0).getLink().getEndNode();
+                node = path.getEdgeList().get(0).getLink().getEndNode();
                 BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
 
-                //BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
-                //BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
+                // BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
+                // BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
 
                 // the order of endNode and startNode seems to be not consistent!!!!!!
                 if (origin.equals(endNode))
@@ -382,8 +384,8 @@ public class NTMModel implements OTSModelInterface
         // evaluate all potential transfers
         try
         {
-            this.simulator
-                    .scheduleEventRel(this.settingsNTM.getTimeStepDurationNTM(), this, this, "ntmFlowTimestep", null);
+            this.simulator.scheduleEventRel(this.settingsNTM.getTimeStepDurationNTM(), this, this, "ntmFlowTimestep",
+                    null);
         }
         catch (Exception e)
         {
@@ -432,10 +434,18 @@ public class NTMModel implements OTSModelInterface
             {
                 // DoubleScalar<LengthUnit> length =
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
-                LinkEdge<Link> linkEdge = new LinkEdge<>(shpLink);
-                this.linkGraph.addEdge(nodeA, nodeB, linkEdge);
-                this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLength().doubleValue());
-                linkMap.put(shpLink.getId(), linkEdge);
+                try
+                {
+                    LinkEdge<Link> linkEdge = new LinkEdge<>(shpLink);
+                    this.linkGraph.addEdge(nodeA, nodeB, linkEdge);
+                    this.linkGraph.setEdgeWeight(linkEdge, shpLink.getLength().doubleValue());
+                    linkMap.put(shpLink.getId(), linkEdge);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
             }
             else
             {
@@ -822,7 +832,8 @@ public class NTMModel implements OTSModelInterface
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         BoundedNode centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                        DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                                        DoubleScalar<SpeedUnit> speed =
+                                                new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                                         DoubleScalar<FrequencyUnit> capacity =
                                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                                         Link newLink = Link.createLink(nodeIsolated, centroidEntered, capacity, speed);
@@ -868,8 +879,8 @@ public class NTMModel implements OTSModelInterface
         BoundedNode flowNodeA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
         node = le.getLink().getEndNode();
         BoundedNode flowNodeB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
-        //BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
-        //BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
+        // BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
+        // BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
         addLinkEdge(flowNodeA, flowNodeB, le, TrafficBehaviourType.FLOW, this.areaGraph);
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
@@ -890,7 +901,7 @@ public class NTMModel implements OTSModelInterface
                     {
                         if (cA == null || flowNodeA == null)
                         {
-                            System.out.println("Stop");
+                            System.out.println("No connection of flow Link to Area for this one...");
                         }
                         DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar<FrequencyUnit> capacity =
@@ -935,7 +946,7 @@ public class NTMModel implements OTSModelInterface
                     // from urban (Area) to Highway (flow)
                     node = urbanLink.getLink().getStartNode();
                     cA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
-                    //cA = (BoundedNode) urbanLink.getLink().getStartNode();
+                    // cA = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cA != null)
                     {
                         DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
@@ -956,7 +967,7 @@ public class NTMModel implements OTSModelInterface
                     // from Highway (flow) to urban (Area)
                     node = urbanLink.getLink().getEndNode();
                     cB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
-                    //cB = (BoundedNode) urbanLink.getLink().getStartNode();
+                    // cB = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cB != null)
                     {
                         DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
@@ -985,10 +996,12 @@ public class NTMModel implements OTSModelInterface
     public static Map<String, Link> createFlowLinks(final Map<String, Link> shpLinks)
     {
         Map<String, Link> flowLinks = new HashMap<String, Link>();
+        DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(65, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(3000, FrequencyUnit.PER_HOUR);
         for (Link shpLink : shpLinks.values())
         {
-            DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(3000, FrequencyUnit.PER_HOUR);
-            if (shpLink.getSpeed().doubleValue() >= 65 && shpLink.getCapacity().doubleValue() > capacity.doubleValue())
+
+            if (shpLink.getSpeed().doubleValue() >= maxSpeed.doubleValue() && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 Link flowLink = new Link(shpLink);
                 if (flowLink.getGeometry() == null)
@@ -1002,7 +1015,8 @@ public class NTMModel implements OTSModelInterface
 
         for (Link flowLink : flowLinks.values())
         {
-            if (flowLink.getSpeed().doubleValue() >= 65 && flowLink.getCapacity().doubleValue() > 3000)
+
+            if (flowLink.getSpeed().doubleValue() >= maxSpeed.doubleValue() && flowLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 shpLinks.remove(flowLink.getId());
             }
@@ -1071,10 +1085,10 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = false;
-            boolean showFlowLinks = false;
-            boolean showConnectors = false;
-            boolean showNodes = false;
+            boolean showLinks = true;
+            boolean showFlowLinks = true;
+            boolean showConnectors = true;
+            boolean showNodes = true;
             boolean showEdges = true;
             boolean showAreaNode = true;
             boolean showArea = false;

@@ -92,9 +92,9 @@ public class CellTransmissionLink extends Link
         DoubleScalar<SpeedUnit> speed = link.getSpeed();
         Rel<TimeUnit> timeStep = timeStepDurationCellTransmission;
         DoubleScalar<LengthUnit> cellLength =
-                new DoubleScalar.Abs<LengthUnit>(speed.getValueSI() * timeStep.getValueSI(), LengthUnit.KILOMETER);
+                new DoubleScalar.Abs<LengthUnit>(speed.getSI() * timeStep.getSI(), LengthUnit.KILOMETER);
         // find out how many Cells fit into this Link
-        double numberOfCells = Math.rint(link.getLength().getValueSI() / cellLength.getValueSI());
+        double numberOfCells = Math.rint(link.getLength().getSI() / cellLength.getSI());
         //compute the amount of cells 
         for (int i = 0; i < numberOfCells; i++)
         {
