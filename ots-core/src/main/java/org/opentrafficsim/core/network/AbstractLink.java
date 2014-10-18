@@ -140,20 +140,6 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     }
     
     /**
-     * @return length
-     */
-    public final DoubleScalar<LengthUnit> getLength(){
-        return this.length;
-    }
-    
-    /**
-     * @param length
-     */
-    public final void setLength( final DoubleScalar<LengthUnit> length){
-        this.length =  length;
-    }
-
-    /**
      * @return length.
      */
     public final DoubleScalar.Rel<LengthUnit> getLength()
