@@ -1,10 +1,20 @@
 package org.opentrafficsim.core.network;
 
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_BASE;
+import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.network.AbstractLink;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. In addition, a network can be
@@ -124,6 +134,9 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         this.expansionOfNode = expansionNode;
     }
 
+   
+    
+    
     /**
      * @return expansionOfNode
      */
@@ -339,6 +352,61 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     }
         
  */
+    
+    public boolean collapseLinks(AbstractNode<?, ?> node1, AbstractNode<?, ?> node2){
+       AbstractLink<?, AbstractNode<?,?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
+       float sumCapacityFrom1 = (float) 0.0; //One direction
+       float sumCapacityFrom2 = (float) 0.0; // Other direction
+       DoubleScalar<LengthUnit> shortestLengthFrom1 = new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+       DoubleScalar<LengthUnit> shortestLengthFrom2 = new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+       ID idNewFrom1;
+       ID idNewFrom2;
+       AbstractLink<?, AbstractNode<?,?>> newLinkFrom1 = null;
+       AbstractLink<?, AbstractNode<?,?>> newLinkFrom2 = null;
+   
+       
+
+       
+              for(AbstractLink<?, AbstractNode<?,?>> link : setOfLinks){
+                if ((node1.equals(link.getStartNode()) && node2.equals(link.getEndNode())) ){
+                 super.remove(link);
+                 
+                 sumCapacityFrom1 += link.getCapacity().floatValue();
+                 
+                 if (shortestLengthFrom1.floatValue() > link.getLenght().floatValue()){
+                 
+                         shortestLengthFrom1 = link.getLenght();
+                 }
+                 
+                    
+                }
+                else if ( (node2.equals(link.getStartNode()) && node1.equals(link.getEndNode()))){
+                    super.remove(link);
+
+                    sumCapacityFrom2 += link.getCapacity().floatValue();
+                    
+                    if (shortestLengthFrom2.floatValue() > link.getLenght().floatValue()){
+                    
+                        shortestLengthFrom2 = link.getLenght();
+                        
+                    }
+                }
+                    else{
+                            return false;
+                     }
+                }
+       
+           newLinkFrom1.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom1, FrequencyUnit.PER_SECOND));
+           newLinkFrom2.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom2, FrequencyUnit.PER_SECOND));
+           newLinkFrom1.setLength(shortestLengthFrom1);
+           newLinkFrom2.setLength(shortestLengthFrom2);
+           
+           super.add((L) newLinkFrom1);
+           super.add((L) newLinkFrom2);
+           return true;
+           
+        }
+    
      
 
 } // End of class
