@@ -26,19 +26,22 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     private static final long serialVersionUID = 20140920L;
 
     /** link id. */
-    private ID id;
+    private final ID id;
 
     /** start node (directional). */
-    private N startNode;
+    private final N startNode;
 
     /** end node (directional). */
-    private N endNode;
+    private final N endNode;
 
     /** link length in a length unit. */
-    private DoubleScalar<LengthUnit> length;
+    private final DoubleScalar.Rel<LengthUnit> length;
 
-    /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
+    /** link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
     private DoubleScalar<FrequencyUnit> capacity;
+
+    /** possible geometry for the link; can be null. */
+    private LinearGeometry geometry;
 
     /**
      * Construction of a link.
@@ -47,15 +50,17 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
+     * @param geometry possible geometry for the link; can be null.
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length,
-            final DoubleScalar<FrequencyUnit> capacity)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
+            final DoubleScalar<FrequencyUnit> capacity, final LinearGeometry geometry)
     {
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
         this.length = length;
         setCapacity(capacity);
+        this.geometry = geometry;
     }
 
     /**
@@ -65,10 +70,25 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar<LengthUnit> length)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
-                FrequencyUnit.PER_SECOND));
+                FrequencyUnit.PER_SECOND), null);
+    }
+
+    /**
+     * Construction of a link.
+     * @param id the link id.
+     * @param startNode start node (directional).
+     * @param endNode end node (directional).
+     * @param length link length in a length unit.
+     * @param geometry possible geometry for the link; can be null.
+     */
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
+            final LinearGeometry geometry)
+    {
+        this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
+                FrequencyUnit.PER_SECOND), geometry);
     }
 
     /**
@@ -131,6 +151,30 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      */
     public final void setLength( final DoubleScalar<LengthUnit> length){
         this.length =  length;
+    }
+
+    /**
+     * @return length.
+     */
+    public final DoubleScalar.Rel<LengthUnit> getLength()
+    {
+        return this.length;
+    }
+
+    /**
+     * @return geometry.
+     */
+    public final LinearGeometry getGeometry()
+    {
+        return this.geometry;
+    }
+
+    /**
+     * @param geometry set geometry.
+     */
+    public void setGeometry(LinearGeometry geometry)
+    {
+        this.geometry = geometry;
     }
 
 }
