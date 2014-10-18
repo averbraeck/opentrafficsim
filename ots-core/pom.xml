@@ -46,5 +46,14 @@
 			<artifactId>jgrapht-core</artifactId>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>dsol</groupId>
+			<artifactId>dsol-swing</artifactId>
+		</dependency>
 	</dependencies>
 </project>
