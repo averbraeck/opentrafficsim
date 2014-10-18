@@ -51,10 +51,10 @@ public class NetworkException extends Exception
     }
 
     /**
-     * @param message
-     * @param cause
-     * @param enableSuppression
-     * @param writableStackTrace
+     * @param message String; description of the problem
+     * @param cause Throwable; the cause of this ValueException
+     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
+     * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public NetworkException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)
