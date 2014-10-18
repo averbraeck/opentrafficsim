@@ -397,8 +397,9 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
        
            newLinkFrom1.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom1, FrequencyUnit.PER_SECOND));
            newLinkFrom2.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom2, FrequencyUnit.PER_SECOND));
-           newLinkFrom1.setLength(shortestLengthFrom1);
-           newLinkFrom2.setLength(shortestLengthFrom2);
+           // TODO: has to be done in the constructor. length is a final field!
+           // newLinkFrom1.setLength(shortestLengthFrom1);
+           // newLinkFrom2.setLength(shortestLengthFrom2);
            
            super.add((L) newLinkFrom1);
            super.add((L) newLinkFrom2);
