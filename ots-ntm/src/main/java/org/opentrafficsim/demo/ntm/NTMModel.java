@@ -10,8 +10,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
@@ -22,14 +20,12 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
-import org.opentrafficsim.demo.ntm.animation.LinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
@@ -37,17 +33,13 @@ import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
+
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.index.SpatialIndex;
 import com.vividsolutions.jts.index.strtree.STRtree;
-import com.vividsolutions.jts.linearref.LinearLocation;
-import com.vividsolutions.jts.linearref.LocationIndexedLine;
 
 /**
  * <p>
@@ -127,7 +119,8 @@ public class NTMModel implements OTSModelInterface
         {
             // set the time step value at ten seconds;
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
-            DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel = new DoubleScalar.Rel<TimeUnit>(2, TimeUnit.SECOND);
+            DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
+                    new DoubleScalar.Rel<TimeUnit>(2, TimeUnit.SECOND);
             this.settingsNTM = new NTMSettings(timeStepNTM, timeStepCellTransmissionModel);
 
             // Read the shape files with the function:
@@ -152,11 +145,11 @@ public class NTMModel implements OTSModelInterface
                     this.nodes, this.centroids);
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
-     
+
             // read the time profile curves: these will be attached to the demands
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
 
-            // read TrafficDemand /src/main/resources
+            // read TrafficDemand from /src/main/resources
             // including information on the time period this demand covers!
             // within "readOmnitransExportDemand" the cordon zones are determined and areas are created around them
             this.setTripDemand(CsvFileReader.readOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
@@ -164,6 +157,8 @@ public class NTMModel implements OTSModelInterface
                     this.getDepartureTimeProfiles(), this.areas));
 
             this.flowLinks = createFlowLinks(this.shpLinks);
+
+            // merge link segments between junctions:
             Link.findSequentialLinks(this.flowLinks, this.nodes);
             Link.findSequentialLinks(this.shpLinks, this.nodes);
 
@@ -171,7 +166,7 @@ public class NTMModel implements OTSModelInterface
 
             // build the higher level map and the graph
             buildGraph();
-            
+
             // shortest paths creation
             initiateSimulationNTM();
 
@@ -203,6 +198,7 @@ public class NTMModel implements OTSModelInterface
         // they encounter (neighbour) on their shortest path towards that destination.
 
         // Initiate the simulation by creating the paths
+        // These paths are used to determine the first area (neighbour) on the path to destination!!!
         boolean floyd = true;
         @SuppressWarnings("unchecked")
         Collection<GraphPath<BoundedNode, LinkEdge<Link>>> sp1 = null;
@@ -215,30 +211,40 @@ public class NTMModel implements OTSModelInterface
             for (GraphPath<BoundedNode, LinkEdge<Link>> path : sp1)
             {
                 BoundedNode origin = path.getStartVertex();
+                BoundedNode destination = path.getEndVertex();
 
+                // determine the start and endnode of the first edge that starts from the origin
+                // the endNode of this edge is the "Neighbour" area
                 Node node = path.getEdgeList().get(0).getLink().getStartNode();
                 BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
                 node = path.getEdgeList().get(0).getLink().getEndNode();
                 BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
 
-                // BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
-                // BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
-
-                // the order of endNode and startNode seems to be not consistent!!!!!!
+                // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
                 if (origin.equals(endNode))
                 {
                     endNode = startNode;
                 }
-                // TODO: the centroids at the cordon have yet to be connected to the area (yet to be created)
-                if (origin.getId().startsWith("C") && endNode.getId().startsWith("C"))
+                // if (this.tripDemand.getTripDemandOriginToDestination(origin.getId(), destination.getId()) != null)
+                // if (origin.getId().startsWith("C") && endNode.getId().startsWith("C"))
+                // {
+                TripInfoTimeDynamic tripInfo =
+                        this.tripDemand.getTripDemandOriginToDestination(origin.getId(), destination.getId());
+                // for all OD-pairs with trips, the TripInfo is already initiated
+                // if this relationship is not yet initiated, we do it here
+                if (tripInfo == null)
                 {
-                    TripInfoTimeDynamic tripInfo =
-                            this.tripDemand.getTripDemandOriginToDestination(origin.getId(), endNode.getId());
-                    if (tripInfo != null)
-                    {
-                        tripInfo.setNeighbour(endNode);
-                    }
+                    tripInfo = new TripInfoTimeDynamic(0, null);
+                    tripInfo.setNeighbour(endNode);
+                    this.tripDemand.setTripDemandOriginToDestination(origin.getId(), destination.getId(), tripInfo,
+                            this.tripDemand.getTripInfo());
                 }
+                else
+                {
+                    tripInfo.setNeighbour(endNode);
+                }
+                //
+                // }
             }
         }
 
@@ -253,56 +259,111 @@ public class NTMModel implements OTSModelInterface
     @SuppressWarnings("unchecked")
     protected final void ntmFlowTimestep()
     {
-        double accumulatedCars = 0;
+        double accumulatedCarsInCell = 0;
         // long timeStep = 0;
 
         // Initiate trips from OD to first Area (Origin)
         Map<String, Map<String, TripInfoTimeDynamic>> trips = this.tripDemand.getTripInfo();
         // retrieve information from the Area Graph containing the NTM areas and the selected highways
-        // The AreaGraph contains edges that contain:
+
+        // The AreaGraph contains EDGES with differing characteristics:
         // - "NTM"-links between these NTM areas
-        // - "Flow" links representing a highway
-        // The vertices (type: BoundedNode) represent the NTM areas, or the entrance / exit of a Flow link
-        // NTM nodes and FlowLink entrances are connected by a "Transfer" link that connects them
-        // 
-        // The "NTM" links from a certain node, visualize the connection of that node to its "neighbours"
-        // 
+        // - "Cordon" links that act as feeders and sinks of traffic to the "real" Areas
+        // - "Flow" links representing higher order roads with behaviour that deviates from the NTM area links
+        // (only for specific "main" roads)
+
+        // The VERTICES (type: BoundedNode) represent the NTM areas, or the entrance / exit of a Flow link
+        // NTM nodes and FlowLink entrances are connected by a "Transfer" link
+        //
+        // The "NTM" links between a pair of nodes, visualise the connection of that node to its "neighbours" with NTM
+        // characteristics
+        // The "Flow" links represent a connection where traffic behaves differently than in the NTM areas:
+        // once traffic is on a homogeneous link, the capacity remains stable
+        //
+        // The simulation of Traffic becomes a nested process:
+        // - the NTM process is the parent of the simulation
+        // - the Flow process acts as a "child" process
+
         
-        for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
+        // ********************************************************************************************************
+        // STEP 1 of the simulation describes the initialisation of Demand from the Traffic Demand file:
+        // - this is generated by the OD matrix from the model
+
+        // first loop through the nodes and select the NTM and Cordon "Area nodes"
+        // These nodes generate traffic from the trip demand file (feeders)
+
+        // There are two essential variables / class types:
+        // - the Node.ClassBehaviour represents the aggregated traffic flow dynamics between nodes/cells
+        // - the TripInfoTimeDynamic showing:
+        // - number of trips between origin destination pairs (from demand file)
+        // - neighbour area on path form Origin to Destination
+        // - time profile curve of trip departures from this origin
+        // - accumulated cars in this area/node/cell, heading on the way to a certain destination
+        // - flow in this time-step to neighbour from this area to destination
+
+        for (BoundedNode origin : this.areaGraph.vertexSet())
         {
             try
             {
-                if (nodefromNTM.getBehaviourType() == TrafficBehaviourType.NTM)
+                // the real NTM areas
+                if (origin.getBehaviourType() == TrafficBehaviourType.NTM
+                        || origin.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    // first loop through the NTM and Cordon Area "nodes" that generate traffic from the trip demand
-                    // file
-                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) nodefromNTM.getCellBehaviour();
-                    // double cars = cellBehaviour.retrieveDemand(nodeFromNTM.getDemandToEnter(),
-                    // nodeFromNTM.getMaxCapacity(), nodeFromNTM.getParametersNTM());
-                    accumulatedCars = cellBehaviour.getAccumulatedCars();
-                    if (trips.containsKey(nodefromNTM.getArea().getCentroidNr()))
+                    // the variable CellBehaviour(NTM) defines the traffic process within an area (the area is
+                    // represented by the "BoundedNode")
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) origin.getCellBehaviour();
+                    // during the simulation traffic enters and leaves the NTM areas. The number of "accumulated cars"
+                    // represents the net balance of cars within the Nodes/areas
+                    accumulatedCarsInCell = cellBehaviour.getAccumulatedCars();
+
+                    Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(origin.getId());
+                    double startingTrips = 0.0;
+                    for (BoundedNode nodeTo : this.areaGraph.vertexSet())
                     {
-                        Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(nodefromNTM.getArea().getCentroidNr());
-                        for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                        // select
+                        if (tripsFrom.containsKey(nodeTo.getId()))
                         {
-                            if (tripsFrom.containsKey(nodeTo.getId()))
+                            // TODO: adjust next formulae wit time dependent variable
+                            // retrieve the leaving TRIPS of this time slice
+                            startingTrips = tripsFrom.get(nodeTo.getId()).getNumberOfTrips();
+                            if (startingTrips > 0.0)
                             {
-                                // adjust next formulae wit time dependant variable
-                                double startingTrips = tripsFrom.get(nodeTo.getId()).getNumberOfTrips();
-                                tripsFrom.get(nodeTo.getId()).addToPassingTrips(startingTrips);
-                                accumulatedCars += startingTrips;
+                                // these new Trips are added to the TRIPS that are already on the way (passing an NTM
+                                // area): the PassingTrips
+                                tripsFrom.get(nodeTo.getId()).addAccumulatedCarsToDestination(startingTrips);
+                                // and this also increases the number of accumulated cars in the area
+                                accumulatedCarsInCell += startingTrips;
                             }
                         }
                     }
-                    // put these trips in the stock of the Area (added the new Trips)
-                    cellBehaviour.setAccumulatedCars(accumulatedCars);
-                    // compute the total production from an Area to all other Destinations (based on the accumulation
-                    // NFD)
-                    cellBehaviour.setDemand(cellBehaviour.retrieveDemand(accumulatedCars,
-                            cellBehaviour.getMaxCapacity(), cellBehaviour.getParametersNTM()));
-                    // compute the total supply (maximum) from neighbours to an Area (based on the accumulation NFD)
-                    cellBehaviour.setSupply(cellBehaviour.retrieveSupply(accumulatedCars,
-                            cellBehaviour.getMaxCapacity(), cellBehaviour.getParametersNTM()));
+
+                    // put these trips in the stock of cars within the Area (added the new Trips)
+                    cellBehaviour.setAccumulatedCars(accumulatedCarsInCell);
+
+                    // the initial production of traffic is based on the demand
+                    // the formulae depend on the type of Cell that is considered
+                    if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                    {
+                        // compute the total Demand (production) from an Area to all other Destinations (the level is
+                        // based
+                        // on the accumulation, the capacity of an area and the NFD algorithm).
+                        cellBehaviour.setDemand(cellBehaviour.retrieveDemand(accumulatedCarsInCell,
+                                cellBehaviour.getMaxCapacity(), cellBehaviour.getParametersNTM()));
+                        // compute the total supply (maximum) from neighbours to an Area (again based on the
+                        // accumulation and NFD/area characteristics)
+                        cellBehaviour.setSupply(cellBehaviour.retrieveSupply(accumulatedCarsInCell,
+                                cellBehaviour.getMaxCapacity(), cellBehaviour.getParametersNTM()));
+                    }
+                    // the border, or CORDON areas, as sink/source for traffic
+                    else if (origin.getBehaviourType() == TrafficBehaviourType.CORDON)
+                    {
+                        // demand is the sum of new demand and accumulated traffic from previous time steps
+                        cellBehaviour.setDemand(accumulatedCarsInCell);
+                        // the total supply is infinite for Cordon areas (sinks with no limit on in-flow)
+                        cellBehaviour.setSupply(java.lang.Double.POSITIVE_INFINITY);
+                        // in the next steps, the dynamics of demand and supply create a certain flow between areas
+                    }
+                    // in the next steps, the dynamics of demand and supply create a certain flow between areas
                 }
             }
             catch (Exception e)
@@ -311,72 +372,49 @@ public class NTMModel implements OTSModelInterface
             }
         }
 
-        // compute the flows if no restrictions on the supply side // these will be corrected if supply poses
-        // restrictions!
-        for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
+        // ********************************************************************************************************
+        // STEP 2:
+        // Compute the flows between all areas, first assuming that there are no restrictions on the supply side.
+        // These will be corrected in Step 3 in case supply poses restrictions to the in-flow!
+        // This stage regards both the dynamics from the NTM areas and from the Flow Nodes and Edges
+        for (BoundedNode startNode : this.areaGraph.vertexSet())
         {
             try
             {
-                if (nodefromNTM.getBehaviourType() == TrafficBehaviourType.NTM)
+                if (startNode.getBehaviourType() == TrafficBehaviourType.NTM
+                        || startNode.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    // first loop through the NTM and Cordon Area "nodes" that generate traffic from the trip demand
-                    // file
-                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) nodefromNTM.getCellBehaviour();
-                    accumulatedCars = cellBehaviour.getAccumulatedCars();
-                    if (trips.containsKey(nodefromNTM.getArea().getCentroidNr()))
+                    // first loop through the NTM and Cordon Area "nodes"
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) startNode.getCellBehaviour();
+                    accumulatedCarsInCell = cellBehaviour.getAccumulatedCars();
+                    // tripsFrom represents the "row" of trips leaving from a zone to all of its destinations
+                    // (columns)
+                    Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(startNode.getArea().getCentroidNr());
+                    for (BoundedNode nodeTo : this.areaGraph.vertexSet())
                     {
-                        Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(nodefromNTM.getArea().getCentroidNr());
-                        for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                        if (tripsFrom.containsKey(nodeTo.getId()) && startNode.getId() != nodeTo.getId())
                         {
-                            if (tripsFrom.containsKey(nodeTo.getId()))
-                            {
-                                // retrieve the number of cars that want to leave to a neighbouring cell
-                                BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
-                                double share =
-                                        tripsFrom.get(nodeTo.getId()).getPassingTrips()
-                                                / cellBehaviour.getAccumulatedCars();
-                                double flowFromDemand = share * cellBehaviour.getDemand();
-                                tripsFrom.get(neighbour.getId()).setFlow(flowFromDemand);
-                                ((CellBehaviourNTM) neighbour.getCellBehaviour()).addDemandToEnter(flowFromDemand);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-        // compute the flows if no restrictions on the supply side
-        // these will be corrected if supply poses restrictions!
-        for (BoundedNode nodefromNTM : this.areaGraph.vertexSet())
-        {
-            try
-            {
-                if (nodefromNTM.getBehaviourType() == TrafficBehaviourType.NTM)
-                {
-                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) nodefromNTM.getCellBehaviour();
-                    // double cars = cellBehaviour.retrieveDemand(nodeFromNTM.getDemandToEnter(),
-                    // nodeFromNTM.getMaxCapacity(), nodeFromNTM.getParametersNTM());
-                    accumulatedCars = cellBehaviour.getAccumulatedCars();
-                    if (trips.containsKey(nodefromNTM.getArea().getCentroidNr()))
-                    {
-                        Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(nodefromNTM.getArea().getCentroidNr());
-                        for (BoundedNode nodeTo : this.areaGraph.vertexSet())
-                        {
-                            if (tripsFrom.containsKey(nodeTo.getId()))
-                            {
-                                // retrieve the number of cars that want to leave to a neighbouring cell
-                                BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
-                                CellBehaviourNTM cellBehaviourNeighbour =
-                                        (CellBehaviourNTM) neighbour.getCellBehaviour();
-                                double share =
-                                        cellBehaviourNeighbour.getFlow() / cellBehaviourNeighbour.getDemandToEnter();
-                                double flowFromDemand = share * cellBehaviourNeighbour.getSupply();
-                                cellBehaviourNeighbour.setFlow(flowFromDemand);
-                                tripsFrom.get(neighbour.getId()).setFlow(flowFromDemand);
-                            }
+                            // The tripsFrom includes information about the trips to all other zones
+                            // In this step we are interested in the first zone we encounter ("neighbour") of the
+                            // cars on their path to a certain destination Area.
+                            // Therefore we retrieve this neighbour
+                            BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
+                            // Compute the share of the accumulated trips to a certain destination as part of the
+                            // total accumulation
+                            double share =
+                                    tripsFrom.get(nodeTo.getId()).getAccumulatedCarsToDestination()
+                                            / cellBehaviour.getAccumulatedCars();
+                            // the out-flow to a certain destination may be restricted by the bounds of the total
+                            // demand based on total accumulation and the characteristics of the NFD diagram
+                            double flowFromDemand = share * cellBehaviour.getDemand();
+                            // this potential out-flow is heading to the neighbour that is on its path to
+                            // destination
+                            tripsFrom.get(neighbour.getId()).setFlowToNeighbour(flowFromDemand);
+                            // this flow is also added to the total sum of traffic that wants to enter this neighbour
+                            // Area.
+                            ((CellBehaviourNTM) neighbour.getCellBehaviour()).addDemandToEnter(flowFromDemand);
+                            // In the next step, see whether this demand from nodes is able to enter completely or just
+                            // partly (when supply is restricted)
                         }
                     }
                 }
@@ -387,12 +425,87 @@ public class NTMModel implements OTSModelInterface
             }
         }
 
-        // Evaluate the accumulation per area and determine the maximum production
+        // ********************************************************************************************************
+        // STEP 3:
+        // This step monitors whether the demand of traffic from outside areas is able to enter a certain Area
+        // Perhaps supply poses an upper bound on the Demand!
+        for (BoundedNode startNode : this.areaGraph.vertexSet())
+        {
+            try
+            {
+                if (startNode.getBehaviourType() == TrafficBehaviourType.NTM
+                        || startNode.getBehaviourType() == TrafficBehaviourType.CORDON)
+                {
+                    // tripsFrom represents the "row" of trips leaving from a zone to all of its destinations
+                    // (columns)
+                    Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(startNode.getId());
+                    for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                    {
+                        if (tripsFrom.containsKey(nodeTo.getId()))
+                        {
+                            // retrieve the neighbour area on the path to a certain destination
+                            BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
+                            // retrieve the type of CellBehaviour of this neighbour
+                            CellBehaviourNTM cellBehaviourNeighbour = (CellBehaviourNTM) neighbour.getCellBehaviour();
+                            double tripsToNeighbour = tripsFrom.get(neighbour.getId()).getFlowToNeighbour();
+                            // compute the share of traffic that wants to enter this Neighbour area from a certain
+                            // origin - destination pair
+                            double share = tripsToNeighbour / cellBehaviourNeighbour.getDemandToEnter();
+                            // the total supply to the neighbour may be restricted (getSupply). Compute the share of
+                            // this supply.
+                            double flowFromDemand = share * cellBehaviourNeighbour.getSupply();
+                            // this is the final flow to the neighbour
+                            tripsFrom.get(neighbour.getId()).setFlowToNeighbour(flowFromDemand);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
 
-        // potential transfer from a source area to all neighbours (demand)
-        // evaluate the production
+        // ********************************************************************************************************
+        // STEP 4:
+        // This step finishes the bookkeeping and transfers traffic to the neighbouring cells based on the flows from
+        // the previous step
+        for (BoundedNode startNode : this.areaGraph.vertexSet())
+        {
+            try
+            {
+                if (startNode.getBehaviourType() == TrafficBehaviourType.NTM
+                        || startNode.getBehaviourType() == TrafficBehaviourType.CORDON)
+                {
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) startNode.getCellBehaviour();
+                    // tripsFrom represents the "row" of trips leaving from a zone to all of its destinations
+                    // (columns)
+                    Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(startNode.getId());
+                    for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                    {
+                        if (tripsFrom.containsKey(nodeTo.getId()))
+                        {
+                            // retrieve the neighbour area on the path to a certain destination
+                            BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
+                            CellBehaviourNTM cellBehaviourNeighbour = (CellBehaviourNTM) neighbour.getCellBehaviour();
+                            // this is the final flow from startNode to the neighbour
+                            double flow = tripsFrom.get(neighbour.getId()).getFlowToNeighbour();
+                            // adjust the number of cars in the Cell (leaving)
+                            double accumulatedCars = cellBehaviour.getAccumulatedCars();
+                            cellBehaviour.setAccumulatedCars(accumulatedCars - flow);
+                            // and adjust the number of cars in the neighbouring Cell (entering)
+                            double accumulatedCarsNeighbour = cellBehaviourNeighbour.getAccumulatedCars();
+                            cellBehaviourNeighbour.setAccumulatedCars(accumulatedCarsNeighbour + flow);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
 
-        // evaluate all potential transfers
         try
         {
             this.simulator.scheduleEventRel(this.settingsNTM.getTimeStepDurationNTM(), this, this, "ntmFlowTimestep",
@@ -409,7 +522,6 @@ public class NTMModel implements OTSModelInterface
      */
     private void buildGraph()
     {
-
         // temporary storage for nodes and edges mapped from the number to the node
         Map<String, BoundedNode> nodeMap = new HashMap<>();
         Map<String, BoundedNode> nodeGraphMap = new HashMap<>();
@@ -549,8 +661,9 @@ public class NTMModel implements OTSModelInterface
             if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
             {
                 // make FLOW connectors (in the areaGraph!!)
-                // create cellTransmissionLinks for the edges of the real FLOW connectors 
-                // every CTM link receives a set of FlowCells that will be simulated as a nested process within the Network Transmission Model
+                // create cellTransmissionLinks for the edges of the real FLOW connectors
+                // every CTM link receives a set of FlowCells that will be simulated as a nested process within the
+                // Network Transmission Model
                 createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap);
             }
             // for all other links, inspect if they connect areas
@@ -895,8 +1008,10 @@ public class NTMModel implements OTSModelInterface
         // BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
         // BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
         Link link = le.getLink();
-        ArrayList<FlowCell> cells = LinkCellTransmission.createCells(link, this.getSettingsNTM().getTimeStepDurationCellTransmissionModel());
-        LinkCellTransmission linkCTM  = new LinkCellTransmission(link, cells);
+        ArrayList<FlowCell> cells =
+                LinkCellTransmission
+                        .createCells(link, this.getSettingsNTM().getTimeStepDurationCellTransmissionModel());
+        LinkCellTransmission linkCTM = new LinkCellTransmission(link, cells);
         le.setLink(linkCTM);
         addLinkEdge(flowNodeA, flowNodeB, le, TrafficBehaviourType.FLOW, this.areaGraph);
         // loop through the other links to find the links that connect

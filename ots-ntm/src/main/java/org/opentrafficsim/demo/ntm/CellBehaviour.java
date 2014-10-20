@@ -19,6 +19,47 @@ package org.opentrafficsim.demo.ntm;
  */
 public abstract class CellBehaviour
 {
+   
+
+    /** */
+    private double supply;
+
+    /** */
+    private double demand;
+
+    
+    
+    /**
+     * @return supply.
+     */
+    public double getSupply()
+    {
+        return this.supply;
+    }
+
+    /**
+     * @param supply set supply.
+     */
+    public void setSupply(double supply)
+    {
+        this.supply = supply;
+    }
+
+    /**
+     * @return demand.
+     */
+    public double getDemand()
+    {
+        return this.demand;
+    }
+
+    /**
+     * @param demand set demand.
+     */
+    public void setDemand(double demand)
+    {
+        this.demand = demand;
+    }
     
 /*    *//**
      * @param cars 
