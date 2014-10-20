@@ -25,41 +25,26 @@ public class CellBehaviourCordon extends CellBehaviour
     /** */
     private static final long serialVersionUID = 20140903L;
 
+    
 
-
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @param inFlow 
+     * @return */
     //@Override
-    public double retrieveSupply(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
+    public double setSupply(final Double inFlow)
     {
-        double carProduction = 0.0;
-        double productionSupply = Math.min(maxCapacity, carProduction); // supply
-        return productionSupply;
+        return inFlow;
         
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @param outFlow 
+     * @return */
     //@Override
-    public double retrieveDemand(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
+    public double setDemand(final Double outFlow)
     {
-        double maxDemand = param.getFreeSpeed().getSI() * accumulatedCars; // ask Victor
-        double productionDemand = Math.min(maxDemand, maxCapacity); // / demand
-        return productionDemand;
+        return outFlow;
     }
-
-    /** {@inheritDoc} */
-    //@Override
-    public double computeAccumulation()
-    {
-        double accumulation = 0.0;
-        return accumulation;
-    }
-    
-
-
-
-
-
-
 
     
 }

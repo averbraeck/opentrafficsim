@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -96,8 +97,8 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param origin 
-     * @param destination 
+     * @param origin
+     * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
     public final Map<String, TripInformation> getTripDemandOriginToAllDestinations(final String origin,
@@ -109,8 +110,8 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param origin 
-     * @param destination 
+     * @param origin
+     * @param destination
      * @return tripInfo by OD pair
      */
     public final TripInformation getTripDemandOriginToDestination(final String origin, final String destination)
@@ -119,6 +120,21 @@ public class TripDemand<TripInformation>
         Map<String, TripInformation> map = tripInfoAll.get(origin);
         TripInformation info = map.get(destination);
         return info;
+    }
+
+    /**
+     * @param origin 
+     * @param destination 
+     * @param tripInfo 
+     * @param tripInfoAll 
+     * @return  
+     */
+    public final Map<String, Map<String, TripInformation>> setTripDemandOriginToDestination(final String origin, final String destination,
+            TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
+    {
+        Map<String, TripInformation> map = tripInfoAll.get(origin);
+        map.put(destination, tripInfo);
+        return tripInfoAll;
     }
 
 }

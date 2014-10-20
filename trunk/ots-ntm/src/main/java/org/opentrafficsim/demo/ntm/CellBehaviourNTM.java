@@ -34,11 +34,6 @@ public class CellBehaviourNTM extends CellBehaviour
     /** */
     private double maxCapacity;
 
-    /** */
-    private double supply;
-
-    /** */
-    private double demand;
 
     /** The number of cars that are heading for this Cell. */
     private double demandToEnter;
@@ -201,14 +196,6 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @return productionSupply
-     */
-    public final double getSupply()
-    {
-        return this.supply;
-    }
-
-    /**
      * @param currentSpeed set currentSpeed.
      */
     public void setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
@@ -216,21 +203,7 @@ public class CellBehaviourNTM extends CellBehaviour
         this.currentSpeed = currentSpeed;
     }
 
-    /**
-     * @param supply set supply.
-     */
-    public void setSupply(double supply)
-    {
-        this.supply = supply;
-    }
 
-    /**
-     * @param demand set demand.
-     */
-    public void setDemand(double demand)
-    {
-        this.demand = demand;
-    }
 
     /**
      * @param speedSupply set speedSupply.
@@ -238,14 +211,6 @@ public class CellBehaviourNTM extends CellBehaviour
     public void setSpeedSupply(double speedSupply)
     {
         this.speedSupply = speedSupply;
-    }
-
-    /**
-     * @return productionDemand
-     */
-    public final double getDemand()
-    {
-        return this.demand;
     }
 
     // this.speedSupply = this.productionSupply / accumulatedCars;

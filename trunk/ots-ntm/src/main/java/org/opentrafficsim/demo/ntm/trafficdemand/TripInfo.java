@@ -4,7 +4,6 @@ import org.opentrafficsim.demo.ntm.BoundedNode;
 import org.opentrafficsim.demo.ntm.BoundedNode;
 import org.opentrafficsim.demo.ntm.Node;
 
-
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -20,19 +19,18 @@ import org.opentrafficsim.demo.ntm.Node;
  */
 public class TripInfo
 {
-    /** total number of Trips for this simulation. */
+    /** total number of Trips for this simulation from the trip demand file. */
     private double numberOfTrips;
 
-    /** the first AreaNode encountered on the path to Destination.*/
+    /** the first Area/Node encountered on the path to Destination. */
     private Node neighbour;
-    
-    /** trips on their journey passing an area.*/
-    private double passingTrips;
 
-    /** flow to neighbour.*/
-    private double flow;
+    /** trips on their journey within an area. */
+    private double accumulatedCarsToDestination;
 
-    
+    /** flow to neighbour. */
+    private double flowToNeighbour;
+
     /**
      * @param numberOfTrips total number of Trips for this simulation
      */
@@ -50,7 +48,6 @@ public class TripInfo
     {
         return this.numberOfTrips;
     }
-
 
     /**
      * @param numberOfTrips set numberOfTrips
@@ -79,43 +76,41 @@ public class TripInfo
     /**
      * @return passingTrips.
      */
-    public final double getPassingTrips()
+    public final double getAccumulatedCarsToDestination()
     {
-        return this.passingTrips;
+        return this.accumulatedCarsToDestination;
     }
 
     /**
-     * @param passingTrips set passingTrips.
+     * @param accumulatedCarsToDestination 
      */
-    public final void setPassingTrips(final double passingTrips)
+    public final void setAccumulatedCarsToDestination(final double accumulatedCarsToDestination)
     {
-        this.passingTrips = passingTrips;
+        this.accumulatedCarsToDestination = accumulatedCarsToDestination;
     }
-    
+
     /**
-     * @param addTrips set passingTrips.
+     * @param addTrips set accumulating Trips to a certain destination.
      */
-    public final void addToPassingTrips(final double addTrips)
+    public final void addAccumulatedCarsToDestination(final double addTrips)
     {
-        this.passingTrips += addTrips;
+        this.accumulatedCarsToDestination += addTrips;
     }
 
     /**
      * @return flow.
      */
-    public final double getFlow()
+    public final double getFlowToNeighbour()
     {
-        return this.flow;
+        return this.flowToNeighbour;
     }
 
     /**
      * @param flow set flow.
      */
-    public final void setFlow(final double flow)
+    public final void setFlowToNeighbour(final double flow)
     {
-        this.flow = flow;
+        this.flowToNeighbour = flow;
     }
-
-
 
 }
