@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.geometry;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -56,53 +57,49 @@ public class TestModel implements OTSModelInterface
         GeometryFactory factory = new GeometryFactory();
         CoordinateReferenceSystem crs = DefaultEngineeringCRS.CARTESIAN_2D;
 
-        Node n0 = new Node("N0", new Coordinate(-25.0, 0.0), this.simulator);
-        Node n1 = new Node("N1", new Coordinate(0.0, 0.0), this.simulator);
-        Link l01 = new Link("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER), this.simulator);
+        Node n0 = new Node("N0", new Coordinate(-25.0, 0.0));
+        Node n1 = new Node("N1", new Coordinate(0.0, 0.0));
+        Link l01 = new Link("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls01 =
                 factory.createLineString(new Coordinate[]{new Coordinate(-25.0, 0.0), new Coordinate(0.0, 0.0)});
 
-        Node n2 = new Node("N2", new Coordinate(25.0, 20.0), this.simulator);
+        Node n2 = new Node("N2", new Coordinate(25.0, 20.0));
         Link l12 =
                 new Link("L12", n1, n2,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER),
-                        this.simulator);
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls12 =
                 factory.createLineString(new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(25.0, 20.0)});
 
-        Node n3 = new Node("N3", new Coordinate(50.0, 0.0), this.simulator);
+        Node n3 = new Node("N3", new Coordinate(50.0, 0.0));
         Link l23 =
                 new Link("L23", n2, n3,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER),
-                        this.simulator);
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls23 =
                 factory.createLineString(new Coordinate[]{new Coordinate(25.0, 20.0), new Coordinate(50.0, 0.0)});
 
-        Node n4 = new Node("N4", new Coordinate(75.0, -20.0), this.simulator);
+        Node n4 = new Node("N4", new Coordinate(75.0, -20.0));
         Link l34 =
                 new Link("L34", n3, n4,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER),
-                        this.simulator);
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls34 =
                 factory.createLineString(new Coordinate[]{new Coordinate(50.0, 0.0), new Coordinate(75.0, -20.0)});
 
-        Node n5 = new Node("N5", new Coordinate(100.0, 0.0), this.simulator);
+        Node n5 = new Node("N5", new Coordinate(100.0, 0.0));
         Link l45 =
                 new Link("L45", n4, n5,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER),
-                        this.simulator);
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls45 =
                 factory.createLineString(new Coordinate[]{new Coordinate(75.0, -20.0), new Coordinate(100.0, 0.0)});
 
-        Node n6 = new Node("N6", new Coordinate(125.0, 0.0), this.simulator);
-        Link l56 = new Link("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER), this.simulator);
+        Node n6 = new Node("N6", new Coordinate(125.0, 0.0));
+        Link l56 = new Link("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls56 =
                 factory.createLineString(new Coordinate[]{new Coordinate(100.0, 0.0), new Coordinate(125.0, 0.0)});
 
-        Node n7 = new Node("N7", new Coordinate(300.0, 0.0), this.simulator);
+        Node n7 = new Node("N7", new Coordinate(300.0, 0.0));
         Link l67 =
                 new Link("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20),
-                        LengthUnit.METER), this.simulator);
+                        LengthUnit.METER));
         LineString ls67 =
                 factory.createLineString(new Coordinate[]{new Coordinate(125.0, 0.0), new Coordinate(150.0, 0.0),
                         new Coordinate(175.0, 20.0), new Coordinate(200.0, 0.0), new Coordinate(225.0, -20.0),
@@ -173,9 +170,9 @@ public class TestModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> m35 = new DoubleScalar.Rel<LengthUnit>(3.5, LengthUnit.METER);
         DoubleScalar.Rel<FrequencyUnit> f0 = new DoubleScalar.Rel<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Rel<FrequencyUnit> f200 = new DoubleScalar.Rel<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
-        
+
         Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
-        
+
         Lane laneELL =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null,
                         Directionality.NONE, f0);
@@ -188,9 +185,9 @@ public class TestModel implements OTSModelInterface
         Lane laneELM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null,
                         Directionality.NONE, f0);
-        
+
         Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
-        
+
         Lane laneERM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null,
                         Directionality.NONE, f0);
@@ -203,19 +200,19 @@ public class TestModel implements OTSModelInterface
         Lane laneERR =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null,
                         Directionality.NONE, f0);
-        
+
         Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
 
         try
         {
-            new LaneAnimation(laneELL, this.simulator);
-            new LaneAnimation(laneL1, this.simulator);
-            new LaneAnimation(laneL2, this.simulator);
-            new LaneAnimation(laneELM, this.simulator);
-            new LaneAnimation(laneERM, this.simulator);
-            new LaneAnimation(laneR2, this.simulator);
-            new LaneAnimation(laneR1, this.simulator);
-            new LaneAnimation(laneERR, this.simulator);
+            new LaneAnimation(laneELL, this.simulator, Color.GRAY);
+            new LaneAnimation(laneL1, this.simulator, Color.GRAY);
+            new LaneAnimation(laneL2, this.simulator, Color.GRAY);
+            new LaneAnimation(laneELM, this.simulator, Color.GRAY);
+            new LaneAnimation(laneERM, this.simulator, Color.GRAY);
+            new LaneAnimation(laneR2, this.simulator, Color.GRAY);
+            new LaneAnimation(laneR1, this.simulator, Color.GRAY);
+            new LaneAnimation(laneERR, this.simulator, Color.GRAY);
 
             new ShoulderAnimation(sL, this.simulator);
             new ShoulderAnimation(sM, this.simulator);

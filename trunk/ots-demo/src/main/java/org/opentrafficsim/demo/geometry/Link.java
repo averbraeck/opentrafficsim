@@ -1,15 +1,5 @@
 package org.opentrafficsim.demo.geometry;
 
-import java.rmi.RemoteException;
-
-import javax.media.j3d.Bounds;
-import javax.naming.NamingException;
-
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.CrossSectionLink;
 import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -37,14 +27,11 @@ public class Link extends CrossSectionLink<String, Node>
      * @param length l
      * @param capacity c
      * @param geometry g
-     * @param simulator simulator
      */
     public Link(final String id, final Node startNode, final Node endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar<FrequencyUnit> capacity, final LinearGeometry geometry,
-            final OTSSimulatorInterface simulator)
+            final DoubleScalar<FrequencyUnit> capacity, final LinearGeometry geometry)
     {
         super(id, startNode, endNode, length, capacity, geometry);
-        addAnimation(simulator);
     }
 
     /**
@@ -53,13 +40,11 @@ public class Link extends CrossSectionLink<String, Node>
      * @param endNode en
      * @param length l
      * @param geometry g
-     * @param simulator simulator
      */
     public Link(final String id, final Node startNode, final Node endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final LinearGeometry geometry, final OTSSimulatorInterface simulator)
+            final LinearGeometry geometry)
     {
         super(id, startNode, endNode, length, geometry);
-        addAnimation(simulator);
     }
 
     /**
@@ -67,31 +52,10 @@ public class Link extends CrossSectionLink<String, Node>
      * @param startNode sn
      * @param endNode en
      * @param length l
-     * @param simulator simulator
      */
-    public Link(final String id, final Node startNode, final Node endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final OTSSimulatorInterface simulator)
+    public Link(final String id, final Node startNode, final Node endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, startNode, endNode, length);
-        addAnimation(simulator);
-    }
-
-    /**
-     * @param simulator simulator
-     */
-    private void addAnimation(final OTSSimulatorInterface simulator)
-    {
-        if (simulator instanceof OTSAnimatorInterface)
-        {
-            try
-            {
-                new LinkAnimation(this, simulator, 0.1f);
-            }
-            catch (RemoteException | NamingException ex)
-            {
-                //
-            }
-        }
     }
 
 }

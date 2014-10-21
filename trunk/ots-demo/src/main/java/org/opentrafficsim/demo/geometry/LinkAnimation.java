@@ -47,7 +47,7 @@ public class LinkAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.RED);
+        graphics.setColor(Color.ORANGE);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
         Coordinate a = ((Link) getSource()).getStartNode().getPoint();
