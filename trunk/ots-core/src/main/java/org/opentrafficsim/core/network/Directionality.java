@@ -7,14 +7,17 @@ package org.opentrafficsim.core.network;
  * <p>
  * @version Oct 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public enum Directionality
 {
+    /** Direction the same as the direction of the graph. */
     FORWARD,
+    /** Direction opposite to the direction of the graph. */
     BACKWARD,
-    BOTH;
+    /** Bidirectional. */
+    BOTH,
+    /** No traffic possible. */
+    NONE;
 }
