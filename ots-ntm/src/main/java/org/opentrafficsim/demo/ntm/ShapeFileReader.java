@@ -223,7 +223,8 @@ public class ShapeFileReader
                 {
                     double x = (double) feature.getAttribute("X");
                     double y = (double) feature.getAttribute("Y");
-                    Node node = new Node(nr, point, null);
+                    // initially, set the behaviour default to TrafficBehaviourType.ROAD
+                    Node node = new Node(nr, point, TrafficBehaviourType.ROAD);
                     nodes.put(nr, node);
                 }
             }

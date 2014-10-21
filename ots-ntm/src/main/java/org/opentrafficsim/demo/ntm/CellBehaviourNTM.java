@@ -25,18 +25,11 @@ public class CellBehaviourNTM extends CellBehaviour
     /** */
     private static final long serialVersionUID = 20140903L;
 
-    /** */
-    private double accumulatedCars;
-
     /** currentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
 
     /** */
     private double maxCapacity;
-
-
-    /** The number of cars that are heading for this Cell. */
-    private double demandToEnter;
 
     /** */
     private double speedSupply;
@@ -164,22 +157,6 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @return accumulatedCars.
-     */
-    public double getAccumulatedCars()
-    {
-        return this.accumulatedCars;
-    }
-
-    /**
-     * @param accumulatedCars set accumulatedCars.
-     */
-    public void setAccumulatedCars(double accumulatedCars)
-    {
-        this.accumulatedCars = accumulatedCars;
-    }
-
-    /**
      * @return maxCapacity
      */
     public final double getMaxCapacity()
@@ -240,14 +217,6 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @return demandToEnter.
-     */
-    public final double getDemandToEnter()
-    {
-        return this.demandToEnter;
-    }
-
-    /**
      * @return flow.
      */
     public double getFlow()
@@ -261,22 +230,6 @@ public class CellBehaviourNTM extends CellBehaviour
     public void setFlow(double flow)
     {
         this.flow = flow;
-    }
-
-    /**
-     * @param demandToEnter set demandToEnter.
-     */
-    public final void setDemandToEnter(final double demandToEnter)
-    {
-        this.demandToEnter = demandToEnter;
-    }
-
-    /**
-     * @param addDemandToEnter adds demandToEnter.
-     */
-    public final void addDemandToEnter(final double addDemandToEnter)
-    {
-        this.demandToEnter += addDemandToEnter;
     }
 
     /*    *//**

@@ -44,7 +44,7 @@ public class BoundedNode extends Node
         super(nr, centroid, behaviourType);
         if (behaviourType == TrafficBehaviourType.ROAD)
         {
-            this.setCellBehaviour(null);
+            this.setCellBehaviour(new CellBehaviour());
             this.setArea(area);
         }
         else if (behaviourType == TrafficBehaviourType.NTM)
@@ -69,7 +69,7 @@ public class BoundedNode extends Node
         }
         else
         {
-            this.setCellBehaviour(null);
+            this.setCellBehaviour(new CellBehaviour());
             this.setArea(area);
         }
     }
