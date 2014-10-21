@@ -70,7 +70,6 @@ public class Node extends AbstractNode<String, Point>
         super(nr, point);
         // long index = indexNumber++;
         this.behaviourType = behaviourType;
-
     }
 
     /**

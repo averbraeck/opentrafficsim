@@ -13,6 +13,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -21,6 +24,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
@@ -254,7 +258,7 @@ public class CsvFileReader
                                 double y = nodeA.getPoint().getY() + 3;
                                 Point point = Node.createPoint(x, y);
                                 String nr = nodeA.getId() + "_" + nodeB.getId();
-                                node = new Node(nr, point, null);
+                                node = new Node(nr, point, TrafficBehaviourType.ROAD);
                                 centroids.put(nr, node);
                                 centroidsAndCordonConnectors.put(node.getId(), node);
                                 orderedZones.put(index, node.getId());
@@ -341,8 +345,14 @@ public class CsvFileReader
                         {
                             // TODO: now we simply take the first time profile.
                             // This should be input in file: which profile is connected to which OD pair
+                            DepartureTimeProfile profile = profiles.get(0);
+                            Abs<TimeUnit> startSimulationTimeSinceMidnight = settingsNTM.getStartTimeSinceMidnight();
+                            NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> profileList =
+                                    profile.checkAndNormalizeCurve(startSimulationTimeSinceMidnight,
+                                            settingsNTM.getDurationOfSimulation(), profile.getDepartureTimeCurve());
+                            profile.setDepartureTimeCurve(profileList);
                             TripInfoTimeDynamic tripInfo =
-                                    new TripInfoTimeDynamic(Double.parseDouble(numberOfTrips), profiles.get(0));
+                                    new TripInfoTimeDynamic(Double.parseDouble(numberOfTrips), profile);
                             if (centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)) == null)
                             {
                                 System.out.println("Strange: no destination????");
@@ -427,7 +437,7 @@ public class CsvFileReader
         final String DURATION = "SegmentDuration";
 
         ArrayList<DepartureTimeProfile> profiles = new ArrayList<DepartureTimeProfile>();
-        ArrayList<FractionOfTripDemandByTimeSegment> fractions = null;
+        NavigableMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> fractions = new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
         DepartureTimeProfile profile = null;
         DoubleScalar.Rel<TimeUnit> duration = null;
         DoubleScalar.Abs<TimeUnit> segmentStartTime = null;
@@ -449,7 +459,7 @@ public class CsvFileReader
                         // if we encounter a ProfileName, create a new profile
                         if (dataItem[0].equals(NAME))
                         {
-                            fractions = new ArrayList<FractionOfTripDemandByTimeSegment>();
+                            fractions = new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
                             profile = new DepartureTimeProfile();
                             profile.setName(dataItem[1]);
                             profiles.add(profile);
@@ -485,7 +495,7 @@ public class CsvFileReader
                                 {
                                     FractionOfTripDemandByTimeSegment newFraction =
                                             new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
-                                    fractions.add(newFraction);
+                                    fractions.put(segmentStartTime, newFraction);
                                     prevStartTime = MutableDoubleScalar.Abs.plus(prevStartTime, duration).immutable();
                                 }
                             }
@@ -499,7 +509,7 @@ public class CsvFileReader
                                 fraction = Double.parseDouble(dataItem[i]);
                                 FractionOfTripDemandByTimeSegment newFraction =
                                         new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
-                                fractions.add(newFraction);
+                                fractions.put(segmentStartTime, newFraction);
                                 segmentStartTime = MutableDoubleScalar.Abs.plus(segmentStartTime, duration).immutable();
                             }
                         }

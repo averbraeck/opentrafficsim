@@ -17,9 +17,17 @@ package org.opentrafficsim.demo.ntm;
  * @param <Capacity> 
  * @param <Param> 
  */
-public abstract class CellBehaviour
+public class CellBehaviour
 {
    
+
+    /**
+     * 
+     */
+    public CellBehaviour()
+    {
+        super();
+    }
 
     /** */
     private double supply;
@@ -27,8 +35,13 @@ public abstract class CellBehaviour
     /** */
     private double demand;
 
-    
-    
+
+    /** */
+    private double accumulatedCars;
+
+
+    /** The number of cars that are heading for this Cell. */
+    private double demandToEnter;
     /**
      * @return supply.
      */
@@ -60,7 +73,48 @@ public abstract class CellBehaviour
     {
         this.demand = demand;
     }
+
+    /**
+     * @return accumulatedCars.
+     */
+    public double getAccumulatedCars()
+    {
+        return accumulatedCars;
+    }
+
+    /**
+     * @param accumulatedCars set accumulatedCars.
+     */
+    public void setAccumulatedCars(double accumulatedCars)
+    {
+        this.accumulatedCars = accumulatedCars;
+    }
     
+
+    /**
+     * @return demandToEnter.
+     */
+    public final double getDemandToEnter()
+    {
+        return this.demandToEnter;
+    }
+    /**
+     * @param demandToEnter set demandToEnter.
+     */
+    public final void setDemandToEnter(final double demandToEnter)
+    {
+        this.demandToEnter = demandToEnter;
+    }
+
+    /**
+     * @param addDemandToEnter adds demandToEnter.
+     */
+    public final void addDemandToEnter(final double addDemandToEnter)
+    {
+        this.demandToEnter += addDemandToEnter;
+    }
+
+
 /*    *//**
      * @param cars 
      * @param maxCapacity 
