@@ -15,9 +15,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
@@ -215,16 +219,23 @@ public class CsvFileReader
                             // there could be more connectors attached to this node. If so, create a new Node
                             if (centroidsAndCordonConnectors.get(nodeB.getId()) != null)
                             {
+
                                 double x = nodeB.getPoint().getX() + 3;
                                 double y = nodeB.getPoint().getY() + 3;
                                 Point point = Node.createPoint(x, y);
                                 String nr = nodeB.getId() + "_" + nodeA.getId();
                                 node = new Node(nr, point, null);
                                 centroids.put(nr, node);
-                                cordonConnector.setEndNode(node);
                                 centroidsAndCordonConnectors.put(node.getId(), node);
                                 orderedZones.put(index, node.getId());
                                 cordonPoint = node;
+                                connectors.remove(cordonConnector);
+                                cordonConnector =
+                                        new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
+                                                cordonConnector.getLength(), cordonConnector.getStartNode(), node,
+                                                cordonConnector.getSpeed(), cordonConnector.getCapacity(),
+                                                cordonConnector.getBehaviourType(), cordonConnector.getLinkData());
+                                connectors.put(name, cordonConnector);
                             }
                             else
                             {
@@ -245,10 +256,16 @@ public class CsvFileReader
                                 String nr = nodeA.getId() + "_" + nodeB.getId();
                                 node = new Node(nr, point, null);
                                 centroids.put(nr, node);
-                                cordonConnector.setStartNode(node);
                                 centroidsAndCordonConnectors.put(node.getId(), node);
                                 orderedZones.put(index, node.getId());
                                 cordonPoint = node;
+                                connectors.remove(cordonConnector);
+                                cordonConnector =
+                                        new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
+                                                cordonConnector.getLength(), node, cordonConnector.getEndNode(), 
+                                                cordonConnector.getSpeed(), cordonConnector.getCapacity(),
+                                                cordonConnector.getBehaviourType(), cordonConnector.getLinkData());
+                                connectors.put(name, cordonConnector);
                             }
                             else
                             {
@@ -261,7 +278,7 @@ public class CsvFileReader
                         {
                             // after determining the new cordon centroid, a new area is created around this feeding
                             // link. This becomes a feeder type of area
-                            Geometry buffer = cordonConnector.getGeometry().buffer(10);
+                            Geometry buffer = cordonConnector.getGeometry().getLineString().buffer(10);
                             Point centroid = cordonPoint.getPoint();
                             String nr = cordonPoint.getId();
                             String newName = cordonConnector.getLinkData().getName();
@@ -322,9 +339,8 @@ public class CsvFileReader
                         // only the non-zero cells
                         if (Double.parseDouble(numberOfTrips) > 0.0)
                         {
-                            // ToDo: now we simply take the first time profile. Should be input in file: which profile
-                            // is
-                            // connected to which OD pair
+                            // TODO: now we simply take the first time profile.
+                            // This should be input in file: which profile is connected to which OD pair
                             TripInfoTimeDynamic tripInfo =
                                     new TripInfoTimeDynamic(Double.parseDouble(numberOfTrips), profiles.get(0));
                             if (centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)) == null)

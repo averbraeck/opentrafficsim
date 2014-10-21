@@ -2,8 +2,11 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +124,10 @@ public class NTMModel implements OTSModelInterface
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
                     new DoubleScalar.Rel<TimeUnit>(2, TimeUnit.SECOND);
-            this.settingsNTM = new NTMSettings(timeStepNTM, timeStepCellTransmissionModel);
+            Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(7200, TimeUnit.SECOND);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");    
+            Calendar startTime = new GregorianCalendar(2014,1,28,7,0,00);    
+            this.settingsNTM = new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM, timeStepCellTransmissionModel);
 
             // Read the shape files with the function:
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
@@ -146,7 +152,7 @@ public class NTMModel implements OTSModelInterface
             // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
             // this.centroids);
 
-            // read the time profile curves: these will be attached to the demands
+            // read the time profile curves: these will be attached to the demands afterwards
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
 
             // read TrafficDemand from /src/main/resources
@@ -228,6 +234,7 @@ public class NTMModel implements OTSModelInterface
                 // if (this.tripDemand.getTripDemandOriginToDestination(origin.getId(), destination.getId()) != null)
                 // if (origin.getId().startsWith("C") && endNode.getId().startsWith("C"))
                 // {
+
                 TripInfoTimeDynamic tripInfo =
                         this.tripDemand.getTripDemandOriginToDestination(origin.getId(), destination.getId());
                 // for all OD-pairs with trips, the TripInfo is already initiated
@@ -325,7 +332,11 @@ public class NTMModel implements OTSModelInterface
                         {
                             // TODO: adjust next formulae wit time dependent variable
                             // retrieve the leaving TRIPS of this time slice
+                            // first the total within the defined period
                             startingTrips = tripsFrom.get(nodeTo.getId()).getNumberOfTrips();
+                            DepartureTimeProfile profile = tripsFrom.get(nodeTo.getId()).getDepartureTimeProfile();
+                            
+                            // get the share of this timeperiod
                             if (startingTrips > 0.0)
                             {
                                 // these new Trips are added to the TRIPS that are already on the way (passing an NTM
@@ -992,14 +1003,14 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param aA
-     * @param aB
-     * @param le
-     * @param linkMap
-     * @param areaNodeCentroidMap
+     * @param aA 
+     * @param aB 
+     * @param le 
+     * @param linkMap 
+     * @param areaNodeCentroidMap 
      */
-    private void createFlowConnectors(Area aA, Area aB, LinkEdge<Link> le, Map<String, LinkEdge<Link>> linkMap,
-            Map<Area, BoundedNode> areaNodeCentroidMap)
+    private void createFlowConnectors(final Area aA, final Area aB, final LinkEdge<Link> le, final Map<String, LinkEdge<Link>> linkMap,
+            final Map<Area, BoundedNode> areaNodeCentroidMap)
     {
         Node node = le.getLink().getStartNode();
         BoundedNode flowNodeA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
@@ -1012,8 +1023,8 @@ public class NTMModel implements OTSModelInterface
                 LinkCellTransmission
                         .createCells(link, this.getSettingsNTM().getTimeStepDurationCellTransmissionModel());
         LinkCellTransmission linkCTM = new LinkCellTransmission(link, cells);
-        le.setLink(linkCTM);
-        addLinkEdge(flowNodeA, flowNodeB, le, TrafficBehaviourType.FLOW, this.areaGraph);
+        LinkEdge leNew = new LinkEdge(linkCTM);
+        addLinkEdge(flowNodeA, flowNodeB, leNew, TrafficBehaviourType.FLOW, this.areaGraph);
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
         BoundedNode cB = null;
@@ -1027,9 +1038,9 @@ public class NTMModel implements OTSModelInterface
                 if (urbanLink.getLink().getEndNode().getId().equals(flowNodeA.getId()))
                 {
                     // from urban (Area) to Highway (flow)
-                    aA = findArea(urbanLink.getLink().getStartNode().getPoint());
-                    cA = areaNodeCentroidMap.get(aA);
-                    if (aA != null)
+                    Area aStart = findArea(urbanLink.getLink().getStartNode().getPoint());
+                    cA = areaNodeCentroidMap.get(aStart);
+                    if (aStart != null)
                     {
                         if (cA == null || flowNodeA == null)
                         {
@@ -1052,9 +1063,9 @@ public class NTMModel implements OTSModelInterface
                 if (urbanLink.getLink().getStartNode().getId().equals(flowNodeB.getId()))
                 {
                     // from Highway (flow) to urban (Area)
-                    aB = findArea(urbanLink.getLink().getEndNode().getPoint());
-                    cB = areaNodeCentroidMap.get(aB);
-                    if (aB != null)
+                    Area aEnd = findArea(urbanLink.getLink().getEndNode().getPoint());
+                    cB = areaNodeCentroidMap.get(aEnd);
+                    if (aEnd != null)
                     {
                         DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar<FrequencyUnit> capacity =

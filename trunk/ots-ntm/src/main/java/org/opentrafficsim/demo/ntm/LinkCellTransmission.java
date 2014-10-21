@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -45,7 +46,7 @@ public class LinkCellTransmission extends Link
      * @param linkData
      * @param cells
      */
-    public LinkCellTransmission(Geometry geometry, String nr, DoubleScalar<LengthUnit> length, Node startNode,
+    public LinkCellTransmission(LinearGeometry geometry, String nr, Rel<LengthUnit> length, Node startNode,
             Node endNode, DoubleScalar<SpeedUnit> speed, DoubleScalar<FrequencyUnit> capacity,
             TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells)
     {

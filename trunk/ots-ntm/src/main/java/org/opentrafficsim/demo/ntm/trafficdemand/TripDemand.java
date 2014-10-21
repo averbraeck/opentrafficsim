@@ -116,23 +116,41 @@ public class TripDemand<TripInformation>
      */
     public final TripInformation getTripDemandOriginToDestination(final String origin, final String destination)
     {
+        TripInformation info = null;
         Map<String, Map<String, TripInformation>> tripInfoAll = this.getTripInfo();
         Map<String, TripInformation> map = tripInfoAll.get(origin);
-        TripInformation info = map.get(destination);
+        if (map != null)
+        {
+            if (destination != null)
+            {
+                if (map.get(destination) == null)
+                {
+                    System.out.println("null!!!");
+                }
+                else
+                {
+                    info = map.get(destination);
+                }
+            }
+        }
         return info;
     }
 
     /**
-     * @param origin 
-     * @param destination 
-     * @param tripInfo 
-     * @param tripInfoAll 
-     * @return  
+     * @param origin
+     * @param destination
+     * @param tripInfo
+     * @param tripInfoAll
+     * @return
      */
-    public final Map<String, Map<String, TripInformation>> setTripDemandOriginToDestination(final String origin, final String destination,
-            TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
+    public final Map<String, Map<String, TripInformation>> setTripDemandOriginToDestination(final String origin,
+            final String destination, TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
     {
         Map<String, TripInformation> map = tripInfoAll.get(origin);
+        if (map == null)
+        {
+            map = new HashMap<String, TripInformation>();
+        }
         map.put(destination, tripInfo);
         return tripInfoAll;
     }

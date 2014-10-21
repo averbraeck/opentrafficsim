@@ -13,13 +13,17 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opentrafficsim.core.network.AbstractLink;
+import org.opentrafficsim.core.network.LinearGeometry;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
@@ -232,8 +236,6 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
 
     private ArrayList<FlowCell> flowCells;
 
-    /** */
-    private Geometry geometry;
 
     /**
      * @param geometry
@@ -247,30 +249,32 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param capacity
      * @param behaviourType
      */
-    public Link(final Geometry geometry, final String nr, final DoubleScalar<LengthUnit> length, final Node startNode,
+    public Link(final LinearGeometry geometry, final String nr, final Rel<LengthUnit> length, final Node startNode,
             final Node endNode, DoubleScalar<SpeedUnit> speed, final DoubleScalar<FrequencyUnit> capacity,
             final TrafficBehaviourType behaviourType, LinkData linkData)
     {
-        super(nr, startNode, endNode, length, capacity);
-        this.geometry = geometry;
+        super(nr, startNode, endNode, length, capacity, geometry);
         this.speed = speed;
         this.behaviourType = behaviourType;
         this.linkData = linkData;
-        Coordinate[] cc = geometry.getCoordinates();
-        if (cc.length == 0)
+        if (geometry != null)
         {
-            System.out.println("cc.length = 0 for " + nr + " (" + nr + ")");
-        }
-        else
-        {
-            if (Math.abs(cc[0].x - startNode.getPoint().getX()) > 0.001
-                    && Math.abs(cc[0].x - endNode.getPoint().getX()) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - startNode.getPoint().getX()) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - endNode.getPoint().getX()) > 0.001)
+            Coordinate[] cc = geometry.getLineString().getCoordinates();
+            if (cc.length == 0)
             {
-                System.out.println("x coordinate non-match for " + nr + " (" + nr + "); cc[0].x=" + cc[0].x
-                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getPoint().getX()
-                        + ", nodeB.x=" + endNode.getPoint().getX());
+                System.out.println("cc.length = 0 for " + nr + " (" + nr + ")");
+            }
+            else
+            {
+                if (Math.abs(cc[0].x - startNode.getPoint().getX()) > 0.001
+                        && Math.abs(cc[0].x - endNode.getPoint().getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - startNode.getPoint().getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - endNode.getPoint().getX()) > 0.001)
+                {
+                    System.out.println("x coordinate non-match for " + nr + " (" + nr + "); cc[0].x=" + cc[0].x
+                            + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getPoint().getX()
+                            + ", nodeB.x=" + endNode.getPoint().getX());
+                }
             }
         }
 
@@ -281,22 +285,23 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      */
     public Link(Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity());
-        this.geometry = link.getGeometry();
+        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link.getGeometry());
         this.speed = link.speed;
-
-        Coordinate[] cc = this.getGeometry().getCoordinates();
-        if (cc.length == 0)
-            System.out.println("cc.length = 0 for " + this.getId() + " (" + this.getId() + ")");
-        else
+        if (this.getGeometry() != null)
         {
-            if (Math.abs(cc[0].x - this.getStartNode().getPoint().getX()) > 0.001
-                    && Math.abs(cc[0].x - this.getEndNode().getPoint().getX()) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().getX()) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().getX()) > 0.001)
-                System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x="
-                        + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
-                        + this.getStartNode().getPoint().getX() + ", nodeB.x=" + this.getEndNode().getPoint().getX());
+            Coordinate[] cc = this.getGeometry().getLineString().getCoordinates();
+            if (cc.length == 0)
+                System.out.println("cc.length = 0 for " + this.getId() + " (" + this.getId() + ")");
+            else
+            {
+                if (Math.abs(cc[0].x - this.getStartNode().getPoint().getX()) > 0.001
+                        && Math.abs(cc[0].x - this.getEndNode().getPoint().getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().getX()) > 0.001)
+                    System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x="
+                            + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
+                            + this.getStartNode().getPoint().getX() + ", nodeB.x=" + this.getEndNode().getPoint().getX());
+            }
         }
     }
 
@@ -315,13 +320,21 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         Coordinate coordEnd = new Coordinate(endNode.getPoint().getX(), endNode.getPoint().getY());
         Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
-        Geometry geometry = line.getGeometryN(0);
-        DoubleScalar<LengthUnit> length =
-                new DoubleScalar.Abs<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
+        Rel<LengthUnit> length =
+                new Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
 
         String nr = startNode.getId() + " - " + endNode.getId();
         Link newLink =
-                new Link(geometry, nr, length, startNode, endNode, speed, capacity, TrafficBehaviourType.NTM, null);
+                new Link(null, nr, length, startNode, endNode, speed, capacity, TrafficBehaviourType.NTM, null);
+        try
+        {
+            LinearGeometry geometry = new LinearGeometry(newLink, line, null);
+            newLink.setGeometry(geometry);
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
         return newLink;
     }
 
@@ -545,8 +558,8 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         Link mergedLink = null;
         LineMerger lineMerger = new LineMerger();
         Collection<Geometry> lineStrings = new ArrayList<Geometry>();
-        lineStrings.add(down.getGeometry());
-        lineStrings.add(up.getGeometry());
+        lineStrings.add(down.getGeometry().getLineString());
+        lineStrings.add(up.getGeometry().getLineString());
         lineMerger.add(lineStrings);
         Collection<Geometry> mergedLineStrings = lineMerger.getMergedLineStrings();
         Geometry mergedGeometry = mergedLineStrings.iterator().next();
@@ -562,8 +575,23 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
                         (DoubleScalar.Rel<LengthUnit>) down.getLength());
         DoubleScalar.Rel<LengthUnit> length = lengthTemp.immutable();
         mergedLink =
-                new Link(mergedGeometry, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(),
+                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(),
                         up.getCapacity(), up.getBehaviourType(), up.getLinkData());
+
+        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        Coordinate[] coords = mergedGeometry.getCoordinates();
+        LineString line = geometryFactory.createLineString(coords);
+        LinearGeometry geometry;
+        try
+        {
+            geometry = new LinearGeometry(mergedLink, line, null);
+            mergedLink.setGeometry(geometry);
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
+        
         return mergedLink;
     }
 
@@ -571,7 +599,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
-        Point c = this.getGeometry().getCentroid();
+        Point c = this.getGeometry().getLineString().getCentroid();
         return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
     }
 
@@ -580,7 +608,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     public Bounds getBounds() throws RemoteException
     {
         DirectedPoint c = getLocation();
-        Envelope envelope = this.getGeometry().getEnvelopeInternal();
+        Envelope envelope = this.getGeometry().getLineString().getEnvelopeInternal();
         return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
                 envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
     }
@@ -599,10 +627,10 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
             // double dx = 0;
             // double dy = 0;
             this.lines = new HashSet<Path2D>();
-            for (int i = 0; i < this.getGeometry().getNumGeometries(); i++)
+            for (int i = 0; i < this.getGeometry().getLineString().getNumGeometries(); i++)
             {
                 Path2D line = new Path2D.Double();
-                Geometry g = this.getGeometry().getGeometryN(i);
+                Geometry g = this.getGeometry().getLineString().getGeometryN(i);
                 boolean start = true;
                 for (Coordinate c : g.getCoordinates())
                 {
@@ -653,21 +681,6 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         return "ShpLink [nr=" + this.getId() + ", nodeA=" + this.getStartNode() + ", nodeB=" + this.getEndNode() + "]";
     }
 
-    /**
-     * @return geometry.
-     */
-    public Geometry getGeometry()
-    {
-        return geometry;
-    }
-
-    /**
-     * @param geometry set geometry.
-     */
-    public void setGeometry(Geometry geometry)
-    {
-        this.geometry = geometry;
-    }
 
     /**
      * @return linkData.

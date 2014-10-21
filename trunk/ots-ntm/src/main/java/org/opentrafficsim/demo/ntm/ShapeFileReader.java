@@ -12,8 +12,10 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -22,6 +24,8 @@ import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -310,8 +314,10 @@ public class ShapeFileReader
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
-
+                GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
+                Coordinate[] coords = geometry.getCoordinates();
+                LineString line = geometryFactory.createLineString(coords);
                 String nr = String.valueOf(feature.getAttribute("LINKNR"));
                 String nrBA = nr + "_BA";
                 String name = String.valueOf(feature.getAttribute("NAME"));
@@ -352,13 +358,18 @@ public class ShapeFileReader
                             System.out.println("test");
                         }
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
+                        
                         linkAB =
-                                new Link(geometry, nr, length, nodeA, nodeB, speed, capacity,
+                                new Link(null, nr, length, nodeA, nodeB, speed, capacity,
                                         TrafficBehaviourType.ROAD, linkData);
+                        LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
+                        linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(geometry, nrBA, length, nodeB, nodeA, speed, capacity,
+                                new Link(null, nrBA, length, nodeB, nodeA, speed, capacity,
                                         TrafficBehaviourType.ROAD, linkData);
+                        linearGeometry = new LinearGeometry(linkBA, line, null);
+                        linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
                         {
                             links.put(nr, linkAB);
@@ -407,24 +418,30 @@ public class ShapeFileReader
                     else if (nodeACentroid)
                     {
                         Link link =
-                                new Link(geometry, nr, length, centroidA, nodeB, speed, capacity,
+                                new Link(null, nr, length, centroidA, nodeB, speed, capacity,
                                         TrafficBehaviourType.CENTROID, linkData);
+                        LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
+                        link.setGeometry(linearGeometry);
                         connectors.put(nr, link);
 
                     }
                     else if (nodeBCentroid)
                     {
                         Link link =
-                                new Link(geometry, nr, length, nodeA, centroidB, speed, capacity,
+                                new Link(null, nr, length, nodeA, centroidB, speed, capacity,
                                         TrafficBehaviourType.CENTROID, linkData);
+                        LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
+                        link.setGeometry(linearGeometry);
                         connectors.put(nr, link);
 
                     }
                     else
                     {
                         Link link =
-                                new Link(geometry, nr, length, nodeA, nodeB, speed, capacity,
+                                new Link(null, nr, length, nodeA, nodeB, speed, capacity,
                                         TrafficBehaviourType.ROAD, linkData);
+                        LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
+                        link.setGeometry(linearGeometry);
                         links.put(nr, link);
                     }
                 }
