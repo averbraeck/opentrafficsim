@@ -28,23 +28,28 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class LaneAnimation extends Renderable2D
 {
+    /** color of the lane. */
+    private final Color color;
+    
     /**
      * @param source s
      * @param simulator s
+     * @param color color of the lane.
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator) throws NamingException,
+    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator, final Color color) throws NamingException,
             RemoteException
     {
         super(source, simulator);
+        this.color = color;
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.GRAY);
+        graphics.setColor(this.color);
         Lane lane = (Lane) getSource();
         DirectedPoint p = lane.getLocation();
         Geometry g = lane.getGeometry();
