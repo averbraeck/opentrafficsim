@@ -136,8 +136,8 @@ public class TestModel implements OTSModelInterface
      * The road is as follows.
      * 
      * <pre>
-     * ----------------------- +9.00
-     * SSSSS Shoulder SL SSSSS +8.75 (width = 0.5)
+     * ----------------------- +9.50
+     * SSSSS Shoulder SL SSSSS +9.00 (width = 1.0)
      * ----------------------- +8.50
      * EEEEE Emergency ELL EEE +8.25 (width = 0.5)
      * ----------------------- +8.00
@@ -157,8 +157,8 @@ public class TestModel implements OTSModelInterface
      * ----------------------- -8.00
      * EEEEE Emergency ERR EEE -8.25 (width = 0.5)
      * ----------------------- -8.50
-     * SSSSS Shoulder SR SSSSS -8.75 (width = 0.5)
-     * ----------------------- -9.00
+     * SSSSS Shoulder SR SSSSS -9.00 (width = 1.0)
+     * ----------------------- -9.50
      * </pre>
      *
      * <br>
@@ -174,11 +174,11 @@ public class TestModel implements OTSModelInterface
         DoubleScalar.Rel<FrequencyUnit> f0 = new DoubleScalar.Rel<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Rel<FrequencyUnit> f200 = new DoubleScalar.Rel<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         
-        Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(8.75, LengthUnit.METER), m05, m05);
+        Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
         
         Lane laneELL =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null,
-                        Directionality.BACKWARD, f0);
+                        Directionality.NONE, f0);
         Lane laneL1 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), m35, m35, null,
                         Directionality.BACKWARD, f200);
@@ -187,12 +187,13 @@ public class TestModel implements OTSModelInterface
                         Directionality.BACKWARD, f200);
         Lane laneELM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null,
-                        Directionality.BACKWARD, f0);
+                        Directionality.NONE, f0);
+        
         Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
         
         Lane laneERM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null,
-                        Directionality.FORWARD, f0);
+                        Directionality.NONE, f0);
         Lane laneR2 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
                         Directionality.FORWARD, f200);
@@ -201,9 +202,9 @@ public class TestModel implements OTSModelInterface
                         Directionality.FORWARD, f200);
         Lane laneERR =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null,
-                        Directionality.FORWARD, f0);
+                        Directionality.NONE, f0);
         
-        Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-8.75, LengthUnit.METER), m05, m05);
+        Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
 
         try
         {
