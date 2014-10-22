@@ -52,7 +52,6 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class ShapeFileReader
 {
-
     /**
      * @param shapeFileName the nodes shapefile to read
      * @param numberType
