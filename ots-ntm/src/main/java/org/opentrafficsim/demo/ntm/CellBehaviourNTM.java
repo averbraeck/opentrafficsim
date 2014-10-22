@@ -62,22 +62,32 @@ public class CellBehaviourNTM extends CellBehaviour
                         * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @param accumulatedCars 
+     * @param maximumCapacity 
+     * @param param 
+     * @return */
     //@Override
-    public double retrieveSupply(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
+    public double retrieveSupply(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
     {
-        double carProduction = retrieveCarProduction(accumulatedCars, maxCapacity, param);
-        double productionSupply = Math.min(maxCapacity, carProduction); // supply
+        double carProduction = maximumCapacity;
+        if (accumulatedCars > param.getAccCritical2())
+        {
+            carProduction = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
+        }
+        double productionSupply = Math.min(maximumCapacity, carProduction); // supply
         return productionSupply;
-
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @param accumulatedCars 
+     * @param maxCapacity 
+     * @param param 
+     * @return */
     //@Override
-    public double retrieveDemand(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
+    public double retrieveDemand(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
     {
-        double maxDemand = param.getFreeSpeed().getSI() * accumulatedCars; // ask Victor
-        double productionDemand = Math.min(maxDemand, maxCapacity); // / demand
+        double productionDemand = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
         return productionDemand;
     }
 
