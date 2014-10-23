@@ -451,7 +451,7 @@ public class ShapeFileReader
             final OTSSimulatorInterface simulator)
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
-        // lane is 3.5 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
+        // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
         DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m30 = new DoubleScalar.Rel<LengthUnit>(3.0, LengthUnit.METER);
         DoubleScalar.Rel<FrequencyUnit> f200 = new DoubleScalar.Rel<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
@@ -495,7 +495,7 @@ public class ShapeFileReader
 
         Lane lane =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
-                        Directionality.NONE, f50);
+                        Directionality.BOTH, f50);
         try
         {
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);

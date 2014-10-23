@@ -1,11 +1,5 @@
-package org.opentrafficsim.car;
+package org.opentrafficsim.core.gtu;
 
-import java.util.Set;
-
-import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
-import org.opentrafficsim.core.gtu.GTUReferencePoint;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LaneLocation;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -20,10 +14,25 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> The type of ID, e.g., String or Integer
  */
-public class Car<ID> extends AbstractLaneBasedGTU<ID>
+public abstract class AbstractGTU<ID> implements GTU<ID>
 {
     /** */
     private static final long serialVersionUID = 20140822L;
+
+    /** the id of the GTU, could be String or Integer. */
+    private final ID id;
+
+    /** the type of GTU, e.g. TruckType, CarType, BusType. */
+    private final GTUType<?> gtuType;
+
+    /** the maximum length of the GTU (parallel with driving direction). */
+    private final DoubleScalar<LengthUnit> length;
+
+    /** the maximum width of the GTU (perpendicular to driving direction). */
+    private final DoubleScalar<LengthUnit> width;
+
+    /** the maximum speed of the GTU (in the driving direction). */
+    private final DoubleScalar<SpeedUnit> maximumVelocity;
 
     /**
      * @param id the id of the GTU, could be String or Integer.
@@ -32,40 +41,49 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
      * @param width the maximum width of the GTU (perpendicular to driving direction).
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction).
      */
-    public Car(final ID id, final GTUType<?> gtuType, final DoubleScalar<LengthUnit> length,
+    public AbstractGTU(final ID id, final GTUType<?> gtuType, final DoubleScalar<LengthUnit> length,
             final DoubleScalar<LengthUnit> width, final DoubleScalar<SpeedUnit> maximumVelocity)
     {
-        super(id, gtuType, length, width, maximumVelocity);
+        super();
+        this.id = id;
+        this.gtuType = gtuType;
+        this.length = length;
+        this.width = width;
+        this.maximumVelocity = maximumVelocity;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<LaneLocation> getCurrentLocation(final GTUReferencePoint delta)
+    public final ID getId()
     {
-        return null;
+        return this.id;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> longitudinalDistance(final GTUReferencePoint delta, final LaneLocation location)
+    public final DoubleScalar<LengthUnit> getLength()
     {
-        // TODO
-        return null;
+        return this.length;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar<SpeedUnit> getCurrentLongitudinalVelocity()
+    public final DoubleScalar<LengthUnit> getWidth()
     {
-        // TODO
-        return null;
+        return this.width;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar<SpeedUnit> getCurrentLateralVelocity()
+    public final GTUType<?> getGTUType()
     {
-        return new DoubleScalar.Rel<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
+        return this.gtuType;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar<SpeedUnit> getMaximumVelocity()
+    {
+        return this.maximumVelocity;
+    }
 }

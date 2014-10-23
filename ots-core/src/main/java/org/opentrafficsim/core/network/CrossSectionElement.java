@@ -47,8 +47,11 @@ public abstract class CrossSectionElement implements LocatableInterface
     /** end width, positioned <i>symmetrically around</i> the lateral end position. */
     private final DoubleScalar<LengthUnit> endWidth;
 
-    /** geometry matching the cross section element. */
-    private final Geometry geometry;
+    /** geometry matching the contours of the cross section element. */
+    private final Geometry contour;
+
+    /** the offset line as calculated. */
+    private LineString offsetLine;
 
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -64,7 +67,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         this.lateralCenterPosition = lateralCenterPosition;
         this.beginWidth = beginWidth;
         this.endWidth = endWidth;
-        this.geometry = constructGeometry();
+        this.contour = constructGeometry();
     }
 
     /**
@@ -78,19 +81,19 @@ public abstract class CrossSectionElement implements LocatableInterface
         double width =
                 this.beginWidth.doubleValue() > 0 ? Math.max(this.beginWidth.doubleValue(), this.endWidth.doubleValue()) : Math
                         .min(this.beginWidth.doubleValue(), this.endWidth.doubleValue());
-        LineString offsetLine =
+        this.offsetLine =
                 (this.lateralCenterPosition.doubleValue() == 0.0) ? line : offsetLineString(line,
                         this.lateralCenterPosition.doubleValue());
         // CoordinateReferenceSystem crs = this.parentLink.getGeometry().getCRS();
         if (this.beginWidth.equals(this.endWidth))
         {
             // TODO: This is done in metres. Does that always fit the geometry?
-            return offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
+            return this.offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
         }
         else
         {
             // TODO: algorithm to make the gradual offset change...
-            return offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
+            return this.offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
         }
     }
 
@@ -130,7 +133,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        Envelope e = this.geometry.getEnvelopeInternal();
+        Envelope e = this.contour.getEnvelopeInternal();
         return new DirectedPoint(0.5 * (e.getMaxX() - e.getMinX()), 0.5 * (e.getMaxY() - e.getMinY()), 0.0);
     }
 
@@ -138,7 +141,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        Envelope e = this.geometry.getEnvelopeInternal();
+        Envelope e = this.contour.getEnvelopeInternal();
         double dx = 0.5 * (e.getMaxX() - e.getMinX());
         double dy = 0.5 * (e.getMaxY() - e.getMinY());
         return new BoundingBox(new Point3d(e.getMinX() - dx, e.getMinY() - dy, 0.0), new Point3d(e.getMinX() + dx, e.getMinY()
@@ -146,11 +149,19 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @return geometry.
+     * @return the contour of the cross section element.
      */
-    public final Geometry getGeometry()
+    public final Geometry getContour()
     {
-        return this.geometry;
+        return this.contour;
+    }
+
+    /**
+     * @return offsetLine.
+     */
+    public final LineString getOffsetLine()
+    {
+        return this.offsetLine;
     }
 
     /**
@@ -220,11 +231,11 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @param bufferLine
+     * @param bufferLine 
      * @param c0
      * @param c1
      * @param offset
-     * @return
+     * @return perpendicular buffer line
      */
     private Coordinate[] perpBufferCoords(final Geometry bufferLine, final Coordinate c0, final Coordinate c1,
             final double offset)

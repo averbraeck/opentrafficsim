@@ -15,8 +15,8 @@ import javax.swing.JLabel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -265,9 +265,9 @@ public class ContourPlotTest
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(20, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Create a car running 50 km.h
-        Car car = new Car(0, null, null, initialTime, initialPosition, initialSpeed);
+        OldCar car = new OldCar(0, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car run at constant speed for one minute
-        car.setState(new CarFollowingModelResult(
+        car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
                         initialTime.getSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
@@ -313,7 +313,7 @@ public class ContourPlotTest
             }
         }
         // Make the car run at constant speed for another minute
-        car.setState(new CarFollowingModelResult(
+        car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
                         car.getNextEvaluationTime().getSI() + 60, TimeUnit.SECOND), 0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
@@ -399,7 +399,7 @@ public class ContourPlotTest
             }
         }
         // Make the car run at constant speed for five more minutes
-        car.setState(new CarFollowingModelResult(
+        car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
                         car.getNextEvaluationTime().getSI() + 300, TimeUnit.SECOND), 0));
         cp.addData(car);

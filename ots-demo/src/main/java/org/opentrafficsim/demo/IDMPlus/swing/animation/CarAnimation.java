@@ -10,7 +10,6 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
-import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 /**
@@ -30,7 +29,7 @@ public class CarAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public CarAnimation(final Car source, final OTSSimulatorInterface simulator)
+    public CarAnimation(final AnimatedCar source, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(source, simulator);

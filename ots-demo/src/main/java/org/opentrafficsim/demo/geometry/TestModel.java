@@ -130,7 +130,7 @@ public class TestModel implements OTSModelInterface
     }
 
     /**
-     * The road is as follows.
+     * The road is as follows; The design line goes from left to right.
      * 
      * <pre>
      * ----------------------- +9.50
