@@ -2,6 +2,7 @@ package org.opentrafficsim.car.lanechanging;
 
 import java.util.Set;
 
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.following.FollowAcceleration;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
@@ -41,14 +42,14 @@ public final class Egoistic
      * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum (deemed safe) deceleration. This
      *            must be a positive value, about 2 m/s/s.
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
-     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current time
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the
      *         lane change is carried out
      */
     public static DoubleScalar.Abs<AccelerationUnit> acceleration(final GTU<?> referenceCar,
             final Set<GTU<?>> otherCars, final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, Abs<TimeUnit> when)
+            final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
+        DoubleScalar.Abs<TimeUnit> when = referenceCar.getSimulator().getSimulatorTime().get();
         GTU<?> leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
         GTU<?> follower = null;
