@@ -98,7 +98,7 @@ public class LinkCellTransmission extends Link
         //compute the amount of cells 
         for (int i = 0; i < numberOfCells; i++)
         {
-            FlowCell cell = new FlowCell(cellLength, link.getCapacity());
+            FlowCell cell = new FlowCell(cellLength, link.getCapacity(), TrafficBehaviourType.FLOW);
             flowCells.add(cell);
         }
         return flowCells;
