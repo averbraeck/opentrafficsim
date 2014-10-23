@@ -46,7 +46,7 @@ public class ShoulderAnimation extends Renderable2D
         graphics.setColor(Color.GREEN);
         Shoulder shoulder = (Shoulder) getSource();
         DirectedPoint p = shoulder.getLocation();
-        Geometry g = shoulder.getGeometry();
+        Geometry g = shoulder.getContour();
         Coordinate[] coordinates = g.getCoordinates();
         Path2D.Double path = new Path2D.Double();
         boolean start = false;

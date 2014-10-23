@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
+import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -57,19 +57,19 @@ public class TrajectoryPlotTest
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(2000, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Create a car running 50 km.h
-        Car car = new Car(1, null, null, initialTime, initialPosition, initialSpeed);
+        OldCar car = new OldCar(1, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 500 seconds
         DoubleScalar.Abs<TimeUnit> endTime = new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 400, TimeUnit.SECOND);
-        car.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
+        car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
         initialTime = new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND);
-        Car secondCar = new Car(2, null, null, initialTime, initialPosition, initialSpeed);
+        OldCar secondCar = new OldCar(2, null, null, initialTime, initialPosition, initialSpeed);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
-        secondCar.setState(new CarFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
+        secondCar.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
         // System.out.println("Second car end position " + car.getPosition(secondCar.getNextEvaluationTime()));
         tp.addData(secondCar);
@@ -163,7 +163,7 @@ public class TrajectoryPlotTest
      * @param series Integer; the series in the TrajectoryPlot that should correspond to the car
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
      */
-    private void verifyTrajectory(final Car car, final int series, final TrajectoryPlot tp)
+    private void verifyTrajectory(final OldCar car, final int series, final TrajectoryPlot tp)
     {
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =

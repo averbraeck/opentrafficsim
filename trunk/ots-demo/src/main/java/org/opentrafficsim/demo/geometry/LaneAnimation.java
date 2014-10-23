@@ -52,7 +52,7 @@ public class LaneAnimation extends Renderable2D
         graphics.setColor(this.color);
         Lane lane = (Lane) getSource();
         DirectedPoint p = lane.getLocation();
-        Geometry g = lane.getGeometry();
+        Geometry g = lane.getContour();
         Coordinate[] coordinates = g.getCoordinates();
         Path2D.Double path = new Path2D.Double();
         boolean start = false;

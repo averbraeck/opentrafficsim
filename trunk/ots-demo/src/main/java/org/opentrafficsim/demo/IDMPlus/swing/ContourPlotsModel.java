@@ -10,15 +10,14 @@ import javax.vecmath.Point2d;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
-import org.opentrafficsim.car.following.IDMPlus;
+import org.opentrafficsim.car.OldCar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.location.Line;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -66,7 +65,7 @@ public class ContourPlotsModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus. */
-    protected CarFollowingModel<AnimatedCar> carFollowingModel;
+    protected GTUFollowingModel<AnimatedCar> carFollowingModel;
 
     /** cars in the model. */
     private ArrayList<AnimatedCar> cars = new ArrayList<AnimatedCar>();
@@ -91,7 +90,7 @@ public class ContourPlotsModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulatorInterface) simulator;
 
-        this.carFollowingModel = new IDMPlus<Line<String>, AnimatedCar>();
+        this.carFollowingModel = new IDMPlus<AnimatedCar>();
 
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
@@ -138,7 +137,7 @@ public class ContourPlotsModel implements OTSModelInterface
      * Add one movement step of one Car to all contour plots.
      * @param car Car
      */
-    protected final void addToContourPlots(final Car car)
+    protected final void addToContourPlots(final OldCar car)
     {
         for (ContourPlot contourPlot : this.contourPlots)
         {
@@ -227,7 +226,7 @@ public class ContourPlotsModel implements OTSModelInterface
          * @throws RemoteException
          */
         public IDMCar(final int id, final OTSDEVSSimulatorInterface simulator,
-                final CarFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
+                final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
                 final DoubleScalar.Abs<LengthUnit> initialPosition, final DoubleScalar.Rel<SpeedUnit> initialSpeed)
                 throws RemoteException, NamingException
         {
@@ -270,7 +269,7 @@ public class ContourPlotsModel implements OTSModelInterface
                                 new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);
             }
-            CarFollowingModelResult cfmr =
+            GTUFollowingModelResult cfmr =
                     ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
                             ContourPlotsModel.this.speedLimit);
             setState(cfmr);

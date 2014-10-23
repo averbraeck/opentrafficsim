@@ -24,7 +24,7 @@ public class Lane extends CrossSectionElement
 
     /** Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
     private DoubleScalar<FrequencyUnit> capacity;
-
+    
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param lateralStartPosition the lateral start position compared to the linear geometry of the Cross Section Link.

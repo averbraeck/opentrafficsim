@@ -2,9 +2,9 @@ package org.opentrafficsim.car.lanechanging;
 
 import java.util.Set;
 
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.FollowAcceleration;
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.following.FollowAcceleration;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -43,12 +43,12 @@ public final class Egoistic
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the
      *         lane change is carried out
      */
-    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final Car referenceCar, final Set<Car> otherCars,
+    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final GTU<?> referenceCar, final Set<GTU<?>> otherCars,
             final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
-        Car leader = null;
+        GTU<?> leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
-        Car follower = null;
+        GTU<?> follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
         DoubleScalar.Abs<TimeUnit> when = referenceCar.getNextEvaluationTime();
         DoubleScalar.Abs<LengthUnit> referenceCarPosition = referenceCar.getPosition(when);
@@ -56,7 +56,7 @@ public final class Egoistic
 
         // TODO: the car following model already deals with a Set of leaders; can't we do something similar with the set
         // of followers?
-        for (Car c : otherCars)
+        for (GTU<?> c : otherCars)
         {
             DoubleScalar.Rel<LengthUnit> headway =
                     MutableDoubleScalar.minus(c.getPosition(when), referenceCarPosition).immutable();
@@ -77,7 +77,7 @@ public final class Egoistic
                 }
             }
         }
-        CarFollowingModel carFollowingModel = referenceCar.getCarFollowingModel();
+        GTUFollowingModel carFollowingModel = referenceCar.getGTUFollowingModel();
         DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
                 FollowAcceleration.acceleration(follower, referenceCar, when, carFollowingModel, speedLimit);
         if (followerAcceleration.getSI() < -maximumDeceleration.getSI())

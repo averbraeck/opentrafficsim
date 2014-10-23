@@ -5,12 +5,13 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
@@ -22,12 +23,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
  * <p>
  * @version Oct 3, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class AnimatedCar extends Car
+public class AnimatedCar extends Car<Integer, DoubleScalar<SpeedUnit>>
 {
     /** */
     private static final long serialVersionUID = 20141003L;
@@ -44,7 +42,7 @@ public class AnimatedCar extends Car
      * @throws RemoteException in case of remote registration failure of the animation
      */
     public AnimatedCar(final int id, final OTSDEVSSimulatorInterface simulator,
-            final CarFollowingModel<AnimatedCar> carFollowingModel, final Abs<TimeUnit> initialTime,
+            final GTUFollowingModel carFollowingModel, final Abs<TimeUnit> initialTime,
             final Abs<LengthUnit> initialPosition, final Rel<SpeedUnit> initialSpeed) throws RemoteException,
             NamingException
     {

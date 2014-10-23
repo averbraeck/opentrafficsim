@@ -7,14 +7,13 @@ import java.util.Collection;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
-import org.opentrafficsim.car.following.IDMPlus;
+import org.opentrafficsim.car.OldCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.location.Line;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -45,10 +44,10 @@ public class TrajectoriesModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus. */
-    protected CarFollowingModel<Car> carFollowingModel;
+    protected GTUFollowingModel<OldCar> carFollowingModel;
 
     /** cars in the model. */
-    protected ArrayList<Car> cars = new ArrayList<Car>();
+    protected ArrayList<OldCar> cars = new ArrayList<OldCar>();
 
     /** minimum distance. */
     private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
@@ -70,7 +69,7 @@ public class TrajectoriesModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulator) simulator;
 
-        this.carFollowingModel = new IDMPlus<Line<String>, Car>();
+        this.carFollowingModel = new IDMPlus<OldCar>();
 
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
@@ -118,7 +117,7 @@ public class TrajectoriesModel implements OTSModelInterface
     }
 
     /** Inner class IDMCar. */
-    protected class IDMCar extends Car
+    protected class IDMCar extends OldCar
     {
         /**
          * Create a new IDMCar.
@@ -129,7 +128,7 @@ public class TrajectoriesModel implements OTSModelInterface
          * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial position of the new IDMCar
          * @param initialSpeed DoubleScalar.Rel&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          */
-        public IDMCar(final int id, final OTSDEVSSimulator simulator, final CarFollowingModel carFollowingModel,
+        public IDMCar(final int id, final OTSDEVSSimulator simulator, final GTUFollowingModel carFollowingModel,
                 final DoubleScalar.Abs<TimeUnit> initialTime, final DoubleScalar.Abs<LengthUnit> initialPosition,
                 final DoubleScalar.Rel<SpeedUnit> initialSpeed)
         {
@@ -156,7 +155,7 @@ public class TrajectoriesModel implements OTSModelInterface
                 TrajectoriesModel.this.cars.remove(this);
                 return;
             }
-            Collection<Car> leaders = new ArrayList<Car>();
+            Collection<OldCar> leaders = new ArrayList<OldCar>();
             int carIndex = TrajectoriesModel.this.cars.indexOf(this);
             if (carIndex < TrajectoriesModel.this.cars.size() - 1)
             {
@@ -165,13 +164,13 @@ public class TrajectoriesModel implements OTSModelInterface
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getSI() >= 300 && now.getSI() < 500)
             {
-                Car block =
-                        new Car(99999, null, TrajectoriesModel.this.carFollowingModel, now,
+                OldCar block =
+                        new OldCar(99999, null, TrajectoriesModel.this.carFollowingModel, now,
                                 new DoubleScalar.Abs<LengthUnit>(4000, LengthUnit.METER),
                                 new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);
             }
-            CarFollowingModelResult cfmr =
+            GTUFollowingModelResult cfmr =
                     TrajectoriesModel.this.carFollowingModel.computeAcceleration(this, leaders,
                             TrajectoriesModel.this.speedLimit);
             setState(cfmr);

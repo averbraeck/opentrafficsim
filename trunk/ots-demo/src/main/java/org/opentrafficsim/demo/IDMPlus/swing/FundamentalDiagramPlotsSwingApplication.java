@@ -14,10 +14,10 @@ import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
-import org.opentrafficsim.car.following.CarFollowingModel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -48,7 +48,7 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
     }
 
     /** the car following model, e.g. IDM Plus. */
-    protected CarFollowingModel carFollowingModel;
+    protected GTUFollowingModel carFollowingModel;
 
     /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagramPlots = new ArrayList<FundamentalDiagram>();
