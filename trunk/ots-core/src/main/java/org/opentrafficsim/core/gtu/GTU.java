@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -35,4 +36,7 @@ public interface GTU<ID> extends LocatableInterface, Serializable
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
     GTUType<?> getGTUType();
+    
+    /** @return the simulator of the GTU. */
+    OTSDEVSSimulatorInterface getSimulator();
 }
