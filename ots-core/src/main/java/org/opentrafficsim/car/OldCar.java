@@ -22,7 +22,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 /**
  * This is a quick hack attempting to test-implement IDM+.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 2, 2014 <br>
@@ -97,9 +98,8 @@ public class OldCar
      */
     public final DoubleScalar.Rel<SpeedUnit> getVelocity(final DoubleScalar.Abs<TimeUnit> when)
     {
-        DoubleScalar.Rel<TimeUnit> dT = MutableDoubleScalar.minus(when, this.lastEvaluationTime).immutable();
-        return MutableDoubleScalar.plus(SpeedUnit.METER_PER_SECOND, this.speed,
-                Calc.accelerationTimesTime(this.getAcceleration(when), dT)).immutable();
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        return DoubleScalar.plus(this.speed, Calc.accelerationTimesTime(this.getAcceleration(when), dT)).immutable();
     }
 
     /**
@@ -110,9 +110,9 @@ public class OldCar
      */
     public final DoubleScalar.Abs<LengthUnit> getPosition(final DoubleScalar.Abs<TimeUnit> when)
     {
-        DoubleScalar.Rel<TimeUnit> dT = MutableDoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         // System.out.println("dT is " + dT);
-        return MutableDoubleScalar.plus(this.longitudinalPosition, Calc.speedTimesTime(this.speed, dT),
+        return DoubleScalar.plus(DoubleScalar.plus(this.longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(), 
                 Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
     }
 
@@ -202,8 +202,8 @@ public class OldCar
     {
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", this.id,
-                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(),
-                this.getPosition(when).getSI(), this.getVelocity(when).getSI(), this.getAcceleration(when).getSI());
+                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(), this.getPosition(when).getSI(), this
+                        .getVelocity(when).getSI(), this.getAcceleration(when).getSI());
     }
 
     /**
@@ -272,8 +272,8 @@ public class OldCar
     {
         // quick and dirty... straight line.
         // TODO: map to a geometry model...
-        return new DirectedPoint(
-                new double[] {getPosition(this.simulator.getSimulatorTime().get()).doubleValue(), 0.0d, 0.0d });
+        return new DirectedPoint(new double[]{getPosition(this.simulator.getSimulatorTime().get()).doubleValue(), 0.0d,
+                0.0d});
     }
 
     /** {@inheritDoc} */
