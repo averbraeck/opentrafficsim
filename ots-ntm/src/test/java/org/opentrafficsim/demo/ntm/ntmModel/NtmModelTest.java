@@ -2,24 +2,12 @@ package org.opentrafficsim.demo.ntm.ntmModel;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 import org.junit.Test;
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.following.CarFollowingModel;
-import org.opentrafficsim.car.following.IDMPlus;
-import org.opentrafficsim.car.following.CarFollowingModel.CarFollowingModelResult;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.location.Line;
+import org.opentrafficsim.car.OldCar;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.ntm.CsvFileReader;
-import org.opentrafficsim.demo.ntm.NTMSettings;
-import org.opentrafficsim.demo.ntm.ShapeFileReader;
 
 /**
  * <p>
@@ -36,16 +24,16 @@ import org.opentrafficsim.demo.ntm.ShapeFileReader;
 public class NtmModelTest
 {
     /**
-     * Test some basics of the Car class
+     * Test some basics of the Car class.
      */
     @SuppressWarnings("static-method")
     @Test
-    public void carTest()
+    public final void carTest()
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
-        Car referenceCar = new Car(12345, null, null, initialTime, initialPosition, initialSpeed);
+        OldCar referenceCar = new OldCar(12345, null, null, initialTime, initialPosition, initialSpeed);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getID());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
                 .getPosition(initialTime).getSI(), 0.0001);
