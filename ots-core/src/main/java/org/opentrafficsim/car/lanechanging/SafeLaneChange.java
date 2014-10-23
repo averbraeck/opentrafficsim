@@ -7,6 +7,7 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * This utility class implements the <i>Safety Criterion</i> as described in Traffic Flow Dynamics by Martin Treiber and
@@ -39,20 +40,21 @@ public final class SafeLaneChange
      * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum (considered safe) deceleration
      *            (must be positive; something on the order of 2m/s/s)
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current time
      * @return Boolean; true if the resulting deceleration is safe; false if the resulting deceleration is unsafe
      */
     public static boolean safe(final GTU<?> referenceGTU, final GTU<?> otherGTU,
-            final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            Abs<TimeUnit> when)
     {
-        DoubleScalar.Abs<TimeUnit> when = referenceGTU.getNextEvaluationTime();
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
         if (referenceGTU.getPosition(when).getSI() > otherGTU.getPosition(when).getSI())
         { // The referenceGTU is ahead of the otherGTU
-            return FollowAcceleration.acceleration(otherGTU, referenceGTU, when, gtuFollowingModel, speedLimit)
-                    .getSI() >= -maximumDeceleration.getSI();
+            return FollowAcceleration.acceleration(otherGTU, referenceGTU, when, gtuFollowingModel, speedLimit).getSI() >= -maximumDeceleration
+                    .getSI();
         }
         // The otherGTU is exactly parallel or ahead of the referenceGTU
-        return FollowAcceleration.acceleration(referenceGTU, otherGTU, when, gtuFollowingModel, speedLimit)
-                .getSI() >= -maximumDeceleration.getSI();
+        return FollowAcceleration.acceleration(referenceGTU, otherGTU, when, gtuFollowingModel, speedLimit).getSI() >= -maximumDeceleration
+                .getSI();
     }
 }

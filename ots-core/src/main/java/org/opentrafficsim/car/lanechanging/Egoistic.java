@@ -10,6 +10,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -40,17 +41,18 @@ public final class Egoistic
      * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum (deemed safe) deceleration. This
      *            must be a positive value, about 2 m/s/s.
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current time
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the
      *         lane change is carried out
      */
-    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final GTU<?> referenceCar, final Set<GTU<?>> otherCars,
-            final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final GTU<?> referenceCar,
+            final Set<GTU<?>> otherCars, final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit, Abs<TimeUnit> when)
     {
         GTU<?> leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
         GTU<?> follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
-        DoubleScalar.Abs<TimeUnit> when = referenceCar.getNextEvaluationTime();
         DoubleScalar.Abs<LengthUnit> referenceCarPosition = referenceCar.getPosition(when);
         // TODO: if otherCars are sorted in some way, scanning the entire list like this is not needed.
 
