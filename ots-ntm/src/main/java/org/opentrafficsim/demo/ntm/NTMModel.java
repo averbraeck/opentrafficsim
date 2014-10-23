@@ -397,14 +397,18 @@ public class NTMModel implements OTSModelInterface
                                 cellBehaviourNTM.getMaxCapacity(), cellBehaviourNTM.getParametersNTM()));
                     }
                     // the border, or CORDON areas, as sink/source for traffic
-                    else if (origin.getBehaviourType() == TrafficBehaviourType.CORDON)
+                    // The flow nodes act as entrances, intermediate or exits of the cell transmission model
+                    // For this last category, we assume that the links are putting a restriction on capacity
+                    else if (origin.getBehaviourType() == TrafficBehaviourType.CORDON
+                            || origin.getBehaviourType() == TrafficBehaviourType.FLOW)
                     {
                         // demand is the sum of new demand and accumulated traffic from previous time steps (possibly if
                         // the neighbour area does not accept all traffic)
                         cellBehaviour.setDemand(accumulatedCarsInCell);
-                        // the total supply is infinite for Cordon areas (sinks with no limit on in-flow)
+                        // the total supply is infinite for Cordon and Flow nodes (sinks with no limit on in-flow)
                         cellBehaviour.setSupply(java.lang.Double.POSITIVE_INFINITY);
                     }
+
                 }
             }
             // in the next steps, the dynamics of demand and supply create a certain flow between areas
@@ -428,7 +432,8 @@ public class NTMModel implements OTSModelInterface
                 // the behaviour of Cell Transmission still has to be implemented here
                 // the network is already prepared!
                 if (startNode.getBehaviourType() == TrafficBehaviourType.NTM
-                        || startNode.getBehaviourType() == TrafficBehaviourType.CORDON)
+                        || startNode.getBehaviourType() == TrafficBehaviourType.CORDON
+                        || startNode.getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
                     // first loop through the NTM and Cordon Area "nodes"
                     CellBehaviour cellBehaviour = startNode.getCellBehaviour();
@@ -451,15 +456,40 @@ public class NTMModel implements OTSModelInterface
                             double share =
                                     tripsFrom.get(nodeTo.getId()).getAccumulatedCarsToDestination()
                                             / cellBehaviour.getAccumulatedCars();
-                            // the out-flow to a certain destination may be restricted by the bounds of the total
-                            // demand based on total accumulation and the characteristics of the NFD diagram
+                            // for the NTM areas only:
+                            // . the out-flow to a certain destination may be restricted by the bounds of the total
+                            // . demand based on total accumulation and the characteristics of the NFD diagram
                             double flowFromDemand = share * cellBehaviour.getDemand();
 
                             // this potential out-flow is heading to the neighbour that is on its path to
                             // destination
                             if (neighbour != null)
                             {
-                                tripsFrom.get(neighbour.getId()).setFlowToNeighbour(flowFromDemand);
+                                if (startNode.getBehaviourType() == TrafficBehaviourType.FLOW
+                                        && neighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
+                                {
+                                    // In case of Cell Transmission Links, there is an intermediate process of traffic
+                                    // moving over a link. The demand to this link is computed.
+                                    // In Step 3 see if this demand is below the capacity of the link (supply)
+                                    try
+                                    {
+                                        LinkCellTransmission ctmLink =
+                                                (LinkCellTransmission) this.areaGraph.getEdge(startNode, neighbour)
+                                                        .getLink();
+                                        FlowCell startCell = ctmLink.getCells().get(0);
+                                        CellBehaviourFlow flowBehaviour = (CellBehaviourFlow) startCell.getCellBehaviour();
+                                        // retrieve the cars that want to enter (from the previous step)
+                                        double cars = flowBehaviour.getNumberOfTripsTo().get(nodeTo.getId());
+                                        // add the additional demand that wants to traverse
+                                        flowBehaviour.getNumberOfTripsTo().put(nodeTo.getId(), cars + flowFromDemand);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                // first add these trips to the number of trips that want to transfer to their neighbour
+                                tripsFrom.get(nodeTo.getId()).setFlowToNeighbour(flowFromDemand);
                                 // this flow is also added to the total sum of traffic that wants to enter this
                                 // neighbour Area.
                                 neighbour.getCellBehaviour().addDemandToEnter(flowFromDemand);
@@ -482,7 +512,99 @@ public class NTMModel implements OTSModelInterface
 
         // ********************************************************************************************************
         // STEP 3:
-        // This step monitors whether the demand of traffic from outside areas is able to enter a certain Area
+        // Simulate the CellTranmission model
+        // This phase identifies how trips proceed through the link and results in the traffic state of the flow cells
+        // within the CTM link and the amount of traffic that wants to enter the end Node of the CTM link
+        // If this Node provides the entrance to a new Cell Transmission Link this is implemented in the simulation
+        // if that Node provides a transfer to an NTM of Corodn area it captures the trips that want to enter that node
+
+        // Simulate this 5 times!!
+        for (BoundedNode startNode : this.areaGraph.vertexSet())
+        {
+            try
+            {
+                if (startNode.getBehaviourType() == TrafficBehaviourType.FLOW)
+                {
+                    // first loop through the NTM and Cordon Area "nodes"
+                    // tripsFrom represents the "row" of trips leaving from a zone to all of its destinations
+                    // (columns)
+                    Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(startNode.getId());
+                    for (BoundedNode nodeTo : this.areaGraph.vertexSet())
+                    {
+                        if (tripsFrom.containsKey(nodeTo.getId()))
+                        {
+                            // retrieve the neighbour area on the path to a certain destination
+                            BoundedNode neighbour = (BoundedNode) tripsFrom.get(nodeTo.getId()).getNeighbour();
+                            if (neighbour != null)
+                            {
+                                if (neighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
+                                {
+                                    // Do CTM
+                                    // In case of Cell Transmission Links, there is an intermediate process of traffic
+                                    // moving over a link. The demand to this link is computed.
+                                    // In Step 3 see if this demand is below the capacity of the link (supply)
+                                    try
+                                    {
+                                        // all cells have identical characteristics
+                                        LinkCellTransmission ctmLink =
+                                                (LinkCellTransmission) this.areaGraph.getEdge(startNode, neighbour)
+                                                        .getLink();
+                                        FlowCell startCell = ctmLink.getCells().get(0);
+                                        double demandToEnter = startCell.getCellBehaviour().getDemandToEnter();
+                                        DoubleScalar<FrequencyUnit> capacity = ctmLink.getCapacity();
+                                        double shareToEnter =
+                                                demandToEnter
+                                                        * this.settingsNTM.getTimeStepDurationCellTransmissionModel()
+                                                                .getSI() / capacity.getSI();
+                                        // Loop through the cells and do transmission
+                                        for (FlowCell cell : ctmLink.getCells())
+                                        {
+                                            CellBehaviourFlow flowBehaviour = (CellBehaviourFlow) cell.getCellBehaviour();
+                                            double enterCell = shareToEnter * flowBehaviour.getNumberOfTripsTo().get(nodeTo.getId());
+                                        }
+
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+
+                                    // retrieve the type of CellBehaviour (showing the demand and supply characteristics
+                                    // of
+                                    // this neighbour)
+                                    CellBehaviour cellBehaviourNeighbour = neighbour.getCellBehaviour();
+                                    double tripsToNeighbour = tripsFrom.get(nodeTo.getId()).getFlowToNeighbour();
+                                    // compute the share of traffic that wants to enter this Neighbour area from a
+                                    // certain
+                                    // origin - destination pair as part of the total demand that wants to enter the
+                                    // neighbour cell.
+                                    double share = tripsToNeighbour / cellBehaviourNeighbour.getDemandToEnter();
+                                    // the total supply to the neighbour may be restricted (by calling getSupply that
+                                    // provides the maximum Supply). Compute the final flow based on the share of Trips
+                                    // to a
+                                    // certain destination and this maximum supply of the Cell.
+                                    double flowFromDemand = share * cellBehaviourNeighbour.getSupply();
+                                    // set the final flow to the neighbour
+                                    tripsFrom.get(nodeTo.getId()).setFlowToNeighbour(flowFromDemand);
+                                }
+                            }
+                            else
+                            {
+                                System.out.println("no route...");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        // ********************************************************************************************************
+        // STEP 4:
+        // Monitor whether the demand of traffic from outside areas is able to enter a certain Area
         // Perhaps SUPPLY poses an upper bound on the Demand!
         for (BoundedNode startNode : this.areaGraph.vertexSet())
         {
@@ -505,7 +627,7 @@ public class NTMModel implements OTSModelInterface
                                 // retrieve the type of CellBehaviour (showing the demand and supply characteristics of
                                 // this neighbour)
                                 CellBehaviour cellBehaviourNeighbour = neighbour.getCellBehaviour();
-                                double tripsToNeighbour = tripsFrom.get(neighbour.getId()).getFlowToNeighbour();
+                                double tripsToNeighbour = tripsFrom.get(nodeTo.getId()).getFlowToNeighbour();
                                 // compute the share of traffic that wants to enter this Neighbour area from a certain
                                 // origin - destination pair as part of the total demand that wants to enter the
                                 // neighbour cell.
@@ -515,7 +637,7 @@ public class NTMModel implements OTSModelInterface
                                 // certain destination and this maximum supply of the Cell.
                                 double flowFromDemand = share * cellBehaviourNeighbour.getSupply();
                                 // set the final flow to the neighbour
-                                tripsFrom.get(neighbour.getId()).setFlowToNeighbour(flowFromDemand);
+                                tripsFrom.get(nodeTo.getId()).setFlowToNeighbour(flowFromDemand);
                             }
                             else
                             {
@@ -532,7 +654,7 @@ public class NTMModel implements OTSModelInterface
         }
 
         // ********************************************************************************************************
-        // STEP 4:
+        // STEP 5:
         // This step finishes the bookkeeping and transfers traffic to the neighbouring cells based on the flows from
         // the previous step
         for (BoundedNode startNode : this.areaGraph.vertexSet())
@@ -588,6 +710,11 @@ public class NTMModel implements OTSModelInterface
         {
             e.printStackTrace();
         }
+    }
+
+    private void cellTransmissionTimeStep()
+    {
+
     }
 
     /**
@@ -1326,7 +1453,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (Link flowLink : this.flowLinks.values())
                 {
-                    new ShpLinkAnimation(flowLink, this.simulator, 5.0F, Color.RED);
+                    new ShpLinkAnimation(flowLink, this.simulator, 2.0F, Color.RED);
                 }
             }
             if (showNodes)
@@ -1344,7 +1471,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
                 {
-                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 2.5f, Color.BLACK);
+                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 5.5f, Color.BLACK);
                 }
             }
             if (showAreaNode)

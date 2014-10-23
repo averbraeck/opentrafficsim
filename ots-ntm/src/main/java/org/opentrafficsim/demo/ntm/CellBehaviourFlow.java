@@ -2,12 +2,13 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
 
-/**
+/**The CellBehaviourFlow is used for cell transmission models and can be linked to the cells of a Link
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -26,6 +27,8 @@ public class CellBehaviourFlow extends CellBehaviour
     private static final long serialVersionUID = 20140903L;
 
 
+    /** */
+    private HashMap<String, Double> numberOfTripsTo;
 
     /** {@inheritDoc} */
     //@Override
@@ -78,6 +81,22 @@ public class CellBehaviourFlow extends CellBehaviour
         xyPairs.add(p);
         double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
         return carProduction;
+    }
+
+    /**
+     * @return numberOfTripsTo.
+     */
+    public HashMap<String, Double> getNumberOfTripsTo()
+    {
+        return numberOfTripsTo;
+    }
+
+    /**
+     * @param numberOfTripsTo set numberOfTripsTo.
+     */
+    public void setNumberOfTripsTo(HashMap<String, Double> numberOfTripsTo)
+    {
+        this.numberOfTripsTo = numberOfTripsTo;
     }
 
 

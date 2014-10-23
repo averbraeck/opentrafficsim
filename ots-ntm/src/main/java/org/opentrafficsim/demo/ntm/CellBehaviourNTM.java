@@ -37,37 +37,34 @@ public class CellBehaviourNTM extends CellBehaviour
     /** */
     private double speedDemand;
 
-
-    /** */
-    private double flow;
-
     /**
      * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
-     * uncongested speed - roadLength length of all roads
+     * uncongested speed - roadLength length of all roads.
      */
     private ParametersNTM parametersNTM;
 
-    @SuppressWarnings("javadoc")
+    /** */
     private Area area;
 
     /**
      * @param parametersNTM contains a set of params
      * @param area that contains this behaviour
      */
-    public CellBehaviourNTM(Area area, ParametersNTM parametersNTM)
+    public CellBehaviourNTM(final Area area, final ParametersNTM parametersNTM)
     {
         this.parametersNTM = parametersNTM;
         this.maxCapacity =
-                parametersNTM.getAccCritical1()
-                        * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }
 
-    /** {@inheritDoc} 
-     * @param accumulatedCars 
-     * @param maximumCapacity 
-     * @param param 
-     * @return */
-    //@Override
+    /**
+     * {@inheritDoc}
+     * @param accumulatedCars
+     * @param maximumCapacity
+     * @param param
+     * @return
+     */
+    // @Override
     public double retrieveSupply(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
     {
         double carProduction = maximumCapacity;
@@ -79,12 +76,14 @@ public class CellBehaviourNTM extends CellBehaviour
         return productionSupply;
     }
 
-    /** {@inheritDoc} 
-     * @param accumulatedCars 
-     * @param maxCapacity 
-     * @param param 
-     * @return */
-    //@Override
+    /**
+     * {@inheritDoc}
+     * @param accumulatedCars
+     * @param maxCapacity
+     * @param param
+     * @return
+     */
+    // @Override
     public double retrieveDemand(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
     {
         double productionDemand = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
@@ -92,7 +91,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /** {@inheritDoc} */
-    //@Override
+    // @Override
     public double computeAccumulation()
     {
         double accumulation = 0.0;
@@ -102,11 +101,11 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
-     * @param maxCapacity
-     * @param param
-     * @return carProduction
+     * @param maxCapacity 
+     * @param param 
+     * @return carProduction 
      */
-    public final double retrieveCarProduction(final double accumulatedCars, final double maxCapacity,
+    public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,
             final ParametersNTM param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
@@ -114,10 +113,10 @@ public class CellBehaviourNTM extends CellBehaviour
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical1(), maxCapacity);
+        p.setLocation(param.getAccCritical1(), maximumCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical2(), maxCapacity);
+        p.setLocation(param.getAccCritical2(), maximumCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
         p.setLocation(param.getAccJam(), 0);
@@ -145,7 +144,7 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @return area.
      */
-    public Area getArea()
+    public final Area getArea()
     {
         return this.area;
     }
@@ -153,7 +152,7 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @param area set area.
      */
-    public void setArea(Area area)
+    public void setArea(final Area area)
     {
         this.area = area;
     }
@@ -185,17 +184,15 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @param currentSpeed set currentSpeed.
      */
-    public void setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    public final void setCurrentSpeed(final DoubleScalar.Abs<SpeedUnit> currentSpeed)
     {
         this.currentSpeed = currentSpeed;
     }
 
-
-
     /**
      * @param speedSupply set speedSupply.
      */
-    public void setSpeedSupply(double speedSupply)
+    public final void setSpeedSupply(final double speedSupply)
     {
         this.speedSupply = speedSupply;
     }
@@ -224,22 +221,6 @@ public class CellBehaviourNTM extends CellBehaviour
     public final void setSpeedDemand(final double speedDemand)
     {
         this.speedDemand = speedDemand;
-    }
-
-    /**
-     * @return flow.
-     */
-    public double getFlow()
-    {
-        return flow;
-    }
-
-    /**
-     * @param flow set flow.
-     */
-    public void setFlow(double flow)
-    {
-        this.flow = flow;
     }
 
     /*    *//**

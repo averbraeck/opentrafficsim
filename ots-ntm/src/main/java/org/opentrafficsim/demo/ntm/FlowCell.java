@@ -3,12 +3,14 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.media.j3d.Bounds;
 
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -36,15 +38,25 @@ public class FlowCell implements LocatableInterface
 
     /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
     private DoubleScalar<FrequencyUnit> capacity;
+
+    
+    /** */
+    private CellBehaviour cellBehaviour;
+
     /**
-     * @param geometry
      * @param cellLength
      * @param capacity
+     * @param behaviourType
      */
-    public FlowCell(DoubleScalar<LengthUnit> cellLength, DoubleScalar<FrequencyUnit> capacity)
+    public FlowCell(final DoubleScalar<LengthUnit> cellLength, final DoubleScalar<FrequencyUnit> capacity,
+            final TrafficBehaviourType behaviourType)
     {
         this.setCellLength(cellLength);
         this.setCapacity(capacity);
+        if (behaviourType == TrafficBehaviourType.FLOW)
+        {
+            this.setCellBehaviour(new CellBehaviourFlow());
+        }
     }
 
     /**
@@ -116,5 +128,22 @@ public class FlowCell implements LocatableInterface
     {
         this.capacity = capacity;
     }
+
+    /**
+     * @return cellBehaviour.
+     */
+    public CellBehaviour getCellBehaviour()
+    {
+        return cellBehaviour;
+    }
+
+    /**
+     * @param cellBehaviour set cellBehaviour.
+     */
+    public void setCellBehaviour(CellBehaviour cellBehaviour)
+    {
+        this.cellBehaviour = cellBehaviour;
+    }
+
 
 }

@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.ntm;
 
-
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -13,13 +12,12 @@ package org.opentrafficsim.demo.ntm;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
- * @param <Cars> 
- * @param <Capacity> 
- * @param <Param> 
+ * @param <Cars>
+ * @param <Capacity>
+ * @param <Param>
  */
 public class CellBehaviour
 {
-   
 
     /**
      * 
@@ -35,17 +33,19 @@ public class CellBehaviour
     /** */
     private double demand;
 
-
     /** */
     private double accumulatedCars;
 
-
     /** The number of cars that are heading for this Cell. */
     private double demandToEnter;
+
+    /** */
+    private double flow;
+
     /**
      * @return supply.
      */
-    public double getSupply()
+    public final double getSupply()
     {
         return this.supply;
     }
@@ -53,7 +53,7 @@ public class CellBehaviour
     /**
      * @param supply set supply.
      */
-    public void setSupply(double supply)
+    public final void setSupply(double supply)
     {
         this.supply = supply;
     }
@@ -61,7 +61,7 @@ public class CellBehaviour
     /**
      * @return demand.
      */
-    public double getDemand()
+    public final double getDemand()
     {
         return this.demand;
     }
@@ -69,27 +69,42 @@ public class CellBehaviour
     /**
      * @param demand set demand.
      */
-    public void setDemand(double demand)
+    public void setDemand(final double demand)
     {
         this.demand = demand;
     }
 
     /**
+     * @return flow.
+     */
+    public double getFlow()
+    {
+        return flow;
+    }
+
+    /**
+     * @param flow set flow.
+     */
+    public void setFlow(double flow)
+    {
+        this.flow = flow;
+    }
+
+    /**
      * @return accumulatedCars.
      */
-    public double getAccumulatedCars()
+    public final double getAccumulatedCars()
     {
-        return accumulatedCars;
+        return this.accumulatedCars;
     }
 
     /**
      * @param accumulatedCars set accumulatedCars.
      */
-    public void setAccumulatedCars(double accumulatedCars)
+    public final void setAccumulatedCars(double accumulatedCars)
     {
         this.accumulatedCars = accumulatedCars;
     }
-    
 
     /**
      * @return demandToEnter.
@@ -98,6 +113,7 @@ public class CellBehaviour
     {
         return this.demandToEnter;
     }
+
     /**
      * @param demandToEnter set demandToEnter.
      */
@@ -114,26 +130,26 @@ public class CellBehaviour
         this.demandToEnter += addDemandToEnter;
     }
 
-
-/*    *//**
-     * @param cars 
-     * @param maxCapacity 
-     * @param parameters 
-     * @return 
-     *//*
-    double retrieveSupply(Cars cars, Capacity maxCapacity,  Param parameters);
-
-    *//**
-     * @param cars 
-     * @param maxCapacity 
-     * @param parameters 
-     * @return 
-     *//*
-    double retrieveDemand(Cars cars, Capacity maxCapacity,  Param parameters);
-
-    *//**
-     * @return 
-     * 
-     *//*
-    double computeAccumulation();*/
+    /*    *//**
+     * @param cars
+     * @param maxCapacity
+     * @param parameters
+     * @return
+     */
+    /*
+     * double retrieveSupply(Cars cars, Capacity maxCapacity, Param parameters);
+     *//**
+     * @param cars
+     * @param maxCapacity
+     * @param parameters
+     * @return
+     */
+    /*
+     * double retrieveDemand(Cars cars, Capacity maxCapacity, Param parameters);
+     *//**
+     * @return
+     */
+    /*
+     * double computeAccumulation();
+     */
 }

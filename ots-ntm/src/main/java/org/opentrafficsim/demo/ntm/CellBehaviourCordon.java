@@ -27,24 +27,5 @@ public class CellBehaviourCordon extends CellBehaviour
 
     
 
-    /** {@inheritDoc} 
-     * @param inFlow 
-     * @return */
-    //@Override
-    public double setSupply(final Double inFlow)
-    {
-        return inFlow;
-        
-    }
-
-    /** {@inheritDoc} 
-     * @param outFlow 
-     * @return */
-    //@Override
-    public double setDemand(final Double outFlow)
-    {
-        return outFlow;
-    }
-
     
 }
