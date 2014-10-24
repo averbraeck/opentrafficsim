@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import javax.swing.JOptionPane;
 
-import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -97,7 +97,7 @@ public final class ContourPlots
         contourPlots.add(cp);
 
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
-        GTUFollowingModel<OldCar> carFollowingModel = new IDMPlus<OldCar>();
+        GTUFollowingModel<Car> carFollowingModel = new IDMPlus<Car>();
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -106,7 +106,7 @@ public final class ContourPlots
         double thisTick = 0;
         final double tick = 0.5;
         int carsCreated = 0;
-        ArrayList<OldCar> cars = new ArrayList<OldCar>();
+        ArrayList<Car> cars = new ArrayList<Car>();
         double nextSourceTick = 0;
         double nextMoveTick = 0;
         while (thisTick < endTime)
@@ -116,8 +116,8 @@ public final class ContourPlots
             {
                 // Time to generate another car
                 DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                OldCar car =
-                        new OldCar(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
+                Car car =
+                        new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
                 cars.add(0, car);
                 // System.out.println(String.format("thisTick=%.1f, there are now %d vehicles", thisTick, cars.size()));
                 nextSourceTick += headway;
@@ -136,13 +136,13 @@ public final class ContourPlots
                 for (int carIndex = 0; carIndex < cars.size(); carIndex++)
                 {
                     DoubleScalar.Abs<TimeUnit> now = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                    OldCar car = cars.get(carIndex);
+                    Car car = cars.get(carIndex);
                     if (car.getPosition(now).getSI() > maximumDistance.getSI())
                     {
                         cars.remove(carIndex);
                         break;
                     }
-                    Collection<OldCar> leaders = new ArrayList<OldCar>();
+                    Collection<Car> leaders = new ArrayList<Car>();
                     if (carIndex < cars.size() - 1)
                     {
                         leaders.add(cars.get(carIndex + 1));
@@ -150,8 +150,8 @@ public final class ContourPlots
                     if (thisTick >= 300 && thisTick < 500)
                     {
                         // Add a stationary car at 4000m to simulate an opening bridge
-                        OldCar block =
-                                new OldCar(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(
+                        Car block =
+                                new Car(99999, simulator, carFollowingModel, now, new DoubleScalar.Abs<LengthUnit>(
                                         4000, LengthUnit.METER), new DoubleScalar.Rel<SpeedUnit>(0,
                                         SpeedUnit.KM_PER_HOUR));
                         leaders.add(block);

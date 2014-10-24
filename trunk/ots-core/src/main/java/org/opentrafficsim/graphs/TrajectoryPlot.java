@@ -24,7 +24,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -288,7 +288,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      * Add the scheduled motion of a car to this TrajectoryPlot.
      * @param car Car; the Car that has determined it's next move
      */
-    public final void addData(final OldCar car)
+    public final void addData(final Car car)
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<LengthUnit> startPosition = car.getPosition(startTime);
@@ -376,7 +376,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
          * @param car Car; the Car whose currently committed trajectory segment must be added
          */
-        public final void addSegment(final OldCar car)
+        public final void addSegment(final Car car)
         {
             final int startSample =
                     (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());

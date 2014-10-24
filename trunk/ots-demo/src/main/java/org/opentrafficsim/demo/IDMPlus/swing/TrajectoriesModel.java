@@ -7,7 +7,7 @@ import java.util.Collection;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -44,10 +44,10 @@ public class TrajectoriesModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus. */
-    protected GTUFollowingModel<OldCar> carFollowingModel;
+    protected GTUFollowingModel<Car> carFollowingModel;
 
     /** cars in the model. */
-    protected ArrayList<OldCar> cars = new ArrayList<OldCar>();
+    protected ArrayList<Car> cars = new ArrayList<Car>();
 
     /** minimum distance. */
     private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
@@ -69,7 +69,7 @@ public class TrajectoriesModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulator) simulator;
 
-        this.carFollowingModel = new IDMPlus<OldCar>();
+        this.carFollowingModel = new IDMPlus<Car>();
 
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
@@ -117,7 +117,7 @@ public class TrajectoriesModel implements OTSModelInterface
     }
 
     /** Inner class IDMCar. */
-    protected class IDMCar extends OldCar
+    protected class IDMCar extends Car
     {
         /**
          * Create a new IDMCar.
@@ -155,7 +155,7 @@ public class TrajectoriesModel implements OTSModelInterface
                 TrajectoriesModel.this.cars.remove(this);
                 return;
             }
-            Collection<OldCar> leaders = new ArrayList<OldCar>();
+            Collection<Car> leaders = new ArrayList<Car>();
             int carIndex = TrajectoriesModel.this.cars.indexOf(this);
             if (carIndex < TrajectoriesModel.this.cars.size() - 1)
             {
@@ -164,8 +164,8 @@ public class TrajectoriesModel implements OTSModelInterface
             // Add a stationary car at 4000m to simulate an opening bridge
             if (now.getSI() >= 300 && now.getSI() < 500)
             {
-                OldCar block =
-                        new OldCar(99999, null, TrajectoriesModel.this.carFollowingModel, now,
+                Car block =
+                        new Car(99999, null, TrajectoriesModel.this.carFollowingModel, now,
                                 new DoubleScalar.Abs<LengthUnit>(4000, LengthUnit.METER),
                                 new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                 leaders.add(block);

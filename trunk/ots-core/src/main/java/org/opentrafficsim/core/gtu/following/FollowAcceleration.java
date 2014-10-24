@@ -3,7 +3,9 @@ package org.opentrafficsim.core.gtu.following;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.LaneBasedGTU;
+import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -40,22 +42,38 @@ public final class FollowAcceleration
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (deceleration) for the following GTU in order to not
      *         collide with the leader GTU
      */
-    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final GTU<?> follower, final GTU<?> leader,
+    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
             final DoubleScalar.Abs<TimeUnit> when, final GTUFollowingModel gtuFollowingModel,
             final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         if (null != leader)
         {
-            MutableDoubleScalar.Rel<LengthUnit> headway =
-                    MutableDoubleScalar.minus(leader.positionOfRear(when), follower.positionOfFront(when));
-            if (headway.getSI() <= 0)
+            // find a lane where follower and leader are jointly
+            Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
+            lanes.retainAll(follower.getLongitudinalPositions().keySet());
+            // TODO expand to lanes for next links as well, to a certain distance (which is...?)
+            if (lanes.size() > 0)
             {
-                // Immediate collision; return a prohibitive negative value
-                return new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY, AccelerationUnit.METER_PER_SECOND_2);
+                Lane lane = lanes.iterator().next();
+                try
+                {
+                    MutableDoubleScalar.Rel<LengthUnit> headway =
+                            DoubleScalar.minus(leader.positionOfRear(lane, when), follower.positionOfFront(lane, when));
+                    if (headway.getSI() <= 0)
+                    {
+                        // Immediate collision; return a prohibitive negative value
+                        return new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY,
+                                AccelerationUnit.METER_PER_SECOND_2);
+                    }
+                }
+                catch (NetworkException ne)
+                {
+                    // not possible -- both vehicles are on these lanes
+                }
             }
         }
         // Wrap the leader in a set, then apply the GTU following model
-        Set<GTU<?>> leaders = new HashSet<>(1);
+        Set<LaneBasedGTU<?>> leaders = new HashSet<>(1);
         if (null != leader)
         {
             leaders.add(leader);

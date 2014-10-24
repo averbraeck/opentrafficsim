@@ -26,13 +26,13 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     private final GTUType<?> gtuType;
 
     /** the maximum length of the GTU (parallel with driving direction). */
-    private final DoubleScalar<LengthUnit> length;
+    private final DoubleScalar.Rel<LengthUnit> length;
 
     /** the maximum width of the GTU (perpendicular to driving direction). */
-    private final DoubleScalar<LengthUnit> width;
+    private final DoubleScalar.Rel<LengthUnit> width;
 
     /** the maximum speed of the GTU (in the driving direction). */
-    private final DoubleScalar<SpeedUnit> maximumVelocity;
+    private final DoubleScalar.Abs<SpeedUnit> maximumVelocity;
 
     /**
      * @param id the id of the GTU, could be String or Integer.
@@ -41,8 +41,8 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
      * @param width the maximum width of the GTU (perpendicular to driving direction).
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction).
      */
-    public AbstractGTU(final ID id, final GTUType<?> gtuType, final DoubleScalar<LengthUnit> length,
-            final DoubleScalar<LengthUnit> width, final DoubleScalar<SpeedUnit> maximumVelocity)
+    public AbstractGTU(final ID id, final GTUType<?> gtuType, final DoubleScalar.Rel<LengthUnit> length,
+            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity)
     {
         super();
         this.id = id;
@@ -61,14 +61,14 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar<LengthUnit> getLength()
+    public final DoubleScalar.Rel<LengthUnit> getLength()
     {
         return this.length;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar<LengthUnit> getWidth()
+    public final DoubleScalar.Rel<LengthUnit> getWidth()
     {
         return this.width;
     }
@@ -82,7 +82,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar<SpeedUnit> getMaximumVelocity()
+    public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
     {
         return this.maximumVelocity;
     }

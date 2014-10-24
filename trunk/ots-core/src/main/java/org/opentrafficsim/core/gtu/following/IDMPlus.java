@@ -3,8 +3,13 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.LaneBasedGTU;
+import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -76,6 +81,9 @@ public class IDMPlus implements GTUFollowingModel
     /** Safe time headway. */
     private final DoubleScalar.Rel<TimeUnit> tSafe = new DoubleScalar.Rel<TimeUnit>(1.6, TimeUnit.SECOND);
 
+    /** the reference to the simulator for the GTUs to use. */
+    private final OTSDEVSSimulatorInterface simulator;
+
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the speed
      * limit, etc.).
@@ -87,6 +95,15 @@ public class IDMPlus implements GTUFollowingModel
      * and accuracy).
      */
     private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
+
+    /**
+     * @param simulator the simulator.
+     */
+    public IDMPlus(final OTSDEVSSimulatorInterface simulator)
+    {
+        super();
+        this.simulator = simulator;
+    }
 
     /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
@@ -102,8 +119,8 @@ public class IDMPlus implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final GTUFollowingModelResult computeAcceleration(final GTU<?> gtu, final Collection<GTU<?>> leaders,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = gtu.getNextEvaluationTime();
         // System.out.println("evaluation time is " + thisEvaluationTime);
@@ -169,9 +186,9 @@ public class IDMPlus implements GTUFollowingModel
      * @throws RemoteException
      */
     @Override
-    public final GTUFollowingModelResult computeLaneChangeAndAcceleration(final GTU<?> gtu,
-            final Collection<GTU<?>> sameLaneGTUs, final Collection<GTU<?>> preferredLaneGTUs,
-            final Collection<GTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+    public final GTUFollowingModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<LaneBasedGTU<?>> sameLaneGTUs, final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final double preferredLaneRouteIncentive, final double nonPreferredLaneRouteIncentive) throws RemoteException
     {
         System.out.println(String.format(
@@ -186,9 +203,8 @@ public class IDMPlus implements GTUFollowingModel
         if (null != nonPreferredLaneGTUs)
         {
             nonPreferredLaneSpeedIncentive =
-                    aGain
-                            * MutableDoubleScalar.minus(anticipatedSpeed(speedLimit, gtu, nonPreferredLaneGTUs), vAntStraight)
-                                    .getSI() / this.vGain.getSI();
+                    aGain * DoubleScalar.minus(anticipatedSpeed(speedLimit, gtu, nonPreferredLaneGTUs), vAntStraight).getSI()
+                            / this.vGain.getSI();
         }
         double dBias = 0;
         double preferredLaneSpeedIncentive = 0;
@@ -197,7 +213,7 @@ public class IDMPlus implements GTUFollowingModel
             DoubleScalar.Abs<SpeedUnit> vAnt = anticipatedSpeed(speedLimit, gtu, preferredLaneGTUs);
             if (vAnt.getSI() > this.vCong.getSI())
             {
-                preferredLaneSpeedIncentive = MutableDoubleScalar.minus(vAnt, vAntStraight).getSI() / this.vGain.getSI();
+                preferredLaneSpeedIncentive = DoubleScalar.minus(vAnt, vAntStraight).getSI() / this.vGain.getSI();
                 if (preferredLaneSpeedIncentive > 0)
                 {
                     preferredLaneSpeedIncentive = 0; // changing lane to overtake "on the right" is not permitted
@@ -205,8 +221,7 @@ public class IDMPlus implements GTUFollowingModel
             }
             else
             {
-                preferredLaneSpeedIncentive =
-                        aGain * MutableDoubleScalar.minus(vAnt, vAntStraight).getSI() / this.vGain.getSI();
+                preferredLaneSpeedIncentive = aGain * DoubleScalar.minus(vAnt, vAntStraight).getSI() / this.vGain.getSI();
             }
             // FIXME: comparing double values for equality is not "reliable"
             if (preferredLaneRouteIncentive >= 0 && vAnt.getSI() == vDes(gtu, speedLimit).getSI())
@@ -234,17 +249,17 @@ public class IDMPlus implements GTUFollowingModel
      * @param desire double; the desire to change into the adjacent lane
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit in the adjacent lane
      * @return boolean; true if the lane change can be performed; false if the lane change should not be performed
-     * @throws RemoteException
+     * @throws RemoteException in case simulation time cannot be retrieved
      */
-    private boolean checkLaneChange(final GTU<?> gtu, final Collection<GTU<?>> gtusInOtherLane, final double desire,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    private boolean checkLaneChange(final LaneBasedGTU<?> gtu, final Collection<LaneBasedGTU<?>> gtusInOtherLane,
+            final double desire, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         // Find the new leader and follower
-        GTU<?> leader = null;
+        LaneBasedGTU<?> leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
-        GTU<?> follower = null;
+        LaneBasedGTU<?> follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
-        for (GTU<?> gtuInOtherLane : gtusInOtherLane)
+        for (LaneBasedGTU<?> gtuInOtherLane : gtusInOtherLane)
         {
             DoubleScalar.Rel<LengthUnit> headway = gtu.headway(gtuInOtherLane);
             if (headway.getSI() > 0)
@@ -264,7 +279,7 @@ public class IDMPlus implements GTUFollowingModel
                 }
             }
         }
-        Collection<GTU<?>> leaders = new ArrayList<GTU<?>>();
+        Collection<LaneBasedGTU<?>> leaders = new ArrayList<LaneBasedGTU<?>>();
         if (null != leader)
         {
             leaders.add(leader);
@@ -276,7 +291,7 @@ public class IDMPlus implements GTUFollowingModel
         }
         if (null != follower)
         {
-            Collection<GTU<?>> referenceGTUGroup = new ArrayList<GTU<?>>();
+            Collection<LaneBasedGTU<?>> referenceGTUGroup = new ArrayList<LaneBasedGTU<?>>();
             referenceGTUGroup.add(gtu);
             DoubleScalar.Abs<AccelerationUnit> otherGTUAcceleration =
                     computeAcceleration(follower, referenceGTUGroup, speedLimit).getAcceleration();
@@ -332,8 +347,8 @@ public class IDMPlus implements GTUFollowingModel
      * @param leaders Collection&lt;GTU&gt;; the set of other gtus
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the anticipated speed
      */
-    private DoubleScalar.Abs<SpeedUnit> anticipatedSpeed(final DoubleScalar.Abs<SpeedUnit> speedLimit, final GTU<?> gtu,
-            final Collection<GTU<?>> leaders)
+    private DoubleScalar.Abs<SpeedUnit> anticipatedSpeed(final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final LaneBasedGTU<?> gtu, final Collection<LaneBasedGTU<?>> leaders)
     {
         DoubleScalar.Abs<SpeedUnit> result = speedLimit;
         DoubleScalar.Abs<LengthUnit> frontPositionOfGTU = gtu.positionOfFront(gtu.getNextEvaluationTime());
@@ -357,6 +372,14 @@ public class IDMPlus implements GTUFollowingModel
             }
         }
         return result;
+    }
+
+    /**
+     * @return simulator.
+     */
+    public final OTSDEVSSimulatorInterface getSimulator()
+    {
+        return this.simulator;
     }
 
 }

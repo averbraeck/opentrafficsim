@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
-import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -100,7 +100,7 @@ public class FundamentalDiagramPlotTest
             int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
             for (int lane = 0; lane < numberOfLanes; lane++)
             {
-                OldCar car = new OldCar(1 + lane, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
+                Car car = new Car(1 + lane, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
                 fd.addData(lane, car, time);
                 for (int readBackLane = 0; readBackLane < numberOfLanes; readBackLane++)
                 {
@@ -177,7 +177,7 @@ public class FundamentalDiagramPlotTest
             }
             // Check that harmonic mean speed is computed
             speed = new DoubleScalar.Rel<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-            OldCar car = new OldCar(1234, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
+            Car car = new Car(1234, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
             fd.addData(0, car, time);
             fd.actionPerformed(setXToSpeed);
             value = fd.getYValue(0, bucket);
