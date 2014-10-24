@@ -26,13 +26,13 @@ public interface GTU<ID> extends LocatableInterface, Serializable
     ID getId();
 
     /** @return the maximum length of the GTU (parallel with driving direction). */
-    DoubleScalar<LengthUnit> getLength();
+    DoubleScalar.Rel<LengthUnit> getLength();
 
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
-    DoubleScalar<LengthUnit> getWidth();
+    DoubleScalar.Rel<LengthUnit> getWidth();
 
     /** @return the maximum velocity of the GTU, in the linear direction */
-    DoubleScalar<SpeedUnit> getMaximumVelocity();
+    DoubleScalar.Abs<SpeedUnit> getMaximumVelocity();
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
     GTUType<?> getGTUType();

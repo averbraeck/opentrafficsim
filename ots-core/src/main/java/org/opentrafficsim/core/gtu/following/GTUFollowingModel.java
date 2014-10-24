@@ -3,7 +3,8 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -27,7 +28,7 @@ public interface GTUFollowingModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return GTUFollowingModelResult; the result of application of the gtu following model
      */
-    GTUFollowingModelResult computeAcceleration(final GTU<?> gtu, final Collection<GTU<?>> leaders,
+    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu, final Collection<LaneBasedGTU<?>> leaders,
             final DoubleScalar.Abs<SpeedUnit> speedLimit);
 
     /**
@@ -44,18 +45,20 @@ public interface GTUFollowingModel
      * @param nonPreferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane into which gtus should merge
      *            to overtake other traffic
      * @return GTUFollowingModelResult; the result of the lane change and gtu following model
-     * @throws RemoteException
+     * @throws RemoteException in case the simulation time cannot be retrieved.
      */
-    GTUFollowingModelResult computeLaneChangeAndAcceleration(final GTU<?> gtu, final Collection<GTU<?>> sameLaneGTUs,
-            final Collection<GTU<?>> preferredLaneGTUs, final Collection<GTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, double preferredLaneRouteIncentive,
-            double nonPreferredLaneRouteIncentive) throws RemoteException;
+    GTUFollowingModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<LaneBasedGTU<?>> sameLaneGTUs, final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            double preferredLaneRouteIncentive, double nonPreferredLaneRouteIncentive) throws RemoteException;
+
+    /** @return the simulator of the GTU Following Model. */
+    OTSDEVSSimulatorInterface getSimulator();
 
     /**
      * The result of a GTUFollowingModel evaluation shall be stored in an instance of this class.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. 
-     * All rights reserved. <br>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version Jul 9, 2014 <br>

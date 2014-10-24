@@ -38,6 +38,19 @@ public final class Calc
     }
 
     /**
+     * Distance is speed times time. <br>
+     * s(t) = v * t
+     * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the speed
+     * @param time DoubleScalar.Rel&lt;TimeUnit&gt;; the time
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the resulting distance
+     */
+    public static DoubleScalar.Rel<LengthUnit> speedTimesTime(final DoubleScalar.Abs<SpeedUnit> speed,
+            final DoubleScalar.Rel<TimeUnit> time)
+    {
+        return new DoubleScalar.Rel<LengthUnit>(speed.getSI() * time.getSI(), LengthUnit.METER);
+    }
+
+    /**
      * Distance is 0.5 times acceleration times time squared. <br>
      * s(t) = 0.5 * a * t * t
      * @param acceleration DoubleScalar.Rel&lt;AccelerationUnit&gt;; the acceleration

@@ -30,7 +30,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
-import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -473,7 +473,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled (should be a GTU)
      */
-    public final void addData(final OldCar car)
+    public final void addData(final Car car)
     {
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();

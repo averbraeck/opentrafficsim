@@ -28,7 +28,7 @@ public class CarTest
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
-        OldCar referenceCar = new OldCar(12345, null, null, initialTime, initialPosition, initialSpeed);
+        Car referenceCar = new Car(12345, null, null, initialTime, initialPosition, initialSpeed);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getID());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
                 .getPosition(initialTime).getSI(), 0.0001);

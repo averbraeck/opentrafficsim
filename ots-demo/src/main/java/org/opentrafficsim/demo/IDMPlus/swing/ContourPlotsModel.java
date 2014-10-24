@@ -10,7 +10,7 @@ import javax.vecmath.Point2d;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.OldCar;
+import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -137,7 +137,7 @@ public class ContourPlotsModel implements OTSModelInterface
      * Add one movement step of one Car to all contour plots.
      * @param car Car
      */
-    protected final void addToContourPlots(final OldCar car)
+    protected final void addToContourPlots(final Car car)
     {
         for (ContourPlot contourPlot : this.contourPlots)
         {
