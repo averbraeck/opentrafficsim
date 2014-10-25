@@ -46,8 +46,8 @@ public class LinkCellTransmission extends Link
      * @param linkData
      * @param cells
      */
-    public LinkCellTransmission(LinearGeometry geometry, String nr, Rel<LengthUnit> length, Node startNode,
-            Node endNode, DoubleScalar<SpeedUnit> speed, DoubleScalar<FrequencyUnit> capacity,
+    public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Abs<LengthUnit> length, Node startNode,
+            Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Abs<FrequencyUnit> capacity,
             TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells)
     {
         super(geometry, nr, length, startNode, endNode, speed, capacity, behaviourType, linkData);
