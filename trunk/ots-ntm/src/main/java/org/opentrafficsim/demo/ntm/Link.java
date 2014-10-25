@@ -223,15 +223,15 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  */
 public class Link extends AbstractLink<String, Node> implements LocatableInterface
 {
-    /** SPEEDAB class java.lang.Double 120.0 */
-    private DoubleScalar<SpeedUnit> speed;
+    /** SPEEDAB class java.lang.Double 120.0. */
+    private DoubleScalar.Abs<SpeedUnit> speed;
 
-    /** the lines for the animation, relative to the centroid */
+    /** the lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
 
     private LinkData linkData;
 
-    /** traffic behaviour */
+    /** traffic behaviour. */
     private TrafficBehaviourType behaviourType;
 
     private ArrayList<FlowCell> flowCells;
@@ -249,11 +249,12 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param capacity
      * @param behaviourType
      */
-    public Link(final LinearGeometry geometry, final String nr, final Rel<LengthUnit> length, final Node startNode,
-            final Node endNode, DoubleScalar<SpeedUnit> speed, final DoubleScalar<FrequencyUnit> capacity,
+    public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Abs<LengthUnit> length, final Node startNode,
+            final Node endNode, DoubleScalar.Abs<SpeedUnit> speed, final DoubleScalar.Abs<FrequencyUnit> capacity,
             final TrafficBehaviourType behaviourType, LinkData linkData)
     {
-        super(nr, startNode, endNode, length, capacity, geometry);
+        super(nr, startNode, endNode, length, capacity);
+        setGeometry(geometry);
         this.speed = speed;
         this.behaviourType = behaviourType;
         this.linkData = linkData;
@@ -283,9 +284,10 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     /**
      * @param link
      */
-    public Link(Link link)
+    public Link(final Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link.getGeometry());
+        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity());
+        setGeometry(link.getGeometry());
         this.speed = link.speed;
         if (this.getGeometry() != null)
         {
@@ -312,16 +314,16 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param speed
      * @return
      */
-    public static Link createLink(Node startNode, Node endNode, DoubleScalar<FrequencyUnit> capacity,
-            DoubleScalar<SpeedUnit> speed)
+    public static Link createLink(Node startNode, Node endNode, DoubleScalar.Abs<FrequencyUnit> capacity,
+            DoubleScalar.Abs<SpeedUnit> speed)
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate coordStart = new Coordinate(startNode.getPoint().getX(), startNode.getPoint().getY());
         Coordinate coordEnd = new Coordinate(endNode.getPoint().getX(), endNode.getPoint().getY());
         Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
-        Rel<LengthUnit> length =
-                new Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
+        DoubleScalar.Abs<LengthUnit> length =
+                new DoubleScalar.Abs<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
 
         String nr = startNode.getId() + " - " + endNode.getId();
         Link newLink =
@@ -570,10 +572,8 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         }
         // System.out.println("test: " + nr + " length A: " + up.getLength().doubleValue() + " length B: "
         // + down.getLength().doubleValue());
-        MutableDoubleScalar.Rel<LengthUnit> lengthTemp =
-                DoubleScalar.plus(LengthUnit.METER, (DoubleScalar.Rel<LengthUnit>) up.getLength(),
-                        (DoubleScalar.Rel<LengthUnit>) down.getLength());
-        DoubleScalar.Rel<LengthUnit> length = lengthTemp.immutable();
+        DoubleScalar.Abs<LengthUnit> length =
+                new DoubleScalar.Abs<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
         mergedLink =
                 new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(),
                         up.getCapacity(), up.getBehaviourType(), up.getLinkData());
@@ -653,7 +653,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     /**
      * @return speed
      */
-    public DoubleScalar<SpeedUnit> getSpeed()
+    public DoubleScalar.Abs<SpeedUnit> getSpeed()
     {
         return this.speed;
     }

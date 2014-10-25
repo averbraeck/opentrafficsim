@@ -325,7 +325,7 @@ public class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                DoubleScalar.Abs<LengthUnit> length = new DoubleScalar.Abs<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -335,9 +335,9 @@ public class ShapeFileReader
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
-                DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
+                DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
-                DoubleScalar<FrequencyUnit> capacity =
+                DoubleScalar.Abs<FrequencyUnit> capacity =
                         new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
