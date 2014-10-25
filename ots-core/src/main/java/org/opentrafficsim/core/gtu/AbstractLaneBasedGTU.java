@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -15,7 +14,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.Lane;
-import org.opentrafficsim.core.network.LaneLocation;
+import org.opentrafficsim.core.network.LinkLocation;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -71,15 +70,17 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @param gtuFollowingModel the following model, including a reference to the simulator.
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes.
      * @param initialSpeed the initial speed of the car on the lane.
+     * @param simulator the simulator.
      * @throws RemoteException in case the simulation time cannot be read.
      */
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException
     {
-        super(id, gtuType, length, width, maximumVelocity);
+        super(id, gtuType, length, width, maximumVelocity, simulator);
         this.gtuFollowingModel = gtuFollowingModel;
         this.lastEvaluationTime = getSimulator().getSimulatorTime().get();
         this.longitudinalPositions = new HashMap<>(initialLongitudinalPositions);
@@ -88,61 +89,19 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         this.nextEvaluationTime = getSimulator().getSimulatorTime().get();
     }
 
-    /**
-     * Return the speed of this Car at the specified time. <br>
-     * v(t) = v0 + (t - t0) * a
-     * @param when time for which the speed must be returned
-     * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the speed at the specified time
-     */
-    public final DoubleScalar.Abs<SpeedUnit> getVelocity(final DoubleScalar.Abs<TimeUnit> when)
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Abs<SpeedUnit> getLongitudinalVelocity(final DoubleScalar.Abs<TimeUnit> when)
     {
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         return DoubleScalar.plus(this.speed, Calc.accelerationTimesTime(this.getAcceleration(when), dT)).immutable();
     }
 
-    /**
-     * Return the position of this Car at the specified time. <br>
-     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
-     * @param lane the position on this lane will be returned.
-     * @param when time for which the position must be returned.
-     * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time on the specified lane (could be longer than
-     *         the length of the lane).
-     * @exception NetworkException when the vehicle is not on the given lane.
-     */
-    public final DoubleScalar.Abs<LengthUnit> getPosition(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
-            throws NetworkException
-    {
-        if (!this.longitudinalPositions.containsKey(lane))
-        {
-            throw new NetworkException("GTU " + getId() + " not on lane " + lane);
-        }
-        DoubleScalar.Abs<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
-        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
-        return DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
-                Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
-    }
-
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<LengthUnit> positionOfFront(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
-            throws NetworkException
+    public final DoubleScalar.Abs<SpeedUnit> getLongitudinalVelocity() throws RemoteException
     {
-        return getPosition(lane, when);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final DoubleScalar.Abs<LengthUnit> positionOfRear(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
-            throws NetworkException
-    {
-        return DoubleScalar.minus(getPosition(lane, when), getLength()).immutable();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final DoubleScalar.Abs<SpeedUnit> getCurrentLongitudinalVelocity() throws RemoteException
-    {
-        return getVelocity(getSimulator().getSimulatorTime().get());
+        return getLongitudinalVelocity(getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
@@ -160,40 +119,18 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
-     * Description of Car at specified time.
-     * @param lane the position on this lane will be returned.
-     * @param when DoubleScalarAbs&lt;TimeUnit&gt;; the time
-     * @return String; description of this Car at the specified time
-     */
-    public final String toString(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
-    {
-        double pos = Double.NaN;
-        try
-        {
-            pos = this.getPosition(lane, when).getSI();
-        }
-        catch (NetworkException exception)
-        {
-            exception.printStackTrace();
-        }
-        // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
-        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", getId(),
-                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(), pos, this.getVelocity(when).getSI(), this
-                        .getAcceleration(when).getSI());
-    }
-
-    /**
      * Set the new state.
      * @param cfmr GTUFollowingModelResult; the new state of this GTU
      * @exception NetworkException when the vehicle is not on the given lane.
      */
     public final void setState(final GTUFollowingModelResult cfmr) throws NetworkException
     {
+        // TODO: test when vehicle moves to next lane in the network.
         for (Lane lane : this.longitudinalPositions.keySet())
         {
-            this.longitudinalPositions.put(lane, getPosition(lane, this.nextEvaluationTime));
+            this.longitudinalPositions.put(lane, positionOfFront(lane, this.nextEvaluationTime));
         }
-        this.speed = getVelocity(this.nextEvaluationTime);
+        this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
         // TODO add a check that time is increasing
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.getValidUntil();
@@ -213,10 +150,163 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU) throws RemoteException
+    public final DoubleScalar.Abs<SpeedUnit> getCurrentLateralVelocity()
+    {
+        // TODO: change when lateral velocity is introduced.
+        return new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Abs<LengthUnit> positionOfFront(final Lane lane) throws NetworkException
+    {
+        try
+        {
+            DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
+            return positionOfFront(lane, when);
+        }
+        catch (RemoteException exception)
+        {
+            throw new NetworkException(exception);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Abs<LengthUnit> positionOfFront(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
+            throws NetworkException
+    {
+        // TODO: link to the next lane if position > lane.getLength()
+        if (!this.longitudinalPositions.containsKey(lane))
+        {
+            throw new NetworkException("GTU " + getId() + " not on lane " + lane);
+        }
+        DoubleScalar.Abs<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        return DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
+                Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LinkLocation positionOfFront() throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
-        return DoubleScalar.minus(positionOfFront(lane, when), otherGTU.positionOfFront(lane, when)).immutable();
+        return positionOfFront(when);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LinkLocation positionOfFront(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
+    {
+        // TODO: link to the previous or next link if fraction < 0.0 or fraction > 1.0
+        Lane lane = this.longitudinalPositions.keySet().iterator().next();
+        DoubleScalar.Abs<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        DoubleScalar.Abs<LengthUnit> loc =
+                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
+                        Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
+        double fractionalLongitudinalPosition = DoubleScalar.divide(loc, lane.getLength()).doubleValue();
+        return new LinkLocation(lane.getParentLink(), fractionalLongitudinalPosition);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Abs<LengthUnit> positionOfRear(final Lane lane) throws NetworkException
+    {
+        return DoubleScalar.minus(positionOfFront(lane), getLength()).immutable();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Abs<LengthUnit> positionOfRear(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
+            throws NetworkException
+    {
+        // TODO: link to the next lane if position < 0 or position > lane.getLength()
+        return DoubleScalar.minus(positionOfFront(lane, when), getLength()).immutable();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LinkLocation positionOfRear() throws RemoteException
+    {
+        DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
+        return positionOfRear(when);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LinkLocation positionOfRear(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
+    {
+        // TODO: link to the previous or next link if fraction < 0.0 or fraction > 1.0
+        Lane lane = this.longitudinalPositions.keySet().iterator().next();
+        DoubleScalar.Abs<LengthUnit> longitudinalPosition =
+                DoubleScalar.minus(this.longitudinalPositions.get(lane), getLength()).immutable();
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        DoubleScalar.Abs<LengthUnit> loc =
+                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
+                        Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
+        double fractionalLongitudinalPosition = DoubleScalar.divide(loc, lane.getLength()).doubleValue();
+        return new LinkLocation(lane.getParentLink(), fractionalLongitudinalPosition);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Rel<LengthUnit> headwayInCurrentLane(final DoubleScalar<LengthUnit> maxDistance)
+            throws RemoteException
+    {
+        // TODO: link to the next lane if maxDistance < lane.getLength()
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedGTU<?> headwayGTUInCurrentLane(final DoubleScalar<LengthUnit> maxDistance) throws RemoteException
+    {
+        // TODO: link to the next lane if maxDistance < lane.getLength()
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU) throws RemoteException
+    {
+        // TODO: link to the next lane if maxDistance < lane.getLength()
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU, final DoubleScalar.Abs<TimeUnit> when)
+            throws RemoteException
+    {
+        // TODO: link to the next lane if maxDistance < lane.getLength()
+        return this.positionOfFront().distance(otherGTU.positionOfFront());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Rel<LengthUnit> headwayInLane(final Lane lane, final DoubleScalar<LengthUnit> maxDistance)
+            throws RemoteException
+    {
+        // TODO: link to the next lane if maxDistance < lane.getLength()
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedGTU<?> headwayGTUInLane(final Lane lane, final DoubleScalar<LengthUnit> maxDistance)
+            throws RemoteException
+    {
+        // TODO: link to the next lane if maxDistance < lane.getLength()
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Map<Lane, DoubleScalar.Abs<LengthUnit>> getLongitudinalPositions()
+    {
+        return this.longitudinalPositions;
     }
 
     /**
@@ -232,20 +322,25 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        Set<LaneLocation> laneLocations = getCurrentLocation(new GTUReferencePoint(0.0, 0.0, 0.0));
-        if (laneLocations.isEmpty())
+        Lane lane = this.longitudinalPositions.keySet().iterator().next();
+        try
+        {
+            // TODO: solve problem when point is still on previous lane.
+            double fraction = (positionOfFront(lane).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
+            LineString line = lane.getOffsetLine();
+            LengthIndexedLine lil = new LengthIndexedLine(line);
+            Coordinate c = lil.extractPoint(fraction * line.getLength());
+            Coordinate ca =
+                    (fraction <= 0.01) ? lil.extractPoint(0.0) : lil.extractPoint((fraction - 0.01) * line.getLength());
+            Coordinate cb =
+                    (fraction >= 0.99) ? lil.extractPoint(1.0) : lil.extractPoint((fraction + 0.01) * line.getLength());
+            double angle = Math.atan2(cb.y - ca.y, cb.x - ca.x);
+            return new DirectedPoint(c.x, c.y, c.z, 0.0, 0.0, angle);
+        }
+        catch (NetworkException ne)
         {
             return null;
         }
-        LaneLocation laneLocation = laneLocations.iterator().next();
-        LineString line = laneLocation.getLane().getOffsetLine();
-        double fraction = laneLocation.getFractionalLongitudinalPosition();
-        LengthIndexedLine lil = new LengthIndexedLine(line);
-        Coordinate c = lil.extractPoint(fraction * line.getLength());
-        Coordinate ca = (fraction <= 0.01) ? lil.extractPoint(0.0) : lil.extractPoint((fraction - 0.01) * line.getLength());
-        Coordinate cb = (fraction >= 0.99) ? lil.extractPoint(1.0) : lil.extractPoint((fraction + 0.01) * line.getLength());
-        double angle = Math.atan2(cb.y - ca.y, cb.x - ca.x);
-        return new DirectedPoint(c.x, c.y, c.z, 0.0, 0.0, angle);
     }
 
     /** {@inheritDoc} */
@@ -258,18 +353,27 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         return new BoundingBox(new Point3d(l.x - dx, l.y - dy, 0.0), new Point3d(l.x + dx, l.y + dy, l.z));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
+    /**
+     * Description of Car at specified time.
+     * @param lane the position on this lane will be returned.
+     * @param when DoubleScalarAbs&lt;TimeUnit&gt;; the time
+     * @return String; description of this Car at the specified time
+     */
+    public final String toString(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
     {
-        return this.gtuFollowingModel.getSimulator();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Map<Lane, DoubleScalar.Abs<LengthUnit>> getLongitudinalPositions()
-    {
-        return this.longitudinalPositions;
+        double pos = Double.NaN;
+        try
+        {
+            pos = this.positionOfFront(lane, when).getSI();
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
+        // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
+        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", getId(),
+                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(), pos, this.getLongitudinalVelocity(when)
+                        .getSI(), this.getAcceleration(when).getSI());
     }
 
 }

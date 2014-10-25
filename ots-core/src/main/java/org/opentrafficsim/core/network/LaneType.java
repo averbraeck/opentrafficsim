@@ -1,5 +1,10 @@
 package org.opentrafficsim.core.network;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.opentrafficsim.core.gtu.GTUType;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -11,8 +16,46 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> to identify the ID type (can be String, numeric, object).
  */
-public interface LaneType<ID>
+public class LaneType<ID>
 {
-    /** @return the id of the LaneType to make it identifiable */ 
-    ID getID();
+    /** The id of the LaneType to make it identifiable. */
+    private final ID id;
+
+    /** the compatibility of GTUs with this lane type. */
+    private final Set<GTUType<?>> compatibilitySet = new HashSet<>();
+
+    /**
+     * @param id the id of the lane type.
+     */
+    public LaneType(final ID id)
+    {
+        super();
+        this.id = id;
+    }
+
+    /**
+     * @param gtuType GTU type to add compatibility for.
+     */
+    public final void addPermeability(final GTUType<?> gtuType)
+    {
+        this.compatibilitySet.add(gtuType);
+    }
+
+    /**
+     * @param gtuType GTU type to look for compatibility.
+     * @return whether the LaneType is compatible with the GTU type.
+     */
+    public final boolean isCompatible(final GTUType<?> gtuType)
+    {
+        return this.compatibilitySet.contains(gtuType);
+    }
+
+    /**
+     * @return id.
+     */
+    public final ID getId()
+    {
+        return this.id;
+    }
+
 }

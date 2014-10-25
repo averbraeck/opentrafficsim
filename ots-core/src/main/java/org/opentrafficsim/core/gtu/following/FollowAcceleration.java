@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.following;
 
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,9 +43,9 @@ public final class FollowAcceleration
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (deceleration) for the following GTU in order to not
      *         collide with the leader GTU
      */
-    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
-            final DoubleScalar.Abs<TimeUnit> when, final GTUFollowingModel gtuFollowingModel,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final LaneBasedGTU<?> follower,
+            final LaneBasedGTU<?> leader, final DoubleScalar.Abs<TimeUnit> when, final GTUFollowingModel gtuFollowingModel,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         if (null != leader)
         {

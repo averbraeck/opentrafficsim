@@ -1,13 +1,9 @@
-package org.opentrafficsim.gtu.lanechanging;
+package org.opentrafficsim.car.lanechanging;
 
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.following.FollowAcceleration;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * This utility class implements the <i>Safety Criterion</i> as described in Traffic Flow Dynamics by Martin Treiber and
@@ -45,6 +41,7 @@ public final class SafeLaneChange
     public static boolean safe(final GTU<?> referenceGTU, final GTU<?> otherGTU,
             final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
+        /*-
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
         if (referenceGTU.getPosition(when).getSI() > otherGTU.getPosition(when).getSI())
@@ -55,5 +52,7 @@ public final class SafeLaneChange
         // The otherGTU is exactly parallel or ahead of the referenceGTU
         return FollowAcceleration.acceleration(referenceGTU, otherGTU, when, gtuFollowingModel, speedLimit).getSI() >= -maximumDeceleration
                 .getSI();
+                */
+        return false;
     }
 }

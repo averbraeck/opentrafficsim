@@ -5,19 +5,15 @@ package org.opentrafficsim.core.network;
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Aug 19, 2014 <br>
+ * @version Oct 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Zone
+public enum LateralDirectionality
 {
-
-    /**
-     * 
-     */
-    public Zone()
-    {
-    }
-
+    /** Direction to the left of our current driving direction. */
+    LEFT,
+    /** Direction to the right of our current driving direction. */
+    RIGHT;
 }

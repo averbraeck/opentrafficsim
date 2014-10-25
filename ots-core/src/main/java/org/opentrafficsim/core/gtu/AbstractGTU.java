@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -33,16 +34,21 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
 
     /** the maximum speed of the GTU (in the driving direction). */
     private final DoubleScalar.Abs<SpeedUnit> maximumVelocity;
-
+    
+    /** the simulator. */
+    private final OTSDEVSSimulatorInterface simulator;
+    
     /**
      * @param id the id of the GTU, could be String or Integer.
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
      * @param length the maximum length of the GTU (parallel with driving direction).
      * @param width the maximum width of the GTU (perpendicular to driving direction).
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction).
+     * @param simulator a simulator to schedule time on.
      */
     public AbstractGTU(final ID id, final GTUType<?> gtuType, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity)
+            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+            final OTSDEVSSimulatorInterface simulator)
     {
         super();
         this.id = id;
@@ -50,6 +56,15 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
         this.length = length;
         this.width = width;
         this.maximumVelocity = maximumVelocity;
+        this.simulator = simulator;
+    }
+
+    /**
+     * @return simulator.
+     */
+    public final OTSDEVSSimulatorInterface getSimulator()
+    {
+        return this.simulator;
     }
 
     /** {@inheritDoc} */
