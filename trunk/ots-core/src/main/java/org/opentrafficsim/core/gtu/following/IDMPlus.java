@@ -3,13 +3,10 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.LaneBasedGTU;
-import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -120,19 +117,21 @@ public class IDMPlus implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = gtu.getNextEvaluationTime();
         // System.out.println("evaluation time is " + thisEvaluationTime);
         // System.out.println("vDes is " + vDes);
-        DoubleScalar.Abs<LengthUnit> myFrontPosition = gtu.positionOfFront(thisEvaluationTime);
+        DoubleScalar.Abs<LengthUnit> myFrontPosition = gtu.positionOfFront(thisEvaluationTime).getLongitudinalPosition();
         // System.out.println("myFrontPosition is " + myFrontPosition);
         DoubleScalar.Rel<LengthUnit> shortestHeadway = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
-        GTU<?> closestLeader = null;
-        for (GTU<?> leader : leaders)
+        LaneBasedGTU<?> closestLeader = null;
+        for (LaneBasedGTU<?> leader : leaders)
         {
             DoubleScalar.Rel<LengthUnit> s =
-                    MutableDoubleScalar.minus(leader.positionOfRear(thisEvaluationTime), myFrontPosition).immutable();
+                    DoubleScalar.minus(leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(), myFrontPosition)
+                            .immutable();
             // System.out.println("s is " + s);
             if (s.getSI() < 0)
             {
@@ -145,7 +144,7 @@ public class IDMPlus implements GTUFollowingModel
             }
         }
         // System.out.println("shortestHeadway is " + shortestHeadway);
-        DoubleScalar.Rel<SpeedUnit> myCurrentSpeed = gtu.getVelocity(thisEvaluationTime);
+        DoubleScalar.Abs<SpeedUnit> myCurrentSpeed = gtu.getLongitudinalVelocity(thisEvaluationTime);
         double speedIncentive = 1 - Math.pow(myCurrentSpeed.getSI() / vDes(gtu, speedLimit).getSI(), 4);
         // System.out.println("speedIncentive is " + speedIncentive);
         MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAverageSpeedTimes2 =
@@ -153,19 +152,19 @@ public class IDMPlus implements GTUFollowingModel
                         AccelerationUnit.METER_PER_SECOND_2);
         logWeightedAverageSpeedTimes2.multiply(2); // don't forget the times 2
         DoubleScalar.Rel<SpeedUnit> dV =
-                (null == closestLeader) ? new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND) : MutableDoubleScalar
-                        .minus(gtu.getVelocity(thisEvaluationTime), closestLeader.getVelocity(thisEvaluationTime)).immutable();
+                (null == closestLeader) ? new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND) : DoubleScalar
+                        .minus(gtu.getLongitudinalVelocity(thisEvaluationTime),
+                                closestLeader.getLongitudinalVelocity(thisEvaluationTime)).immutable();
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + gtu.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
         DoubleScalar.Rel<LengthUnit> sStar =
-                MutableDoubleScalar.plus(
+                DoubleScalar.plus(
                         LengthUnit.METER,
                         this.s0,
-                        Calc.speedTimesTime(gtu.getVelocity(thisEvaluationTime), this.tSafe),
-                        Calc.speedTimesTime(dV,
-                                Calc.speedDividedByAcceleration(myCurrentSpeed, logWeightedAverageSpeedTimes2.immutable())))
-                        .immutable();
+                        Calc.speedTimesTime(gtu.getLongitudinalVelocity(thisEvaluationTime), this.tSafe),
+                        Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(myCurrentSpeed,
+                                logWeightedAverageSpeedTimes2.immutable()))).immutable();
         if (sStar.getSI() < 0) // Negative value should be treated as 0
         {
             sStar = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -187,8 +186,9 @@ public class IDMPlus implements GTUFollowingModel
      */
     @Override
     public final GTUFollowingModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<LaneBasedGTU<?>> sameLaneGTUs, final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final Collection<? extends LaneBasedGTU<?>> sameLaneGTUs,
+            final Collection<? extends LaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<? extends LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final double preferredLaneRouteIncentive, final double nonPreferredLaneRouteIncentive) throws RemoteException
     {
         System.out.println(String.format(
@@ -203,8 +203,9 @@ public class IDMPlus implements GTUFollowingModel
         if (null != nonPreferredLaneGTUs)
         {
             nonPreferredLaneSpeedIncentive =
-                    aGain * DoubleScalar.minus(anticipatedSpeed(speedLimit, gtu, nonPreferredLaneGTUs), vAntStraight).getSI()
-                            / this.vGain.getSI();
+                    aGain
+                            * DoubleScalar.minus(anticipatedSpeed(speedLimit, gtu, nonPreferredLaneGTUs), vAntStraight)
+                                    .getSI() / this.vGain.getSI();
         }
         double dBias = 0;
         double preferredLaneSpeedIncentive = 0;
@@ -251,7 +252,7 @@ public class IDMPlus implements GTUFollowingModel
      * @return boolean; true if the lane change can be performed; false if the lane change should not be performed
      * @throws RemoteException in case simulation time cannot be retrieved
      */
-    private boolean checkLaneChange(final LaneBasedGTU<?> gtu, final Collection<LaneBasedGTU<?>> gtusInOtherLane,
+    private boolean checkLaneChange(final LaneBasedGTU<?> gtu, final Collection<? extends LaneBasedGTU<?>> gtusInOtherLane,
             final double desire, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         // Find the new leader and follower
@@ -348,15 +349,16 @@ public class IDMPlus implements GTUFollowingModel
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the anticipated speed
      */
     private DoubleScalar.Abs<SpeedUnit> anticipatedSpeed(final DoubleScalar.Abs<SpeedUnit> speedLimit,
-            final LaneBasedGTU<?> gtu, final Collection<LaneBasedGTU<?>> leaders)
+            final LaneBasedGTU<?> gtu, final Collection<? extends LaneBasedGTU<?>> leaders) throws RemoteException
     {
         DoubleScalar.Abs<SpeedUnit> result = speedLimit;
-        DoubleScalar.Abs<LengthUnit> frontPositionOfGTU = gtu.positionOfFront(gtu.getNextEvaluationTime());
-        for (GTU<?> leader : leaders)
+        DoubleScalar.Abs<LengthUnit> frontPositionOfGTU =
+                gtu.positionOfFront(gtu.getNextEvaluationTime()).getLongitudinalPosition();
+        for (LaneBasedGTU<?> leader : leaders)
         {
             DoubleScalar.Rel<LengthUnit> headway =
-                    MutableDoubleScalar.minus(leader.positionOfRear(gtu.getNextEvaluationTime()), frontPositionOfGTU)
-                            .immutable();
+                    DoubleScalar.minus(leader.positionOfRear(gtu.getNextEvaluationTime()).getLongitudinalPosition(),
+                            frontPositionOfGTU).immutable();
             if (headway.getSI() < 0)
             {
                 continue;
@@ -365,7 +367,7 @@ public class IDMPlus implements GTUFollowingModel
             {
                 continue;
             }
-            DoubleScalar.Rel<SpeedUnit> leaderSpeed = leader.getVelocity(gtu.getNextEvaluationTime());
+            DoubleScalar.Abs<SpeedUnit> leaderSpeed = leader.getLongitudinalVelocity(gtu.getNextEvaluationTime());
             if (leaderSpeed.getSI() < result.getSI())
             {
                 result = new DoubleScalar.Abs<SpeedUnit>(leaderSpeed.getSI(), leaderSpeed.getUnit());

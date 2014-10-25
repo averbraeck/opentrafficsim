@@ -1,7 +1,6 @@
 package org.opentrafficsim.demo.geometry;
 
 import org.opentrafficsim.core.network.CrossSectionLink;
-import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -26,25 +25,11 @@ public class Link extends CrossSectionLink<String, Node>
      * @param endNode en
      * @param length l
      * @param capacity c
-     * @param geometry g
      */
     public Link(final String id, final Node startNode, final Node endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar<FrequencyUnit> capacity, final LinearGeometry geometry)
+            final DoubleScalar<FrequencyUnit> capacity)
     {
-        super(id, startNode, endNode, length, capacity, geometry);
-    }
-
-    /**
-     * @param id id
-     * @param startNode sn
-     * @param endNode en
-     * @param length l
-     * @param geometry g
-     */
-    public Link(final String id, final Node startNode, final Node endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final LinearGeometry geometry)
-    {
-        super(id, startNode, endNode, length, geometry);
+        super(id, startNode, endNode, length, capacity);
     }
 
     /**

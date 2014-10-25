@@ -20,7 +20,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Directionality;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.Shoulder;
@@ -400,11 +400,11 @@ public class ShapeFileReader
             new ShoulderAnimation(sM, simulator);
             for (int i = -1; i <= 1; i += 2)
             {
-                Directionality dir = (i < 0) ? Directionality.FORWARD : Directionality.BACKWARD;
+                LongitudinalDirectionality dir = (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
                 Lane laneEM =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
-                                Directionality.NONE, f0);
+                                LongitudinalDirectionality.NONE, f0);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
@@ -428,7 +428,7 @@ public class ShapeFileReader
                 }
                 Lane laneEO =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05,
-                                null, Directionality.NONE, f0);
+                                null, LongitudinalDirectionality.NONE, f0);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
                 Shoulder sO = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
@@ -465,7 +465,7 @@ public class ShapeFileReader
             }
             for (int i = -1; i <= 1; i += 2)
             {
-                Directionality dir = (i < 0) ? Directionality.FORWARD : Directionality.BACKWARD;
+                LongitudinalDirectionality dir = (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 double lat = middenberm ? 0.5 : 0.0;
                 for (int j = 0; j < n; j++)
                 {
@@ -495,7 +495,7 @@ public class ShapeFileReader
 
         Lane lane =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
-                        Directionality.BOTH, f50);
+                        LongitudinalDirectionality.BOTH, f50);
         try
         {
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);

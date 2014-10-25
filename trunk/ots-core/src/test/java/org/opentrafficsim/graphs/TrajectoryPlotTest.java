@@ -8,6 +8,9 @@ import static org.junit.Assert.fail;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 
@@ -15,7 +18,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
 import org.opentrafficsim.car.Car;
+import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -54,10 +61,21 @@ public class TrajectoryPlotTest
         }
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
-        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(2000, LengthUnit.METER);
-        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Create a car running 50 km.h
-        Car car = new Car(1, null, null, initialTime, initialPosition, initialSpeed);
+        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(2000, LengthUnit.METER);
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        GTUType<String> carType = new GTUType<String>("Car");
+        DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
+        Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Lane lane = CarTest.makeLane();
+        initialLongitudinalPositions.put(lane, initialPosition);
+        OTSDEVSSimulator simulator = CarTest.makeSimulator();
+        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        Car<Integer> car =
+                new Car<Integer>(12345, carType, length, width, maxSpeed, null, initialLongitudinalPositions,
+                        initialSpeed, simulator);
+
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 500 seconds
         DoubleScalar.Abs<TimeUnit> endTime = new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 400, TimeUnit.SECOND);
         car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
@@ -162,8 +180,9 @@ public class TrajectoryPlotTest
      * @param car Car; the car whose trajectory was sampled
      * @param series Integer; the series in the TrajectoryPlot that should correspond to the car
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
+     * @throws RemoteException 
      */
-    private void verifyTrajectory(final Car car, final int series, final TrajectoryPlot tp)
+    private void verifyTrajectory(final Car car, final int series, final TrajectoryPlot tp) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
@@ -180,7 +199,7 @@ public class TrajectoryPlotTest
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
-            DoubleScalar.Abs<LengthUnit> actualPosition = car.getPosition(sampleTime);
+            DoubleScalar.Abs<LengthUnit> actualPosition = car.positionOfFront(sampleTime).getLongitudinalPosition();
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                     0.0001);

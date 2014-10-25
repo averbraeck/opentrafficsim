@@ -13,7 +13,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Directionality;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.NetworkException;
@@ -175,31 +175,31 @@ public class TestModel implements OTSModelInterface
 
         Lane laneELL =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null,
-                        Directionality.NONE, f0);
+                        LongitudinalDirectionality.NONE, f0);
         Lane laneL1 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), m35, m35, null,
-                        Directionality.BACKWARD, f200);
+                        LongitudinalDirectionality.BACKWARD, f200);
         Lane laneL2 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), m35, m35, null,
-                        Directionality.BACKWARD, f200);
+                        LongitudinalDirectionality.BACKWARD, f200);
         Lane laneELM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null,
-                        Directionality.NONE, f0);
+                        LongitudinalDirectionality.NONE, f0);
 
         Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
 
         Lane laneERM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null,
-                        Directionality.NONE, f0);
+                        LongitudinalDirectionality.NONE, f0);
         Lane laneR2 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
-                        Directionality.FORWARD, f200);
+                        LongitudinalDirectionality.FORWARD, f200);
         Lane laneR1 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
-                        Directionality.FORWARD, f200);
+                        LongitudinalDirectionality.FORWARD, f200);
         Lane laneERR =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null,
-                        Directionality.NONE, f0);
+                        LongitudinalDirectionality.NONE, f0);
 
         Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
 

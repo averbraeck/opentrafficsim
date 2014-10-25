@@ -40,26 +40,11 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
-     * @param geometry possible geometry for the link; can be null.
      */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar<FrequencyUnit> capacity, final LinearGeometry geometry)
+    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length,
+            final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
-        super(id, startNode, endNode, length, capacity, geometry);
-    }
-
-    /**
-     * Construction of a link.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param length link length in a length unit.
-     * @param geometry possible geometry for the link; can be null.
-     */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final LinearGeometry geometry)
-    {
-        super(id, startNode, endNode, length, geometry);
+        super(id, startNode, endNode, length, capacity);
     }
 
     /**
@@ -69,13 +54,14 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
+    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length)
     {
         super(id, startNode, endNode, length);
     }
 
     /**
-     * Add a cross section element at the end of the list.
+     * Add a cross section element at the end of the list. <br>
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param cse the cross section element to add.
      */
     protected final void addCrossSectionElement(final CrossSectionElement cse)
@@ -84,7 +70,8 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
     }
 
     /**
-     * Add a cross section element at the end of the list.
+     * Add a cross section element at the end of the list.<br>
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param index the location to insert the element.
      * @param cse the cross section element to add.
      */

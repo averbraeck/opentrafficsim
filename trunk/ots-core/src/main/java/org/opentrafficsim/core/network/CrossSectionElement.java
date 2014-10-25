@@ -39,13 +39,19 @@ public abstract class CrossSectionElement implements LocatableInterface
     private final CrossSectionLink<?, ?> parentLink;
 
     /** the lateral start position compared to the linear geometry of the Cross Section Link. */
-    private final DoubleScalar<LengthUnit> lateralCenterPosition;
+    private final DoubleScalar.Abs<LengthUnit> lateralCenterPosition;
+
+    /** the lowest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section Link. */
+    private final DoubleScalar.Abs<LengthUnit> lateralBeginStartPosition;
+
+    /** the highest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section Link. */
+    private final DoubleScalar.Abs<LengthUnit> lateralBeginEndPosition;
 
     /** start width, positioned <i>symmetrically around</i> the lateral start position. */
-    private final DoubleScalar<LengthUnit> beginWidth;
+    private final DoubleScalar.Abs<LengthUnit> beginWidth;
 
     /** end width, positioned <i>symmetrically around</i> the lateral end position. */
-    private final DoubleScalar<LengthUnit> endWidth;
+    private final DoubleScalar.Abs<LengthUnit> endWidth;
 
     /** geometry matching the contours of the cross section element. */
     private final Geometry contour;
@@ -53,14 +59,19 @@ public abstract class CrossSectionElement implements LocatableInterface
     /** the offset line as calculated. */
     private LineString offsetLine;
 
+    /** the length of the line. Calculated once at the creation. */
+    private DoubleScalar.Abs<LengthUnit> length;
+
     /**
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
+     * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
-    public CrossSectionElement(final CrossSectionLink<?, ?> parentLink, final DoubleScalar<LengthUnit> lateralCenterPosition,
-            final DoubleScalar<LengthUnit> beginWidth, final DoubleScalar<LengthUnit> endWidth)
+    public CrossSectionElement(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
+            final DoubleScalar.Abs<LengthUnit> beginWidth, final DoubleScalar.Abs<LengthUnit> endWidth)
     {
         super();
         this.parentLink = parentLink;
@@ -68,6 +79,13 @@ public abstract class CrossSectionElement implements LocatableInterface
         this.beginWidth = beginWidth;
         this.endWidth = endWidth;
         this.contour = constructGeometry();
+        // TODO: LengthUnit and width might depend on CRS
+        this.length = new DoubleScalar.Abs<LengthUnit>(this.offsetLine.getLength(), LengthUnit.METER);
+        double halfWidth = beginWidth.getSI() / 2.0; // SI, so in meters
+        this.lateralBeginStartPosition =
+                new DoubleScalar.Abs<LengthUnit>(lateralCenterPosition.getSI() - halfWidth, LengthUnit.METER);
+        this.lateralBeginEndPosition =
+                new DoubleScalar.Abs<LengthUnit>(lateralCenterPosition.getSI() + halfWidth, LengthUnit.METER);
     }
 
     /**
@@ -87,7 +105,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         // CoordinateReferenceSystem crs = this.parentLink.getGeometry().getCRS();
         if (this.beginWidth.equals(this.endWidth))
         {
-            // TODO: This is done in metres. Does that always fit the geometry?
+            // TODO: This is done in meters. Does that always fit the geometry?
             return this.offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
         }
         else
@@ -231,7 +249,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @param bufferLine 
+     * @param bufferLine
      * @param c0
      * @param c1
      * @param offset
@@ -269,5 +287,29 @@ public abstract class CrossSectionElement implements LocatableInterface
             }
         }
         return bestI;
+    }
+
+    /**
+     * @return length.
+     */
+    public final DoubleScalar.Abs<LengthUnit> getLength()
+    {
+        return this.length;
+    }
+
+    /**
+     * @return lateralBeginStartPosition.
+     */
+    public final DoubleScalar.Abs<LengthUnit> getLateralBeginStartPosition()
+    {
+        return this.lateralBeginStartPosition;
+    }
+
+    /**
+     * @return lateralBeginEndPosition.
+     */
+    public final DoubleScalar.Abs<LengthUnit> getLateralBeginEndPosition()
+    {
+        return this.lateralBeginEndPosition;
     }
 }

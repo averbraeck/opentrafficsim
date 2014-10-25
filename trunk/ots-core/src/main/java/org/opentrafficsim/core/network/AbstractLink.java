@@ -35,10 +35,10 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     private final N endNode;
 
     /** link length in a length unit. */
-    private final DoubleScalar.Rel<LengthUnit> length;
+    private final DoubleScalar.Abs<LengthUnit> length;
 
     /** link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
-    private DoubleScalar<FrequencyUnit> capacity;
+    private DoubleScalar.Abs<FrequencyUnit> capacity;
 
     /** possible geometry for the link; can be null. */
     private LinearGeometry geometry;
@@ -50,17 +50,15 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
-     * @param geometry possible geometry for the link; can be null.
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar<FrequencyUnit> capacity, final LinearGeometry geometry)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length,
+            final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
         this.length = length;
         setCapacity(capacity);
-        this.geometry = geometry;
     }
 
     /**
@@ -70,25 +68,10 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
-                FrequencyUnit.PER_SECOND), null);
-    }
-
-    /**
-     * Construction of a link.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param length link length in a length unit.
-     * @param geometry possible geometry for the link; can be null.
-     */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final LinearGeometry geometry)
-    {
-        this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
-                FrequencyUnit.PER_SECOND), geometry);
+                FrequencyUnit.PER_SECOND));
     }
 
     /**
@@ -126,7 +109,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @return link capacity.
      */
-    public final DoubleScalar<FrequencyUnit> getCapacity()
+    public final DoubleScalar.Abs<FrequencyUnit> getCapacity()
     {
         return this.capacity;
     }
@@ -134,7 +117,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @param capacity set the link capacity.
      */
-    public final void setCapacity(final DoubleScalar<FrequencyUnit> capacity)
+    public final void setCapacity(final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         this.capacity = capacity;
     }
@@ -142,7 +125,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @return length.
      */
-    public final DoubleScalar.Rel<LengthUnit> getLength()
+    public final DoubleScalar.Abs<LengthUnit> getLength()
     {
         return this.length;
     }
@@ -158,7 +141,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @param geometry set geometry.
      */
-    public void setGeometry(LinearGeometry geometry)
+    public final void setGeometry(final LinearGeometry geometry)
     {
         this.geometry = geometry;
     }

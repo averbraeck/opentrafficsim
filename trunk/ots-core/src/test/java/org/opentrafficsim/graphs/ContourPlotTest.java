@@ -9,14 +9,22 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
 
+import javax.naming.NamingException;
 import javax.swing.JLabel;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
 import org.opentrafficsim.car.Car;
+import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -43,10 +51,14 @@ public class ContourPlotTest
 
     /**
      * Test the AccelerationContourPlot.
+     * @throws NamingException 
+     * @throws SimRuntimeException 
+     * @throws NetworkException 
+     * @throws RemoteException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void accelerationContourTest()
+    public final void accelerationContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
     {
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", minimumDistance, maximumDistance);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
@@ -56,10 +68,14 @@ public class ContourPlotTest
 
     /**
      * Test the DensityContourPlot.
+     * @throws NamingException 
+     * @throws SimRuntimeException 
+     * @throws NetworkException 
+     * @throws RemoteException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void densityContourTest()
+    public final void densityContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
     {
         DensityContourPlot dcp = new DensityContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
@@ -69,10 +85,14 @@ public class ContourPlotTest
 
     /**
      * Test the FlowContourPlot.
+     * @throws NamingException 
+     * @throws SimRuntimeException 
+     * @throws NetworkException 
+     * @throws RemoteException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void flowContourTest()
+    public final void flowContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
     {
         FlowContourPlot fcp = new FlowContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
@@ -82,10 +102,14 @@ public class ContourPlotTest
 
     /**
      * Test the SpeedContourPlot.
+     * @throws NamingException 
+     * @throws SimRuntimeException 
+     * @throws NetworkException 
+     * @throws RemoteException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void speedContourTest()
+    public final void speedContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
     {
         SpeedContourPlot scp = new SpeedContourPlot("Density", minimumDistance, maximumDistance);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
@@ -100,9 +124,13 @@ public class ContourPlotTest
      * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car has
      *            travelled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the value
      *            expected when no car has passed
+     * @throws NetworkException 
+     * @throws RemoteException 
+     * @throws NamingException 
+     * @throws SimRuntimeException 
      */
     public static void standardContourTests(final ContourPlot cp, final double expectedZValue,
-            final double expectedZValueWithTraffic)
+            final double expectedZValueWithTraffic) throws NetworkException, RemoteException, SimRuntimeException, NamingException
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -263,9 +291,11 @@ public class ContourPlotTest
         bins = cp.getItemCount(0);
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(20, LengthUnit.METER);
-        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        Lane lane = CarTest.makeLane();
+        OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // Create a car running 50 km.h
-        Car car = new Car(0, null, null, initialTime, initialPosition, initialSpeed);
+        Car car = CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed, simulator); // new Car(0, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car run at constant speed for one minute
         car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
@@ -353,8 +383,8 @@ public class ContourPlotTest
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
                         new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
-                if (car.getPosition(cellStartTime).getSI() <= y + useDistanceGranularity
-                        && car.getPosition(cellEndTime).getSI() >= y)
+                if (car.positionOfFront(cellStartTime).getLongitudinalPosition().getSI() <= y + useDistanceGranularity
+                        && car.positionOfFront(cellEndTime).getLongitudinalPosition().getSI() >= y)
                 {
                     hit = true;
                 }

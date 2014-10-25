@@ -85,7 +85,7 @@ public final class Calc
      * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the time it takes to accelerate using the given acceleration from 0 to the
      *         indicated speed
      */
-    public static DoubleScalar.Rel<TimeUnit> speedDividedByAcceleration(final DoubleScalar.Rel<SpeedUnit> speed,
+    public static DoubleScalar.Rel<TimeUnit> speedDividedByAcceleration(final DoubleScalar<SpeedUnit> speed,
             final DoubleScalar.Rel<AccelerationUnit> acceleration)
     {
         return new DoubleScalar.Rel<TimeUnit>(speed.getSI() / acceleration.getSI(), TimeUnit.SECOND);

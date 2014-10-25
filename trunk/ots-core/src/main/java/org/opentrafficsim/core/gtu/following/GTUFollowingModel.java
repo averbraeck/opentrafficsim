@@ -27,9 +27,11 @@ public interface GTUFollowingModel
      * @param leaders Set&lt;GTU&gt;; the set of leaders to take into consideration
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return GTUFollowingModelResult; the result of application of the gtu following model
+     * @throws RemoteException in case of simulator reachability problems
      */
-    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu, final Collection<LaneBasedGTU<?>> leaders,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit);
+    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException;
 
     /**
      * Compute the acceleration and lane change.
@@ -48,8 +50,9 @@ public interface GTUFollowingModel
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
     GTUFollowingModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<LaneBasedGTU<?>> sameLaneGTUs, final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final Collection<? extends LaneBasedGTU<?>> sameLaneGTUs,
+            final Collection<? extends LaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<? extends LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
             double preferredLaneRouteIncentive, double nonPreferredLaneRouteIncentive) throws RemoteException;
 
     /** @return the simulator of the GTU Following Model. */

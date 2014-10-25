@@ -276,7 +276,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param car Car; the car that passes FIXME replace Car by GTU
      * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
      */
-    public final void addData(final int lane, final Car car, final DoubleScalar.Abs<TimeUnit> detectionTime)
+    public final void addData(final int lane, final Car<?> car, final DoubleScalar.Abs<TimeUnit> detectionTime)
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
@@ -287,7 +287,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             laneData.add(new Sample());
         }
         Sample sample = laneData.get(timeBin);
-        sample.addData(car.getVelocity(detectionTime));
+        sample.addData(car.getLongitudinalVelocity(detectionTime));
     }
 
     /**
@@ -517,7 +517,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * Add one Car detection to this Sample.
          * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the detected speed
          */
-        public void addData(final DoubleScalar.Rel<SpeedUnit> speed)
+        public void addData(final DoubleScalar.Abs<SpeedUnit> speed)
         {
             double sumReciprocalSpeeds = 0;
             if (this.flow > 0)
