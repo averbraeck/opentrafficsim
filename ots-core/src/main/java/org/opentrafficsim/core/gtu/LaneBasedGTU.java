@@ -51,7 +51,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the center position of the
      *         GTU.
      */
-    Map<Lane, DoubleScalar.Abs<LengthUnit>> getLongitudinalPositions();
+    Map<Lane, DoubleScalar.Rel<LengthUnit>> getLongitudinalPositions();
 
     /**
      * Return the position of the front bumper of this GTU, relative to the center line of the Lane.
@@ -59,7 +59,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @exception NetworkException when the vehicle is not on the given lane.
      */
-    DoubleScalar.Abs<LengthUnit> positionOfFront(Lane lane) throws NetworkException;
+    DoubleScalar.Rel<LengthUnit> positionOfFront(Lane lane) throws NetworkException;
 
     /**
      * Return the position of the front bumper of this GTU, relative to the center line of the Lane. <br>
@@ -69,7 +69,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @exception NetworkException when the vehicle is not on the given lane.
      */
-    DoubleScalar.Abs<LengthUnit> positionOfFront(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws NetworkException;
+    DoubleScalar.Rel<LengthUnit> positionOfFront(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws NetworkException;
 
     /**
      * Return the position of the front bumper of this GTU.
@@ -93,7 +93,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
      * @exception NetworkException when the vehicle is not on the given lane.
      */
-    DoubleScalar.Abs<LengthUnit> positionOfRear(Lane lane) throws NetworkException;
+    DoubleScalar.Rel<LengthUnit> positionOfRear(Lane lane) throws NetworkException;
 
     /**
      * Return the position of the rear bumper of this GTU.<br>
@@ -103,7 +103,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position at the specified time
      * @exception NetworkException when the vehicle is not on the given lane.
      */
-    DoubleScalar.Abs<LengthUnit> positionOfRear(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws NetworkException;
+    DoubleScalar.Rel<LengthUnit> positionOfRear(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws NetworkException;
 
     /**
      * Return the position of the rear bumper of this GTU.

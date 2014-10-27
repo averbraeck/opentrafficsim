@@ -120,9 +120,9 @@ public class FundamentalDiagramPlotTest
             DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
             DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
             DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-            Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
             Lane lane = CarTest.makeLane();
-            DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER);
+            DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(23, LengthUnit.METER);
             initialLongitudinalPositions.put(lane, initialPosition);
             OTSDEVSSimulator simulator = CarTest.makeSimulator();
             int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());

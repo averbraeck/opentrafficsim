@@ -49,7 +49,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
 
     /** Longitudinal positions on one or more lanes. */
-    private final Map<Lane, DoubleScalar.Abs<LengthUnit>> longitudinalPositions;
+    private final Map<Lane, DoubleScalar.Rel<LengthUnit>> longitudinalPositions;
 
     /** Speed at lastEvaluationTime. */
     private DoubleScalar.Abs<SpeedUnit> speed;
@@ -76,7 +76,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final GTUFollowingModel gtuFollowingModel,
-            final Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed,
             final OTSDEVSSimulatorInterface simulator) throws RemoteException
     {
@@ -158,7 +158,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<LengthUnit> positionOfFront(final Lane lane) throws NetworkException
+    public final DoubleScalar.Rel<LengthUnit> positionOfFront(final Lane lane) throws NetworkException
     {
         try
         {
@@ -173,7 +173,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<LengthUnit> positionOfFront(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Rel<LengthUnit> positionOfFront(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
             throws NetworkException
     {
         // TODO: link to the next lane if position > lane.getLength()
@@ -181,7 +181,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             throw new NetworkException("GTU " + getId() + " not on lane " + lane);
         }
-        DoubleScalar.Abs<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         return DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
                 Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
@@ -201,9 +201,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     {
         // TODO: link to the previous or next link if fraction < 0.0 or fraction > 1.0
         Lane lane = this.longitudinalPositions.keySet().iterator().next();
-        DoubleScalar.Abs<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
-        DoubleScalar.Abs<LengthUnit> loc =
+        DoubleScalar.Rel<LengthUnit> loc =
                 DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
                         Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
         double fractionalLongitudinalPosition = DoubleScalar.divide(loc, lane.getLength()).doubleValue();
@@ -212,14 +212,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<LengthUnit> positionOfRear(final Lane lane) throws NetworkException
+    public final DoubleScalar.Rel<LengthUnit> positionOfRear(final Lane lane) throws NetworkException
     {
         return DoubleScalar.minus(positionOfFront(lane), getLength()).immutable();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<LengthUnit> positionOfRear(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
+    public final DoubleScalar.Rel<LengthUnit> positionOfRear(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
             throws NetworkException
     {
         // TODO: link to the next lane if position < 0 or position > lane.getLength()
@@ -240,10 +240,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     {
         // TODO: link to the previous or next link if fraction < 0.0 or fraction > 1.0
         Lane lane = this.longitudinalPositions.keySet().iterator().next();
-        DoubleScalar.Abs<LengthUnit> longitudinalPosition =
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition =
                 DoubleScalar.minus(this.longitudinalPositions.get(lane), getLength()).immutable();
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
-        DoubleScalar.Abs<LengthUnit> loc =
+        DoubleScalar.Rel<LengthUnit> loc =
                 DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
                         Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
         double fractionalLongitudinalPosition = DoubleScalar.divide(loc, lane.getLength()).doubleValue();
@@ -304,7 +304,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, DoubleScalar.Abs<LengthUnit>> getLongitudinalPositions()
+    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getLongitudinalPositions()
     {
         return this.longitudinalPositions;
     }

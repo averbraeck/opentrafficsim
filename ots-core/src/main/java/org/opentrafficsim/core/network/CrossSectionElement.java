@@ -25,7 +25,8 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -39,19 +40,25 @@ public abstract class CrossSectionElement implements LocatableInterface
     private final CrossSectionLink<?, ?> parentLink;
 
     /** the lateral start position compared to the linear geometry of the Cross Section Link. */
-    private final DoubleScalar.Abs<LengthUnit> lateralCenterPosition;
+    private final DoubleScalar.Rel<LengthUnit> lateralCenterPosition;
 
-    /** the lowest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section Link. */
-    private final DoubleScalar.Abs<LengthUnit> lateralBeginStartPosition;
+    /**
+     * the lowest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section
+     * Link.
+     */
+    private final DoubleScalar.Rel<LengthUnit> lateralBeginStartPosition;
 
-    /** the highest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section Link. */
-    private final DoubleScalar.Abs<LengthUnit> lateralBeginEndPosition;
+    /**
+     * the highest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section
+     * Link.
+     */
+    private final DoubleScalar.Rel<LengthUnit> lateralBeginEndPosition;
 
     /** start width, positioned <i>symmetrically around</i> the lateral start position. */
-    private final DoubleScalar.Abs<LengthUnit> beginWidth;
+    private final DoubleScalar.Rel<LengthUnit> beginWidth;
 
     /** end width, positioned <i>symmetrically around</i> the lateral end position. */
-    private final DoubleScalar.Abs<LengthUnit> endWidth;
+    private final DoubleScalar.Rel<LengthUnit> endWidth;
 
     /** geometry matching the contours of the cross section element. */
     private final Geometry contour;
@@ -60,18 +67,20 @@ public abstract class CrossSectionElement implements LocatableInterface
     private LineString offsetLine;
 
     /** the length of the line. Calculated once at the creation. */
-    private DoubleScalar.Abs<LengthUnit> length;
+    private DoubleScalar.Rel<LengthUnit> length;
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
-     * the StartNode towards the EndNode as the longitudinal direction.
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
+     * direction from the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
-     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section
+     *            Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
-    public CrossSectionElement(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Abs<LengthUnit> beginWidth, final DoubleScalar.Abs<LengthUnit> endWidth)
+    public CrossSectionElement(final CrossSectionLink<?, ?> parentLink,
+            final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
+            final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super();
         this.parentLink = parentLink;
@@ -80,25 +89,25 @@ public abstract class CrossSectionElement implements LocatableInterface
         this.endWidth = endWidth;
         this.contour = constructGeometry();
         // TODO: LengthUnit and width might depend on CRS
-        this.length = new DoubleScalar.Abs<LengthUnit>(this.offsetLine.getLength(), LengthUnit.METER);
-        double halfWidth = beginWidth.getSI() / 2.0; // SI, so in meters
-        this.lateralBeginStartPosition =
-                new DoubleScalar.Abs<LengthUnit>(lateralCenterPosition.getSI() - halfWidth, LengthUnit.METER);
-        this.lateralBeginEndPosition =
-                new DoubleScalar.Abs<LengthUnit>(lateralCenterPosition.getSI() + halfWidth, LengthUnit.METER);
+        this.length = new DoubleScalar.Rel<LengthUnit>(this.offsetLine.getLength(), LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> halfWidth =
+                new DoubleScalar.Rel<>(beginWidth.getInUnit() / 2, beginWidth.getUnit());
+        this.lateralBeginStartPosition = DoubleScalar.minus(lateralCenterPosition, halfWidth).immutable();
+        this.lateralBeginEndPosition = DoubleScalar.plus(lateralCenterPosition, halfWidth).immutable();
     }
 
     /**
-     * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
-     * around it.
+     * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called
+     * "buffer" around it.
      * @return the geometry belonging to this CrossSectionElement.
      */
     private Geometry constructGeometry()
     {
         LineString line = this.parentLink.getGeometry().getLineString();
         double width =
-                this.beginWidth.doubleValue() > 0 ? Math.max(this.beginWidth.doubleValue(), this.endWidth.doubleValue()) : Math
-                        .min(this.beginWidth.doubleValue(), this.endWidth.doubleValue());
+                this.beginWidth.doubleValue() > 0 ? Math
+                        .max(this.beginWidth.doubleValue(), this.endWidth.doubleValue()) : Math.min(
+                        this.beginWidth.doubleValue(), this.endWidth.doubleValue());
         this.offsetLine =
                 (this.lateralCenterPosition.doubleValue() == 0.0) ? line : offsetLineString(line,
                         this.lateralCenterPosition.doubleValue());
@@ -162,8 +171,8 @@ public abstract class CrossSectionElement implements LocatableInterface
         Envelope e = this.contour.getEnvelopeInternal();
         double dx = 0.5 * (e.getMaxX() - e.getMinX());
         double dy = 0.5 * (e.getMaxY() - e.getMinY());
-        return new BoundingBox(new Point3d(e.getMinX() - dx, e.getMinY() - dy, 0.0), new Point3d(e.getMinX() + dx, e.getMinY()
-                + dy, 0.0));
+        return new BoundingBox(new Point3d(e.getMinX() - dx, e.getMinY() - dy, 0.0), new Point3d(e.getMinX() + dx,
+                e.getMinY() + dy, 0.0));
     }
 
     /**
@@ -263,7 +272,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         double norm = Math.abs(offset / Math.sqrt(sdx * sdx + sdy * sdy));
         Coordinate p0 = new Coordinate(c0.x + norm * sdy, c0.y - norm * sdx);
         Coordinate p1 = new Coordinate(c0.x - norm * sdy, c0.y + norm * sdx);
-        return new Coordinate[] { p0, p1 };
+        return new Coordinate[]{p0, p1};
     }
 
     /**
@@ -292,7 +301,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     /**
      * @return length.
      */
-    public final DoubleScalar.Abs<LengthUnit> getLength()
+    public final DoubleScalar.Rel<LengthUnit> getLength()
     {
         return this.length;
     }
@@ -300,7 +309,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     /**
      * @return lateralBeginStartPosition.
      */
-    public final DoubleScalar.Abs<LengthUnit> getLateralBeginStartPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLateralBeginStartPosition()
     {
         return this.lateralBeginStartPosition;
     }
@@ -308,7 +317,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     /**
      * @return lateralBeginEndPosition.
      */
-    public final DoubleScalar.Abs<LengthUnit> getLateralBeginEndPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLateralBeginEndPosition()
     {
         return this.lateralBeginEndPosition;
     }

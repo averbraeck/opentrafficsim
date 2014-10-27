@@ -41,10 +41,10 @@ public class IDMPlusTest
 
     /**
      * Test IDMPlus.
-     * @throws RemoteException
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws SimRuntimeException
+     * @throws RemoteException on communications failure
+     * @throws NetworkException on network error
+     * @throws NamingException on ???
+     * @throws SimRuntimeException on ???
      */
     @SuppressWarnings("static-method")
     @Test
@@ -56,11 +56,11 @@ public class IDMPlusTest
         Lane lane = CarTest.makeLane();
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(123.456, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(123.456, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         Car<Integer> referenceCar =
@@ -73,10 +73,10 @@ public class IDMPlusTest
         assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
-        DoubleScalar.Abs<LengthUnit> leaderPosition =
-                new DoubleScalar.Abs<LengthUnit>(3 + referenceCar.getLength().getSI()
+        DoubleScalar.Rel<LengthUnit> leaderPosition =
+                new DoubleScalar.Rel<LengthUnit>(3 + referenceCar.getLength().getSI()
                         + referenceCar.positionOfFront(initialTime).getLongitudinalPosition().getSI(), LengthUnit.METER);
-        Map<Lane, DoubleScalar.Abs<LengthUnit>> leaderPositions = new HashMap<>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
         Car<Integer> leaderCar =
                 new Car<Integer>(23456, carType, length, width, maxSpeed, null, leaderPositions, initialSpeed, simulator);
@@ -85,7 +85,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-                new DoubleScalar.Abs<LengthUnit>(1000 + (3 + referenceCar.getLength().getSI() + referenceCar
+                new DoubleScalar.Rel<LengthUnit>(1000 + (3 + referenceCar.getLength().getSI() + referenceCar
                         .positionOfFront(initialTime).getLongitudinalPosition().getSI()), LengthUnit.METER);
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -103,7 +103,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-                new DoubleScalar.Abs<LengthUnit>(-(3 + referenceCar.getLength().getSI() + referenceCar.positionOfFront(
+                new DoubleScalar.Rel<LengthUnit>(-(3 + referenceCar.getLength().getSI() + referenceCar.positionOfFront(
                         initialTime).getLongitudinalPosition().getSI()), LengthUnit.METER);
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -118,7 +118,7 @@ public class IDMPlusTest
         {
             leaders.clear();
             leaderPosition =
-                    new DoubleScalar.Abs<LengthUnit>(spareDistance
+                    new DoubleScalar.Rel<LengthUnit>(spareDistance
                             + (3 + referenceCar.getLength().getSI() + referenceCar.positionOfFront(initialTime)
                                     .getLongitudinalPosition().getSI()), LengthUnit.METER);
             leaderPositions = new HashMap<>();
@@ -138,7 +138,7 @@ public class IDMPlusTest
         // System.out.println("");
         referenceAcceleration = Double.NEGATIVE_INFINITY;
         leaderPosition =
-                new DoubleScalar.Abs<LengthUnit>(2 + 3 + referenceCar.getLength().getSI()
+                new DoubleScalar.Rel<LengthUnit>(2 + 3 + referenceCar.getLength().getSI()
                         + referenceCar.positionOfFront(initialTime).getLongitudinalPosition().getSI(), LengthUnit.METER);
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -146,7 +146,7 @@ public class IDMPlusTest
         initialSpeed = new DoubleScalar.Abs<SpeedUnit>(2, SpeedUnit.METER_PER_SECOND);
         for (int integerLeaderSpeed = 0; integerLeaderSpeed <= 40; integerLeaderSpeed++)
         {
-            Map<Lane, DoubleScalar.Abs<LengthUnit>> initialPositions = new HashMap<>();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<>();
             initialPositions.put(lane, initialPosition);
             referenceCar =
                     new Car<Integer>(12345, carType, length, width, maxSpeed, carFollowingModel, initialPositions,
@@ -168,8 +168,8 @@ public class IDMPlusTest
         assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
         // Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at the right
         // point. (In IDM+ the car oscillates a while around the final position with pretty good damping.)
-        initialPosition = new DoubleScalar.Abs<LengthUnit>(100, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Abs<LengthUnit>> initialPositions = new HashMap<>();
+        initialPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<>();
         initialPositions.put(lane, initialPosition);
         initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND);
         referenceCar =
@@ -177,7 +177,7 @@ public class IDMPlusTest
                         simulator);
         leaders.clear();
         leaderPosition =
-                new DoubleScalar.Abs<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
+                new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
                         + referenceCar.positionOfFront(initialTime).getLongitudinalPosition().getSI(), LengthUnit.METER);
         leaderCar = new Car<Integer>(0, carType, length, width, maxSpeed, null, leaderPositions, initialSpeed, simulator);
         leaders.add(leaderCar);

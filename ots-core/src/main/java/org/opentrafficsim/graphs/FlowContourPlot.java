@@ -25,11 +25,11 @@ public class FlowContourPlot extends ContourPlot
     /**
      * Create a new FlowContourPlot.
      * @param caption String; text to show above the FlowContourPlot
-     * @param minimumDistance DoubleScalarAbs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
-     * @param maximumDistance DoubleScalarAbs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
+     * @param minimumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
+     * @param maximumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public FlowContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
-            final DoubleScalar.Abs<LengthUnit> maximumDistance)
+    public FlowContourPlot(final String caption, final DoubleScalar.Rel<LengthUnit> minimumDistance,
+            final DoubleScalar.Rel<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
                 STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(

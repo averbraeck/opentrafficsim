@@ -36,7 +36,7 @@ public class LinkLocation
      * @param link The link of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the link.
      */
-    public LinkLocation(final AbstractLink<?, ?> link, final DoubleScalar.Abs<LengthUnit> position)
+    public LinkLocation(final AbstractLink<?, ?> link, final DoubleScalar.Rel<LengthUnit> position)
     {
         super();
         this.link = link;

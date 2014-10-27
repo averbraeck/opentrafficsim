@@ -26,11 +26,11 @@ public class SpeedContourPlot extends ContourPlot
     /**
      * Create a new SpeedContourPlot.
      * @param caption String; text to show above the SpeedContourPlot
-     * @param minimumDistance DoubleScalar.Abs&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
-     * @param maximumDistance DoubleScalar.Abs&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
+     * @param minimumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
+     * @param maximumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
-    public SpeedContourPlot(final String caption, final DoubleScalar.Abs<LengthUnit> minimumDistance,
-            final DoubleScalar.Abs<LengthUnit> maximumDistance)
+    public SpeedContourPlot(final String caption, final DoubleScalar.Rel<LengthUnit> minimumDistance,
+            final DoubleScalar.Rel<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
                 STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(

@@ -45,10 +45,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 public class ContourPlotTest
 {
     /** Lower bound of test distance range. */
-    static DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(1234, LengthUnit.METER);
+    static DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(1234, LengthUnit.METER);
 
     /** Upper bound of test distance range. */
-    static DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(12345, LengthUnit.METER);
+    static DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(12345, LengthUnit.METER);
 
     /**
      * Test the AccelerationContourPlot.
@@ -291,7 +291,7 @@ public class ContourPlotTest
         cp.reGraph();
         bins = cp.getItemCount(0);
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
-        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(20, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(20, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         Lane lane = CarTest.makeLane();
         OTSDEVSSimulator simulator = CarTest.makeSimulator();

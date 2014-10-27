@@ -24,8 +24,8 @@ public class Barrier extends RoadMarkerAlong
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
-    public Barrier(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Abs<LengthUnit> beginWidth, final DoubleScalar.Abs<LengthUnit> endWidth)
+    public Barrier(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super(parentLink, lateralCenterPosition, beginWidth, endWidth);
     }

@@ -70,7 +70,7 @@ public class CarTest
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         Lane lane = makeLane();
-        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(12, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
         Car<Integer> referenceCar = makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator);
@@ -122,13 +122,13 @@ public class CarTest
      * @throws RemoteException on network error
      */
     public static Car<Integer> makeReferenceCar(final int nr, final Lane lane,
-            final DoubleScalar.Abs<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+            final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
             final OTSDEVSSimulator simulator) throws RemoteException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         GTUFollowingModel cfm = new IDMPlus(simulator);
@@ -145,14 +145,14 @@ public class CarTest
         Node n1 = new Node("n1", new Coordinate(0, 0));
         Node n2 = new Node("n2", new Coordinate(10000.0, 0.0));
         CrossSectionLink<String, Node> link12 =
-                new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Abs<LengthUnit>(10000.0, LengthUnit.METER));
+                new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Rel<LengthUnit>(10000.0, LengthUnit.METER));
         GeometryFactory factory = new GeometryFactory();
         Coordinate[] coordinates = new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
         LineString line = factory.createLineString(coordinates);
         new LinearGeometry(link12, line, null);
         LaneType<String> carLaneType = new LaneType<String>("CarLane");
-        DoubleScalar.Abs<LengthUnit> latPos = new DoubleScalar.Abs<LengthUnit>(0.0, LengthUnit.METER);
-        DoubleScalar.Abs<LengthUnit> width = new DoubleScalar.Abs<LengthUnit>(4.0, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         return new Lane(link12, latPos, width, width, carLaneType, LongitudinalDirectionality.FORWARD, f200);
 
