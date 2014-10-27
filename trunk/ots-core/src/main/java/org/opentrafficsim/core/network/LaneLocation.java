@@ -36,7 +36,7 @@ public class LaneLocation
      * @param lane The lane of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the lane.
      */
-    public LaneLocation(final Lane lane, final DoubleScalar.Abs<LengthUnit> position)
+    public LaneLocation(final Lane lane, final DoubleScalar.Rel<LengthUnit> position)
     {
         super();
         this.lane = lane;

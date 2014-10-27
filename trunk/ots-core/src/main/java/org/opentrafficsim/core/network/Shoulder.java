@@ -21,8 +21,8 @@ public class Shoulder extends CrossSectionElement
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
-    public Shoulder(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralStartPosition,
-            final DoubleScalar.Abs<LengthUnit> beginWidth, final DoubleScalar.Abs<LengthUnit> endWidth)
+    public Shoulder(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralStartPosition,
+            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super(parentLink, lateralStartPosition, beginWidth, endWidth);
     }

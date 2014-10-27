@@ -42,7 +42,7 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
     public Car(final ID id, final GTUType<?> gtuType, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final GTUFollowingModel gtuFollowingModel,
-            final Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
             throws RemoteException
     {

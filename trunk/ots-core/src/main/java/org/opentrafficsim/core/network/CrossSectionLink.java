@@ -41,7 +41,7 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
      */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length,
+    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         super(id, startNode, endNode, length, capacity);
@@ -54,7 +54,7 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length)
+    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, startNode, endNode, length);
     }

@@ -31,8 +31,8 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
-    public RoadMarkerAlong(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Abs<LengthUnit> beginWidth, final DoubleScalar.Abs<LengthUnit> endWidth)
+    public RoadMarkerAlong(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super(parentLink, lateralCenterPosition, beginWidth, endWidth);
     }

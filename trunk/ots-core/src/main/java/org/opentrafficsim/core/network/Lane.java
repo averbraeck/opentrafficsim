@@ -38,8 +38,8 @@ public class Lane extends CrossSectionElement
      * @param directionality in direction of geometry, reverse, or both.
      * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage).
      */
-    public Lane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralStartPosition,
-            final DoubleScalar.Abs<LengthUnit> beginWidth, final DoubleScalar.Abs<LengthUnit> endWidth,
+    public Lane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralStartPosition,
+            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth,
             final LaneType<?> laneType, final LongitudinalDirectionality directionality,
             final DoubleScalar.Abs<FrequencyUnit> capacity)
     {

@@ -24,8 +24,8 @@ public class Stripe extends RoadMarkerAlong
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
      */
-    public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Abs<LengthUnit> width)
+    public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+            final DoubleScalar.Rel<LengthUnit> width)
     {
         super(parentLink, lateralCenterPosition, width, width);
     }
@@ -40,8 +40,8 @@ public class Stripe extends RoadMarkerAlong
      * @param gtuTypes the GTU types for which the permeability is defined.
      * @param permeable one of the enums of Stripe.Permeable to define the permeability.
      */
-    public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Abs<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable)
+    public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+            final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable)
     {
         super(parentLink, lateralCenterPosition, width, width);
         for (GTUType<?> gtuType : gtuTypes)
@@ -59,8 +59,8 @@ public class Stripe extends RoadMarkerAlong
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
      * @param permeable one of the enums of Stripe.Permeable to define the permeability.
      */
-    public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Abs<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Abs<LengthUnit> width, final Permeable permeable)
+    public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+            final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable)
     {
         super(parentLink, lateralCenterPosition, width, width);
         addPermeability(GTUType.ALL, permeable);

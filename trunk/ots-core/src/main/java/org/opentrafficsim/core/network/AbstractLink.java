@@ -35,7 +35,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     private final N endNode;
 
     /** link length in a length unit. */
-    private final DoubleScalar.Abs<LengthUnit> length;
+    private final DoubleScalar.Rel<LengthUnit> length;
 
     /** link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
     private DoubleScalar.Abs<FrequencyUnit> capacity;
@@ -51,7 +51,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length,
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         this.id = id;
@@ -68,7 +68,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Abs<LengthUnit> length)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
                 FrequencyUnit.PER_SECOND));
@@ -125,7 +125,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @return length.
      */
-    public final DoubleScalar.Abs<LengthUnit> getLength()
+    public final DoubleScalar.Rel<LengthUnit> getLength()
     {
         return this.length;
     }
