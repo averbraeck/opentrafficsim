@@ -14,6 +14,10 @@ import java.util.Map;
 
 import javax.swing.JLabel;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
@@ -23,6 +27,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -45,9 +50,10 @@ public class TrajectoryPlotTest
 
     /**
      * Test the TrajectoryPlot.
+     * @throws Exception 
      */
     @Test
-    public final void trajectoryTest()
+    public final void trajectoryTest() throws Exception
     {
         DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(1234, LengthUnit.METER);
         DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(12345, LengthUnit.METER);
@@ -60,7 +66,6 @@ public class TrajectoryPlotTest
             assertEquals("SeriesKey(" + i + ") should return " + i, i, tp.getSeriesKey(i));
         }
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
-        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
         // Create a car running 50 km.h
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(2000, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
@@ -71,21 +76,24 @@ public class TrajectoryPlotTest
         Lane lane = CarTest.makeLane();
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
+        // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
+        simulateUntil(new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND), simulator);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         Car<Integer> car =
                 new Car<Integer>(12345, carType, length, width, maxSpeed, null, initialLongitudinalPositions,
                         initialSpeed, simulator);
-
-        // Make the car accelerate with constant acceleration of 0.05 m/s/s for 500 seconds
-        DoubleScalar.Abs<TimeUnit> endTime = new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 400, TimeUnit.SECOND);
+        // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
+        DoubleScalar.Rel<TimeUnit> duration = new DoubleScalar.Rel<TimeUnit>(400, TimeUnit.SECOND);
+        DoubleScalar.Abs<TimeUnit> endTime = DoubleScalar.plus(simulator.getSimulatorTime().get(), duration).immutable();
         car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
-        initialTime = new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND);
-        Car secondCar = new Car(2, null, null, initialTime, initialPosition, initialSpeed);
+        simulateUntil(new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND), simulator);
+        Car<Integer> secondCar = new Car<Integer>(2, carType, length, width, maxSpeed, null, initialLongitudinalPositions,
+                initialSpeed, simulator);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
         secondCar.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
                 AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
@@ -207,6 +215,46 @@ public class TrajectoryPlotTest
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                     0.0001);
         }
+    }
+    
+    /** Set to true when the stop event is executed by the simulator. */
+    private volatile boolean stopped;
+    /**
+     * Run a simulator up to the specified stop time.
+     * @param stopTime DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time 
+     * @param simulator DEVSSimulatorInterface; the simulator
+     */
+    private void simulateUntil(DoubleScalar.Abs<TimeUnit> stopTime, DEVSSimulatorInterface simulator)
+    {
+        this.stopped = false;
+        try
+        {
+            simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "stop", null);
+        }
+        catch (RemoteException | SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+        while (! this.stopped)
+        {
+            try
+            {
+                simulator.step();
+            }
+            catch (RemoteException | SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Event for the simulator.
+     */
+    @SuppressWarnings("unused")
+    private void stop()
+    {
+        this.stopped = true;
     }
 
 }

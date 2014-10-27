@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import javax.swing.JLabel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
@@ -294,6 +295,7 @@ public class ContourPlotTest
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         Lane lane = CarTest.makeLane();
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
+        new ContourPlotTest().simulateUntil(initialTime, simulator);
         // Create a car running 50 km.h
         Car car = CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed, simulator); // new Car(0, null, null, initialTime, initialPosition, initialSpeed);
         // Make the car run at constant speed for one minute
@@ -528,4 +530,45 @@ public class ContourPlotTest
         ph.updateHint(Double.NaN, Double.NaN);
         assertEquals("The text should again be a single space", " ", hintPanel.getText());
     }
+    
+    /** Set to true when the stop event is executed by the simulator. */
+    private volatile boolean stopped;
+    /**
+     * Run a simulator up to the specified stop time.
+     * @param stopTime DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time 
+     * @param simulator DEVSSimulatorInterface; the simulator
+     */
+    private void simulateUntil(DoubleScalar.Abs<TimeUnit> stopTime, DEVSSimulatorInterface simulator)
+    {
+        this.stopped = false;
+        try
+        {
+            simulator.scheduleEventAbs(stopTime, this, this, "stop", null);
+        }
+        catch (RemoteException | SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+        while (! this.stopped)
+        {
+            try
+            {
+                simulator.step();
+            }
+            catch (RemoteException | SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Event for the simulator.
+     */
+    @SuppressWarnings("unused")
+    private void stop()
+    {
+        this.stopped = true;
+    }
+
 }

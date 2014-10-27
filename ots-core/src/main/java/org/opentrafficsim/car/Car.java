@@ -49,5 +49,19 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
         super(id, gtuType, length, width, maximumVelocity, gtuFollowingModel, initialLongitudinalPositions, initialSpeed,
                 simulator);
     }
+    
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        try
+        {
+            return String.format("Car %s rear:%s front:%s", getId().toString(), positionOfRear(), positionOfFront());
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+        return("Caught exception in toString");
+    }
 
 }
