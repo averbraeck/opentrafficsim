@@ -492,7 +492,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 (car.positionOfFront(fromTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue().getSI())
                         / this.getYAxis().getGranularities()[0];
         final double relativeToDistance =
-                (car.positionOfFront(fromTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue().getSI())
+                (car.positionOfFront(toTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue().getSI())
                         / this.getYAxis().getGranularities()[0];
         double relativeFromTime =
                 (fromTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
