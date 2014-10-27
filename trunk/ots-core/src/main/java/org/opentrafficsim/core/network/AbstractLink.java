@@ -146,4 +146,10 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
         this.geometry = geometry;
     }
 
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return this.id.toString();
+    }
+
 }

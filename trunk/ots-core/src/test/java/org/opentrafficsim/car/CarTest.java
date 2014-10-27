@@ -48,7 +48,8 @@ import com.vividsolutions.jts.geom.LineString;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 11, 2014 <br>
@@ -58,6 +59,10 @@ public class CarTest
 {
     /**
      * Test some basics of the Car class.
+     * @throws RemoteException on network error
+     * @throws NetworkException on ???
+     * @throws SimRuntimeException on ???
+     * @throws NamingException on ???
      */
     @SuppressWarnings("static-method")
     @Test
@@ -71,20 +76,28 @@ public class CarTest
         Car<Integer> referenceCar = makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator);
 
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
-                .positionOfFront(initialTime).getLongitudinalPosition().getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getLongitudinalVelocity(
-                initialTime).getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(initialTime)
-                .getSI(), 0.0001);
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
+                referenceCar.positionOfFront(initialTime).getLongitudinalPosition().getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar
+                .getLongitudinalVelocity(initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0,
+                referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
     }
 
+    /**
+     * Create the simplest possible simulator.
+     * @return OTSDEVSSimulator
+     * @throws RemoteException on network error
+     * @throws SimRuntimeException on ???
+     * @throws NamingException on ???
+     */
     public static OTSDEVSSimulator makeSimulator() throws RemoteException, SimRuntimeException, NamingException
     {
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
         Context context = new InitialContext();
-        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp = new Experiment<>(context);
+        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
+                new Experiment<>(context);
         Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
                 new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
@@ -98,16 +111,19 @@ public class CarTest
     }
 
     /**
-     * @param nr
-     * @param lane
-     * @param initialPosition
-     * @param initialSpeed
-     * @param simulator
-     * @return a standard car
-     * @throws RemoteException
+     * Create a new Car.
+     * @param nr int; the name (number) of the Car
+     * @param lane Lane; the lane on which the new Car is positioned
+     * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial longitudinal position of the new Car
+     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed
+     * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
+     *            getLastEvalutionTime())
+     * @return Car; the new Car
+     * @throws RemoteException on network error
      */
-    public static Car<Integer> makeReferenceCar(int nr, Lane lane, DoubleScalar.Abs<LengthUnit> initialPosition,
-            DoubleScalar.Abs<SpeedUnit> initialSpeed, OTSDEVSSimulator simulator) throws RemoteException
+    public static Car<Integer> makeReferenceCar(final int nr, final Lane lane,
+            final DoubleScalar.Abs<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+            final OTSDEVSSimulator simulator) throws RemoteException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
@@ -122,6 +138,7 @@ public class CarTest
 
     /**
      * @return a lane of 1000 m long.
+     * @throws NetworkException on network error
      */
     public static Lane makeLane() throws NetworkException
     {
@@ -130,7 +147,7 @@ public class CarTest
         CrossSectionLink<String, Node> link12 =
                 new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Abs<LengthUnit>(10000.0, LengthUnit.METER));
         GeometryFactory factory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[] { new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0) };
+        Coordinate[] coordinates = new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
         LineString line = factory.createLineString(coordinates);
         new LinearGeometry(link12, line, null);
         LaneType<String> carLaneType = new LaneType<String>("CarLane");
@@ -174,19 +191,22 @@ public class CarTest
     /** the helper model. */
     protected static class Model implements OTSModelInterface
     {
+        /** */
+        private static final long serialVersionUID = 20141027L;
+        /** The simulator. */
         private OTSDEVSSimulator simulator;
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+        public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
-            this.simulator = (OTSDEVSSimulator) simulator;
+            this.simulator = (OTSDEVSSimulator) theSimulator;
         }
 
         /** {@inheritDoc} */
         @Override
-        public OTSDEVSSimulator getSimulator() throws RemoteException
+        public final OTSDEVSSimulator getSimulator() throws RemoteException
         {
             return this.simulator;
         }

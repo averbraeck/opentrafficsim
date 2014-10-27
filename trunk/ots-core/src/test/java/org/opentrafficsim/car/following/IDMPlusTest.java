@@ -186,13 +186,13 @@ public class IDMPlusTest
         {
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             referenceCar.setState(cfmr);
-            // System.out.println(String.format("step %3d referenceCar: %s", timeStep, referenceCar));
+            System.out.println(String.format("step %3d referenceCar: %s, leaderCar: %s", timeStep, referenceCar, leaderCar));
             if (timeStep > 100)
             {
                 double position = referenceCar.positionOfFront(cfmr.getValidUntil()).getLongitudinalPosition().getSI();
                 assertEquals(
                         "After 20 seconds the referenceCar should now be very close to 3m before the rear of the leader",
-                        200, position, 0.1);
+                        leaderCar.positionOfRear().getLongitudinalPosition().getSI() - 3.0, position, 0.1);
                 assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar
                         .getLongitudinalVelocity(cfmr.getValidUntil()).getSI(), 0.2);
             }

@@ -9,12 +9,25 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.naming.NamingException;
 import javax.swing.JLabel;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
 import org.opentrafficsim.car.Car;
+import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -22,7 +35,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 25, 2014 <br>
@@ -32,10 +46,14 @@ public class FundamentalDiagramPlotTest
 {
     /**
      * Test the FundamentalDiagram.
+     * @throws RemoteException on communications error
+     * @throws NetworkException on network error
+     * @throws NamingException on ???
+     * @throws SimRuntimeException on ???
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void fundamentalDiagramTest()
+    public final void fundamentalDiagramTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
@@ -54,7 +72,9 @@ public class FundamentalDiagramPlotTest
         }
         try
         {
-            fd = new FundamentalDiagram("Fundamental Diagram", 1, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), position);
+            fd =
+                    new FundamentalDiagram("Fundamental Diagram", 1,
+                            new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), position);
             fail("Bad number of lanes should have thrown an Error");
         }
         catch (Error e)
@@ -95,18 +115,28 @@ public class FundamentalDiagramPlotTest
             assertTrue("No data should result in NaN", Double.isNaN(value));
             ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
             ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
-            DoubleScalar.Rel<SpeedUnit> speed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
             DoubleScalar.Abs<TimeUnit> time = new DoubleScalar.Abs<TimeUnit>(123, TimeUnit.SECOND);
+            DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
+            DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
+            DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+            Map<Lane, DoubleScalar.Abs<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+            Lane lane = CarTest.makeLane();
+            DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER);
+            initialLongitudinalPositions.put(lane, initialPosition);
+            OTSDEVSSimulator simulator = CarTest.makeSimulator();
             int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
-            for (int lane = 0; lane < numberOfLanes; lane++)
+            for (int laneNumber = 0; laneNumber < numberOfLanes; laneNumber++)
             {
-                Car car = new Car(1 + lane, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
-                fd.addData(lane, car, time);
+                Car<Integer> car =
+                        new Car<Integer>(1 + laneNumber, null, length, width, maxSpeed, null,
+                                initialLongitudinalPositions, speed, simulator);
+                fd.addData(laneNumber, car, time);
                 for (int readBackLane = 0; readBackLane < numberOfLanes; readBackLane++)
                 {
                     for (int sample = 0; sample < 10; sample++)
                     {
-                        boolean shouldHaveData = readBackLane <= lane && sample == bucket;
+                        boolean shouldHaveData = readBackLane <= laneNumber && sample == bucket;
                         value = fd.getXValue(readBackLane, sample);
                         if (shouldHaveData)
                         {
@@ -127,12 +157,12 @@ public class FundamentalDiagramPlotTest
                         {
                             assertTrue("Data should be NaN", Double.isNaN(value));
                         }
-                        shouldHaveData = readBackLane <= lane && sample <= bucket;
+                        shouldHaveData = readBackLane <= laneNumber && sample <= bucket;
                         value = fd.getYValue(readBackLane, sample);
                         if (shouldHaveData)
                         {
                             double expectedFlow =
-                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
+                                    readBackLane <= laneNumber && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
@@ -143,7 +173,7 @@ public class FundamentalDiagramPlotTest
                         if (shouldHaveData)
                         {
                             double expectedFlow =
-                                    readBackLane <= lane && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
+                                    readBackLane <= laneNumber && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
                             assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
                         }
                         else
@@ -154,7 +184,8 @@ public class FundamentalDiagramPlotTest
                         value = fd.getYValue(readBackLane, sample);
                         if (shouldHaveData)
                         {
-                            double expectedSpeed = readBackLane <= lane && sample == bucket ? speed.getInUnit() : 0;
+                            double expectedSpeed =
+                                    readBackLane <= laneNumber && sample == bucket ? speed.getInUnit() : 0;
                             assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
                         }
                         else
@@ -164,7 +195,8 @@ public class FundamentalDiagramPlotTest
                         value = fd.getY(readBackLane, sample).doubleValue();
                         if (shouldHaveData)
                         {
-                            double expectedSpeed = readBackLane <= lane && sample == bucket ? speed.getInUnit() : 0;
+                            double expectedSpeed =
+                                    readBackLane <= laneNumber && sample == bucket ? speed.getInUnit() : 0;
                             assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
                         }
                         else
@@ -176,8 +208,8 @@ public class FundamentalDiagramPlotTest
                 }
             }
             // Check that harmonic mean speed is computed
-            speed = new DoubleScalar.Rel<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-            Car car = new Car(1234, null, null, time, new DoubleScalar.Abs<LengthUnit>(23, LengthUnit.METER), speed);
+            speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+            Car<Integer> car = new Car<Integer>(1234, null, length, width, maxSpeed, null, initialLongitudinalPositions, speed, simulator);
             fd.addData(0, car, time);
             fd.actionPerformed(setXToSpeed);
             value = fd.getYValue(0, bucket);

@@ -160,9 +160,8 @@ public class IDMPlus implements GTUFollowingModel
         // System.out.println("s0 is " + this.s0);
         DoubleScalar.Rel<LengthUnit> sStar =
                 DoubleScalar.plus(
-                        LengthUnit.METER,
-                        this.s0,
-                        Calc.speedTimesTime(gtu.getLongitudinalVelocity(thisEvaluationTime), this.tSafe),
+                        DoubleScalar.plus(this.s0,
+                        Calc.speedTimesTime(gtu.getLongitudinalVelocity(thisEvaluationTime), this.tSafe)).immutable(),
                         Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(myCurrentSpeed,
                                 logWeightedAverageSpeedTimes2.immutable()))).immutable();
         if (sStar.getSI() < 0) // Negative value should be treated as 0

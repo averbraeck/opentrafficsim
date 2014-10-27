@@ -69,7 +69,7 @@ public class LinkLocation
     }
 
     /**
-     * Returns the distance to another linklocation. If the other location is in front of us, the distance is positive. If it is
+     * Returns the distance to another LinkLocation. If the other location is in front of us, the distance is positive. If it is
      * behind us, it is negative.
      * @param loc the link location to find the distance to.
      * @return the distance to another LinkLocation.
@@ -83,5 +83,11 @@ public class LinkLocation
 
         // TODO: not on the same link. Find shortest path...
         return null;
+    }
+    
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(), getLongitudinalPosition().getUnit());
     }
 }
