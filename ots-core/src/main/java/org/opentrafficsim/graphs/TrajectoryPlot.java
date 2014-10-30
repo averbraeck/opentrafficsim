@@ -292,7 +292,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     public final void addData(final Car<?> car) throws RemoteException
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
-        final DoubleScalar.Abs<LengthUnit> startPosition = car.positionOfFront(startTime).getLongitudinalPosition();
+        final DoubleScalar.Rel<LengthUnit> startPosition = car.positionOfFront(startTime).getLongitudinalPosition();
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
@@ -357,12 +357,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         }
 
         /** Position of (current) end of trajectory. */
-        private DoubleScalar.Abs<LengthUnit> currentEndPosition;
+        private DoubleScalar.Rel<LengthUnit> currentEndPosition;
 
         /**
          * @return currentEndPosition
          */
-        public final DoubleScalar.Abs<LengthUnit> getCurrentEndPosition()
+        public final DoubleScalar.Rel<LengthUnit> getCurrentEndPosition()
         {
             return this.currentEndPosition;
         }
@@ -387,7 +387,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
                         new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                DoubleScalar.Abs<LengthUnit> position = car.positionOfFront(sampleTime).getLongitudinalPosition();
+                DoubleScalar.Rel<LengthUnit> position = car.positionOfFront(sampleTime).getLongitudinalPosition();
                 if (position.getSI() < getMinimumPosition().getSI())
                 {
                     continue;

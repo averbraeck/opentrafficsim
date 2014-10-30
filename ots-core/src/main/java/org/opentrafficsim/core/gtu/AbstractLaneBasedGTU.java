@@ -131,7 +131,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             this.longitudinalPositions.put(lane, positionOfFront(lane, this.nextEvaluationTime));
         }
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
-        // TODO add a check that time is increasing
+        // TODO add a sanity check that time is increasing
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.getValidUntil();
         this.acceleration = cfmr.getAcceleration();
