@@ -123,7 +123,7 @@ public class IDMPlus implements GTUFollowingModel
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = gtu.getNextEvaluationTime();
         // System.out.println("evaluation time is " + thisEvaluationTime);
         // System.out.println("vDes is " + vDes);
-        DoubleScalar.Abs<LengthUnit> myFrontPosition = gtu.positionOfFront(thisEvaluationTime).getLongitudinalPosition();
+        DoubleScalar.Rel<LengthUnit> myFrontPosition = gtu.positionOfFront(thisEvaluationTime).getLongitudinalPosition();
         // System.out.println("myFrontPosition is " + myFrontPosition);
         DoubleScalar.Rel<LengthUnit> shortestHeadway = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
         LaneBasedGTU<?> closestLeader = null;
@@ -351,7 +351,7 @@ public class IDMPlus implements GTUFollowingModel
             final LaneBasedGTU<?> gtu, final Collection<? extends LaneBasedGTU<?>> leaders) throws RemoteException
     {
         DoubleScalar.Abs<SpeedUnit> result = speedLimit;
-        DoubleScalar.Abs<LengthUnit> frontPositionOfGTU =
+        DoubleScalar.Rel<LengthUnit> frontPositionOfGTU =
                 gtu.positionOfFront(gtu.getNextEvaluationTime()).getLongitudinalPosition();
         for (LaneBasedGTU<?> leader : leaders)
         {

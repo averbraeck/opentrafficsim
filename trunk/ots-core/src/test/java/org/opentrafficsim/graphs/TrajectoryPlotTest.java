@@ -207,7 +207,7 @@ public class TrajectoryPlotTest
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
-            DoubleScalar.Abs<LengthUnit> actualPosition = car.positionOfFront(sampleTime).getLongitudinalPosition();
+            DoubleScalar.Rel<LengthUnit> actualPosition = car.positionOfFront(sampleTime).getLongitudinalPosition();
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                     0.0001);

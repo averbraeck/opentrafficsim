@@ -62,9 +62,9 @@ public class LinkLocation
     /**
      * @return position as a length as a traveled length on this link.
      */
-    public final DoubleScalar.Abs<LengthUnit> getLongitudinalPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
     {
-        return new DoubleScalar.Abs<LengthUnit>(this.link.getLength().getSI() * this.fractionalLongitudinalPosition,
+        return new DoubleScalar.Rel<LengthUnit>(this.link.getLength().getSI() * this.fractionalLongitudinalPosition,
                 LengthUnit.METER);
     }
 
