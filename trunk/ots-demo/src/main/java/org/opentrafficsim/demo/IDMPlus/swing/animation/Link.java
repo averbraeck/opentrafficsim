@@ -1,17 +1,11 @@
 package org.opentrafficsim.demo.IDMPlus.swing.animation;
 
-import java.rmi.RemoteException;
-
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.network.AbstractLink;
+import org.opentrafficsim.core.network.CrossSectionLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.geometry.Node;
 
 /**
  * <p>
@@ -22,7 +16,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class Link extends AbstractLink<String, Node> implements LocatableInterface
+public class Link extends CrossSectionLink<String, Node> implements LocatableInterface
 {
     /** */
     private static final long serialVersionUID = 20140921L;
@@ -39,22 +33,6 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     public Link(final String id, final Node nodeA, final Node nodeB, final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, nodeA, nodeB, length);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final DirectedPoint getLocation() throws RemoteException
-    {
-        return new DirectedPoint(new double[]{getStartNode().getPoint().getX(), getStartNode().getPoint().getY(), 0.0d});
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Bounds getBounds() throws RemoteException
-    {
-        return new BoundingBox(new Point3d(0.0d, 0.0d, 0.0d), new Point3d(Math.max(1.0d, getEndNode().getPoint().getX()
-                - getStartNode().getPoint().getX()), Math.max(1.0d, getEndNode().getPoint().getY()
-                - getStartNode().getPoint().getY()), 0.0d));
     }
 
     /**

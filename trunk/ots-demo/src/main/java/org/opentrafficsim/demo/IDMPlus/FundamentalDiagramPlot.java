@@ -67,7 +67,7 @@ public final class FundamentalDiagramPlot
         fd.pack();
         fd.setVisible(true);
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
-        GTUFollowingModel<Car> carFollowingModel = new IDMPlus<Car>();
+        GTUFollowingModel carFollowingModel = new IDMPlus(simulator);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -86,8 +86,8 @@ public final class FundamentalDiagramPlot
             {
                 // Time to generate another car
                 DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(thisTick, TimeUnit.SECOND);
-                Car car =
-                        new Car(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
+                Car<Integer> car =
+                        new Car<Integer>(++carsCreated, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
                 cars.add(0, car);
                 // System.out.println(String.format("thisTick=%.1f, there are now %d vehicles", thisTick, cars.size()));
                 nextSourceTick += headway;

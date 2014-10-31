@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

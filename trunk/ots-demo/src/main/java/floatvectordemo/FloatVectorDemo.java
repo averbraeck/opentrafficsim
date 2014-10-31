@@ -29,8 +29,9 @@ public final class FloatVectorDemo
     /**
      * Demonstrate the use of FloatVector and MutableFloatVector.
      * @param args String[]; the command line argument; not used
+     * @throws ValueException should not happen in this demo code
      */
-    public static void main(final String[] args)
+    public static void main(final String[] args) throws ValueException
     {
         System.out.println("Creating FloatVector.Abs.Dense fad");
         FloatVector.Abs.Dense<LengthUnit> fad =
@@ -46,7 +47,7 @@ public final class FloatVectorDemo
         MutableFloatVector.Abs.Dense<LengthUnit> fadsum = null;
         try
         {
-            fadsum = MutableFloatVector.plus(fad, frd);
+            fadsum = FloatVector.plus(fad, frd);
         }
         catch (ValueException exception)
         {

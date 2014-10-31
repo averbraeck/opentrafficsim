@@ -56,7 +56,7 @@ public final class Trajectories
         tp.pack();
         tp.setVisible(true);
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
-        GTUFollowingModel<Car> carFollowingModel = new IDMPlus<Car>();
+        GTUFollowingModel carFollowingModel = new IDMPlus(simulator);
         DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);

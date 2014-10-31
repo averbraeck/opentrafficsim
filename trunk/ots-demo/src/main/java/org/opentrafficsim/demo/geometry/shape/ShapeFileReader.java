@@ -20,17 +20,17 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.LinearGeometry;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Shoulder;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 import org.opentrafficsim.demo.geometry.GeometryLinkAnimation;
 import org.opentrafficsim.demo.geometry.LaneAnimation;
-import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.demo.geometry.ShoulderAnimation;
 
@@ -390,8 +390,8 @@ public class ShapeFileReader
         DoubleScalar.Rel<LengthUnit> m05 = new DoubleScalar.Rel<LengthUnit>(0.5, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m35 = new DoubleScalar.Rel<LengthUnit>(3.5, LengthUnit.METER);
-        DoubleScalar.Rel<FrequencyUnit> f0 = new DoubleScalar.Rel<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
-        DoubleScalar.Rel<FrequencyUnit> f200 = new DoubleScalar.Rel<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<FrequencyUnit> f0 = new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
 
         try
         {
@@ -454,7 +454,7 @@ public class ShapeFileReader
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
         DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m30 = new DoubleScalar.Rel<LengthUnit>(3.0, LengthUnit.METER);
-        DoubleScalar.Rel<FrequencyUnit> f200 = new DoubleScalar.Rel<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
 
         try
         {
@@ -491,7 +491,7 @@ public class ShapeFileReader
     private static void addCityStreet(final Link link, final OTSSimulatorInterface simulator)
     {
         DoubleScalar.Rel<LengthUnit> m60 = new DoubleScalar.Rel<LengthUnit>(6.0, LengthUnit.METER);
-        DoubleScalar.Rel<FrequencyUnit> f50 = new DoubleScalar.Rel<FrequencyUnit>(50.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<FrequencyUnit> f50 = new DoubleScalar.Abs<FrequencyUnit>(50.0, FrequencyUnit.PER_HOUR);
 
         Lane lane =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
