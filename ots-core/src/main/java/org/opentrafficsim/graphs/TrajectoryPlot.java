@@ -29,7 +29,6 @@ import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
@@ -57,12 +56,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     }
 
     /** Minimum position on this TrajectoryPlot. */
-    private final DoubleScalar.Abs<LengthUnit> minimumPosition;
+    private final DoubleScalar.Rel<LengthUnit> minimumPosition;
 
     /**
      * @return minimumPosition
      */
-    public final DoubleScalar.Abs<LengthUnit> getMinimumPosition()
+    public final DoubleScalar.Rel<LengthUnit> getMinimumPosition()
     {
         return this.minimumPosition;
     }
@@ -70,13 +69,13 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     /**
      * @return maximumPosition
      */
-    public final DoubleScalar.Abs<LengthUnit> getMaximumPosition()
+    public final DoubleScalar.Rel<LengthUnit> getMaximumPosition()
     {
         return this.maximumPosition;
     }
 
     /** Maximum position on this TrajectoryPlot. */
-    private final DoubleScalar.Abs<LengthUnit> maximumPosition;
+    private final DoubleScalar.Rel<LengthUnit> maximumPosition;
 
     /** Maximum of the time axis. */
     private DoubleScalar.Abs<TimeUnit> maximumTime = new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND);
@@ -113,11 +112,11 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      * Create a new TrajectoryPlot.
      * @param caption String; the text to show above the TrajectoryPlot
      * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot
-     * @param minimumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the minimum position sampled by this TrajectoryPlot
-     * @param maximumPosition DoubleScalarAbs&lt;LengthUnit&gt;; the maximum position sampled by this TrajectoryPlot
+     * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum position sampled by this TrajectoryPlot
+     * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum position sampled by this TrajectoryPlot
      */
     public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval,
-            final DoubleScalar.Abs<LengthUnit> minimumPosition, final DoubleScalar.Abs<LengthUnit> maximumPosition)
+            final DoubleScalar.Rel<LengthUnit> minimumPosition, final DoubleScalar.Rel<LengthUnit> maximumPosition)
     {
         this.trajectories = new ArrayList<Trajectory>();
         this.sampleInterval = sampleInterval;
@@ -136,8 +135,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         this.chartPanel.getXYPlot().setDomainAxis(xAxis);
         this.chartPanel.getXYPlot().setRangeAxis(yAxis);
-        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(),
-                MutableDoubleScalar.minus(maximumPosition, minimumPosition).getSI());
+        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition)
+                .getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
@@ -288,6 +287,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     /**
      * Add the scheduled motion of a car to this TrajectoryPlot.
      * @param car Car; the Car that has determined it's next move
+     * @throws RemoteException when communication fails
      */
     public final void addData(final Car<?> car) throws RemoteException
     {
@@ -376,13 +376,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
          * @param car Car; the Car whose currently committed trajectory segment must be added
+         * @throws RemoteException when communication fails
          */
         public final void addSegment(final Car<?> car) throws RemoteException
         {
-            final int startSample =
-                    (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
-            final int endSample =
-                    (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
+            final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
+            final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =

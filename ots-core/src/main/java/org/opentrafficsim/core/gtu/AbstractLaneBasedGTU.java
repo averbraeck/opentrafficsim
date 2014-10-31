@@ -29,7 +29,8 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 22, 2014 <br>
@@ -77,8 +78,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final OTSDEVSSimulatorInterface simulator) throws RemoteException
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
+            throws RemoteException
     {
         super(id, gtuType, length, width, maximumVelocity, simulator);
         this.gtuFollowingModel = gtuFollowingModel;
@@ -183,7 +184,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
-        return DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
+        return DoubleScalar.plus(
+                DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
                 Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
     }
 
@@ -204,7 +206,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
-                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
+                DoubleScalar.plus(
+                        DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
                         Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
         double fractionalLongitudinalPosition = DoubleScalar.divide(loc, lane.getLength()).doubleValue();
         return new LinkLocation(lane.getParentLink(), fractionalLongitudinalPosition);
@@ -244,7 +247,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 DoubleScalar.minus(this.longitudinalPositions.get(lane), getLength()).immutable();
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
-                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
+                DoubleScalar.plus(
+                        DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
                         Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable();
         double fractionalLongitudinalPosition = DoubleScalar.divide(loc, lane.getLength()).doubleValue();
         return new LinkLocation(lane.getParentLink(), fractionalLongitudinalPosition);
@@ -261,7 +265,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU<?> headwayGTUInCurrentLane(final DoubleScalar<LengthUnit> maxDistance) throws RemoteException
+    public final LaneBasedGTU<?> headwayGTUInCurrentLane(final DoubleScalar<LengthUnit> maxDistance)
+            throws RemoteException
     {
         // TODO: link to the next lane if maxDistance < lane.getLength()
         return null;
@@ -277,8 +282,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU, final DoubleScalar.Abs<TimeUnit> when)
-            throws RemoteException
+    public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU,
+            final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
     {
         // TODO: link to the next lane if maxDistance < lane.getLength()
         return this.positionOfFront().distance(otherGTU.positionOfFront());
@@ -372,8 +377,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", getId(),
-                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(), pos, this.getLongitudinalVelocity(when)
-                        .getSI(), this.getAcceleration(when).getSI());
+                this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(), pos,
+                this.getLongitudinalVelocity(when).getSI(), this.getAcceleration(when).getSI());
     }
 
 }
