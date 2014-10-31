@@ -19,7 +19,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 
 import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -56,8 +55,8 @@ public class ContourPlotsSwingApplication extends DSOLApplication
 
     /**
      * @param args String[]; the command line argument (ignored)
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws SimRuntimeException on ???
+     * @throws RemoteException on communication error
      */
     public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {

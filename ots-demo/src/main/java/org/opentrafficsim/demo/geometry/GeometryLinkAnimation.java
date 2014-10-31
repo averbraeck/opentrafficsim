@@ -14,6 +14,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -38,8 +39,8 @@ public class GeometryLinkAnimation extends Renderable2D
      * @throws NamingException for problems with registering in context
      * @throws RemoteException for problems with registering in context
      */
-    public GeometryLinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width) throws NamingException,
-            RemoteException
+    public GeometryLinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;

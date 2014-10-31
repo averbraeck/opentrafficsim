@@ -3,9 +3,10 @@ package org.opentrafficsim.demo.IDMPlus.swing;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
-import javax.vecmath.Point2d;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -16,17 +17,24 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
+import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.LinkAnimation;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.Node;
+import org.opentrafficsim.demo.geometry.LaneFactory;
+import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.ContourPlot;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
@@ -65,19 +73,25 @@ public class ContourPlotsModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus. */
-    protected GTUFollowingModel<AnimatedCar> carFollowingModel;
+    protected GTUFollowingModel carFollowingModel;
 
     /** cars in the model. */
-    private ArrayList<AnimatedCar> cars = new ArrayList<AnimatedCar>();
+    ArrayList<AnimatedCar> cars = new ArrayList<AnimatedCar>();
+
+    /** The blocking car. */
+    protected AnimatedCar block = null;
 
     /** minimum distance. */
-    private DoubleScalar.Abs<LengthUnit> minimumDistance = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
+    private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
     /** maximum distance. */
-    private DoubleScalar.Abs<LengthUnit> maximumDistance = new DoubleScalar.Abs<LengthUnit>(5000, LengthUnit.METER);
+    private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
+
+    /** The Lane containt the simulated Cars. */
+    Lane lane;
 
     /** the speed limit. */
-    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
     /** the contour plots. */
     private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
@@ -85,22 +99,37 @@ public class ContourPlotsModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.simulator = (OTSDEVSSimulatorInterface) simulator;
+        Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
+        Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
+        this.lane = LaneFactory.makeLane("Lane", from, to);
 
-        this.carFollowingModel = new IDMPlus<AnimatedCar>();
+        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+
+        this.carFollowingModel = new IDMPlus((OTSDEVSSimulatorInterface) theSimulator);
 
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
 
         try
         {
+            // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "generateCar", null);
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+            // Create a block at t = 5 minutes
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this,
+                    "createBlock", null);
+            // Remove the block at t = 8 minutes, 20 seconds
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(500, TimeUnit.SECOND), this, this,
+                    "removeBlock", null);
+            // Schedule regular updates of the graph
+            for (int t = 60; t <= 1800; t++)
+            {
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
+                        "drawGraphs", null);
+            }
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -108,7 +137,7 @@ public class ContourPlotsModel implements OTSModelInterface
         }
 
         // in case we run on an animator and not on a simulator, we create the animation
-        if (simulator instanceof OTSAnimatorInterface)
+        if (theSimulator instanceof OTSAnimatorInterface)
         {
             createAnimation();
         }
@@ -122,10 +151,10 @@ public class ContourPlotsModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            Node nodeA = new Node("A", new Point2d(0.0d, 0.0d));
-            Node nodeB = new Node("B", new Point2d(5000.0d, 0.0d));
+            Node nodeA = new Node("A", new Coordinate(0.0d, 0.0d, 0.0d));
+            Node nodeB = new Node("B", new Coordinate(5000.0d, 0.0d, 0.0d));
             Link link = new Link("Road", nodeA, nodeB, new DoubleScalar.Rel<LengthUnit>(5000.0d, LengthUnit.METER));
-            new LinkAnimation(link, this.simulator, 5.0f);
+            new LinkAnimation(link, this.simulator, 15.0f);
         }
         catch (NamingException | RemoteException exception)
         {
@@ -136,8 +165,9 @@ public class ContourPlotsModel implements OTSModelInterface
     /**
      * Add one movement step of one Car to all contour plots.
      * @param car Car
+     * @throws RemoteException
      */
-    protected final void addToContourPlots(final Car car)
+    protected final void addToContourPlots(final Car<?> car) throws RemoteException
     {
         for (ContourPlot contourPlot : this.contourPlots)
         {
@@ -157,21 +187,52 @@ public class ContourPlotsModel implements OTSModelInterface
     }
 
     /**
+     * Set up the block.
+     * @throws RemoteException on communications failure
+     */
+    protected final void createBlock() throws RemoteException
+    {
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        initialPositions.put(this.lane, initialPosition);
+        try
+        {
+            this.block =
+                    new IDMCar(999999, this.simulator, this.carFollowingModel, this.simulator.getSimulatorTime().get(),
+                            initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+        }
+        catch (NamingException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Remove the block.
+     */
+    protected final void removeBlock()
+    {
+        this.block = null;
+    }
+
+    /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @throws NamingException
+     * @throws NamingException on ???
      */
     protected final void generateCar() throws NamingException
     {
-        DoubleScalar.Abs<LengthUnit> initialPosition = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalar.Rel<SpeedUnit> initialSpeed = new DoubleScalar.Rel<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        IDMCar car;
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        initialPositions.put(this.lane, initialPosition);
         try
         {
-            car =
+            IDMCar car =
                     new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
-                            .getSimulatorTime().get(), initialPosition, initialSpeed);
+                            .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.cars.add(0, car);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
+            new CarAnimation(car, this.simulator);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -198,7 +259,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /**
      * @return minimumDistance
      */
-    public final DoubleScalar.Abs<LengthUnit> getMinimumDistance()
+    public final DoubleScalar.Rel<LengthUnit> getMinimumDistance()
     {
         return this.minimumDistance;
     }
@@ -206,7 +267,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /**
      * @return maximumDistance
      */
-    public final DoubleScalar.Abs<LengthUnit> getMaximumDistance()
+    public final DoubleScalar.Rel<LengthUnit> getMaximumDistance()
     {
         return this.maximumDistance;
     }
@@ -214,23 +275,27 @@ public class ContourPlotsModel implements OTSModelInterface
     /** Inner class IDMCar. */
     protected class IDMCar extends AnimatedCar
     {
+        /** */
+        private static final long serialVersionUID = 20141030L;
+
         /**
          * Create a new IDMCar.
          * @param id integer; the id of the new IDMCar
          * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
-         * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial position of the new IDMCar
-         * @param initialSpeed DoubleScalar.Rel&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException
-         * @throws RemoteException
+         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
+         *            positions of the new IDMCar
+         * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
+         * @throws NamingException ...
+         * @throws RemoteException ...
          */
         public IDMCar(final int id, final OTSDEVSSimulatorInterface simulator,
                 final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
-                final DoubleScalar.Abs<LengthUnit> initialPosition, final DoubleScalar.Rel<SpeedUnit> initialSpeed)
-                throws RemoteException, NamingException
+                final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+                final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, simulator, carFollowingModel, initialTime, initialPosition, initialSpeed);
+            super(id, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
@@ -243,13 +308,18 @@ public class ContourPlotsModel implements OTSModelInterface
 
         /**
          * @throws RemoteException RemoteException
-         * @throws NamingException
+         * @throws NamingException on ???
+         * @throws NetworkException on network inconsistency
+         * @throws SimRuntimeException on ??
          */
-        protected final void move() throws RemoteException, NamingException
+        protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
-            System.out.println("move " + this.getID());
-            DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            if (getPosition(now).getSI() > ContourPlotsModel.this.maximumDistance.getSI())
+            // System.out.println("move " + getId());
+            if (this == ContourPlotsModel.this.block)
+            {
+                return;
+            }
+            if (positionOfFront().getLongitudinalPosition().getSI() > getMaximumDistance().getSI())
             {
                 ContourPlotsModel.this.cars.remove(this);
                 return;
@@ -260,32 +330,32 @@ public class ContourPlotsModel implements OTSModelInterface
             {
                 leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
             }
-            // Add a stationary car at 4000m to simulate an opening bridge
-            if (now.getSI() >= 300 && now.getSI() < 500)
-            {
-                AnimatedCar block =
-                        new AnimatedCar(99999, null, ContourPlotsModel.this.carFollowingModel, now,
-                                new DoubleScalar.Abs<LengthUnit>(4000, LengthUnit.METER),
-                                new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
-                leaders.add(block);
-            }
             GTUFollowingModelResult cfmr =
                     ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
                             ContourPlotsModel.this.speedLimit);
+            if (null != ContourPlotsModel.this.block)
+            {
+                leaders.clear();
+                leaders.add(ContourPlotsModel.this.block);
+                GTUFollowingModelResult blockCFMR =
+                        ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                                ContourPlotsModel.this.speedLimit);
+                if (blockCFMR.getAcceleration().getSI() < cfmr.getAcceleration().getSI()
+                        && blockCFMR.getAcceleration().getSI() >= -5)
+                {
+                    cfmr = blockCFMR;
+                }
+            }
+            if (cfmr.getAcceleration().getSI() < -0.1)
+            {
+                // System.out.println("Deceleration: " + cfmr.getAcceleration());
+            }
             setState(cfmr);
 
             // Add the movement of this Car to the contour plots
             addToContourPlots(this);
-
-            try
-            {
-                getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this,
-                        "move", null);
-            }
-            catch (RemoteException | SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
+            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
+                    null);
         }
     }
 }

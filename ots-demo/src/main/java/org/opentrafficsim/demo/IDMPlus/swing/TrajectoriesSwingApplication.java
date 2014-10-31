@@ -46,10 +46,9 @@ public class TrajectoriesSwingApplication extends DSOLApplication
 
     /**
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws SimRuntimeException on ???
+     * @throws RemoteException on communication failure
      */
-    @SuppressWarnings("unused")
     public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         TrajectoriesModel model = new TrajectoriesModel();
