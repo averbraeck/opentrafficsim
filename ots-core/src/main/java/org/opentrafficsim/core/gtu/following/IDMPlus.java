@@ -119,15 +119,15 @@ public class IDMPlus implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu,
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
             final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException
     {
-        DoubleScalar.Abs<TimeUnit> thisEvaluationTime = gtu.getNextEvaluationTime();
+        DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         // System.out.println("evaluation time is " + thisEvaluationTime);
         // System.out.println("vDes is " + vDes);
         DoubleScalar.Rel<LengthUnit> myFrontPosition =
-                gtu.positionOfFront(thisEvaluationTime).getLongitudinalPosition();
+                follower.positionOfFront(thisEvaluationTime).getLongitudinalPosition();
         // System.out.println("myFrontPosition is " + myFrontPosition);
         DoubleScalar.Rel<LengthUnit> shortestHeadway =
                 new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
@@ -149,13 +149,30 @@ public class IDMPlus implements GTUFollowingModel
             }
         }
         // System.out.println("shortestHeadway is " + shortestHeadway);
-        return computeAcceleration(gtu, closestLeader, speedLimit);
+        return computeAcceleration(follower, closestLeader, speedLimit);
     }
 
     /** {@inheritDoc} */
     @Override
     public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
             final LaneBasedGTU<?> leader, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    {
+        DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
+        DoubleScalar.Abs<SpeedUnit> leaderSpeed =
+                null == leader ? follower.getLongitudinalVelocity(thisEvaluationTime) : leader
+                        .getLongitudinalVelocity(thisEvaluationTime);
+        DoubleScalar.Rel<LengthUnit> headway =
+                null == leader ? new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER) : DoubleScalar
+                        .minus(leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(),
+                                follower.positionOfFront(thisEvaluationTime).getLongitudinalPosition()).immutable();
+
+        return computeAcceleration(follower, leaderSpeed, headway, speedLimit);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, Abs<SpeedUnit> leaderSpeed,
+            Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> myCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
@@ -165,10 +182,9 @@ public class IDMPlus implements GTUFollowingModel
                 new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
                         AccelerationUnit.METER_PER_SECOND_2);
         logWeightedAverageSpeedTimes2.multiply(2); // don't forget the times 2
+
         DoubleScalar.Rel<SpeedUnit> dV =
-                (null == leader) ? new DoubleScalar.Rel<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND) : DoubleScalar.minus(
-                        follower.getLongitudinalVelocity(thisEvaluationTime),
-                        leader.getLongitudinalVelocity(thisEvaluationTime)).immutable();
+                DoubleScalar.minus(follower.getLongitudinalVelocity(thisEvaluationTime), leaderSpeed).immutable();
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + gtu.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
@@ -187,11 +203,7 @@ public class IDMPlus implements GTUFollowingModel
         }
         // System.out.println("s* is " + sStar);
 
-        DoubleScalar.Rel<LengthUnit> shortestHeadway =
-                null == leader ? new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER) : DoubleScalar
-                        .minus(leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(),
-                                follower.positionOfFront(thisEvaluationTime).getLongitudinalPosition()).immutable();
-        double distanceIncentive = 1 - Math.pow(sStar.getSI() / shortestHeadway.getSI(), 2);
+        double distanceIncentive = 1 - Math.pow(sStar.getSI() / headway.getSI(), 2);
         MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration =
                 new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
         newAcceleration.multiply(Math.min(speedIncentive, distanceIncentive));
@@ -204,7 +216,7 @@ public class IDMPlus implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
     {
         return this.b;
     }
