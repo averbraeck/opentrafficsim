@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -23,42 +22,39 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public interface GTUFollowingModel
 {
     /**
-     * Compute the acceleration that would be used to follow a set of leaders.
-     * @param gtu the GTU for which acceleration is computed
-     * @param leaders Set&lt;GTU&gt;; the set of leaders to take into consideration
+     * Compute the acceleration that would be used to follow a set of leaders.<br />
+     * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
+     * leader, or should slow down for a crossing from accelerating to unsafe speeds.
+     * @param follower the GTU for which acceleration is computed
+     * @param leaders Set&lt;LaneBasedGTU&gt;; the set of leaders to take into consideration
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return GTUFollowingModelResult; the result of application of the gtu following model
      * @throws RemoteException in case of simulator reachability problems
      */
-    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> gtu,
+    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
             final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException;
 
     /**
-     * Compute the acceleration and lane change.
-     * @param gtu GTU; the GTU for which the acceleration and lane change is computed
-     * @param sameLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null)
-     * @param preferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where gtus should
-     *            drive in the absence of other traffic (must be null if there is no such lane)
-     * @param nonPreferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
-     *            gtus should merge to overtake other traffic (must be null if there is no such lane)
+     * Compute the acceleration that would be used to follow a set of leaders.<br />
+     * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
+     * leader, or should slow down for a crossing from accelerating to unsafe speeds.
+     * @param follower the GTU for which acceleration is computed
+     * @param leader LaneBasedGTU&lt;?&gt;; the leader to take into consideration
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @param preferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane where gtus should drive
-     *            in the absence of other traffic
-     * @param nonPreferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane into which gtus
-     *            should merge to overtake other traffic
-     * @return GTUFollowingModelResult; the result of the lane change and gtu following model
-     * @throws RemoteException in case the simulation time cannot be retrieved.
+     * @return GTUFollowingModelResult; the result of application of the GTU following model
+     * @throws RemoteException in case of simulator reachability problems
      */
-    GTUFollowingModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<? extends LaneBasedGTU<?>> sameLaneGTUs,
-            final Collection<? extends LaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<? extends LaneBasedGTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, double preferredLaneRouteIncentive,
-            double nonPreferredLaneRouteIncentive) throws RemoteException;
+    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException;
 
-    /** @return the simulator of the GTU Following Model. */
-    OTSDEVSSimulatorInterface getSimulator();
+    /**
+     * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be
+     * enforced upon a new follower due to entering a road or changing into an adjacent lane. The result shall be a
+     * <b>positive value</b>. In most car following models this value is named <cite>b</cite>.
+     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; must be a positive value!
+     */
+    DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration();
 
     /**
      * The result of a GTUFollowingModel evaluation shall be stored in an instance of this class.
@@ -79,24 +75,15 @@ public interface GTUFollowingModel
         private final DoubleScalar.Abs<TimeUnit> validUntil;
 
         /**
-         * Lane change; 0: stay in current lane; -1 merge onto adjacent overtaking lane; +1 merge towards the default
-         * lane.
-         */
-        private final int laneChange;
-
-        /**
          * Create a new GTUFollowingModelResult.
          * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
          * @param validUntil DoubleScalarAbs&lt;TimeUnit&gt;; time when this result expires
-         * @param laneChange Integer; the lane determined change; 0: stay in current lane; -1 merge onto adjacent
-         *            overtaking lane; +1 merge towards the default lane
          */
         public GTUFollowingModelResult(final DoubleScalar.Abs<AccelerationUnit> acceleration,
-                final DoubleScalar.Abs<TimeUnit> validUntil, final int laneChange)
+                final DoubleScalar.Abs<TimeUnit> validUntil)
         {
             this.acceleration = acceleration;
             this.validUntil = validUntil;
-            this.laneChange = laneChange;
         }
 
         /**
@@ -116,20 +103,11 @@ public interface GTUFollowingModel
         }
 
         /**
-         * @return laneChange.
-         */
-        public int getLaneChange()
-        {
-            return this.laneChange;
-        }
-
-        /**
          * {@inheritDoc}
          */
         public String toString()
         {
-            return String.format("a=%s, valid until %s, laneChange=%s", this.acceleration, this.validUntil,
-                    this.laneChange);
+            return String.format("a=%s, valid until %s", this.acceleration, this.validUntil);
         }
     }
 }
