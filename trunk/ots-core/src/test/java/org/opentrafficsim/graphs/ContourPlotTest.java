@@ -301,7 +301,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for one minute
         car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
-                        initialTime.getSI() + 60, TimeUnit.SECOND), 0));
+                        initialTime.getSI() + 60, TimeUnit.SECOND)));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
@@ -347,7 +347,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for another minute
         car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
-                        car.getNextEvaluationTime().getSI() + 60, TimeUnit.SECOND), 0));
+                        car.getNextEvaluationTime().getSI() + 60, TimeUnit.SECOND)));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
@@ -433,7 +433,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for five more minutes
         car.setState(new GTUFollowingModelResult(
                 new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(
-                        car.getNextEvaluationTime().getSI() + 300, TimeUnit.SECOND), 0));
+                        car.getNextEvaluationTime().getSI() + 300, TimeUnit.SECOND)));
         cp.addData(car);
         // Check that the time range has expanded
         xBins = cp.xAxisBins();

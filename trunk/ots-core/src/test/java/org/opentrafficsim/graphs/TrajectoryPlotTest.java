@@ -84,7 +84,7 @@ public class TrajectoryPlotTest
         DoubleScalar.Rel<TimeUnit> duration = new DoubleScalar.Rel<TimeUnit>(400, TimeUnit.SECOND);
         DoubleScalar.Abs<TimeUnit> endTime = DoubleScalar.plus(simulator.getSimulatorTime().get(), duration).immutable();
         car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
-                AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
+                AccelerationUnit.METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
@@ -94,7 +94,7 @@ public class TrajectoryPlotTest
                 initialSpeed, simulator);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
         secondCar.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
-                AccelerationUnit.METER_PER_SECOND_2), endTime, 0));
+                AccelerationUnit.METER_PER_SECOND_2), endTime));
         // System.out.println("Second car end position " + car.getPosition(secondCar.getNextEvaluationTime()));
         tp.addData(secondCar);
         assertEquals("Number of trajectories should now be 2", 2, tp.getSeriesCount());
