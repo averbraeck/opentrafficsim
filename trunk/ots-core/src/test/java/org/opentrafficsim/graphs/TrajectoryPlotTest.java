@@ -31,11 +31,11 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 22, 2014 <br>
@@ -48,7 +48,7 @@ public class TrajectoryPlotTest
 
     /**
      * Test the TrajectoryPlot.
-     * @throws Exception 
+     * @throws Exception which should not happen, but will be treated as an error by the JUnit framework if it does
      */
     @Test
     public final void trajectoryTest() throws Exception
@@ -82,7 +82,8 @@ public class TrajectoryPlotTest
                         initialSpeed, simulator);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         DoubleScalar.Rel<TimeUnit> duration = new DoubleScalar.Rel<TimeUnit>(400, TimeUnit.SECOND);
-        DoubleScalar.Abs<TimeUnit> endTime = DoubleScalar.plus(simulator.getSimulatorTime().get(), duration).immutable();
+        DoubleScalar.Abs<TimeUnit> endTime =
+                DoubleScalar.plus(simulator.getSimulatorTime().get(), duration).immutable();
         car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
                 AccelerationUnit.METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
@@ -90,8 +91,9 @@ public class TrajectoryPlotTest
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
         simulateUntil(new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND), simulator);
-        Car<Integer> secondCar = new Car<Integer>(2, carType, length, width, maxSpeed, null, initialLongitudinalPositions,
-                initialSpeed, simulator);
+        Car<Integer> secondCar =
+                new Car<Integer>(2, carType, length, width, maxSpeed, null, initialLongitudinalPositions, initialSpeed,
+                        simulator);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
         secondCar.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
                 AccelerationUnit.METER_PER_SECOND_2), endTime));
@@ -186,13 +188,13 @@ public class TrajectoryPlotTest
      * @param car Car; the car whose trajectory was sampled
      * @param series Integer; the series in the TrajectoryPlot that should correspond to the car
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
-     * @throws RemoteException 
+     * @throws RemoteException on communication failure
      */
-    private void verifyTrajectory(final Car car, final int series, final TrajectoryPlot tp) throws RemoteException
+    private void verifyTrajectory(final Car<?> car, final int series, final TrajectoryPlot tp) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
-                MutableDoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
+                DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
         int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
@@ -200,7 +202,7 @@ public class TrajectoryPlotTest
         {
             DoubleScalar.Rel<TimeUnit> deltaTime =
                     new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
-            DoubleScalar.Abs<TimeUnit> sampleTime = MutableDoubleScalar.plus(initialTime, deltaTime).immutable();
+            DoubleScalar.Abs<TimeUnit> sampleTime = DoubleScalar.plus(initialTime, deltaTime).immutable();
             double sampledTime = tp.getXValue(series, sample);
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
@@ -214,15 +216,18 @@ public class TrajectoryPlotTest
                     0.0001);
         }
     }
-    
+
     /** Set to true when the stop event is executed by the simulator. */
     private volatile boolean stopped;
+
     /**
      * Run a simulator up to the specified stop time.
-     * @param stopTime DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time 
+     * @param stopTime DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time
      * @param simulator DEVSSimulatorInterface; the simulator
      */
-    private void simulateUntil(DoubleScalar.Abs<TimeUnit> stopTime, DEVSSimulatorInterface simulator)
+    @SuppressWarnings("unchecked")
+    private void simulateUntil(final DoubleScalar.Abs<TimeUnit> stopTime,
+            @SuppressWarnings("rawtypes") final DEVSSimulatorInterface simulator)
     {
         this.stopped = false;
         try
@@ -233,7 +238,7 @@ public class TrajectoryPlotTest
         {
             exception.printStackTrace();
         }
-        while (! this.stopped)
+        while (!this.stopped)
         {
             try
             {
@@ -245,7 +250,7 @@ public class TrajectoryPlotTest
             }
         }
     }
-    
+
     /**
      * Event for the simulator.
      */
