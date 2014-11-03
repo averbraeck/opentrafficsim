@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
-import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.network.CrossSectionLink;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.NetworkException;
