@@ -42,7 +42,7 @@ public interface GTUFollowingModel
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * leader, or should slow down for a crossing from accelerating to unsafe speeds.
      * @param follower the GTU for which acceleration is computed
-     * @param leader LaneBasedGTU&lt;?&gt;; the leader to take into consideration
+     * @param leader LaneBasedGTU&lt;?&gt;; the leader to take into consideration (may be null)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return GTUFollowingModelResult; the result of application of the GTU following model
      * @throws RemoteException in case of simulator reachability problems
