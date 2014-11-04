@@ -3,10 +3,13 @@ package org.opentrafficsim.car.lanechanging;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.gtu.LaneBasedGTU;
+import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * All lane change models must implement this interface.
@@ -26,28 +29,29 @@ public interface LaneChangeModel
 {
     /**
      * Compute the acceleration and lane change. <br />
-     * FIXME the parameters of this method wil change. Hopefully will become straightforward to figure out the nearby
+     * FIXME the parameters of this method will change. Hopefully will become straightforward to figure out the nearby
      * vehicles in the current and the adjacent lanes.
      * @param gtu GTU; the GTU for which the acceleration and lane change is computed
-     * @param sameLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null)
+     * @param sameLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null and
+     *            may include gtu)
      * @param preferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where gtus should
      *            drive in the absence of other traffic (must be null if there is no such lane)
      * @param nonPreferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
      *            GTUs should merge to overtake other traffic (must be null if there is no such lane)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @param preferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane where gtus should drive
-     *            in the absence of other traffic
-     * @param nonPreferredLaneRouteIncentive Double; route incentive to merge to the adjacent lane into which gtus
-     *            should merge to overtake other traffic
+     * @param preferredLaneRouteIncentive DoubleScalar.Abs&lt;AccelerationUnit&gt;; route incentive to merge to the
+     *            adjacent lane where GTUs should drive in the absence of other traffic
+     * @param nonPreferredLaneRouteIncentive DoubleScalar.Abs&lt;AccelerationUnit&gt;; route incentive to merge to the
+     *            adjacent lane into which GTUs should merge to overtake other traffic
      * @return LaneChangeModelResult; the result of the lane change and GTU following model
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
-    LaneChangeModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<? extends LaneBasedGTU<?>> sameLaneGTUs,
-            final Collection<? extends LaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<? extends LaneBasedGTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, double preferredLaneRouteIncentive,
-            double nonPreferredLaneRouteIncentive) throws RemoteException;
+    LaneChangeModelResult computeLaneChangeAndAcceleration(final AbstractLaneBasedGTU<?> gtu,
+            final Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs,
+            final Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit, Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
 
     /**
      * The result of a LaneChangeModel evaluation shall be stored in an instance of this class. <br />
@@ -74,41 +78,41 @@ public interface LaneChangeModel
          * Lane change. This has one of the following values:
          * <table>
          * <tr>
-         * <td>0:</td>
+         * <td>null:</td>
          * <td>Stay in the current lane</td>
          * </tr>
          * <tr>
-         * <td>&minus;1:</td>
-         * <td>Move to the adjacent overtaking lane</td>
+         * <td>LateralDirectionality.LEFT:</td>
+         * <td>Move to the Left adjacent lane</td>
          * </tr>
          * <tr>
-         * <td>+1:</td>
-         * <td>Move to the adjacent non-overtaking lane</td>
+         * <td>LateralDirectionality.RIGHT:</td>
+         * <td>Move to the Right adjacent lane</td>
          * </tr>
          * </table>
          */
-        private final int laneChange;
+        private final LateralDirectionality laneChange;
 
         /**
          * Construct a new LaneChangeModelResult.
          * @param gfmr GTUFollowingModelResult; the acceleration and duration of validity of this result.
-         * @param laneChange int; this has one of the values:
+         * @param laneChange LateralDirectionality; this has one of the values:
          *            <table>
          *            <tr>
-         *            <td>0:</td>
+         *            <td>null:</td>
          *            <td>Stay in the current lane</td>
          *            </tr>
          *            <tr>
-         *            <td>&minus;1:</td>
-         *            <td>Move to the adjacent overtaking lane</td>
+         *            <td>LateralDirectionality.LEFT:</td>
+         *            <td>Move to the Left adjacent lane</td>
          *            </tr>
          *            <tr>
-         *            <td>+1:</td>
-         *            <td>Move to the adjacent non-overtaking lane</td>
+         *            <td>LateralDirectionality.RIGHT:</td>
+         *            <td>Move to the Right adjacent lane</td>
          *            </tr>
          *            </table>
          */
-        public LaneChangeModelResult(final GTUFollowingModelResult gfmr, final int laneChange)
+        public LaneChangeModelResult(final GTUFollowingModelResult gfmr, final LateralDirectionality laneChange)
         {
             this.gfmr = gfmr;
             this.laneChange = laneChange;
@@ -126,20 +130,20 @@ public interface LaneChangeModel
          * @return laneChange. This has one of the values:
          *         <table>
          *         <tr>
-         *         <td>0:</td>
+         *         <td>null:</td>
          *         <td>Stay in the current lane</td>
          *         </tr>
          *         <tr>
-         *         <td>&minus;1:</td>
-         *         <td>Move to the adjacent overtaking lane</td>
+         *         <td>LateralDirectionality.LEFT:</td>
+         *         <td>Move to the Left adjacent lane</td>
          *         </tr>
          *         <tr>
-         *         <td>+1:</td>
-         *         <td>Move to the adjacent non-overtaking lane</td>
+         *         <td>LateralDirectionality.RIGHT:</td>
+         *         <td>Move to the Right adjacent lane</td>
          *         </tr>
          *         </table>
          */
-        public final int getLaneChange()
+        public final LateralDirectionality getLaneChange()
         {
             return this.laneChange;
         }
