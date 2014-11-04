@@ -118,7 +118,7 @@ public class TrajectoriesModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(500, TimeUnit.SECOND), this, this,
                     "removeBlock", null);
             // Schedule regular updates of the graph
-            for (int t = 60; t <= 1800; t++)
+            for (int t = 1; t <= 1800; t++)
             {
                 this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
                         "drawGraph", null);
