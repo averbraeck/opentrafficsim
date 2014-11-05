@@ -59,10 +59,14 @@ public class NTMTestApplication extends DSOLApplication
     {
         NTMModel model = new NTMModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
+        // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(TimeUnit.SECOND)
+        OTSSimTimeDouble startTime = new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND));
+        // OTSReplication replication =
+        // new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), model
+        // .getSettingsNTM().getDurationOfSimulation(), model);
         OTSReplication replication =
-                new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(7200.0,
-                                TimeUnit.SECOND), model);
+                new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(7200.0, TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
 
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =

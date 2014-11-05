@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
@@ -54,7 +55,8 @@ public class CellBehaviourNTM extends CellBehaviour
     {
         this.parametersNTM = parametersNTM;
         this.maxCapacity =
-                parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
+                        * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
     }
 
     /**
@@ -101,9 +103,9 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
-     * @param maxCapacity 
-     * @param param 
-     * @return carProduction 
+     * @param maximumCapacity based on area information
+     * @param param
+     * @return carProduction
      */
     public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,
             final ParametersNTM param)

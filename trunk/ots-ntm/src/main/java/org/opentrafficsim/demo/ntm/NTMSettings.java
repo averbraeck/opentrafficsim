@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.ntm;
 import java.util.Calendar;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
@@ -24,7 +25,7 @@ public class NTMSettings
     /**
      * Start time of the simulation since Midnight, translated from Calendar to seconds since.
      */
-    private DoubleScalar.Abs<TimeUnit> startTimeSinceMidnight;
+    private Abs<TimeUnit> startTimeSinceMidnight;
 
     /** */
     private Rel<TimeUnit> durationOfSimulation;
@@ -93,7 +94,7 @@ public class NTMSettings
     /**
      * @return startTimeSinceMidnight
      */
-    public DoubleScalar.Abs<TimeUnit> getStartTimeSinceMidnight()
+    public Abs<TimeUnit> getStartTimeSinceMidnight()
     {
         return this.startTimeSinceMidnight;
     }

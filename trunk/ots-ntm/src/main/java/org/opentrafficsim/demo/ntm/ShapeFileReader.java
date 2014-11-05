@@ -99,8 +99,12 @@ public class ShapeFileReader
                 String gebied = (String) feature.getAttribute("GEBIEDSNAA");
                 String regio = (String) feature.getAttribute("REGIO");
                 double dhb = (double) feature.getAttribute("DHB");
-                // search for areas within the centroids (from the "points")
-                Node centroid = centroids.get(centroidNr);
+                Node centroid = null;
+                if (centroids != null)
+                {
+                    // search for areas within the centroids (from the "points")
+                    centroid = centroids.get(centroidNr);
+                }
                 if (centroid == null)
                 {
                     // System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" +
@@ -124,9 +128,12 @@ public class ShapeFileReader
                     numberOfAreasWithCentroid++;
                 }
             }
-            System.out.println("Number of centroids " + centroids.size());
-            System.out.println("Number of areas with centroids " + numberOfAreasWithCentroid);
-            System.out.println("Number of areas without centroids " + numberOfAreasWithoutCentroid);
+            if (centroids != null)
+            {
+                System.out.println("Number of centroids " + centroids.size());
+                System.out.println("Number of areas with centroids " + numberOfAreasWithCentroid);
+                System.out.println("Number of areas without centroids " + numberOfAreasWithoutCentroid);
+            }
         }
         catch (Exception problem)
         {
@@ -138,19 +145,23 @@ public class ShapeFileReader
             storeAreas.dispose();
         }
         int teller = 0;
-        for (Node centroid : centroids.values())
+        
+        if (centroids != null)
         {
-            boolean found = false;
-
-            if (areas.containsKey(centroid.getId()))
+            for (Node centroid : centroids.values())
             {
-                found = true;
-                teller++;
-            }
-            if (!found)
-            {
-                areas.put(centroid.getId(), NTMModel.createMissingArea(centroid));
-                System.out.println("Centroid not found: create area for " + centroid.getId());
+                boolean found = false;
+    
+                if (areas.containsKey(centroid.getId()))
+                {
+                    found = true;
+                    teller++;
+                }
+                if (!found)
+                {
+                    areas.put(centroid.getId(), BuildGraph.createMissingArea(centroid));
+                    System.out.println("Centroid not found: create area for " + centroid.getId());
+                }
             }
         }
         System.out.println("found : " + teller);
@@ -325,7 +336,7 @@ public class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Abs<LengthUnit> length = new DoubleScalar.Abs<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -420,7 +431,7 @@ public class ShapeFileReader
                     {
                         Link link =
                                 new Link(null, nr, length, centroidA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.CENTROID, linkData);
+                                        TrafficBehaviourType.NTM, linkData);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         connectors.put(nr, link);
@@ -430,7 +441,7 @@ public class ShapeFileReader
                     {
                         Link link =
                                 new Link(null, nr, length, nodeA, centroidB, speed, capacity,
-                                        TrafficBehaviourType.CENTROID, linkData);
+                                        TrafficBehaviourType.NTM, linkData);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         connectors.put(nr, link);

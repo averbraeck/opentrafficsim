@@ -236,7 +236,6 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
 
     private ArrayList<FlowCell> flowCells;
 
-
     /**
      * @param geometry
      * @param nr
@@ -249,15 +248,18 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param capacity
      * @param behaviourType
      */
-    public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Abs<LengthUnit> length, final Node startNode,
+
+    public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
             final Node endNode, DoubleScalar.Abs<SpeedUnit> speed, final DoubleScalar.Abs<FrequencyUnit> capacity,
             final TrafficBehaviourType behaviourType, LinkData linkData)
     {
+
         super(nr, startNode, endNode, length, capacity);
         setGeometry(geometry);
         this.speed = speed;
         this.behaviourType = behaviourType;
         this.linkData = linkData;
+        this.setGeometry(geometry);
         if (geometry != null)
         {
             Coordinate[] cc = geometry.getLineString().getCoordinates();
@@ -300,9 +302,10 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
                         && Math.abs(cc[0].x - this.getEndNode().getPoint().getX()) > 0.001
                         && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().getX()) > 0.001
                         && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().getX()) > 0.001)
-                    System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x="
-                            + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
-                            + this.getStartNode().getPoint().getX() + ", nodeB.x=" + this.getEndNode().getPoint().getX());
+                    System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId()
+                            + "); cc[0].x=" + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
+                            + this.getStartNode().getPoint().getX() + ", nodeB.x="
+                            + this.getEndNode().getPoint().getX());
             }
         }
     }
@@ -312,22 +315,23 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
      * @param endNode
      * @param capacity
      * @param speed
+     * @param trafficBehaviourType
      * @return
      */
-    public static Link createLink(Node startNode, Node endNode, DoubleScalar.Abs<FrequencyUnit> capacity,
-            DoubleScalar.Abs<SpeedUnit> speed)
+    public static Link createLink(Node startNode, Node endNode, Abs<FrequencyUnit> capacity,
+            DoubleScalar.Abs<SpeedUnit> speed, TrafficBehaviourType trafficBehaviourType)
+
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate coordStart = new Coordinate(startNode.getPoint().getX(), startNode.getPoint().getY());
         Coordinate coordEnd = new Coordinate(endNode.getPoint().getX(), endNode.getPoint().getY());
         Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
-        DoubleScalar.Abs<LengthUnit> length =
-                new DoubleScalar.Abs<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> length =
+                new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
 
         String nr = startNode.getId() + " - " + endNode.getId();
-        Link newLink =
-                new Link(null, nr, length, startNode, endNode, speed, capacity, TrafficBehaviourType.NTM, null);
+        Link newLink = new Link(null, nr, length, startNode, endNode, speed, capacity, trafficBehaviourType, null);
         try
         {
             LinearGeometry geometry = new LinearGeometry(newLink, line, null);
@@ -572,11 +576,13 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         }
         // System.out.println("test: " + nr + " length A: " + up.getLength().doubleValue() + " length B: "
         // + down.getLength().doubleValue());
-        DoubleScalar.Abs<LengthUnit> length =
-                new DoubleScalar.Abs<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
+
+        DoubleScalar.Rel<LengthUnit> length =
+                new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
+
         mergedLink =
-                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(),
-                        up.getCapacity(), up.getBehaviourType(), up.getLinkData());
+                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(), up.getCapacity(),
+                        up.getBehaviourType(), up.getLinkData());
 
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();
@@ -591,7 +597,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
         {
             exception.printStackTrace();
         }
-        
+
         return mergedLink;
     }
 
@@ -680,7 +686,6 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     {
         return "ShpLink [nr=" + this.getId() + ", nodeA=" + this.getStartNode() + ", nodeB=" + this.getEndNode() + "]";
     }
-
 
     /**
      * @return linkData.
