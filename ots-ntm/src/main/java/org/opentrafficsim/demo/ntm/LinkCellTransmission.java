@@ -8,6 +8,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
@@ -46,7 +47,8 @@ public class LinkCellTransmission extends Link
      * @param linkData
      * @param cells
      */
-    public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Abs<LengthUnit> length, Node startNode,
+
+    public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length, Node startNode,
             Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Abs<FrequencyUnit> capacity,
             TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells)
     {

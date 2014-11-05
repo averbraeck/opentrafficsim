@@ -27,11 +27,14 @@ import org.opentrafficsim.demo.ntm.Area;
 public class AreaAnimation extends Renderable2D
 {
     private float width;
-    private Color color;
+    private Color colorArea;
+    private Color colorBorder;
 
     /**
      * @param source
      * @param simulator
+     * @param width 
+     * @param traffic 
      * @throws NamingException
      * @throws RemoteException
      */
@@ -40,15 +43,28 @@ public class AreaAnimation extends Renderable2D
     {
         super(source, simulator);
         this.width = width;
+        if (source.getAccumulatedCars() > 0)
+        {
+            this.colorArea = colorFor(normalize(0, 5, source.getAccumulatedCars()));
+        }
+        else
+        {
+            this.colorArea = Color.YELLOW;    
+        }
+
+        //
+        float[] hsv = new float[3];
+//        Color.RGBtoHSB(r,g,b,hsv);
+        //Color.RGBtoHSB(130,0,0,hsv);
         if (source.getRegio() == "Missing") {
-            this.color = Color.ORANGE;
+            this.colorBorder = Color.ORANGE;
         }
         else if (source.getRegio() == "cordonPoint") {
-            this.color = Color.RED;
+            this.colorBorder = Color.RED;
             this.width = 5;
         }
         else {
-            this.color = Color.GREEN;
+            this.colorBorder = Color.BLACK;
         }
     }
 
@@ -61,9 +77,23 @@ public class AreaAnimation extends Renderable2D
             graphics.setColor(Color.BLACK);
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(this.width));
-            graphics.setColor(this.color);
+            graphics.setColor(this.colorArea);
+            graphics.fill(polygon);
+            graphics.setColor(this.colorBorder);
             graphics.draw(polygon);
             graphics.setStroke(oldStroke);
         }
     }
+    
+    private static Color colorFor(double value) {
+        value = Math.max(0, Math.min(1, value));
+        int red = (int)(value * 255);
+        return new Color(red,0,0);
+    }
+    
+    private static double normalize(double min, double max, double value) {
+        return (value - min) / (max - min);
+    }
+    
+
 }

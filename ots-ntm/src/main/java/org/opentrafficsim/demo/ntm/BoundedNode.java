@@ -49,8 +49,8 @@ public class BoundedNode extends Node
         }
         else if (behaviourType == TrafficBehaviourType.NTM)
         {
-            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-            DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(10, LengthUnit.KILOMETER);
+            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(40, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.KILOMETER);
             //TODO parameters should depend on area characteristics
             ParametersNTM parametersNTM = new ParametersNTM(25.0, 50.0, 100, speed, roadLength);
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
