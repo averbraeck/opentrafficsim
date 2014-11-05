@@ -15,7 +15,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
- * Common code of many lane change models.
+ * Common code for a family of lane change models like in M. Treiber and A. Kesting <i>Traffic Flow Dynamics</i>,
+ * Springer-Verlag Berlin Heidelberg 2013, pp 239-244
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -37,14 +38,14 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final DoubleScalar.Abs<SpeedUnit> speedLimit, final Rel<AccelerationUnit> preferredLaneRouteIncentive,
             final Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
-        // Fairly straightforward application of egoistic lane change model in Treiber c.s. pp 239-244
         try
         {
             System.out.println(String.format(
                     "Route desire to merge to preferredLane: %.3f, route desire to merge to overtakingLane: %.3f",
                     preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
             Lane lane = gtu.getLongitudinalPositions().keySet().iterator().next();
-            // TODO make this driving side dependent.
+            // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
+            // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
             Lane nonPreferredLane = lane.accessibleAdjacentLane(nonPreferred, gtu.getGTUType());
@@ -60,6 +61,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // The egoistic lane change only looks at his/her own gain; therefore ignores field 1 of the accelerations.
             if (null == preferredA)
             {
+                // Lane change to the preferred lane is not possible
                 if (null == nonPreferredA)
                 {
                     // No lane change possible; this is definitely the easy case
@@ -71,7 +73,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     // Merge to nonPreferredLane is possible; merge to preferredLane is NOT possible
                     if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).getSI() > straightA.getSI())
                     {
-                        // Merge to the adjacent nonPreferred lane
+                        // Merge to the nonPreferred lane; i.e. start an overtaking procedure
                         return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu,
                                 nonPreferredLaneGTUs, speedLimit), nonPreferred);
                     }
@@ -89,7 +91,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 // Merge to preferredLane is possible; merge to nonPreferred lane is NOT possible
                 if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).getSI() > straightA.getSI())
                 {
-                    // Merge to the preferred lane
+                    // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
                     return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu,
                             preferredLaneGTUs, speedLimit), preferred);
                 }
@@ -117,11 +119,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (preferredAttractiveness.getSI() > 0
                     && preferredAttractiveness.getSI() > nonPreferredAttractiveness.getSI())
             {
-                // Merge to the preferred lane
+                // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
                 return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
                         speedLimit), preferred);
             }
-            // Merge to the adjacent nonPreferred lane
+            // Merge to the adjacent nonPreferred lane; i.e. start an overtaking procedure
             return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
                     speedLimit), nonPreferred);
         }
@@ -129,15 +131,19 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
         {
             exception.printStackTrace();
         }
-        throw new Error("Cannot happen");
+        throw new Error(
+                "Cannot happen: computeLaneChangeAndAcceleration failed to decide whether or not to change lane");
     }
 
     /**
-     * Return the weighted acceleration as described by the personality.
+     * Return the weighted acceleration as described by the personality. This incorporates the personality of the driver
+     * to the lane change decisions.
      * @param accelerations DoubleVector.Abs.Dense&lt;AccelerationUnit&gt;; the acceleration that the reference GTU will
      *            make (in position 0 of the vector) and the acceleration that the (new) follower GTU will make (in
      *            position 1 of the vector)
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that the personality of the driver uses
+     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that the personality of the driver uses (in a
+     *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide
+     *         if a lane change should be performed
      */
     public abstract DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(
             DoubleVector.Abs.Dense<AccelerationUnit> accelerations);
