@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * <p>
@@ -99,6 +100,10 @@ public class CodeGenerator
             {
                 for (String importString : imports)
                 {
+                    if (null == importString)
+                    {
+                        continue;
+                    }
                     if (importString.length() > 0)
                     {
                         writer.write("import " + importString + ";");
@@ -438,12 +443,15 @@ public class CodeGenerator
         construction.append(line);
         if (null != exceptions)
         {
-            String append = " throws " + exceptions.split("[|]")[0];
+            String append = "throws " + exceptions.split("[|]")[0];
             if (line.length() + append.length() > maxLineLength)
             {
-                construction.append("\r\n" + indent + indent(2));
+                construction.append("\r\n" + indent + indent(2) + append);
             }
-            construction.append(append);
+            else
+            {
+                construction.append(" " + append);
+            }
         }
         if (null != body)
         {
@@ -548,6 +556,47 @@ public class CodeGenerator
     public final void generatePackageInfo(final String relativePackageName, final String contents)
     {
         closeFile(openFile(relativePackageName, packageInfoName, null, contents, null));
+    }
+
+    /**
+     * Build a string with the specified number of <cite>[]</cite> (square bracket) pairs.
+     * @param dimensions int; the number of bracket pairs to concatenate
+     * @return String
+     */
+    public String buildEmptyBrackets(final int dimensions)
+    {
+        return buildBrackets(dimensions, "");
+    }
+
+    /**
+     * Build a string with the specified number of <cite>[<b>string</b>]</cite> (square bracket with content) pairs.
+     * @param dimensions int; the number of bracket pairs with contents to concatenate
+     * @param contents String; the text that goes between each pair of brackets
+     * @return String
+     */
+    public String buildBrackets(final int dimensions, final String contents)
+    {
+        String result = "";
+        for (int i = 0; i < dimensions; i++)
+        {
+            result += "[" + contents + "]";
+        }
+        return result;
+    }
+
+    /**
+     * Convert an ArrayList&ltString&gt; into an array of String.
+     * @param code ArrayList<String>; the lines to convert to an array of string
+     * @return String[]; array containing the strings from the ArrayList
+     */
+    public static String[] arrayListToArray(final ArrayList<String> code)
+    {
+        String[] codeLines = new String[code.size()];
+        for (int line = 0; line < code.size(); line++)
+        {
+            codeLines[line] = code.get(line);
+        }
+        return codeLines;
     }
 
 }
