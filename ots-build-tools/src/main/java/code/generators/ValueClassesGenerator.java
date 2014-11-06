@@ -23,140 +23,6 @@ public final class ValueClassesGenerator
     }
 
     /**
-     * Information about the math functions.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version 30 sep. 2014 <br>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    static class MathFunctionEntry
-    {
-        /** Name of the function. */
-        public final String name;
-
-        /** Additional argument with description. */
-        public final String argument;
-
-        /** If set, the result of the function is always double (regardless of the argument). */
-        public final boolean castToFloatRequired;
-
-        /** Description of the function. */
-        public final String description;
-
-        /** If set this function also appears in *MathFunctionsImpl. */
-        public final boolean appearsInMathFunctionsImpl;
-
-        /** Generate this text in a to do if not null. */
-        public final String toDoText;
-
-        /**
-         * Create a new mathFunctionEntry.
-         * @param name String; name of the function
-         * @param argument String; additional argument of the function (set to null if the function has only one
-         *            argument)
-         * @param castToFloatRequired boolean; if true; the result of the function is double (regardless of the
-         *            argument)
-         * @param appearsInMathFunctionsImpl boolean; if true; this function must also appear in the *MathFunctionImpl
-         *            class
-         * @param comment String; description of the function
-         * @param toDoText String; if non-null a to do comment containing this text is generated with the implementation
-         */
-        public MathFunctionEntry(final String name, final String argument, final boolean castToFloatRequired,
-                final boolean appearsInMathFunctionsImpl, final String comment, final String toDoText)
-        {
-            this.name = name;
-            this.argument = argument;
-            this.castToFloatRequired = castToFloatRequired;
-            this.appearsInMathFunctionsImpl = appearsInMathFunctionsImpl;
-            this.description = comment;
-            this.toDoText = toDoText;
-        }
-    }
-
-    /** The math functions. */
-    public static MathFunctionEntry[] mathFunctions =
-            {
-                    new MathFunctionEntry("abs", null, false, false, "Set the value(s) to their absolute value.", null),
-                    new MathFunctionEntry("acos", null, true, false,
-                            "Set the value(s) to the arc cosine of the value(s); the resulting angle is in the range "
-                                    + "0.0 through pi.", "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("asin", null, true, false,
-                            "Set the value(s) to the arc sine of the value(s); the resulting angle is in the range "
-                                    + "-pi/2 through pi/2.", "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("atan", null, true, false,
-                            "Set the value(s) to the arc tangent of the value(s); the resulting angle is in the "
-                                    + "range -pi/2 through pi/2.", "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("cbrt", null, true, true, "Set the value(s) to the(ir) cube root.",
-                            "dimension for all SI coefficients / 3."),
-                    new MathFunctionEntry("ceil", null, true, false,
-                            "Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater "
-                                    + "than or equal to the\r\n"
-                                    + "     * argument and equal to a mathematical integer.", null),
-                    new MathFunctionEntry("cos", null, true, false,
-                            "Set the value(s) to the trigonometric cosine of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("cosh", null, true, true,
-                            "Set the value(s) to the hyperbolic cosine of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("exp", null, true, false,
-                            "Set the value(s) to Euler's number e raised to the power of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("expm1", null, true, true,
-                            "Set the value(s) to Euler's number e raised to the power of the value(s) minus 1 "
-                                    + "(e^x - 1).", "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("floor", null, true, false,
-                            "Set the value(s) to the largest (closest to positive infinity) value(s) that are less "
-                                    + "than or equal to the\r\n"
-                                    + "     * argument and equal to a mathematical integer.", null),
-                    new MathFunctionEntry("log", null, true, false,
-                            "Set the value(s) to the natural logarithm (base e) of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("log10", null, true, true,
-                            "Set the value(s) to the base 10 logarithm of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("log1p", null, true, true,
-                            "Set the value(s) to the natural logarithm of the sum of the value(s) and 1.",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("pow", "double|x|the value to use as the power", true, false,
-                            "Set the value(s) to the value(s) raised to the power of the argument.",
-                            "SI unit with coefficients * x."),
-                    new MathFunctionEntry("rint", null, true, false,
-                            "Set the value(s) to the value(s) that are closest in value to the argument and equal to "
-                                    + "a mathematical integer.", null),
-                    new MathFunctionEntry("round", null, false, true,
-                            "Set the value(s) to the closest long to the argument with ties rounding up.", null),
-                    new MathFunctionEntry("signum", null, false, true,
-                            "Set the value(s) to the signum function of the value(s); zero if the argument is zero, "
-                                    + "1.0 if the argument is\r\n"
-                                    + "         * greater than zero, -1.0 if the argument is less than zero.",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("sin", null, true, false,
-                            "Set the value(s) to the trigonometric sine of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("sinh", null, true, true,
-                            "Set the value(s) to the hyperbolic sine of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("sqrt", null, true, false,
-                            "Set the value(s) to the correctly rounded positive square root of the value(s).",
-                            "dimension for all SI coefficients / 2."),
-                    new MathFunctionEntry("tan", null, true, false,
-                            "Set the value(s) to the trigonometric tangent of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("tanh", null, true, true,
-                            "Set the value(s) to the hyperbolic tangent of the value(s).",
-                            "dimensionless result (SIUnit.ONE)."),
-                    new MathFunctionEntry("toDegrees", null, true, true,
-                            "Set the value(s) to approximately equivalent angle(s) measured in degrees.", null),
-                    new MathFunctionEntry("toRadians", null, true, true,
-                            "Set the value(s) to approximately equivalent angle(s) measured in radians.", null),
-                    new MathFunctionEntry("inv", null, true, false,
-                            "Set the value(s) to the complement (1.0/x) of the value(s).",
-                            "negate all coefficients in the Unit.")};
-
-    /**
      * Generate the code for the value classes.
      * @param args String[]; the command line arguments (not used)
      */
@@ -171,9 +37,13 @@ public final class ValueClassesGenerator
                 "Absolute values are quantities that are measured from some agreed upon reference point. <br>\r\n"
                         + " * Values are Absolute when the sum of two values makes no sense, but the difference does "
                         + "(but results in a Relative).", null, "", null);
-        cg.generateInterface("value", "Relative", null, "Relative values express differences. <br>\r\n"
-                + " * Values are Relative when adding or subtracting two values does make sense and results in a value "
-                + "of that same type.", null, "", null);
+        cg.generateInterface(
+                "value",
+                "Relative",
+                null,
+                "Relative values express differences. <br>\r\n"
+                        + " * Values are Relative when adding or subtracting two values does make sense and results in a value "
+                        + "of that same type.", null, "", null);
         cg.generateInterface("value", "DenseData", null, "Values are stored densely.", null, "", null);
         cg.generateInterface("value", "SparseData", null, "Values are stored sparsely (lots of zero values expected).",
                 null, "", null);
@@ -532,20 +402,20 @@ public final class ValueClassesGenerator
      * @param cg CodeGenerator; the code generator
      * @return String; Java code
      */
-    private static String buildMathFunctionImpl(final String type, CodeGenerator cg)
+    private static String buildMathFunctionImpl(final String type, final CodeGenerator cg)
     {
         String useCast = (type.startsWith("D") ? "" : "(" + type.toLowerCase() + ") "); // append a space
         StringBuilder construction = new StringBuilder();
-        for (MathFunctionEntry mfu : mathFunctions)
+        for (MathFunction mf : MathFunction.mathFunctions)
         {
-            if (mfu.appearsInMathFunctionsImpl)
+            if (mf.appearsInMathFunctionsImpl)
             {
                 construction.append(cg.indent(1) + "/**\r\n" + cg.indent(1) + " * Function that returns <tt>Math."
-                        + mfu.name + "(a)</tt>.\r\n" + cg.indent(1) + " */\r\n" + cg.indent(1) + "public static final "
-                        + type + "Function " + mfu.name + " = new " + type + "Function()\r\n" + cg.indent(1) + "{\r\n"
+                        + mf.name + "(a)</tt>.\r\n" + cg.indent(1) + " */\r\n" + cg.indent(1) + "public static final "
+                        + type + "Function " + mf.name + " = new " + type + "Function()\r\n" + cg.indent(1) + "{\r\n"
                         + cg.indent(2) + "@Override\r\n" + cg.indent(2) + "public " + type.toLowerCase()
                         + " apply(final " + type.toLowerCase() + " a)\r\n" + cg.indent(2) + "{\r\n" + cg.indent(3)
-                        + "return " + useCast + "Math." + mfu.name + "(a);\r\n" + cg.indent(2) + "}\r\n" + cg.indent(1)
+                        + "return " + useCast + "Math." + mf.name + "(a);\r\n" + cg.indent(2) + "}\r\n" + cg.indent(1)
                         + "};\r\n\r\n");
             }
         }
@@ -560,10 +430,10 @@ public final class ValueClassesGenerator
     private static String buildAllMathFunctions(final CodeGenerator cg)
     {
         StringBuilder construction = new StringBuilder();
-        for (MathFunctionEntry mfu : mathFunctions)
+        for (MathFunction mf : MathFunction.mathFunctions)
         {
-            construction.append(cg.buildMethod(cg.indent(1), "|void|" + mfu.name, mfu.description, null == mfu.argument
-                    ? new String[]{} : new String[]{mfu.argument}, null, null, null, false));
+            construction.append(cg.buildMethod(cg.indent(1), "|void|" + mf.name, mf.description, null == mf.argument
+                    ? new String[]{} : new String[]{mf.argument}, null, null, null, false));
         }
         return construction.toString();
     }
@@ -582,7 +452,7 @@ public final class ValueClassesGenerator
         final String mutableType = mutable ? "Mutable" : "Immutable ";
         final String aggregate = 0 == dimensions ? "Scalar" : 1 == dimensions ? "Vector" : "Matrix";
         final String pluralAggregateType = dimensions == 1 ? "vectors" : "matrices";
-        final String emptyBrackets = buildEmptyBrackets(dimensions);
+        final String emptyBrackets = cg.buildEmptyBrackets(dimensions);
         final String ots = "org.opentrafficsim.core.";
         final String cc = "cern.colt.matrix.";
         ArrayList<String> imports = new ArrayList<String>();
@@ -591,7 +461,7 @@ public final class ValueClassesGenerator
             imports.add("java.io.Serializable");
             imports.add("");
         }
-        if (2 == dimensions || !mutable)
+        if (!mutable)
         {
             imports.add(ots + "unit.SICoefficients");
             imports.add("org.opentrafficsim.core.unit.SIUnit");
@@ -738,10 +608,6 @@ public final class ValueClassesGenerator
                             + "worthwhile for a Scalar." : ""), null, null, null, null, false));
             if (dimensions > 0)
             {
-                code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate + "<U>|copy", null,
-                        null, null, null, new String[]{"return immutable().mutable();",
-                                "// FIXME: This may cause both the original and the copy to be deep " + "copied later",
-                                "// Maybe it is better to make one deep copy now..."}, false));
                 code.append(cg.buildMethod(
                         outerIndent,
                         "protected final|void|checkCopyOnWrite",
@@ -892,7 +758,7 @@ public final class ValueClassesGenerator
                                 1 == dimensions ? "for (int index = size(); --index >= 0;)"
                                         : "for (int row = rows(); --row >= 0;)",
                                 "{",
-                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
+                                dimensions > 1 ? cg.indent(1) + "for (int column = columns(); --column >= 0;)" : null,
                                 dimensions > 1 ? cg.indent(1) + "{" : null,
                                 (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
                                         + (1 == dimensions ? "index" : "row, column") + ", safeGet("
@@ -916,7 +782,7 @@ public final class ValueClassesGenerator
                                 1 == dimensions ? "for (int index = size(); --index >= 0;)"
                                         : "for (int row = rows(); --row >= 0;)",
                                 "{",
-                                dimensions > 1 ? "for (int column = columns(); --column >= 0;)" : null,
+                                dimensions > 1 ? cg.indent(1) + "for (int column = columns(); --column >= 0;)" : null,
                                 dimensions > 1 ? cg.indent(1) + "{" : null,
                                 (dimensions > 1 ? cg.indent(1) : "") + cg.indent(1) + "safeSet("
                                         + (1 == dimensions ? "index" : "row, column") + ", safeGet("
@@ -992,7 +858,8 @@ public final class ValueClassesGenerator
                             + emptyBrackets
                             + (0 == dimensions ? "|value|the value in the unit of this " + type + "Scalar"
                                     : "|values|an array of values")},
-                    dimensions > 1 ? "ValueException|when values is not rectangular" : null,
+                    dimensions > 0 ? "ValueException|when values is null"
+                            + (dimensions > 1 ? ", or not rectangular" : "") : null,
                     null,
                     0 == dimensions ? new String[]{
                             "if (this.getUnit().equals(this.getUnit()." + "getStandardUnit()))",
@@ -1003,6 +870,10 @@ public final class ValueClassesGenerator
                             "{",
                             cg.indent(1) + "setValueSI(" + (type.startsWith("F") ? "(float) " : "")
                                     + "expressAsSIUnit(value));", "}"} : 1 == dimensions ? new String[]{
+                            "if (null == values)",
+                            "{",
+                            cg.indent(1) + "throw new ValueException(\"values is null\");",
+                            "}",
                             "this.vectorSI = createMatrix1D(values.length);",
                             "if (getUnit().equals(getUnit().getStandardUnit()))",
                             "{",
@@ -1046,10 +917,11 @@ public final class ValueClassesGenerator
                         "Construct the " + aggregate.toLowerCase() + " and store the values in the standard SI unit.",
                         new String[]{"final " + type + "Scalar<U>" + emptyBrackets + "|values|"
                                 + (dimensions > 1 ? "a " + dimensions + "D " : "an ") + "array of values"},
-                        1 == dimensions ? "ValueException|when values is empty"
-                                : "ValueException|when values has zero entries, or is not rectangular",
+                        1 == dimensions ? "ValueException|when values is null, or empty"
+                                : "ValueException|when values is null, empty, or is not rectangular",
                         null,
-                        1 == dimensions ? new String[]{
+                        1 == dimensions ? new String[]{"if (null == values)", "{",
+                                cg.indent(1) + "throw new ValueException(\"values is null\");", "}",
                                 "this." + aggregate.toLowerCase() + "SI = createMatrix1D(values.length);",
                                 "for (int index = 0; index < values.length; index++)", "{",
                                 cg.indent(1) + "safeSet(index, values[index].getSI());", cg.indent(1) + "}"}
@@ -1218,11 +1090,11 @@ public final class ValueClassesGenerator
                             "if (this instanceof Mutable" + type + aggregate + ")",
                             "{",
                             cg.indent(1) + "buf.append(\"Mutable   \");",
-                            "if (this instanceof Mutable" + type + aggregate + ".Abs)",
-                            "{",
-                            cg.indent(1) + "buf.append(\"Abs \");",
-                            "}",
-                            "else if (this instanceof Mutable" + type + aggregate + ".Rel)",
+                            cg.indent(1) + "if (this instanceof Mutable" + type + aggregate + ".Abs)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate + ".Rel)",
                             cg.indent(1) + "{",
                             cg.indent(2) + "buf.append(\"Rel \");",
                             cg.indent(1) + "}",
@@ -1233,93 +1105,89 @@ public final class ValueClassesGenerator
                             "}",
                             "else",
                             "{",
-                            "buf.append(\"Immutable \");",
-                            "if (this instanceof " + type + aggregate + ".Abs)",
-                            "{",
-                            cg.indent(1) + "buf.append(\"Abs \");",
-                            "}",
-                            "else if (this instanceof " + type + aggregate + ".Rel)",
-                            "{",
-                            cg.indent(1) + "buf.append(\"Rel \");",
-                            "}",
+                            cg.indent(1) + "buf.append(\"Immutable \");",
+                            cg.indent(1) + "if (this instanceof " + type + aggregate + ".Abs)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Rel)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel \");",
+                            cg.indent(1) + "}",
                             cg.indent(1) + "else",
                             cg.indent(1) + "{",
                             cg.indent(2) + "buf.append(\"??? \");",
                             cg.indent(1) + "}",
                             "}",
                             "buf.append(\"[\" + displayUnit.getAbbreviation() + \"] \");",
-                            cg.indent(1) + (type.startsWith("F") ? "float f = (float) " : "double d = ")
+                            (type.startsWith("F") ? "float f = (float) " : "double d = ")
                                     + "ValueUtil.expressAsUnit(getSI(), displayUnit);",
-                            cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "") + "buf.append(Format.format("
-                                    + type.substring(0, 1).toLowerCase() + "));", "return buf.toString();"}
-                            : new String[]{
-                                    "StringBuffer buf = new StringBuffer();",
-                                    "if (this instanceof Mutable" + type + aggregate + ")",
-                                    "{",
-                                    cg.indent(1) + "buf.append(\"Mutable   \");",
-                                    "if (this instanceof Mutable" + type + aggregate + ".Abs.Dense)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Abs Dense  \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate
-                                            + ".Rel.Dense)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Rel Dense  \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate
-                                            + ".Abs.Sparse)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Abs Sparse \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate
-                                            + ".Rel.Sparse)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Rel Sparse \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"??? \");",
-                                    cg.indent(1) + "}",
-                                    "}",
-                                    "else",
-                                    "{",
-                                    cg.indent(1) + "buf.append(\"Immutable \");",
-                                    "if (this instanceof " + type + aggregate + ".Abs.Dense)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Abs Dense  \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Rel.Dense)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Rel Dense  \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Abs.Sparse)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Abs Sparse \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Rel.Sparse)",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"Rel Sparse \");",
-                                    cg.indent(1) + "}",
-                                    cg.indent(1) + "else",
-                                    cg.indent(1) + "{",
-                                    cg.indent(2) + "buf.append(\"??? \");",
-                                    cg.indent(1) + "}",
-                                    "}",
-                                    "buf.append(\"[\" + displayUnit.getAbbreviation() + \"]\");",
-                                    (1 == dimensions ? "for (int i = 0; i < size(); i++)"
-                                            : "for (int row = 0; row < rows(); row++)"),
-                                    "{",
-                                    (dimensions > 1 ? "buf.append(\"\\r\\n\\t\");" : null),
-                                    (dimensions > 1 ? "for (int column = 0; column < columns(); column++)" : null),
-                                    (dimensions > 1 ? "{" : null),
-                                    cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "")
-                                            + (type.startsWith("F") ? "float f = (float) " : "double d = ")
-                                            + "ValueUtil.expressAsUnit(safeGet("
-                                            + (1 == dimensions ? "i" : "row, column") + "), displayUnit);",
-                                    cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "")
-                                            + "buf.append(\" \" + Format.format(" + type.substring(0, 1).toLowerCase()
-                                            + "));", (dimensions > 1 ? cg.indent(1) + "}" : null), "}",
-                                    "return buf.toString();"}, false));
+                            "buf.append(Format.format(" + type.substring(0, 1).toLowerCase() + "));",
+                            "return buf.toString();"} : new String[]{
+                            "StringBuffer buf = new StringBuffer();",
+                            "if (this instanceof Mutable" + type + aggregate + ")",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Mutable   \");",
+                            cg.indent(1) + "if (this instanceof Mutable" + type + aggregate + ".Abs.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate + ".Rel.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate + ".Abs.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof Mutable" + type + aggregate + ".Rel.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"??? \");",
+                            cg.indent(1) + "}",
+                            "}",
+                            "else",
+                            "{",
+                            cg.indent(1) + "buf.append(\"Immutable \");",
+                            cg.indent(1) + "if (this instanceof " + type + aggregate + ".Abs.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Rel.Dense)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Dense  \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Abs.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Abs Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else if (this instanceof " + type + aggregate + ".Rel.Sparse)",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"Rel Sparse \");",
+                            cg.indent(1) + "}",
+                            cg.indent(1) + "else",
+                            cg.indent(1) + "{",
+                            cg.indent(2) + "buf.append(\"??? \");",
+                            cg.indent(1) + "}",
+                            "}",
+                            "buf.append(\"[\" + displayUnit.getAbbreviation() + \"]\");",
+                            (1 == dimensions ? "for (int i = 0; i < size(); i++)"
+                                    : "for (int row = 0; row < rows(); row++)"),
+                            "{",
+                            (dimensions > 1 ? cg.indent(1) + "buf.append(\"\\r\\n\\t\");" : null),
+                            (dimensions > 1 ? cg.indent(1) + "for (int column = 0; column < columns(); column++)"
+                                    : null),
+                            (dimensions > 1 ? cg.indent(1) + "{" : null),
+                            cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "")
+                                    + (type.startsWith("F") ? "float f = (float) " : "double d = ")
+                                    + "ValueUtil.expressAsUnit(safeGet(" + (1 == dimensions ? "i" : "row, column")
+                                    + "), displayUnit);",
+                            cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "") + "buf.append(\" \" + Format.format("
+                                    + type.substring(0, 1).toLowerCase() + "));",
+                            (dimensions > 1 ? cg.indent(1) + "}" : null), "}", "return buf.toString();"}, false));
             if (dimensions > 0)
             {
                 code.append(cg.buildMethod(
@@ -1327,9 +1195,13 @@ public final class ValueClassesGenerator
                         "protected final|void|checkSize",
                         "Centralized size equality check.",
                         new String[]{"final " + type + aggregate + "<?>|other|other " + type + aggregate},
-                        "ValueException|when " + pluralAggregateType + " have unequal size",
+                        "ValueException|when other is null, or " + pluralAggregateType + " have unequal size",
                         null,
                         new String[]{
+                                "if (null == other)",
+                                "{",
+                                cg.indent(1) + "throw new ValueException(\"other is null\");",
+                                "}",
                                 1 == dimensions ? "if (size() != other.size())"
                                         : "if (rows() != other.rows() || columns() != other.columns())",
                                 "{",
@@ -1364,12 +1236,17 @@ public final class ValueClassesGenerator
                         outerIndent,
                         "private static|void|ensureRectangular",
                         "Check that a 2D array of " + type.toLowerCase()
-                                + " is rectangular; i.e. all rows have the same length.",
+                                + " is not null and rectangular; i.e. all rows have the same length.",
                         new String[]{"final " + type.toLowerCase() + emptyBrackets + "|values|the 2D array to check"},
                         "ValueException|when not all rows have the same length",
                         null,
-                        new String[]{"for (int row = values.length; --row >= 1;)", "{",
-                                cg.indent(1) + "if (values[0].length != values[row].length)", cg.indent(1) + "{",
+                        new String[]{"if (null == values)", "{",
+                                cg.indent(1) + "throw new ValueException(\"values is null\");", "}",
+                                "if (values.length > 0 && null == values[0])", "{",
+                                cg.indent(1) + "throw new ValueException(\"Row 0 is null\");", "}",
+                                "for (int row = values.length; --row >= 1;)", "{",
+                                cg.indent(1) + "if (null == values[row] || values[0].length != values[row].length)",
+                                cg.indent(1) + "{",
                                 cg.indent(2) + "throw new ValueException(\"Lengths of rows are not all the same\");",
                                 cg.indent(1) + "}", "}"}, false));
                 code.append(cg.buildMethod(
@@ -1381,6 +1258,10 @@ public final class ValueClassesGenerator
                         "ValueException|when values is not rectangular, or contains " + "no data",
                         null,
                         new String[]{
+                                "if (null == values)",
+                                "{",
+                                cg.indent(1) + "throw new ValueException(\"values is null\");",
+                                "}",
                                 "if (0 == values.length || 0 == values[0].length)",
                                 "{",
                                 cg.indent(1) + "throw new ValueException(\"Cannot " + "determine unit for " + type
@@ -1577,6 +1458,8 @@ public final class ValueClassesGenerator
                 code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, false, true));
                 code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, true, false));
                 code.append(buildScalarMultiplyOrDivide(cg, outerIndent, type, false, false));
+                code.append(buildInterpolator(cg, outerIndent, type, "Abs", dimensions, ""));
+                code.append(buildInterpolator(cg, outerIndent, type, "Rel", dimensions, ""));
             }
             else
             {
@@ -1625,12 +1508,16 @@ public final class ValueClassesGenerator
                 code.append(buildPrivateDenseSparseConverter(cg, outerIndent, type, dimensions, false));
                 code.append(buildDenseSparseConverter(cg, outerIndent, type, "Abs", false, dimensions));
                 code.append(buildDenseSparseConverter(cg, outerIndent, type, "Rel", false, dimensions));
+                code.append(buildInterpolator(cg, outerIndent, type, "Abs", dimensions, ".Dense"));
+                code.append(buildInterpolator(cg, outerIndent, type, "Rel", dimensions, ".Dense"));
+                code.append(buildInterpolator(cg, outerIndent, type, "Abs", dimensions, ".Sparse"));
+                code.append(buildInterpolator(cg, outerIndent, type, "Rel", dimensions, ".Sparse"));
             }
         }
         cg.generateAbstractClass("value.v" + type.toLowerCase() + "." + aggregate.toLowerCase(), (mutable ? "Mutable"
-                : "") + type + aggregate, arrayListToArray(imports), mutableType + type + aggregate + ".",
-                new String[]{"<U> Unit; the unit of this " + (mutable ? "Mutable" : "") + type + aggregate},
-                "<U extends Unit<U>> extends "
+                : "") + type + aggregate, CodeGenerator.arrayListToArray(imports),
+                mutableType + type + aggregate + ".", new String[]{"<U> Unit; the unit of this "
+                        + (mutable ? "Mutable" : "") + type + aggregate}, "<U extends Unit<U>> extends "
                         + (mutable ? type + aggregate : 0 == dimensions ? "Scalar" : "AbstractValue")
                         + "<U>"
                         + (dimensions > 0 || mutable ? " implements "
@@ -1638,6 +1525,53 @@ public final class ValueClassesGenerator
                                         + "Write" + type + aggregate + "Functions<U>, " + type + "MathFunctions"
                                         : "Serializable,\r\n" + cg.indent(1) + "ReadOnly" + type + aggregate
                                                 + "Functions<U>")) : ""), code.toString());
+    }
+
+    /**
+     * Generate the Java code for the weightedAverage method.
+     * @param cg CodeGenerator; the code generator
+     * @param outerIndent String; prefix for all lines
+     * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param absRel String; either <cite>Abs</cite>, or <cite>Rel</cite>
+     * @param dimensions int; number of dimensions of the storage
+     * @param dotDS String; either <cite>.Dense</cite>, or <cite>.Sparse</cite> or the empty String
+     * @return String; Java code
+     */
+    private static String buildInterpolator(final CodeGenerator cg, final String outerIndent, final String type,
+            final String absRel, final int dimensions, final String dotDS)
+    {
+        final String aggregate = 0 == dimensions ? "Scalar" : 1 == dimensions ? "Vector" : "Matrix";
+        final String indices = 0 == dimensions ? "" : 1 == dimensions ? "index" : "row, column";
+        final String indicesWithComma = 0 == dimensions ? "" : indices + ", ";
+        return cg
+                .buildMethod(
+                        outerIndent,
+                        "public static <U extends Unit<U>>|Mutable" + type + aggregate + "." + absRel + dotDS
+                                + "<U>|interpolate",
+                        "Interpolate between or extrapolate over two values.",
+                        new String[]{
+                                "final " + type + aggregate + "." + absRel + dotDS
+                                        + "<U>|zero|zero reference (returned when ratio == 0)",
+                                "final " + type + aggregate + "." + absRel + dotDS
+                                        + "<U>|one|one reference (returned when ratio == 1)",
+                                "final "
+                                        + type.toLowerCase()
+                                        + "|ratio|the ratio that determines where between (or outside) zero and one the result "
+                                        + "lies", "Unit|<U>|the unit of the parameters and the result"},
+                        dimensions > 0 ? "ValueException|when zero and one do not have the same size" : null,
+                        null,
+                        new String[]{
+                                "Mutable" + type + aggregate + '.' + absRel + dotDS + "<U> result = zero.mutable();",
+                                1 == dimensions ? "for (int index = result.size(); --index >= 0;)" : null,
+                                2 == dimensions ? "for (int row = result.rows(); --row >= 0;)" : null,
+                                dimensions > 0 ? "{" : null,
+                                dimensions > 1 ? cg.indent(1) + "for (int column = result.columns(); --column >= 0;)"
+                                        : null,
+                                dimensions > 1 ? cg.indent(1) + "{" : null,
+                                cg.indent(dimensions) + "result.setSI(" + indicesWithComma + "result.getSI(" + indices
+                                        + ") * (1 - ratio) + one.getSI(" + indices + ") * ratio);",
+                                dimensions > 1 ? cg.indent(1) + "}" : null, dimensions > 0 ? "}" : null,
+                                "return result;"}, false);
     }
 
     /**
@@ -1791,7 +1725,7 @@ public final class ValueClassesGenerator
         params.add("final " + type + vectorOrMatrix + "." + leftType + "<" + paramUnit + ">|left|the "
                 + (rightType.length() == 0 ? type + vectorOrMatrix : "left operand"));
         params.add("final "
-                + (rightType.length() == 0 ? type.toLowerCase() + buildEmptyBrackets(dimensions) : type
+                + (rightType.length() == 0 ? type.toLowerCase() + cg.buildEmptyBrackets(dimensions) : type
                         + vectorOrMatrix + "." + rightType + "<" + paramUnit + ">") + "|right|the "
                 + (rightType.length() == 0 ? type.toLowerCase() + " array" : "right operand"));
         if (rightType.length() == 0)
@@ -1815,10 +1749,11 @@ public final class ValueClassesGenerator
                         + "&lt;"
                         + (rightType.length() == 0 ? "U" : "SIUnit")
                         + "&gt;.",
-                arrayListToArray(params),
+                CodeGenerator.arrayListToArray(params),
                 "ValueException|when the "
                         + (rightType.length() == 0 ? type + vectorOrMatrix + " and the array" : pluralVectorOrMatrix
-                                .toLowerCase()) + " do not have the same size", null, arrayListToArray(code), false);
+                                .toLowerCase()) + " do not have the same size", null, CodeGenerator
+                        .arrayListToArray(code), false);
     }
 
     /**
@@ -1877,23 +1812,8 @@ public final class ValueClassesGenerator
                 "final " + type + vectorOrMatrix + "." + leftType + "<U>|left|the left operand",
                 "final " + type + vectorOrMatrix + "." + rightType + "<U>|right|the right operand",
                 "Unit|<U>|the unit of the parameters and the result"}, "ValueException|when the "
-                + pluralVectorOrMatrix.toLowerCase() + " do not have the same size", null, arrayListToArray(code),
-                false);
-    }
-
-    /**
-     * Convert an ArrayList&ltString&gt; into an array of String.
-     * @param code ArrayList<String>; the lines to convert to an array of string
-     * @return String[]; array containing the strings from the ArrayList
-     */
-    private static String[] arrayListToArray(final ArrayList<String> code)
-    {
-        String[] codeLines = new String[code.size()];
-        for (int line = 0; line < code.size(); line++)
-        {
-            codeLines[line] = code.get(line);
-        }
-        return codeLines;
+                + pluralVectorOrMatrix.toLowerCase() + " do not have the same size", null, CodeGenerator
+                .arrayListToArray(code), false);
     }
 
     /**
@@ -1909,61 +1829,35 @@ public final class ValueClassesGenerator
     {
         StringBuilder construction = new StringBuilder();
         final String cast = (type.startsWith("F") ? "(float)" : null);
-        for (MathFunctionEntry mfu : mathFunctions)
+        for (MathFunction mf : MathFunction.mathFunctions)
         {
             if (0 == dimensions)
             {
                 String code;
-                if ("inv".equals(mfu.name))
+                if ("inv".equals(mf.name))
                 {
                     code = "setValueSI(1.0" + (type.startsWith("F") ? "f" : "") + " / getSI());";
                 }
                 else
                 {
                     code =
-                            "setValueSI(" + (null != cast && mfu.castToFloatRequired ? cast + " " : "") + "Math."
-                                    + mfu.name + "(" + "getSI()" + (null != mfu.argument ? ", x" : "") + ")" + ");";
+                            "setValueSI(" + (null != cast && mf.castToFloatRequired ? cast + " " : "") + "Math."
+                                    + mf.name + "(" + "getSI()" + (null != mf.argument ? ", x" : "") + ")" + ");";
                 }
-                construction.append(cg.buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
+                construction.append(cg.buildMethod(indent, "public final|void|" + mf.name, null, null != mf.argument
                         ? new String[]{"final double|x|"} : null, null, null, new String[]{
-                        null != mfu.toDoText ? "// TODO: " + mfu.toDoText : null, code}, false));
+                        null != mf.toDoText ? "// TODO: " + mf.toDoText : null, code}, false));
             }
             else
             {
-                construction.append(cg.buildMethod(indent, "public final|void|" + mfu.name, null, null != mfu.argument
+                construction.append(cg.buildMethod(indent, "public final|void|" + mf.name, null, null != mf.argument
                         ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + type
-                        + (mfu.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mfu.name
-                        + (null != mfu.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
-                        + (null != mfu.argument ? "x)" : "") + ");"}, false));
+                        + (mf.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mf.name
+                        + (null != mf.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
+                        + (null != mf.argument ? "x)" : "") + ");"}, false));
             }
         }
         return construction.toString();
-    }
-
-    /**
-     * Build a string with the specified number of <cite>[]</cite> (square bracket) pairs.
-     * @param dimensions int; the number of bracket pairs to concatenate
-     * @return String
-     */
-    private static String buildEmptyBrackets(final int dimensions)
-    {
-        return buildBrackets(dimensions, "");
-    }
-
-    /**
-     * Build a string with the specified number of <cite>[<b>string</b>]</cite> (square bracket with content) pairs.
-     * @param dimensions int; the number of bracket pairs with contents to concatenate
-     * @param contents String; the text that goes between each pair of brackets
-     * @return String
-     */
-    private static String buildBrackets(final int dimensions, final String contents)
-    {
-        String result = "";
-        for (int i = 0; i < dimensions; i++)
-        {
-            result += "[" + contents + "]";
-        }
-        return result;
     }
 
     /**
@@ -2075,8 +1969,8 @@ public final class ValueClassesGenerator
         final String typeName = longName.replaceFirst(".* (.*)$", "$1");
         final String immutableTypeName = typeName.startsWith("Mutable") ? typeName.substring(7) : typeName;
         final String vectorOrMatrix = dimensions == 1 ? "Vector" : "Matrix";
-        final String emptyBrackets = buildEmptyBrackets(dimensions);
-        final String zeroBrackets = buildBrackets(dimensions, "0");
+        final String emptyBrackets = cg.buildEmptyBrackets(dimensions);
+        final String zeroBrackets = cg.buildBrackets(dimensions, "0");
         StringBuilder construction = new StringBuilder();
         construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
         construction.append(indent + "public static class " + denseOrSparse + "<U extends Unit<U>> extends "
@@ -2088,9 +1982,10 @@ public final class ValueClassesGenerator
                 + fixedLongName + ".", new String[]{
                 "final " + type.toLowerCase() + emptyBrackets + "|values|the " + (mutable ? "initial " : "")
                         + "values of the entries in the new " + fixedLongName,
-                "final U|unit|the unit of the new " + fixedLongName}, dimensions > 1
-                ? "ValueException|when values is not rectangular" : null, null, new String[]{"super(unit);",
-                "// System.out.println(\"Created " + denseOrSparse + "\");", "initialize(values);"}, true));
+                "final U|unit|the unit of the new " + fixedLongName}, dimensions > 0
+                ? "ValueException|when values is null" + (dimensions > 1 ? ", or is not rectangular" : "") : null,
+                null, new String[]{"super(unit);", "// System.out.println(\"Created " + denseOrSparse + "\");",
+                        "initialize(values);"}, true));
         construction.append(cg.buildMethod(contentIndent, "public||" + denseOrSparse, "Construct a new "
                 + fixedLongName + ".", new String[]{"final " + type + "Scalar." + absRel.substring(0, 3) + "<U>"
                 + emptyBrackets + "|values|the " + (mutable ? "initial " : "") + "values of the entries in the new "
@@ -2116,12 +2011,21 @@ public final class ValueClassesGenerator
                             "return new " + type + vectorOrMatrix + "." + absRel.substring(0, 3) + "." + denseOrSparse
                                     + "<U>(get" + vectorOrMatrix + "SI(), getUnit());"}, false));
         }
-        construction.append(cg.buildMethod(contentIndent,
+        construction.append(cg.buildMethod(
+                contentIndent,
                 "public final|Mutable" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
-                        + "<U>|mutable", null, null, null, null, mutable ? new String[]{
+                        + "<U>|mutable",
+                null,
+                null,
+                null,
+                null,
+                mutable ? new String[]{
                         "setCopyOnWrite(true);",
-                        "return new Mutable" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
-                                + "<U>(get" + vectorOrMatrix + "SI(), getUnit());"} : new String[]{"return new Mutable"
+                        "final Mutable" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
+                                + "<U> result =",
+                        cg.indent(2) + "new Mutable" + immutableTypeName + "." + absRel.substring(0, 3) + "."
+                                + denseOrSparse + "<U>(get" + vectorOrMatrix + "SI(), getUnit());",
+                        "result.setCopyOnWrite(true);", "return result;"} : new String[]{"return new Mutable"
                         + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse + "<U>(get"
                         + vectorOrMatrix + "SI(), getUnit());"}, false));
         construction.append(cg.buildMethod(contentIndent, "protected final|" + type + "Matrix" + dimensions
@@ -2135,6 +2039,13 @@ public final class ValueClassesGenerator
                     "public final|" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
                             + "<U>|copy", null, null, null, null, new String[]{"return this; // That was easy..."},
                     false));
+        }
+        else
+        {
+            // copy
+            construction.append(cg.buildMethod(contentIndent,
+                    "public final|Mutable" + immutableTypeName + "." + absRel.substring(0, 3) + "." + denseOrSparse
+                            + "<U>|copy", null, null, null, null, new String[]{"return mutable();"}, false));
         }
         construction.append(indent + "}\r\n\r\n");
         return construction.toString();
@@ -2170,7 +2081,7 @@ public final class ValueClassesGenerator
     }
 
     /**
-     * Build the plus method for adding an array of relative scalars to an absolute or relative scalar.
+     * Build the plus method for adding a relative scalar to an absolute or relative scalar.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prepended to each line
      * @param scalarType String; either <cite>Float</cite>, or <cite>Double</cite>
@@ -2182,49 +2093,21 @@ public final class ValueClassesGenerator
             final boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
-        return cg
-                .buildMethod(
-                        indent,
-                        "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar." + absRel
-                                + "<U>|plus|the sum of the values as "
-                                + (absoluteResult ? "an absolute" : "a relative") + " value",
-                        absoluteResult
-                                ? "Add a number of relative values to an absolute value. Return a new instance of the value. "
-                                        + "The unit of the return\r\n"
-                                        + indent
-                                        + " * value will be the unit of the first argument. Due to type erasure of generics, "
-                                        + "the method cannot check whether an\r\n"
-                                        + indent
-                                        + " * array of arguments submitted to the varargs has a mixed-unit content at runtime."
-                                : "Add a number of relative values. Return a new instance of the value. Due to type erasure of "
-                                        + "generics, the method\r\n"
-                                        + indent
-                                        + " * cannot check whether an array of arguments submitted to the varargs has a "
-                                        + "mixed-unit content at runtime.", new String[]{
-                                absoluteResult ? "final " + scalarType + "Scalar." + absRel + "<U>|value" + absRel
-                                        + "|the absolute base value" : "final U|targetUnit| the unit of the sum",
-                                "final " + scalarType
-                                        + "Scalar.Rel<U>...|valuesRel|zero or more relative values to add "
-                                        + (absoluteResult ? "to the absolute value" : "together"),
-                                "Unit|<U>|the unit of the parameters and the result"}, null, "@SafeVarargs",
-                        new String[]{
-                                "Mutable"
-                                        + scalarType
-                                        + "Scalar."
-                                        + absRel
-                                        + "<U> result = new Mutable"
-                                        + scalarType
-                                        + "Scalar."
-                                        + absRel
-                                        + "<U>("
-                                        + (absoluteResult ? "valueAbs);" : "0.0"
-                                                + (scalarType.startsWith("F") ? "f" : "") + ", targetUnit);"),
-                                "for (" + scalarType + "Scalar.Rel<U> v : valuesRel)", "{",
-                                cg.indent(1) + "result.incrementBy(v);", "}", "return result;"}, false);
+        return cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + scalarType + "Scalar." + absRel
+                + "<U>|plus|the sum of the values as " + (absoluteResult ? "an Absolute" : "a Relative") + " value",
+                "Add a Relative value to " + (absoluteResult ? "an Absolute" : "a Relative")
+                        + " value. Return a new instance of the value. " + "The unit of the return\r\n" + indent
+                        + " * value will be the unit of the left argument.", new String[]{
+                        "final " + scalarType + "Scalar." + absRel + "<U>|left" + "|the left argument",
+                        "final " + scalarType + "Scalar.Rel<U>|right|the right argument",
+                        "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
+                        "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new Mutable" + scalarType
+                                + "Scalar." + absRel + "<U>(" + "left);", "result.incrementBy(right);",
+                        "return result;"}, false);
     }
 
     /**
-     * Build the minus method for subtracting an array of relative scalars from an absolute or relative scalar.
+     * Build the minus method for subtracting a relative scalar from an absolute or relative scalar.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prepended to each line
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
@@ -2236,35 +2119,19 @@ public final class ValueClassesGenerator
             final boolean absoluteResult)
     {
         final String absRel = absoluteResult ? "Abs" : "Rel";
-        return cg.buildMethod(
-                indent,
-                "public static <U extends Unit<U>>|Mutable" + type + "Scalar." + absRel
-                        + "<U>|minus|the resulting value as " + (absoluteResult ? "an absolute" : "a relative")
-                        + " value",
-                absoluteResult ? "Subtract a number of relative values from an absolute value. Return a new instance "
+        return cg.buildMethod(indent, "public static <U extends Unit<U>>|Mutable" + type + "Scalar." + absRel
+                + "<U>|minus|the resulting value as " + (absoluteResult ? "an absolute" : "a relative") + " value",
+                absoluteResult ? "Subtract a Relative value from an absolute value. Return a new instance "
                         + "of the value. The unit of the\r\n" + indent
-                        + " * return value will be the unit of the first argument. Due to type erasure of generics, "
-                        + "the method cannot check\r\n" + indent
-                        + " * whether an array of arguments submitted to the varargs has a mixed-unit content at "
-                        + "runtime."
-                        : "Subtract a number of relative values from a relative value. Return a new instance of the "
+                        + " * return value will be the unit of the left argument."
+                        : "Subtract a relative value from a relative value. Return a new instance of the "
                                 + "value. The unit of the\r\n" + indent
-                                + " * value will be the unit of the first argument. Due to type erasure of generics, "
-                                + "the method cannot check whether an\r\n" + indent
-                                + " * array of arguments submitted to the varargs has a mixed-unit content at "
-                                + "runtime.",
-                new String[]{
-                        "final " + type + "Scalar." + absRel + "<U>|value" + absRel + "|the "
-                                + (absoluteResult ? "absolute" : "relative") + " base value",
-                        "final " + type + "Scalar.Rel<U>...|valuesRel|zero or more relative values to subtract "
-                                + (absoluteResult ? "from the absolute value" : "from the first value"),
-                        "Unit|<U>|the unit of the parameters and the result"},
-                null,
-                "@SafeVarargs",
-                new String[]{
+                                + " * value will be the unit of the first argument.", new String[]{
+                        "final " + type + "Scalar." + absRel + "<U>|left" + "|the left value",
+                        "final " + type + "Scalar.Rel<U>|right|the right value",
+                        "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
                         "Mutable" + type + "Scalar." + absRel + "<U> result = new Mutable" + type + "Scalar." + absRel
-                                + "<U>(value" + absRel + ");", "for (" + type + "Scalar.Rel<U> v : valuesRel)", "{",
-                        cg.indent(1) + "result.decrementBy(v);", "}", "return result;"}, false);
+                                + "<U>(left);", "result.decrementBy(right);", "return result;"}, false);
     }
 
     /**
