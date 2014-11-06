@@ -25,7 +25,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
@@ -165,7 +164,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /**
      * Add one movement step of one Car to all contour plots.
      * @param car Car
-     * @throws RemoteException
+     * @throws RemoteException on communications failure
      */
     protected final void addToContourPlots(final Car<?> car) throws RemoteException
     {
@@ -325,6 +324,8 @@ public class ContourPlotsModel implements OTSModelInterface
                 return;
             }
             Collection<AnimatedCar> leaders = new ArrayList<AnimatedCar>();
+            // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
+            // list
             int carIndex = ContourPlotsModel.this.cars.indexOf(this);
             if (carIndex < ContourPlotsModel.this.cars.size() - 1)
             {
@@ -345,10 +346,6 @@ public class ContourPlotsModel implements OTSModelInterface
                 {
                     cfmr = blockCFMR;
                 }
-            }
-            if (cfmr.getAcceleration().getSI() < -0.1)
-            {
-                // System.out.println("Deceleration: " + cfmr.getAcceleration());
             }
             setState(cfmr);
 

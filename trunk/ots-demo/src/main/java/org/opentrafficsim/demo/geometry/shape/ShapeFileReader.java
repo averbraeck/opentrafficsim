@@ -50,18 +50,24 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ShapeFileReader
+public final class ShapeFileReader
 {
+    /** Do not instantiate this class. */
+    private ShapeFileReader()
+    {
+        // Cannot be instantiated.
+    }
+
     /**
      * @param shapeFileName the nodes shapefile to read
-     * @param numberType
+     * @param numberType ???
      * @param returnCentroid if true only loop through the centroid/zones (in case of mixed nodes and centroids)
      * @param allCentroids if true: the file contains centroids (a centroid file)
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
     public static Map<String, Node> ReadNodes(final String shapeFileName, final String numberType,
-            boolean returnCentroid, boolean allCentroids) throws IOException
+            final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650)
@@ -136,7 +142,7 @@ public class ShapeFileReader
 
     /**
      * @param number number string
-     * @return nr: the number of the Node without characters
+     * @return boolean: true if the number refers to a Centroid; false otherwise
      */
     public static boolean inspectNodeCentroid(final String number)
     {

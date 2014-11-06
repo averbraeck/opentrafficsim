@@ -3,18 +3,14 @@ package org.opentrafficsim.demo.geometry.shape;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.net.URL;
-import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.JScrollPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 
@@ -36,11 +32,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ShapeTestApplication extends DSOLApplication
 {
     /**
-     * @param title
-     * @param panel
+     * @param title String title of the application window
+     * @param panel DSOLPanel
      */
-    public ShapeTestApplication(String title,
-            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    public ShapeTestApplication(final String title,
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -49,13 +45,12 @@ public class ShapeTestApplication extends DSOLApplication
     private static final long serialVersionUID = 20140819L;
 
     /**
-     * @param args
-     * @throws SimRuntimeException
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws IOException
+     * @param args String[]; command line arguments
+     * @throws SimRuntimeException on ???
+     * @throws NamingException on ???
+     * @throws IOException on ???
      */
-    public static void main(String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException
     {
         ShapeModel model = new ShapeModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();

@@ -17,7 +17,6 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -47,9 +46,6 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
         super(title, panel);
     }
 
-    /** the car following model, e.g. IDM Plus. */
-    protected GTUFollowingModel carFollowingModel;
-
     /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagramPlots = new ArrayList<FundamentalDiagram>();
 
@@ -63,10 +59,9 @@ public class FundamentalDiagramPlotsSwingApplication extends DSOLApplication
 
     /**
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws SimRuntimeException on ???
+     * @throws RemoteException on communications failure
      */
-    @SuppressWarnings("unused")
     public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel();
