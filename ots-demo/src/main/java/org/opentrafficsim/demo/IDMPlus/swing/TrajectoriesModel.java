@@ -71,7 +71,7 @@ public class TrajectoriesModel implements OTSModelInterface
     /** maximum distance. */
     DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
-    /** The Lane containt the simulated Cars. */
+    /** The Lane containing the simulated Cars. */
     Lane lane;
 
     /** the speed limit. */
@@ -236,6 +236,8 @@ public class TrajectoriesModel implements OTSModelInterface
                 return;
             }
             Collection<Car<Integer>> leaders = new ArrayList<Car<Integer>>();
+            // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
+            // list
             int carIndex = TrajectoriesModel.this.cars.indexOf(this);
             if (carIndex < TrajectoriesModel.this.cars.size() - 1)
             {

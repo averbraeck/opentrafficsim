@@ -11,22 +11,19 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.IDMPlus.swing.ContourPlotsModel.IDMCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
@@ -62,13 +59,13 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus. */
-    protected GTUFollowingModel carFollowingModel;
+    GTUFollowingModel carFollowingModel;
 
     /** cars in the model. */
     ArrayList<AnimatedCar> cars = new ArrayList<AnimatedCar>();
 
     /** The blocking car. */
-    protected AnimatedCar block = null;
+    AnimatedCar block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -76,7 +73,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** maximum distance. */
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
-    /** The Lane containt the simulated Cars. */
+    /** The Lane containing the simulated Cars. */
     Lane lane;
 
     /** the speed limit. */
@@ -300,6 +297,8 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
                 return;
             }
             Collection<AnimatedCar> leaders = new ArrayList<AnimatedCar>();
+            // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
+            // list
             int carIndex = FundamentalDiagramPlotsModel.this.cars.indexOf(this);
             if (carIndex < FundamentalDiagramPlotsModel.this.cars.size() - 1)
             {

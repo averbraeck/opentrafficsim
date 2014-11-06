@@ -42,10 +42,10 @@ public class ShapeModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.simulator = (OTSDEVSSimulatorInterface) _simulator;
+        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         try
         {
             // Read the shape files with the function:
