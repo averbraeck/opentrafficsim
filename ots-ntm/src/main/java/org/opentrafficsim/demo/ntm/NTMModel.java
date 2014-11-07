@@ -130,7 +130,7 @@ public class NTMModel implements OTSModelInterface
             // false: mixed file with centroids (number starts with "C") and normal nodes
 
             this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
-            this.areas = ShapeFileReader.readAreas("/gis/areas.shp", this.centroids);
+            this.areas = ShapeFileReader.readAreas("/gis/selectedAreas_newest_merged1.shp", this.centroids);
             this.nodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
 
             

@@ -45,20 +45,30 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class DataIO
 {
-    public enum days {Sat, Sun, Mon, Tue, Wed, Thu, Fri};
+    public enum days {
+        Sat,
+        Sun,
+        Mon,
+        Tue,
+        Wed,
+        Thu,
+        Fri
+    };
 
     public static void main(String[] args)
     {
-        
-        String pathArea = "/gis/areas.shp";
-        String pathRoads = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/TheHagueNetwork_Unidirectional_v2.shp";
+
+        String pathArea = "/gis/select.shp";
+//        String pathArea = "/gis/areas.shp";
+        String pathRoads =
+                "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/TheHagueNetwork_Unidirectional_v2.shp";
         String pathData =
                 "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
         String fileNameStarts = "I_";
         boolean fileNameDay = false;
         addArea(pathArea, pathRoads, pathData, fileNameStarts, fileNameDay);
         pathData =
-                "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data/";
+                "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data_v2/";
         fileNameStarts = "I_";
         fileNameDay = true;
         addArea(pathArea, pathRoads, pathData, fileNameStarts, fileNameDay);
@@ -67,8 +77,8 @@ public class DataIO
         addArea(pathArea, pathRoads, pathData, fileNameStarts, fileNameDay);
     }
 
-    
-    public static void addArea(String pathArea, String pathRoads, String pathData, String fileNameStarts, boolean fileNameDay)
+    public static void addArea(String pathArea, String pathRoads, String pathData, String fileNameStarts,
+            boolean fileNameDay)
     {
         Map<String, Geometry> roads = new HashMap<String, Geometry>();
         Map<String, Area> areas = new HashMap<String, Area>();
@@ -82,21 +92,22 @@ public class DataIO
         }
         try
         {
-            roads =
-                    readTheHague(pathRoads);
+            // the specific ID we want to use, and the geometry (the_geom) of the road
+            roads = readTheHague(pathRoads, "LINK_ID");
         }
         catch (IOException exception)
         {
             exception.printStackTrace();
         }
-    
-    
+
         String year = "2014";
         String day = null;
         String month = null;
-        for (int i = 1; i <= 12; i++)
+//        for (int i = 1; i <= 12; i++)
+        for (int i = 5; i <= 5; i++)
         {
-            for (int j = 1; j <= 31; j++)
+//            for (int j = 1; j <= 31; j++)
+            for (int j = 29; j <= 29; j++)
             {
                 if (i <= 10)
                 {
@@ -106,7 +117,7 @@ public class DataIO
                 {
                     month = Integer.toString(i);
                 }
-    
+
                 if (j <= 10)
                 {
                     day = "0" + j;
@@ -117,17 +128,19 @@ public class DataIO
                 }
                 if (fileNameDay)
                 {
-                    for (days dayName: days.values())
+                    for (days dayName : days.values())
                     {
-                        String inputFile = pathData + fileNameStarts + year + month + day + "_" + dayName + ".csv";
-                        Map<String, ArrayList<Double>> countMap = readData(inputFile, ",", pathData, year);
+                        String inputFile = pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
+                        Map<String, ArrayList<Double>> countMap = readData(inputFile, ";", pathData, year);
                         if (countMap.size() > 0)
                         {
-                            String outputFile = pathData + "new/" + fileNameStarts + year + month + day +  "_" + dayName + "_area.csv";
+                            String outputFile =
+                                    pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName
+                                            + "_area_GV[none].csv";
                             writeToCsv(outputFile, countMap, roads, areas);
                         }
-                        
-                    }                        
+
+                    }
                 }
                 else
                 {
@@ -144,7 +157,6 @@ public class DataIO
         }
     }
 
-    
     public static Map<String, ArrayList<Double>> readData(String inputFile, String csvSplitBy, String path, String year)
     {
         Map<String, ArrayList<Double>> countMap = new HashMap<String, ArrayList<Double>>();
@@ -259,6 +271,7 @@ public class DataIO
 
         // write the data with the corresponding area ID to a new file
         // Iterator it = roads.entrySet().iterator();
+        int u = 1;
         Iterator it = countMap.entrySet().iterator();
         while (it.hasNext())
         {
@@ -272,21 +285,25 @@ public class DataIO
             }
             else
             {
-                int u = 1;
                 u++;
             }
+
             String text = "";
+            String id = (String) pairs.getKey();
+            // watch out: convert from LinkID to WVKID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            id = id.substring(0, id.length() - 1);
             if (area != null)
             {
                 text =
                 // pairs.getKey() + ", " + " \n";
-                        pairs.getKey() + ", " + area.getGemeente();
+//                        id + ", " + area.getCentroidNr();
+                        id + ", " + area.getName();
             }
             else
             {
                 text =
                 // pairs.getKey() + ", " + " \n";
-                        pairs.getKey() + "";
+                        id + " no area found";
             }
             // ArrayList<Double> counts = countMap.get(pairs.getKey());
             ArrayList<Double> counts = (ArrayList<Double>) pairs.getValue();
@@ -313,7 +330,7 @@ public class DataIO
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, Geometry> readTheHague(final String shapeFileName) throws IOException
+    public static Map<String, Geometry> readTheHague(final String shapeFileName, String Id) throws IOException
     {
         /*-
         the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232, ...
@@ -354,7 +371,7 @@ public class DataIO
             {
                 SimpleFeature feature = iterator.next();
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
-                String ID = String.valueOf(feature.getAttribute("LINK_ID"));
+                String ID = String.valueOf(feature.getAttribute(Id));
                 roads.put(ID, geometry);
             }
         }
@@ -411,22 +428,24 @@ public class DataIO
         SimpleFeatureCollection featureCollectionAreas = featureSourceAreas.getFeatures();
         SimpleFeatureIterator iterator = featureCollectionAreas.features();
         Long newNr = 100000000L;
-
+        boolean OLD = false;
         try
         {
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
                 Geometry geometry = (Geometry) feature.getAttribute("the_geom");
-                String areaNr = String.valueOf(feature.getAttribute("AREANR"));
-                String centroidNr = "C" + String.valueOf(feature.getAttribute("CENTROIDNR"));
-                String name = (String) feature.getAttribute("NAME");
-                String gemeente = (String) feature.getAttribute("GEMEENTEVM");
-                String gebied = (String) feature.getAttribute("GEBIEDSNAA");
-                String regio = (String) feature.getAttribute("REGIO");
-                double dhb = (double) feature.getAttribute("DHB");
+                if (OLD)
+                    {
+                    String areaNr = String.valueOf(feature.getAttribute("AREANR"));
+                    String centroidNr = "C" + String.valueOf(feature.getAttribute("CENTROIDNR"));
+                    String name = (String) feature.getAttribute("NAME");
+                    String gemeente = (String) feature.getAttribute("GEMEENTEVM");
+                    String gebied = (String) feature.getAttribute("GEBIEDSNAA");
+                    String regio = (String) feature.getAttribute("REGIO");
+                    double dhb = (double) feature.getAttribute("NUMBER");
+    
 
-                {
                     if (areas.containsKey(centroidNr))
                     {
                         System.out.println("Area number " + centroidNr + "(" + name
@@ -435,7 +454,16 @@ public class DataIO
                         centroidNr = newNr.toString();
                     }
                     Area area = new Area(geometry, centroidNr, name, areaNr, gebied, regio, dhb, null, null);
-                    areas.put(centroidNr, area);
+
+                }
+                else
+                {
+                    String name = (String) feature.getAttribute("Name");
+                    int number = (int) feature.getAttribute("Number");
+    
+                    Area area = new Area(geometry, null, name, null, null, null, number, null, null);
+                    areas.put(name, area);
+                    
                 }
             }
         }
