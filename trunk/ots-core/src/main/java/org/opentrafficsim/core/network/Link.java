@@ -69,7 +69,7 @@ public class Link<ID,N extends AbstractNode<?,?>> extends AbstractLink<ID, N>
      */
     public Link(ID id, N startNode, N endNode, Rel<LengthUnit> length)
     {
-        super(id, startNode, endNode, length);
+        super(id, startNode, endNode, length, 0 /* hierarchy */);
     }
 
     /**

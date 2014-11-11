@@ -47,7 +47,8 @@ import java.util.Set;
 public class Junction<ID, L extends AbstractLink<?, ?>> extends HashSet<L>
 {
     /** network id. */
-    private final ID id;
+    private final ID id = null; // FIXME added "= null" to make the error go away
+    // Please do not commit code that does not compile!
     
     /** HashSet of Nodes. */
     private Set<AbstractNode<?, ?>> nodeSet = new HashSet<>();
