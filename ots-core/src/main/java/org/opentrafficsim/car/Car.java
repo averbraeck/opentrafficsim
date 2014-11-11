@@ -61,7 +61,7 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
         {
             exception.printStackTrace();
         }
-        return ("Caught exception in toString");
+        return "Caught exception in toString";
     }
 
 }

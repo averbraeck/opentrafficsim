@@ -285,7 +285,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     {
         int bestI = -1;
         double bestD = Double.MAX_VALUE;
-        int start = (coords[0].equals(coords[coords.length - 1])) ? 1 : 0;
+        int start = coords[0].equals(coords[coords.length - 1]) ? 1 : 0;
         for (int i = start; i < coords.length; i++)
         {
             double d = search.distance(coords[i]);
