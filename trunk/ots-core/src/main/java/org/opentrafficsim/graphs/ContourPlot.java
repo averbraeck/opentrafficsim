@@ -468,6 +468,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     /**
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled (should be a GTU)
+     * @throws RemoteException on communications failure
      */
     public final void addData(final Car<?> car) throws RemoteException
     {
