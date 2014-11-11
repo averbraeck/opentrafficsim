@@ -141,12 +141,12 @@ public class ContourPlotTest
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
         int expectedXBins =
-                (int) Math.ceil((MutableDoubleScalar
+                (int) Math.ceil((DoubleScalar
                         .minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getSI())
                         / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins =
-                (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getSI())
+                (int) Math.ceil((DoubleScalar.minus(maximumDistance, minimumDistance).getSI())
                         / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
@@ -160,12 +160,12 @@ public class ContourPlotTest
                 cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + distanceGranularity));
                 cp.reGraph();
                 expectedXBins =
-                        (int) Math.ceil((MutableDoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
+                        (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
                                 ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins =
-                        (int) Math.ceil((MutableDoubleScalar.minus(maximumDistance, minimumDistance).getSI())
+                        (int) Math.ceil((DoubleScalar.minus(maximumDistance, minimumDistance).getSI())
                                 / distanceGranularity);
                 yBins = cp.yAxisBins();
                 assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
