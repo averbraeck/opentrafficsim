@@ -60,7 +60,7 @@ public class FrequencyUnitTest extends AbstractUnitTest<FrequencyUnit>
      * Verify that we can create our own Frequency unit.
      */
     @Test
-    public final void createFrequencyUnitt()
+    public final void createFrequencyUnit()
     {
         FrequencyUnit myFU =
                 new FrequencyUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "FrequencyUnit.MiddleA",
