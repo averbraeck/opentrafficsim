@@ -42,6 +42,9 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
 
     /** possible geometry for the link; can be null. */
     private LinearGeometry geometry;
+    
+    /** hierarchy of the link, lower the number, higher the importance, min is 0 */
+    private int hierarchy;
 
     /**
      * Construction of a link.
@@ -50,14 +53,17 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
+     * @param hierarchy 
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Abs<FrequencyUnit> capacity)
+            final DoubleScalar.Abs<FrequencyUnit> capacity, int hierarchy)
     {
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
         this.length = length;
+        if (hierarchy<0){hierarchy = 0;}
+        this.setHierarchy(hierarchy);
         setCapacity(capacity);
     }
 
@@ -67,11 +73,12 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param startNode start node (directional).
      * @param endNode end node (directional).
      * @param length link length in a length unit.
+     * @param hierarchy 
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length, int hierarchy)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
-                FrequencyUnit.PER_SECOND));
+                FrequencyUnit.PER_SECOND), hierarchy);
     }
 
     /**
@@ -150,6 +157,22 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     public String toString()
     {
         return this.id.toString();
+    }
+
+    /**
+     * @return hierarchy
+     */
+    public int getHierarchy()
+    {
+        return this.hierarchy;
+    }
+
+    /**
+     * @param hierarchy set hierarchy
+     */
+    public void setHierarchy(int hierarchy)
+    {
+        this.hierarchy = hierarchy;
     }
 
 }
