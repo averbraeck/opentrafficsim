@@ -44,7 +44,7 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
     public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
-        super(id, startNode, endNode, length, capacity);
+        super(id, startNode, endNode, length, capacity, 0 /* hierarchy */);
     }
 
     /**
@@ -56,7 +56,7 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      */
     public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
-        super(id, startNode, endNode, length);
+        super(id, startNode, endNode, length, 0 /* hierarchy */);
     }
 
     /**
