@@ -1,19 +1,13 @@
 package org.opentrafficsim.core.network;
 
-import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_BASE;
-import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.network.AbstractLink;
-
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. In addition, a network can be

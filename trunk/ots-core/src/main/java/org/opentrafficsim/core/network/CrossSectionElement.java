@@ -200,7 +200,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     {
         // create the buffer around the line
         double offsetPlus = Math.abs(offset);
-        boolean right = (offset < 0.0);
+        boolean right = offset < 0.0;
         Geometry bufferLine = line.buffer(offsetPlus, 8, BufferParameters.CAP_FLAT);
         Coordinate[] bufferCoords = bufferLine.getCoordinates();
         // intersect with perpendicular lines at the start and end
