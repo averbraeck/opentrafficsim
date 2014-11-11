@@ -34,6 +34,7 @@ import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.LinearDensityUnit;
 import org.opentrafficsim.core.unit.MassUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -56,7 +57,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private static final long serialVersionUID = 20140701L;
 
     /** The ChartPanel for this Fundamental Diagram. */
-    private  JFreeChart chartPanel;
+    private JFreeChart chartPanel;
 
     /** Caption for this Fundamental Diagram. */
     private final String caption;
@@ -81,11 +82,10 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /** Storage for the Samples; one for each lane covered by the detector. */
     private ArrayList<ArrayList<Sample>> sampleSets;
 
-    // TODO we need a linear density unit (1/m, 1/km). Now badly abusing MassUnit.KILOGRAM.
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new DoubleScalar.Abs<MassUnit>(0, MassUnit.KILOGRAM),
-            new DoubleScalar.Abs<MassUnit>(200, MassUnit.KILOGRAM), null, 0d, "Density [veh/km]", "Density",
-            "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new DoubleScalar.Abs<LinearDensityUnit>(0, LinearDensityUnit.PER_KILOMETER),
+            new DoubleScalar.Abs<LinearDensityUnit>(200, LinearDensityUnit.PER_KILOMETER), null, 0d,
+            "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -132,7 +132,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
-    
+
     /**
      * Retrieve the format string for the Y axis.
      * @return format string
@@ -228,7 +228,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
     }
-    
+
     /**
      * Update the status text.
      * @param newText String; the new text to show
@@ -246,7 +246,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     {
         return new DoubleScalar.Abs<LengthUnit>(this.position);
     }
-    
+
     /**
      * Build one JRadioButtonMenuItem for the sub menu of the context menu.
      * @param subMenu JMenu; the menu to which the new JRadioButtonMenuItem is added
