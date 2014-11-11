@@ -23,22 +23,22 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** the actual time unit, e.g. second. */
     private final TimeUnit timeUnit;
 
-    /** hertz. */
+    /** Hertz. */
     public static final FrequencyUnit HERTZ;
 
-    /** kilohertz. */
+    /** kiloHertz. */
     public static final FrequencyUnit KILOHERTZ;
 
-    /** megahertz. */
+    /** megaHertz. */
     public static final FrequencyUnit MEGAHERTZ;
 
-    /** gigahertz. */
+    /** gigaHertz. */
     public static final FrequencyUnit GIGAHERTZ;
 
-    /** terahertz. */
+    /** teraHertz. */
     public static final FrequencyUnit TERAHERTZ;
 
-    /** revolutions per minute = 1/60 Hz. */
+    /** Revolutions per minute = 1/60 Hz. */
     public static final FrequencyUnit RPM;
 
     /** 1/s. */
