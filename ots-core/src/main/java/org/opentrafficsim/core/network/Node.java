@@ -50,23 +50,19 @@ public class Node<ID, P> extends AbstractNode<ID, P>
      * @param id
      * @param point
      */
-    public Node(ID id, P point)
+    public Node(final ID id, final P point)
     {
         super(id, point);
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
-     */
+    /** {@inheritDoc} */
     @Override
     public Bounds getBounds() throws RemoteException
     {
         return null;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
