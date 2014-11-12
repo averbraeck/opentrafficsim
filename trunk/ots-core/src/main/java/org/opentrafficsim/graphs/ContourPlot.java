@@ -71,13 +71,13 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     private final Axis yAxis;
 
     /** Time granularity values. */
-    protected static final double[] STANDARDTIMEGRANULARITIES = { 1, 2, 5, 10, 20, 30, 60, 120, 300, 600 };
+    protected static final double[] STANDARDTIMEGRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
     /** Index of the initial time granularity in standardTimeGranularites. */
     protected static final int STANDARDINITIALTIMEGRANULARITYINDEX = 3;
 
     /** Distance granularity values. */
-    protected static final double[] STANDARDDISTANCEGRANULARITIES = { 10, 20, 50, 100, 200, 500, 1000 };
+    protected static final double[] STANDARDDISTANCEGRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};
 
     /** Index of the initial distance granularity in standardTimeGranularites. */
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
@@ -109,7 +109,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         extendXRange(xAxis.getMaximumValue());
-        double[] boundaries = { redValue, yellowValue, greenValue };
+        double[] boundaries = {redValue, yellowValue, greenValue};
         this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
         final PointerHandler ph = new PointerHandler()
         {
@@ -231,7 +231,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         yAxis.setUpperMargin(0.0);
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         XYBlockRenderer renderer = new XYBlockRenderer();
-        final Color[] colorValues = { Color.RED, Color.YELLOW, Color.GREEN };
+        final Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
         final ContinuousColorPaintScale paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
         renderer.setPaintScale(paintScale);
         final XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);

@@ -258,10 +258,10 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @param bufferLine
-     * @param c0
-     * @param c1
-     * @param offset
+     * @param bufferLine Geometry
+     * @param c0 Coordinate
+     * @param c1 Coordinate
+     * @param offset double; offset with respoct to the bufferLine
      * @return perpendicular buffer line
      */
     private Coordinate[] perpBufferCoords(final Geometry bufferLine, final Coordinate c0, final Coordinate c1,

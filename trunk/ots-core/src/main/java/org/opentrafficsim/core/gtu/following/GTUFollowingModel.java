@@ -62,8 +62,8 @@ public interface GTUFollowingModel
      * @throws RemoteException in case of simulator reachability problems
      */
     GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit)
-            throws RemoteException;
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            Abs<SpeedUnit> speedLimit) throws RemoteException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be

@@ -171,8 +171,9 @@ public class IDMPlus implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, Abs<SpeedUnit> leaderSpeed,
-            Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> myCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
