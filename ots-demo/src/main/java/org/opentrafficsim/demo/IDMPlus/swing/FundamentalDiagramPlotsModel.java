@@ -26,9 +26,9 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.LinkAnimation;
 import org.opentrafficsim.demo.geometry.LaneFactory;
+import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.FundamentalDiagram;
 

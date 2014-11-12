@@ -12,7 +12,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
+import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 
 /**
