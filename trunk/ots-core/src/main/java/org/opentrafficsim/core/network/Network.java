@@ -9,8 +9,8 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. In addition, a network can be
- * an (expanded) node as well. An example is shown below:
+ * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. In addition, a
+ * network can be an (expanded) node as well. An example is shown below:
  * 
  * <pre>
  *            |
@@ -32,9 +32,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *            |
  * </pre>
  * 
- * Node O in the example is expanded into the subnetwork consisting of nodes A, B, C, D, and E, and links AB, AC, AD, BC, CD,
- * BE, CE, and DE. It also means that when node expansion takes place, the links to node O have to be replaced. In the example
- * below:
+ * Node O in the example is expanded into the subnetwork consisting of nodes A, B, C, D, and E, and links AB, AC, AD,
+ * BC, CD, BE, CE, and DE. It also means that when node expansion takes place, the links to node O have to be replaced.
+ * In the example below:
  * 
  * <pre>
  *            X
@@ -60,10 +60,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *            W
  * </pre>
  * 
- * the node XO is replaced by XA, YO is replaced by YB, OZ is replaced by DZ, and OW is replaced by EW in the network. The
- * reverse takes place when we do node collapse.
+ * the node XO is replaced by XA, YO is replaced by YB, OZ is replaced by DZ, and OW is replaced by EW in the network.
+ * The reverse takes place when we do node collapse.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -86,7 +87,6 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
 
     /** HashSet of Nodes. */
     private Set<AbstractNode<?, ?>> nodeSet = new HashSet<>();
-    
 
     /**
      * Construction of an empty network.
@@ -127,9 +127,6 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         this.expansionOfNode = expansionNode;
     }
 
-   
-    
-    
     /**
      * @return expansionOfNode
      */
@@ -155,8 +152,6 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         return this.id;
     }
 
-    
-    
     /**
      * @return nodeSet
      */
@@ -210,7 +205,8 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     {
         if (isInNetwork(addThis))
         {
-            throw new NetworkException("Adding Node " + addThis.getId().toString() + ". This Node is  already in the Set");
+            throw new NetworkException("Adding Node " + addThis.getId().toString()
+                    + ". This Node is  already in the Set");
         }
         else
         {
@@ -298,118 +294,113 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         }
     }
 
-/*    
-    public boolean expandNode(AbstractNode<?, ?> node) throws NetworkException
+    /*
+     * public boolean expandNode(AbstractNode<?, ?> node) throws NetworkException { if (expansionOfNode == null) { throw
+     * new NetworkException("This Node" + node.getId().toString() + " is not able to expand."); } else { } }
+     */
+    public boolean collapseToNode(HashSet<AbstractNode<?, ?>> nodeSet)
     {
-        if (expansionOfNode == null)
+        AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
+        Set<L> insideLinks = new HashSet<L>();
+        Set<L> neighbourLinks = new HashSet<L>();
+
+        for (AbstractNode<?, ?> node : nodeSet)
         {
-            throw new NetworkException("This Node" + node.getId().toString() + " is not able to expand.");
-        }
-        else
-        {
-             
-            
-            
-        }
-    }
-*/
-    public boolean collapseToNode(HashSet<AbstractNode<?,?>> nodeSet)
-    {
-        AbstractLink<?, AbstractNode<?,?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
-        Set <L> insideLinks = new HashSet<L> ();
-        Set <L> neighbourLinks = new HashSet<L> ();
-        
-        
-         for (AbstractNode<?,?> node : nodeSet){  
-            for(AbstractLink<?, AbstractNode<?,?>> link : setOfLinks){
-                if ((node.equals(link.getStartNode()) && node.equals(link.getEndNode())) ){
-                    
+            for (AbstractLink<?, AbstractNode<?, ?>> link : setOfLinks)
+            {
+                if ((node.equals(link.getStartNode()) && node.equals(link.getEndNode())))
+                {
+
                     insideLinks.add((L) link);
-                    //Subnetwork add link
+                    // Subnetwork add link
                     super.remove(link);
                     this.nodeSet.remove(node);
-                    
+
                 }
-                else if ((node.equals(link.getStartNode()) || node.equals(link.getEndNode())) ){
+                else if ((node.equals(link.getStartNode()) || node.equals(link.getEndNode())))
+                {
                     neighbourLinks.add((L) link);
-                    
+
                     super.remove(link);
                     this.nodeSet.remove(node);
-                    
-                } else{;}
-   
+
+                }
+                else
+                {
+                    ;
+                }
+
             }
-         }
-         
-         // add nodes to subnetwork
-         // add links to subnetwork
-         // constructor call newnode with new links
-         
-         return true;
+        }
+
+        // add nodes to subnetwork
+        // add links to subnetwork
+        // constructor call newnode with new links
+
+        return true;
     }
-        
- 
-    
+
     /**
      * @param node1
      * @param node2
-     * @return  true if successful, false if it is not possible to collapse nodes
+     * @return true if successful, false if it is not possible to collapse nodes
      */
-    public boolean collapseLinks(final AbstractNode<?, ?> node1, final AbstractNode<?, ?> node2){
-       AbstractLink<?, AbstractNode<?,?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
-       float sumCapacityFrom1 = (float) 0.0; //One direction
-       float sumCapacityFrom2 = (float) 0.0; // Other direction
-       DoubleScalar<LengthUnit> shortestLengthFrom1 = new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
-       DoubleScalar<LengthUnit> shortestLengthFrom2 = new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
-       final ID idNewFrom1;
-       final ID idNewFrom2;
-          
+    public boolean collapseLinks(final AbstractNode<?, ?> node1, final AbstractNode<?, ?> node2)
+    {
+        AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
+        float sumCapacityFrom1 = (float) 0.0; // One direction
+        float sumCapacityFrom2 = (float) 0.0; // Other direction
+        DoubleScalar<LengthUnit> shortestLengthFrom1 =
+                new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+        DoubleScalar<LengthUnit> shortestLengthFrom2 =
+                new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+        final ID idNewFrom1;
+        final ID idNewFrom2;
 
-       
-              for(AbstractLink<?, AbstractNode<?,?>> link : setOfLinks){
-                if ((node1.equals(link.getStartNode()) && node2.equals(link.getEndNode())) ){
-                 super.remove(link);
-                 
-                 sumCapacityFrom1 += link.getCapacity().floatValue();
-                 
-                 if (shortestLengthFrom1.floatValue() > link.getLenght().floatValue()){
-                 
-                         shortestLengthFrom1 = link.getLenght();
-                 }
-                 
-                    
-                }
-                else if ( (node2.equals(link.getStartNode()) && node1.equals(link.getEndNode()))){
-                    super.remove(link);
+        for (AbstractLink<?, AbstractNode<?, ?>> link : setOfLinks)
+        {
+            if ((node1.equals(link.getStartNode()) && node2.equals(link.getEndNode())))
+            {
+                super.remove(link);
 
-                    sumCapacityFrom2 += link.getCapacity().floatValue();
-                    
-                    if (shortestLengthFrom2.floatValue() > link.getLenght().floatValue()){
-                    
-                        shortestLengthFrom2 = link.getLenght();
-                        
-                    }
+                sumCapacityFrom1 += link.getCapacity().floatValue();
+
+                if (shortestLengthFrom1.floatValue() > link.getLenght().floatValue())
+                {
+
+                    shortestLengthFrom1 = link.getLenght();
                 }
-                    else{
-                            return false;
-                     }
+
+            }
+            else if ((node2.equals(link.getStartNode()) && node1.equals(link.getEndNode())))
+            {
+                super.remove(link);
+
+                sumCapacityFrom2 += link.getCapacity().floatValue();
+
+                if (shortestLengthFrom2.floatValue() > link.getLenght().floatValue())
+                {
+
+                    shortestLengthFrom2 = link.getLenght();
+
                 }
-              
-             /* Link<?, ?> newLinkFrom1= Link(idNewFrom1,node1,node2,sumCapacityFrom1);
-              Link<?, ?> newLinkFrom2=;
-              
-              // TODO: Contructor call, ask AV. 
-              
-              newLinkFrom1.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom1, FrequencyUnit.PER_SECOND));
-              newLinkFrom2.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom2, FrequencyUnit.PER_SECOND));
-           
-           
-           super.add((L) newLinkFrom1);
-           super.add((L) newLinkFrom2); */
-           return true;
-           
+            }
+            else
+            {
+                return false;
+            }
         }
-    
+
+        /*
+         * Link<?, ?> newLinkFrom1= Link(idNewFrom1,node1,node2,sumCapacityFrom1); Link<?, ?> newLinkFrom2=; // TODO:
+         * Contructor call, ask AV. newLinkFrom1.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom1,
+         * FrequencyUnit.PER_SECOND)); newLinkFrom2.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(sumCapacityFrom2,
+         * FrequencyUnit.PER_SECOND)); super.add((L) newLinkFrom1); super.add((L) newLinkFrom2);
+         */
+        return true;
+
+    }
+
     /**
      * @param hierarchyLevel
      * @return
@@ -417,18 +408,20 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      */
     public Set<L> findLinkHierarchyBelow(int hierarchyLevel) throws NetworkException
     {
-        AbstractLink<?, AbstractNode<?,?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
-        Set<L> linksAboveLevel = new HashSet<L> ();
-        
-        for(AbstractLink<?, AbstractNode<?,?>> link : setOfLinks){
-            if (link.getHierarchy() > hierarchyLevel){
+        AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
+        Set<L> linksAboveLevel = new HashSet<L>();
+
+        for (AbstractLink<?, AbstractNode<?, ?>> link : setOfLinks)
+        {
+            if (link.getHierarchy() > hierarchyLevel)
+            {
                 linksAboveLevel.add((L) link);
             }
         }
-        
+
         return linksAboveLevel;
     }
-    
+
     /**
      * @param hierarchyLevel
      * @return
@@ -436,20 +429,19 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      */
     public Set<L> findLinkHierarchyEqualOrBelow(int hierarchyLevel) throws NetworkException
     {
-        AbstractLink<?, AbstractNode<?,?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
-        Set<L> linksAboveLevel = new HashSet<L> ();
-        
-        for(AbstractLink<?, AbstractNode<?,?>> link : setOfLinks){
-            if (link.getHierarchy() >= hierarchyLevel){
+        AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
+        Set<L> linksAboveLevel = new HashSet<L>();
+
+        for (AbstractLink<?, AbstractNode<?, ?>> link : setOfLinks)
+        {
+            if (link.getHierarchy() >= hierarchyLevel)
+            {
                 linksAboveLevel.add((L) link);
             }
         }
-        
+
         return linksAboveLevel;
-        
+
     }
-    
-    
-     
 
 } // End of class

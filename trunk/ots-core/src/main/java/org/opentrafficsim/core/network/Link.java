@@ -61,18 +61,14 @@ public class Link<ID, N extends AbstractNode<?, ?>> extends AbstractLink<ID, N>
         super(id, startNode, endNode, length, 0 /* hierarchy */);
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
-     */
+    /** {@inheritDoc} */
     @Override
     public Bounds getBounds() throws RemoteException
     {
         return null;
     }
 
-    /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getLocation()
-     */
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
