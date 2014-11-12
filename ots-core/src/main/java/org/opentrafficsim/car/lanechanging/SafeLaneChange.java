@@ -46,13 +46,13 @@ public final class SafeLaneChange
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
         if (referenceGTU.getPosition(when).getSI() > otherGTU.getPosition(when).getSI())
         { // The referenceGTU is ahead of the otherGTU
-            return FollowAcceleration.acceleration(otherGTU, referenceGTU, when, gtuFollowingModel, speedLimit).getSI() >= -maximumDeceleration
-                    .getSI();
+            return FollowAcceleration.acceleration(otherGTU, referenceGTU, when, gtuFollowingModel, speedLimit).getSI() 
+                    >= -maximumDeceleration.getSI();
         }
         // The otherGTU is exactly parallel or ahead of the referenceGTU
-        return FollowAcceleration.acceleration(referenceGTU, otherGTU, when, gtuFollowingModel, speedLimit).getSI() >= -maximumDeceleration
-                .getSI();
-                */
+        return FollowAcceleration.acceleration(referenceGTU, otherGTU, when, gtuFollowingModel, speedLimit).getSI() 
+                >= -maximumDeceleration.getSI();
+        */
         return false;
     }
 }

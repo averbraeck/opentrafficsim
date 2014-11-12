@@ -7,7 +7,8 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 /**
  * Objects per unit of distance.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 11 nov. 2014 <br>
@@ -32,9 +33,15 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
 
     static
     {
-        PER_METER = new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m", SI_DERIVED);
-        PER_KILOMETER = new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED, PER_METER, 0.001);
-        PER_MILLIMETER = new LinearDensityUnit("LinearDensityUnit.per_millimeter", "LinearDensityUnit./mm", SI_DERIVED, PER_METER, 1000);
+        PER_METER =
+                new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m",
+                        SI_DERIVED);
+        PER_KILOMETER =
+                new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED,
+                        PER_METER, 0.001);
+        PER_MILLIMETER =
+                new LinearDensityUnit("LinearDensityUnit.per_millimeter", "LinearDensityUnit./mm", SI_DERIVED,
+                        PER_METER, 1000);
     }
 
     /**
@@ -47,7 +54,8 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
     public LinearDensityUnit(final LengthUnit lengthUnit, final String nameKey, final String abbreviationKey,
             final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem, PER_METER, 1.0 / lengthUnit.getConversionFactorToStandardUnit(), true);
+        super(nameKey, abbreviationKey, unitSystem, PER_METER, 1.0 / lengthUnit.getConversionFactorToStandardUnit(),
+                true);
         this.lengthUnit = lengthUnit;
     }
 
@@ -88,6 +96,5 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
     {
         return "s-1";
     }
-
 
 }

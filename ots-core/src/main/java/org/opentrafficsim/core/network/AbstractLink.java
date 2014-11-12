@@ -10,7 +10,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -25,25 +26,25 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /** */
     private static final long serialVersionUID = 20140920L;
 
-    /** link id. */
+    /** Link id. */
     private final ID id;
 
-    /** start node (directional). */
+    /** Start node (directional). */
     private final N startNode;
 
-    /** end node (directional). */
+    /** Dnd node (directional). */
     private final N endNode;
 
-    /** link length in a length unit. */
+    /** Link length in a length unit. */
     private final DoubleScalar.Rel<LengthUnit> length;
 
-    /** link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
+    /** Link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
     private DoubleScalar.Abs<FrequencyUnit> capacity;
 
-    /** possible geometry for the link; can be null. */
+    /** Possible geometry for the link; can be null. */
     private LinearGeometry geometry;
-    
-    /** hierarchy of the link, lower the number, higher the importance, min is 0 */
+
+    /** Hierarchy of the link, lower the number, higher the importance, min is 0. */
     private int hierarchy;
 
     /**
@@ -53,17 +54,16 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
-     * @param hierarchy 
+     * @param hierarchy
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Abs<FrequencyUnit> capacity, int hierarchy)
+            final DoubleScalar.Abs<FrequencyUnit> capacity, final int hierarchy)
     {
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
         this.length = length;
-        if (hierarchy<0){hierarchy = 0;}
-        this.setHierarchy(hierarchy);
+        this.setHierarchy(hierarchy < 0 ? 0 : hierarchy);
         setCapacity(capacity);
     }
 
@@ -73,9 +73,10 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
      * @param startNode start node (directional).
      * @param endNode end node (directional).
      * @param length link length in a length unit.
-     * @param hierarchy 
+     * @param hierarchy
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length, int hierarchy)
+    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
+            final int hierarchy)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
                 FrequencyUnit.PER_SECOND), hierarchy);
@@ -128,7 +129,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     {
         this.capacity = capacity;
     }
-    
+
     /**
      * @return length.
      */

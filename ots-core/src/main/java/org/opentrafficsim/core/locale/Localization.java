@@ -19,10 +19,10 @@ public class Localization
     private final String bundleNamePrefix;
 
     /** the resource bundle. */
-    protected ResourceBundle resourceBundle;
+    private ResourceBundle resourceBundle;
 
     /** current locale. */
-    protected Locale currentLocale = null;
+    private Locale currentLocale = null;
 
     /**
      * Create a Localization object.

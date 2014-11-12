@@ -6,7 +6,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * "1D" implementation. Mapping on the design line (often the center line) of a road.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 22, 2014 <br>
@@ -23,7 +24,8 @@ public class LinkLocation
 
     /**
      * @param link The link of the location of a point relative to the GTU.
-     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the link.
+     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the
+     *            link.
      */
     public LinkLocation(final AbstractLink<?, ?> link, final double fractionalLongitudinalPosition)
     {
@@ -69,8 +71,8 @@ public class LinkLocation
     }
 
     /**
-     * Returns the distance to another LinkLocation. If the other location is in front of us, the distance is positive. If it is
-     * behind us, it is negative.
+     * Returns the distance to another LinkLocation. If the other location is in front of us, the distance is positive.
+     * If it is behind us, it is negative.
      * @param loc the link location to find the distance to.
      * @return the distance to another LinkLocation.
      */
@@ -84,10 +86,11 @@ public class LinkLocation
         // TODO: not on the same link. Find shortest path...
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public String toString()
     {
-        return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(), getLongitudinalPosition().getUnit());
+        return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(), getLongitudinalPosition()
+                .getUnit());
     }
 }
