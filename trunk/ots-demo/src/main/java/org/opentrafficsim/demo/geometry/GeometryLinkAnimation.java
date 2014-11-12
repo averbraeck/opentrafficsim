@@ -14,7 +14,6 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

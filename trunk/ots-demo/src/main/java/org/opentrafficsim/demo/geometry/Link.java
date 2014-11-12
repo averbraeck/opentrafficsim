@@ -1,11 +1,10 @@
-package org.opentrafficsim.demo.IDMPlus.swing.animation;
+package org.opentrafficsim.demo.geometry;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
 import org.opentrafficsim.core.network.CrossSectionLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.geometry.Node;
 
 /**
  * <p>

@@ -24,7 +24,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;

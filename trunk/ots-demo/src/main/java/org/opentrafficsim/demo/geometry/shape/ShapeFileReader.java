@@ -28,9 +28,9 @@ import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.Link;
 import org.opentrafficsim.demo.geometry.GeometryLinkAnimation;
 import org.opentrafficsim.demo.geometry.LaneAnimation;
+import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.demo.geometry.ShoulderAnimation;
 
