@@ -80,7 +80,7 @@ public class ContourPlots extends DSOLApplication
     public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
         InternalContourPlotsModel model = new InternalContourPlotsModel();
-        ContourPlots p =
+        ContourPlots contourPlots =
                 new ContourPlots("IDM+ contour plots", new SimpleSimulator(new OTSSimTimeDouble(
                         new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
                         TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
@@ -95,7 +95,7 @@ public class ContourPlots extends DSOLApplication
             try
             {
                 htmlPanel = new HTMLPanel(page);
-                p.simpleSimulator.getPanel().getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
+                contourPlots.simpleSimulator.getPanel().getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
             }
             catch (IOException exception)
             {
@@ -105,7 +105,7 @@ public class ContourPlots extends DSOLApplication
 
         // Make the tab with the contour plots
         TablePanel charts = new TablePanel(2, 2);
-        p.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
+        contourPlots.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
 
         // Make the four contour plots
         ContourPlot cp;
