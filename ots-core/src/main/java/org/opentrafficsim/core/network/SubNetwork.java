@@ -34,10 +34,15 @@ import java.util.Set;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
+ * @param <ID> Name of the sub network
+ * @param <L> ???
  */
 public class SubNetwork<ID, L extends AbstractLink<?, ?>> extends Network
 {
 
+    /** */
+    private static final long serialVersionUID = 20141112L;
+    
     private Set<L> links2Out = new HashSet<L>();
 
     /**

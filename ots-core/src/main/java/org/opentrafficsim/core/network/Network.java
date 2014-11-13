@@ -269,9 +269,9 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     /**
      * @param deleteThis
      * @return boolean
-     * @throws NetworkException
+     * @throws NetworkException on network inconsistency
      */
-    public boolean deleteNode(AbstractNode<?, ?> deleteThis) throws NetworkException
+    public boolean deleteNode(final AbstractNode<?, ?> deleteThis) throws NetworkException
     {
         if (isInNetwork(deleteThis))
         {
@@ -298,7 +298,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * public boolean expandNode(AbstractNode<?, ?> node) throws NetworkException { if (expansionOfNode == null) { throw
      * new NetworkException("This Node" + node.getId().toString() + " is not able to expand."); } else { } }
      */
-    public boolean collapseToNode(HashSet<AbstractNode<?, ?>> nodeSet)
+    public boolean collapseToNode(final HashSet<AbstractNode<?, ?>> nodeSet)
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         Set<L> insideLinks = new HashSet<L>();
@@ -348,8 +348,8 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     public boolean collapseLinks(final AbstractNode<?, ?> node1, final AbstractNode<?, ?> node2)
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
-        float sumCapacityFrom1 = (float) 0.0; // One direction
-        float sumCapacityFrom2 = (float) 0.0; // Other direction
+        float sumCapacityFrom1 = 0.0f; // One direction
+        float sumCapacityFrom2 = 0.0f; // Other direction
         DoubleScalar<LengthUnit> shortestLengthFrom1 =
                 new DoubleScalar.Abs<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
         DoubleScalar<LengthUnit> shortestLengthFrom2 =
@@ -398,15 +398,14 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
          * FrequencyUnit.PER_SECOND)); super.add((L) newLinkFrom1); super.add((L) newLinkFrom2);
          */
         return true;
-
     }
 
     /**
-     * @param hierarchyLevel
-     * @return
-     * @throws NetworkException
+     * @param hierarchyLevel int;
+     * @return Set&lt;L&gt;
+     * @throws NetworkException on network inconsistency
      */
-    public Set<L> findLinkHierarchyBelow(int hierarchyLevel) throws NetworkException
+    public Set<L> findLinkHierarchyBelow(final int hierarchyLevel) throws NetworkException
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         Set<L> linksAboveLevel = new HashSet<L>();
@@ -423,11 +422,11 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     }
 
     /**
-     * @param hierarchyLevel
-     * @return
-     * @throws NetworkException
+     * @param hierarchyLevel int
+     * @return Set&lt;L&gt;
+     * @throws NetworkException on network inconsistency
      */
-    public Set<L> findLinkHierarchyEqualOrBelow(int hierarchyLevel) throws NetworkException
+    public Set<L> findLinkHierarchyEqualOrBelow(final int hierarchyLevel) throws NetworkException
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         Set<L> linksAboveLevel = new HashSet<L>();
