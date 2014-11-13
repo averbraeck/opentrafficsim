@@ -93,8 +93,8 @@ public class TrajectoriesSwingApplication extends DSOLApplication
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
-        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
-        URL page = ContourPlotsModel.class.getResource(helpSource);
+        String helpSource = "/" + InternalContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
+        URL page = InternalContourPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
             HTMLPanel htmlPanel;

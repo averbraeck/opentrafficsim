@@ -12,7 +12,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.car.Car;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -27,9 +26,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.LinkAnimation;
 import org.opentrafficsim.demo.geometry.LaneFactory;
-import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.ContourPlot;
 
@@ -86,7 +83,7 @@ public class ContourPlotsModel implements OTSModelInterface
     /** maximum distance. */
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
-    /** The Lane containt the simulated Cars. */
+    /** The Lane that contains the simulated Cars. */
     Lane lane;
 
     /** the speed limit. */
@@ -101,19 +98,15 @@ public class ContourPlotsModel implements OTSModelInterface
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
+        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
         Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
-        this.lane = LaneFactory.makeLane("Lane", from, to);
-
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-
-        this.carFollowingModel = new IDMPlus((OTSDEVSSimulatorInterface) theSimulator);
-
-        // 1500 [veh / hour] == 2.4s headway
-        this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
-
         try
         {
+            this.lane = LaneFactory.makeLane("Lane", from, to, this.simulator);
+            this.carFollowingModel = new IDMPlus((OTSDEVSSimulatorInterface) theSimulator);
+            // 1500 [veh / hour] == 2.4s headway
+            this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "generateCar", null);
@@ -130,32 +123,7 @@ public class ContourPlotsModel implements OTSModelInterface
                         "drawGraphs", null);
             }
         }
-        catch (RemoteException | SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
-
-        // in case we run on an animator and not on a simulator, we create the animation
-        if (theSimulator instanceof OTSAnimatorInterface)
-        {
-            createAnimation();
-        }
-    }
-
-    /**
-     * Make the animation for each of the components that we want to see on the screen.
-     */
-    private void createAnimation()
-    {
-        try
-        {
-            // let's make several layers with the different types of information
-            Node nodeA = new Node("A", new Coordinate(0.0d, 0.0d, 0.0d));
-            Node nodeB = new Node("B", new Coordinate(5000.0d, 0.0d, 0.0d));
-            Link link = new Link("Road", nodeA, nodeB, new DoubleScalar.Rel<LengthUnit>(5000.0d, LengthUnit.METER));
-            new LinkAnimation(link, this.simulator, 15.0f);
-        }
-        catch (NamingException | RemoteException exception)
+        catch (RemoteException | SimRuntimeException | NamingException exception)
         {
             exception.printStackTrace();
         }

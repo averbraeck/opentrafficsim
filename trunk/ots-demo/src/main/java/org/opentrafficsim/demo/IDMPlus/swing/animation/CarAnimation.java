@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 public class CarAnimation extends Renderable2D
 {
     /**
-     * @param source the link to draw
+     * @param source the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation

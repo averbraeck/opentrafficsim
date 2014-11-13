@@ -25,8 +25,8 @@ public class NodeAnimation extends Renderable2D
     /**
      * @param node n
      * @param simulator s
-     * @throws NamingException ne
-     * @throws RemoteException re
+     * @throws NamingException on ???
+     * @throws RemoteException on communications failure
      */
     public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
@@ -40,4 +40,5 @@ public class NodeAnimation extends Renderable2D
         graphics.setColor(Color.BLACK);
         graphics.draw(new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
     }
+    
 }
