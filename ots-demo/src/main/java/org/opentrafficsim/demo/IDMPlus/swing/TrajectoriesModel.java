@@ -25,9 +25,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.IDMPlus.swing.animation.LinkAnimation;
 import org.opentrafficsim.demo.geometry.LaneFactory;
-import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 
@@ -86,20 +84,17 @@ public class TrajectoriesModel implements OTSModelInterface
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
+        this.simulator = (OTSDEVSSimulator) theSimulator;
         Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
         Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
-        this.lane = LaneFactory.makeLane("Lane", from, to);
         try
         {
-            new LinkAnimation((Link) this.lane.getParentLink(), this.simulator, 5.0f);
+            this.lane = LaneFactory.makeLane("Lane", from, to, this.simulator);
         }
         catch (NamingException exception1)
         {
             exception1.printStackTrace();
         }
-
-        // new LinkAnimation(this.lane.getParentLink(), this.simulator, 5.0f);
-        this.simulator = (OTSDEVSSimulator) theSimulator;
 
         this.carFollowingModel = new IDMPlus((OTSDEVSSimulatorInterface) theSimulator);
 

@@ -60,7 +60,7 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      */
     public static void main(final String[] args) throws SimRuntimeException, RemoteException
     {
-        ContourPlotsModel model = new ContourPlotsModel();
+        InternalContourPlotsModel model = new InternalContourPlotsModel();
         // use the OTSDEVSSimulator if we don't want animation, otherwise the OTSDEVSAnimator.
         // OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
@@ -92,7 +92,7 @@ public class ContourPlotsSwingApplication extends DSOLApplication
      * @param model ContourPlotsModel; the model.
      * @param panel DSOLPanel
      */
-    private static void makePlots(final ContourPlotsModel model,
+    private static void makePlots(final InternalContourPlotsModel model,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         TablePanel charts = new TablePanel(2, 2);
@@ -129,8 +129,8 @@ public class ContourPlotsSwingApplication extends DSOLApplication
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
-        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
-        URL page = ContourPlotsModel.class.getResource(helpSource);
+        String helpSource = "/" + InternalContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
+        URL page = InternalContourPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
             HTMLPanel htmlPanel;

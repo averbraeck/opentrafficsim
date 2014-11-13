@@ -88,11 +88,17 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
+        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
         Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
-        this.lane = LaneFactory.makeLane("Lane", from, to);
-
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+        try
+        {
+            this.lane = LaneFactory.makeLane("Lane", from, to, this.simulator);
+        }
+        catch (NamingException exception1)
+        {
+            exception1.printStackTrace();
+        }
 
         this.carFollowingModel = new IDMPlus((OTSDEVSSimulatorInterface) theSimulator);
 
@@ -286,7 +292,7 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
          */
         protected final void move() throws RemoteException, NetworkException, SimRuntimeException
         {
-            System.out.println("move " + this.getId());
+            //System.out.println("move " + this.getId());
             if (this == FundamentalDiagramPlotsModel.this.block)
             {
                 return;
@@ -319,10 +325,6 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
                 {
                     cfmr = blockCFMR;
                 }
-            }
-            if (cfmr.getAcceleration().getSI() < -0.1)
-            {
-                System.out.println("Deceleration: " + cfmr.getAcceleration());
             }
             setState(cfmr);
 
