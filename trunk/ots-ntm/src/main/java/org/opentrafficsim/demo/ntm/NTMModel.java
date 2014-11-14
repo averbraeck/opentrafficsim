@@ -105,7 +105,6 @@ public class NTMModel implements OTSModelInterface
     @Override
     public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
-            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
@@ -162,7 +161,7 @@ public class NTMModel implements OTSModelInterface
             Link.findSequentialLinks(this.shpLinks, this.nodes);
 
             // save the selected and created areas to a shape file 
-            WriteToShp.createShape(this.areas);
+            //WriteToShp.createShape(this.areas);
             
             // build the higher level map and the graph
             BuildGraph.buildGraph(this);

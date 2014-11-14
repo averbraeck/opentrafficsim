@@ -221,7 +221,7 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Link extends AbstractLink<String, Node> implements LocatableInterface
+public class Link extends AbstractLink<String, Node> 
 {
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Abs<SpeedUnit> speed;
@@ -229,6 +229,7 @@ public class Link extends AbstractLink<String, Node> implements LocatableInterfa
     /** the lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
 
+    /** */
     private LinkData linkData;
 
     /** traffic behaviour. */

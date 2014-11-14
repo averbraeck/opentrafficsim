@@ -55,7 +55,7 @@ public class NTMTestApplication extends DSOLApplication
      * @throws NamingException
      * @throws IOException
      */
-    public static void main(String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException
     {
         NTMModel model = new NTMModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();

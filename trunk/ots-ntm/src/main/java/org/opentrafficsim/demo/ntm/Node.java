@@ -39,7 +39,7 @@ public class Node extends AbstractNode<String, Point>
      * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
      */
-    enum TrafficBehaviourType {
+    public enum TrafficBehaviourType {
         NTM,
         CORDON,
         FLOW,
