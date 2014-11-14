@@ -74,6 +74,7 @@ public class WriteToShp
 {
     static SimpleFeatureSource featureSource = null;
 
+    
     public static void createShape(Map<String, Area> areas)
     {
         /*
@@ -295,7 +296,7 @@ public class WriteToShp
 
     }
 
-    /**
+        /**
      * Prompt the user for the name and path to use for the output shapefile
      * @param csvFile the input csv file used to create a default shapefile name
      * @return name and path for the shapefile as a new File object
@@ -388,7 +389,7 @@ public class WriteToShp
         return visitor.numInvalidGeometries;
     }
 
-    private static class ValidateGeometryAction extends SafeAction
+    public static class ValidateGeometryAction extends SafeAction
     {
         ValidateGeometryAction()
         {

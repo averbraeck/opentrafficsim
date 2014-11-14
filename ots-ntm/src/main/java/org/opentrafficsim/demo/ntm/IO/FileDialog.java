@@ -1,4 +1,4 @@
-package org.opentrafficsim.demo.ntm;
+package org.opentrafficsim.demo.ntm.IO;
 
 import java.awt.Component;
 import java.awt.Container;
