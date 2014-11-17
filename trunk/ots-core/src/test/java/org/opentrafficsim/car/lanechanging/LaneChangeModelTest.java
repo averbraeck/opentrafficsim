@@ -206,13 +206,14 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     @Override
     public EventListInterface<OTSSimTimeDouble> getEventList() throws RemoteException
     {
-        return null;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public void scheduleEvent(SimEventInterface<OTSSimTimeDouble> event) throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -220,6 +221,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventRel(Rel<TimeUnit> relativeDelay, short priority, Object source, Object target,
             String method, Object[] args) throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -227,6 +229,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventRel(Rel<TimeUnit> relativeDelay, Object source, Object target, String method, Object[] args)
             throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -234,6 +237,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventAbs(OTSSimTimeDouble absoluteTime, short priority, Object source, Object target,
             String method, Object[] args) throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -241,6 +245,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventAbs(Abs<TimeUnit> absoluteTime, Object source, Object target, String method, Object[] args)
             throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -248,6 +253,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventAbs(Abs<TimeUnit> absoluteTime, short priority, Object source, Object target,
             String method, Object[] args) throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -255,6 +261,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventAbs(OTSSimTimeDouble absoluteTime, Object source, Object target, String method,
             Object[] args) throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -262,6 +269,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventNow(short priority, Object source, Object target, String method, Object[] args)
             throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -269,6 +277,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void scheduleEventNow(Object source, Object target, String method, Object[] args) throws RemoteException,
             SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -276,6 +285,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void setEventList(EventListInterface<OTSSimTimeDouble> eventList) throws RemoteException,
             SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -289,7 +299,7 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     @Override
     public Replication<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getReplication() throws RemoteException
     {
-        return null;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -297,59 +307,63 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public void initialize(Replication<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> replication,
             ReplicationMode replicationMode) throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isRunning() throws RemoteException
     {
-        return false;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public void start() throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public void step() throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public void stop() throws RemoteException, SimRuntimeException
     {
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public Context getContext() throws NamingException
     {
-        return null;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean addListener(EventListenerInterface arg0, EventType arg1) throws RemoteException
     {
-        return false;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean addListener(EventListenerInterface arg0, EventType arg1, boolean arg2) throws RemoteException
     {
-        return false;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean addListener(EventListenerInterface arg0, EventType arg1, short arg2) throws RemoteException
     {
-        return false;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
@@ -357,14 +371,14 @@ class FakeSimulator implements OTSDEVSSimulatorInterface
     public boolean addListener(EventListenerInterface arg0, EventType arg1, short arg2, boolean arg3)
             throws RemoteException
     {
-        return false;
+        throw new Error("Not supported in the face simulator");
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean removeListener(EventListenerInterface arg0, EventType arg1) throws RemoteException
     {
-        return false;
+        throw new Error("Not supported in the face simulator");
     }
 
 }
