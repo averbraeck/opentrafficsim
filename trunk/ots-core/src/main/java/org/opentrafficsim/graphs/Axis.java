@@ -14,7 +14,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 class Axis
 {
     /** Lowest value along this axis. */
-    private DoubleScalar<?> minimumValue;
+    private final DoubleScalar<?> minimumValue;
 
     /** Highest value along this axis. */
     private DoubleScalar<?> maximumValue;
