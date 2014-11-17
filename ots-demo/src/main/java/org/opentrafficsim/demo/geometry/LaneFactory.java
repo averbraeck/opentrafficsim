@@ -46,7 +46,7 @@ public final class LaneFactory
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Link
      */
-    private static Link makeLink(final String name, final Node from, final Node to, DoubleScalar.Rel<LengthUnit> width, 
+    private static Link makeLink(final String name, final Node from, final Node to, DoubleScalar.Rel<LengthUnit> width,
             OTSDEVSSimulatorInterface simulator)
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -108,7 +108,7 @@ public final class LaneFactory
     public static Lane makeLane(final String name, final Node from, final Node to, OTSDEVSSimulatorInterface simulator)
             throws RemoteException, NamingException
     {
-        LaneType<String> carLaneType = new LaneType<String>(name);
+        LaneType<String> carLaneType = new LaneType<String>("car");
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, width, simulator);
@@ -136,8 +136,9 @@ public final class LaneFactory
         width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
+            // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
             DoubleScalar.Rel<LengthUnit> latPos =
-                    new DoubleScalar.Rel<LengthUnit>(laneIndex * width.getSI(), LengthUnit.METER);
+                    new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
             result[laneIndex] = makeLane(link, carLaneType, latPos, width, simulator);
         }
         return result;
