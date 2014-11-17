@@ -14,7 +14,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 22, 2014 <br>
@@ -46,10 +47,10 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
             throws RemoteException
     {
-        super(id, gtuType, length, width, maximumVelocity, gtuFollowingModel, initialLongitudinalPositions, initialSpeed,
-                simulator);
+        super(id, gtuType, length, width, maximumVelocity, gtuFollowingModel, initialLongitudinalPositions,
+                initialSpeed, simulator);
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {

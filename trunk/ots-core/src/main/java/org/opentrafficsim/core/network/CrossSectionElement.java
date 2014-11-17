@@ -39,35 +39,35 @@ public abstract class CrossSectionElement implements LocatableInterface
     /** Cross Section Link to which the element belongs. */
     private final CrossSectionLink<?, ?> parentLink;
 
-    /** the lateral start position compared to the linear geometry of the Cross Section Link. */
+    /** The lateral start position compared to the linear geometry of the Cross Section Link. */
     private final DoubleScalar.Rel<LengthUnit> lateralCenterPosition;
 
     /**
-     * the lowest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section
-     * Link.
+     * The right most (most negative) lateral position of the edge at the begin compared to the linear geometry of the
+     * Cross Section Link.
      */
-    private final DoubleScalar.Rel<LengthUnit> lateralBeginStartPosition;
+    private final DoubleScalar.Rel<LengthUnit> lateralBeginRightPosition;
 
     /**
-     * the highest value lateral position of the edge at the begin compared to the linear geometry of the Cross Section
-     * Link.
+     * The left most (most positive) lateral position of the edge at the begin compared to the linear geometry of the
+     * Cross Section Link.
      */
-    private final DoubleScalar.Rel<LengthUnit> lateralBeginEndPosition;
+    private final DoubleScalar.Rel<LengthUnit> lateralBeginLeftPosition;
 
-    /** start width, positioned <i>symmetrically around</i> the lateral start position. */
+    /** Start width, positioned <i>symmetrically around</i> the lateral start position. */
     private final DoubleScalar.Rel<LengthUnit> beginWidth;
 
-    /** end width, positioned <i>symmetrically around</i> the lateral end position. */
+    /** End width, positioned <i>symmetrically around</i> the lateral end position. */
     private final DoubleScalar.Rel<LengthUnit> endWidth;
 
     /** geometry matching the contours of the cross section element. */
     private final Geometry contour;
 
-    /** the offset line as calculated. */
+    /** The offset line as calculated. */
     private LineString offsetLine;
 
-    /** the length of the line. Calculated once at the creation. */
-    private DoubleScalar.Rel<LengthUnit> length;
+    /** The length of the line. Calculated once at the creation. */
+    private final DoubleScalar.Rel<LengthUnit> length;
 
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
@@ -92,8 +92,9 @@ public abstract class CrossSectionElement implements LocatableInterface
         this.length = new DoubleScalar.Rel<LengthUnit>(this.offsetLine.getLength(), LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> halfWidth =
                 new DoubleScalar.Rel<>(beginWidth.getInUnit() / 2, beginWidth.getUnit());
-        this.lateralBeginStartPosition = DoubleScalar.minus(lateralCenterPosition, halfWidth).immutable();
-        this.lateralBeginEndPosition = DoubleScalar.plus(lateralCenterPosition, halfWidth).immutable();
+        this.lateralBeginRightPosition = DoubleScalar.minus(lateralCenterPosition, halfWidth).immutable();
+        this.lateralBeginLeftPosition = DoubleScalar.plus(lateralCenterPosition, halfWidth).immutable();
+        this.parentLink.addCrossSectionElement(this);
     }
 
     /**
@@ -307,18 +308,44 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @return lateralBeginStartPosition.
+     * @return lateralBeginRightPosition.
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralBeginStartPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLateralBeginRightPosition()
     {
-        return this.lateralBeginStartPosition;
+        return this.lateralBeginRightPosition;
     }
 
     /**
-     * @return lateralBeginEndPosition.
+     * @return lateralBeginLeftPosition.
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralBeginEndPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLateralBeginLeftPosition()
     {
-        return this.lateralBeginEndPosition;
+        return this.lateralBeginLeftPosition;
     }
+
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return String.format("offset %.2fm, beginWidth %.2fm, endWidth %.2fm", this.lateralCenterPosition.getSI(),
+                this.beginWidth.getSI(), this.endWidth.getSI());
+    }
+    
+    /**
+     * Return the Left or Right position indicated by the lateralDirection argument.
+     * @param lateralDirection
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;
+     */
+    public final DoubleScalar.Rel<LengthUnit> getLateralBeginPosition(final LateralDirectionality lateralDirection)
+    {
+        switch (lateralDirection)
+        {
+            case LEFT:
+                return getLateralBeginLeftPosition();
+            case RIGHT:
+                return getLateralBeginRightPosition();
+            default:
+                throw new Error("Bad switch on LateralDirectionality " + lateralDirection);
+        }
+    }
+
 }

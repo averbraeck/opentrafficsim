@@ -10,7 +10,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -82,77 +83,76 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
-     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
-     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
-     * or BOTH, null will be returned.<br>
-     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
-     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
-     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
-     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
-     * relevant lateral edges of the two adjacent lanes. <br>
-     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
-     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
-     * returned. <br>
+     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane,
+     * or null if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In
+     * other words, if we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of
+     * that lane is not FORWARD or BOTH, null will be returned.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This
+     * means that a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability
+     * for a GTU. A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta
+     * distance from the relevant lateral edges of the two adjacent lanes. <br>
+     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a
+     * car lane are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the
+     * provided GTUType is returned. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param lateralDirection LEFT or RIGHT.
      * @param gtuType the type of GTU for which this an adjacent lane.
-     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
-     *         not match.
+     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction
+     *         does not match.
      */
     public final Lane accessibleAdjacentLane(final LateralDirectionality lateralDirection, final GTUType<?> gtuType)
     {
         final double delta = 0.1; // in meters
         Set<Lane> candidates = new HashSet<>();
+        LateralDirectionality reverseDirection =
+                lateralDirection == LateralDirectionality.LEFT ? LateralDirectionality.RIGHT
+                        : LateralDirectionality.LEFT;
         for (CrossSectionElement cse : getParentLink().getCrossSectionElementList())
         {
-            if (cse instanceof Lane)
+            if (!(cse instanceof Lane))
             {
-                Lane cseLane = (Lane) cse;
-                if (cseLane.getLaneType().isCompatible(gtuType))
+                continue; // Not a Lane (probably a road marker)
+            }
+            Lane cseLane = (Lane) cse;
+            if (!cseLane.getLaneType().isCompatible(gtuType))
+            {
+                continue; // Not compatible with our GTU type
+            }
+            if (cseLane.getDirectionality().equals(LongitudinalDirectionality.BOTH)
+                    || cseLane.getDirectionality().equals(this.getDirectionality()))
+            {
+                // The driving direction of our GTU is compatible with cseLane
+                //System.out.println("this: " + toString());
+                //System.out.println(" cse: " + cse.toString());
+                if (this == cse)
                 {
-                    if (cseLane.getDirectionality().equals(LongitudinalDirectionality.BOTH)
-                            || cseLane.getDirectionality().equals(this.getDirectionality()))
-                    {
-                        if (lateralDirection.equals(LateralDirectionality.LEFT))
-                        {
-                            if (Math.abs(DoubleScalar.minus(this.getLateralBeginEndPosition(),
-                                    cse.getLateralBeginStartPosition()).getSI()) < delta)
-                            {
-                                // adjacent. Can we cross?
-                                if (canCrossTo(gtuType, this.getLateralBeginEndPosition().getSI(), delta, lateralDirection))
-                                {
-                                    candidates.add(cseLane);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (Math.abs(DoubleScalar.minus(this.getLateralBeginStartPosition(),
-                                    cse.getLateralBeginEndPosition()).getSI()) < delta)
-                            {
-                                // adjacent. Can we cross?
-                                if (canCrossTo(gtuType, this.getLateralBeginStartPosition().getSI(), delta, lateralDirection))
-                                {
-                                    candidates.add(cseLane);
-                                }
-                            }
-                        }
-                    }
+                    //System.out.println("Current lane is not adjacent to itself");
+                    continue; // Current lane is not adjacent to itself
+                }
+                //System.out.println("checking for " + lateralDirection + " adjacency");
+                if (Math.abs(DoubleScalar.minus(this.getLateralBeginPosition(lateralDirection),
+                        cse.getLateralBeginPosition(reverseDirection)).getSI()) > delta)
+                {
+                    continue; // Not adjacent (within error margin delfta)
+                }
+                //System.out.println("Lanes are adjacent!");
+                // Lanes are adjacent. Can we cross?
+                if (canCrossTo(gtuType, this.getLateralBeginPosition(lateralDirection).getSI(), delta, lateralDirection))
+                {
+                    candidates.add(cseLane); // Yes! Our GTU type can cross into this adjacent Lane
                 }
             }
         }
-
         if (candidates.isEmpty())
         {
-            return null;
+            return null; // There is no adjacent Lane that this GTU type can cross into
         }
-
         if (candidates.size() == 1)
         {
-            return candidates.iterator().next();
+            return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
         }
-
+        // There are several candidates; find the one that is widest at the beginning.
         Lane bestLane = null;
         double widthM = -1.0;
         for (Lane lane : candidates)
@@ -177,7 +177,6 @@ public class Lane extends CrossSectionElement
     private boolean canCrossTo(final GTUType<?> gtuType, final double edgeOffset, final double delta,
             final LateralDirectionality lateralDirection)
     {
-        boolean canCross = true;
         for (CrossSectionElement cse : getParentLink().getCrossSectionElementList())
         {
             if (cse instanceof RoadMarkerAlong)
@@ -187,11 +186,20 @@ public class Lane extends CrossSectionElement
                 {
                     if (!marker.isPermeable(gtuType, lateralDirection))
                     {
-                        canCross = false;
+                        return false;
                     }
                 }
             }
         }
-        return canCross;
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        CrossSectionLink<?, ?> link = getParentLink();
+        // FIXME indexOf is the the correct way to determine the rank of a Lane
+        return String.format("Lane %d of %s, %s", link.getCrossSectionElementList().indexOf(this), link.toString(),
+                super.toString());
     }
 }

@@ -16,6 +16,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
@@ -55,7 +56,7 @@ public final class FollowAcceleration
             final GTUFollowingModel gtuFollowingModel, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException, NetworkException
     {
-        if (null != leader)
+        if (null != leader && null != follower)
         {
             // find a lane where follower and leader are jointly
             Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
@@ -198,7 +199,8 @@ public final class FollowAcceleration
         }
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
         DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
-                FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel, speedLimit);
+                null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
+                        : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel, speedLimit);
         try
         {
             if (followerAcceleration.getSI() >= -maximumDeceleration.getSI())
