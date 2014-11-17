@@ -34,14 +34,14 @@ public interface LaneChangeModel
      * @param gtu GTU; the GTU for which the acceleration and lane change is computed
      * @param sameLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null and
      *            may include gtu)
-     * @param preferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where gtus should
+     * @param preferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where GTUs should
      *            drive in the absence of other traffic (must be null if there is no such lane)
      * @param nonPreferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
      *            GTUs should merge to overtake other traffic (must be null if there is no such lane)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @param preferredLaneRouteIncentive DoubleScalar.Abs&lt;AccelerationUnit&gt;; route incentive to merge to the
+     * @param preferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane where GTUs should drive in the absence of other traffic
-     * @param nonPreferredLaneRouteIncentive DoubleScalar.Abs&lt;AccelerationUnit&gt;; route incentive to merge to the
+     * @param nonPreferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane into which GTUs should merge to overtake other traffic
      * @return LaneChangeModelResult; the result of the lane change and GTU following model
      * @throws RemoteException in case the simulation time cannot be retrieved.
@@ -50,8 +50,9 @@ public interface LaneChangeModel
             final Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs,
             final Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs,
             final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, Rel<AccelerationUnit> preferredLaneRouteIncentive,
-            Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
+            final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
 
     /**
      * The result of a LaneChangeModel evaluation shall be stored in an instance of this class. <br />
@@ -146,6 +147,13 @@ public interface LaneChangeModel
         public final LateralDirectionality getLaneChange()
         {
             return this.laneChange;
+        }
+
+        /** {@inheritDoc} */
+        public final String toString()
+        {
+            return this.gfmr.toString() + ", "
+                    + (null == this.laneChange ? "no lane change" : this.laneChange.toString());
         }
 
     }

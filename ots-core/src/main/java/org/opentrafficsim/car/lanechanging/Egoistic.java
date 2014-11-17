@@ -2,7 +2,7 @@ package org.opentrafficsim.car.lanechanging;
 
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
@@ -19,7 +19,7 @@ public final class Egoistic extends AbstractLaneChangeModel
 {
     /** {@inheritDoc} */
     @Override
-    public Abs<AccelerationUnit> applyDriverPersonality(final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
+    public DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
     {
         try
         {

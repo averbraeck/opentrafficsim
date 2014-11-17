@@ -35,14 +35,14 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs,
             final Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs,
             final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, final Rel<AccelerationUnit> preferredLaneRouteIncentive,
-            final Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
+            final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
         {
-            System.out.println(String.format(
-                    "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
-                    preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
+            // System.out.println(String.format(
+            //         "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
+            //         preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
             Lane lane = gtu.getLongitudinalPositions().keySet().iterator().next();
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
