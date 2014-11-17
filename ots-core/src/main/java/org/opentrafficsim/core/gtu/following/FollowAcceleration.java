@@ -58,7 +58,8 @@ public final class FollowAcceleration
         if (null != leader && null != follower)
         {
             // find a lane where follower and leader are jointly
-            Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
+            // OOOPS DONT DO IT THIS WAY: Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
+            Set<Lane> lanes = new HashSet<Lane>(leader.getLongitudinalPositions().keySet());
             lanes.retainAll(follower.getLongitudinalPositions().keySet());
             // TODO expand to lanes for next links as well, to a certain distance (which is...?)
             if (lanes.size() > 0)
@@ -87,6 +88,10 @@ public final class FollowAcceleration
                 for (Lane lane : leader.getLongitudinalPositions().keySet())
                 {
                     links.add(lane.getParentLink());
+                }
+                if (links.size() == 0)
+                {
+                    throw new NetworkException("Leader is not on any link");
                 }
                 Set<CrossSectionLink<?, ?>> followerLinks = new HashSet<CrossSectionLink<?, ?>>();
                 for (Lane lane : follower.getLongitudinalPositions().keySet())
@@ -197,6 +202,7 @@ public final class FollowAcceleration
             }
         }
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
+        //System.out.println("referenceGTU: " + referenceGTU);
         DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
                 null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
                         : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel, speedLimit);

@@ -142,13 +142,14 @@ public class LaneChangeModelTest
     }
 
     /**
-     * Test that a vehicle in the left lane changes to the right lane if that is empty.
+     * Test that a vehicle in the left lane changes to the right lane if that is empty, or there is enough room.
      * @throws RemoteException on communications failure
      * @throws NamingException on ???
-     * @throws SimRuntimeException
+     * @throws SimRuntimeException on ???
+     * @throws NetworkException on Network inconsistency
      */
     @Test
-    public final void changeRightToEmptyLane() throws RemoteException, NamingException, SimRuntimeException
+    public final void changeRight() throws RemoteException, NamingException, SimRuntimeException, NetworkException
     {
         GTUType<String> gtuType = new GTUType<String>("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
@@ -161,7 +162,7 @@ public class LaneChangeModelTest
         initialLongitudinalPositions.put(lanes[0], new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER));
         OTSDEVSSimulatorInterface fakeSimulator = new FakeSimulator();
         Car<String> car =
-                new Car<String>("Car", gtuType, new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
+                new Car<String>("ReferenceCar", gtuType, new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
                                 SpeedUnit.KM_PER_HOUR), new IDMPlus(null), initialLongitudinalPositions,
                         new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), fakeSimulator);
@@ -177,6 +178,37 @@ public class LaneChangeModelTest
         System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT,
                 laneChangeModelResult.getLaneChange());
+        DoubleScalar.Rel<LengthUnit> rear = car.positionOfRear(lanes[0]);
+        DoubleScalar.Rel<LengthUnit> front = car.positionOfFront(lanes[0]);
+        DoubleScalar.Rel<LengthUnit> reference = car.getLongitudinalPositions().get(lanes[0]);
+        System.out.println("rear:      " + rear);
+        System.out.println("front:     " + front);
+        System.out.println("reference: " + reference);
+        DoubleScalar.Rel<LengthUnit> vehicleLength = DoubleScalar.minus(front, rear).immutable();
+        DoubleScalar.Rel<LengthUnit> collisionStart = DoubleScalar.minus(reference, vehicleLength).immutable();
+        DoubleScalar.Rel<LengthUnit> collisionEnd = DoubleScalar.plus(reference, vehicleLength).immutable();
+        for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
+        {
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> otherLongitudinalPositions =
+                    new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            otherLongitudinalPositions.put(lanes[1], new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
+            Car<String> collisionCar =
+                    new Car<String>("LaneChangeBlockingCar", gtuType, vehicleLength,
+                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
+                                    SpeedUnit.KM_PER_HOUR), new IDMPlus(null), otherLongitudinalPositions,
+                            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), fakeSimulator);
+            preferredLaneGTUs.clear();
+            preferredLaneGTUs.add(collisionCar);
+            laneChangeModelResult =
+                    new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
+                            nonPreferredLaneGTUs, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                            new DoubleScalar.Rel<AccelerationUnit>(0.3, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
+            System.out.println(laneChangeModelResult.toString());
+            assertEquals(
+                    "Vehicle cannot to change to the right lane because that would result in an immediate collision",
+                    null, laneChangeModelResult.getLaneChange());
+        }
     }
 }
 
