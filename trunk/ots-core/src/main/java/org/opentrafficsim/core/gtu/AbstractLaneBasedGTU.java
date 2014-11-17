@@ -127,9 +127,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final void setState(final GTUFollowingModelResult cfmr) throws NetworkException
     {
         // TODO: test when vehicle moves to next lane in the network.
-        for (Lane lane : this.longitudinalPositions.keySet())
+        for (Lane lane : getLongitudinalPositions().keySet())
         {
-            this.longitudinalPositions.put(lane, positionOfFront(lane, this.nextEvaluationTime));
+            getLongitudinalPositions().put(lane, positionOfFront(lane, this.nextEvaluationTime));
         }
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
         // TODO add a sanity check that time is increasing
@@ -178,11 +178,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             throws NetworkException
     {
         // TODO: link to the next lane if position > lane.getLength()
-        if (!this.longitudinalPositions.containsKey(lane))
+        if (!getLongitudinalPositions().containsKey(lane))
         {
             throw new NetworkException("GTU " + getId() + " not on lane " + lane);
         }
-        DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition = getLongitudinalPositions().get(lane);
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         return DoubleScalar.plus(
                 DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
@@ -202,8 +202,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final LinkLocation positionOfFront(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
     {
         // TODO: link to the previous or next link if fraction < 0.0 or fraction > 1.0
-        Lane lane = this.longitudinalPositions.keySet().iterator().next();
-        DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        Lane lane = getLongitudinalPositions().keySet().iterator().next();
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition = getLongitudinalPositions().get(lane);
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
                 DoubleScalar.plus(
@@ -242,9 +242,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final LinkLocation positionOfRear(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
     {
         // TODO: link to the previous or next link if fraction < 0.0 or fraction > 1.0
-        Lane lane = this.longitudinalPositions.keySet().iterator().next();
+        Lane lane = getLongitudinalPositions().keySet().iterator().next();
         DoubleScalar.Rel<LengthUnit> longitudinalPosition =
-                DoubleScalar.minus(this.longitudinalPositions.get(lane), getLength()).immutable();
+                DoubleScalar.minus(getLongitudinalPositions().get(lane), getLength()).immutable();
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
                 DoubleScalar.plus(
@@ -311,6 +311,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getLongitudinalPositions()
     {
+        //System.out.println(getId() + ": Longitudinal positions: " + this.longitudinalPositions);
         return this.longitudinalPositions;
     }
 
@@ -327,7 +328,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        Lane lane = this.longitudinalPositions.keySet().iterator().next();
+        Lane lane = getLongitudinalPositions().keySet().iterator().next();
         try
         {
             // TODO: solve problem when point is still on previous lane.
