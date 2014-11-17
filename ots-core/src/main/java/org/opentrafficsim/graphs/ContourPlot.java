@@ -277,10 +277,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             if (fields[0].equalsIgnoreCase("setDistanceGranularity"))
             {
                 this.getYAxis().setCurrentGranularity(value);
+                clearCachedValues();
             }
             else if (fields[0].equalsIgnoreCase("setTimeGranularity"))
             {
                 this.getXAxis().setCurrentGranularity(value);
+                clearCachedValues();
             }
             else
             {
@@ -329,13 +331,20 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         return 1;
     }
 
+    /** Cached result of yAxisBins. */
+    int cachedYAxisBins = -1;
+    
     /**
      * Retrieve the number of cells to use along the distance axis.
      * @return Integer; the number of cells to use along the distance axis
      */
     protected final int yAxisBins()
     {
-        return this.getYAxis().getAggregatedBinCount();
+        if (this.cachedYAxisBins >= 0)
+        {
+            return this.cachedYAxisBins;
+        }
+        return this.cachedYAxisBins = this.getYAxis().getAggregatedBinCount();
     }
 
     /**
@@ -368,20 +377,34 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         return item / yAxisBins();
     }
 
+    /** Cached result of xAxisBins. */
+    int cachedXAxisBins = -1;
+    
     /**
      * Retrieve the number of cells to use along the time axis.
      * @return Integer; the number of cells to use along the time axis
      */
     protected final int xAxisBins()
     {
-        return this.getXAxis().getAggregatedBinCount();
+        if (this.cachedXAxisBins >= 0)
+        {
+            return this.cachedXAxisBins;
+        }
+        return this.cachedXAxisBins = this.getXAxis().getAggregatedBinCount();
     }
 
+    /** Cached result of getItemCount. */
+    int cachedItemCount = -1;
+    
     /** {@inheritDoc} */
     @Override
     public final int getItemCount(final int series)
     {
-        return yAxisBins() * xAxisBins();
+        if (this.cachedItemCount >= 0)
+        {
+            return this.cachedItemCount;
+        }
+        return this.cachedItemCount = yAxisBins() * xAxisBins();
     }
 
     /** {@inheritDoc} */
@@ -466,6 +489,13 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /**
+     * Make sure that the results of the most called methods are re-calculated.
+     */
+    private final void clearCachedValues()
+    {
+        this.cachedItemCount = this.cachedXAxisBins = this.cachedYAxisBins = -1;
+    }
+    /**
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled (should be a GTU)
      * @throws RemoteException on communications failure
@@ -477,6 +507,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
         {
             extendXRange(toTime);
+            clearCachedValues();
             this.getXAxis().adjustMaximumValue(toTime);
         }
         if (toTime.getSI() <= fromTime.getSI()) // degenerate sample???
