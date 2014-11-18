@@ -121,17 +121,17 @@ public final class LaneFactory
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
      * @param laneCount int; number of lanes in the road
+     * @param laneType LaneType; type of the new Lanes
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane[]; array containing the new Lanes
      * @throws NamingException
      * @throws RemoteException
      */
     public static Lane[] makeMultiLane(final String name, final Node from, final Node to, int laneCount,
-            OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+            LaneType laneType, OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, width, simulator);
-        LaneType<String> carLaneType = new LaneType<String>(name);
         Lane[] result = new Lane[laneCount];
         width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
@@ -139,7 +139,7 @@ public final class LaneFactory
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
             DoubleScalar.Rel<LengthUnit> latPos =
                     new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
-            result[laneIndex] = makeLane(link, carLaneType, latPos, width, simulator);
+            result[laneIndex] = makeLane(link, laneType, latPos, width, simulator);
         }
         return result;
     }
