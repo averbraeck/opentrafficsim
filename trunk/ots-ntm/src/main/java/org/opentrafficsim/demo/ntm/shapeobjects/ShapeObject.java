@@ -35,6 +35,7 @@ public class ShapeObject
         this.geometry = geometry;
         this.values = values;
     }
+        
     /**
      * @return theGeom.
      */

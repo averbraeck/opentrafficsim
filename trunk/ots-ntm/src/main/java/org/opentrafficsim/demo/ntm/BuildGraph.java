@@ -41,7 +41,6 @@ public class BuildGraph
      */
     static void buildGraph(NTMModel model)
     {
-
         /** debug information?. */
         final boolean DEBUG = true;
         // temporary storage for nodes and edges mapped from the number to the node

@@ -63,9 +63,9 @@ public class DataIO
 
         String fileArea = FileDialog.showFileDialog(true, "shp", "Shapefile with Areas", startMap);
         // File file = new File(fileName);
-
         String fileRoads = FileDialog.showFileDialog(true, "shp", "Shapefile with Roads", startMap);
         // "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/TheHagueNetwork_Unidirectional_v2.shp";
+
         String filePathData =
                 "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
         String fileNameStarts = "I_";
@@ -97,35 +97,21 @@ public class DataIO
         ShapeStore roads = null;
         // Map<String, Area> areas = new HashMap<String, Area>();
         ShapeStore areas = null;
-        try
-        {
-            File file = new File(fileArea);
-            areas = ShapeStore.openGISFile(file);
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
-        try
-        {
-            // the specific ID we want to use, and the geometry (the_geom) of the road
-            File file = new File(fileRoads);
-            roads = ShapeStore.openGISFile(file);
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
+        File file = new File(fileArea);
+        areas = ShapeStore.openGISFile(file);
 
+        // the specific ID we want to use, and the geometry (the_geom) of the road
+        file = new File(fileRoads);
+        roads = ShapeStore.openGISFile(file);
         // we are looking for a specific day!
         String year = "2014";
         String day = null;
         String month = null;
-        // for (int i = 1; i <= 12; i++)
-        for (int i = 5; i <= 5; i++)
+         for (int i = 1; i <= 12; i++)
+//        for (int i = 5; i <= 5; i++)
         {
-            // for (int j = 1; j <= 31; j++)
-            for (int j = 29; j <= 29; j++)
+            for (int j = 1; j <= 31; j++)
+            //for (int j = 29; j <= 29; j++)
             {
                 if (i <= 10)
                 {
@@ -150,13 +136,16 @@ public class DataIO
                     {
                         String inputFile =
                                 pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
-                        Map<String, ArrayList<Double>> countMap = readData(inputFile, ";", pathData, year);
+                        Map<String, ArrayList<Double>> countMap = readData(inputFile, ";", pathData, year, 5);
                         if (countMap.size() > 0)
                         {
                             String outputFile =
                                     pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName
                                             + "_area_GV[none].csv";
-                            detectLocationOfObject(outputFile, countMap, roads, areas, "LINK_ID", "Name");
+                            String outputShapeFile =
+                                    pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
+                            detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID",
+                                    "Name");
                         }
 
                     }
@@ -164,11 +153,12 @@ public class DataIO
                 else
                 {
                     String inputFile = pathData + fileNameStarts + year + month + day + ".csv";
-                    Map<String, ArrayList<Double>> countMap = readData(inputFile, ",", pathData, year);
+                    Map<String, ArrayList<Double>> countMap = readData(inputFile, ",", pathData, year, 5);
                     if (countMap.size() > 0)
                     {
+                        String outputShapeFile = pathData + "new/" + fileNameStarts + year + month + day + ".shp";
                         String outputFile = pathData + "new/" + fileNameStarts + year + month + day + "_area.csv";
-                        detectLocationOfObject(outputFile, countMap, roads, areas, "LINK_ID", "Name");
+                        detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID", "Name");
                     }
                 }
             }
@@ -183,8 +173,8 @@ public class DataIO
      * @return values
      * @throws FileNotFoundException
      */
-    public static Map<String, ArrayList<Double>> readData(String inputFile, String csvSplitBy, String path, String year)
-            throws FileNotFoundException
+    public static Map<String, ArrayList<Double>> readData(String inputFile, String csvSplitBy, String path,
+            String year, Integer aggregateBy) throws FileNotFoundException
     {
         Map<String, ArrayList<Double>> countMap = new HashMap<String, ArrayList<Double>>();
         BufferedReader in = null;
@@ -198,9 +188,7 @@ public class DataIO
             // read all lines: first column contains the name of the origin
             // this can be either a link or a centroid (starts with "C")
             boolean header = true;
-
             ArrayList<String> segment = new ArrayList<String>();
-
             try
             {
                 while ((line = in.readLine()) != null)
@@ -227,8 +215,8 @@ public class DataIO
                     else
                     {
                         int columnNumber = 0;
-                        ArrayList<Double> count = new ArrayList<Double>();
-                        String iD = null;
+                        ArrayList<Double> counts = new ArrayList<Double>();
+                        String id = null;
                         for (String lineSegment : completeLine)
                         {
                             lineSegment = lineSegment.trim();
@@ -236,15 +224,38 @@ public class DataIO
                             if (columnNumber > 0)
                             {
                                 String counted = lineSegment;
-                                count.add(Double.parseDouble(counted));
+                                counts.add(Double.parseDouble(counted));
                             }
                             else if (columnNumber == 0)
                             {
-                                iD = lineSegment;
+                                id = lineSegment;
                             }
                             columnNumber++;
                         }
-                        countMap.put(iD, count);
+
+                        ArrayList<Double> aggregatedCounts = new ArrayList<Double>();
+                        if (aggregateBy > 1)
+                        {
+                            int i = 1;
+                            double aggregatedCount = 0.0;
+                            for (Double count : counts)
+                            {
+                                aggregatedCount += count;
+                                i++;
+                                if (i == aggregateBy)
+                                {
+                                    aggregatedCounts.add(aggregatedCount);
+                                    i = 1;
+                                    aggregatedCount = 0.0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            aggregatedCounts = counts;
+                        }
+
+                        countMap.put(id, aggregatedCounts);
                     }
                 }
                 in.close();
@@ -264,6 +275,7 @@ public class DataIO
 
     /**
      * @param outputFile
+     * @param outputFile
      * @param countMap
      * @param objectsToDetect
      * @param searchLocations
@@ -271,96 +283,118 @@ public class DataIO
      * @param fieldNameSearchAreas
      * @throws IOException
      */
-    public static void detectLocationOfObject(String outputFile, Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect,
-            ShapeStore searchLocations, String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
+
+    public static void detectLocationOfObject(String outputShapeFile, String outputFile,
+            Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
+            String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
         File fileNew = new File(outputFile);
         BufferedWriter out = null;
-        // if file doesnt exists, then create it
+        // if file doesn't exists, then create it...
         if (fileNew.exists())
         {
             fileNew.createNewFile();
         }
 
         out = new BufferedWriter(new FileWriter(fileNew));
-        String newField = "Count";
-        objectsToDetect.getVariableTypeMap().put("Count", "Double");
-        objectsToDetect.getVariableNames().add(newField);
-        objectsToDetect.getAttributeClassTypes().put(newField, Double.class);
+        // add data to the point/line (road) file of attributes within a polygon
+        objectsToDetect.addAttribute("Count", "Double");
+        int indexAttributeAdded0 = objectsToDetect.getVariableNames().size() - 1;
+
+        // add data to the area (polygon) file
+        searchLocations.addAttribute("Counted", "Integer");
+        int indexAttributeAdded1 = searchLocations.getVariableNames().size() - 1;
+        searchLocations.addAttribute("CountedIDs", "String");
+        int indexAttributeAdded2 = indexAttributeAdded1 + 1;
+
         // we are looking for roads with a specific ID that is included in the data from TNO
         // step 1: create a HashMap to find the geometry of a road with a specific ID
         // step 2: find the corresponding Area
-
         HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();
-        int indexName = -1;
+        int indexFieldNameToDetect = -1;
+
         for (String name : objectsToDetect.getVariableNames())
         {
             if (name.equals(fieldNameToDetect))
             {
-                indexName = objectsToDetect.getVariableNames().indexOf(name);
+                indexFieldNameToDetect = objectsToDetect.getVariableNames().indexOf(name);
                 break;
             }
         }
         for (ShapeObject road : objectsToDetect.getGeoObjects())
         {
-            mapRoads.put(road.getValues().get(indexName), road);
+            mapRoads.put(road.getValues().get(indexFieldNameToDetect), road);
         }
-        
+
         // write the data with the corresponding area ID to a new file
-        // Iterator it = roads.entrySet().iterator();
         Iterator it = countMap.entrySet().iterator();
         while (it.hasNext())
         {
-            Map.Entry pairs = (Map.Entry) it.next();
-            // Geometry geom = (Geometry) pairs.getValue();
-            Geometry geom = null;
-            if (mapRoads.get(pairs.getKey()) !=null)
+            Map.Entry countIdValue = (Map.Entry) it.next();
+            Geometry geomToDetect = null;
+            if (mapRoads.get(countIdValue.getKey()) != null)
             {
-                geom = mapRoads.get(pairs.getKey()).getGeometry();
+                geomToDetect = mapRoads.get(countIdValue.getKey()).getGeometry();
             }
             ShapeObject area = null;
-            if (geom != null)
+            if (geomToDetect != null)
             {
-                area = findObjectInPolygon(geom, searchLocations);
+                area = findObjectInPolygon(geomToDetect, searchLocations);
             }
 
-            for (String name : searchLocations.getVariableNames())
-            {
-                if (name.equals(fieldNameSearchAreas))
-                {
-                    indexName = searchLocations.getVariableNames().indexOf(name);
-                }
-            }
             String text = "";
-            String id = (String) pairs.getKey();
-            id = id.substring(0, id.length() - 1);
+            String id = (String) countIdValue.getKey();
             if (area != null)
             {
-                text = id + ", " + area.getValues().get(indexName);
+                Integer counted;
+                if (area.getValues().get(indexAttributeAdded1).equals("NaN"))
+                {
+                    counted = -999;
+                }
+                else if (area.getValues().get(indexAttributeAdded1).equals(" "))
+                {
+                    counted = -999;
+                }
+                else
+                {
+                    counted = Integer.parseInt(area.getValues().get(indexAttributeAdded1));
+                }
+                area.getValues().set(indexAttributeAdded1, Integer.toString(counted + 1));
+//                String ids = area.getValues().get(indexAttributeAdded2);
+//                area.getValues().set(indexAttributeAdded2, ids + id);
+                text = id + ", " + area.getValues().get(0);
             }
             else
             {
                 text = id + " no area found";
             }
-            ArrayList<Double> counts = (ArrayList<Double>) pairs.getValue();
+            ArrayList<Double> counts = (ArrayList<Double>) countIdValue.getValue();
             for (Double count : counts)
             {
                 text += ", " + count;
             }
             text += " \n";
             out.write(text);
-            
+
             // extend the shape of roads with count data
-            
-            ShapeObject shape = mapRoads.get(pairs.getKey());
-            if (shape != null)
+            if (mapRoads.get(countIdValue.getKey()) != null)
             {
-                shape.getValues().add(counts.get(0).toString());
+                mapRoads.get(countIdValue.getKey()).getValues()
+                        .set(indexAttributeAdded0, Double.toString(counts.get(0)));
             }
             it.remove(); // avoids a ConcurrentModificationException
         }
-        String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
-        ShapeStore.createShapeFile(objectsToDetect, startMap);
+
+/*        if (new File(outputShapeFile).isAbsolute())
+        {
+            File file = new File(outputShapeFile);
+            ShapeStore.createShapeFile(searchLocations, file);
+        }
+        if (new File(outputShapeFile).isAbsolute())
+        {
+            File file = new File(outputShapeFile);
+            ShapeStore.createShapeFile(objectsToDetect, file);
+        }*/
         out.close();
     }
 

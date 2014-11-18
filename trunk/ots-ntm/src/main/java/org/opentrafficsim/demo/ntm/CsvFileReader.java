@@ -223,7 +223,6 @@ public class CsvFileReader
                             // there could be more connectors attached to this node. If so, create a new Node
                             if (centroidsAndCordonConnectors.get(nodeB.getId()) != null)
                             {
-
                                 double x = nodeB.getPoint().getX() + 3;
                                 double y = nodeB.getPoint().getY() + 3;
                                 Point point = Node.createPoint(x, y);
