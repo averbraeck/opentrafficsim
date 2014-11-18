@@ -9,17 +9,10 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.media.j3d.Bounds;
-import javax.naming.Context;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -27,7 +20,6 @@ import org.junit.Test;
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.lanechanging.LaneChangeModel.LaneChangeModelResult;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -43,10 +35,8 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.simulationengine.FakeSimulator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -156,7 +146,7 @@ public class LaneChangeModelTest
         laneType.addPermeability(gtuType);
         Lane[] lanes =
                 makeMultiLane("Road with two lanes", new Node("From", new Coordinate(0, 0, 0)), new Node("To",
-                        new Coordinate(5000, 0, 0)), laneType, 2);
+                        new Coordinate(200, 0, 0)), laneType, 2);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(lanes[0], new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER));
@@ -209,210 +199,40 @@ public class LaneChangeModelTest
                     "Vehicle cannot to change to the right lane because that would result in an immediate collision",
                     null, laneChangeModelResult.getLaneChange());
         }
+        for (double pos = 0; pos < 200; pos += 5)
+        {
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> otherLongitudinalPositions =
+                    new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            otherLongitudinalPositions.put(lanes[1], new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
+            Car<String> otherCar =
+                    new Car<String>("OtherCar", gtuType, vehicleLength,
+                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
+                                    SpeedUnit.KM_PER_HOUR), new IDMPlus(null), otherLongitudinalPositions,
+                            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), fakeSimulator);
+            preferredLaneGTUs.clear();
+            preferredLaneGTUs.add(otherCar);
+            laneChangeModelResult =
+                    new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
+                            nonPreferredLaneGTUs, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                            new DoubleScalar.Rel<AccelerationUnit>(0.3, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
+            System.out.println(String.format("pos=%5fm Egoistic:   %s", pos, laneChangeModelResult.toString()));
+            laneChangeModelResult =
+                    new Altruistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
+                            nonPreferredLaneGTUs, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                            new DoubleScalar.Rel<AccelerationUnit>(0.3, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
+            System.out.println(String.format("pos=%5fm Altruistic: %s", pos, laneChangeModelResult.toString()));
+//            assertEquals(
+//                    "Vehicle cannot to change to the right lane because that would result in an immediate collision",
+//                    null, laneChangeModelResult.getLaneChange());
+        }
     }
-}
-
-/**
- * Dummy implementation. Only working method is getSimulatorTime.
- * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
- * <p>
- * @version 14 nov. 2014 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- */
-class FakeSimulator implements OTSDEVSSimulatorInterface
-{
-    /** */
-    private static final long serialVersionUID = 20141117L;
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean cancelEvent(SimEventInterface<OTSSimTimeDouble> event) throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public EventListInterface<OTSSimTimeDouble> getEventList() throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEvent(SimEventInterface<OTSSimTimeDouble> event) throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventRel(Rel<TimeUnit> relativeDelay, short priority, Object source, Object target,
-            String method, Object[] args) throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventRel(Rel<TimeUnit> relativeDelay, Object source, Object target, String method, Object[] args)
-            throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventAbs(OTSSimTimeDouble absoluteTime, short priority, Object source, Object target,
-            String method, Object[] args) throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventAbs(Abs<TimeUnit> absoluteTime, Object source, Object target, String method, Object[] args)
-            throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventAbs(Abs<TimeUnit> absoluteTime, short priority, Object source, Object target,
-            String method, Object[] args) throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventAbs(OTSSimTimeDouble absoluteTime, Object source, Object target, String method,
-            Object[] args) throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventNow(short priority, Object source, Object target, String method, Object[] args)
-            throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void scheduleEventNow(Object source, Object target, String method, Object[] args) throws RemoteException,
-            SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setEventList(EventListInterface<OTSSimTimeDouble> eventList) throws RemoteException,
-            SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSSimTimeDouble getSimulatorTime() throws RemoteException
-    {
-        return new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Replication<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getReplication() throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void initialize(Replication<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> replication,
-            ReplicationMode replicationMode) throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isRunning() throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void start() throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void step() throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void stop() throws RemoteException, SimRuntimeException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Context getContext() throws NamingException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(EventListenerInterface arg0, EventType arg1) throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(EventListenerInterface arg0, EventType arg1, boolean arg2) throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(EventListenerInterface arg0, EventType arg1, short arg2) throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(EventListenerInterface arg0, EventType arg1, short arg2, boolean arg3)
-            throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean removeListener(EventListenerInterface arg0, EventType arg1) throws RemoteException
-    {
-        throw new Error("Not supported in the face simulator");
-    }
-
+    
+    // TODO: test/prove the expected differences between Egoistic and Altruistic
+    // TODO: prove that the most restrictive car in the other lane determines what happens
+    // TODO: test merge into overtaking lane
+    
 }
 
 /**
