@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
 import java.awt.Color;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,11 +22,14 @@ import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.IO.WriteToShp;
@@ -33,9 +37,14 @@ import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
+import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
+import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * <p>
@@ -55,8 +64,11 @@ public class NTMModel implements OTSModelInterface
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** areas. */
+    /** detailed areas from the traffic model. */
     private Map<String, Area> areas;
+
+    /** detailed areas from the traffic model. */
+    private ShapeStore compressedAreas;
 
     /** nodes from shape file. */
     private Map<String, Node> nodes;
@@ -129,10 +141,14 @@ public class NTMModel implements OTSModelInterface
             // false: mixed file with centroids (number starts with "C") and normal nodes
 
             this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
-            this.areas = ShapeFileReader.readAreas("/gis/selectedAreas_newest_merged1.shp", this.centroids);
+
+            // the Map areas contains a reference to the centroids! 
+            this.areas = ShapeFileReader.readAreas("/gis/selectedAreasGT1.shp", this.centroids);
+            // save the selected and created areas to a shape file
+            // WriteToShp.createShape(this.areas);
+
             this.nodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
 
-            
             // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
             // this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
             // this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
@@ -141,18 +157,30 @@ public class NTMModel implements OTSModelInterface
             this.shpConnectors = new HashMap<>();
             ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                     this.nodes, this.centroids);
-            // ShapeFileReader.ReadLinks("/gis/links.shp", this.shpLinks, this.shpConnectors, this.shpNodes,
-            // this.centroids);
 
+            // to compress the areas into bigger units
+            File file = new File("D:/gtamminga/workspace/ots-ntm/target/classes/gis/selectedAreas_newest_merged1.shp");
+            this.compressedAreas = ShapeStore.openGISFile(file);
+            this.shpConnectors = connectCentroidsToBigger(this.compressedAreas, this.centroids, this.shpConnectors, this.areas);
+            
             // read the time profile curves: these will be attached to the demands afterwards
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
 
             // read TrafficDemand from /src/main/resources
             // including information on the time period this demand covers!
             // within "readOmnitransExportDemand" the cordon zones are determined and areas are created around them
+            // - create additional centroids at cordons and add related areas!!
+            // - move links from normal to connectors
+            // - add time settings from the demand matrix
+            // - create demand between centoids and areas
             this.setTripDemand(CsvFileReader.readOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
+
+
+
+            // create a key between the larger areas and the original smaller areas
+            // this enables the creation of compressed zones
 
             this.flowLinks = createFlowLinks(this.shpLinks);
 
@@ -160,15 +188,15 @@ public class NTMModel implements OTSModelInterface
             Link.findSequentialLinks(this.flowLinks, this.nodes);
             Link.findSequentialLinks(this.shpLinks, this.nodes);
 
-            // save the selected and created areas to a shape file 
-            //WriteToShp.createShape(this.areas);
-            
+            // save the selected and created areas to a shape file: at this position the connector areas are saved
+            // also!!!
+            // WriteToShp.createShape(this.areas);
+
             // build the higher level map and the graph
             BuildGraph.buildGraph(this);
 
             // shortest paths creation
             initiateSimulationNTM();
-
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
@@ -185,6 +213,75 @@ public class NTMModel implements OTSModelInterface
         {
             exception.printStackTrace();
         }
+    }
+
+    /**
+     * @param areas 
+     * @param shpConnectors2
+     * @param compressedAreas2
+     * @param areas2
+     * @return
+     */
+    private Map<String, Link> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, Node> centroids,
+            Map<String, Link> connectors, Map<String, Area> areas)
+    {
+        HashMap<String, Link> mapConnectors = new HashMap<String, Link>();
+        HashMap<Node, Node> mapSmallAreaToBigArea = new HashMap<Node, Node>();
+        Map<String, Node> newCentroids = new HashMap<String, Node>();
+        ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
+        for (ShapeObject bigArea : compressedAreas.getGeoObjects())
+        {
+            String nr = "big" + bigArea.getValues().get(0);
+            Node newCentroid = new Node(nr, bigArea.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
+            newCentroids.put(nr, newCentroid);
+            for (Node centroid : centroids.values())
+            {
+                if (bigArea.getGeometry().covers(centroid.getPoint()))
+                {
+                    mapSmallAreaToBigArea.put(centroid, newCentroid);
+                    centroidsToRemove.add(centroid);
+                }
+            }
+        }
+        for (Node smallCentroid: centroidsToRemove)
+        {
+            centroids.remove(smallCentroid.getId());
+            centroids.put(mapSmallAreaToBigArea.get(smallCentroid).getId(), mapSmallAreaToBigArea.get(smallCentroid));
+        }
+        
+        for (Link link : connectors.values())
+        {
+            Node startNode = null;
+            Node endNode = null;
+            Link newConnector = null;
+
+            if (mapSmallAreaToBigArea.containsKey(link.getStartNode()))
+            {
+                startNode = mapSmallAreaToBigArea.get(link.getStartNode());
+            }
+            if (mapSmallAreaToBigArea.containsKey(link.getEndNode()))
+            {
+                endNode = mapSmallAreaToBigArea.get(link.getEndNode());
+            }
+            if (startNode != null)
+            {
+                newConnector =
+                        new Link(link.getGeometry(), link.getId(), link.getLength(), startNode, link.getEndNode(),
+                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+            }
+            else if (endNode != null)
+            {
+                newConnector =
+                        new Link(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), endNode,
+                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+            }
+            else
+            {
+                newConnector = new Link(link);
+            }
+            mapConnectors.put(link.getId(), newConnector);
+        }
+        return mapConnectors;
     }
 
     /**
@@ -610,6 +707,22 @@ public class NTMModel implements OTSModelInterface
         }
 
         return flowLinks;
+    }
+
+    /**
+     * @return compressedAreas.
+     */
+    public ShapeStore getCompressedAreas()
+    {
+        return compressedAreas;
+    }
+
+    /**
+     * @param compressedAreas set compressedAreas.
+     */
+    public void setCompressedAreas(ShapeStore compressedAreas)
+    {
+        this.compressedAreas = compressedAreas;
     }
 
     /*

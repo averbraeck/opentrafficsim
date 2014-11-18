@@ -81,6 +81,59 @@ public class ShapeStore
         this.attributeClassTypes = attributeClassTypes;
     }
 
+    public void addAttribute(String newField, String type)
+    {
+        boolean attributeAlreadyExists = false;
+        for (String variableName: this.getVariableNames())
+        {
+            if (newField.equals(variableName))
+            {
+                attributeAlreadyExists = true;
+            }
+        }
+        if (!attributeAlreadyExists)
+        {
+            this.getVariableTypeMap().put(newField, type);
+            this.getVariableNames().add(newField);
+            if (type.equals("Double"))
+            {
+                this.getAttributeClassTypes().put(newField, Double.class);
+                // add empty string
+                for(ShapeObject shape: this.getGeoObjects())
+                {
+                    shape.getValues().add("0.0");
+                }
+            }
+            else if (type.equals("Long"))
+            {
+                this.getAttributeClassTypes().put(newField, Long.class);
+                for(ShapeObject shape: this.getGeoObjects())
+                {
+                    shape.getValues().add("0.0");
+                }
+
+            }
+            else if (type.equals("Integer"))
+            {
+                this.getAttributeClassTypes().put(newField, Integer.class);
+                for(ShapeObject shape: this.getGeoObjects())
+                {
+                    shape.getValues().add("0");
+                }
+
+            }
+            else if (type.equals("String"))
+            {
+                this.getAttributeClassTypes().put(newField, String.class);
+                for(ShapeObject shape: this.getGeoObjects())
+                {
+                    shape.getValues().add(" ");
+                }
+
+            }
+
+        }
+    }
     
     /**
      * @param file
@@ -176,11 +229,8 @@ public class ShapeStore
      * @param startMap
      * @throws IOException
      */
-    public static void createShapeFile(ShapeStore shapes, String startMap) throws IOException
+    public static void createShapeFile(ShapeStore shapes, File newFile) throws IOException
     {
-        String fileName = FileDialog.showFileDialog(false, "shp", "Shapefile", startMap);
-        File newFile = new File(fileName);
-
         Map<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("url", newFile.toURI().toURL());
         params.put("create spatial index", Boolean.TRUE);

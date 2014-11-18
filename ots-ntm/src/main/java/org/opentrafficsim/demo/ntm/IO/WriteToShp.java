@@ -80,7 +80,7 @@ public class WriteToShp
         /*
          * Get an output file name and create the new shapefile
          */
-        String file = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/selectedAreas.shp";
+        String file = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/selectedAreasGT.shp";
         File newFile = getNewShapeFile(file);
         boolean DEBUG = false;
         ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
