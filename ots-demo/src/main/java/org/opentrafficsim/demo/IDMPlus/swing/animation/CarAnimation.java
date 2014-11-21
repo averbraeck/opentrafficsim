@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 
+import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -40,7 +41,7 @@ public class CarAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.BLUE);
-        graphics.draw(new Rectangle2D.Double(0.0d, -1.0d, 4.0d, 2.0d));
+        graphics.draw(new Rectangle2D.Double(-2.0d, -1.0d, 4.0d, 2.0d));
     }
 
 }
