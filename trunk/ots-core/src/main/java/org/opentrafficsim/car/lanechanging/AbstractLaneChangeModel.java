@@ -11,6 +11,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
@@ -34,14 +35,16 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs,
             final Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs,
             final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
         {
             // System.out.println(String.format(
-            //         "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
-            //         preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
+            // "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
+            // preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
             Lane lane = gtu.getLongitudinalPositions().keySet().iterator().next();
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
@@ -50,14 +53,15 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             Lane nonPreferredLane = lane.accessibleAdjacentLane(nonPreferred, gtu.getGTUType());
             Lane preferredLane = lane.accessibleAdjacentLane(preferred, gtu.getGTUType());
             DoubleScalar.Abs<AccelerationUnit> straightA =
-                    applyDriverPersonality(FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit));
+                    DoubleScalar.plus(
+                            applyDriverPersonality(FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit)),
+                            laneChangeThreshold).immutable();
             DoubleScalar.Abs<AccelerationUnit> nonPreferredA =
                     null == nonPreferredLane ? null : applyDriverPersonality(FollowAcceleration.acceleration(gtu,
                             nonPreferredLaneGTUs, speedLimit));
             DoubleScalar.Abs<AccelerationUnit> preferredA =
                     null == preferredLane ? null : applyDriverPersonality(FollowAcceleration.acceleration(gtu,
                             preferredLaneGTUs, speedLimit));
-            // The egoistic lane change only looks at his/her own gain; therefore ignores field 1 of the accelerations.
             if (null == preferredA)
             {
                 // Lane change to the preferred lane is not possible
