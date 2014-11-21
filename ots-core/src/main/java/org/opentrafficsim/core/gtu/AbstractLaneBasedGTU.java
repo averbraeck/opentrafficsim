@@ -311,7 +311,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getLongitudinalPositions()
     {
-        //System.out.println(getId() + ": Longitudinal positions: " + this.longitudinalPositions);
+        // System.out.println(getId() + ": Longitudinal positions: " + this.longitudinalPositions);
         return this.longitudinalPositions;
     }
 
@@ -353,10 +353,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        DirectedPoint l = getLocation();
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
-        return new BoundingBox(new Point3d(l.x - dx, l.y - dy, 0.0), new Point3d(l.x + dx, l.y + dy, l.z));
+        return new BoundingBox(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
     }
 
     /**
