@@ -357,7 +357,7 @@ class InternalContourPlotsModel implements OTSModelInterface
          *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          * @throws NamingException ...
-         * @throws RemoteException ...
+         * @throws RemoteException on communication failure
          */
         public IDMCar(final int id, final OTSDEVSSimulatorInterface simulator,
                 final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
