@@ -31,6 +31,17 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 public final class FollowAcceleration
 {
     /**
+     * Return a prohibitive negative value.
+     * @return DoubleVector.Abs.Dense&lt;AccelerationUnit&gt;
+     * @throws ValueException when something that cannot happen happens
+     */
+    private static DoubleVector.Abs.Dense<AccelerationUnit> tooDangerous() throws ValueException
+    {
+        return new DoubleVector.Abs.Dense<AccelerationUnit>(new double[]{Double.NEGATIVE_INFINITY,
+                Double.NEGATIVE_INFINITY}, AccelerationUnit.METER_PER_SECOND_2);
+    }
+
+    /**
      * This class should never be instantiated.
      */
     private FollowAcceleration()
@@ -202,7 +213,7 @@ public final class FollowAcceleration
             }
         }
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
-        //System.out.println("referenceGTU: " + referenceGTU);
+        // System.out.println("referenceGTU: " + referenceGTU);
         DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
                 null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
                         : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel, speedLimit);
@@ -210,6 +221,10 @@ public final class FollowAcceleration
         {
             if (followerAcceleration.getSI() >= -maximumDeceleration.getSI())
             {
+                if (null != leaderHeadway && leaderHeadway.getSI() <= referenceGTU.getLength().getSI())
+                {
+                    return tooDangerous();
+                }
                 DoubleScalar.Abs<AccelerationUnit> referenceAcceleration =
                         FollowAcceleration.acceleration(referenceGTU, leader, when, gtuFollowingModel, speedLimit);
                 if (referenceAcceleration.getSI() >= -maximumDeceleration.getSI())
@@ -218,8 +233,8 @@ public final class FollowAcceleration
                             followerAcceleration});
                 }
             }
-            return new DoubleVector.Abs.Dense<AccelerationUnit>(new double[]{Double.NEGATIVE_INFINITY,
-                    Double.NEGATIVE_INFINITY}, AccelerationUnit.METER_PER_SECOND_2);
+            System.out.println("Imposed follower acceleration is dangerous: " + followerAcceleration);
+            return tooDangerous();
         }
         catch (ValueException exception)
         {

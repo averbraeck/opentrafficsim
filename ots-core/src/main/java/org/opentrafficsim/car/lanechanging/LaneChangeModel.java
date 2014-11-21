@@ -9,6 +9,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * All lane change models must implement this interface.
@@ -40,6 +41,8 @@ public interface LaneChangeModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @param preferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane where GTUs should drive in the absence of other traffic
+     * @param laneChangeThreshold DoubleScalar.Rel&lt;AccelerationUnit&gt;; changing threshold that prevents lane
+     *            changes that have very little benefit
      * @param nonPreferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane into which GTUs should merge to overtake other traffic
      * @return LaneChangeModelResult; the result of the lane change and GTU following model
@@ -51,6 +54,7 @@ public interface LaneChangeModel
             final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
             final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
 
     /**
