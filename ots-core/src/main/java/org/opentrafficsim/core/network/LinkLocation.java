@@ -66,7 +66,7 @@ public class LinkLocation
      */
     public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
     {
-        return new DoubleScalar.Rel<LengthUnit>(this.link.getLength().getSI() * this.fractionalLongitudinalPosition,
+        return new DoubleScalar.Rel<LengthUnit>(this.link.getLength().getSI() * getFractionalLongitudinalPosition(),
                 LengthUnit.METER);
     }
 

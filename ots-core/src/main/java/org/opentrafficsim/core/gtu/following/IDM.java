@@ -27,28 +27,47 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 public class IDM implements GTUFollowingModel
 {
     /** Preferred net longitudinal distance when stopped [m]. */
-    private final DoubleScalar.Rel<LengthUnit> s0 = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
+    private final DoubleScalar.Rel<LengthUnit> s0;
 
     /** Maximum longitudinal acceleration [m/s^2]. */
-    private final DoubleScalar.Abs<AccelerationUnit> a = new DoubleScalar.Abs<AccelerationUnit>(1,
-            AccelerationUnit.METER_PER_SECOND_2);
+    private final DoubleScalar.Abs<AccelerationUnit> a;
 
     /** Longitudinal deceleration [m/s^2]. (Should be a positive value even though it is a <b>de</b>celeration.) */
-    private final DoubleScalar.Abs<AccelerationUnit> b = new DoubleScalar.Abs<AccelerationUnit>(3,
-            AccelerationUnit.METER_PER_SECOND_2);
+    private final DoubleScalar.Abs<AccelerationUnit> b;
 
     /** Safe time headway. */
-    private final DoubleScalar.Rel<TimeUnit> tSafe = new DoubleScalar.Rel<TimeUnit>(1.6, TimeUnit.SECOND);
+    private final DoubleScalar.Rel<TimeUnit> tSafe;
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the
      * speed limit, etc.).
      */
-    private final double delta = 1.0;
+    private final double delta;
 
     /**
-     * Time slot size used by IDMPlus (not defined in the paper, but 0.5s is a reasonable trade-off between
-     * computational speed and accuracy).
+     * Construct a new IDM car following model.
+     * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of a stationary vehicle (normal value
+     *            is 1 m/s/s)
+     * @param b DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum deemed-safe deceleration (this is a positive
+     *            value). Normal value is 1.5 m/s/s.
+     * @param s0 DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum stationary headway (normal value is 2 m)
+     * @param tSafe DoubleScalar.Rel&lt;TimeUnit&gt;; the minimum time-headway (normal value is 1s)
+     * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed
+     *            equals 110% of the speed limit; etc.)
+     */
+    public IDM(DoubleScalar.Abs<AccelerationUnit> a, DoubleScalar.Abs<AccelerationUnit> b,
+            DoubleScalar.Rel<LengthUnit> s0, DoubleScalar.Rel<TimeUnit> tSafe, double delta)
+    {
+        this.a = a;
+        this.b = b;
+        this.s0 = s0;
+        this.tSafe = tSafe;
+        this.delta = delta;
+    }
+
+    /**
+     * Time slot size used by IDM (not defined in the paper, but 0.5s is a reasonable trade-off between computational
+     * speed and accuracy).
      */
     private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
 
@@ -122,8 +141,13 @@ public class IDM implements GTUFollowingModel
             DoubleScalar.Abs<SpeedUnit> leaderSpeed, DoubleScalar.Rel<LengthUnit> headway,
             DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
+        // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> followerCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
+        if (follower.getId().equals(35))
+        {
+            // System.out.println("Let op");
+        }
         // dV is the approach speed
         DoubleScalar.Rel<SpeedUnit> dV =
                 DoubleScalar.minus(follower.getLongitudinalVelocity(thisEvaluationTime), leaderSpeed).immutable();
@@ -136,15 +160,25 @@ public class IDM implements GTUFollowingModel
                         AccelerationUnit.METER_PER_SECOND_2);
         logWeightedAccelerationTimes2.multiply(2); // don't forget the times 2
         // TODO compute logWeightedAccelerationTimes2 only once per run
-        DoubleScalar.Rel<LengthUnit> sStar =
+        /*
+         * DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus( DoubleScalar.plus(this.s0,
+         * Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe)) .immutable(),
+         * Calc.speedTimesTime( dV, Calc.speedDividedByAcceleration(followerCurrentSpeed,
+         * logWeightedAccelerationTimes2.immutable()))).immutable();
+         */
+        DoubleScalar.Rel<LengthUnit> right =
                 DoubleScalar.plus(
-                        DoubleScalar.plus(this.s0,
-                                Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe))
-                                .immutable(),
+                        Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe),
                         Calc.speedTimesTime(
                                 dV,
                                 Calc.speedDividedByAcceleration(followerCurrentSpeed,
                                         logWeightedAccelerationTimes2.immutable()))).immutable();
+        if (right.getSI() < 0)
+        {
+            System.out.println("Fixing negative right");
+            right = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
+        }
+        DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus(this.s0, right).immutable();
         if (sStar.getSI() < 0) // Negative value should be treated as 0
         {
             System.out.println("sStar is negative");
@@ -152,19 +186,16 @@ public class IDM implements GTUFollowingModel
         }
         // System.out.println("s* is " + sStar);
         DoubleScalar.Rel<AccelerationUnit> aInteraction =
-                new DoubleScalar.Rel<AccelerationUnit>(-this.a.getSI() * sStar.getSI() / headway.getSI(),
+                new DoubleScalar.Rel<AccelerationUnit>(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2),
                         AccelerationUnit.METER_PER_SECOND_2);
-        /*-
-        System.out
-                .println(String
-                        .format("headway %6.1fm, leaderV %6.1fkm/h followerV %6.1fkm/h, dV %6.1fkm/h aFree %6.2fm/s/s aInteraction %6.1fm/s/s",
-                                headway.getSI() > 9999 ? 9999d : headway.getSI(), leaderSpeed.getInUnit(), follower
-                                        .getLongitudinalVelocity(thisEvaluationTime).getInUnit(), dV.getInUnit(), aFree
-                                        .getSI(), aInteraction.getSI()));
-         */
         DoubleScalar.Abs<AccelerationUnit> newAcceleration = DoubleScalar.plus(aFree, aInteraction).immutable();
-
-        // System.out.println("distanceIncentive is " + distanceIncentive);
+        if (newAcceleration.getSI() * this.stepSize.getSI() + follower.getLongitudinalVelocity().getSI() < 0)
+        {
+            System.out.println("Limiting deceleration to prevent moving backwards");
+            newAcceleration =
+                    new DoubleScalar.Abs<AccelerationUnit>(-follower.getLongitudinalVelocity().getSI()
+                            / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
+        }
         // System.out.println("newAcceleration is " + newAcceleration);
         MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = thisEvaluationTime.mutable();
         nextEvaluationTime.incrementBy(this.stepSize);
@@ -177,6 +208,21 @@ public class IDM implements GTUFollowingModel
     public Abs<AccelerationUnit> maximumSafeDeceleration()
     {
         return this.b;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getName()
+    {
+        return "IDM";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLongName()
+    {
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
+                this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
 }

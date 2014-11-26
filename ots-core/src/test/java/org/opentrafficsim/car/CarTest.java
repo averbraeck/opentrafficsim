@@ -34,6 +34,7 @@ import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -131,7 +132,11 @@ public class CarTest
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        GTUFollowingModel cfm = new IDMPlus(simulator);
+        GTUFollowingModel cfm =
+                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                TimeUnit.SECOND), 1d);
         return new Car<Integer>(nr, carType, length, width, maxSpeed, cfm, initialLongitudinalPositions, initialSpeed,
                 simulator);
     }
@@ -193,12 +198,14 @@ public class CarTest
     {
         /** */
         private static final long serialVersionUID = 20141027L;
+
         /** The simulator. */
         private OTSDEVSSimulator simulator;
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+        public final void constructModel(
+                final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;

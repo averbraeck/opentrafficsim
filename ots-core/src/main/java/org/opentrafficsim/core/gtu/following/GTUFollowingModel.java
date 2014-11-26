@@ -72,6 +72,18 @@ public interface GTUFollowingModel
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; must be a positive value!
      */
     DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration();
+    
+    /**
+     * Return the name of this GTU following model.
+     * @return String; just the name of the GTU following model
+     */
+    String getName();
+    
+    /**
+     * Return complete textual information about this instantiation of this GTU following model.
+     * @return String; the name and parameter values of the GTU following model
+     */
+    String getLongName();
 
     /**
      * The result of a GTUFollowingModel evaluation shall be stored in an instance of this class.
