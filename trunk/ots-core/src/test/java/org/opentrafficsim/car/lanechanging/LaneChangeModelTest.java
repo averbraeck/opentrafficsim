@@ -35,6 +35,7 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.simulationengine.FakeSimulator;
 
@@ -154,8 +155,12 @@ public class LaneChangeModelTest
         Car<String> car =
                 new Car<String>("ReferenceCar", gtuType, new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                                SpeedUnit.KM_PER_HOUR), new IDMPlus(null), initialLongitudinalPositions,
-                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), fakeSimulator);
+                                SpeedUnit.KM_PER_HOUR), new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+                                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
+                                LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d),
+                        initialLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                        fakeSimulator);
         Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
         sameLaneGTUs.add(car);
         Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
@@ -186,8 +191,12 @@ public class LaneChangeModelTest
             Car<String> collisionCar =
                     new Car<String>("LaneChangeBlockingCar", gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
                             2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR),
-                            new IDMPlus(null), otherLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100,
-                                    SpeedUnit.KM_PER_HOUR), fakeSimulator);
+                            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                                    new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d),
+                            otherLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                            fakeSimulator);
             preferredLaneGTUs.clear();
             preferredLaneGTUs.add(collisionCar);
             laneChangeModelResult =
@@ -209,8 +218,12 @@ public class LaneChangeModelTest
             Car<String> otherCar =
                     new Car<String>("OtherCar", gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2,
                             LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR),
-                            new IDMPlus(null), otherLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100,
-                                    SpeedUnit.KM_PER_HOUR), fakeSimulator);
+                            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                                    new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d),
+                            otherLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                            fakeSimulator);
             preferredLaneGTUs.clear();
             preferredLaneGTUs.add(otherCar);
             laneChangeModelResult =

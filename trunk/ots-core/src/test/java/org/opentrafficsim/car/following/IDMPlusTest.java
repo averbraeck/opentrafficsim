@@ -23,6 +23,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModel
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -54,7 +55,11 @@ public class IDMPlusTest
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
-        GTUFollowingModel carFollowingModel = new IDMPlus(simulator);
+        GTUFollowingModel carFollowingModel =
+                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                TimeUnit.SECOND), 1d);
         Lane lane = CarTest.makeLane();
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
@@ -76,7 +81,7 @@ public class IDMPlusTest
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
         DoubleScalar.Rel<LengthUnit> leaderPosition =
-                new DoubleScalar.Rel<LengthUnit>(3 + referenceCar.getLength().getSI()
+                new DoubleScalar.Rel<LengthUnit>(2 + referenceCar.getLength().getSI()
                         + referenceCar.positionOfFront(initialTime).getLongitudinalPosition().getSI(), LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -200,8 +205,8 @@ public class IDMPlusTest
             {
                 double position = referenceCar.positionOfFront(cfmr.getValidUntil()).getLongitudinalPosition().getSI();
                 assertEquals(
-                        "After 20 seconds the referenceCar should now be very close to 3m before the rear of the leader",
-                        leaderCar.positionOfRear().getLongitudinalPosition().getSI() - 3.0, position, 0.1);
+                        "After 20 seconds the referenceCar should now be very close to 2m before the rear of the leader",
+                        leaderCar.positionOfRear().getLongitudinalPosition().getSI() - 2.0, position, 0.2);
                 assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar
                         .getLongitudinalVelocity(cfmr.getValidUntil()).getSI(), 0.2);
             }
