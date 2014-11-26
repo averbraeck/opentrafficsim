@@ -52,7 +52,7 @@ public class AnimatedCar extends Car<Integer>
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                         SpeedUnit.KM_PER_HOUR), carFollowingModel, initialLongitudinalPositions, initialSpeed,
                 simulator);
-        if (simulator instanceof OTSAnimatorInterface)
+        if (simulator instanceof OTSAnimatorInterface && id >= 0)
         {
             new CarAnimation(this, simulator);
         }

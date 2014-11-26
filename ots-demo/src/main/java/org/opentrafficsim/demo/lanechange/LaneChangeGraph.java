@@ -34,6 +34,7 @@ import org.opentrafficsim.car.lanechanging.LaneChangeModel;
 import org.opentrafficsim.car.lanechanging.LaneChangeModel.LaneChangeModelResult;
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Lane;
@@ -41,6 +42,7 @@ import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
@@ -70,6 +72,9 @@ public class LaneChangeGraph extends JFrame
 
     /** The main window. */
     LaneChangeGraph mainWindow;
+
+    /** The car following model. */
+    GTUFollowingModel carFollowingModel;
 
     /** The graphs. */
     ChartPanel[][] charts;
@@ -211,7 +216,7 @@ public class LaneChangeGraph extends JFrame
         laneType.addPermeability(gtuType);
         Lane lanes[] =
                 LaneFactory.makeMultiLane("Road with two lanes", new Node("From", new Coordinate(lowerBound.getSI(), 0,
-                        0)), new Node("To", new Coordinate(upperBound.getSI(), 0, 0)), 2, laneType, null);
+                        0)), new Node("To", new Coordinate(upperBound.getSI(), 0, 0)), null, 2, laneType, null);
         // Create the reference vehicle
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -219,10 +224,21 @@ public class LaneChangeGraph extends JFrame
                 LengthUnit.METER));
         // The reference car only needs a fake simulator
         FakeSimulator fakeSimulator = new FakeSimulator();
+        this.carFollowingModel =
+                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                TimeUnit.SECOND), 1d);
+        this.carFollowingModel =
+                new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                TimeUnit.SECOND), 1d);
+
         Car<String> referenceCar =
                 new Car<String>("ReferenceCar", gtuType, new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                                SpeedUnit.KM_PER_HOUR), new IDM(), initialLongitudinalPositions, referenceSpeed,
+                                SpeedUnit.KM_PER_HOUR), this.carFollowingModel, initialLongitudinalPositions, referenceSpeed,
                         fakeSimulator);
         Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
         sameLaneGTUs.add(referenceCar);
@@ -295,7 +311,7 @@ public class LaneChangeGraph extends JFrame
         Car<String> otherCar =
                 new Car<String>("otherCar", referenceCar.getGTUType(), new DoubleScalar.Rel<LengthUnit>(4,
                         LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                        new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new IDMPlus(null),
+                        new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), this.carFollowingModel,
                         initialLongitudinalPositions, DoubleScalar.plus(referenceCar.getLongitudinalVelocity(), deltaV)
                                 .immutable(), referenceCar.getSimulator());
         Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
