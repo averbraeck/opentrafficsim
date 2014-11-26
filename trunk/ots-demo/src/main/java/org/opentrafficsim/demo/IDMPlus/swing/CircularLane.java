@@ -1,8 +1,6 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,11 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
-import javax.swing.JScrollPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -23,9 +19,9 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -33,6 +29,9 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.demo.IDMPlus.swing.InternalContourPlotsModel.IDMCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
 import org.opentrafficsim.demo.geometry.LaneFactory;
@@ -42,24 +41,24 @@ import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.SpeedContourPlot;
+import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
- * Simplest contour plots demonstration.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 12 nov. 2014 <br>
+ * @version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlots extends DSOLApplication
+public class CircularLane extends DSOLApplication
 {
     /** */
-    private static final long serialVersionUID = 20141112L;
+    private static final long serialVersionUID = 20141121L;
 
     /** The simulator */
     final SimpleSimulator simpleSimulator;
@@ -68,106 +67,99 @@ public class ContourPlots extends DSOLApplication
      * @param title String; caption of the application window
      * @param simulator SimpleSimulator
      */
-    public ContourPlots(final String title, SimpleSimulator simulator)
+    public CircularLane(final String title, SimpleSimulator simulator)
     {
         super(title, simulator.getPanel());
         this.simpleSimulator = simulator;
     }
 
     /**
-     * @param args String[]; the command line argument (ignored)
-     * @throws SimRuntimeException on ???
-     * @throws RemoteException on communication error
+     * Main program.
+     * @param args String[]; the command line arguments (not used)
+     * @throws SimRuntimeException
+     * @throws RemoteException
      */
-    public static void main(final String[] args) throws SimRuntimeException, RemoteException
+    public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
-        InternalContourPlotsModel model = new InternalContourPlotsModel();
-        ContourPlots contourPlots =
-                new ContourPlots("IDM+ contour plots", new SimpleSimulator(new OTSSimTimeDouble(
+        SimulationModel model = new SimulationModel();
+        CircularLane circularLane =
+                new CircularLane("Circular Lane animation", new SimpleSimulator(new OTSSimTimeDouble(
                         new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
-                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
-                        new Rectangle2D.Double(0, -100, 5000, 200)));
-
-        // Make the info tab
-        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
-        URL page = ContourPlotsModel.class.getResource(helpSource);
-        if (page != null)
-        {
-            HTMLPanel htmlPanel;
-            try
-            {
-                htmlPanel = new HTMLPanel(page);
-                contourPlots.simpleSimulator.getPanel().getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
-            }
-            catch (IOException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
+                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model,
+                        new Rectangle2D.Double(-1000, -1000, 1000, 1000)));
 
         // Make the tab with the contour plots
-        TablePanel charts = new TablePanel(2, 2);
-        contourPlots.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
+        TablePanel charts = new TablePanel(3, 2);
+        circularLane.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
 
         // Make the four contour plots
         ContourPlot cp;
 
-        cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
+        cp =
+                new DensityContourPlot("DensityPlot " + model.carFollowingModel.getLongName(),
+                        model.getMinimumDistance(), model.lane.getLength());
         cp.setTitle("Density Contour Graph");
         cp.setExtendedState(MAXIMIZED_BOTH);
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 0);
 
-        cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
+        cp =
+                new SpeedContourPlot("SpeedPlot " + model.carFollowingModel.getLongName(), model.getMinimumDistance(),
+                        model.lane.getLength());
         cp.setTitle("Speed Contour Graph");
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 0);
 
-        cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
+        cp =
+                new FlowContourPlot("FlowPlot " + model.carFollowingModel.getLongName(), model.getMinimumDistance(),
+                        model.lane.getLength());
         cp.setTitle("FLow Contour Graph");
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 1);
 
-        cp = new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model.getMaximumDistance());
+        cp =
+                new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModel.getLongName(),
+                        model.getMinimumDistance(), model.lane.getLength());
         cp.setTitle("Acceleration Contour Graph");
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
+
+        TrajectoryPlot trajectoryPlot =
+                new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName(),
+                        new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
+                        model.lane.getLength());
+        trajectoryPlot.setTitle("Trajectories");
+        charts.setCell(trajectoryPlot.getContentPane(), 2, 0);
+        model.getTrajectoryPlots().add(trajectoryPlot);
+
+        trajectoryPlot =
+                new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName(),
+                        new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
+                        model.lane.getLength());
+        trajectoryPlot.setTitle("Trajectories");
+        charts.setCell(trajectoryPlot.getContentPane(), 2, 1);
+        model.getTrajectoryPlots().add(trajectoryPlot);
     }
 
 }
 
 /**
- * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
- * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
- * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
- * Output is a set of block charts:
- * <ul>
- * <li>Traffic density</li>
- * <li>Speed</li>
- * <li>Flow</li>
- * <li>Acceleration</li>
- * </ul>
- * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical
- * axis.
+ * Simulate traffic on a circular, one-lane road.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Aug 1, 2014 <br>
+ * @version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class InternalContourPlotsModel implements OTSModelInterface
+class SimulationModel implements OTSModelInterface
 {
     /** */
-    private static final long serialVersionUID = 20140815L;
+    private static final long serialVersionUID = 20141121L;
 
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
-
-    /** the headway (inter-vehicle time). */
-    private DoubleScalar.Rel<TimeUnit> headway;
 
     /** number of cars created. */
     private int carsCreated = 0;
@@ -178,14 +170,8 @@ class InternalContourPlotsModel implements OTSModelInterface
     /** cars in the model. */
     ArrayList<AnimatedCar> cars = new ArrayList<AnimatedCar>();
 
-    /** The blocking car. */
-    protected AnimatedCar block = null;
-
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-
-    /** maximum distance. */
-    private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane that contains the simulated Cars. */
     Lane lane;
@@ -196,18 +182,26 @@ class InternalContourPlotsModel implements OTSModelInterface
     /** the contour plots. */
     private ArrayList<ContourPlot> contourPlots = new ArrayList<ContourPlot>();
 
+    /** the trajectory plot. */
+    private ArrayList<TrajectoryPlot> trajectoryPlots = new ArrayList<TrajectoryPlot>();
+
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
-        Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
+        double radius = 6000 / 2 / Math.PI;
+        Node startEnd = new Node("Start/End", new Coordinate(radius, 0, 0));
+        Coordinate[] intermediateCoordinates = new Coordinate[255];
+        for (int i = 0; i < intermediateCoordinates.length; i++)
+        {
+            double angle = 2 * Math.PI * (1 + i) / (1 + intermediateCoordinates.length);
+            intermediateCoordinates[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+        }
         try
         {
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, this.simulator);
+            this.lane = LaneFactory.makeLane("Lane", startEnd, startEnd, intermediateCoordinates, this.simulator);
             this.carFollowingModel =
                     new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
@@ -218,24 +212,20 @@ class InternalContourPlotsModel implements OTSModelInterface
                             new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
                                     TimeUnit.SECOND), 1d);
-            //this.carFollowingModel = new IDM();
-            // 1500 [veh / hour] == 2.4s headway
-            this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
-            // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "generateCar", null);
-            // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this,
-                    "createBlock", null);
-            // Remove the block at t = 8 minutes, 20 seconds
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(500, TimeUnit.SECOND), this, this,
-                    "removeBlock", null);
-            // Schedule regular updates of the graph
-            for (int t = 1; t <= 1800; t++)
+            // Put the (not very evenly spaced) cars on the track
+            double trackLength = this.lane.getLength().getSI();
+            double headway = 50;
+            for (double pos = 0; pos <= trackLength - headway; pos += headway)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                        "drawGraphs", null);
+                generateCar(new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
+                if (pos > trackLength / 4 && pos < 3 * trackLength / 4)
+                {
+                    generateCar(new DoubleScalar.Rel<LengthUnit>(pos + headway / 2, LengthUnit.METER));
+                }
             }
+            // Schedule regular updates of the graph
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
+                    "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException exception)
         {
@@ -254,6 +244,10 @@ class InternalContourPlotsModel implements OTSModelInterface
         {
             contourPlot.addData(car);
         }
+        for (TrajectoryPlot trajectoryPlot : this.trajectoryPlots)
+        {
+            trajectoryPlot.addData(car);
+        }
     }
 
     /**
@@ -265,45 +259,34 @@ class InternalContourPlotsModel implements OTSModelInterface
         {
             contourPlot.reGraph();
         }
-    }
-
-    /**
-     * Set up the block.
-     * @throws RemoteException on communications failure
-     */
-    protected final void createBlock() throws RemoteException
-    {
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-        initialPositions.put(this.lane, initialPosition);
+        for (TrajectoryPlot trajectoryPlot : this.trajectoryPlots)
+        {
+            trajectoryPlot.reGraph();
+        }
+        // Re schedule this method
         try
         {
-            this.block =
-                    new IDMCar(999999, this.simulator, this.carFollowingModel, this.simulator.getSimulatorTime().get(),
-                            initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
+                    .getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
-        catch (NamingException exception)
+        catch (RemoteException exception)
         {
             exception.printStackTrace();
         }
-    }
+        catch (SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
 
-    /**
-     * Remove the block.
-     */
-    protected final void removeBlock()
-    {
-        this.block = null;
     }
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      * @throws NamingException on ???
      */
-    protected final void generateCar() throws NamingException
+    protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition) throws NamingException
     {
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         try
@@ -311,11 +294,10 @@ class InternalContourPlotsModel implements OTSModelInterface
             IDMCar car =
                     new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
                             .getSimulatorTime().get(), initialPositions, initialSpeed);
-            this.cars.add(0, car);
-            this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
+            this.cars.add(car);
             new CarAnimation(car, this.simulator);
         }
-        catch (RemoteException | SimRuntimeException exception)
+        catch (RemoteException exception)
         {
             exception.printStackTrace();
         }
@@ -323,10 +305,9 @@ class InternalContourPlotsModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
-        return this.simulator;
+        return null;
     }
 
     /**
@@ -338,19 +319,19 @@ class InternalContourPlotsModel implements OTSModelInterface
     }
 
     /**
+     * @return trajectoryPlots
+     */
+    public final ArrayList<TrajectoryPlot> getTrajectoryPlots()
+    {
+        return this.trajectoryPlots;
+    }
+
+    /**
      * @return minimumDistance
      */
     public final DoubleScalar.Rel<LengthUnit> getMinimumDistance()
     {
         return this.minimumDistance;
-    }
-
-    /**
-     * @return maximumDistance
-     */
-    public final DoubleScalar.Rel<LengthUnit> getMaximumDistance()
-    {
-        return this.maximumDistance;
     }
 
     /** Inner class IDMCar. */
@@ -379,7 +360,10 @@ class InternalContourPlotsModel implements OTSModelInterface
             super(id, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
             try
             {
-                simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
+                if (id >= 0)
+                {
+                    simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
+                }
             }
             catch (RemoteException | SimRuntimeException exception)
             {
@@ -396,39 +380,70 @@ class InternalContourPlotsModel implements OTSModelInterface
         protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
             // System.out.println("move " + getId());
-            if (this == InternalContourPlotsModel.this.block)
+            if (this.getId() < 0)
             {
-                return;
-            }
-            if (positionOfFront().getLongitudinalPosition().getSI() > getMaximumDistance().getSI())
-            {
-                InternalContourPlotsModel.this.cars.remove(this);
                 return;
             }
             Collection<AnimatedCar> leaders = new ArrayList<AnimatedCar>();
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
-            int carIndex = InternalContourPlotsModel.this.cars.indexOf(this);
-            if (carIndex < InternalContourPlotsModel.this.cars.size() - 1)
+            int carIndex = SimulationModel.this.cars.indexOf(this);
+            if (carIndex < SimulationModel.this.cars.size() - 1)
             {
-                leaders.add(InternalContourPlotsModel.this.cars.get(carIndex + 1));
+                leaders.add(SimulationModel.this.cars.get(carIndex + 1));
             }
-            GTUFollowingModelResult cfmr =
-                    InternalContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                            InternalContourPlotsModel.this.speedLimit);
-            if (null != InternalContourPlotsModel.this.block)
+            else
             {
-                leaders.clear();
-                leaders.add(InternalContourPlotsModel.this.block);
-                GTUFollowingModelResult blockCFMR =
-                        InternalContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                                InternalContourPlotsModel.this.speedLimit);
-                if (blockCFMR.getAcceleration().getSI() < cfmr.getAcceleration().getSI()
-                        && blockCFMR.getAcceleration().getSI() >= -5)
+                leaders.add(SimulationModel.this.cars.get(0));
+            }
+            // Horrible hack; wrap the position back to zero when vehicle exceeds length of the circuit
+            if (this.positionOfFront().getLongitudinalPosition().getSI() > SimulationModel.this.lane.getLength()
+                    .getSI())
+            {
+                Map<Lane, DoubleScalar.Rel<LengthUnit>> map = this.getLongitudinalPositions();
+                for (Lane l : map.keySet())
                 {
-                    cfmr = blockCFMR;
+                    map.put(l, new DoubleScalar.Rel<LengthUnit>(map.get(l).getSI()
+                            % SimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 }
             }
+            // Even more horrible hack; create a fake leader for the vehicle closest to the wrap around point
+            AnimatedCar leader = leaders.iterator().next();
+            // Figure out the headway
+            if (leader.positionOfRear(SimulationModel.this.lane).getSI() < this.positionOfFront(
+                    SimulationModel.this.lane).getSI())
+            {
+                Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                        new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+                initialPositions.put(SimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader
+                        .positionOfFront(SimulationModel.this.lane, getNextEvaluationTime()).getSI()
+                        + SimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
+                try
+                {
+                    IDMCar fakeLeader =
+                            new IDMCar(-99999, this.getSimulator(), this.getGTUFollowingModel(), this.getSimulator()
+                                    .getSimulatorTime().get(), initialPositions, leader.getLongitudinalVelocity());
+                    leaders.add(fakeLeader);
+                    /*-
+                    if (getSimulator().getSimulatorTime().get().getSI() > 300)
+                    {
+                        System.out.println("follower:   " + this);
+                        System.out.println("leader:     " + leader);
+                        System.out.println("fakeleader: " + fakeLeader);
+                        System.out.println("headway:    "
+                                + (fakeLeader.positionOfRear(SimulationModel.this.lane).getSI() - positionOfFront(
+                                        SimulationModel.this.lane).getSI()) + "m");
+                    }
+                     */
+                }
+                catch (RemoteException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            GTUFollowingModelResult cfmr =
+                    SimulationModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                            SimulationModel.this.speedLimit);
             setState(cfmr);
             // Add the movement of this Car to the contour plots
             addToContourPlots(this);
@@ -437,4 +452,5 @@ class InternalContourPlotsModel implements OTSModelInterface
                     null);
         }
     }
+
 }
