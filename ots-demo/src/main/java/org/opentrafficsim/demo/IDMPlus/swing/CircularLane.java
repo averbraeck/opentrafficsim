@@ -18,11 +18,13 @@ import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -81,7 +83,7 @@ public class CircularLane extends DSOLApplication
      */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
-        SimulationModel model = new SimulationModel();
+        LaneSimulationModel model = new LaneSimulationModel();
         CircularLane circularLane =
                 new CircularLane("Circular Lane animation", new SimpleSimulator(new OTSSimTimeDouble(
                         new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
@@ -153,7 +155,7 @@ public class CircularLane extends DSOLApplication
  * @version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class SimulationModel implements OTSModelInterface
+class LaneSimulationModel implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20141121L;
@@ -201,17 +203,22 @@ class SimulationModel implements OTSModelInterface
         }
         try
         {
-            this.lane = LaneFactory.makeLane("Lane", startEnd, startEnd, intermediateCoordinates, this.simulator);
+            LaneType<String> laneType = new LaneType<String>("CarLane");
+            // this.lane = LaneFactory.makeLane("Lane", startEnd, startEnd, intermediateCoordinates, laneType,
+            // this.simulator);
+            this.lane =
+                    LaneFactory.makeMultiLane("Lane", startEnd, startEnd, intermediateCoordinates, 1, laneType,
+                            this.simulator)[0];
             this.carFollowingModel =
                     new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
                                     TimeUnit.SECOND), 1d);
-            this.carFollowingModel =
-                    new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
+            // this.carFollowingModel =
+            // new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+            // new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+            // new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+            // TimeUnit.SECOND), 1d);
             // Put the (not very evenly spaced) cars on the track
             double trackLength = this.lane.getLength().getSI();
             double headway = 50;
@@ -292,7 +299,7 @@ class SimulationModel implements OTSModelInterface
         try
         {
             IDMCar car =
-                    new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
+                    new IDMCar(++this.carsCreated, null, this.simulator, this.carFollowingModel, this.simulator
                             .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.cars.add(car);
             new CarAnimation(car, this.simulator);
@@ -343,6 +350,7 @@ class SimulationModel implements OTSModelInterface
         /**
          * Create a new IDMCar.
          * @param id integer; the id of the new IDMCar
+         * @param gtuType GTUType&lt;String&gt;; the type of the GTU
          * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
@@ -352,12 +360,12 @@ class SimulationModel implements OTSModelInterface
          * @throws NamingException ...
          * @throws RemoteException on communication failure
          */
-        public IDMCar(final int id, final OTSDEVSSimulatorInterface simulator,
+        public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
                 final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
+            super(id, gtuType, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
             try
             {
                 if (id >= 0)
@@ -387,42 +395,43 @@ class SimulationModel implements OTSModelInterface
             Collection<AnimatedCar> leaders = new ArrayList<AnimatedCar>();
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
-            int carIndex = SimulationModel.this.cars.indexOf(this);
-            if (carIndex < SimulationModel.this.cars.size() - 1)
+            int carIndex = LaneSimulationModel.this.cars.indexOf(this);
+            if (carIndex < LaneSimulationModel.this.cars.size() - 1)
             {
-                leaders.add(SimulationModel.this.cars.get(carIndex + 1));
+                leaders.add(LaneSimulationModel.this.cars.get(carIndex + 1));
             }
             else
             {
-                leaders.add(SimulationModel.this.cars.get(0));
+                leaders.add(LaneSimulationModel.this.cars.get(0));
             }
             // Horrible hack; wrap the position back to zero when vehicle exceeds length of the circuit
-            if (this.positionOfFront().getLongitudinalPosition().getSI() > SimulationModel.this.lane.getLength()
+            if (this.positionOfFront().getLongitudinalPosition().getSI() > LaneSimulationModel.this.lane.getLength()
                     .getSI())
             {
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> map = this.getLongitudinalPositions();
                 for (Lane l : map.keySet())
                 {
                     map.put(l, new DoubleScalar.Rel<LengthUnit>(map.get(l).getSI()
-                            % SimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
+                            % LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 }
             }
             // Even more horrible hack; create a fake leader for the vehicle closest to the wrap around point
             AnimatedCar leader = leaders.iterator().next();
             // Figure out the headway
-            if (leader.positionOfRear(SimulationModel.this.lane).getSI() < this.positionOfFront(
-                    SimulationModel.this.lane).getSI())
+            if (leader.positionOfRear(LaneSimulationModel.this.lane).getSI() < this.positionOfFront(
+                    LaneSimulationModel.this.lane).getSI())
             {
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
                         new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-                initialPositions.put(SimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader
-                        .positionOfFront(SimulationModel.this.lane, getNextEvaluationTime()).getSI()
-                        + SimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
+                initialPositions.put(LaneSimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader
+                        .positionOfFront(LaneSimulationModel.this.lane, getNextEvaluationTime()).getSI()
+                        + LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 try
                 {
                     IDMCar fakeLeader =
-                            new IDMCar(-99999, this.getSimulator(), this.getGTUFollowingModel(), this.getSimulator()
-                                    .getSimulatorTime().get(), initialPositions, leader.getLongitudinalVelocity());
+                            new IDMCar(-99999, null, this.getSimulator(), this.getGTUFollowingModel(), this
+                                    .getSimulator().getSimulatorTime().get(), initialPositions,
+                                    leader.getLongitudinalVelocity());
                     leaders.add(fakeLeader);
                     /*-
                     if (getSimulator().getSimulatorTime().get().getSI() > 300)
@@ -442,8 +451,8 @@ class SimulationModel implements OTSModelInterface
                 }
             }
             GTUFollowingModelResult cfmr =
-                    SimulationModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                            SimulationModel.this.speedLimit);
+                    LaneSimulationModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                            LaneSimulationModel.this.speedLimit);
             setState(cfmr);
             // Add the movement of this Car to the contour plots
             addToContourPlots(this);

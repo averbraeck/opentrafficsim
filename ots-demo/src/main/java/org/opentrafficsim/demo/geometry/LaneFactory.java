@@ -103,20 +103,20 @@ public final class LaneFactory
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
      * @param intermediateCoordinates Coordinate[]; intermediate coordinates or null to create a straight road
+     * @param laneType LaneType; type of the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane; the new Lane
      * @throws NamingException
      * @throws RemoteException
      */
     public static Lane makeLane(final String name, final Node from, final Node to,
-            Coordinate[] intermediateCoordinates, OTSDEVSSimulatorInterface simulator) throws RemoteException,
-            NamingException
+            Coordinate[] intermediateCoordinates, LaneType<String> laneType, OTSDEVSSimulatorInterface simulator)
+            throws RemoteException, NamingException
     {
-        LaneType<String> carLaneType = new LaneType<String>("car");
-        DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
-        return makeLane(link, carLaneType, latPos, width, simulator);
+        DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
+        return makeLane(link, laneType, latPos, width, simulator);
     }
 
     /**
@@ -132,11 +132,12 @@ public final class LaneFactory
      * @throws NamingException
      * @throws RemoteException
      */
-    public static Lane[] makeMultiLane(final String name, final Node from, final Node to, Coordinate[] intermediateCoordinates,
-            int laneCount, LaneType<String> laneType, OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+    public static Lane[] makeMultiLane(final String name, final Node from, final Node to,
+            Coordinate[] intermediateCoordinates, int laneCount, LaneType<String> laneType,
+            OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
-        final Link link = makeLink(name, from, to, null);
+        final Link link = makeLink(name, from, to, intermediateCoordinates);
         Lane[] result = new Lane[laneCount];
         width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
