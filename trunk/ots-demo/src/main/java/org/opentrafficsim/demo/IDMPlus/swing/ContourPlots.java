@@ -22,11 +22,13 @@ import org.opentrafficsim.car.Car;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -207,7 +209,8 @@ class InternalContourPlotsModel implements OTSModelInterface
         Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
         try
         {
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, this.simulator);
+            LaneType<String> laneType = new LaneType<String>("CarLane");
+            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
             this.carFollowingModel =
                     new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
@@ -218,7 +221,7 @@ class InternalContourPlotsModel implements OTSModelInterface
                             new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
                                     TimeUnit.SECOND), 1d);
-            //this.carFollowingModel = new IDM();
+            // this.carFollowingModel = new IDM();
             // 1500 [veh / hour] == 2.4s headway
             this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
@@ -279,8 +282,8 @@ class InternalContourPlotsModel implements OTSModelInterface
         try
         {
             this.block =
-                    new IDMCar(999999, this.simulator, this.carFollowingModel, this.simulator.getSimulatorTime().get(),
-                            initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                    new IDMCar(999999, null, this.simulator, this.carFollowingModel, this.simulator.getSimulatorTime()
+                            .get(), initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
         }
         catch (NamingException exception)
         {
@@ -309,7 +312,7 @@ class InternalContourPlotsModel implements OTSModelInterface
         try
         {
             IDMCar car =
-                    new IDMCar(++this.carsCreated, this.simulator, this.carFollowingModel, this.simulator
+                    new IDMCar(++this.carsCreated, null, this.simulator, this.carFollowingModel, this.simulator
                             .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.cars.add(0, car);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
@@ -362,6 +365,7 @@ class InternalContourPlotsModel implements OTSModelInterface
         /**
          * Create a new IDMCar.
          * @param id integer; the id of the new IDMCar
+         * @param gtuType GTUType&lt;String&gt;; the type of the GTU
          * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
@@ -371,12 +375,12 @@ class InternalContourPlotsModel implements OTSModelInterface
          * @throws NamingException ...
          * @throws RemoteException on communication failure
          */
-        public IDMCar(final int id, final OTSDEVSSimulatorInterface simulator,
+        public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
                 final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
+            super(id, gtuType, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);

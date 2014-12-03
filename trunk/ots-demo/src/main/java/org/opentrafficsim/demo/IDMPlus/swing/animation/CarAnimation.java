@@ -2,11 +2,12 @@ package org.opentrafficsim.demo.IDMPlus.swing.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -24,6 +25,9 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  */
 public class CarAnimation extends Renderable2D
 {
+    /** Color of this car. */
+    final Color color;
+    
     /**
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
@@ -34,14 +38,22 @@ public class CarAnimation extends Renderable2D
             throws NamingException, RemoteException
     {
         super(source, simulator);
+        this.color = colorTable[source.getId() % colorTable.length];
     }
 
+    /**
+     * Colors for the cars.
+     */
+    static final Color[] colorTable = {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY};
+    
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.BLUE);
+        graphics.setColor(this.color);
         graphics.draw(new Rectangle2D.Double(-2.0d, -1.0d, 4.0d, 2.0d));
+        graphics.setColor(Color.WHITE);
+        graphics.draw(new Ellipse2D.Double(0.5d, -0.5d, 1d, 1d));
     }
 
 }

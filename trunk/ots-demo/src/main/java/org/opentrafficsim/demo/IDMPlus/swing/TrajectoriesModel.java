@@ -20,6 +20,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModel
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -88,9 +89,10 @@ public class TrajectoriesModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulator) theSimulator;
         Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
         Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
+        LaneType<String> laneType = new LaneType<String>("CarLane");
         try
         {
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, this.simulator);
+            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
         }
         catch (NamingException exception1)
         {
