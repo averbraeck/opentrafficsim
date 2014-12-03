@@ -4,9 +4,10 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
+import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**The CellBehaviourFlow is used for cell transmission models and can be linked to the cells of a Link
  * <p>
@@ -29,60 +30,34 @@ public class CellBehaviourFlow extends CellBehaviour
 
     /** */
     private HashMap<String, Double> numberOfTripsTo;
-
-    /** {@inheritDoc} */
-    //@Override
-    public double retrieveSupply(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
-    {
-        double carProduction = retrieveCarProduction(accumulatedCars, maxCapacity, param);
-        double productionSupply = Math.min(maxCapacity, carProduction); // supply
-        return productionSupply;
-        
-    }
-
-    /** {@inheritDoc} */
-   // @Override
-    public double retrieveDemand(final Double accumulatedCars, final Double maxCapacity, final ParametersNTM param)
-    {
-        double maxDemand = param.getFreeSpeed().getSI() * accumulatedCars; // ask Victor
-        double productionDemand = Math.min(maxDemand, maxCapacity); // / demand
-        return productionDemand;
-    }
-
-    /** {@inheritDoc} */
-    //@Override
-    public double computeAccumulation()
-    {
-        double accumulation = 0.0;
-        return accumulation;
-    }
     
-    
-    /** Retrieves car production from network fundamental diagram.
-     * @param accumulatedCars number of cars in Cell
-     * @param maxCapacity 
-     * @param param 
-     * @return carProduction
+
+    /** currentSpeed: average current speed of Cars in this CELL. */
+    private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+
+    /** */
+    private double maxCapacity;
+
+    /**
+     * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
+     * uncongested speed - roadLength length of all roads.
      */
-    public final double retrieveCarProduction(final double accumulatedCars, final double maxCapacity, final ParametersNTM param)
-    {
-        ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
-        Point2D p = new Point2D.Double();
-        p.setLocation(0, 0);
-        xyPairs.add(p);
-        p = new Point2D.Double();
-        p.setLocation(param.getAccCritical1(), maxCapacity);
-        xyPairs.add(p);
-        p = new Point2D.Double();
-        p.setLocation(param.getAccCritical2(), maxCapacity);
-        xyPairs.add(p);
-        p = new Point2D.Double();
-        p.setLocation(param.getAccJam(), 0);
-        xyPairs.add(p);
-        double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
-        return carProduction;
-    }
+    private ParametersFundamentalDiagram parametersFundamentalDiagram;
 
+    /** */
+    private Area area;
+
+    /**
+     * @param parametersFD contains a set of params
+     * @param area that contains this behaviour
+     */
+    public CellBehaviourFlow(final Area area, final ParametersFundamentalDiagram parametersFD)
+    {
+        this.parametersFundamentalDiagram = parametersFD;
+        this.maxCapacity =
+                parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+    }  
+    
     /**
      * @return numberOfTripsTo.
      */
@@ -101,8 +76,102 @@ public class CellBehaviourFlow extends CellBehaviour
 
 
 
+    /**
+     * {@inheritDoc}
+     * @param accumulatedCars
+     * @param maximumCapacity
+     * @param param
+     * @return
+     */
+    // @Override
+    public double retrieveSupply(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
+    {
+        double carProduction = maximumCapacity;
+        if (accumulatedCars > param.getAccCritical().get(0))
+        {
+            carProduction = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
+        }
+        double productionSupply = Math.min(maximumCapacity, carProduction); // supply
+        return productionSupply;
+    }
 
+    /**
+     * {@inheritDoc}
+     * @param accumulatedCars
+     * @param maxCapacity
+     * @param param
+     * @return
+     */
+    // @Override
+    public double retrieveDemand(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
+    {
+        double productionDemand = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
+        return productionDemand;
+    }
 
+    /** {@inheritDoc} */
+    // @Override
+    public double computeAccumulation()
+    {
+        double accumulation = 0.0;
+        return accumulation;
+    }
+
+    /**
+     * Retrieves car production from network fundamental diagram.
+     * @param accumulatedCars number of cars in Cell
+     * @param maximumCapacity based on area information
+     * @param param
+     * @return carProduction
+     */
+    public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,
+            final ParametersNTM param)
+    {
+        ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
+        Point2D p = new Point2D.Double();
+        p.setLocation(0, 0);
+        xyPairs.add(p);
+        p = new Point2D.Double();
+        p.setLocation(param.getAccCritical().get(0), maximumCapacity);
+        xyPairs.add(p);
+        p = new Point2D.Double();
+        p.setLocation(param.getAccCritical().get(1), 0);
+        xyPairs.add(p);
+        double carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
+        return carProduction;
+    }
+
+    /**
+     * @return averageSpeed
+     */
+    public final DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    {
+        return this.currentSpeed;
+    }
+
+    /**
+     * @return maxCapacity
+     */
+    public final double getMaxCapacity()
+    {
+        return this.maxCapacity;
+    }
+
+    /**
+     * @param maxCapacity set maxCapacity.
+     */
+    public final void setMaxCapacity(final double maxCapacity)
+    {
+        this.maxCapacity = maxCapacity;
+    }
+
+    /**
+     * @param currentSpeed set currentSpeed.
+     */
+    public final void setCurrentSpeed(final DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    {
+        this.currentSpeed = currentSpeed;
+    }
 
     
 }

@@ -48,22 +48,22 @@ public class LinkCellTransmission extends Link
      * @param cells
      */
 
-    public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length, Node startNode,
-            Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Abs<FrequencyUnit> capacity,
-            TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells)
+    public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length,
+            Node startNode, Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Abs<FrequencyUnit> capacity,
+            TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells, int hierarchy)
     {
-        super(geometry, nr, length, startNode, endNode, speed, capacity, behaviourType, linkData);
+        super(geometry, nr, length, startNode, endNode, speed, capacity, behaviourType, linkData, hierarchy);
         this.cells = cells;
     }
-    
+
     /**
      * @param link original Link
      * @param cells to add
      */
     public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), 
-                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+        super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), link
+                .getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
         this.cells = cells;
     }
 
@@ -94,10 +94,11 @@ public class LinkCellTransmission extends Link
         // the length of the cell depends on the speed and simulation time step
         DoubleScalar<SpeedUnit> speed = link.getSpeed();
         DoubleScalar<LengthUnit> cellLength =
-                new DoubleScalar.Abs<LengthUnit>(speed.getSI() * timeStepDurationCellTransmission.getSI(), LengthUnit.METER);
+                new DoubleScalar.Abs<LengthUnit>(speed.getSI() * timeStepDurationCellTransmission.getSI(),
+                        LengthUnit.METER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.rint(link.getLength().getSI() / cellLength.getSI());
-        //compute the amount of cells 
+        // compute the amount of cells
         for (int i = 0; i < numberOfCells; i++)
         {
             FlowCell cell = new FlowCell(cellLength, link.getCapacity(), TrafficBehaviourType.FLOW);

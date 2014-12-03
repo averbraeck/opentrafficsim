@@ -130,7 +130,7 @@ public class BuildGraph
             }
             else
             {
-                System.out.println("look out!!! line 489");
+                System.out.println("Build graph line 133: look out, no area connected!!!");
             }
 
         }
@@ -178,7 +178,7 @@ public class BuildGraph
         {
             Area aA = findArea(le.getLink().getStartNode().getPoint(), model);
             Area aB = findArea(le.getLink().getEndNode().getPoint(), model);
-
+            int hierarchy = le.getLink().getHierarchy();
             // When this is a flow link, inspect if they connect to urban roads
             // if so, create a GraphEdge that connects flow roads with urban roads / areas (in/out going)
             if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
@@ -216,7 +216,7 @@ public class BuildGraph
                             DoubleScalar.Abs<SpeedUnit> speed =
                                     new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
 
-                            Link newLink = Link.createLink(cA, cB, capacity, speed, TrafficBehaviourType.NTM);
+                            Link newLink = Link.createLink(cA, cB, capacity, speed, TrafficBehaviourType.NTM, hierarchy);
                             LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                             addLinkEdge(cA, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
                         }
@@ -479,6 +479,7 @@ public class BuildGraph
                             {
                                 for (LinkEdge<Link> le : spList)
                                 {
+                                    int hierarchy = le.getLink().getHierarchy();
                                     Area enteredArea = findArea(le.getLink().getEndNode().getPoint(), model);
                                     if (enteredArea != null && enteredArea != isolatedArea
                                             && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
@@ -491,7 +492,7 @@ public class BuildGraph
                                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                                         Link newLink =
                                                 Link.createLink(nodeIsolated, centroidEntered, capacity, speed,
-                                                        TrafficBehaviourType.NTM);
+                                                        TrafficBehaviourType.NTM, hierarchy);
                                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                                         addLinkEdge(nodeIsolated, centroidEntered, newLinkEdge,
                                                 TrafficBehaviourType.NTM, areaGraphIn);
@@ -512,7 +513,7 @@ public class BuildGraph
                                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                                         Link newLink =
                                                 Link.createLink(nodeIsolated, bN, capacity, speed,
-                                                        TrafficBehaviourType.NTM);
+                                                        TrafficBehaviourType.NTM, hierarchy);
                                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                                         addLinkEdge(nodeIsolated, bN, newLinkEdge, TrafficBehaviourType.FLOW,
                                                 areaGraphIn);
@@ -535,19 +536,19 @@ public class BuildGraph
     }
 
     /**
-     * @param aA
-     * @param aB
+     * @param areaStart
+     * @param areaEnd
      * @param le
      * @param linkMap
      * @param areaNodeCentroidMap
      */
-    private static void createFlowConnectors(final Area aA, final Area aB, final LinkEdge<Link> le,
+    private static void createFlowConnectors(final Area areaStart, final Area areaEnd, final LinkEdge<Link> le,
             final Map<String, LinkEdge<Link>> linkMap, final Map<Area, BoundedNode> areaNodeCentroidMap, NTMModel model)
     {
         Node node = le.getLink().getStartNode();
-        BoundedNode flowNodeA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
+        BoundedNode flowNodeStart = new BoundedNode(node.getPoint(), node.getId(), areaStart, node.getBehaviourType());
         node = le.getLink().getEndNode();
-        BoundedNode flowNodeB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
+        BoundedNode flowNodeEnd = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
         // BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
         // BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
         Link link = le.getLink();
@@ -556,24 +557,25 @@ public class BuildGraph
                         .getTimeStepDurationCellTransmissionModel());
         LinkCellTransmission linkCTM = new LinkCellTransmission(link, cells);
         LinkEdge leNew = new LinkEdge(linkCTM);
-        addLinkEdge(flowNodeA, flowNodeB, leNew, TrafficBehaviourType.FLOW, model.getAreaGraph());
+        int hierarchy = le.getLink().getHierarchy();
+        addLinkEdge(flowNodeStart, flowNodeEnd, leNew, TrafficBehaviourType.FLOW, model.getAreaGraph());
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
         BoundedNode cB = null;
-        cA = areaNodeCentroidMap.get(aA);
-        cB = areaNodeCentroidMap.get(aB);
+        cA = areaNodeCentroidMap.get(areaStart);
+        cB = areaNodeCentroidMap.get(areaEnd);
         for (LinkEdge<Link> urbanLink : linkMap.values())
         {
             if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD)
             {
-                if (urbanLink.getLink().getEndNode().getId().equals(flowNodeA.getId()))
+                if (urbanLink.getLink().getEndNode().getId().equals(flowNodeStart.getId()))
                 {
                     // from urban (Area) to Highway (flow)
                     Area aStart = findArea(urbanLink.getLink().getStartNode().getPoint(), model);
                     cA = areaNodeCentroidMap.get(aStart);
                     if (aStart != null)
                     {
-                        if (cA == null || flowNodeA == null)
+                        if (cA == null || flowNodeStart == null)
                         {
                             System.out.println("No connection of flow Link to Area for this one...");
                         }
@@ -581,18 +583,18 @@ public class BuildGraph
                         DoubleScalar.Abs<FrequencyUnit> capacity =
 
                         new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink = Link.createLink(cA, flowNodeA, capacity, speed, TrafficBehaviourType.NTM);
+                        Link newLink = Link.createLink(cA, flowNodeStart, capacity, speed, TrafficBehaviourType.NTM, hierarchy);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
-                        addLinkEdge(cA, flowNodeA, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
+                        addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
 
                     }
                     else
                     {
-                        System.out.println("aA == Null................");
+                        System.out.println("BuildGraph linne 593: aA == Null................");
                     }
 
                 }
-                if (urbanLink.getLink().getStartNode().getId().equals(flowNodeB.getId()))
+                if (urbanLink.getLink().getStartNode().getId().equals(flowNodeEnd.getId()))
                 {
                     // from Highway (flow) to urban (Area)
                     Area aEnd = findArea(urbanLink.getLink().getEndNode().getPoint(), model);
@@ -603,13 +605,13 @@ public class BuildGraph
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar.Abs<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink = Link.createLink(flowNodeB, cB, capacity, speed, TrafficBehaviourType.NTM);
+                        Link newLink = Link.createLink(flowNodeEnd, cB, capacity, speed, TrafficBehaviourType.NTM, hierarchy);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
-                        addLinkEdge(flowNodeB, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
+                        addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
                     }
                     else
                     {
-                        System.out.println("aB == Null................");
+                        System.out.println("BuildGraph line 614 aB == Null................");
                     }
 
                 }
@@ -617,11 +619,11 @@ public class BuildGraph
 
             else if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.CORDON)
             {
-                if (urbanLink.getLink().getEndNode().getId().equals(flowNodeA.getId()))
+                if (urbanLink.getLink().getEndNode().getId().equals(flowNodeStart.getId()))
                 {
                     // from urban (Area) to Highway (flow)
                     node = urbanLink.getLink().getStartNode();
-                    cA = new BoundedNode(node.getPoint(), node.getId(), aA, node.getBehaviourType());
+                    cA = new BoundedNode(node.getPoint(), node.getId(), areaStart, node.getBehaviourType());
                     // cA = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cA != null)
                     {
@@ -629,21 +631,21 @@ public class BuildGraph
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar.Abs<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink = Link.createLink(cA, flowNodeA, capacity, speed, TrafficBehaviourType.CORDON);
+                        Link newLink = Link.createLink(cA, flowNodeStart, capacity, speed, TrafficBehaviourType.CORDON, hierarchy);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
-                        addLinkEdge(cA, flowNodeA, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
+                        addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
                     }
                     else
                     {
-                        System.out.println("cA == Null");
+                        System.out.println("BuildGraph line 640 cA == Null");
                     }
 
                 }
-                else if (urbanLink.getLink().getStartNode().getId().equals(flowNodeB.getId()))
+                else if (urbanLink.getLink().getStartNode().getId().equals(flowNodeEnd.getId()))
                 {
                     // from Highway (flow) to urban (Area)
                     node = urbanLink.getLink().getEndNode();
-                    cB = new BoundedNode(node.getPoint(), node.getId(), aB, node.getBehaviourType());
+                    cB = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
                     // cB = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cB != null)
                     {
@@ -651,13 +653,13 @@ public class BuildGraph
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar.Abs<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink = Link.createLink(flowNodeB, cB, capacity, speed, TrafficBehaviourType.CORDON);
+                        Link newLink = Link.createLink(flowNodeEnd, cB, capacity, speed, TrafficBehaviourType.CORDON, hierarchy);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
-                        addLinkEdge(flowNodeB, cB, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
+                        addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
                     }
                     else
                     {
-                        System.out.println("cB == Null");
+                        System.out.println("BuildGraph line 662 cB == Null");
                     }
 
                 }

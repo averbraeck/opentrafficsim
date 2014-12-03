@@ -237,7 +237,8 @@ public class CsvFileReader
                                         new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
                                                 cordonConnector.getLength(), cordonConnector.getStartNode(), node,
                                                 cordonConnector.getSpeed(), cordonConnector.getCapacity(),
-                                                cordonConnector.getBehaviourType(), cordonConnector.getLinkData());
+                                                cordonConnector.getBehaviourType(), cordonConnector.getLinkData(),
+                                                cordonConnector.getHierarchy());
                                 connectors.put(name, cordonConnector);
                             }
                             else
@@ -267,7 +268,9 @@ public class CsvFileReader
                                         new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
                                                 cordonConnector.getLength(), node, cordonConnector.getEndNode(), 
                                                 cordonConnector.getSpeed(), cordonConnector.getCapacity(),
-                                                cordonConnector.getBehaviourType(), cordonConnector.getLinkData());
+                                                cordonConnector.getBehaviourType(), cordonConnector.getLinkData(),
+                                                cordonConnector.getHierarchy());
+                                
                                 connectors.put(name, cordonConnector);
                             }
                             else

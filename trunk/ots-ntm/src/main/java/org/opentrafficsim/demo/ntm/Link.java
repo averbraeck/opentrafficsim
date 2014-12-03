@@ -44,173 +44,7 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * 
  * <pre>
  * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
- * LINKNR class java.lang.Long 1
- * NAME class java.lang.String 
- * DIRECTION class java.lang.Long 1
- * LENGTH class java.lang.Double 1.80327678
- * ANODE class java.lang.Long 684088
- * BNODE class java.lang.Long 1090577263
- * LINKTAG class java.lang.String 967536
- * WEGTYPEAB class java.lang.String mvt
- * TYPEWEGVAB class java.lang.String asw 2x2 (8600)
- * NOMO_1E_AB class java.lang.String TypeItem78
- * TYPEWEG_AB class java.lang.String 12 Autosnelweg 2x2
- * BRONMODEAB class java.lang.String Rotterdam
- * BRONMODEBA class java.lang.String Rotterdam
- * SPEEDAB class java.lang.Double 120.0
- * CAPACITYAB class java.lang.Double 8600.0
- * FREESPEEAB class java.lang.Double 0.0
- * SATFLOWAB class java.lang.Double 0.0
- * SPEEDATCAB class java.lang.Double 0.0
- * SPEEDAB_2 class java.lang.Double 120.0
- * CAPACIAB_2 class java.lang.Double 8600.0
- * FREESPAB_2 class java.lang.Double 0.0
- * SATFLOAB_2 class java.lang.Double 0.0
- * SPEEDAAB_2 class java.lang.Double 0.0
- * SPEEDAB_3 class java.lang.Double 120.0
- * CAPACIAB_3 class java.lang.Double 8600.0
- * FREESPAB_3 class java.lang.Double 0.0
- * SATFLOAB_3 class java.lang.Double 0.0
- * SPEEDAAB_3 class java.lang.Double 0.0
- * SPEEDAB_4 class java.lang.Double 90.0
- * CAPACIAB_4 class java.lang.Double 8600.0
- * FREESPAB_4 class java.lang.Double 0.0
- * SATFLOAB_4 class java.lang.Double 0.0
- * SPEEDAAB_4 class java.lang.Double 0.0
- * SPEEDAB_5 class java.lang.Double 90.0
- * CAPACIAB_5 class java.lang.Double 8600.0
- * FREESPAB_5 class java.lang.Double 0.0
- * SATFLOAB_5 class java.lang.Double 0.0
- * SPEEDAAB_5 class java.lang.Double 0.0
- * SPEEDAB_6 class java.lang.Double 90.0
- * CAPACIAB_6 class java.lang.Double 8600.0
- * FREESPAB_6 class java.lang.Double 0.0
- * SATFLOAB_6 class java.lang.Double 0.0
- * SPEEDAAB_6 class java.lang.Double 0.0
- * LOADAB class java.lang.Double 0.07822362
- * COSTAB class java.lang.Double 0.28906184
- * CALCSPEEAB class java.lang.Double 119.03069305
- * LOADAB_2 class java.lang.Double 4040.8034668
- * COSTAB_2 class java.lang.Double 0.29288939
- * CALCSPAB_2 class java.lang.Double 116.03796387
- * LANESAB class java.lang.Long 2
- * SPEED_WEAB class java.lang.Long 120
- * SPEED_MOAB class java.lang.Long 120
- * WEGTYPEBA class java.lang.String 
- * TYPEWEGVBA class java.lang.String 
- * TYPEWEG_BA class java.lang.String 
- * SPEEDBA class java.lang.Double 0.0
- * CAPACITYBA class java.lang.Double 0.0
- * FREESPEEBA class java.lang.Double 0.0
- * SATFLOWBA class java.lang.Double 0.0
- * SPEEDATCBA class java.lang.Double 0.0
- * SPEEDBA_2 class java.lang.Double 0.0
- * CAPACIBA_2 class java.lang.Double 0.0
- * FREESPBA_2 class java.lang.Double 0.0
- * SATFLOBA_2 class java.lang.Double 0.0
- * SPEEDABA_2 class java.lang.Double 0.0
- * SPEEDBA_3 class java.lang.Double 0.0
- * CAPACIBA_3 class java.lang.Double 0.0
- * FREESPBA_3 class java.lang.Double 0.0
- * SATFLOBA_3 class java.lang.Double 0.0
- * SPEEDABA_3 class java.lang.Double 0.0
- * SPEEDBA_4 class java.lang.Double 0.0
- * CAPACIBA_4 class java.lang.Double 0.0
- * FREESPBA_4 class java.lang.Double 0.0
- * SATFLOBA_4 class java.lang.Double 0.0
- * SPEEDABA_4 class java.lang.Double 0.0
- * SPEEDBA_5 class java.lang.Double 0.0
- * CAPACIBA_5 class java.lang.Double 0.0
- * FREESPBA_5 class java.lang.Double 0.0
- * SATFLOBA_5 class java.lang.Double 0.0
- * SPEEDABA_5 class java.lang.Double 0.0
- * SPEEDBA_6 class java.lang.Double 0.0
- * CAPACIBA_6 class java.lang.Double 0.0
- * FREESPBA_6 class java.lang.Double 0.0
- * SATFLOBA_6 class java.lang.Double 0.0
- * SPEEDABA_6 class java.lang.Double 0.0
- * LOADBA class java.lang.Double 0.0
- * COSTBA class java.lang.Double 0.0
- * CALCSPEEBA class java.lang.Double 0.0
- * LOADBA_2 class java.lang.Double 0.0
- * COSTBA_2 class java.lang.Double 0.0
- * CALCSPBA_2 class java.lang.Double 0.0
- * LANESBA class java.lang.Long 0
- * SPEED_WEBA class java.lang.Long 0
- * SPEED_MOBA class java.lang.Long 0
- * PROVINCIAB class java.lang.String 
- * PROVINCIBA class java.lang.String 
- * GEMEENTEAB class java.lang.String 
- * GEMEENTEBA class java.lang.String 
- * NAMENR class java.lang.Long 0
- * TYPESHAAAB class java.lang.String 
- * TYPESHAABA class java.lang.String 
- * NETWERKAAB class java.lang.String 
- * NETWERKABA class java.lang.String 
- * LANESMASBA class java.lang.String 
- * WIDTHCRBA class java.lang.Double 0.0
- * EXITLANEBA class java.lang.Long 0
- * SLOWTRAFBA class java.lang.Long 0
- * SIGNBA class java.lang.Long 0
- * ENABLEDBA class java.lang.Long 0
- * INCDMASKBA class java.lang.Long 0
- * MILIEUCOAB class java.lang.String 
- * MILIEUCOBA class java.lang.String 
- * LANESMASAB class java.lang.String 
- * WIDTHCRAB class java.lang.Double 0.0
- * EXITLANEAB class java.lang.Long 0
- * SLOWTRAFAB class java.lang.Long 0
- * SIGNAB class java.lang.Long 0
- * ENABLEDAB class java.lang.Long 0
- * INCDMASKAB class java.lang.Long 0
- * X0KMWEGEAB class java.lang.String 
- * X0KMWEGEBA class java.lang.String 
- * FUNCCLASAB class java.lang.String 
- * FUNCCLASBA class java.lang.String 
- * AR_TRUCKAB class java.lang.String 
- * AR_TRUCKBA class java.lang.String 
- * AR_PEDESAB class java.lang.String 
- * AR_PEDESBA class java.lang.String 
- * AR_MOTORAB class java.lang.String 
- * AR_MOTORBA class java.lang.String 
- * AR_BUSAB class java.lang.String 
- * AR_BUSBA class java.lang.String 
- * AR_AUTOAB class java.lang.String 
- * AR_AUTOBA class java.lang.String 
- * GEMEENAB_2 class java.lang.String 
- * GEMEENBA_2 class java.lang.String 
- * FIETSPADBA class java.lang.String 
- * LINKSMETBA class java.lang.String 
- * NOMO_2E_AB class java.lang.String 
- * WEEFVAKKAB class java.lang.String 
- * LINKSMETAB class java.lang.String 
- * NOMO_1E_BA class java.lang.String 
- * NOMO_2E_BA class java.lang.String 
- * APPROACHAB class java.lang.Long 0
- * APPROACHBA class java.lang.Long 0
- * KRUISPUNAB class java.lang.String 
- * KRUISPUNBA class java.lang.String 
- * STREETNAME class java.lang.String 
- * PROMILAB class java.lang.String 
- * PROMILBA class java.lang.String 
- * GEMEENAB_3 class java.lang.String 
- * GEMEENBA_3 class java.lang.String 
- * VRACHTWEAB class java.lang.String 
- * VRACHTWEBA class java.lang.String 
- * FIETSPADAB class java.lang.String 
- * ROADNUMBER class java.lang.String 
- * ONTWIKKELI class java.lang.String 
- * WEEFVAKKBA class java.lang.String 
- * PROGNOSEAB class java.lang.String 
- * PROGNOSEBA class java.lang.String 
- * OVSYSTEEAB class java.lang.String 
- * OVSYSTEEBA class java.lang.String 
- * STATIONSAB class java.lang.String 
- * STATIONSBA class java.lang.String 
- * TRAMSYSTAB class java.lang.String 
- * TRAMSYSTBA class java.lang.String 
- * TELLINGJAB class java.lang.String 
- * TELLINGJBA class java.lang.String
+ * and a lot of data attributes such as speed and length
  * </pre>
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -252,10 +86,10 @@ public class Link extends AbstractLink<String, Node>
 
     public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
             final Node endNode, DoubleScalar.Abs<SpeedUnit> speed, final DoubleScalar.Abs<FrequencyUnit> capacity,
-            final TrafficBehaviourType behaviourType, LinkData linkData)
+            final TrafficBehaviourType behaviourType, LinkData linkData, int hierarchy)
     {
 
-        super(nr, startNode, endNode, length, capacity);
+        super(nr, startNode, endNode, length, capacity, hierarchy);
         setGeometry(geometry);
         this.speed = speed;
         this.behaviourType = behaviourType;
@@ -289,7 +123,7 @@ public class Link extends AbstractLink<String, Node>
      */
     public Link(final Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity());
+        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link.getHierarchy());
         setGeometry(link.getGeometry());
         this.speed = link.speed;
         if (this.getGeometry() != null)
@@ -320,7 +154,7 @@ public class Link extends AbstractLink<String, Node>
      * @return
      */
     public static Link createLink(Node startNode, Node endNode, Abs<FrequencyUnit> capacity,
-            DoubleScalar.Abs<SpeedUnit> speed, TrafficBehaviourType trafficBehaviourType)
+            DoubleScalar.Abs<SpeedUnit> speed, TrafficBehaviourType trafficBehaviourType,  int hierarchy)
 
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
@@ -332,7 +166,7 @@ public class Link extends AbstractLink<String, Node>
                 new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
 
         String nr = startNode.getId() + " - " + endNode.getId();
-        Link newLink = new Link(null, nr, length, startNode, endNode, speed, capacity, trafficBehaviourType, null);
+        Link newLink = new Link(null, nr, length, startNode, endNode, speed, capacity, trafficBehaviourType, null, hierarchy);
         try
         {
             LinearGeometry geometry = new LinearGeometry(newLink, line, null);
@@ -453,10 +287,6 @@ public class Link extends AbstractLink<String, Node>
 
             for (Link link : links.values())
             {
-                if (link.getEndNode().getId().equals("1090602926"))
-                {
-                    System.out.println("test: ");
-                }
                 ArrayList<Link> downStreamLinks = downLinks.get(link);
                 // join this "link" with the "down" link, if they have no junction
 
@@ -583,7 +413,7 @@ public class Link extends AbstractLink<String, Node>
 
         mergedLink =
                 new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(), up.getCapacity(),
-                        up.getBehaviourType(), up.getLinkData());
+                        up.getBehaviourType(), up.getLinkData(), up.getHierarchy());
 
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();

@@ -1,5 +1,8 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -12,21 +15,22 @@ package org.opentrafficsim.demo.ntm;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
- * @param <Cars>
- * @param <Capacity>
- * @param <Param>
  */
 public class CellBehaviour
 {
-
     /**
      * 
      */
     public CellBehaviour()
     {
         super();
+        this.tripInfoByNodeMap = new HashMap<Node, TripInfoByDestination>();
     }
 
+    /** the first Area/Node encountered on the path to Destination. */
+    private HashMap<Node, TripInfoByDestination> tripInfoByNodeMap;
+
+    
     /** */
     private double supply;
 
@@ -53,7 +57,7 @@ public class CellBehaviour
     /**
      * @param supply set supply.
      */
-    public final void setSupply(double supply)
+    public final void setSupply(final double supply)
     {
         this.supply = supply;
     }
@@ -69,7 +73,7 @@ public class CellBehaviour
     /**
      * @param demand set demand.
      */
-    public void setDemand(final double demand)
+    public final void setDemand(final double demand)
     {
         this.demand = demand;
     }
@@ -77,15 +81,15 @@ public class CellBehaviour
     /**
      * @return flow.
      */
-    public double getFlow()
+    public final double getFlow()
     {
-        return flow;
+        return this.flow;
     }
 
     /**
      * @param flow set flow.
      */
-    public void setFlow(double flow)
+    public final void setFlow(final double flow)
     {
         this.flow = flow;
     }
@@ -101,9 +105,17 @@ public class CellBehaviour
     /**
      * @param accumulatedCars set accumulatedCars.
      */
-    public final void setAccumulatedCars(double accumulatedCars)
+    public final void setAccumulatedCars(final double accumulatedCars)
     {
         this.accumulatedCars = accumulatedCars;
+    }
+
+    /**
+     * @param addCars add accumulatedCars.
+     */
+    public final void addAccumulatedCars(final double addCars)
+    {
+        this.accumulatedCars += addCars;
     }
 
     /**
@@ -130,26 +142,20 @@ public class CellBehaviour
         this.demandToEnter += addDemandToEnter;
     }
 
-    /*    *//**
-     * @param cars
-     * @param maxCapacity
-     * @param parameters
-     * @return
+    /**
+     * @return tripInfoNode.
      */
-    /*
-     * double retrieveSupply(Cars cars, Capacity maxCapacity, Param parameters);
-     *//**
-     * @param cars
-     * @param maxCapacity
-     * @param parameters
-     * @return
+    public final HashMap<Node, TripInfoByDestination> getTripInfoByNodeMap()
+    {
+        return this.tripInfoByNodeMap;
+    }
+
+    /**
+     * @param tripInfoByNodeMap set tripInfoNode.
      */
-    /*
-     * double retrieveDemand(Cars cars, Capacity maxCapacity, Param parameters);
-     *//**
-     * @return
-     */
-    /*
-     * double computeAccumulation();
-     */
+    public final void setTripInfoByNodeMap(final HashMap<Node, TripInfoByDestination> tripInfoByNodeMap)
+    {
+        this.tripInfoByNodeMap = tripInfoByNodeMap;
+    }
+
 }

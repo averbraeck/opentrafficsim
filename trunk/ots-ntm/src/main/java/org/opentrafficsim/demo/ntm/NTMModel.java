@@ -159,9 +159,9 @@ public class NTMModel implements OTSModelInterface
                     this.nodes, this.centroids);
 
             // to compress the areas into bigger units
-            File file = new File("D:/gtamminga/workspace/ots-ntm/target/classes/gis/selectedAreas_newest_merged1.shp");
-            this.compressedAreas = ShapeStore.openGISFile(file);
-            this.shpConnectors = connectCentroidsToBigger(this.compressedAreas, this.centroids, this.shpConnectors, this.areas);
+         //   File file = new File("D:/gtamminga/workspace/ots-ntm/target/classes/gis/selectedAreas_newest_merged1.shp");
+         //   this.compressedAreas = ShapeStore.openGISFile(file);
+         //   this.shpConnectors = connectCentroidsToBigger(this.compressedAreas, this.centroids, this.shpConnectors, this.areas);
             
             // read the time profile curves: these will be attached to the demands afterwards
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
@@ -229,7 +229,7 @@ public class NTMModel implements OTSModelInterface
         HashMap<Node, Node> mapSmallAreaToBigArea = new HashMap<Node, Node>();
         Map<String, Node> newCentroids = new HashMap<String, Node>();
         ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
-        for (ShapeObject bigArea : compressedAreas.getGeoObjects())
+        for (ShapeObject bigArea: compressedAreas.getGeoObjects())
         {
             String nr = "big" + bigArea.getValues().get(0);
             Node newCentroid = new Node(nr, bigArea.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
@@ -267,13 +267,15 @@ public class NTMModel implements OTSModelInterface
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), startNode, link.getEndNode(),
-                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
+                                link.getHierarchy());
             }
             else if (endNode != null)
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), endNode,
-                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
+                                link.getHierarchy());
             }
             else
             {
@@ -322,30 +324,26 @@ public class NTMModel implements OTSModelInterface
                 {
                     endNode = startNode;
                 }
-
-                TripInfoTimeDynamic tripInfo =
-                        this.tripDemand.getTripDemandOriginToDestination(origin.getId(), destination.getId());
-                // for all OD-pairs with trips, the TripInfo is already initiated
-                // if this relationship is not yet initiated, we do it here
-
-                if (tripInfo == null)
+                //for all node - destination pairs add information on their first neighbour on the shortest path
+                TripInfoByDestination tripInfoByNode= new TripInfoByDestination(endNode, destination, 0, 0);
+                startNode.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
+                
+                if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
-                    tripInfo = new TripInfoTimeDynamic(0, null);
-                    tripInfo.setNeighbour(endNode);
-                    this.tripDemand.setTripDemandOriginToDestination(origin.getId(), destination.getId(), tripInfo,
-                            this.tripDemand.getTripInfo());
-                }
-                else
-                {
-                    tripInfo.setNeighbour(endNode);
-                }
-                if (origin.getId().equals("481332"))
-                {
-                    if (tripInfo.getNeighbour() == null)
+                    // for the flow links we create the trip info by Node also for the flow cells
+                    LinkCellTransmission ctmLink =
+                            (LinkCellTransmission) this.getAreaGraph()
+                                    .getEdge(origin, endNode).getLink();
+                    // Loop through the cells and do transmission
+                    for (FlowCell cell : ctmLink.getCells())
                     {
-                        System.out.println("neighbour???");
+                        tripInfoByNode= new TripInfoByDestination(endNode, destination, 0, 0);
+                        cell.getCellBehaviour().getTripInfoByNodeMap().put(origin, tripInfoByNode);
                     }
                 }
+                
+                // for all OD-pairs with trips, the TripInfo is already initiated
+                // here we add the intermediate trip information at all nodes
 
             }
         }
@@ -689,7 +687,7 @@ public class NTMModel implements OTSModelInterface
                 Link flowLink = new Link(shpLink);
                 if (flowLink.getGeometry() == null)
                 {
-                    System.out.println("nnn");
+                    System.out.println("NTMModel line 694 ... no geometry");
                 }
                 flowLink.setBehaviourType(TrafficBehaviourType.FLOW);
                 flowLinks.put(flowLink.getId(), flowLink);
