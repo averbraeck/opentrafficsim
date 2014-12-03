@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.util.ArrayList;
+
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -7,7 +9,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 26 Sep 2014 <br>
@@ -20,11 +23,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 public class ParametersFundamentalDiagram
 {
 
-    /** parameter accCritical1: when production stops to increase (at maxProduction). */
-    private double accCritical1;
-
-    /** parameter accJam: complete grid lock. */
-    private double accJam;
+    /**
+     * parameters accCritical: when production stops to increase (at maxProduction) or decreases (accJam).
+     */
+    private ArrayList<Double> accCritical;
 
     /**
      * freeSpeed: average free speed of cars in CELL.
@@ -32,57 +34,14 @@ public class ParametersFundamentalDiagram
     private final DoubleScalar.Abs<SpeedUnit> freeSpeed;
 
     /**
-     * freeSpeed: average free speed of cars in CELL.
-     */
-    private final DoubleScalar.Abs<LengthUnit> roadLength;
-
-    /**
-     * @param accCritical1
-     * @param accJam
+     * @param accCritical
      * @param freeSpeed
-     * @param roadLength
      */
-    public ParametersFundamentalDiagram(double accCritical1, double accJam, Abs<SpeedUnit> freeSpeed,
-            Abs<LengthUnit> roadLength)
+    public ParametersFundamentalDiagram(ArrayList<Double> accCritical, Abs<SpeedUnit> freeSpeed)
     {
         super();
-        this.accCritical1 = accCritical1;
-        this.accJam = accJam;
+        this.accCritical = accCritical;
         this.freeSpeed = freeSpeed;
-        this.roadLength = roadLength;
-    }
-
-    /**
-     * @return accCritical1.
-     */
-    public double getAccCritical1()
-    {
-        return this.accCritical1;
-    }
-
-    /**
-     * @param accCritical1 set accCritical1.
-     */
-    public void setAccCritical1(double accCritical1)
-    {
-        this.accCritical1 = accCritical1;
-    }
-
-
-    /**
-     * @return accJam.
-     */
-    public double getAccJam()
-    {
-        return this.accJam;
-    }
-
-    /**
-     * @param accJam set accJam.
-     */
-    public void setAccJam(double accJam)
-    {
-        this.accJam = accJam;
     }
 
     /**
@@ -94,11 +53,19 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @return roadLength.
+     * @return accCritical1.
      */
-    public DoubleScalar.Abs<LengthUnit> getRoadLength()
+    public ArrayList<Double> getAccCritical()
     {
-        return this.roadLength;
+        return this.accCritical;
     }
-    
+
+    /**
+     * @param accCritical1 set accCritical1.
+     */
+    public void setAccCritical1(ArrayList<Double> accCritical)
+    {
+        this.accCritical = accCritical;
+    }
+
 }

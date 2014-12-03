@@ -350,6 +350,7 @@ public class ShapeFileReader
                 double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
                 DoubleScalar.Abs<FrequencyUnit> capacity =
                         new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
+                int hierarchy = 0;
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
                 Node centroidA = centroids.get(lNodeA);
@@ -373,13 +374,13 @@ public class ShapeFileReader
                         
                         linkAB =
                                 new Link(null, nr, length, nodeA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.ROAD, linkData);
+                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
                                 new Link(null, nrBA, length, nodeB, nodeA, speed, capacity,
-                                        TrafficBehaviourType.ROAD, linkData);
+                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
@@ -431,7 +432,7 @@ public class ShapeFileReader
                     {
                         Link link =
                                 new Link(null, nr, length, centroidA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.NTM, linkData);
+                                        TrafficBehaviourType.NTM, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         connectors.put(nr, link);
@@ -441,7 +442,7 @@ public class ShapeFileReader
                     {
                         Link link =
                                 new Link(null, nr, length, nodeA, centroidB, speed, capacity,
-                                        TrafficBehaviourType.NTM, linkData);
+                                        TrafficBehaviourType.NTM, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         connectors.put(nr, link);
@@ -451,7 +452,7 @@ public class ShapeFileReader
                     {
                         Link link =
                                 new Link(null, nr, length, nodeA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.ROAD, linkData);
+                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         links.put(nr, link);

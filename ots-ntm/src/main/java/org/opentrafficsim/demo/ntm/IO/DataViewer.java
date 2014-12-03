@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.ntm.IO;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +16,31 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
+import org.jgrapht.graph.SimpleWeightedGraph;
+import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.LinkEdge;
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.demo.ntm.Area;
+import org.opentrafficsim.demo.ntm.BoundedNode;
+import org.opentrafficsim.demo.ntm.Link;
+import org.opentrafficsim.demo.ntm.NTMsimulation;
+import org.opentrafficsim.demo.ntm.Node;
+import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
+import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
+import org.opentrafficsim.demo.ntm.animation.RoadAnimation;
+import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
+import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 
@@ -32,7 +59,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class DataIO
+public class DataViewer implements OTSModelInterface
 {
     /**
      * <p>
@@ -56,9 +83,30 @@ public class DataIO
         Thu,
         Fri
     };
+    
+    /** */
+    HashMap<String, ShapeObject> mapRoadCounts;
 
-    public static void main(String[] args) throws IOException
+    /** the simulator. */
+    private OTSDEVSSimulatorInterface simulator;
+    
+    /**
+     * Constructor to make the graphs with the right type.
+     */
+    @SuppressWarnings("unchecked")
+    public DataViewer()
     {
+    }
+    
+
+    /** {@inheritDoc} 
+     * @throws SimRuntimeException 
+     * @throws RemoteException */
+    @Override
+    public final void constructModel(
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator) throws RemoteException, SimRuntimeException 
+    {
+        this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
 
         String fileArea = FileDialog.showFileDialog(true, "shp", "Shapefile with Areas", startMap);
@@ -70,28 +118,79 @@ public class DataIO
                 "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
         String fileNameStarts = "I_";
         boolean fileNameDay = false;
-        addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay);
+        
+        try
+        {
+            this.mapRoadCounts = addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay);
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
 
-        filePathData =
+ /*       filePathData =
                 "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data_v2/";
         fileNameStarts = "I_";
         fileNameDay = true;
-        addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay);
+        try
+        {
+            addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay);
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
 
         fileNameStarts = "VL_";
         fileNameDay = true;
-        addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay);
+        try
+        {
+            addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay);
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }*/
+
+        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
+                "ntmFlowTimestep", null);
     }
 
+    
+    /**
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    protected final void ntmFlowTimestep()
+    {
+        this.mapRoadCounts.values();
+        DoubleScalar.Rel<TimeUnit> timeStep = new DoubleScalar.Rel(2.0, TimeUnit.SECOND);
+        // in case we run on an animator and not on a simulator, we create the animation
+        if (this.simulator instanceof OTSAnimatorInterface)
+        {
+            createDynamicAreaAnimation();
+        }
+        try
+        {
+            // start this method again
+            this.simulator.scheduleEventRel(timeStep, this, this, "ntmFlowTimestep",
+                    null);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
     /**
      * @param fileArea
      * @param fileRoads
      * @param pathData
      * @param fileNameStarts
      * @param fileNameDay
+     * @return 
      * @throws IOException
      */
-    public static void addArea(String fileArea, String fileRoads, String pathData, String fileNameStarts,
+    public static HashMap<String, ShapeObject> addArea(String fileArea, String fileRoads, String pathData, String fileNameStarts,
             boolean fileNameDay) throws IOException
     {
         ShapeStore roads = null;
@@ -107,11 +206,13 @@ public class DataIO
         String year = "2014";
         String day = null;
         String month = null;
-         for (int i = 1; i <= 12; i++)
-//        for (int i = 5; i <= 5; i++)
+        
+        HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();  
+//         for (int i = 1; i <= 12; i++)
+        for (int i = 5; i <= 5; i++)
         {
-            for (int j = 1; j <= 31; j++)
-            //for (int j = 29; j <= 29; j++)
+//            for (int j = 1; j <= 31; j++)
+            for (int j = 29; j <= 29; j++)
             {
                 if (i <= 10)
                 {
@@ -136,7 +237,7 @@ public class DataIO
                     {
                         String inputFile =
                                 pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
-                        Map<String, ArrayList<Double>> countMap = readData(inputFile, ";", pathData, year, 1);
+                        Map<String, ArrayList<java.lang.Double>> countMap = readData(inputFile, ";", pathData, year, 5);
                         if (countMap.size() > 0)
                         {
                             String outputFile =
@@ -144,7 +245,7 @@ public class DataIO
                                             + "_area_GV[none].csv";
                             String outputShapeFile =
                                     pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
-                            detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID",
+                            mapRoads =  detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID",
                                     "Name");
                         }
 
@@ -153,16 +254,17 @@ public class DataIO
                 else
                 {
                     String inputFile = pathData + fileNameStarts + year + month + day + ".csv";
-                    Map<String, ArrayList<Double>> countMap = readData(inputFile, ",", pathData, year, 1);
+                    Map<String, ArrayList<java.lang.Double>> countMap = readData(inputFile, ",", pathData, year, 5);
                     if (countMap.size() > 0)
                     {
                         String outputShapeFile = pathData + "new/" + fileNameStarts + year + month + day + ".shp";
                         String outputFile = pathData + "new/" + fileNameStarts + year + month + day + "_area.csv";
-                        detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID", "Name");
+                        mapRoads =  detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID", "Name");
                     }
                 }
             }
         }
+        return mapRoads;
     }
 
     /**
@@ -173,10 +275,10 @@ public class DataIO
      * @return values
      * @throws FileNotFoundException
      */
-    public static Map<String, ArrayList<Double>> readData(String inputFile, String csvSplitBy, String path,
+    public static Map<String, ArrayList<java.lang.Double>> readData(String inputFile, String csvSplitBy, String path,
             String year, Integer aggregateBy) throws FileNotFoundException
     {
-        Map<String, ArrayList<Double>> countMap = new HashMap<String, ArrayList<Double>>();
+        Map<String, ArrayList<java.lang.Double>> countMap = new HashMap<String, ArrayList<java.lang.Double>>();
         BufferedReader in = null;
         String line = "";
 
@@ -215,7 +317,7 @@ public class DataIO
                     else
                     {
                         int columnNumber = 0;
-                        ArrayList<Double> counts = new ArrayList<Double>();
+                        ArrayList<java.lang.Double> counts = new ArrayList<java.lang.Double>();
                         String id = null;
                         for (String lineSegment : completeLine)
                         {
@@ -224,7 +326,7 @@ public class DataIO
                             if (columnNumber > 0)
                             {
                                 String counted = lineSegment;
-                                counts.add(Double.parseDouble(counted));
+                                counts.add(java.lang.Double.parseDouble(counted));
                             }
                             else if (columnNumber == 0)
                             {
@@ -233,19 +335,19 @@ public class DataIO
                             columnNumber++;
                         }
 
-                        ArrayList<Double> aggregatedCounts = new ArrayList<Double>();
+                        ArrayList<java.lang.Double> aggregatedCounts = new ArrayList<java.lang.Double>();
                         if (aggregateBy > 1)
                         {
-                            int i = 0;
+                            int i = 1;
                             double aggregatedCount = 0.0;
-                            for (Double count : counts)
+                            for (java.lang.Double count : counts)
                             {
                                 aggregatedCount += count;
                                 i++;
                                 if (i == aggregateBy)
                                 {
                                     aggregatedCounts.add(aggregatedCount);
-                                    i = 0;
+                                    i = 1;
                                     aggregatedCount = 0.0;
                                 }
                             }
@@ -281,11 +383,12 @@ public class DataIO
      * @param searchLocations
      * @param fieldNameToDetect
      * @param fieldNameSearchAreas
+     * @return 
      * @throws IOException
      */
 
-    public static void detectLocationOfObject(String outputShapeFile, String outputFile,
-            Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
+    public static HashMap<String, ShapeObject> detectLocationOfObject(String outputShapeFile, String outputFile,
+            Map<String, ArrayList<java.lang.Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
             String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
         File fileNew = new File(outputFile);
@@ -305,12 +408,12 @@ public class DataIO
         searchLocations.addAttribute("Counted", "Integer");
         int indexAttributeAdded1 = searchLocations.getVariableNames().size() - 1;
         searchLocations.addAttribute("CountedIDs", "String");
+        int indexAttributeAdded2 = indexAttributeAdded1 + 1;
 
         // we are looking for roads with a specific ID that is included in the data from TNO
         // step 1: create a HashMap to find the geometry of a road with a specific ID
         // step 2: find the corresponding Area
         HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();
-        HashMap<String, String> mapRoadLengths = new HashMap<String, String>();
         int indexFieldNameToDetect = -1;
 
         for (String name : objectsToDetect.getVariableNames())
@@ -321,26 +424,9 @@ public class DataIO
                 break;
             }
         }
-        
         for (ShapeObject road : objectsToDetect.getGeoObjects())
         {
             mapRoads.put(road.getValues().get(indexFieldNameToDetect), road);
-        }
-        
-        int indexFieldNameLength = -1;
-
-        for (String name : objectsToDetect.getVariableNames())
-        {
-            if (name.equals("LENGTH"))
-            {
-                indexFieldNameLength = objectsToDetect.getVariableNames().indexOf(name);
-                break;
-            }
-        }
-        
-        for (ShapeObject road : objectsToDetect.getGeoObjects())
-        {
-            mapRoadLengths.put(road.getValues().get(indexFieldNameToDetect), road.getValues().get(indexFieldNameLength));
         }
 
         // write the data with the corresponding area ID to a new file
@@ -349,15 +435,9 @@ public class DataIO
         {
             Map.Entry countIdValue = (Map.Entry) it.next();
             Geometry geomToDetect = null;
-            Double length = null;
             if (mapRoads.get(countIdValue.getKey()) != null)
             {
                 geomToDetect = mapRoads.get(countIdValue.getKey()).getGeometry();
-                length = Double.parseDouble(mapRoadLengths.get(countIdValue.getKey()));
-            }
-            if (length == null)
-            {
-                length = Double.NaN;
             }
             ShapeObject area = null;
             if (geomToDetect != null)
@@ -385,25 +465,26 @@ public class DataIO
                 area.getValues().set(indexAttributeAdded1, Integer.toString(counted + 1));
 //                String ids = area.getValues().get(indexAttributeAdded2);
 //                area.getValues().set(indexAttributeAdded2, ids + id);
-                text = id + ", " + area.getValues().get(0) + ", " + length;
+                text = id + ", " + area.getValues().get(0);
             }
             else
             {
-                text = id + ", no area found" + ", " + length;
+                text = id + " no area found";
             }
-            ArrayList<Double> counts = (ArrayList<Double>) countIdValue.getValue();
-            for (Double count : counts)
+            ArrayList<java.lang.Double> counts = (ArrayList<java.lang.Double>) countIdValue.getValue();
+            for (java.lang.Double count : counts)
             {
                 text += ", " + count;
             }
             text += " \n";
             out.write(text);
 
+            
             // extend the shape of roads with count data
             if (mapRoads.get(countIdValue.getKey()) != null)
             {
                 mapRoads.get(countIdValue.getKey()).getValues()
-                        .set(indexAttributeAdded0, Double.toString(counts.get(0)));
+                        .set(indexAttributeAdded0, text);
             }
             it.remove(); // avoids a ConcurrentModificationException
         }
@@ -419,6 +500,33 @@ public class DataIO
             ShapeStore.createShapeFile(objectsToDetect, file);
         }*/
         out.close();
+        return mapRoads;
+    }
+
+    /**
+     * Make the animation for each of the components that we want to see on the screen.
+     */
+    private void createDynamicAreaAnimation()
+
+    {
+        try
+        {
+            // let's make several layers with the different types of information
+            boolean showLinks = true;
+ 
+            if (showLinks)
+            {
+                for (ShapeObject road : this.mapRoadCounts.values())
+                {
+                    new RoadAnimation(road, this.simulator, 2.0F, Color.GRAY);
+                }
+            }
+
+        }
+        catch (NamingException | RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -438,5 +546,13 @@ public class DataIO
             }
         }
         return area;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    {
+        return null;
     }
 }

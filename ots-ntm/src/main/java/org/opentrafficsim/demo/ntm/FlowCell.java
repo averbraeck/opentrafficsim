@@ -11,7 +11,7 @@ import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
-import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
+import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -55,7 +55,7 @@ public class FlowCell implements LocatableInterface
         this.setCapacity(capacity);
         if (behaviourType == TrafficBehaviourType.FLOW)
         {
-            this.setCellBehaviour(new CellBehaviourFlow());
+            this.setCellBehaviour(new CellBehaviourFlow(null, null));
         }
     }
 
@@ -74,12 +74,12 @@ public class FlowCell implements LocatableInterface
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical1(), maxCapacity);
+        p.setLocation(param.getAccCritical().get(0), maxCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccJam(), 0);
+        p.setLocation(param.getAccCritical().get(1), 0);
         xyPairs.add(p);
-        double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
+        double carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
         return carProduction;
     }
 

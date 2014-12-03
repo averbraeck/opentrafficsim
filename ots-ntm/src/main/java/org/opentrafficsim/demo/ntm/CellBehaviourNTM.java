@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.ntm.fundamentaldiagrams.NetworkFundamentalDiagram;
+import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
  * <p>
@@ -55,7 +55,7 @@ public class CellBehaviourNTM extends CellBehaviour
     {
         this.parametersNTM = parametersNTM;
         this.maxCapacity =
-                parametersNTM.getAccCritical1() * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
+                parametersNTM.getAccCritical().get(0) * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
                         * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
     }
 
@@ -70,7 +70,7 @@ public class CellBehaviourNTM extends CellBehaviour
     public double retrieveSupply(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
     {
         double carProduction = maximumCapacity;
-        if (accumulatedCars > param.getAccCritical2())
+        if (accumulatedCars > param.getAccCritical().get(1))
         {
             carProduction = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
         }
@@ -115,15 +115,15 @@ public class CellBehaviourNTM extends CellBehaviour
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical1(), maximumCapacity);
+        p.setLocation(param.getAccCritical().get(0), maximumCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical2(), maximumCapacity);
+        p.setLocation(param.getAccCritical().get(1), maximumCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccJam(), 0);
+        p.setLocation(param.getAccCritical().get(2), 0);
         xyPairs.add(p);
-        double carProduction = NetworkFundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
+        double carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
         return carProduction;
     }
 

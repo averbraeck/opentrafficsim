@@ -22,15 +22,6 @@ public class TripInfo
     /** total number of Trips for this simulation from the trip demand file. */
     private double numberOfTrips;
 
-    /** the first Area/Node encountered on the path to Destination. */
-    private Node neighbour;
-
-    /** trips on their journey within an area. */
-    private double accumulatedCarsToDestination;
-
-    /** flow to neighbour. */
-    private double flowToNeighbour;
-
     /**
      * @param numberOfTrips total number of Trips for this simulation
      */
@@ -57,60 +48,5 @@ public class TripInfo
         this.numberOfTrips = numberOfTrips;
     }
 
-    /**
-     * @return neighbour.
-     */
-    public final Node getNeighbour()
-    {
-        return this.neighbour;
-    }
-
-    /**
-     * @param endNode set neighbour.
-     */
-    public final void setNeighbour(final Node endNode)
-    {
-        this.neighbour = endNode;
-    }
-
-    /**
-     * @return passingTrips.
-     */
-    public final double getAccumulatedCarsToDestination()
-    {
-        return this.accumulatedCarsToDestination;
-    }
-
-    /**
-     * @param accumulatedCarsToDestination 
-     */
-    public final void setAccumulatedCarsToDestination(final double accumulatedCarsToDestination)
-    {
-        this.accumulatedCarsToDestination = accumulatedCarsToDestination;
-    }
-
-    /**
-     * @param addTrips set accumulating Trips to a certain destination.
-     */
-    public final void addAccumulatedCarsToDestination(final double addTrips)
-    {
-        this.accumulatedCarsToDestination += addTrips;
-    }
-
-    /**
-     * @return flow.
-     */
-    public final double getFlowToNeighbour()
-    {
-        return this.flowToNeighbour;
-    }
-
-    /**
-     * @param flow set flow.
-     */
-    public final void setFlowToNeighbour(final double flow)
-    {
-        this.flowToNeighbour = flow;
-    }
 
 }
