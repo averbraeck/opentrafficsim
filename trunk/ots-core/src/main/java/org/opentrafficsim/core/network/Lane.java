@@ -134,7 +134,7 @@ public class Lane extends CrossSectionElement
                 if (Math.abs(DoubleScalar.minus(this.getLateralBeginPosition(lateralDirection),
                         cse.getLateralBeginPosition(reverseDirection)).getSI()) > delta)
                 {
-                    continue; // Not adjacent (within error margin delfta)
+                    continue; // Not adjacent (within error margin delta)
                 }
                 //System.out.println("Lanes are adjacent!");
                 // Lanes are adjacent. Can we cross?

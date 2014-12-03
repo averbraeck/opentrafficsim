@@ -12,6 +12,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter
@@ -51,6 +52,22 @@ public class IDMPlus implements GTUFollowingModel
      * computational speed and accuracy).
      */
     private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
+
+    /**
+     * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
+     * These values are from <b>Integrated Lane Change Model with Relaxation and Synchronization</b> by Wouter J.
+     * Schakel, Victor L. Knoop, and Bart van Arem, published in Transportation Research Record: Journal of the
+     * Transportation Research Board, No. 2316, Transportation Research Board of the National Academies, Washington,
+     * D.C., 2012, pp. 47–57.
+     */
+    public IDMPlus()
+    {
+        this.a = new DoubleScalar.Abs<AccelerationUnit>(1.56, AccelerationUnit.METER_PER_SECOND_2);
+        this.b = new DoubleScalar.Abs<AccelerationUnit>(2.09, AccelerationUnit.METER_PER_SECOND_2);
+        this.s0 = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
+        this.tSafe = new DoubleScalar.Rel<TimeUnit>(1.2, TimeUnit.SECOND);
+        this.delta = 1d;
+    }
 
     /**
      * Construct a new IDMPlus car following model.

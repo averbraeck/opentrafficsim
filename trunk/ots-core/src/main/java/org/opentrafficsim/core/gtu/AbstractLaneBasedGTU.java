@@ -336,12 +336,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             LineString line = lane.getOffsetLine();
             LengthIndexedLine lil = new LengthIndexedLine(line);
             Coordinate c = lil.extractPoint(fraction * line.getLength());
+            // HACK (FIXME)
+            c.z = 0d;
             Coordinate ca =
                     fraction <= 0.01 ? lil.extractPoint(0.0) : lil.extractPoint((fraction - 0.01) * line.getLength());
             Coordinate cb =
                     fraction >= 0.99 ? lil.extractPoint(1.0) : lil.extractPoint((fraction + 0.01) * line.getLength());
             double angle = Math.atan2(cb.y - ca.y, cb.x - ca.x);
-            return new DirectedPoint(c.x, c.y, c.z, 0.0, 0.0, angle);
+            return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0,
+                    angle);
         }
         catch (NetworkException ne)
         {

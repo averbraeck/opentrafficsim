@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
@@ -142,7 +143,7 @@ public final class FollowAcceleration
                     throw new Error("Cannot happen -- Cannot find leaderLane");
                 }
                 // Get the difference of the projections of both lanes onto the design line of the link
-                leader.positionOfRear(leaderLane, when);
+                // leader.positionOfRear(leaderLane, when);
                 double leaderRatio = leader.positionOfRear(when).getFractionalLongitudinalPosition();
                 double followerRatio = follower.positionOfFront(when).getFractionalLongitudinalPosition();
                 double ratioDifference = leaderRatio - followerRatio; // TODO prove that this is always correct
@@ -185,6 +186,18 @@ public final class FollowAcceleration
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
         Lane referenceLane = referenceGTU.getLongitudinalPositions().keySet().iterator().next();
         DoubleScalar.Rel<LengthUnit> referenceCarPosition = referenceGTU.positionOfFront(referenceLane, when);
+        if (otherCars.size() > 0)
+        {
+            AbstractLaneBasedGTU<?> otherCar = otherCars.iterator().next();
+            Lane otherLane = otherCar.getLongitudinalPositions().keySet().iterator().next();
+            if (otherLane != referenceLane)
+            {
+                // Project the referenceCarPosition on the lane of the otherCars
+                referenceCarPosition =
+                        new DoubleScalar.Rel<LengthUnit>(referenceCarPosition.getSI()
+                                / referenceLane.getLength().getSI() * otherLane.getLength().getSI(), LengthUnit.METER);
+            }
+        }
         // Find the nearest leader and the nearest follower.
         for (AbstractLaneBasedGTU<?> c : otherCars)
         {
@@ -197,7 +210,7 @@ public final class FollowAcceleration
                     DoubleScalar.minus(c.positionOfFront(otherLane, when), referenceCarPosition).immutable();
             if (headway.getSI() < 0)
             {
-                if (null == follower || followerHeadway.getSI() > headway.getSI())
+                if (null == follower || followerHeadway.getSI() < headway.getSI())
                 {
                     follower = c;
                     followerHeadway = headway;
@@ -205,20 +218,32 @@ public final class FollowAcceleration
             }
             else
             {
-                if (null == leader || leaderHeadway.getSI() < headway.getSI())
+                if (null == leader || leaderHeadway.getSI() > headway.getSI())
                 {
                     leader = c;
                     leaderHeadway = headway;
                 }
             }
         }
-        GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
-        // System.out.println("referenceGTU: " + referenceGTU);
-        DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
-                null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
-                        : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel, speedLimit);
+        System.out.println("leader is " + (null == leader ? "NULL" : leader));
         try
         {
+            if (null != followerHeadway && DoubleScalar.plus(referenceGTU.getLength(), followerHeadway).getSI() >= 0)
+            {
+                // Immediate collision with follower
+                return tooDangerous();
+            }
+            if (null != leader && DoubleScalar.minus(leaderHeadway, leader.getLength()).getSI() <= 0)
+            {
+                // Immediate collision with leader
+                return tooDangerous();
+            }
+            GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
+            // System.out.println("referenceGTU: " + referenceGTU);
+            DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
+                    null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
+                            : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel,
+                                    speedLimit);
             if (followerAcceleration.getSI() >= -maximumDeceleration.getSI())
             {
                 if (null != leaderHeadway && leaderHeadway.getSI() <= referenceGTU.getLength().getSI())
