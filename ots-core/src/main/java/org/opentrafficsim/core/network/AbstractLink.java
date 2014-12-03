@@ -83,14 +83,6 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     }
 
     /**
-     * @return link length.
-     */
-    public final DoubleScalar<LengthUnit> getLenght()
-    {
-        return this.length;
-    }
-
-    /**
      * @return id.
      */
     public final ID getId()

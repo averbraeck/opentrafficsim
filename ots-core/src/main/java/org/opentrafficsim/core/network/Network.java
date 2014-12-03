@@ -365,10 +365,10 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
 
                 sumCapacityFrom1 += link.getCapacity().floatValue();
 
-                if (shortestLengthFrom1.floatValue() > link.getLenght().floatValue())
+                if (shortestLengthFrom1.floatValue() > link.getLength().floatValue())
                 {
 
-                    shortestLengthFrom1 = link.getLenght();
+                    shortestLengthFrom1 = link.getLength();
                 }
 
             }
@@ -378,10 +378,10 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
 
                 sumCapacityFrom2 += link.getCapacity().floatValue();
 
-                if (shortestLengthFrom2.floatValue() > link.getLenght().floatValue())
+                if (shortestLengthFrom2.floatValue() > link.getLength().floatValue())
                 {
 
-                    shortestLengthFrom2 = link.getLenght();
+                    shortestLengthFrom2 = link.getLength();
 
                 }
             }

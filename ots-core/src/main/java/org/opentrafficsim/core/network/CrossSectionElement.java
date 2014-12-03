@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -192,6 +193,15 @@ public abstract class CrossSectionElement implements LocatableInterface
         return this.offsetLine;
     }
 
+    private void printCoordinates(String prefix, Geometry ls, int fromIndex, int toIndex)
+    {
+        System.out.print(prefix);
+        for (int i = fromIndex; i < toIndex; i++)
+        {
+            System.out.print(String.format(Locale.US, " %8.8f,%8.3f   ", ls.getCoordinates()[i].x, ls.getCoordinates()[i].y));
+        }
+        System.out.println("");
+    }
     /**
      * @param line original line
      * @param offset offset in meters (negative: left; positive: right)
@@ -199,10 +209,13 @@ public abstract class CrossSectionElement implements LocatableInterface
      */
     private LineString offsetLineString(final LineString line, final double offset)
     {
+        printCoordinates("      Line:", line, 0, line.getNumPoints());
+        System.out.println("  Offset: " + offset);
         // create the buffer around the line
         double offsetPlus = Math.abs(offset);
         boolean right = offset < 0.0;
         Geometry bufferLine = line.buffer(offsetPlus, 8, BufferParameters.CAP_FLAT);
+        printCoordinates("bufferLine:", bufferLine, 0, bufferLine.getNumPoints());
         Coordinate[] bufferCoords = bufferLine.getCoordinates();
         // intersect with perpendicular lines at the start and end
         Coordinate[] lineCoords = line.getCoordinates();
@@ -219,6 +232,22 @@ public abstract class CrossSectionElement implements LocatableInterface
         if (right)
         {
             // from sc[0] to ec[1]
+            for (int i = Math.max(is0, ie1); i >= Math.min(is0, ie1); i--)
+            {
+                cList.add(bufferCoords[i]);
+            }
+            if (cList.contains(sc[1]) || cList.contains(ec[0]))
+            {
+                // wrong path (U-shape) -- take the other one
+                cList = new ArrayList<Coordinate>();
+                for (int i = Math.max(is0, ie1); i <= Math.min(is0, ie1) + bufferCoords.length; i++)
+                {
+                    int index = i % bufferCoords.length;
+                    cList.add(bufferCoords[index]);
+                }
+            }
+            /*- original code
+            // from sc[0] to ec[1]
             for (int i = Math.min(is0, ie1); i <= Math.max(is0, ie1); i++)
             {
                 cList.add(bufferCoords[i]);
@@ -233,6 +262,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                     cList.add(bufferCoords[index]);
                 }
             }
+            */
         }
         else
         {
@@ -255,6 +285,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate[] cc = new Coordinate[cList.size()];
         cs = new CoordinateArraySequence(cList.toArray(cc));
         LineString ls = new LineString(cs, factory);
+        printCoordinates("Result CSE: ", ls, 0, ls.getNumPoints());
         return ls;
     }
 

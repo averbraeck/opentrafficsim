@@ -45,6 +45,18 @@ public class IDM implements GTUFollowingModel
     private final double delta;
 
     /**
+     * Construct a new IDM car following model with reasonable values (reasonable for passenger cars).
+     */
+    public IDM()
+    {
+        this.a = new DoubleScalar.Abs<AccelerationUnit>(1.56, AccelerationUnit.METER_PER_SECOND_2);
+        this.b = new DoubleScalar.Abs<AccelerationUnit>(2.09, AccelerationUnit.METER_PER_SECOND_2);
+        this.s0 = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
+        this.tSafe = new DoubleScalar.Rel<TimeUnit>(1.2, TimeUnit.SECOND);
+        this.delta = 1d;
+    }
+    
+    /**
      * Construct a new IDM car following model.
      * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of a stationary vehicle (normal value
      *            is 1 m/s/s)
