@@ -225,7 +225,7 @@ public final class FollowAcceleration
                 }
             }
         }
-        System.out.println("leader is " + (null == leader ? "NULL" : leader));
+        //System.out.println("leader is " + (null == leader ? "NULL" : leader));
         try
         {
             if (null != followerHeadway && DoubleScalar.plus(referenceGTU.getLength(), followerHeadway).getSI() >= 0)
@@ -258,7 +258,7 @@ public final class FollowAcceleration
                             followerAcceleration});
                 }
             }
-            System.out.println("Imposed follower acceleration is dangerous: " + followerAcceleration);
+            //System.out.println("Imposed follower acceleration is dangerous: " + followerAcceleration);
             return tooDangerous();
         }
         catch (ValueException exception)
