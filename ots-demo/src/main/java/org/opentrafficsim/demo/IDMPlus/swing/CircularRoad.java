@@ -92,7 +92,7 @@ public class CircularRoad extends DSOLApplication
                 new CircularRoad("Circular Road animation", new SimpleSimulator(new OTSSimTimeDouble(
                         new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
                         TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model,
-                        new Rectangle2D.Double(-50, -50, 50, 50)));
+                        new Rectangle2D.Double(-1000, -1000, 1000, 1000)));
 
         // Make the tab with the contour plots
         TablePanel charts = new TablePanel(4, 3);
@@ -213,11 +213,9 @@ class RoadSimulationModel implements OTSModelInterface
             this.contourPlots.add(new ArrayList<ContourPlot>());
         }
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        double radius = 600 / 2 / Math.PI;
+        double radius = 6000 / 2 / Math.PI;
         Node startEnd = new Node("Start/End", new Coordinate(radius, 0, 0));
-        // double a = 2 * Math.PI * 3 / 256;
-        // Node end = new Node("tempEnd", new Coordinate(radius * Math.cos(a), radius * Math.sin(a), 0));
-        Coordinate[] intermediateCoordinates = new Coordinate[20];
+        Coordinate[] intermediateCoordinates = new Coordinate[255];
         for (int i = 0; i < intermediateCoordinates.length; i++)
         {
             double angle = 2 * Math.PI * (1 + i) / (1 + intermediateCoordinates.length);
@@ -244,7 +242,7 @@ class RoadSimulationModel implements OTSModelInterface
                                     TimeUnit.SECOND), 1d);
             this.laneChangeModel = new Egoistic();
             // Put the (not very evenly spaced) cars on the track
-            double headway = 100;
+            double headway = 50;
             for (int laneIndex = 0; laneIndex < this.lanes.length; laneIndex++)
             {
                 double trackLength = this.lanes[laneIndex].getLength().getSI();
@@ -261,8 +259,8 @@ class RoadSimulationModel implements OTSModelInterface
             // Schedule regular updates of the graph
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
                     "drawGraphs", null);
-            checkOrdering(RoadSimulationModel.this.cars.get(0), true);
-            checkOrdering(RoadSimulationModel.this.cars.get(1), true);
+            checkOrdering(RoadSimulationModel.this.cars.get(0));
+            checkOrdering(RoadSimulationModel.this.cars.get(1));
         }
         catch (RemoteException | SimRuntimeException | NamingException exception)
         {
@@ -331,7 +329,7 @@ class RoadSimulationModel implements OTSModelInterface
     protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition, int laneIndex,
             GTUType<String> gtuType) throws NamingException
     {
-        System.out.println("GenerateCar " + (this.carsCreated + 1) + " initialPosition is " + initialPosition);
+        //System.out.println("GenerateCar " + (this.carsCreated + 1) + " initialPosition is " + initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lanes[laneIndex], initialPosition);
@@ -342,8 +340,8 @@ class RoadSimulationModel implements OTSModelInterface
                             .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.cars.get(laneIndex).add(car);
             new CarAnimation(car, this.simulator);
-            System.out.print(car + ": ");
-            System.out.println(car.getLocation());
+            //System.out.print(car + ": ");
+            //System.out.println(car.getLocation());
         }
         catch (RemoteException exception)
         {
@@ -458,20 +456,34 @@ class RoadSimulationModel implements OTSModelInterface
             Collection<AbstractLaneBasedGTU<?>> sameLaneTraffic = carsInSpecifiedLane(laneIndex);
             Collection<AbstractLaneBasedGTU<?>> leftLaneTraffic = carsInSpecifiedLane(laneIndex - 1);
             Collection<AbstractLaneBasedGTU<?>> rightLaneTraffic = carsInSpecifiedLane(laneIndex + 1);
-            System.out.println(" LeftLaneTraffic: " + leftLaneTraffic);
-            System.out.println(" SameLaneTraffic: " + sameLaneTraffic);
-            System.out.println("RightLaneTraffic: " + rightLaneTraffic);
-            System.out.println("Lane length is " + lane.getLength() + " this is " + this);
+            /*-
+            if (getId() == 12)
+            {
+                if (RoadSimulationModel.this.simulator.getSimulatorTime().get().getSI() == 142.5)
+                {
+                    System.out.println("let op");
+                }
+                System.out.println(" LeftLaneTraffic: " + leftLaneTraffic);
+                System.out.println(" SameLaneTraffic: " + sameLaneTraffic);
+                System.out.println("RightLaneTraffic: " + rightLaneTraffic);
+                System.out.println("Lane length is " + lane.getLength() + " this is " + this + " T is "
+                        + RoadSimulationModel.this.simulator.getSimulatorTime().get());
+            }
+            */
             LaneChangeModel.LaneChangeModelResult lcmr =
                     RoadSimulationModel.this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic,
                             rightLaneTraffic, leftLaneTraffic, RoadSimulationModel.this.speedLimit,
                             new DoubleScalar.Rel<AccelerationUnit>(0.3, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<AccelerationUnit>(0.1, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
-            System.out.println("lane change result of " + this + ": " + lcmr);
+            //System.out.println("lane change result of " + this + ": " + lcmr);
             if (lcmr.getLaneChange() != null)
             {
-                // Remove vehicle from it's current lane
+                // Remember at what ratio on the old lane the vehicle was at the PREVIOUS time step
+                Map<Lane, Rel<LengthUnit>> longitudinalPositions = getLongitudinalPositions();
+                DoubleScalar.Rel<LengthUnit> oldPosition = longitudinalPositions.get(lane);
+                double oldRatio = oldPosition.getSI() / lane.getLength().getSI();
+               // Remove vehicle from it's current lane
                 RoadSimulationModel.this.cars.get(laneIndex).remove(this);
                 // Figure out where to insert it in the target lane
                 laneIndex += lcmr.getLaneChange().equals(LateralDirectionality.LEFT) ? -1 : +1;
@@ -479,23 +491,27 @@ class RoadSimulationModel implements OTSModelInterface
                 lane = RoadSimulationModel.this.lanes[laneIndex];
                 int pivot = pivot(relativePosition, carsInLane);
                 // Insert vehicle
-                System.out.println("Inserting car " + this.getId() + " at position " + pivot);
+                //System.out.println("Inserting car " + this.getId() + " at position " + pivot);
                 carsInLane.add(pivot, this);
-                Map<Lane, Rel<LengthUnit>> longitudinalPositions = getLongitudinalPositions();
                 longitudinalPositions.clear();
-                longitudinalPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(relativePosition
+                // Put the vehicle in the new lane at the ratio that it was at the PREVIOUS time step
+                // The reason for this is that the vehicle is moved forward in setState below and setState requires
+                // that the location has not yet been updated.
+                longitudinalPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(oldRatio
                         * lane.getLength().getSI(), LengthUnit.METER));
-                checkOrdering(carsInLane, false);
+                checkOrdering(carsInLane);
             }
             setState(lcmr.getGfmr());
-            checkOrdering(RoadSimulationModel.this.cars.get(0), true);
-            checkOrdering(RoadSimulationModel.this.cars.get(1), true);
+            checkOrdering(RoadSimulationModel.this.cars.get(0));
+            checkOrdering(RoadSimulationModel.this.cars.get(1));
             // Add the movement of this Car to the contour plots
             addToContourPlots(this, laneIndex);
-            System.out.println("Moved " + this);
+            //System.out.println("Moved " + this);
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
                     null);
+            //printList(0);
+            //printList(1);
         }
     }
 
@@ -540,13 +556,13 @@ class RoadSimulationModel implements OTSModelInterface
                     // It is wrong that we can modify it, but for now we'll make use of that mistake...
                     Map<Lane, Rel<LengthUnit>> relativePositions = car.getLongitudinalPositions();
                     double relativePosition = relativePositions.get(lane).getSI() / lane.getLength().getSI();
-                    System.out.println("Wrapping car " + car.getId() + " in lane " + laneIndex + " back to position 0");
+                    //System.out.println("Wrapping car " + car.getId() + " in lane " + laneIndex + " back to position 0");
                     relativePositions.clear();
                     relativePosition -= 1;
                     relativePositions.put(lane, new DoubleScalar.Rel<LengthUnit>(relativePosition, LengthUnit.METER));
                     carsInLane.remove(car);
                     carsInLane.add(0, car);
-                    checkOrdering(carsInLane, true);
+                    checkOrdering(carsInLane);
                 }
                 else
                 {
@@ -583,7 +599,7 @@ class RoadSimulationModel implements OTSModelInterface
                     break;
                 }
             }
-            System.out.println("pivot is " + result + " carsInLane.size is " + carsInLane.size());
+            //System.out.println("pivot is " + result + " carsInLane.size is " + carsInLane.size());
             return result;
         }
         catch (RemoteException exception)
@@ -658,9 +674,8 @@ class RoadSimulationModel implements OTSModelInterface
     /**
      * Sanity checks.
      * @param list ArrayList&lt;AnimatedCar&gt;; the array of cars to check
-     * @param checkSameLane boolean; if true; this method also checks that all vehicles are in the same lane.
      */
-    public void checkOrdering(ArrayList<AnimatedCar> list, boolean checkSameLane)
+    public void checkOrdering(ArrayList<AnimatedCar> list)
     {
         if (list.size() == 0)
         {
@@ -672,36 +687,24 @@ class RoadSimulationModel implements OTSModelInterface
             Lane lane = first.getLongitudinalPositions().keySet().iterator().next();
             DoubleScalar.Abs<TimeUnit> when = first.getSimulator().getSimulatorTime().get();
             double position = first.positionOfFront(lane, when).getSI();
-            for (int i = 1; i < list.size(); i++)
+            for (int rank = 1; rank < list.size(); rank++)
             {
-                AnimatedCar other = list.get(i);
-                if (checkSameLane)
+                AnimatedCar other = list.get(rank);
+                Lane otherLane = other.getLongitudinalPositions().keySet().iterator().next();
+                if (lane != otherLane)
                 {
-                    Lane otherLane = other.getLongitudinalPositions().keySet().iterator().next();
-                    if (lane != otherLane)
-                    {
-                        for (int j = 0; j < list.size(); j++)
-                        {
-                            System.out.println("list " + j + ": " + list.get(j));
-                        }
-                        stopSimulator(first.getSimulator(), "cars are not all in the same lane");
-                    }
-                }
-                else if (null == other.getLongitudinalPositions().get(lane))
-                {
-                    continue;
+                    printList(this.cars.indexOf(list));
+                    stopSimulator(first.getSimulator(), "cars are not all in the same lane");
                 }
                 double otherPosition = other.positionOfFront(lane, when).getSI();
                 if (otherPosition <= position)
                 {
-                    for (int j = 0; j < list.size(); j++)
-                    {
-                        System.out.println("list " + j + ": " + list.get(j));
-                    }
+                    printList(this.cars.indexOf(list));
                     stopSimulator(first.getSimulator(), "cars are not correctly ordered: " + first
                             + " should be ahead of " + other);
                 }
                 first = other;
+                position = otherPosition;
             }
         }
         catch (RemoteException exception)
@@ -711,6 +714,31 @@ class RoadSimulationModel implements OTSModelInterface
         catch (NetworkException exception)
         {
             exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Print a list of cars on the console.
+     * @param laneIndex int; index of the lane whereof the cars must be printed
+     */
+    public void printList(int laneIndex)
+    {
+        ArrayList<AnimatedCar> list = this.cars.get(laneIndex);
+        for (int rank = 0; rank < list.size(); rank++)
+        {
+            AnimatedCar car = list.get(rank);
+            try
+            {
+                double relativePosition =
+                        car.positionOfFront(this.lanes[laneIndex], this.simulator.getSimulatorTime().get()).getSI()
+                                / this.lanes[laneIndex].getLength().getSI();
+                System.out.println(String.format("lane %d rank %2d relpos %7.5f: %s", laneIndex, rank,
+                        relativePosition, car.toString()));
+            }
+            catch (RemoteException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 
