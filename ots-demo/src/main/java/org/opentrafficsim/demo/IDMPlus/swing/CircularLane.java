@@ -210,18 +210,18 @@ class LaneSimulationModel implements OTSModelInterface
                     LaneFactory.makeMultiLane("Lane", startEnd, startEnd, intermediateCoordinates, 1, laneType,
                             this.simulator)[0];
             this.carFollowingModel =
+                    new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                    TimeUnit.SECOND), 1d);
+            this.carFollowingModel =
                     new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
                                     TimeUnit.SECOND), 1d);
-            // this.carFollowingModel =
-            // new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-            // new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-            // new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-            // TimeUnit.SECOND), 1d);
             // Put the (not very evenly spaced) cars on the track
             double trackLength = this.lane.getLength().getSI();
-            double headway = 50;
+            double headway = 40;
             for (double pos = 0; pos <= trackLength - headway; pos += headway)
             {
                 generateCar(new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
