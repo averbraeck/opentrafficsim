@@ -87,7 +87,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param nameKey the key to the locale file for the long name of the unit
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
-     * @throws UnitException
+     * @throws UnitException when unit cannot be added to the list of units
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem) throws UnitException
     {
@@ -106,7 +106,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param referenceUnit the unit to convert to
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
      *            reference unit
-     * @throws UnitException when unit cannot be added to the list of units.
+     * @throws UnitException when unit cannot be added to the list of units
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
             final double conversionFactorToReferenceUnit) throws UnitException

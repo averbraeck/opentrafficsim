@@ -11,7 +11,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
@@ -37,7 +36,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
             final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
-            Rel<AccelerationUnit> laneChangeThreshold,
+            final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
