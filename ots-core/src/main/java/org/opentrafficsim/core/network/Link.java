@@ -63,14 +63,14 @@ public class Link<ID, N extends AbstractNode<?, ?>> extends AbstractLink<ID, N>
 
     /** {@inheritDoc} */
     @Override
-    public Bounds getBounds() throws RemoteException
+    public final Bounds getBounds() throws RemoteException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation() throws RemoteException
     {
         return null;
     }

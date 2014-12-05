@@ -11,7 +11,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -55,7 +54,7 @@ public class IDM implements GTUFollowingModel
         this.tSafe = new DoubleScalar.Rel<TimeUnit>(1.2, TimeUnit.SECOND);
         this.delta = 1d;
     }
-    
+
     /**
      * Construct a new IDM car following model.
      * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of a stationary vehicle (normal value
@@ -67,8 +66,8 @@ public class IDM implements GTUFollowingModel
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed
      *            equals 110% of the speed limit; etc.)
      */
-    public IDM(DoubleScalar.Abs<AccelerationUnit> a, DoubleScalar.Abs<AccelerationUnit> b,
-            DoubleScalar.Rel<LengthUnit> s0, DoubleScalar.Rel<TimeUnit> tSafe, double delta)
+    public IDM(final DoubleScalar.Abs<AccelerationUnit> a, final DoubleScalar.Abs<AccelerationUnit> b,
+            final DoubleScalar.Rel<LengthUnit> s0, final DoubleScalar.Rel<TimeUnit> tSafe, final double delta)
     {
         this.a = a;
         this.b = b;
@@ -85,8 +84,8 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower,
-            Collection<? extends LaneBasedGTU<?>> leaders, DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
@@ -120,8 +119,8 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, LaneBasedGTU<?> leader,
-            DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+            final LaneBasedGTU<?> leader, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> leaderSpeed =
@@ -149,17 +148,13 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower,
-            DoubleScalar.Abs<SpeedUnit> leaderSpeed, DoubleScalar.Rel<LengthUnit> headway,
-            DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> followerCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
-        if (follower.getId().equals(35))
-        {
-            // System.out.println("Let op");
-        }
         // dV is the approach speed
         DoubleScalar.Rel<SpeedUnit> dV =
                 DoubleScalar.minus(follower.getLongitudinalVelocity(thisEvaluationTime), leaderSpeed).immutable();
@@ -187,7 +182,7 @@ public class IDM implements GTUFollowingModel
                                         logWeightedAccelerationTimes2.immutable()))).immutable();
         if (right.getSI() < 0)
         {
-            //System.out.println("Fixing negative right");
+            // System.out.println("Fixing negative right");
             right = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         }
         DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus(this.s0, right).immutable();
@@ -203,7 +198,7 @@ public class IDM implements GTUFollowingModel
         DoubleScalar.Abs<AccelerationUnit> newAcceleration = DoubleScalar.plus(aFree, aInteraction).immutable();
         if (newAcceleration.getSI() * this.stepSize.getSI() + follower.getLongitudinalVelocity().getSI() < 0)
         {
-            //System.out.println("Limiting deceleration to prevent moving backwards");
+            // System.out.println("Limiting deceleration to prevent moving backwards");
             newAcceleration =
                     new DoubleScalar.Abs<AccelerationUnit>(-follower.getLongitudinalVelocity().getSI()
                             / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
@@ -217,21 +212,21 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
     {
         return this.b;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getName()
+    public final String getName()
     {
         return "IDM";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getLongName()
+    public final String getLongName()
     {
         return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
                 this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);

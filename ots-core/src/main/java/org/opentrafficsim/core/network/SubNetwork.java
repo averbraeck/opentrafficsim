@@ -53,7 +53,7 @@ public class SubNetwork<ID, L extends AbstractLink<?, ?>> extends Network
         super(id);
     }
 
-    public Set<L> getLinks2Out()
+    public final Set<L> getLinks2Out()
     {
         return this.links2Out;
     }

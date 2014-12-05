@@ -491,7 +491,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     /**
      * Make sure that the results of the most called methods are re-calculated.
      */
-    private final void clearCachedValues()
+    private void clearCachedValues()
     {
         this.cachedItemCount = this.cachedXAxisBins = this.cachedYAxisBins = -1;
     }

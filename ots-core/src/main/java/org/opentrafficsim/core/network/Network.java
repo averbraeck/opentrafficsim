@@ -122,15 +122,17 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         super(collection);
         this.id = id;
         if (collection.contains(expansionNode))
+        {
             throw new NetworkException("Creating Network " + this.id + " with initial collection. Expansion node "
                     + expansionNode.toString() + " is part of the initial collection");
+        }
         this.expansionOfNode = expansionNode;
     }
 
     /**
      * @return expansionOfNode
      */
-    public AbstractNode<?, ?> getExpansionOfNode()
+    public final AbstractNode<?, ?> getExpansionOfNode()
     {
         return this.expansionOfNode;
     }
@@ -139,7 +141,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @param expansionOfNode set expansionOfNode
      * @throws NetworkException when expansion node is part of the node collection.
      */
-    public void setExpansionOfNode(AbstractNode<?, ?> expansionOfNode) throws NetworkException
+    public final void setExpansionOfNode(final AbstractNode<?, ?> expansionOfNode) throws NetworkException
     {
         this.expansionOfNode = expansionOfNode;
     }
@@ -147,7 +149,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     /**
      * @return id
      */
-    public ID getId()
+    public final ID getId()
     {
         return this.id;
     }
@@ -155,7 +157,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     /**
      * @return nodeSet
      */
-    public Set<AbstractNode<?, ?>> getNodeSet()
+    public final Set<AbstractNode<?, ?>> getNodeSet()
     {
         return this.nodeSet;
     }
@@ -163,7 +165,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     /**
      * @param nodeSet set nodeSet
      */
-    public void setNodeSet(Set<AbstractNode<?, ?>> nodeSet)
+    public final void setNodeSet(final Set<AbstractNode<?, ?>> nodeSet)
     {
         this.nodeSet = nodeSet;
     }
@@ -172,7 +174,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @param node
      * @return true or false
      */
-    public boolean isInNetwork(AbstractNode<?, ?> node)
+    public final boolean isInNetwork(final AbstractNode<?, ?> node)
     {
 
         if (this.nodeSet.contains(node))
@@ -183,12 +185,10 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         {
             for (AbstractNode<?, ?> n : this.nodeSet)
             {
-                if (n instanceof AbstractExpansionNode)
+                if (n instanceof AbstractExpansionNode
+                        && ((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetwork(node))
                 {
-                    if (((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetwork(node))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -201,7 +201,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @return true or false
      * @throws NetworkException
      */
-    public boolean addNode(AbstractNode<?, ?> addThis) throws NetworkException
+    public final boolean addNode(final AbstractNode<?, ?> addThis) throws NetworkException
     {
         if (isInNetwork(addThis))
         {
@@ -220,7 +220,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @param node
      * @return boolean
      */
-    public boolean isInNetworkLevel(AbstractNode<?, ?> node)
+    public final boolean isInNetworkLevel(AbstractNode<?, ?> node)
     {
         if (this.nodeSet.contains(node))
         {
@@ -237,7 +237,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @return network
      * @throws NetworkException
      */
-    public Network<?, ?> getSubNetworkConsistNode(AbstractNode<?, ?> node) throws NetworkException
+    public final Network<?, ?> getSubNetworkConsistNode(final AbstractNode<?, ?> node) throws NetworkException
     {
         if (isInNetwork(node))
         {
@@ -249,12 +249,10 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
             {
                 for (AbstractNode<?, ?> n : this.nodeSet)
                 {
-                    if (n instanceof AbstractExpansionNode)
+                    if (n instanceof AbstractExpansionNode
+                            && ((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetworkLevel(node))
                     {
-                        if (((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetworkLevel(node))
-                        {
-                            return getSubNetworkConsistNode(node);
-                        }
+                        return getSubNetworkConsistNode(node);
                     }
                 }
             }
@@ -271,7 +269,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @return boolean
      * @throws NetworkException on network inconsistency
      */
-    public boolean deleteNode(final AbstractNode<?, ?> deleteThis) throws NetworkException
+    public final boolean deleteNode(final AbstractNode<?, ?> deleteThis) throws NetworkException
     {
         if (isInNetwork(deleteThis))
         {
@@ -298,7 +296,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * public boolean expandNode(AbstractNode<?, ?> node) throws NetworkException { if (expansionOfNode == null) { throw
      * new NetworkException("This Node" + node.getId().toString() + " is not able to expand."); } else { } }
      */
-    public boolean collapseToNode(final HashSet<AbstractNode<?, ?>> nodeSet)
+    public final boolean collapseToNode(final HashSet<AbstractNode<?, ?>> nodeSet)
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         Set<L> insideLinks = new HashSet<L>();
@@ -308,7 +306,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
         {
             for (AbstractLink<?, AbstractNode<?, ?>> link : setOfLinks)
             {
-                if ((node.equals(link.getStartNode()) && node.equals(link.getEndNode())))
+                if (node.equals(link.getStartNode()) && node.equals(link.getEndNode()))
                 {
 
                     insideLinks.add((L) link);
@@ -317,7 +315,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
                     this.nodeSet.remove(node);
 
                 }
-                else if ((node.equals(link.getStartNode()) || node.equals(link.getEndNode())))
+                else if (node.equals(link.getStartNode()) || node.equals(link.getEndNode()))
                 {
                     neighbourLinks.add((L) link);
 
@@ -345,7 +343,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @param node2
      * @return true if successful, false if it is not possible to collapse nodes
      */
-    public boolean collapseLinks(final AbstractNode<?, ?> node1, final AbstractNode<?, ?> node2)
+    public final boolean collapseLinks(final AbstractNode<?, ?> node1, final AbstractNode<?, ?> node2)
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         float sumCapacityFrom1 = 0.0f; // One direction
@@ -359,7 +357,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
 
         for (AbstractLink<?, AbstractNode<?, ?>> link : setOfLinks)
         {
-            if ((node1.equals(link.getStartNode()) && node2.equals(link.getEndNode())))
+            if (node1.equals(link.getStartNode()) && node2.equals(link.getEndNode()))
             {
                 super.remove(link);
 
@@ -372,7 +370,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
                 }
 
             }
-            else if ((node2.equals(link.getStartNode()) && node1.equals(link.getEndNode())))
+            else if (node2.equals(link.getStartNode()) && node1.equals(link.getEndNode()))
             {
                 super.remove(link);
 
@@ -405,7 +403,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @return Set&lt;L&gt;
      * @throws NetworkException on network inconsistency
      */
-    public Set<L> findLinkHierarchyBelow(final int hierarchyLevel) throws NetworkException
+    public final Set<L> findLinkHierarchyBelow(final int hierarchyLevel) throws NetworkException
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         Set<L> linksAboveLevel = new HashSet<L>();
@@ -426,7 +424,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @return Set&lt;L&gt;
      * @throws NetworkException on network inconsistency
      */
-    public Set<L> findLinkHierarchyEqualOrBelow(final int hierarchyLevel) throws NetworkException
+    public final Set<L> findLinkHierarchyEqualOrBelow(final int hierarchyLevel) throws NetworkException
     {
         AbstractLink<?, AbstractNode<?, ?>>[] setOfLinks = (AbstractLink<?, AbstractNode<?, ?>>[]) super.toArray();
         Set<L> linksAboveLevel = new HashSet<L>();

@@ -195,7 +195,7 @@ public class Lane extends CrossSectionElement
     }
 
     /** {@inheritDoc} */
-    public String toString()
+    public final String toString()
     {
         CrossSectionLink<?, ?> link = getParentLink();
         // FIXME indexOf is the the correct way to determine the rank of a Lane

@@ -10,7 +10,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 3, 2014 <br>
@@ -64,30 +65,30 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
 
     /** {@inheritDoc} */
     @Override
-    public OTSSimTimeDouble copy()
+    public final OTSSimTimeDouble copy()
     {
         return new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(this.time.getInUnit(), this.time.getUnit()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public void set(final DoubleScalar.Abs<TimeUnit> value)
+    public final void set(final DoubleScalar.Abs<TimeUnit> value)
     {
         this.time = value.mutable();
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<TimeUnit> get()
+    public final DoubleScalar.Abs<TimeUnit> get()
     {
         return this.time.immutable();
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<TimeUnit> minus(final OTSSimTimeDouble absoluteTime)
+    public final DoubleScalar.Rel<TimeUnit> minus(final OTSSimTimeDouble absoluteTime)
     {
-        DoubleScalar.Rel<TimeUnit> rel = MutableDoubleScalar.minus(this.time.immutable(), absoluteTime.get()).immutable();
+        DoubleScalar.Rel<TimeUnit> rel = DoubleScalar.minus(this.time.immutable(), absoluteTime.get()).immutable();
         return rel;
     }
 

@@ -19,7 +19,8 @@ public final class Egoistic extends AbstractLaneChangeModel
 {
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
+    public DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(
+            final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
     {
         try
         {

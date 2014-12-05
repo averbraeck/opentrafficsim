@@ -34,7 +34,7 @@ public class SimpleSimulator
     /** The JPanel that contains the simulator controls, a status bar and a JTabbedPane with switchable sub panels. */
     private final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
 
-    /** The simulator engine */
+    /** The simulator engine. */
     private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /**
@@ -71,7 +71,7 @@ public class SimpleSimulator
      * @throws SimRuntimeException on ???
      */
     public SimpleSimulator(final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, Rectangle2D extent)
+            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
             throws RemoteException, SimRuntimeException
     {
         this.simulator = new OTSDEVSAnimator();
@@ -90,7 +90,7 @@ public class SimpleSimulator
      * To use in a Swing application add the DSOLPanel to a JFrame.
      * @return the simulation panel (extends JPanel).
      */
-    public DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel()
+    public final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel()
     {
         return this.panel;
     }
@@ -99,7 +99,7 @@ public class SimpleSimulator
      * Access to the simulator is needed to create simulated objects.
      * @return simulator.
      */
-    public DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
     {
         return this.simulator;
     }
