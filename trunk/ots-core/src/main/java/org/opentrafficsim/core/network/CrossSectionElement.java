@@ -193,12 +193,19 @@ public abstract class CrossSectionElement implements LocatableInterface
         return this.offsetLine;
     }
 
-    private void printCoordinates(String prefix, Geometry ls, int fromIndex, int toIndex)
+    /**
+     * Print the coordinates on the console.
+     * @param prefix String; text to put before the output
+     * @param geometry Geometry; the coordinates to print
+     * @param fromIndex int; index of the first coordinate to print
+     * @param toIndex int; one higher than the index of the last coordinate to print
+     */
+    public static void printCoordinates(String prefix, Geometry geometry, int fromIndex, int toIndex)
     {
         System.out.print(prefix);
         for (int i = fromIndex; i < toIndex; i++)
         {
-            System.out.print(String.format(Locale.US, " %8.8f,%8.3f   ", ls.getCoordinates()[i].x, ls.getCoordinates()[i].y));
+            System.out.print(String.format(Locale.US, " %8.8f,%8.3f   ", geometry.getCoordinates()[i].x, geometry.getCoordinates()[i].y));
         }
         System.out.println("");
     }
@@ -209,13 +216,13 @@ public abstract class CrossSectionElement implements LocatableInterface
      */
     private LineString offsetLineString(final LineString line, final double offset)
     {
-        printCoordinates("      Line:", line, 0, line.getNumPoints());
-        System.out.println("  Offset: " + offset);
+        //printCoordinates("      Line:", line, 0, line.getNumPoints());
+        //System.out.println("  Offset: " + offset);
         // create the buffer around the line
         double offsetPlus = Math.abs(offset);
         boolean right = offset < 0.0;
         Geometry bufferLine = line.buffer(offsetPlus, 8, BufferParameters.CAP_FLAT);
-        printCoordinates("bufferLine:", bufferLine, 0, bufferLine.getNumPoints());
+        //printCoordinates("bufferLine:", bufferLine, 0, bufferLine.getNumPoints());
         Coordinate[] bufferCoords = bufferLine.getCoordinates();
         // intersect with perpendicular lines at the start and end
         Coordinate[] lineCoords = line.getCoordinates();
@@ -285,7 +292,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate[] cc = new Coordinate[cList.size()];
         cs = new CoordinateArraySequence(cList.toArray(cc));
         LineString ls = new LineString(cs, factory);
-        printCoordinates("Result CSE: ", ls, 0, ls.getNumPoints());
+        //printCoordinates("Result CSE: ", ls, 0, ls.getNumPoints());
         return ls;
     }
 
