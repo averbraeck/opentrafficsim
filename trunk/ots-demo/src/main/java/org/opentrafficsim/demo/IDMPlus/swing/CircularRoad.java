@@ -103,6 +103,7 @@ public class CircularRoad extends DSOLApplication
 
         for (int laneIndex = 0; laneIndex <= 1; laneIndex++)
         {
+            final String laneName = String.format(" lane %d", laneIndex + 1);
             cp =
                     new DensityContourPlot("DensityPlot " + model.carFollowingModel.getLongName() + " lane "
                             + laneIndex, model.getMinimumDistance(), model.lanes[laneIndex].getLength());
@@ -112,29 +113,28 @@ public class CircularRoad extends DSOLApplication
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 0);
 
             cp =
-                    new SpeedContourPlot("SpeedPlot " + model.carFollowingModel.getLongName() + " lane " + laneIndex,
+                    new SpeedContourPlot("SpeedPlot " + model.carFollowingModel.getLongName() + laneName,
                             model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Speed Contour Graph");
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 0);
 
             cp =
-                    new FlowContourPlot("FlowPlot " + model.carFollowingModel.getLongName() + " lane " + laneIndex,
+                    new FlowContourPlot("FlowPlot " + model.carFollowingModel.getLongName() + laneName,
                             model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("FLow Contour Graph");
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 1);
 
             cp =
-                    new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModel.getLongName() + " lane "
-                            + laneIndex, model.getMinimumDistance(), model.lanes[laneIndex].getLength());
+                    new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModel.getLongName() + laneName,
+                            model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Acceleration Contour Graph");
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 1);
 
             TrajectoryPlot trajectoryPlot =
-                    new TrajectoryPlot(
-                            "TrajectoryPlot " + model.carFollowingModel.getLongName() + " lane " + laneIndex,
+                    new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName() + laneName,
                             new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
                             model.lanes[laneIndex].getLength());
             trajectoryPlot.setTitle("Trajectories");
@@ -142,8 +142,7 @@ public class CircularRoad extends DSOLApplication
             model.getTrajectoryPlots().get(laneIndex).add(trajectoryPlot);
 
             trajectoryPlot =
-                    new TrajectoryPlot(
-                            "TrajectoryPlot " + model.carFollowingModel.getLongName() + " lane " + laneIndex,
+                    new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName() + laneName,
                             new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
                             model.lanes[laneIndex].getLength());
             trajectoryPlot.setTitle("Trajectories");
@@ -242,7 +241,7 @@ class RoadSimulationModel implements OTSModelInterface
                                     TimeUnit.SECOND), 1d);
             this.laneChangeModel = new Egoistic();
             // Put the (not very evenly spaced) cars on the track
-            double headway = 50;
+            double headway = 40;
             for (int laneIndex = 0; laneIndex < this.lanes.length; laneIndex++)
             {
                 double trackLength = this.lanes[laneIndex].getLength().getSI();
@@ -257,7 +256,7 @@ class RoadSimulationModel implements OTSModelInterface
                 }
             }
             // Schedule regular updates of the graph
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(9.999, TimeUnit.SECOND), this, this,
                     "drawGraphs", null);
             checkOrdering(RoadSimulationModel.this.cars.get(0));
             checkOrdering(RoadSimulationModel.this.cars.get(1));
@@ -308,7 +307,7 @@ class RoadSimulationModel implements OTSModelInterface
         try
         {
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
-                    .getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
+                    .getSI() + 10, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
         catch (RemoteException exception)
         {
@@ -329,7 +328,7 @@ class RoadSimulationModel implements OTSModelInterface
     protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition, int laneIndex,
             GTUType<String> gtuType) throws NamingException
     {
-        //System.out.println("GenerateCar " + (this.carsCreated + 1) + " initialPosition is " + initialPosition);
+        // System.out.println("GenerateCar " + (this.carsCreated + 1) + " initialPosition is " + initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lanes[laneIndex], initialPosition);
@@ -340,8 +339,8 @@ class RoadSimulationModel implements OTSModelInterface
                             .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.cars.get(laneIndex).add(car);
             new CarAnimation(car, this.simulator);
-            //System.out.print(car + ": ");
-            //System.out.println(car.getLocation());
+            // System.out.print(car + ": ");
+            // System.out.println(car.getLocation());
         }
         catch (RemoteException exception)
         {
@@ -469,21 +468,21 @@ class RoadSimulationModel implements OTSModelInterface
                 System.out.println("Lane length is " + lane.getLength() + " this is " + this + " T is "
                         + RoadSimulationModel.this.simulator.getSimulatorTime().get());
             }
-            */
+             */
             LaneChangeModel.LaneChangeModelResult lcmr =
                     RoadSimulationModel.this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic,
                             rightLaneTraffic, leftLaneTraffic, RoadSimulationModel.this.speedLimit,
                             new DoubleScalar.Rel<AccelerationUnit>(0.3, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<AccelerationUnit>(0.1, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
-            //System.out.println("lane change result of " + this + ": " + lcmr);
+            // System.out.println("lane change result of " + this + ": " + lcmr);
             if (lcmr.getLaneChange() != null)
             {
                 // Remember at what ratio on the old lane the vehicle was at the PREVIOUS time step
                 Map<Lane, Rel<LengthUnit>> longitudinalPositions = getLongitudinalPositions();
                 DoubleScalar.Rel<LengthUnit> oldPosition = longitudinalPositions.get(lane);
                 double oldRatio = oldPosition.getSI() / lane.getLength().getSI();
-               // Remove vehicle from it's current lane
+                // Remove vehicle from it's current lane
                 RoadSimulationModel.this.cars.get(laneIndex).remove(this);
                 // Figure out where to insert it in the target lane
                 laneIndex += lcmr.getLaneChange().equals(LateralDirectionality.LEFT) ? -1 : +1;
@@ -491,14 +490,14 @@ class RoadSimulationModel implements OTSModelInterface
                 lane = RoadSimulationModel.this.lanes[laneIndex];
                 int pivot = pivot(relativePosition, carsInLane);
                 // Insert vehicle
-                //System.out.println("Inserting car " + this.getId() + " at position " + pivot);
+                // System.out.println("Inserting car " + this.getId() + " at position " + pivot);
                 carsInLane.add(pivot, this);
                 longitudinalPositions.clear();
                 // Put the vehicle in the new lane at the ratio that it was at the PREVIOUS time step
                 // The reason for this is that the vehicle is moved forward in setState below and setState requires
                 // that the location has not yet been updated.
-                longitudinalPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(oldRatio
-                        * lane.getLength().getSI(), LengthUnit.METER));
+                longitudinalPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(oldRatio * lane.getLength().getSI(),
+                        LengthUnit.METER));
                 checkOrdering(carsInLane);
             }
             setState(lcmr.getGfmr());
@@ -506,12 +505,12 @@ class RoadSimulationModel implements OTSModelInterface
             checkOrdering(RoadSimulationModel.this.cars.get(1));
             // Add the movement of this Car to the contour plots
             addToContourPlots(this, laneIndex);
-            //System.out.println("Moved " + this);
+            // System.out.println("Moved " + this);
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
                     null);
-            //printList(0);
-            //printList(1);
+            // printList(0);
+            // printList(1);
         }
     }
 
@@ -556,7 +555,8 @@ class RoadSimulationModel implements OTSModelInterface
                     // It is wrong that we can modify it, but for now we'll make use of that mistake...
                     Map<Lane, Rel<LengthUnit>> relativePositions = car.getLongitudinalPositions();
                     double relativePosition = relativePositions.get(lane).getSI() / lane.getLength().getSI();
-                    //System.out.println("Wrapping car " + car.getId() + " in lane " + laneIndex + " back to position 0");
+                    // System.out.println("Wrapping car " + car.getId() + " in lane " + laneIndex +
+                    // " back to position 0");
                     relativePositions.clear();
                     relativePosition -= 1;
                     relativePositions.put(lane, new DoubleScalar.Rel<LengthUnit>(relativePosition, LengthUnit.METER));
@@ -599,7 +599,7 @@ class RoadSimulationModel implements OTSModelInterface
                     break;
                 }
             }
-            //System.out.println("pivot is " + result + " carsInLane.size is " + carsInLane.size());
+            // System.out.println("pivot is " + result + " carsInLane.size is " + carsInLane.size());
             return result;
         }
         catch (RemoteException exception)
