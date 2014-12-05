@@ -187,7 +187,7 @@ public class IDM implements GTUFollowingModel
                                         logWeightedAccelerationTimes2.immutable()))).immutable();
         if (right.getSI() < 0)
         {
-            System.out.println("Fixing negative right");
+            //System.out.println("Fixing negative right");
             right = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         }
         DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus(this.s0, right).immutable();
@@ -203,7 +203,7 @@ public class IDM implements GTUFollowingModel
         DoubleScalar.Abs<AccelerationUnit> newAcceleration = DoubleScalar.plus(aFree, aInteraction).immutable();
         if (newAcceleration.getSI() * this.stepSize.getSI() + follower.getLongitudinalVelocity().getSI() < 0)
         {
-            System.out.println("Limiting deceleration to prevent moving backwards");
+            //System.out.println("Limiting deceleration to prevent moving backwards");
             newAcceleration =
                     new DoubleScalar.Abs<AccelerationUnit>(-follower.getLongitudinalVelocity().getSI()
                             / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
