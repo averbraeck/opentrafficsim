@@ -374,6 +374,7 @@ public class LaneChangeGraph extends JFrame
 
 }
 
+/** */
 class ChartData implements XYDataset
 {
 
