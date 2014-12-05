@@ -21,9 +21,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.event.PlotChangeEvent;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
+import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
@@ -139,7 +142,7 @@ public class LaneChangeGraph extends JFrame
             {
                 DoubleScalar.Abs<SpeedUnit> speed =
                         new DoubleScalar.Abs<SpeedUnit>(standardSpeeds[index], SpeedUnit.KM_PER_HOUR);
-                System.out.println("speed " + speed);
+                //System.out.println("speed " + speed);
                 double startSpeedDifference = -30;// standardSpeeds[index];
                 double endSpeedDifference = startSpeedDifference + 60;// 150;
                 ChartData data = (ChartData) lcs.charts[row][index].getChart().getXYPlot().getDataset();
@@ -188,6 +191,8 @@ public class LaneChangeGraph extends JFrame
                     {
                         data.addXYPair(endLeftKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
                     }
+                    Plot plot = lcs.charts[row][index].getChart().getPlot();
+                    plot.notifyListeners(new PlotChangeEvent(plot));
                 }
             }
         }
@@ -281,7 +286,7 @@ public class LaneChangeGraph extends JFrame
         }
         else
         {
-            System.out.println("Bisection failed");
+            //System.out.println("Bisection failed");
             computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, low, lanes[1], speedDifference,
                     mergeRight);
         }
