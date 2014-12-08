@@ -39,36 +39,35 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * Common code for a contour plot. <br>
  * The data collection code for acceleration assumes constant acceleration during the evaluation period of the GTU.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset
+public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart
 {
     /** */
     private static final long serialVersionUID = 20140716L;
 
-    /** The ChartPanel for this ContourPlot. */
-    private final ChartPanel chartPanel;
+    /** Caption of the graph. */
+    private final String caption;
 
-    /**
-     * @return chartPanel
-     */
-    public final ChartPanel getChartPanel()
-    {
-        return this.chartPanel;
-    }
-
-    /** Area to show status information. */
-    private final JLabel statusLabel;
+    /** Color scale for the graph. */
+    final ContinuousColorPaintScale paintScale;
 
     /** Definition of the X-axis. */
     private final Axis xAxis;
 
     /** Definition of the Y-axis. */
-    private final Axis yAxis;
+    final Axis yAxis;
+
+    /** Difference of successive values in the legend. */
+    private final double legendStep;
+
+    /** Format string used to create the captions in the legend. */
+    private final String legendFormat;
 
     /** Time granularity values. */
     protected static final double[] STANDARDTIMEGRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
@@ -106,11 +105,84 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             final double yellowValue, final double greenValue, final String valueFormat, final String legendFormat,
             final double legendStep)
     {
+        this.caption = caption;
         this.xAxis = xAxis;
         this.yAxis = yAxis;
+        this.legendStep = legendStep;
+        this.legendFormat = legendFormat;
         extendXRange(xAxis.getMaximumValue());
         double[] boundaries = {redValue, yellowValue, greenValue};
-        this.chartPanel = new ChartPanel(createChart(caption, valueFormat, this, boundaries, legendFormat, legendStep));
+        final Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
+        this.paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
+        createChart(this);
+        reGraph();
+    }
+
+    /**
+     * Create a JMenu to let the user set the granularity of the XYBlockChart.
+     * @param caption String; caption for the new JMenu
+     * @param format String; format string for the values in the items under the new JMenu
+     * @param commandPrefix String; prefix for the actionCommand of the items under the new JMenu
+     * @param values double[]; array of values to be formatted using the format strings to yield the items under the new
+     *            JMenu
+     * @param currentValue double; the currently selected value (used to put the bullet on the correct item)
+     * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
+     */
+    private JMenu buildMenu(final String caption, final String format, final String commandPrefix,
+            final double[] values, final double currentValue)
+    {
+        final JMenu result = new JMenu(caption);
+        // Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?
+        final ButtonGroup group = new ButtonGroup();
+        for (double value : values)
+        {
+            final JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, value));
+            item.setSelected(value == currentValue);
+            item.setActionCommand(commandPrefix + String.format(Locale.US, " %f", value));
+            item.addActionListener(this);
+            result.add(item);
+            group.add(item);
+        }
+        return result;
+    }
+
+    /**
+     * Create a XYBlockChart.
+     * @return JFreeChart; the new XYBlockChart
+     */
+    private JFreeChart createChart(final JFrame container)
+    {
+        final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
+        container.add(statusLabel, BorderLayout.SOUTH);
+        final NumberAxis xAxis1 = new NumberAxis("\u2192 " + "time [s]");
+        xAxis1.setLowerMargin(0.0);
+        xAxis1.setUpperMargin(0.0);
+        final NumberAxis yAxis1 = new NumberAxis("\u2192 " + "Distance [m]");
+        yAxis1.setAutoRangeIncludesZero(false);
+        yAxis1.setLowerMargin(0.0);
+        yAxis1.setUpperMargin(0.0);
+        yAxis1.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        XYBlockRenderer renderer = new XYBlockRenderer();
+        renderer.setPaintScale(this.paintScale);
+        final XYPlot plot = new XYPlot(this, xAxis1, yAxis1, renderer);
+        final LegendItemCollection legend = new LegendItemCollection();
+        for (int i = 0;; i++)
+        {
+            double value = this.paintScale.getLowerBound() + i * this.legendStep;
+            if (value > this.paintScale.getUpperBound())
+            {
+                break;
+            }
+            legend.add(new LegendItem(String.format(this.legendFormat, value), this.paintScale.getPaint(value)));
+        }
+        legend.add(new LegendItem("No data", Color.BLACK));
+        plot.setFixedLegendItems(legend);
+        plot.setBackgroundPaint(Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white);
+        plot.setRangeGridlinePaint(Color.white);
+        final JFreeChart chart = new JFreeChart(this.caption, plot);
+        chart.setBackgroundPaint(Color.white);
+        final ChartPanel cp = new ChartPanel(chart);
         final PointerHandler ph = new PointerHandler()
         {
             /** {@inheritDoc} */
@@ -119,10 +191,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             {
                 if (Double.isNaN(domainValue))
                 {
-                    setStatusText(" ");
+                    statusLabel.setText(" ");
                     return;
                 }
-                XYPlot plot = (XYPlot) getChartPanel().getChart().getPlot();
+                //XYPlot plot = (XYPlot) getChartPanel().getChart().getPlot();
                 XYZDataset dataset = (XYZDataset) plot.getDataset();
                 String value = "";
                 double roundedTime = domainValue;
@@ -154,104 +226,24 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                                     .getFormat();
                     value = String.format(format, valueUnderMouse);
                 }
-                setStatusText(String.format("time %.0fs, distance %.0fm, %s", roundedTime, roundedDistance, value));
+                statusLabel.setText(String
+                        .format("time %.0fs, distance %.0fm, %s", roundedTime, roundedDistance, value));
             }
 
         };
-        this.chartPanel.addMouseMotionListener(ph);
-        this.chartPanel.addMouseListener(ph);
-        this.chartPanel.setMouseWheelEnabled(true);
-        add(this.chartPanel, BorderLayout.CENTER);
-        this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
-        add(this.statusLabel, BorderLayout.SOUTH);
-        final JPopupMenu popupMenu = this.chartPanel.getPopupMenu();
-        popupMenu.insert(buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", yAxis.getGranularities(),
-                yAxis.getCurrentGranularity()), 0);
-        popupMenu.insert(buildMenu("Time granularity", "%.0f s", "setTimeGranularity", xAxis.getGranularities(), xAxis
-                .getCurrentGranularity()), 1);
-        reGraph();
-    }
-
-    /**
-     * Update the status text.
-     * @param newText String; the new text to show
-     */
-    public final void setStatusText(final String newText)
-    {
-        this.statusLabel.setText(newText);
-    }
-
-    /**
-     * Create a JMenu to let the user set the granularity of the XYBlockChart.
-     * @param caption String; caption for the new JMenu
-     * @param format String; format string for the values in the items under the new JMenu
-     * @param commandPrefix String; prefix for the actionCommand of the items under the new JMenu
-     * @param values double[]; array of values to be formatted using the format strings to yield the items under the new JMenu
-     * @param currentValue double; the currently selected value (used to put the bullet on the correct item)
-     * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
-     */
-    private JMenu buildMenu(final String caption, final String format, final String commandPrefix, final double[] values,
-            final double currentValue)
-    {
-        final JMenu result = new JMenu(caption);
-        // Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?
-        final ButtonGroup group = new ButtonGroup();
-        for (double value : values)
-        {
-            final JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, value));
-            item.setSelected(value == currentValue);
-            item.setActionCommand(commandPrefix + String.format(Locale.US, " %f", value));
-            item.addActionListener(this);
-            result.add(item);
-            group.add(item);
-        }
-        return result;
-    }
-
-    /**
-     * Create a XYBlockChart.
-     * @param caption String; text to show above the chart
-     * @param valueFormat String; format string used to render the value under the mouse in the status bar
-     * @param dataset XYZDataset with the values to render
-     * @param boundaries double[]; array of three boundary values corresponding to Red, Yellow and Green
-     * @param legendFormat String; the format string for captions in the legend
-     * @param legendStep value difference for successive colors in the legend. The first legend value displayed is equal to the
-     *            lowest value in boundaries.
-     * @return JFreeChart; the new XYBlockChart
-     */
-    private static JFreeChart createChart(final String caption, final String valueFormat, final XYZDataset dataset,
-            final double[] boundaries, final String legendFormat, final double legendStep)
-    {
-        final NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
-        xAxis.setLowerMargin(0.0);
-        xAxis.setUpperMargin(0.0);
-        final NumberAxis yAxis = new NumberAxis("\u2192 " + "Distance [m]");
-        yAxis.setAutoRangeIncludesZero(false);
-        yAxis.setLowerMargin(0.0);
-        yAxis.setUpperMargin(0.0);
-        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        XYBlockRenderer renderer = new XYBlockRenderer();
-        final Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
-        final ContinuousColorPaintScale paintScale = new ContinuousColorPaintScale(valueFormat, boundaries, colorValues);
-        renderer.setPaintScale(paintScale);
-        final XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
-        final LegendItemCollection legend = new LegendItemCollection();
-        for (int i = 0;; i++)
-        {
-            double value = paintScale.getLowerBound() + i * legendStep;
-            if (value > paintScale.getUpperBound())
-            {
-                break;
-            }
-            legend.add(new LegendItem(String.format(legendFormat, value), paintScale.getPaint(value)));
-        }
-        legend.add(new LegendItem("No data", Color.BLACK));
-        plot.setFixedLegendItems(legend);
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        final JFreeChart chart = new JFreeChart(caption, plot);
-        chart.setBackgroundPaint(Color.white);
+        cp.addMouseMotionListener(ph);
+        cp.addMouseListener(ph);
+        container.add(cp, BorderLayout.CENTER);
+        cp.setMouseWheelEnabled(true);
+        JPopupMenu popupMenu = cp.getPopupMenu();
+        popupMenu.add(new JPopupMenu.Separator());
+        popupMenu.add(StandAloneChartWindow.createMenuItem(this));
+        popupMenu.insert(
+                buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", yAxis.getGranularities(),
+                        yAxis.getCurrentGranularity()), 0);
+        popupMenu.insert(
+                buildMenu("Time granularity", "%.0f s", "setTimeGranularity", xAxis.getGranularities(),
+                        xAxis.getCurrentGranularity()), 1);
         return chart;
     }
 
@@ -301,12 +293,19 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     public final void reGraph()
     {
+        for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        {
+            if (dcl instanceof XYPlot)
+            {
+                final XYPlot plot = (XYPlot) dcl;
+                plot.notifyListeners(new PlotChangeEvent(plot));
+                final XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();
+                blockRenderer.setBlockHeight(this.getYAxis().getCurrentGranularity());
+                blockRenderer.setBlockWidth(this.getXAxis().getCurrentGranularity());
+                //configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
+            }
+        }
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
-        final XYPlot plot = this.chartPanel.getChart().getXYPlot();
-        plot.notifyListeners(new PlotChangeEvent(plot));
-        final XYBlockRenderer blockRenderer = (XYBlockRenderer) plot.getRenderer();
-        blockRenderer.setBlockHeight(this.getYAxis().getCurrentGranularity());
-        blockRenderer.setBlockWidth(this.getXAxis().getCurrentGranularity());
     }
 
     /**
@@ -333,7 +332,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** Cached result of yAxisBins. */
     int cachedYAxisBins = -1;
-    
+
     /**
      * Retrieve the number of cells to use along the distance axis.
      * @return Integer; the number of cells to use along the distance axis
@@ -379,7 +378,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** Cached result of xAxisBins. */
     int cachedXAxisBins = -1;
-    
+
     /**
      * Retrieve the number of cells to use along the time axis.
      * @return Integer; the number of cells to use along the time axis
@@ -395,7 +394,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** Cached result of getItemCount. */
     int cachedItemCount = -1;
-    
+
     /** {@inheritDoc} */
     @Override
     public final int getItemCount(final int series)
@@ -495,6 +494,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     {
         this.cachedItemCount = this.cachedXAxisBins = this.cachedYAxisBins = -1;
     }
+
     /**
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled (should be a GTU)
@@ -521,10 +521,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
          */
         // The "relative" values are "counting" distance or time in the minimum bin size unit
         final double relativeFromDistance =
-                (car.positionOfFront(fromTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue().getSI())
+                (car.positionOfFront(fromTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue()
+                        .getSI())
                         / this.getYAxis().getGranularities()[0];
         final double relativeToDistance =
-                (car.positionOfFront(toTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue().getSI())
+                (car.positionOfFront(toTime).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue()
+                        .getSI())
                         / this.getYAxis().getGranularities()[0];
         double relativeFromTime =
                 (fromTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
@@ -554,14 +556,14 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             double binDistanceStart =
                     (car.positionOfFront(
                             new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.getXAxis().getGranularities()[0],
-                                    TimeUnit.SECOND)).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue()
-                            .getSI())
+                                    TimeUnit.SECOND)).getLongitudinalPosition().getSI() - this.getYAxis()
+                            .getMinimumValue().getSI())
                             / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
                     (car.positionOfFront(
                             new DoubleScalar.Abs<TimeUnit>(binEndTime * this.getXAxis().getGranularities()[0],
-                                    TimeUnit.SECOND)).getLongitudinalPosition().getSI() - this.getYAxis().getMinimumValue()
-                            .getSI())
+                                    TimeUnit.SECOND)).getLongitudinalPosition().getSI() - this.getYAxis()
+                            .getMinimumValue().getSI())
                             / this.getYAxis().getGranularities()[0];
 
             // Compute the time in each distanceBin
@@ -630,7 +632,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         final int distanceBinGroup = yAxisBin(item);
         // System.out.println(String.format("getZValue(s=%d, i=%d) -> tbg=%d, dbg=%d", series, item, timeBinGroup,
         // distanceBinGroup));
-        final int timeGroupSize = (int) (this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
+        final int timeGroupSize =
+                (int) (this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
         final int firstTimeBin = timeBinGroup * timeGroupSize;
         final int distanceGroupSize =
                 (int) (this.getYAxis().getCurrentGranularity() / this.getYAxis().getGranularities()[0]);
@@ -666,6 +669,19 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     public final Axis getYAxis()
     {
         return this.yAxis;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public JFrame addViewer()
+    {
+        JFrame result = new JFrame(this.caption);
+        result.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        JFreeChart newChart = createChart(result);
+        newChart.setTitle((String)null); 
+        addChangeListener(newChart.getPlot());
+        reGraph();
+        return result;
     }
 
 }
