@@ -268,11 +268,11 @@ class RoadSimulationModel implements OTSModelInterface
     }
 
     /**
-     * Add one movement step of one Car to all contour plots.
+     * Add one movement step of one Car to all plots.
      * @param car Car
      * @throws RemoteException on communications failure
      */
-    protected final void addToContourPlots(final Car<?> car, int lane) throws RemoteException
+    protected final void addToPlots(final Car<?> car, int lane) throws RemoteException
     {
         for (ContourPlot contourPlot : this.contourPlots.get(lane))
         {
@@ -448,27 +448,12 @@ class RoadSimulationModel implements OTSModelInterface
             {
                 throw new Error("Cannot find lane of vehicle " + this);
             }
-            // FIXME: wrong: should get the longitudinal position at THIS time.
             DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = positionOfFront(lane, when);
             double relativePosition = longitudinalPosition.getSI() / lane.getLength().getSI();
             Collection<AbstractLaneBasedGTU<?>> sameLaneTraffic = carsInSpecifiedLane(laneIndex);
             Collection<AbstractLaneBasedGTU<?>> leftLaneTraffic = carsInSpecifiedLane(laneIndex - 1);
             Collection<AbstractLaneBasedGTU<?>> rightLaneTraffic = carsInSpecifiedLane(laneIndex + 1);
-            /*-
-            if (getId() == 12)
-            {
-                if (RoadSimulationModel.this.simulator.getSimulatorTime().get().getSI() == 142.5)
-                {
-                    System.out.println("let op");
-                }
-                System.out.println(" LeftLaneTraffic: " + leftLaneTraffic);
-                System.out.println(" SameLaneTraffic: " + sameLaneTraffic);
-                System.out.println("RightLaneTraffic: " + rightLaneTraffic);
-                System.out.println("Lane length is " + lane.getLength() + " this is " + this + " T is "
-                        + RoadSimulationModel.this.simulator.getSimulatorTime().get());
-            }
-             */
             LaneChangeModel.LaneChangeModelResult lcmr =
                     RoadSimulationModel.this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic,
                             rightLaneTraffic, leftLaneTraffic, RoadSimulationModel.this.speedLimit,
@@ -504,7 +489,7 @@ class RoadSimulationModel implements OTSModelInterface
             checkOrdering(RoadSimulationModel.this.cars.get(0));
             checkOrdering(RoadSimulationModel.this.cars.get(1));
             // Add the movement of this Car to the contour plots
-            addToContourPlots(this, laneIndex);
+            addToPlots(this, laneIndex);
             // System.out.println("Moved " + this);
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
@@ -563,6 +548,14 @@ class RoadSimulationModel implements OTSModelInterface
                     carsInLane.remove(car);
                     carsInLane.add(0, car);
                     checkOrdering(carsInLane);
+                    try
+                    {
+                        addToPlots(car, laneIndex);
+                    }
+                    catch (RemoteException exception)
+                    {
+                        exception.printStackTrace();
+                    }
                 }
                 else
                 {
