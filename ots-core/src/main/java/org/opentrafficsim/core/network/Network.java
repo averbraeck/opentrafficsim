@@ -220,7 +220,7 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
      * @param node
      * @return boolean
      */
-    public final boolean isInNetworkLevel(AbstractNode<?, ?> node)
+    public final boolean isInNetworkLevel(final AbstractNode<?, ?> node)
     {
         if (this.nodeSet.contains(node))
         {

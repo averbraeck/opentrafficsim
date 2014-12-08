@@ -52,12 +52,11 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
     }
 
     /** {@inheritDoc} */
-    public String toString()
+    public final String toString()
     {
         try
         {
-            return String.format("Car %s rear:%s front:%s", getId().toString(), positionOfRear(),
-                    positionOfFront());
+            return String.format("Car %s rear:%s front:%s", getId(), positionOfRear(), positionOfFront());
         }
         catch (RemoteException exception)
         {

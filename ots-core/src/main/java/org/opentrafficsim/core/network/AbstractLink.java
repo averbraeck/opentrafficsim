@@ -163,7 +163,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @param hierarchy set hierarchy
      */
-    public void setHierarchy(int hierarchy)
+    public void setHierarchy(final int hierarchy)
     {
         this.hierarchy = hierarchy;
     }
