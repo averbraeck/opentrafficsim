@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
@@ -19,6 +20,7 @@ import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.general.DatasetChangeEvent;
@@ -39,7 +41,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -96,17 +98,14 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         this.maximumTime = maximumTime;
     }
 
-    /** The ChartPanel for this TrajectoryPlot. */
-    private final JFreeChart chartPanel;
-
-    /** Area to show status information. */
-    private final JLabel statusLabel;
-
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();
 
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
+
+    /** Name of the chart. */
+    private final String caption;
 
     /**
      * Create a new TrajectoryPlot.
@@ -122,9 +121,24 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         this.sampleInterval = sampleInterval;
         this.minimumPosition = minimumPosition;
         this.maximumPosition = maximumPosition;
+        this.caption = caption;
+        createChart(this);
+        this.reGraph(); // fixes the domain axis
+    }
+
+    /**
+     * Create the visualization.
+     * @param name
+     * @return JFreeChart; the visualization
+     */
+    private JFreeChart createChart(final JFrame container)
+    {
+        final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
+        container.add(statusLabel, BorderLayout.SOUTH);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
-        this.chartPanel =
-                ChartFactory.createXYLineChart(caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+        final JFreeChart result =
+                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
+                        false);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
@@ -133,15 +147,15 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
         yAxis.setLowerMargin(0.0);
         yAxis.setUpperMargin(0.0);
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        this.chartPanel.getXYPlot().setDomainAxis(xAxis);
-        this.chartPanel.getXYPlot().setRangeAxis(yAxis);
-        configureAxis(this.chartPanel.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition)
+        result.getXYPlot().setDomainAxis(xAxis);
+        result.getXYPlot().setRangeAxis(yAxis);
+        configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(this.maximumPosition, this.minimumPosition)
                 .getSI());
-        final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
+        final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
         renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
-        final ChartPanel cp = new ChartPanel(this.chartPanel);
+        final ChartPanel cp = new ChartPanel(result);
         cp.setMouseWheelEnabled(true);
         final PointerHandler ph = new PointerHandler()
         {
@@ -151,7 +165,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
             {
                 if (Double.isNaN(domainValue))
                 {
-                    setStatusText(" ");
+                    statusLabel.setText(" ");
                     return;
                 }
                 String value = "";
@@ -215,26 +229,18 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                 else
                     value = "";
                  */
-                setStatusText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue, value));
+                statusLabel.setText(String.format("t=%.0fs, distance=%.0fm%s", domainValue, rangeValue, value));
             }
         };
         cp.addMouseMotionListener(ph);
         cp.addMouseListener(ph);
-        this.add(cp, BorderLayout.CENTER);
-        this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
-        this.add(this.statusLabel, BorderLayout.SOUTH);
-        this.reGraph(); // fixes the domain axis
+        container.add(cp, BorderLayout.CENTER);
         // TODO ensure that shapes for all the data points don't get allocated.
-        // Currently many megabytes of memory become allocated for Ellipses.
-    }
-
-    /**
-     * Update the status text.
-     * @param newText String; the new text to show
-     */
-    public final void setStatusText(final String newText)
-    {
-        this.statusLabel.setText(newText);
+        // Currently JFreeChart allocates many megabytes of memory for Ellipses that are never drawn.
+        JPopupMenu popupMenu = cp.getPopupMenu();
+        popupMenu.add(new JPopupMenu.Separator());
+        popupMenu.add(StandAloneChartWindow.createMenuItem(this));
+        return result;
     }
 
     /**
@@ -242,7 +248,13 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
      */
     public final void reGraph()
     {
-        configureAxis(this.chartPanel.getXYPlot().getDomainAxis(), this.maximumTime.getSI());
+        for (DatasetChangeListener dcl : this.listenerList.getListeners(DatasetChangeListener.class))
+        {
+            if (dcl instanceof XYPlot)
+            {
+                configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
+            }
+        }
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
     }
 
@@ -316,6 +328,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     }
 
     /**
+     * Store trajectory data.
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved.
@@ -390,10 +403,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
                 if (position.getSI() < getMinimumPosition().getSI())
                 {
                     continue;
+                    // FIXME: we could create storage for a fractional sample at the start of the trajectory
                 }
                 if (position.getSI() > getMaximumPosition().getSI())
                 {
                     continue;
+                    // FIXME: we could add storage for a fractional sample at the end of the trajectory
                 }
                 if (this.positions.size() == 0)
                 {
@@ -546,6 +561,18 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset
     public final double getYValue(final int series, final int item)
     {
         return this.trajectories.get(series).getDistance(item);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public JFrame addViewer()
+    {
+        JFrame result = new JFrame(this.caption);
+        result.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        JFreeChart newChart = createChart(result);
+        newChart.setTitle((String)null); 
+        addChangeListener(newChart.getPlot());
+        return result;
     }
 
 }
