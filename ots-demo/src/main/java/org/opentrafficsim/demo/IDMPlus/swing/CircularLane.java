@@ -20,9 +20,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -33,7 +33,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.IDMPlus.swing.InternalContourPlotsModel.IDMCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.CarAnimation;
 import org.opentrafficsim.demo.geometry.LaneFactory;
@@ -241,11 +240,11 @@ class LaneSimulationModel implements OTSModelInterface
     }
 
     /**
-     * Add one movement step of one Car to all contour plots.
+     * Add one movement step of one Car to all plots.
      * @param car Car
      * @throws RemoteException on communications failure
      */
-    protected final void addToContourPlots(final Car<?> car) throws RemoteException
+    protected final void addToPlots(final Car<?> car) throws RemoteException
     {
         for (ContourPlot contourPlot : this.contourPlots)
         {
@@ -455,7 +454,7 @@ class LaneSimulationModel implements OTSModelInterface
                             LaneSimulationModel.this.speedLimit);
             setState(cfmr);
             // Add the movement of this Car to the contour plots
-            addToContourPlots(this);
+            addToPlots(this);
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
                     null);
