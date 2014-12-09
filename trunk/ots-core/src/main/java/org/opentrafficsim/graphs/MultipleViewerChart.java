@@ -16,5 +16,5 @@ public interface MultipleViewerChart
      * Create/add a viewer for the data of the graph.
      * @return JFrame; the JFrame that holds the visualization of the data
      */
-    public JFrame addViewer();
+    JFrame addViewer();
 }

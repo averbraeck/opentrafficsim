@@ -128,7 +128,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
 
     /**
      * Create the visualization.
-     * @param name
+     * @param container JFrame; the JFrame that will be filled with chart and the status label
      * @return JFreeChart; the visualization
      */
     private JFreeChart createChart(final JFrame container)
@@ -565,12 +565,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
 
     /** {@inheritDoc} */
     @Override
-    public JFrame addViewer()
+    public final JFrame addViewer()
     {
         JFrame result = new JFrame(this.caption);
         result.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JFreeChart newChart = createChart(result);
-        newChart.setTitle((String)null); 
+        newChart.setTitle((String) null); 
         addChangeListener(newChart.getPlot());
         return result;
     }

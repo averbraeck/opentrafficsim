@@ -47,8 +47,9 @@ public class Node<ID, P> extends AbstractNode<ID, P>
     private static final long serialVersionUID = 20141112L;
 
     /**
-     * @param id
-     * @param point
+     * Construct a new Node.
+     * @param id ID; the Id of the new Node
+     * @param point P; the location of the new Node
      */
     public Node(final ID id, final P point)
     {

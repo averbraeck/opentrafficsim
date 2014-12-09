@@ -120,7 +120,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /**
      * Create a JMenu to let the user set the granularity of the XYBlockChart.
-     * @param caption String; caption for the new JMenu
+     * @param menuName String; caption for the new JMenu
      * @param format String; format string for the values in the items under the new JMenu
      * @param commandPrefix String; prefix for the actionCommand of the items under the new JMenu
      * @param values double[]; array of values to be formatted using the format strings to yield the items under the new
@@ -128,10 +128,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param currentValue double; the currently selected value (used to put the bullet on the correct item)
      * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
      */
-    private JMenu buildMenu(final String caption, final String format, final String commandPrefix,
+    private JMenu buildMenu(final String menuName, final String format, final String commandPrefix,
             final double[] values, final double currentValue)
     {
-        final JMenu result = new JMenu(caption);
+        final JMenu result = new JMenu(menuName);
         // Enlighten me: Do the menu items store a reference to the ButtonGroup so it won't get garbage collected?
         final ButtonGroup group = new ButtonGroup();
         for (double value : values)
@@ -148,6 +148,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /**
      * Create a XYBlockChart.
+     * @param container JFrame; the JFrame that will be populated with the chart and the status label
      * @return JFreeChart; the new XYBlockChart
      */
     private JFreeChart createChart(final JFrame container)
@@ -343,7 +344,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             return this.cachedYAxisBins;
         }
-        return this.cachedYAxisBins = this.getYAxis().getAggregatedBinCount();
+        this.cachedYAxisBins = this.getYAxis().getAggregatedBinCount();
+        return this.cachedYAxisBins;
     }
 
     /**
@@ -389,7 +391,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             return this.cachedXAxisBins;
         }
-        return this.cachedXAxisBins = this.getXAxis().getAggregatedBinCount();
+        this.cachedXAxisBins = this.getXAxis().getAggregatedBinCount();
+        return this.cachedXAxisBins;
     }
 
     /** Cached result of getItemCount. */
@@ -403,7 +406,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             return this.cachedItemCount;
         }
-        return this.cachedItemCount = yAxisBins() * xAxisBins();
+        this.cachedItemCount = yAxisBins() * xAxisBins();
+        return this.cachedItemCount;
     }
 
     /** {@inheritDoc} */
@@ -492,7 +496,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     private void clearCachedValues()
     {
-        this.cachedItemCount = this.cachedXAxisBins = this.cachedYAxisBins = -1;
+        this.cachedItemCount = -1; 
+        this.cachedXAxisBins = -1; 
+        this.cachedYAxisBins = -1;
     }
 
     /**
@@ -673,11 +679,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** {@inheritDoc} */
     @Override
-    public JFrame addViewer()
+    public final JFrame addViewer()
     {
         JFrame result = new JFrame(this.caption);
         JFreeChart newChart = createChart(result);
-        newChart.setTitle((String)null); 
+        newChart.setTitle((String) null); 
         addChangeListener(newChart.getPlot());
         reGraph();
         return result;
