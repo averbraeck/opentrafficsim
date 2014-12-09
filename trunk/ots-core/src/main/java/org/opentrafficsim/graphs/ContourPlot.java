@@ -676,7 +676,6 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     public JFrame addViewer()
     {
         JFrame result = new JFrame(this.caption);
-        result.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JFreeChart newChart = createChart(result);
         newChart.setTitle((String)null); 
         addChangeListener(newChart.getPlot());
