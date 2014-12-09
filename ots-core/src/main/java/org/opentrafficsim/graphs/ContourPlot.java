@@ -58,7 +58,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     final ContinuousColorPaintScale paintScale;
 
     /** Definition of the X-axis. */
-    private final Axis xAxis;
+    final Axis xAxis;
 
     /** Definition of the Y-axis. */
     final Axis yAxis;
@@ -203,14 +203,14 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 for (int item = dataset.getItemCount(0); --item >= 0;)
                 {
                     double x = dataset.getXValue(0, item);
-                    if (x + xAxis.getCurrentGranularity() / 2 < domainValue
-                            || x - xAxis.getCurrentGranularity() / 2 >= domainValue)
+                    if (x + ContourPlot.this.xAxis.getCurrentGranularity() / 2 < domainValue
+                            || x - ContourPlot.this.xAxis.getCurrentGranularity() / 2 >= domainValue)
                     {
                         continue;
                     }
                     double y = dataset.getYValue(0, item);
-                    if (y + yAxis.getCurrentGranularity() / 2 < rangeValue
-                            || y - yAxis.getCurrentGranularity() / 2 >= rangeValue)
+                    if (y + ContourPlot.this.yAxis.getCurrentGranularity() / 2 < rangeValue
+                            || y - ContourPlot.this.yAxis.getCurrentGranularity() / 2 >= rangeValue)
                     {
                         continue;
                     }
@@ -240,11 +240,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         popupMenu.add(new JPopupMenu.Separator());
         popupMenu.add(StandAloneChartWindow.createMenuItem(this));
         popupMenu.insert(
-                buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", yAxis.getGranularities(),
-                        yAxis.getCurrentGranularity()), 0);
+                buildMenu("Distance granularity", "%.0f m", "setDistanceGranularity", this.yAxis.getGranularities(),
+                        this.yAxis.getCurrentGranularity()), 0);
         popupMenu.insert(
-                buildMenu("Time granularity", "%.0f s", "setTimeGranularity", xAxis.getGranularities(),
-                        xAxis.getCurrentGranularity()), 1);
+                buildMenu("Time granularity", "%.0f s", "setTimeGranularity", this.xAxis.getGranularities(),
+                        this.xAxis.getCurrentGranularity()), 1);
         return chart;
     }
 
