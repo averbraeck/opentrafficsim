@@ -46,7 +46,8 @@ public class SubNetwork<ID, L extends AbstractLink<?, ?>> extends Network
     private Set<L> links2Out = new HashSet<L>();
 
     /**
-     * @param id
+     * Construct a new SubNetwork.
+     * @param id ID; the Id of the new SubNetwork
      */
     public SubNetwork(final ID id)
     {

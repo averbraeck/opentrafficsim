@@ -17,8 +17,14 @@ import javax.swing.WindowConstants;
  * @version 8 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StandAloneChartWindow
+public final class StandAloneChartWindow
 {
+    /** This class shall never be instantiated. */
+    private StandAloneChartWindow()
+    {
+        // This class should not be instantiated
+    }
+
     /**
      * Create a menu item that, when clicked, creates a detached window for a JFreeChart plot.
      * @param data MultipleViewerChart; graph that is capable of being shown in several JFrames
@@ -29,10 +35,10 @@ public class StandAloneChartWindow
         JMenuItem result = new JMenuItem("Show in detached window");
         result.addActionListener(new ActionListener()
         {
-            final MultipleViewerChart additionalViewer = data;
+            private final MultipleViewerChart additionalViewer = data;
 
             @Override
-            public void actionPerformed(ActionEvent e)
+            public void actionPerformed(final ActionEvent e)
             {
                 JFrame window = this.additionalViewer.addViewer();
                 window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

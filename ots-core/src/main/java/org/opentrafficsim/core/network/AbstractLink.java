@@ -48,13 +48,13 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     private int hierarchy;
 
     /**
-     * Construction of a link.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param length link length in a length unit.
-     * @param capacity link capacity in vehicles per hour.
-     * @param hierarchy
+     * Construct a new link.
+     * @param id the link id
+     * @param startNode start node (directional)
+     * @param endNode end node (directional)
+     * @param length link length in a length unit
+     * @param capacity link capacity in vehicles per hour
+     * @param hierarchy int; the hierarchy of the new Link
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Abs<FrequencyUnit> capacity, final int hierarchy)
@@ -68,12 +68,12 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     }
 
     /**
-     * Construction of a link.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param length link length in a length unit.
-     * @param hierarchy
+     * Construct a a new link.
+     * @param id the link id
+     * @param startNode start node (directional)
+     * @param endNode end node (directional)
+     * @param length link length in a length unit
+     * @param hierarchy int; the hierarchie of the new Link
      */
     public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
             final int hierarchy)
@@ -155,7 +155,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @return hierarchy
      */
-    public int getHierarchy()
+    public final int getHierarchy()
     {
         return this.hierarchy;
     }
@@ -163,7 +163,7 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /**
      * @param hierarchy set hierarchy
      */
-    public void setHierarchy(final int hierarchy)
+    public final void setHierarchy(final int hierarchy)
     {
         this.hierarchy = hierarchy;
     }
