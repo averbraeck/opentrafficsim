@@ -16,6 +16,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.lanechanging.AbstractLaneChangeModel;
+import org.opentrafficsim.car.lanechanging.Altruistic;
 import org.opentrafficsim.car.lanechanging.Egoistic;
 import org.opentrafficsim.car.lanechanging.LaneChangeModel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -138,15 +139,7 @@ public class CircularRoad extends DSOLApplication
                             new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
                             model.lanes[laneIndex].getLength());
             trajectoryPlot.setTitle("Trajectories");
-            charts.setCell(trajectoryPlot.getContentPane(), 2 * laneIndex, 2);
-            model.getTrajectoryPlots().get(laneIndex).add(trajectoryPlot);
-
-            trajectoryPlot =
-                    new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName() + laneName,
-                            new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
-                            model.lanes[laneIndex].getLength());
-            trajectoryPlot.setTitle("Trajectories");
-            charts.setCell(trajectoryPlot.getContentPane(), 2 * laneIndex + 1, 2);
+            charts.setCell(trajectoryPlot.getContentPane(), 1 + laneIndex, 2);
             model.getTrajectoryPlots().get(laneIndex).add(trajectoryPlot);
         }
     }
@@ -240,6 +233,7 @@ class RoadSimulationModel implements OTSModelInterface
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
                                     TimeUnit.SECOND), 1d);
             this.laneChangeModel = new Egoistic();
+            this.laneChangeModel = new Altruistic();
             // Put the (not very evenly spaced) cars on the track
             double headway = 40;
             for (int laneIndex = 0; laneIndex < this.lanes.length; laneIndex++)
