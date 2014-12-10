@@ -58,20 +58,20 @@ public class Localization
             {
                 try
                 {
-                    System.out.println("Plan A failed to get resource bundle; trying plan B...");
-                    System.out.println("getString: bundleNamePrefix is \"" + this.bundleNamePrefix
-                            + "\", currentLocale is \"" + this.currentLocale + "\"");
                     this.resourceBundle =
                             ResourceBundle.getBundle("resources/" + this.bundleNamePrefix, this.currentLocale);
                 }
                 catch (MissingResourceException e2)
                 {
-                    System.out.println("Plan B failed as well...");
                     return '!' + key.substring(key.indexOf('.') + 1) + '!';
                 }
             }
         }
-
+        if (null == this.resourceBundle)
+        {
+            // Failed to find the resourceBundle (on a previous call to getString)
+            return '!' + key.substring(key.indexOf('.') + 1) + '!';
+        }
         try
         {
             return this.resourceBundle.getString(key);
