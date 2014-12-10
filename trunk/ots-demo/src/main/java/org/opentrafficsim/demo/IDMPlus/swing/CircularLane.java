@@ -132,14 +132,6 @@ public class CircularLane extends DSOLApplication
         trajectoryPlot.setTitle("Trajectories");
         charts.setCell(trajectoryPlot.getContentPane(), 2, 0);
         model.getTrajectoryPlots().add(trajectoryPlot);
-
-        trajectoryPlot =
-                new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName(),
-                        new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
-                        model.lane.getLength());
-        trajectoryPlot.setTitle("Trajectories");
-        charts.setCell(trajectoryPlot.getContentPane(), 2, 1);
-        model.getTrajectoryPlots().add(trajectoryPlot);
     }
 
 }
@@ -458,6 +450,7 @@ class LaneSimulationModel implements OTSModelInterface
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
                     null);
+            Math.ulp(0d);
         }
     }
 
