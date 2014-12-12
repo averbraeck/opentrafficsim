@@ -218,7 +218,6 @@ class RoadSimulationModel implements OTSModelInterface
             GTUType<String> gtuType = new GTUType<String>("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addPermeability(gtuType);
-            laneType.addPermeability(gtuType);
             this.lanes =
                     LaneFactory.makeMultiLane("Circular Link with " + laneCount + " lanes", startEnd, startEnd,
                             intermediateCoordinates, laneCount, laneType, this.simulator);
