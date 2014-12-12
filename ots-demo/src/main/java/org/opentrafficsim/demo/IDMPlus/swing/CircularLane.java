@@ -43,6 +43,7 @@ import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -88,6 +89,7 @@ public class CircularLane extends DSOLApplication
                         new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
                         TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model,
                         new Rectangle2D.Double(-1000, -1000, 1000, 1000)));
+        new ControlPanel(circularLane.simpleSimulator);
 
         // Make the tab with the contour plots
         TablePanel charts = new TablePanel(3, 2);
