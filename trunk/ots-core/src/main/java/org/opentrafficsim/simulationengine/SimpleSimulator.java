@@ -31,6 +31,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 public class SimpleSimulator
 {
+    /** Counter for replication. */
+    private int lastReplication = 0;
+
     /** The JPanel that contains the simulator controls, a status bar and a JTabbedPane with switchable sub panels. */
     private final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
 
@@ -52,8 +55,8 @@ public class SimpleSimulator
             SimRuntimeException
     {
         this.simulator = new OTSDEVSSimulator();
-        this.simulator.initialize(new OTSReplication("rep1", startTime, warmupPeriod, runLength, model),
-                ReplicationMode.TERMINATING);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod,
+                runLength, model), ReplicationMode.TERMINATING);
         this.panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
                         this.simulator);
@@ -75,8 +78,8 @@ public class SimpleSimulator
             throws RemoteException, SimRuntimeException
     {
         this.simulator = new OTSDEVSAnimator();
-        this.simulator.initialize(new OTSReplication("rep1", startTime, warmupPeriod, runLength, model),
-                ReplicationMode.TERMINATING);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod,
+                runLength, model), ReplicationMode.TERMINATING);
         this.panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
                         this.simulator);
