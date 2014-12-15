@@ -56,6 +56,7 @@ public class SubNetwork<ID, L extends AbstractLink<?, ?>> extends Network
 
     public final Set<L> getLinks2Out()
     {
+        // TODO should probably return a copy of the set
         return this.links2Out;
     }
 
