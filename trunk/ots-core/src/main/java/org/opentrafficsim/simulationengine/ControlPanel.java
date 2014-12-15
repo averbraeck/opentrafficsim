@@ -68,15 +68,16 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     /** The control buttons. */
     ArrayList<JButton> buttons = new ArrayList<JButton>();
-    
+
     /** Font used to display the clock and the stop time. */
     Font timeFont = new Font("SansSerif", Font.BOLD, 18);
-    
+
     /** The TimeEdit that lets the user set a time when the simulation will be stopped */
     final TimeEdit timeEdit;
 
     /** The currently registered stop at event */
     SimEvent<OTSSimTimeDouble> stopAtEvent = null;
+
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator SimpleSimulator; the simulator.
@@ -93,11 +94,12 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
         JPanel buttonPanel = (JPanel) controlPanel.getComponent(0);
         buttonPanel.removeAll();
-        buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", true));
-        buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime", true));
-        buttonPanel.add(makeButton("runButton", "/Play.png", "Run", true));
-        buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", false));
-        buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", false));
+        buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
+        buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
+                "Execute all events scheduled for the current time", true));
+        buttonPanel.add(makeButton("runButton", "/Play.png", "Run", "Run the simulation at maximum speed", true));
+        buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", "Pause the simulator", false));
+        buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
         this.timeEdit = new TimeEdit(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND));
@@ -110,15 +112,17 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * @param name String; name of the button
      * @param iconPath String; path to the resource
      * @param actionCommand String; the action command
+     * @param toolTipText String; the hint to show when the mouse hovers over the button
      * @param enabled boolean; true if the new button must initially be enable; false if it must initially be disabled
      * @return JButton
      */
-    private JButton makeButton(String name, String iconPath, String actionCommand, boolean enabled)
+    private JButton makeButton(String name, String iconPath, String actionCommand, String toolTipText, boolean enabled)
     {
         JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
+        result.setToolTipText(toolTipText);
         result.addActionListener(this);
         this.buttons.add(result);
         return result;
@@ -129,7 +133,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     public void actionPerformed(ActionEvent e)
     {
         String actionCommand = e.getActionCommand();
-        System.out.println("actionCommand: " + actionCommand);
+        // System.out.println("actionCommand: " + actionCommand);
         try
         {
             if (actionCommand.equals("Step"))
@@ -268,10 +272,10 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     @Override
     public void propertyChange(PropertyChangeEvent evt)
     {
-        System.out.println("PropertyChanged: " + evt);
+        // System.out.println("PropertyChanged: " + evt);
         if (null != this.stopAtEvent)
         {
-            this.simulator.cancelEvent(this.stopAtEvent);   // silently ignore false result
+            this.simulator.cancelEvent(this.stopAtEvent); // silently ignore false result
             this.stopAtEvent = null;
         }
         String newValue = (String) evt.getNewValue();
@@ -288,7 +292,10 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         }
         else
         {
-            this.stopAtEvent = new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND)) , SimEventInterface.NORMAL_PRIORITY, this, this, "autoPauseSimulator", null);
+            this.stopAtEvent =
+                    new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(stopTime,
+                            TimeUnit.SECOND)), SimEventInterface.NORMAL_PRIORITY, this, this, "autoPauseSimulator",
+                            null);
             try
             {
                 this.simulator.scheduleEvent(this.stopAtEvent);
@@ -298,9 +305,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 exception.printStackTrace();
             }
         }
-        
+
     }
-    
+
     /** JLabel that displays the simulation time. */
     class ClockPanel extends JLabel
     {
@@ -404,7 +411,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * Extension of a DefaultFormatter that uses a regular expression. <br />
      * Derived from <a
      * href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
-     * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a> <p>
+     * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
+     * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -416,29 +424,30 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     {
         /** */
         private static final long serialVersionUID = 20141212L;
-        
+
         /** The regular expression pattern */
         private Pattern pattern;
-        
+
         /**
          * Create a new RegexFormatter.
-         * @param pattern String; regular expression pattern that defines what
-         * this RexexFormatter will accept
+         * @param pattern String; regular expression pattern that defines what this RexexFormatter will accept
          * @throws PatternSyntaxException
          */
-        public RegexFormatter(String pattern) throws PatternSyntaxException {
+        public RegexFormatter(String pattern) throws PatternSyntaxException
+        {
             this.pattern = Pattern.compile(pattern);
         }
-        
+
         @Override
-        public Object stringToValue(String text) throws ParseException {
+        public Object stringToValue(String text) throws ParseException
+        {
             Matcher matcher = this.pattern.matcher(text);
             if (matcher.matches())
             {
-                //System.out.println("String \"" + text + "\" matches");
+                // System.out.println("String \"" + text + "\" matches");
                 return super.stringToValue(text);
             }
-            //System.out.println("String \"" + text + "\" does not match");
+            // System.out.println("String \"" + text + "\" does not match");
             throw new ParseException("Pattern did not match", 0);
         }
     }
