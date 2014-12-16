@@ -98,7 +98,13 @@ public class ShapeFileReader
                 String gemeente = (String) feature.getAttribute("GEMEENTEVM");
                 String gebied = (String) feature.getAttribute("GEBIEDSNAA");
                 String regio = (String) feature.getAttribute("REGIO");
-                double dhb = (double) feature.getAttribute("DHB");
+//                double dhb = (double) feature.getAttribute("DHB");
+
+/*                String gemeente = "empty";
+                String gebied = "empty";
+                String regio = "empty";*/
+                double dhb = (double) 0.0;
+
                 Node centroid = null;
                 if (centroids != null)
                 {
