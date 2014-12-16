@@ -1,12 +1,9 @@
 package org.opentrafficsim.simulationengine;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
@@ -155,9 +152,20 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                     this.simulator.stop();
                 }
                 double now = this.simulator.getSimulatorTime().get().getSI();
-                System.out.println("now is " + now);
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(now + Math.ulp(now), TimeUnit.SECOND),
-                        this, this, "autoPauseSimulator", null);
+                //System.out.println("now is " + now);
+                this.stopAtEvent =
+                        new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(now,
+                                TimeUnit.SECOND)), SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator",
+                                null);
+                try
+                {
+                    this.simulator.scheduleEvent(this.stopAtEvent);
+                }
+                catch (SimRuntimeException exception)
+                {
+                    this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
+                            + "while trying to schedule an autoPauseSimulator event at the current simulator time");
+                }
                 this.target.start();
             }
             if (actionCommand.equals("Pause"))
@@ -226,29 +234,32 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             this.simulator.stop();
             double currentTick = this.simulator.getSimulatorTime().get().getSI();
             double nextTick = this.simulator.getEventList().first().getAbsoluteExecutionTime().get().getSI();
-            System.out.println("currentTick is " + currentTick);
-            System.out.println("nextTick is " + nextTick);
-            if (nextTick - Math.ulp(nextTick) > currentTick)
+            //System.out.println("currentTick is " + currentTick);
+            //System.out.println("nextTick is " + nextTick);
+            if (nextTick > currentTick)
             {
                 // The clock is now just beyond where it was when the user requested the NextTime operation
                 // Insert another autoPauseSimulator event just before what is now the time of the next event
                 // and let the simulator time increment to that time
+                this.stopAtEvent =
+                        new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(nextTick,
+                                TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator",
+                                null);
+                //System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
-                    System.out.println("Re-Scheduling at " + (nextTick - Math.ulp(nextTick)));
-                    this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(nextTick - Math.ulp(nextTick),
-                            TimeUnit.SECOND), this, this, "autoPauseSimulator", null);
+                    this.simulator.scheduleEvent(this.stopAtEvent);
                     this.simulator.start();
                 }
-                catch (RemoteException | SimRuntimeException exception)
+                catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
-                            "Caught an exception while trying to step up to the next real event");
+                            "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
             else
             {
-                System.out.println("Not re-scheduling");
+                //System.out.println("Not re-scheduling");
                 try
                 {
                     SwingUtilities.invokeAndWait(new Runnable()
@@ -285,7 +296,6 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         int seconds = Integer.parseInt(fields[2]);
         int fraction = Integer.parseInt(fields[3]);
         double stopTime = hours * 3600 + minutes * 60 + seconds + fraction / 1000d;
-        stopTime -= Math.ulp(stopTime);
         if (stopTime < this.simulator.getSimulatorTime().get().getSI())
         {
             return;
@@ -294,15 +304,15 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         {
             this.stopAtEvent =
                     new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(stopTime,
-                            TimeUnit.SECOND)), SimEventInterface.NORMAL_PRIORITY, this, this, "autoPauseSimulator",
-                            null);
+                            TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
             try
             {
                 this.simulator.scheduleEvent(this.stopAtEvent);
             }
             catch (SimRuntimeException exception)
             {
-                exception.printStackTrace();
+                this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
+                        "Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
 
