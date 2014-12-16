@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
@@ -51,9 +52,21 @@ public class CellBehaviourFlow extends CellBehaviour
      * @param parametersFD contains a set of params
      * @param area that contains this behaviour
      */
-    public CellBehaviourFlow(final Area area, final ParametersFundamentalDiagram parametersFD)
+    public CellBehaviourFlow(final Area area, ParametersFundamentalDiagram parametersFD)
     {
+        if (parametersFD == null)
+        {
+            
+            ArrayList<Double> critic1 = new ArrayList<Double>();  
+            //TODO hard coded: should be adjusted!!!!!!!!!!!-
+            
+            critic1.add(1500.0);
+            parametersFD = new ParametersFundamentalDiagram(critic1, new DoubleScalar.Abs<SpeedUnit>(70.0, SpeedUnit.KM_PER_HOUR));
+            
+        }
+
         this.parametersFundamentalDiagram = parametersFD;
+
         this.maxCapacity =
                 parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }  
@@ -121,7 +134,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
      * @param maximumCapacity based on area information
-     * @param param
+     * @param param  kkk
      * @return carProduction
      */
     public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,

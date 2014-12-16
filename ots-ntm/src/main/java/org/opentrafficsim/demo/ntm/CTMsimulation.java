@@ -154,7 +154,7 @@ public class CTMsimulation
 
                                             }
 
-                                            DoubleScalar.Abs<FrequencyUnit> capacity = ctmLink.getCapacity();
+                                            // DoubleScalar.Abs<FrequencyUnit> capacity = ctmLink.getCapacity();
                                             // if the incoming capacity is limiting the flow....
 
                                             // .setFlowToNeighbour(flowToNeighbour);
@@ -174,7 +174,7 @@ public class CTMsimulation
                             }
                             else
                             {
-                                System.out.println("CTMsimulation line 114: no route...");
+                                System.out.println("CTMsimulation line 114: no neighbour...");
                             }
                         }
                     }

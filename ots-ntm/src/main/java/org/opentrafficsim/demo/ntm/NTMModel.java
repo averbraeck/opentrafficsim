@@ -139,15 +139,15 @@ public class NTMModel implements OTSModelInterface
             // false: return nodes
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed file with centroids (number starts with "C") and normal nodes
-
-            this.centroids = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, false);
+            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis";
+            this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
 
             // the Map areas contains a reference to the centroids! 
-            this.areas = ShapeFileReader.readAreas("/gis/selectedAreasGT1.shp", this.centroids);
+            this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
             // save the selected and created areas to a shape file
             // WriteToShp.createShape(this.areas);
 
-            this.nodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", false, false);
+            this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
 
             // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
             // this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
@@ -155,7 +155,7 @@ public class NTMModel implements OTSModelInterface
 
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
-            ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+            ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                     this.nodes, this.centroids);
 
             // to compress the areas into bigger units
@@ -164,7 +164,7 @@ public class NTMModel implements OTSModelInterface
          //   this.shpConnectors = connectCentroidsToBigger(this.compressedAreas, this.centroids, this.shpConnectors, this.areas);
             
             // read the time profile curves: these will be attached to the demands afterwards
-            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles("/gis/profiles.txt", ";", "\\s+"));
+            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";", "\\s+"));
 
             // read TrafficDemand from /src/main/resources
             // including information on the time period this demand covers!
@@ -173,7 +173,7 @@ public class NTMModel implements OTSModelInterface
             // - move links from normal to connectors
             // - add time settings from the demand matrix
             // - create demand between centoids and areas
-            this.setTripDemand(CsvFileReader.readOmnitransExportDemand("/gis/cordonmatrix_pa_os.txt", ";", "\\s+|-",
+            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(path + "/cordonmatrix_pa_os.txt", ";", "\\s+|-",
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
 
