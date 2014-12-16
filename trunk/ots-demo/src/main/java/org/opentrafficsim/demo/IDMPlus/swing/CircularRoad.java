@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -49,7 +49,9 @@ import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimulatorFrame;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -62,24 +64,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoad extends DSOLApplication
+public class CircularRoad
 {
-    /** */
-    private static final long serialVersionUID = 20141121L;
-
-    /** The simulator */
-    final SimpleSimulator simpleSimulator;
-
-    /**
-     * @param title String; caption of the application window
-     * @param simulator SimpleSimulator
-     */
-    public CircularRoad(final String title, SimpleSimulator simulator)
-    {
-        super(title, simulator.getPanel());
-        this.simpleSimulator = simulator;
-    }
-
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -88,16 +74,28 @@ public class CircularRoad extends DSOLApplication
      */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
+        // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
+        new SimulatorFrame("Circular Road animation", buildSimulator().getPanel());
+    }
+
+    /**
+     * Create the simulation.
+     * @return SimpleSimulator; the simulation
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
+     */
+    public static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    {
         RoadSimulationModel model = new RoadSimulationModel();
-        CircularRoad circularLane =
-                new CircularRoad("Circular Road animation", new SimpleSimulator(new OTSSimTimeDouble(
-                        new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
-                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model,
-                        new Rectangle2D.Double(-1000, -1000, 1000, 1000)));
+        final SimpleSimulator result =
+                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 1000, 1000));
+        new ControlPanel(result);
 
         // Make the tab with the contour plots
         TablePanel charts = new TablePanel(4, 3);
-        circularLane.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
+        result.getPanel().getTabbedPane().addTab("statistics", charts);
 
         // Make the four contour plots
         ContourPlot cp;
@@ -109,7 +107,7 @@ public class CircularRoad extends DSOLApplication
                     new DensityContourPlot("DensityPlot " + model.carFollowingModel.getLongName() + " lane "
                             + laneIndex, model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Density Contour Graph");
-            cp.setExtendedState(MAXIMIZED_BOTH);
+            cp.setExtendedState(Frame.MAXIMIZED_BOTH);
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 0);
 
@@ -142,12 +140,13 @@ public class CircularRoad extends DSOLApplication
             charts.setCell(trajectoryPlot.getContentPane(), 1 + laneIndex, 2);
             model.getTrajectoryPlots().get(laneIndex).add(trajectoryPlot);
         }
+        return result;
     }
 
 }
 
 /**
- * Simulate traffic on a circular, one-lane road.
+ * Simulate traffic on a circular, two-lane road.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -302,11 +301,7 @@ class RoadSimulationModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
                     .getSI() + 10, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (SimRuntimeException exception)
+        catch (RemoteException | SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -413,10 +408,11 @@ class RoadSimulationModel implements OTSModelInterface
         }
 
         /**
+         * Determine the movement of this car.
          * @throws RemoteException RemoteException
          * @throws NamingException on ???
          * @throws NetworkException on network inconsistency
-         * @throws SimRuntimeException on ??
+         * @throws SimRuntimeException on ???
          */
         protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
@@ -588,11 +584,7 @@ class RoadSimulationModel implements OTSModelInterface
             // System.out.println("pivot is " + result + " carsInLane.size is " + carsInLane.size());
             return result;
         }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (NetworkException exception)
+        catch (RemoteException | NetworkException exception)
         {
             exception.printStackTrace();
         }
@@ -693,11 +685,7 @@ class RoadSimulationModel implements OTSModelInterface
                 position = otherPosition;
             }
         }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (NetworkException exception)
+        catch (RemoteException | NetworkException exception)
         {
             exception.printStackTrace();
         }
