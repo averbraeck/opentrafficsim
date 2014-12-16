@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
@@ -13,7 +14,6 @@ import javax.naming.NamingException;
 import javax.swing.JScrollPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -44,7 +44,9 @@ import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.SpeedContourPlot;
+import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimulatorFrame;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -58,48 +60,45 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlots extends DSOLApplication
+public class ContourPlots
 {
-    /** */
-    private static final long serialVersionUID = 20141112L;
-
-    /** The simulator */
-    final SimpleSimulator simpleSimulator;
-
     /**
-     * @param title String; caption of the application window
-     * @param simulator SimpleSimulator
+     * Main program.
+     * @param args String[]; the command line arguments (not used)
+     * @throws SimRuntimeException
+     * @throws RemoteException
      */
-    public ContourPlots(final String title, SimpleSimulator simulator)
+    public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
-        super(title, simulator.getPanel());
-        this.simpleSimulator = simulator;
+        // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
+        new SimulatorFrame("Contour Plots animation", buildSimulator().getPanel());
     }
 
     /**
-     * @param args String[]; the command line argument (ignored)
+     * Create the simulation.
+     * @return SimpleSimulator; the simulation
+     * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
-     * @throws RemoteException on communication error
      */
-    public static void main(final String[] args) throws SimRuntimeException, RemoteException
+    public static SimpleSimulator buildSimulator() throws SimRuntimeException, RemoteException
     {
         InternalContourPlotsModel model = new InternalContourPlotsModel();
-        ContourPlots contourPlots =
-                new ContourPlots("IDM+ contour plots", new SimpleSimulator(new OTSSimTimeDouble(
-                        new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
-                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
-                        new Rectangle2D.Double(0, -100, 5000, 200)));
+        SimpleSimulator result = new SimpleSimulator(new OTSSimTimeDouble(
+                new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
+                new Rectangle2D.Double(0, -100, 5000, 200));
+        new ControlPanel(result);
 
         // Make the info tab
-        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
-        URL page = ContourPlotsModel.class.getResource(helpSource);
+        String helpSource = "/" + InternalContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
+        URL page = InternalContourPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
             HTMLPanel htmlPanel;
             try
             {
                 htmlPanel = new HTMLPanel(page);
-                contourPlots.simpleSimulator.getPanel().getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
+                result.getPanel().getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
             }
             catch (IOException exception)
             {
@@ -109,14 +108,14 @@ public class ContourPlots extends DSOLApplication
 
         // Make the tab with the contour plots
         TablePanel charts = new TablePanel(2, 2);
-        contourPlots.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
+        result.getPanel().getTabbedPane().addTab("statistics", charts);
 
         // Make the four contour plots
         ContourPlot cp;
 
         cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Density Contour Graph");
-        cp.setExtendedState(MAXIMIZED_BOTH);
+        cp.setExtendedState(Frame.MAXIMIZED_BOTH);
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 0);
 
@@ -134,6 +133,8 @@ public class ContourPlots extends DSOLApplication
         cp.setTitle("Acceleration Contour Graph");
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
+        
+        return result;
     }
 
 }

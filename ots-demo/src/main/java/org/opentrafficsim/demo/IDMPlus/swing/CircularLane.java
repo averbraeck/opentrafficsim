@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -45,6 +45,7 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimulatorFrame;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -57,24 +58,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularLane extends DSOLApplication
+public class CircularLane
 {
-    /** */
-    private static final long serialVersionUID = 20141121L;
-
-    /** The simulator */
-    final SimpleSimulator simpleSimulator;
-
-    /**
-     * @param title String; caption of the application window
-     * @param simulator SimpleSimulator
-     */
-    public CircularLane(final String title, SimpleSimulator simulator)
-    {
-        super(title, simulator.getPanel());
-        this.simpleSimulator = simulator;
-    }
-
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -83,17 +68,28 @@ public class CircularLane extends DSOLApplication
      */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
+        // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
+        new SimulatorFrame("Circular Lane animation", buildSimulator().getPanel());
+    }
+
+    /**
+     * Create the simulation.
+     * @return SimpleSimulator; the simulation
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
+     */
+    public static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    {
         LaneSimulationModel model = new LaneSimulationModel();
-        CircularLane circularLane =
-                new CircularLane("Circular Lane animation", new SimpleSimulator(new OTSSimTimeDouble(
-                        new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
-                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model,
-                        new Rectangle2D.Double(-1000, -1000, 1000, 1000)));
-        new ControlPanel(circularLane.simpleSimulator);
+        SimpleSimulator result =
+                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 1000, 1000));
+        new ControlPanel(result);
 
         // Make the tab with the contour plots
         TablePanel charts = new TablePanel(3, 2);
-        circularLane.simpleSimulator.getPanel().getTabbedPane().addTab("statistics", charts);
+        result.getPanel().getTabbedPane().addTab("statistics", charts);
 
         // Make the four contour plots
         ContourPlot cp;
@@ -102,7 +98,7 @@ public class CircularLane extends DSOLApplication
                 new DensityContourPlot("DensityPlot " + model.carFollowingModel.getLongName(),
                         model.getMinimumDistance(), model.lane.getLength());
         cp.setTitle("Density Contour Graph");
-        cp.setExtendedState(MAXIMIZED_BOTH);
+        cp.setExtendedState(Frame.MAXIMIZED_BOTH);
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 0);
 
@@ -134,6 +130,8 @@ public class CircularLane extends DSOLApplication
         trajectoryPlot.setTitle("Trajectories");
         charts.setCell(trajectoryPlot.getContentPane(), 2, 0);
         model.getTrajectoryPlots().add(trajectoryPlot);
+
+        return result;
     }
 
 }
@@ -269,11 +267,7 @@ class LaneSimulationModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
                     .getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (SimRuntimeException exception)
+        catch (RemoteException | SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -373,10 +367,11 @@ class LaneSimulationModel implements OTSModelInterface
         }
 
         /**
+         * Determine the movement of this car.
          * @throws RemoteException RemoteException
          * @throws NamingException on ???
          * @throws NetworkException on network inconsistency
-         * @throws SimRuntimeException on ??
+         * @throws SimRuntimeException on ???
          */
         protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
@@ -431,7 +426,7 @@ class LaneSimulationModel implements OTSModelInterface
                     {
                         System.out.println("follower:   " + this);
                         System.out.println("leader:     " + leader);
-                        System.out.println("fakeleader: " + fakeLeader);
+                        System.out.println("fakeLeader: " + fakeLeader);
                         System.out.println("headway:    "
                                 + (fakeLeader.positionOfRear(SimulationModel.this.lane).getSI() - positionOfFront(
                                         SimulationModel.this.lane).getSI()) + "m");
@@ -452,7 +447,6 @@ class LaneSimulationModel implements OTSModelInterface
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
                     null);
-            Math.ulp(0d);
         }
     }
 
