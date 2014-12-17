@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -51,34 +50,34 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ControlPanel implements ActionListener, PropertyChangeListener
 {
     /** The simulator. */
-    final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /** The SimulatorInterface that is controlled by the buttons. */
-    final SimulatorInterface<?, ?, ?> target;
+    private final SimulatorInterface<?, ?, ?> target;
 
     /** Logger. */
-    final Logger logger;
+    private final Logger logger;
 
     /** The clock. */
-    ClockPanel clockPanel;
+    private final ClockPanel clockPanel;
 
     /** The control buttons. */
-    ArrayList<JButton> buttons = new ArrayList<JButton>();
+    private final ArrayList<JButton> buttons = new ArrayList<JButton>();
 
     /** Font used to display the clock and the stop time. */
-    Font timeFont = new Font("SansSerif", Font.BOLD, 18);
+    private final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
 
-    /** The TimeEdit that lets the user set a time when the simulation will be stopped */
-    final TimeEdit timeEdit;
+    /** The TimeEdit that lets the user set a time when the simulation will be stopped. */
+    private final TimeEdit timeEdit;
 
-    /** The currently registered stop at event */
-    SimEvent<OTSSimTimeDouble> stopAtEvent = null;
+    /** The currently registered stop at event. */
+    private SimEvent<OTSSimTimeDouble> stopAtEvent = null;
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator SimpleSimulator; the simulator.
      */
-    public ControlPanel(SimpleSimulator simulator)
+    public ControlPanel(final SimpleSimulator simulator)
     {
         this.simulator = simulator.getSimulator();
         this.target = simulator.getSimulator();
@@ -112,7 +111,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * @param enabled boolean; true if the new button must initially be enable; false if it must initially be disabled
      * @return JButton
      */
-    private JButton makeButton(String name, String iconPath, String actionCommand, String toolTipText, boolean enabled)
+    private JButton makeButton(final String name, final String iconPath, final String actionCommand,
+            final String toolTipText, final boolean enabled)
     {
         JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
         result.setName(name);
@@ -126,9 +126,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     /** {@inheritDoc} */
     @Override
-    public void actionPerformed(ActionEvent e)
+    public final void actionPerformed(final ActionEvent actionEvent)
     {
-        String actionCommand = e.getActionCommand();
+        String actionCommand = actionEvent.getActionCommand();
         // System.out.println("actionCommand: " + actionCommand);
         try
         {
@@ -151,7 +151,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                     this.simulator.stop();
                 }
                 double now = this.simulator.getSimulatorTime().get().getSI();
-                //System.out.println("now is " + now);
+                // System.out.println("now is " + now);
                 this.stopAtEvent =
                         new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(now,
                                 TimeUnit.SECOND)), SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator",
@@ -190,7 +190,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     /**
      * Update the enabled state of all the buttons.
      */
-    void fixButtons()
+    private void fixButtons()
     {
         final boolean moreWorkToDo = this.simulator.getEventList().size() > 0;
         for (JButton button : this.buttons)
@@ -214,7 +214,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             else if (actionCommand.equals("Reset"))
             {
-                button.setEnabled(true);// FIXME: should be disabled when the simulator was just reset or initialized
+                button.setEnabled(true); // FIXME: should be disabled when the simulator was just reset or initialized
             }
             else
             {
@@ -226,15 +226,15 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     /**
      * Pause the simulator.
      */
-    public void autoPauseSimulator()
+    public final void autoPauseSimulator()
     {
         if (this.simulator.isRunning())
         {
             this.simulator.stop();
             double currentTick = this.simulator.getSimulatorTime().get().getSI();
             double nextTick = this.simulator.getEventList().first().getAbsoluteExecutionTime().get().getSI();
-            //System.out.println("currentTick is " + currentTick);
-            //System.out.println("nextTick is " + nextTick);
+            // System.out.println("currentTick is " + currentTick);
+            // System.out.println("nextTick is " + nextTick);
             if (nextTick > currentTick)
             {
                 // The clock is now just beyond where it was when the user requested the NextTime operation
@@ -244,7 +244,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                         new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(nextTick,
                                 TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator",
                                 null);
-                //System.out.println("Re-Scheduling at " + nextTick);
+                // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
                     this.simulator.scheduleEvent(this.stopAtEvent);
@@ -258,7 +258,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             else
             {
-                //System.out.println("Not re-scheduling");
+                // System.out.println("Not re-scheduling");
                 try
                 {
                     SwingUtilities.invokeAndWait(new Runnable()
@@ -280,7 +280,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     /** {@inheritDoc} */
     @Override
-    public void propertyChange(PropertyChangeEvent evt)
+    public final void propertyChange(final PropertyChangeEvent evt)
     {
         // System.out.println("PropertyChanged: " + evt);
         if (null != this.stopAtEvent)
@@ -324,10 +324,10 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         private static final long serialVersionUID = 20141211L;
 
         /** The JLabel that displays the time. */
-        final JLabel clockLabel;
+        private final JLabel clockLabel;
 
         /** timer update in msec. */
-        protected final long PERIOD = 1000;
+        private final long updateInterval = 1000;
 
         /** Construct a clock panel. */
         ClockPanel()
@@ -336,7 +336,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             this.clockLabel = this;
             this.setFont(ControlPanel.this.timeFont);
             Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, this.PERIOD);
+            timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, this.updateInterval);
 
         }
 
@@ -365,7 +365,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     }
 
-    /** Entry field for time */
+    /** Entry field for time. */
     class TimeEdit extends JFormattedTextField
     {
         /** */
@@ -378,7 +378,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
          * Construct a new TimeEdit.
          * @param initialValue DoubleScalar.Abs&lt;TimeUnit&gt;; the initial value for the TimeEdit
          */
-        TimeEdit(DoubleScalar.Abs<TimeUnit> initialValue)
+        TimeEdit(final DoubleScalar.Abs<TimeUnit> initialValue)
         {
             super(new RegexFormatter("\\d\\d\\d\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\d"));
             MaskFormatter mf = null;
@@ -404,7 +404,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
          * Set or update the time shown in this TimeEdit.
          * @param newValue DoubleScalar.Abs&lt;TimeUnit&gt;; the (new) value to set/show in this TimeEdit
          */
-        public void setTime(DoubleScalar.Abs<TimeUnit> newValue)
+        public void setTime(final DoubleScalar.Abs<TimeUnit> newValue)
         {
             double v = newValue.getSI();
             int integerPart = (int) Math.floor(v);
@@ -434,21 +434,20 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         /** */
         private static final long serialVersionUID = 20141212L;
 
-        /** The regular expression pattern */
+        /** The regular expression pattern. */
         private Pattern pattern;
 
         /**
          * Create a new RegexFormatter.
          * @param pattern String; regular expression pattern that defines what this RexexFormatter will accept
-         * @throws PatternSyntaxException
          */
-        public RegexFormatter(String pattern) throws PatternSyntaxException
+        public RegexFormatter(final String pattern)
         {
             this.pattern = Pattern.compile(pattern);
         }
 
         @Override
-        public Object stringToValue(String text) throws ParseException
+        public Object stringToValue(final String text) throws ParseException
         {
             Matcher matcher = this.pattern.matcher(text);
             if (matcher.matches())
