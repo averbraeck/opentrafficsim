@@ -40,6 +40,7 @@ import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.geometry.LaneFactory;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 
@@ -81,6 +82,7 @@ public class Trajectories
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
+        new ControlPanel(result);
         makePlot(model, result.getPanel());
         addInfoTab(result.getPanel());
         return result;
