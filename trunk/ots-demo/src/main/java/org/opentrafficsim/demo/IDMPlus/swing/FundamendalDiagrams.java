@@ -1,5 +1,9 @@
 package org.opentrafficsim.demo.IDMPlus.swing;
 
+import java.awt.Frame;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,8 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
+import javax.swing.JScrollPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
@@ -17,8 +25,8 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Lane;
 import org.opentrafficsim.core.network.LaneType;
@@ -35,19 +43,104 @@ import org.opentrafficsim.demo.geometry.LaneFactory;
 import org.opentrafficsim.demo.geometry.Link;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.FundamentalDiagram;
+import org.opentrafficsim.simulationengine.ControlPanel;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimulatorFrame;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Aug 20, 2014 <br>
+ * @version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramPlotsModel implements OTSModelInterface
+public class FundamendalDiagrams
+{
+    /**
+     * Main program.
+     * @param args String[]; the command line arguments (not used)
+     * @throws SimRuntimeException
+     * @throws RemoteException
+     */
+    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    {
+        // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
+        new SimulatorFrame("Fundamental Diagrams animation", buildSimulator().getPanel());
+    }
+
+    /**
+     * @return
+     * @throws SimRuntimeException 
+     * @throws RemoteException 
+     */
+    private static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    {
+        FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel();
+        SimpleSimulator result = new SimpleSimulator(new OTSSimTimeDouble(
+                new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
+                new Rectangle2D.Double(0, -100, 5000, 200));
+        new ControlPanel(result);
+        makePlots(model, result.getPanel());
+        addInfoTab(result.getPanel());
+        return result;
+    }
+
+    /**
+     * make the stand-alone plots for the model and put them in the statistics panel.
+     * @param model FundamentalDiagramPlotsModel; the model.
+     * @param panel DSOLPanel
+     */
+    private static void makePlots(final FundamentalDiagramPlotsModel model,
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    {
+        final int panelsPerRow = 3;
+        TablePanel charts = new TablePanel(4, panelsPerRow);
+        panel.getTabbedPane().addTab("statistics", charts);
+        for (int plotNumber = 0; plotNumber < 10; plotNumber++)
+        {
+            DoubleScalar.Abs<LengthUnit> detectorLocation =
+                    new DoubleScalar.Abs<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
+            FundamentalDiagram fd =
+                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", 1,
+                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), detectorLocation);
+            fd.setTitle("Density Contour Graph");
+            fd.setExtendedState(Frame.MAXIMIZED_BOTH);
+            model.getFundamentalDiagrams().add(fd);
+            charts.setCell(fd.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
+        }
+    }
+
+    /**
+     * @param panel DSOLPanel
+     */
+    private static void addInfoTab(
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    {
+        // Let's find some content for our infoscreen and add it to our tabbedPane
+        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
+        URL page = ContourPlotsModel.class.getResource(helpSource);
+        if (page != null)
+        {
+            HTMLPanel htmlPanel;
+            try
+            {
+                htmlPanel = new HTMLPanel(page);
+                panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
+            }
+            catch (IOException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+}
+
+/** */
+class FundamentalDiagramPlotsModel implements OTSModelInterface
 {
 
     /** */
@@ -394,3 +487,4 @@ public class FundamentalDiagramPlotsModel implements OTSModelInterface
     }
 
 }
+
