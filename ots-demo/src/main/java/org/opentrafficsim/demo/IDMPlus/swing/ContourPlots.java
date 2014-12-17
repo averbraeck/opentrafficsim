@@ -82,7 +82,7 @@ public class ContourPlots
      */
     public static SimpleSimulator buildSimulator() throws SimRuntimeException, RemoteException
     {
-        InternalContourPlotsModel model = new InternalContourPlotsModel();
+        ContourPlotsModel model = new ContourPlotsModel();
         SimpleSimulator result = new SimpleSimulator(new OTSSimTimeDouble(
                 new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
@@ -90,8 +90,8 @@ public class ContourPlots
         new ControlPanel(result);
 
         // Make the info tab
-        String helpSource = "/" + InternalContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
-        URL page = InternalContourPlotsModel.class.getResource(helpSource);
+        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
+        URL page = ContourPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
             HTMLPanel htmlPanel;
@@ -161,7 +161,7 @@ public class ContourPlots
  * @version Aug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class InternalContourPlotsModel implements OTSModelInterface
+class ContourPlotsModel implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -401,33 +401,33 @@ class InternalContourPlotsModel implements OTSModelInterface
         protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
             // System.out.println("move " + getId());
-            if (this == InternalContourPlotsModel.this.block)
+            if (this == ContourPlotsModel.this.block)
             {
                 return;
             }
             if (positionOfFront().getLongitudinalPosition().getSI() > getMaximumDistance().getSI())
             {
-                InternalContourPlotsModel.this.cars.remove(this);
+                ContourPlotsModel.this.cars.remove(this);
                 return;
             }
             Collection<AnimatedCar> leaders = new ArrayList<AnimatedCar>();
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
-            int carIndex = InternalContourPlotsModel.this.cars.indexOf(this);
-            if (carIndex < InternalContourPlotsModel.this.cars.size() - 1)
+            int carIndex = ContourPlotsModel.this.cars.indexOf(this);
+            if (carIndex < ContourPlotsModel.this.cars.size() - 1)
             {
-                leaders.add(InternalContourPlotsModel.this.cars.get(carIndex + 1));
+                leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
             }
             GTUFollowingModelResult cfmr =
-                    InternalContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                            InternalContourPlotsModel.this.speedLimit);
-            if (null != InternalContourPlotsModel.this.block)
+                    ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                            ContourPlotsModel.this.speedLimit);
+            if (null != ContourPlotsModel.this.block)
             {
                 leaders.clear();
-                leaders.add(InternalContourPlotsModel.this.block);
+                leaders.add(ContourPlotsModel.this.block);
                 GTUFollowingModelResult blockCFMR =
-                        InternalContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                                InternalContourPlotsModel.this.speedLimit);
+                        ContourPlotsModel.this.carFollowingModel.computeAcceleration(this, leaders,
+                                ContourPlotsModel.this.speedLimit);
                 if (blockCFMR.getAcceleration().getSI() < cfmr.getAcceleration().getSI()
                         && blockCFMR.getAcceleration().getSI() >= -5)
                 {
