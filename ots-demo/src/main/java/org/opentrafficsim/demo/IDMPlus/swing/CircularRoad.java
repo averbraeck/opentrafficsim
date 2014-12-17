@@ -56,6 +56,7 @@ import org.opentrafficsim.simulationengine.SimulatorFrame;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
+ * Circular road simulation demo.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -385,7 +386,7 @@ class RoadSimulationModel implements OTSModelInterface
          * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
          *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException ...
+         * @throws NamingException on ???
          * @throws RemoteException on communication failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
@@ -401,7 +402,7 @@ class RoadSimulationModel implements OTSModelInterface
                     simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
                 }
             }
-            catch (RemoteException | SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }

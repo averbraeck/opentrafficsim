@@ -50,6 +50,7 @@ import org.opentrafficsim.simulationengine.SimulatorFrame;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
+ * Circular lane simulation demo.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -276,9 +277,8 @@ class LaneSimulationModel implements OTSModelInterface
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @throws NamingException on ???
      */
-    protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition) throws NamingException
+    protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition)
     {
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -291,7 +291,7 @@ class LaneSimulationModel implements OTSModelInterface
             this.cars.add(car);
             new CarAnimation(car, this.simulator);
         }
-        catch (RemoteException exception)
+        catch (RemoteException | NamingException exception)
         {
             exception.printStackTrace();
         }
@@ -344,8 +344,8 @@ class LaneSimulationModel implements OTSModelInterface
          * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
          *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException ...
-         * @throws RemoteException on communication failure
+         * @throws NamingException on ???
+         * @throws RemoteException on Communications failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
                 final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
@@ -360,7 +360,7 @@ class LaneSimulationModel implements OTSModelInterface
                     simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
                 }
             }
-            catch (RemoteException | SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
