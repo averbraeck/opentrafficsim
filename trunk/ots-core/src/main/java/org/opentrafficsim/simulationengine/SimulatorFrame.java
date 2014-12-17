@@ -28,10 +28,10 @@ public class SimulatorFrame extends JFrame
      * @param title String; title for the JFrame
      * @param panel JPanel; the JPanel that will become the contentPane of the JFrame
      */
-    public SimulatorFrame(String title, JPanel panel)
+    public SimulatorFrame(final String title, final JPanel panel)
     {
         super();
-        setTitle("Circular Road animation");
+        setTitle(title);
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();

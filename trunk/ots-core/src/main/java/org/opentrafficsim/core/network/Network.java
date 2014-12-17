@@ -173,11 +173,11 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
 
     /**
      * Determine if a node is part of this Network.
-     * @param node
+     * @param node AbstractNode&lt;?, ?&gt;; the node
      * @param recurse boolean; if true also search sub-networks
      * @return true or false
      */
-    public final boolean isInNetwork(final AbstractNode<?, ?> node, boolean recurse)
+    public final boolean isInNetwork(final AbstractNode<?, ?> node, final boolean recurse)
     {
         if (this.nodeSet.contains(node))
         {
@@ -216,8 +216,8 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
 
     /**
      * Return the sub network that directly owns a specified node.
-     * @param node
-     * @return network
+     * @param node AbstractNode&lt;?, ?&gt;; the node
+     * @return Network
      * @throws NetworkException if the specified node is not contained in this Network or any of its sub Networks
      */
     public final Network<?, ?> getSubNetworkConsistNode(final AbstractNode<?, ?> node) throws NetworkException
@@ -245,8 +245,8 @@ public class Network<ID, L extends AbstractLink<?, ?>> extends HashSet<L> implem
     }
 
     /**
-     * Delete a node from this network (or a sub-network of this network)
-     * @param deleteThis
+     * Delete a node from this network (or a sub-network of this network).
+     * @param deleteThis AbstractNode&lt;?, ?&gt;; the node that must be deleted
      * @return boolean
      * @throws NetworkException on network inconsistency
      */
