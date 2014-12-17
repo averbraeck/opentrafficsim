@@ -50,6 +50,7 @@ import org.opentrafficsim.simulationengine.SimulatorFrame;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
+ * Demonstrate the FundamentalDiagram plot.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -139,10 +140,22 @@ public class FundamendalDiagrams
     }
 }
 
-/** */
+/**
+ * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
+ * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
+ * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
+ * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
+ * Output is a set of FundamentalDiagram plots for various point along the lane.
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version Aug 1, 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
 class FundamentalDiagramPlotsModel implements OTSModelInterface
 {
-
     /** */
     private static final long serialVersionUID = 20140820L;
 
@@ -193,9 +206,9 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         {
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
         }
-        catch (NamingException exception1)
+        catch (NamingException exception)
         {
-            exception1.printStackTrace();
+            exception.printStackTrace();
         }
 
         this.carFollowingModel =
@@ -374,7 +387,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
          * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
          *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException ...
+         * @throws NamingException on ???
          * @throws RemoteException on communication failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
@@ -387,7 +400,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
             }
-            catch (RemoteException | SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }

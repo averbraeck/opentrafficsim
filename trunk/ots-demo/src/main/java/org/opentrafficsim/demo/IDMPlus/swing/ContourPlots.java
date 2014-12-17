@@ -304,7 +304,7 @@ class ContourPlotsModel implements OTSModelInterface
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      * @throws NamingException on ???
      */
-    protected final void generateCar() throws NamingException
+    protected final void generateCar()
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -319,7 +319,7 @@ class ContourPlotsModel implements OTSModelInterface
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             new CarAnimation(car, this.simulator);
         }
-        catch (RemoteException | SimRuntimeException exception)
+        catch (RemoteException | SimRuntimeException | NamingException exception)
         {
             exception.printStackTrace();
         }
@@ -373,7 +373,7 @@ class ContourPlotsModel implements OTSModelInterface
          * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
          *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException ...
+         * @throws NamingException on ???
          * @throws RemoteException on communication failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
@@ -386,7 +386,7 @@ class ContourPlotsModel implements OTSModelInterface
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
             }
-            catch (RemoteException | SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
