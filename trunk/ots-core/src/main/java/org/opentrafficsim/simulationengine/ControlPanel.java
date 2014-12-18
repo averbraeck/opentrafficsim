@@ -50,7 +50,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ControlPanel implements ActionListener, PropertyChangeListener
 {
     /** The simulator. */
-    private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    protected final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /** The SimulatorInterface that is controlled by the buttons. */
     private final SimulatorInterface<?, ?, ?> target;
@@ -65,7 +65,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     private final ArrayList<JButton> buttons = new ArrayList<JButton>();
 
     /** Font used to display the clock and the stop time. */
-    private final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
+    protected final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
 
     /** The TimeEdit that lets the user set a time when the simulation will be stopped. */
     private final TimeEdit timeEdit;
@@ -190,7 +190,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     /**
      * Update the enabled state of all the buttons.
      */
-    private void fixButtons()
+    protected void fixButtons()
     {
         final boolean moreWorkToDo = this.simulator.getEventList().size() > 0;
         for (JButton button : this.buttons)
@@ -324,7 +324,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         private static final long serialVersionUID = 20141211L;
 
         /** The JLabel that displays the time. */
-        private final JLabel clockLabel;
+        protected final JLabel clockLabel;
 
         /** timer update in msec. */
         private final long updateInterval = 1000;

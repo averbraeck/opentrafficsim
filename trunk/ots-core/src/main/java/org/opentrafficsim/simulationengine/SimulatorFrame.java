@@ -38,4 +38,20 @@ public class SimulatorFrame extends JFrame
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setVisible(true);
     }
+    
+    /**
+     * Wrap a WrappableSimulation in a JFrame.
+     * @param simulation WrappableSimulation; the simulation that will be shown in the JFrame
+     * @param panel JPanel; this should be the JPanel of the simulation
+     */
+    public SimulatorFrame(final WrappableSimulation simulation, final JPanel panel)
+    {
+        super();
+        setTitle(simulation.shortName());
+        setContentPane(panel);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
+        setExtendedState(Frame.MAXIMIZED_BOTH);
+        setVisible(true);
+    }
 }
