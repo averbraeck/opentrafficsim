@@ -44,9 +44,13 @@ import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.SpeedContourPlot;
+import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
+import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
+import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -60,8 +64,26 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlots
+public class ContourPlots implements WrappableSimulation
 {
+    /** The properties exhibited by this simulation. */
+    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+
+    /** Create a ContourPlots simulation. */
+    public ContourPlots()
+    {
+        try
+        {
+            this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                    new Double[]{0.8, 0.2}, false));
+        }
+        catch (IncompatiblePropertyException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -71,7 +93,7 @@ public class ContourPlots
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        new SimulatorFrame("Contour Plots animation", buildSimulator().getPanel());
+        new SimulatorFrame("Contour Plots animation", new ContourPlots().buildSimulator().getPanel());
     }
 
     /**
@@ -80,13 +102,13 @@ public class ContourPlots
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      */
-    public static SimpleSimulator buildSimulator() throws SimRuntimeException, RemoteException
+    public SimpleSimulator buildSimulator() throws SimRuntimeException, RemoteException
     {
         ContourPlotsModel model = new ContourPlotsModel();
-        SimpleSimulator result = new SimpleSimulator(new OTSSimTimeDouble(
-                new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
-                new Rectangle2D.Double(0, -100, 5000, 200));
+        SimpleSimulator result =
+                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
         new ControlPanel(result);
 
         // Make the info tab
@@ -94,10 +116,9 @@ public class ContourPlots
         URL page = ContourPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
-            HTMLPanel htmlPanel;
             try
             {
-                htmlPanel = new HTMLPanel(page);
+                HTMLPanel htmlPanel = new HTMLPanel(page);
                 result.getPanel().getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
             }
             catch (IOException exception)
@@ -133,8 +154,34 @@ public class ContourPlots
         cp.setTitle("Acceleration Contour Graph");
         model.getContourPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
-        
+
         return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String shortName()
+    {
+        return "Contour plots";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String description()
+    {
+        return "<html><h1>ContourPlots</H1>"
+                + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
+                + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
+                + "500s. This blockade simulates a bridge opening.<br/>"
+                + "The blockade causes a traffic jam that slowly dissolves after the blockade is remove. <br />"
+                + "Output is a set of Contour plots of density, flow, speed and acceleration.</html>";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getProperties()
+    {
+        return new ArrayList<AbstractProperty<?>>(this.properties);
     }
 
 }
