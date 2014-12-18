@@ -40,9 +40,13 @@ import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.geometry.LaneFactory;
 import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
+import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
+import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -56,8 +60,26 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Trajectories
+public class Trajectories implements WrappableSimulation
 {
+    /** The properties exhibited by this simulation. */
+    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+
+    /** Create a Trajectories simulation. */
+    public Trajectories()
+    {
+        try
+        {
+            this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                    new Double[]{0.8, 0.2}, false));
+        }
+        catch (IncompatiblePropertyException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -67,15 +89,16 @@ public class Trajectories
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        new SimulatorFrame("Trajectory Plots animation", buildSimulator().getPanel());
+        new SimulatorFrame("Trajectory Plots animation", new Trajectories().buildSimulator().getPanel());
     }
 
     /**
-     * @return
+     * Create a new simulation.
+     * @return SimpleSimulator; the new simulation
      * @throws SimRuntimeException
      * @throws RemoteException
      */
-    private static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    public SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
     {
         InternalTrajectoriesModel model = new InternalTrajectoriesModel();
         SimpleSimulator result =
@@ -130,6 +153,33 @@ public class Trajectories
                 exception.printStackTrace();
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String shortName()
+    {
+        return "Trajectory plot";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String description()
+    {
+        return "<html><H1>Trajectories</H1>"
+                + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
+                + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
+                + "500s. This blockade simulates a bridge opening.<br/>"
+                + "The blockade causes a traffic jam that slowly dissolves after the blockade is remove. <br />"
+                + "Output is a Trajectory plots.</html>";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getProperties()
+    {
+        // Create and return a deep copy of the internal list
+        return new ArrayList<AbstractProperty<?>>(this.properties);
     }
 
 }

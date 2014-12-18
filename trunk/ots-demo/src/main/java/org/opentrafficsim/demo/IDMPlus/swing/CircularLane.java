@@ -43,9 +43,13 @@ import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
+import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
+import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -59,8 +63,26 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularLane
+public class CircularLane implements WrappableSimulation
 {
+    /** The properties exhibited by this simulation. */
+    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+
+    /** Create a CircularLane simulation. */
+    public CircularLane()
+    {
+        try
+        {
+            this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                    new Double[]{0.8, 0.2}, false));
+        }
+        catch (IncompatiblePropertyException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -70,7 +92,7 @@ public class CircularLane
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        new SimulatorFrame("Circular Lane animation", buildSimulator().getPanel());
+        new SimulatorFrame("Circular Lane animation", new CircularLane().buildSimulator().getPanel());
     }
 
     /**
@@ -79,7 +101,7 @@ public class CircularLane
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      */
-    public static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    public SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
     {
         LaneSimulationModel model = new LaneSimulationModel();
         SimpleSimulator result =
@@ -133,6 +155,30 @@ public class CircularLane
         model.getTrajectoryPlots().add(trajectoryPlot);
 
         return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String shortName()
+    {
+        return "Circular Lane simulation";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String description()
+    {
+        return "<html><h1>Circular Lane simulation</h1>"
+                + "Vehicles are unequally distributed over a one lane ring road.<br />"
+                + "When simulation starts, all vehicles begin driving and some shockwaves should develop.<br />"
+                + "Trajectories and contourplots are generated during the simulation.</html>";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getProperties()
+    {
+        return new ArrayList<AbstractProperty<?>>(this.properties);
     }
 
 }
