@@ -30,12 +30,12 @@ import javax.swing.border.TitledBorder;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
-import org.jzy3d.chart.Chart;
-import org.jzy3d.chart.factories.AWTChartComponentFactory;
-import org.jzy3d.colors.Color;
-import org.jzy3d.maths.Coord3d;
-import org.jzy3d.plot3d.primitives.Scatter;
-import org.jzy3d.plot3d.rendering.canvas.Quality;
+//import org.jzy3d.chart.Chart;
+//import org.jzy3d.chart.factories.AWTChartComponentFactory;
+//import org.jzy3d.colors.Color;
+//import org.jzy3d.maths.Coord3d;
+//import org.jzy3d.plot3d.primitives.Scatter;
+//import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -533,7 +533,7 @@ public class newGUI
         }
         else if(network.equals("Direct Lane Choosen"))
         {
-            InternalContourPlotsModel model = new InternalContourPlotsModel();
+            ContourPlotsModel model = new ContourPlotsModel();
             SimpleSimulator simSimulator= new SimpleSimulator(new OTSSimTimeDouble(
                             new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)), new DoubleScalar.Rel<TimeUnit>(0.0,
                             TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model,
@@ -733,7 +733,7 @@ public class newGUI
         separateFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
-    private void createDirectLaneFrame(InternalContourPlotsModel model)
+    private void createDirectLaneFrame(ContourPlotsModel model)
     {
         if(separateFrame == null)
         {
@@ -781,71 +781,7 @@ public class newGUI
     }
     
     
-    private void threeDStat_conf()
-    {
-        // The east part of statistics
-        int size = 500000;
-        float x;
-        float y;
-        float z;
-        float a;
-        
-        Coord3d[] points = new Coord3d[size];
-        Color[]   colors = new Color[size];
-        
-        Random r = new Random();
-        r.setSeed(0);
-        
-        for(int i=0; i<size; i++){
-            x = r.nextFloat() - 0.5f;
-            y = r.nextFloat() - 0.5f;
-            z = r.nextFloat() - 0.5f;
-            points[i] = new Coord3d(x, y, z);
-            a = 0.25f;
-            colors[i] = new Color(x, y, z, a);
-        }
-        Scatter scatter = new Scatter(points, colors);
-        // Scatter scatter2 = new Scatter(points, colors);
-         
-        Chart chart = AWTChartComponentFactory.chart(Quality.Advanced, "newt");
-        chart.getScene().add(scatter);
-        
-        Chart chart2 = AWTChartComponentFactory.chart(Quality.Advanced, "newt");
-        chart2.getScene().add(scatter);
-        
-      
-        JPanel statPanel = new JPanel(new GridLayout(2, 1));
-        Border b = BorderFactory.createLineBorder(java.awt.Color.black);
-        statPanel.setBorder(b);
-        statPanel.setSize(new Dimension(500, 500));
-        statPanel.add((java.awt.Component) chart.getCanvas());
-        statPanel.add((java.awt.Component) chart2.getCanvas());
-        
-        JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,simPanel,statPanel);
-   
-        //add(chartPanel, "cell 0 " + 1 + ", grow");
-        f.add(jsplitpane, BorderLayout.CENTER);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.pack();
-        f.setSize(1000, 680);
-        f.setResizable(true);
-        f.setVisible(true);
-        /*
-        while(true)
-        {
-            for(int i=0; i<size; i++){
-                x = r.nextFloat() - 0.5f;
-                y = r.nextFloat() - 0.5f;
-                z = r.nextFloat() - 0.5f;
-                points[i] = new Coord3d(x, y, z);
-                a = 0.25f;
-                colors[i] = new Color(x, y, z, a);
-            }
-            
-            scatter = new Scatter(points, colors);
-            statPanel.repaint();
-        }*/
-    }
+
     
     public void init() throws RemoteException, SimRuntimeException
     {
