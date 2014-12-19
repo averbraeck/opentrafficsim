@@ -139,6 +139,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         final JFreeChart result =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
                         false);
+        FixCaption.fixCaption(result);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
@@ -570,7 +571,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         JFrame result = new JFrame(this.caption);
         result.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JFreeChart newChart = createChart(result);
-        newChart.setTitle((String) null); 
+        newChart.setTitle((String) null);
         addChangeListener(newChart.getPlot());
         return result;
     }

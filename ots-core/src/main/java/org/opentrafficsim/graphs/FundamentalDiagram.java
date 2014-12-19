@@ -182,6 +182,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.chartPanel =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
                         false);
+        FixCaption.fixCaption(this.chartPanel);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(true);
