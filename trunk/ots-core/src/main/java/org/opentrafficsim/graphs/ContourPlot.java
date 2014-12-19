@@ -182,6 +182,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         final JFreeChart chart = new JFreeChart(this.caption, plot);
+        FixCaption.fixCaption(chart);
         chart.setBackgroundPaint(Color.white);
         final ChartPanel cp = new ChartPanel(chart);
         final PointerHandler ph = new PointerHandler()
