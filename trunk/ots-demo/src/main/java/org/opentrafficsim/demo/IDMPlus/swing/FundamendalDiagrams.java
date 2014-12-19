@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
@@ -69,7 +70,20 @@ public class FundamendalDiagrams
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        new SimulatorFrame("Fundamental Diagrams animation", buildSimulator().getPanel());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    new SimulatorFrame("Fundamental Diagrams animation", buildSimulator().getPanel());
+                }
+                catch (RemoteException | SimRuntimeException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -77,7 +91,7 @@ public class FundamendalDiagrams
      * @throws SimRuntimeException 
      * @throws RemoteException 
      */
-    private static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    static SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
     {
         FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel();
         SimpleSimulator result = new SimpleSimulator(new OTSSimTimeDouble(

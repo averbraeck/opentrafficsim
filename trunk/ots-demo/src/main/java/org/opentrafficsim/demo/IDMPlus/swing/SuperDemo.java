@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -47,10 +48,25 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 public class SuperDemo
 {
     /**
-     * Build the GUI.
-     * @param args
+     * Start the application.
+     * @param args String[]; the command line arguments (not used)
      */
-    public static void main(final String[] args)
+    public static void main(String[] args)
+    {
+    SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run()
+        {
+            new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+        }
+        });
+    }
+    
+    /**
+     * Build the GUI.
+     * @return JPanel; the JPanel that holds the application.=
+     */
+    public JPanel buildGUI()
     {
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
@@ -148,13 +164,7 @@ public class SuperDemo
         });
         left.add(startButton);
         left.add(propertyPanel);
-        /*
-         * ProbabilityDistributionEditor carFollowingModels = new ProbabilityDistributionEditor(new String[]{"IDM",
-         * "IDM+", "aaa"}); left.add(carFollowingModels); ProbabilityDistributionEditor carTypes = new
-         * ProbabilityDistributionEditor(new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2});
-         * left.add(carTypes);
-         */
-        new SimulatorFrame("Open Traffic Simulator Demonstrations", mainPanel);
+        return mainPanel;
     }
 
 }
