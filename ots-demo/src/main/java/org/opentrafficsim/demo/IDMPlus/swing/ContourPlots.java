@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
@@ -93,7 +94,20 @@ public class ContourPlots implements WrappableSimulation
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        new SimulatorFrame("Contour Plots animation", new ContourPlots().buildSimulator().getPanel());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    new SimulatorFrame("Contour Plots animation", new ContourPlots().buildSimulator().getPanel());
+                }
+                catch (RemoteException | SimRuntimeException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
