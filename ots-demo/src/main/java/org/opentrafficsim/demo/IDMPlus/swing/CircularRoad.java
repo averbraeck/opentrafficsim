@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
@@ -53,7 +54,9 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.IntegerProperty;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
@@ -80,9 +83,21 @@ public class CircularRoad implements WrappableSimulation
     {
         try
         {
+            this.properties.add(new SelectionProperty("Car following model",
+                    "<html>The car following model determines the acceleration that a vehicle will make taking "
+                            + "into account nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                            + "curvature of the road) capabilities of the vehicle and personality of the "
+                            + "driver.</html>", new String[]{"IDM", "IDM+"}, 1, false));
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
                     "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                     new Double[]{0.8, 0.2}, false));
+            this.properties.add(new SelectionProperty("Lane change strategy",
+                    "<html>The lane change strategies vary in politeness.<br />"
+                            + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
+                            + "<li>Altruistic (assigns effect on new and current follower the same weight as "
+                            + "the personal gain).</html>", new String[]{"Egoistic", "Altruistic"}, 0, false));
+            this.properties
+                    .add(new IntegerProperty("Track length", "Circumference of the track", 6000, 1000, 6000, false));
         }
         catch (IncompatiblePropertyException exception)
         {
@@ -99,7 +114,8 @@ public class CircularRoad implements WrappableSimulation
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable()
+        {
             @Override
             public void run()
             {
@@ -123,7 +139,7 @@ public class CircularRoad implements WrappableSimulation
      */
     public SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
     {
-        RoadSimulationModel model = new RoadSimulationModel();
+        RoadSimulationModel model = new RoadSimulationModel(this.properties);
         final SimpleSimulator result =
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
@@ -141,7 +157,7 @@ public class CircularRoad implements WrappableSimulation
         {
             final String laneName = String.format(" lane %d", laneIndex + 1);
             cp =
-                    new DensityContourPlot("DensityPlot " + model.carFollowingModel.getLongName() + " lane "
+                    new DensityContourPlot("DensityPlot " + model.carFollowingModelCars.getLongName() + " lane "
                             + laneIndex, model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Density Contour Graph");
             cp.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -149,28 +165,28 @@ public class CircularRoad implements WrappableSimulation
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 0);
 
             cp =
-                    new SpeedContourPlot("SpeedPlot " + model.carFollowingModel.getLongName() + laneName,
+                    new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName() + laneName,
                             model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Speed Contour Graph");
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 0);
 
             cp =
-                    new FlowContourPlot("FlowPlot " + model.carFollowingModel.getLongName() + laneName,
+                    new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName() + laneName,
                             model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("FLow Contour Graph");
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 1);
 
             cp =
-                    new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModel.getLongName() + laneName,
-                            model.getMinimumDistance(), model.lanes[laneIndex].getLength());
+                    new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName()
+                            + laneName, model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Acceleration Contour Graph");
             model.getContourPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 1);
 
             TrajectoryPlot trajectoryPlot =
-                    new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModel.getLongName() + laneName,
+                    new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName() + laneName,
                             new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
                             model.lanes[laneIndex].getLength());
             trajectoryPlot.setTitle("Trajectories");
@@ -228,8 +244,14 @@ class RoadSimulationModel implements OTSModelInterface
     /** Number of cars created. */
     private int carsCreated = 0;
 
-    /** The car following model, e.g. IDM Plus. */
-    protected GTUFollowingModel carFollowingModel;
+    /** the car following model, e.g. IDM Plus for cars. */
+    protected GTUFollowingModel carFollowingModelCars;
+
+    /** the car following model, e.g. IDM Plus for trucks. */
+    protected GTUFollowingModel carFollowingModelTrucks;
+
+    /** The probability that the next generated GTU is a passenger car. */
+    double carProbability;
 
     /** The lane change model. */
     protected AbstractLaneChangeModel laneChangeModel;
@@ -252,6 +274,20 @@ class RoadSimulationModel implements OTSModelInterface
     /** the trajectory plot. */
     private ArrayList<ArrayList<TrajectoryPlot>> trajectoryPlots = new ArrayList<ArrayList<TrajectoryPlot>>();
 
+    /** User settable properties */
+    ArrayList<AbstractProperty<?>> properties = null;
+
+    /** The random number generator used to decide what kind of GTU to generate. */
+    Random randomGenerator = new Random(12345);
+
+    /**
+     * @param properties
+     */
+    public RoadSimulationModel(ArrayList<AbstractProperty<?>> properties)
+    {
+        this.properties = properties;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
@@ -267,33 +303,119 @@ class RoadSimulationModel implements OTSModelInterface
         }
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         double radius = 6000 / 2 / Math.PI;
-        Node startEnd = new Node("Start/End", new Coordinate(radius, 0, 0));
-        Coordinate[] intermediateCoordinates = new Coordinate[255];
-        for (int i = 0; i < intermediateCoordinates.length; i++)
-        {
-            double angle = 2 * Math.PI * (1 + i) / (1 + intermediateCoordinates.length);
-            intermediateCoordinates[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
-        }
         try
         {
+            for (AbstractProperty<?> p : this.properties)
+            {
+                if (p instanceof SelectionProperty)
+                {
+                    SelectionProperty sp = (SelectionProperty) p;
+                    if ("Car following model".equals(sp.getShortName()))
+                    {
+                        String modelName = sp.getValue();
+                        if (modelName.equals("IDM"))
+                        {
+                            this.carFollowingModelCars =
+                                    new IDM(new DoubleScalar.Abs<AccelerationUnit>(1,
+                                            AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                                                    AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                            this.carFollowingModelTrucks =
+                                    new IDM(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                                            AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                                                    AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                        }
+                        else if (modelName.equals("IDM+"))
+                        {
+                            this.carFollowingModelCars =
+                                    new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+                                            AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                                                    AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                            this.carFollowingModelTrucks =
+                                    new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                                            AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                                                    AccelerationUnit.METER_PER_SECOND_2),
+                                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                        }
+                        else
+                        {
+                            throw new Error("Car following model " + modelName + " not implemented");
+                        }
+                    }
+                    else if ("Lane change strategy".equals(sp.getShortName()))
+                    {
+                        String strategyName = sp.getValue();
+                        if ("Egoistic".equals(strategyName))
+                        {
+                            this.laneChangeModel = new Egoistic();
+                        }
+                        else if ("Altruistic".equals(strategyName))
+                        {
+                            this.laneChangeModel = new Altruistic();
+                        }
+                        else
+                        {
+                            throw new Error("Lane change strategy " + strategyName + " not implemented");
+                        }
+                    }
+                    else
+                    {
+                        throw new Error("Unhandled SelectionProperty " + p.getShortName());
+                    }
+                }
+                else if (p instanceof ProbabilityDistributionProperty)
+                {
+                    ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
+                    String modelName = p.getShortName();
+                    if (modelName.equals("Traffic composition"))
+                    {
+                        this.carProbability = pdp.getValue()[0];
+                    }
+                    else
+                    {
+                        throw new Error("Unhandled ProbabilityDistributionProperty " + p.getShortName());
+                    }
+                }
+                else if (p instanceof IntegerProperty)
+                {
+                    IntegerProperty ip = (IntegerProperty) p;
+                    if ("Track length".equals(ip.getShortName()))
+                    {
+                        radius = ip.getValue() / 2 / Math.PI;
+                    }
+                    else
+                    {
+                        throw new Error("Unhandled IntegerProperty " + ip.getShortName());
+                    }
+                }
+                else
+                {
+                    throw new Error("Unhandled property: " + p);
+                }
+            }
             GTUType<String> gtuType = new GTUType<String>("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addPermeability(gtuType);
+            Node startEnd = new Node("Start/End", new Coordinate(radius, 0, 0));
+            Coordinate[] intermediateCoordinates = new Coordinate[255];
+            for (int i = 0; i < intermediateCoordinates.length; i++)
+            {
+                double angle = 2 * Math.PI * (1 + i) / (1 + intermediateCoordinates.length);
+                intermediateCoordinates[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+            }
             this.lanes =
                     LaneFactory.makeMultiLane("Circular Link with " + laneCount + " lanes", startEnd, startEnd,
                             intermediateCoordinates, laneCount, laneType, this.simulator);
-            this.carFollowingModel =
-                    new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
-            this.carFollowingModel =
-                    new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
-            this.laneChangeModel = new Egoistic();
-            this.laneChangeModel = new Altruistic();
             // Put the (not very evenly spaced) cars on the track
             double headway = 40;
             for (int laneIndex = 0; laneIndex < this.lanes.length; laneIndex++)
@@ -372,20 +494,22 @@ class RoadSimulationModel implements OTSModelInterface
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @param gtuType GTUType&lt;String&gt;; the GTU type
      * @throws NamingException on ???
      */
     protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition, int laneIndex,
             GTUType<String> gtuType) throws NamingException
     {
-        // System.out.println("GenerateCar " + (this.carsCreated + 1) + " initialPosition is " + initialPosition);
+        boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lanes[laneIndex], initialPosition);
         try
         {
+            DoubleScalar.Rel<LengthUnit> vehicleLength =
+                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
             IDMCar car =
-                    new IDMCar(++this.carsCreated, gtuType, this.simulator, this.carFollowingModel, this.simulator
+                    new IDMCar(++this.carsCreated, gtuType, this.simulator, generateTruck
+                            ? this.carFollowingModelTrucks : this.carFollowingModelCars, vehicleLength, this.simulator
                             .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.cars.get(laneIndex).add(car);
             new CarAnimation(car, this.simulator);
@@ -443,6 +567,7 @@ class RoadSimulationModel implements OTSModelInterface
          * @param gtuType GTUType&lt;String&gt;; the type of the GTU
          * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
+         * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
          * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
          *            positions of the new IDMCar
@@ -451,11 +576,13 @@ class RoadSimulationModel implements OTSModelInterface
          * @throws RemoteException on communication failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-                final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
+                final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
+                final DoubleScalar.Abs<TimeUnit> initialTime,
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, gtuType, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
+            super(id, gtuType, simulator, carFollowingModel, vehicleLength, initialTime, initialLongitudinalPositions,
+                    initialSpeed);
             try
             {
                 if (id >= 0)
@@ -689,8 +816,8 @@ class RoadSimulationModel implements OTSModelInterface
             result.add(
                     0,
                     new IDMCar(-10000 - prototype.getId(), (GTUType<String>) prototype.getGTUType(), prototype
-                            .getSimulator(), prototype.getGTUFollowingModel(), when, initialPositions, prototype
-                            .getLongitudinalVelocity()));
+                            .getSimulator(), prototype.getGTUFollowingModel(), prototype.getLength(), when,
+                            initialPositions, prototype.getLongitudinalVelocity()));
             // Add a wrapped copy of the first (now second) car at the end
             prototype = (AnimatedCar) result.get(1);
             position = prototype.positionOfFront(lane, when).getSI();
@@ -701,8 +828,8 @@ class RoadSimulationModel implements OTSModelInterface
             initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             initialPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(position, LengthUnit.METER));
             result.add(new IDMCar(-20000 - prototype.getId(), (GTUType<String>) prototype.getGTUType(), prototype
-                    .getSimulator(), prototype.getGTUFollowingModel(), when, initialPositions, prototype
-                    .getLongitudinalVelocity()));
+                    .getSimulator(), prototype.getGTUFollowingModel(), prototype.getLength(), when, initialPositions,
+                    prototype.getLongitudinalVelocity()));
         }
         catch (RemoteException | NetworkException | NamingException exception)
         {

@@ -2,36 +2,40 @@ package org.opentrafficsim.demo.IDMPlus.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.table.TableColumnModel;
+import javax.swing.event.ChangeListener;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.gui.LabeledPanel;
+import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.IntegerProperty;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
@@ -53,15 +57,16 @@ public class SuperDemo
      */
     public static void main(String[] args)
     {
-    SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run()
+        SwingUtilities.invokeLater(new Runnable()
         {
-            new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
-        }
+            @Override
+            public void run()
+            {
+                new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+            }
         });
     }
-    
+
     /**
      * Build the GUI.
      * @return JPanel; the JPanel that holds the application.=
@@ -74,12 +79,14 @@ public class SuperDemo
         final ArrayList<WrappableSimulation> demonstrations = new ArrayList<WrappableSimulation>();
         demonstrations.add(new ContourPlots());
         demonstrations.add(new Trajectories());
+        demonstrations.add(new FundamentalDiagrams());
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
         final JPanel left = new JPanel();
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
         final JLabel description = new JLabel();
         final JPanel propertyPanel = new JPanel();
+        propertyPanel.setLayout(new BoxLayout(propertyPanel, BoxLayout.Y_AXIS));
         mainPanel.add(description, BorderLayout.CENTER);
         final JButton startButton = new JButton("Start simulation");
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -96,18 +103,52 @@ public class SuperDemo
                     propertyPanel.removeAll();
                     for (AbstractProperty<?> p : demo.getProperties())
                     {
-                        if (p instanceof ProbabilityDistributionProperty)
+                        if (p instanceof SelectionProperty)
                         {
+                            JPanel panel = new JPanel();
+                            panel.setLayout(new BorderLayout());
+                            final SelectionProperty sp = (SelectionProperty) p;
+                            JComboBox<String> comboBox = new JComboBox<String>(sp.getOptionNames());
+                            comboBox.setSelectedItem(sp.getValue());
+                            comboBox.setToolTipText(sp.getDescription());
+                            comboBox.addItemListener(new ItemListener()
+                            {
+                                @Override
+                                public void itemStateChanged(ItemEvent itemEvent)
+                                {
+                                    if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                                    {
+                                        String itemText = (String) itemEvent.getItem();
+                                        try
+                                        {
+                                            sp.setValue(itemText);
+                                        }
+                                        catch (IncompatiblePropertyException exception)
+                                        {
+                                            exception.printStackTrace();
+                                        }
+                                    }
+                                }
+                            });
+                            panel.setToolTipText(sp.getDescription());
+                            panel.add(new JLabel(p.getShortName() + ": "), BorderLayout.LINE_START);
+                            panel.add(comboBox, BorderLayout.CENTER);
+                            panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) comboBox.getPreferredSize()
+                                    .getHeight()));
+                            propertyPanel.add(panel);
+                        }
+                        else if (p instanceof ProbabilityDistributionProperty)
+                        {
+                            LabeledPanel lp = new LabeledPanel(p.getShortName());
+                            lp.setLayout(new BorderLayout());
                             final ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
                             final ProbabilityDistributionEditor pdpe =
                                     new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
-                            pdpe.addPropertyChangeListener("probabilitiesChanged", new PropertyChangeListener()
+                            pdpe.addPropertyChangeListener(new PropertyChangeListener()
                             {
-
                                 @Override
                                 public void propertyChange(PropertyChangeEvent arg0)
                                 {
-                                    //System.out.println("Received a PropertyChangeEvent: " + arg0);
                                     try
                                     {
                                         pdp.setValue(pdpe.getProbabilities());
@@ -119,9 +160,60 @@ public class SuperDemo
                                 }
 
                             });
-                            propertyPanel.add(pdpe);
+                            lp.add(pdpe, BorderLayout.CENTER);
+                            lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC")
+                                    .getPreferredSize().getHeight()));
+                            lp.setToolTipText(pdp.getDescription());
+                            propertyPanel.add(lp);
+                        }
+                        else if (p instanceof IntegerProperty)
+                        {
+                            final IntegerProperty ip = (IntegerProperty) p;
+                            LabeledPanel lp = new LabeledPanel(p.getShortName());
+                            lp.setLayout(new BorderLayout());
+                            final JSlider slider = new JSlider();
+                            slider.setMaximum(ip.getMaximumValue());
+                            slider.setMinimum(ip.getMinimumValue());
+                            slider.setValue(ip.getValue());
+                            slider.setPaintTicks(true);
+                            final JLabel currentValue =
+                                    new JLabel(String.format(DefaultLocale.getLocale(), "Track length: %dm",
+                                            ip.getValue()), SwingConstants.RIGHT);
+                            slider.addChangeListener(new ChangeListener()
+                            {
+                                @Override
+                                public void stateChanged(ChangeEvent changeEvent)
+                                {
+                                    int value = slider.getValue();
+                                    currentValue.setText(String.format(DefaultLocale.getLocale(), "Track length: %dm",
+                                            value));
+                                    if (slider.getValueIsAdjusting())
+                                    {
+                                        return;
+                                    }
+                                    try
+                                    {
+                                        ip.setValue(value);
+                                    }
+                                    catch (IncompatiblePropertyException exception)
+                                    {
+                                        exception.printStackTrace();
+                                    }
+                                }
+                            });
+                            lp.setToolTipText(p.getDescription());
+                            lp.add(slider, BorderLayout.CENTER);
+                            lp.add(currentValue, BorderLayout.SOUTH);
+                            lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) slider.getPreferredSize()
+                                    .getHeight()));
+                            propertyPanel.add(lp);
+                        }
+                        else
+                        {
+                            throw new Error("Unhandled property: " + p.getDescription());
                         }
                     }
+                    propertyPanel.add(Box.createVerticalGlue());
                 }
             });
             buttonGroup.add(button);
@@ -154,6 +246,7 @@ public class SuperDemo
                 mainPanel.removeAll();
                 try
                 {
+                    // TODO figure out a way to get the properties to what builsDimulator builds
                     mainPanel.add(simulation.buildSimulator().getPanel(), BorderLayout.CENTER);
                 }
                 catch (RemoteException | SimRuntimeException exception)
@@ -165,244 +258,6 @@ public class SuperDemo
         left.add(startButton);
         left.add(propertyPanel);
         return mainPanel;
-    }
-
-}
-
-/**
- * Visual control that displays a set of probabilities that add up to 1. <br>
- * The user can drag the boundaries between the probabilities to change their values. The sum of the probabilities will
- * always add up to 1.
- * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
- * <p>
- * @version 17 dec. 2014 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- */
-class ProbabilityDistributionEditor extends JPanel implements TableColumnModelListener, MouseListener
-{
-    /** */
-    private static final long serialVersionUID = 20141217L;
-
-    /** The JTable that does the visualization. */
-    private JTable table;
-
-    /** The names of the fields. */
-    private String[] fieldNames;
-
-    /** Set when columns are resized. */
-    private boolean columnSizeChanged;
-
-    /** Probabilities for each column */
-    private double[] probabilities = null;
-
-    /** Register for propertyChange event listeners */
-    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
-    /**
-     * Common initialization code.
-     * @param theFieldNames String[]; the names of the fields.
-     */
-    private void initialize(final String[] theFieldNames)
-    {
-        this.fieldNames = theFieldNames;
-        this.columnSizeChanged = false;
-        Object[][] fields = {};
-        this.table = new JTable(fields, theFieldNames);
-        this.table.getTableHeader().setReorderingAllowed(false);
-        for (int column = 0; column < theFieldNames.length; column++)
-        {
-            this.table.getColumn(theFieldNames[column]).setMinWidth(0);
-        }
-        this.table.getColumnModel().addColumnModelListener(this);
-        this.table.getTableHeader().addMouseListener(this);
-        super.add(new JScrollPane(this.table));
-    }
-
-    /**
-     * Construct a new ProbabilityDistributionEditor with uniform probability distribution.
-     * @param fieldNames String[]; the names of the fields.
-     */
-    ProbabilityDistributionEditor(final String[] fieldNames)
-    {
-        super();
-        initialize(fieldNames);
-        this.columnSizeChanged = true;
-        reComputeFractions();
-    }
-
-    /**
-     * Construct a new ProbabilityDistributionEditor with initial values for the probabilities.
-     * @param fieldNames
-     * @param doubles
-     */
-    ProbabilityDistributionEditor(final String[] fieldNames, final Double[] doubles)
-    {
-        super();
-        initialize(fieldNames);
-        TableColumnModel tcm = this.table.getTableHeader().getColumnModel();
-        double totalWidth = tcm.getTotalColumnWidth();
-        for (int column = 0; column < fieldNames.length; column++)
-        {
-            this.table.getColumn(fieldNames[column]).setPreferredWidth((int) (doubles[column] * totalWidth));
-            this.table.getColumn(fieldNames[column]).setWidth((int) (doubles[column] * totalWidth));
-        }
-        this.columnSizeChanged = true;
-        reComputeFractions();
-    }
-    
-    /**
-     * Retrieve the current probability values.
-     * @return Double[]; thhe current probability values
-     */
-    public Double[] getProbabilities()
-    {
-        Double[] result = new Double[this.probabilities.length];
-        for (int column = 0; column < this.probabilities.length; column++)
-        {
-            result[column] = this.probabilities[column];
-        }
-        return result;
-    }
-    
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener pcl)
-    {
-        this.propertyChangeSupport.addPropertyChangeListener(pcl);
-        System.out.println("Added property change listener: " + pcl);
-    }
-    
-    @Override
-    public void addPropertyChangeListener(String key, PropertyChangeListener pcl)
-    {
-        this.propertyChangeSupport.addPropertyChangeListener(key, pcl);
-        System.out.println("Added property change listener for " + key + ": " + pcl);
-    }
-    
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener pcl)
-    {
-        this.propertyChangeSupport.removePropertyChangeListener(pcl);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String key, PropertyChangeListener pcl)
-    {
-        this.propertyChangeSupport.removePropertyChangeListener(pcl);
-    }
-
-    /**
-     * Retrieve the name of one of the fields.
-     * @param index int; the index of the field to retrieve
-     * @return String; the name of the indicated field
-     */
-    public final String getFieldName(int index)
-    {
-        return this.fieldNames[index];
-    }
-
-    /**
-     * Retrieve the probability of one of the fields.
-     * @param index int; the index of the field
-     * @return double; the probability of the indicated field
-     */
-    public final double getProbability(int index)
-    {
-        return this.probabilities[index];
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void columnAdded(TableColumnModelEvent e)
-    {
-        // Ignored -- cannot happen
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void columnMarginChanged(ChangeEvent e)
-    {
-        this.columnSizeChanged = true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void columnMoved(TableColumnModelEvent e)
-    {
-        // Ignored -- cannot happen
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void columnRemoved(TableColumnModelEvent e)
-    {
-        // Ignored -- cannot happen
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void columnSelectionChanged(ListSelectionEvent e)
-    {
-        // Ignored
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void mouseClicked(MouseEvent arg0)
-    {
-        // Ignored -- irrelevant
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void mouseEntered(MouseEvent arg0)
-    {
-        // Ignored -- irrelevant
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void mouseExited(MouseEvent arg0)
-    {
-        // Ignored -- irrelevant
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void mousePressed(MouseEvent arg0)
-    {
-        // Ignored -- irrelevant
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void mouseReleased(MouseEvent arg0)
-    {
-        // This is the one we need
-        if (this.columnSizeChanged)
-        {
-            reComputeFractions();
-        }
-    }
-
-    /**
-     * Re computer the probabilities and inform all propertyChangeListeners.
-     */
-    private void reComputeFractions()
-    {
-        TableColumnModel tcm = this.table.getTableHeader().getColumnModel();
-        double totalWidth = tcm.getTotalColumnWidth();
-        double[] newProbabilities = new double[tcm.getColumnCount()];
-        for (int column = 0; column < newProbabilities.length; column++)
-        {
-            newProbabilities[column] = tcm.getColumn(column).getWidth() / totalWidth;
-            System.out.println("probabilities[" + column + "]: " + newProbabilities[column]);
-        }
-        double[] oldProbabilities = this.probabilities;
-        this.probabilities = newProbabilities;
-        this.propertyChangeSupport.firePropertyChange("probabilitiesChanged", oldProbabilities, this.probabilities);
     }
 
 }
