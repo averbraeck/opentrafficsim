@@ -17,6 +17,8 @@ import java.util.Map;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 
+import com.vividsolutions.jts.awt.PointShapeFactory.Point;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -130,6 +132,8 @@ public class DataIO
                 {
                     day = Integer.toString(j);
                 }
+                String centroidOutputFile = pathData + "centroids.csv";
+
                 if (fileNameDay)
                 {
                     for (days dayName : days.values())
@@ -144,7 +148,7 @@ public class DataIO
                                             + "_area_GV[none].csv";
                             String outputShapeFile =
                                     pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
-                            detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID",
+                            detectLocationOfObject(outputShapeFile, null, outputFile, countMap, roads, areas, "LINK_ID",
                                     "Name");
                         }
 
@@ -158,7 +162,7 @@ public class DataIO
                     {
                         String outputShapeFile = pathData + "new/" + fileNameStarts + year + month + day + ".shp";
                         String outputFile = pathData + "new/" + fileNameStarts + year + month + day + "_area.csv";
-                        detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID", "Name");
+                        detectLocationOfObject(outputShapeFile, centroidOutputFile, outputFile, countMap, roads, areas, "LINK_ID", "Name");
                     }
                 }
             }
@@ -284,7 +288,7 @@ public class DataIO
      * @throws IOException
      */
 
-    public static void detectLocationOfObject(String outputShapeFile, String outputFile,
+    public static void detectLocationOfObject(String outputShapeFile, String centroidOutputFile, String outputFile,
             Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
             String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
@@ -311,11 +315,13 @@ public class DataIO
         // step 2: find the corresponding Area
         HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();
         HashMap<String, String> mapRoadLengths = new HashMap<String, String>();
+        HashMap<String, String> mapRoadCTM = new HashMap<String, String>();
+        HashMap<String, String> mapRoadSTT_NAAM = new HashMap<String, String>();
         int indexFieldNameToDetect = -1;
 
         for (String name : objectsToDetect.getVariableNames())
         {
-            if (name.equals(fieldNameToDetect))
+            if (name.equals(fieldNameToDetect))  //"LINK_ID"
             {
                 indexFieldNameToDetect = objectsToDetect.getVariableNames().indexOf(name);
                 break;
@@ -338,9 +344,33 @@ public class DataIO
             }
         }
         
+        int indexFieldNameWegbeheerder = -1;
+
+        for (String name : objectsToDetect.getVariableNames())
+        {
+            if (name.equals("WEGDEELLTR"))
+            {
+                indexFieldNameWegbeheerder = objectsToDetect.getVariableNames().indexOf(name);
+                break;
+            }
+        }
+        
+        int indexFieldNameSTT_NAAM = -1;
+
+        for (String name : objectsToDetect.getVariableNames())
+        {
+            if (name.equals("STT_NAAM"))
+            {
+                indexFieldNameSTT_NAAM  = objectsToDetect.getVariableNames().indexOf(name);
+                break;
+            }
+        }
+        
         for (ShapeObject road : objectsToDetect.getGeoObjects())
         {
             mapRoadLengths.put(road.getValues().get(indexFieldNameToDetect), road.getValues().get(indexFieldNameLength));
+            mapRoadCTM.put(road.getValues().get(indexFieldNameToDetect), road.getValues().get(indexFieldNameWegbeheerder));
+            mapRoadSTT_NAAM.put(road.getValues().get(indexFieldNameToDetect), road.getValues().get(indexFieldNameSTT_NAAM));
         }
 
         // write the data with the corresponding area ID to a new file
@@ -350,11 +380,30 @@ public class DataIO
             Map.Entry countIdValue = (Map.Entry) it.next();
             Geometry geomToDetect = null;
             Double length = null;
+            String CTM = null;
+            String STT_NAAM = null;
+            Coordinate coordMiddle = null;
             if (mapRoads.get(countIdValue.getKey()) != null)
             {
                 geomToDetect = mapRoads.get(countIdValue.getKey()).getGeometry();
+                if (geomToDetect != null)
+                {
+                    int numberOfCoords = geomToDetect.getCoordinates().length;
+                    Coordinate coordA = geomToDetect.getCoordinates()[0];
+                    Coordinate coordB = geomToDetect.getCoordinates()[numberOfCoords - 1];
+                    double x = coordA.x + 0.5 * (coordB.x - coordA.x);
+                    double y = coordA.y + 0.5 * (coordB.y - coordA.y);
+                    coordMiddle = new Coordinate( x, y, 0);
+                }
                 length = Double.parseDouble(mapRoadLengths.get(countIdValue.getKey()));
+                CTM = mapRoadCTM.get(countIdValue.getKey());
+                STT_NAAM = mapRoadSTT_NAAM.get(countIdValue.getKey());
             }
+            else
+            {
+                coordMiddle = new Coordinate( -99, -99, 0);
+            }
+            
             if (length == null)
             {
                 length = Double.NaN;
@@ -367,6 +416,7 @@ public class DataIO
 
             String text = "";
             String id = (String) countIdValue.getKey();
+            String coords = coordMiddle.x + ", " + coordMiddle.y + " "; 
             if (area != null)
             {
                 Integer counted;
@@ -385,11 +435,19 @@ public class DataIO
                 area.getValues().set(indexAttributeAdded1, Integer.toString(counted + 1));
 //                String ids = area.getValues().get(indexAttributeAdded2);
 //                area.getValues().set(indexAttributeAdded2, ids + id);
-                text = id + ", " + area.getValues().get(0) + ", " + length;
+
+                if (CTM.equals("SW") || CTM.equals("R") || STT_NAAM.equals("Hubertustunnel"))
+                {
+                    text = id + ", " + "Stroomweg" + ", " + length + ", " + coords;                    
+                }
+                else
+                {
+                    text = id + ", " + area.getValues().get(0) + ", " + length + ", "  + coords;
+                }
             }
             else
             {
-                text = id + ", no area found" + ", " + length;
+                text = id + ", no area found" + ", " + length + ", "  + coords;
             }
             ArrayList<Double> counts = (ArrayList<Double>) countIdValue.getValue();
             for (Double count : counts)
@@ -419,6 +477,27 @@ public class DataIO
             ShapeStore.createShapeFile(objectsToDetect, file);
         }*/
         out.close();
+        
+        if (centroidOutputFile != null)
+        {
+            fileNew = new File(centroidOutputFile);
+            out = null;
+            // if file doesn't exists, then create it...
+            if (fileNew.exists())
+            {
+                fileNew.createNewFile();
+            }
+    
+            out = new BufferedWriter(new FileWriter(fileNew));
+            for (ShapeObject point : searchLocations.getGeoObjects())
+            {
+                com.vividsolutions.jts.geom.Point centroid = point.getGeometry().getCentroid();
+                String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," + centroid.getCoordinate().y ;
+                text += " \n";
+                out.write(text);
+            }
+            out.close();
+        }
     }
 
     /**

@@ -68,6 +68,9 @@ public class NTMModel implements OTSModelInterface
     private Map<String, Area> areas;
 
     /** detailed areas from the traffic model. */
+    private Map<String, Area> bigAreas;
+
+    /** rougher areas from the traffic model. */
     private ShapeStore compressedAreas;
 
     /** nodes from shape file. */
@@ -75,6 +78,9 @@ public class NTMModel implements OTSModelInterface
 
     /** connectors from shape file. */
     private Map<String, Link> shpConnectors;
+
+    /** connectors from shape file. */
+    private Map<String, Link> shpBigConnectors;
 
     /** links from shape file. */
     private Map<String, Link> shpLinks;
@@ -85,8 +91,14 @@ public class NTMModel implements OTSModelInterface
     /** the centroids. */
     private Map<String, Node> centroids;
 
+    /** the centroids. */
+    private Map<String, Node> bigCentroids;
+
     /** the demand of trips by Origin and Destination. */
     private TripDemand<TripInfoTimeDynamic> tripDemand;
+
+    /** the compressed demand of trips by Origin and Destination. */
+    private TripDemand<TripInfoTimeDynamic> compressedTripDemand;
 
     /** The simulation settings. */
     private NTMSettings settingsNTM;
@@ -99,6 +111,9 @@ public class NTMModel implements OTSModelInterface
 
     /** graph containing the simplified network. */
     private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
+    
+    /** debugging.*/
+    public boolean DEBUG = true;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -121,6 +136,7 @@ public class NTMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
         {
+            boolean COMPRESS_AREAS = false;
             // set the time step value at ten seconds;
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
@@ -142,7 +158,7 @@ public class NTMModel implements OTSModelInterface
             String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis";
             this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
 
-            // the Map areas contains a reference to the centroids! 
+            // the Map areas contains a reference to the centroids!
             this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
             // save the selected and created areas to a shape file
             // WriteToShp.createShape(this.areas);
@@ -158,11 +174,6 @@ public class NTMModel implements OTSModelInterface
             ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                     this.nodes, this.centroids);
 
-            // to compress the areas into bigger units
-         //   File file = new File("D:/gtamminga/workspace/ots-ntm/target/classes/gis/selectedAreas_newest_merged1.shp");
-         //   this.compressedAreas = ShapeStore.openGISFile(file);
-         //   this.shpConnectors = connectCentroidsToBigger(this.compressedAreas, this.centroids, this.shpConnectors, this.areas);
-            
             // read the time profile curves: these will be attached to the demands afterwards
             this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";", "\\s+"));
 
@@ -177,8 +188,29 @@ public class NTMModel implements OTSModelInterface
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
 
-
-
+            if (COMPRESS_AREAS)
+            {
+                // to compress the areas into bigger units
+                File file = new File(path + "/selectedAreas_newest_merged2.shp");
+                this.compressedAreas = ShapeStore.openGISFile(file);
+                this.bigAreas = new HashMap<String, Area>();
+                for (ShapeObject shape : this.compressedAreas.getGeoObjects())
+                {
+                    Area bigArea =
+                            new Area(shape.getGeometry(), shape.getValues().get(0), "name", "gemeente", "gebied",
+                                    "regio", 0, shape.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
+                    this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
+                }
+                // create new centroids
+                this.bigCentroids = new HashMap<String, Node>();
+                // key from small to big areas, and new connectors and new bigCentroids!
+                HashMap<Node, Node> mapSmallAreaToBigArea =
+                        connectCentroidsToBigger(this.compressedAreas, this.centroids, this.bigCentroids,
+                                this.shpConnectors, this.areas);
+                this.setShpBigConnectors(createConnectors(mapSmallAreaToBigArea, this.shpConnectors));
+                this.compressedTripDemand =
+                        TripDemand.compressTripDemand(this.tripDemand, this.centroids, mapSmallAreaToBigArea);
+            }
             // create a key between the larger areas and the original smaller areas
             // this enables the creation of compressed zones
 
@@ -191,9 +223,11 @@ public class NTMModel implements OTSModelInterface
             // save the selected and created areas to a shape file: at this position the connector areas are saved
             // also!!!
             // WriteToShp.createShape(this.areas);
-
+            
+            //compute the roadLength within the areas
+            determineRoadLengthInAreas(this.shpLinks, this.areas);
             // build the higher level map and the graph
-            BuildGraph.buildGraph(this);
+            BuildGraph.buildGraph(this, COMPRESS_AREAS);
 
             // shortest paths creation
             initiateSimulationNTM();
@@ -215,40 +249,45 @@ public class NTMModel implements OTSModelInterface
         }
     }
 
+
     /**
-     * @param areas 
+     * @param areas
      * @param shpConnectors2
      * @param compressedAreas2
      * @param areas2
      * @return
      */
-    private Map<String, Link> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, Node> centroids,
-            Map<String, Link> connectors, Map<String, Area> areas)
+    private HashMap<Node, Node> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, Node> centroids,
+            Map<String, Node> bigCentroids, Map<String, Link> connectors, Map<String, Area> areas)
     {
-        HashMap<String, Link> mapConnectors = new HashMap<String, Link>();
         HashMap<Node, Node> mapSmallAreaToBigArea = new HashMap<Node, Node>();
-        Map<String, Node> newCentroids = new HashMap<String, Node>();
-        ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
-        for (ShapeObject bigArea: compressedAreas.getGeoObjects())
+        // ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
+        for (ShapeObject bigArea : compressedAreas.getGeoObjects())
         {
             String nr = "big" + bigArea.getValues().get(0);
-            Node newCentroid = new Node(nr, bigArea.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
-            newCentroids.put(nr, newCentroid);
+            Node bigCentroid = new Node(nr, bigArea.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
+            bigCentroids.put(nr, bigCentroid);
             for (Node centroid : centroids.values())
             {
                 if (bigArea.getGeometry().covers(centroid.getPoint()))
                 {
-                    mapSmallAreaToBigArea.put(centroid, newCentroid);
-                    centroidsToRemove.add(centroid);
+                    mapSmallAreaToBigArea.put(centroid, bigCentroid);
                 }
             }
         }
-        for (Node smallCentroid: centroidsToRemove)
-        {
-            centroids.remove(smallCentroid.getId());
-            centroids.put(mapSmallAreaToBigArea.get(smallCentroid).getId(), mapSmallAreaToBigArea.get(smallCentroid));
-        }
-        
+        return mapSmallAreaToBigArea;
+    }
+
+    /**
+     * @param areas
+     * @param shpConnectors2
+     * @param compressedAreas2
+     * @param areas2
+     * @return
+     */
+    private Map<String, Link> createConnectors(HashMap<Node, Node> mapSmallAreaToBigArea, Map<String, Link> connectors)
+    {
+        HashMap<String, Link> mapConnectors = new HashMap<String, Link>();
         for (Link link : connectors.values())
         {
             Node startNode = null;
@@ -286,6 +325,29 @@ public class NTMModel implements OTSModelInterface
         return mapConnectors;
     }
 
+    
+    /**
+     * @param shpLinks2
+     * @param areas2
+     */
+    private void determineRoadLengthInAreas(Map<String, Link> shpLinks, Map<String, Area> areas)
+    {
+        for (Link link : shpLinks.values())
+        {
+            for (Area area : areas.values())
+            {
+                if (area.getGeometry().contains(link.getGeometry().getLineString()))
+                {
+                    if (area != null)
+                    {
+                        area.addRoadLength(link.getLength());
+                    }
+                }
+            }
+        }
+
+    }
+    
     /**
      * Generate demand at fixed intervals based on traffic demand (implemented by re-scheduling this method).
      */
@@ -315,36 +377,44 @@ public class NTMModel implements OTSModelInterface
                 // determine the start and endnode of the first edge that starts from the origin
                 // the endNode of this edge is the "Neighbour" area
                 Node node = path.getEdgeList().get(0).getLink().getStartNode();
-                BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
+                BoundedNode startNode = null;
+                startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
+                //BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
                 node = path.getEdgeList().get(0).getLink().getEndNode();
-                BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
+                BoundedNode endNode = null;
+                endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
+                //BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
 
                 // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
                 if (origin.equals(endNode))
                 {
                     endNode = startNode;
                 }
-                //for all node - destination pairs add information on their first neighbour on the shortest path
-                TripInfoByDestination tripInfoByNode= new TripInfoByDestination(endNode, destination, 0, 0);
+                // for all node - destination pairs add information on their first neighbour on the shortest path
+
+                TripInfoByDestination tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
                 startNode.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
-                
+/*                for (BoundedNode vertex : this.getAreaGraph().vertexSet())
+                {
+                    if (vertex.getId().equals(startNode.getId()))
+                    {
+                        vertex.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
+                    }
+                }*/
                 if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
                     // for the flow links we create the trip info by Node also for the flow cells
                     LinkCellTransmission ctmLink =
-                            (LinkCellTransmission) this.getAreaGraph()
-                                    .getEdge(origin, endNode).getLink();
+                            (LinkCellTransmission) this.getAreaGraph().getEdge(origin, endNode).getLink();
                     // Loop through the cells and do transmission
                     for (FlowCell cell : ctmLink.getCells())
                     {
-                        tripInfoByNode= new TripInfoByDestination(endNode, destination, 0, 0);
-                        cell.getCellBehaviour().getTripInfoByNodeMap().put(origin, tripInfoByNode);
+                        tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
+                        cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(origin, tripInfoByNode);
                     }
                 }
-                
                 // for all OD-pairs with trips, the TripInfo is already initiated
                 // here we add the intermediate trip information at all nodes
-
             }
         }
 
@@ -629,11 +699,43 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
+     * @return shpBigConnectors.
+     */
+    public Map<String, Link> getShpBigConnectors()
+    {
+        return shpBigConnectors;
+    }
+
+    /**
+     * @param shpBigConnectors set shpBigConnectors.
+     */
+    public void setShpBigConnectors(Map<String, Link> shpBigConnectors)
+    {
+        this.shpBigConnectors = shpBigConnectors;
+    }
+
+    /**
      * @return areas.
      */
     public final Map<String, Area> getAreas()
     {
         return this.areas;
+    }
+
+    /**
+     * @return bigAreas.
+     */
+    public Map<String, Area> getBigAreas()
+    {
+        return bigAreas;
+    }
+
+    /**
+     * @param bigAreas set bigAreas.
+     */
+    public void setBigAreas(Map<String, Area> bigAreas)
+    {
+        this.bigAreas = bigAreas;
     }
 
     /**
@@ -721,6 +823,38 @@ public class NTMModel implements OTSModelInterface
     public void setCompressedAreas(ShapeStore compressedAreas)
     {
         this.compressedAreas = compressedAreas;
+    }
+
+    /**
+     * @return bigCentroids.
+     */
+    public Map<String, Node> getBigCentroids()
+    {
+        return bigCentroids;
+    }
+
+    /**
+     * @param bigCentroids set bigCentroids.
+     */
+    public void setBigCentroids(Map<String, Node> bigCentroids)
+    {
+        this.bigCentroids = bigCentroids;
+    }
+
+    /**
+     * @return compressedTripDemand.
+     */
+    public TripDemand<TripInfoTimeDynamic> getCompressedTripDemand()
+    {
+        return compressedTripDemand;
+    }
+
+    /**
+     * @param compressedTripDemand set compressedTripDemand.
+     */
+    public void setCompressedTripDemand(TripDemand<TripInfoTimeDynamic> compressedTripDemand)
+    {
+        this.compressedTripDemand = compressedTripDemand;
     }
 
     /*

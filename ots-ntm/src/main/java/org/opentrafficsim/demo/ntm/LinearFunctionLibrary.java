@@ -20,20 +20,36 @@ public class LinearFunctionLibrary
 {
 
     /**
-     * @param xyPairs
-     * @param var
-     * @return piecewise linear
+     * An example (PieceWiseLinear) is shown below:
+     * 
+     * <pre>
+     *   production
+     *      |      
+     *    Y |      _____________________ 
+     *      |     /                      \
+     *      |    /                        \ 
+     *      |   /                          \  
+     *      |  /                            \   
+     *      | /                              \ 
+     *      |/________________________________\__________ density (number of vehicles)
+     *            ^                     ^ 
+     *            x1                   x2     x3
+     * </pre>
+     * <p>
+     * @param xyPairs point that define the curve
+     * @param valueX provides te value to execute (returns the Y-value)
+     * @return the Y value of a valueX
      */
-    public static double createPieceWiseLinear(ArrayList<Point2D> xyPairs, double var)
+    public static double createPieceWiseLinear(final ArrayList<Point2D> xyPairs, final double valueX)
     {
         double result = 0;
         Point2D prevPoint = null;
         for (Point2D p : xyPairs)
         {
-            if (p.getX() > var)
+            if (p.getX() > valueX)
             {
                 result =
-                        prevPoint.getY() + (p.getY() - prevPoint.getY()) * (var - prevPoint.getX())
+                        prevPoint.getY() + (p.getY() - prevPoint.getY()) * (valueX - prevPoint.getX())
                                 / (p.getX() - prevPoint.getX());
                 break;
             }

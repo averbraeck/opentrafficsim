@@ -56,7 +56,8 @@ public class CellBehaviourNTM extends CellBehaviour
         this.parametersNTM = parametersNTM;
         this.maxCapacity =
                 parametersNTM.getAccCritical().get(0) * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
-                        * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                        * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);// gedeeld door gemiddelde triplengte in een gebied (lengte zone?)
+        
     }
 
     /**

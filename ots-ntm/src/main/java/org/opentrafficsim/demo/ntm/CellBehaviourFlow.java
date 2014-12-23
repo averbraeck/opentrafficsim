@@ -56,19 +56,12 @@ public class CellBehaviourFlow extends CellBehaviour
     {
         if (parametersFD == null)
         {
-            
-            ArrayList<Double> critic1 = new ArrayList<Double>();  
-            //TODO hard coded: should be adjusted!!!!!!!!!!!-
-            
-            critic1.add(1500.0);
-            parametersFD = new ParametersFundamentalDiagram(critic1, new DoubleScalar.Abs<SpeedUnit>(70.0, SpeedUnit.KM_PER_HOUR));
+            parametersFD = new ParametersFundamentalDiagram(new DoubleScalar.Abs<SpeedUnit>(70.0, SpeedUnit.KM_PER_HOUR));
             
         }
-
-        this.parametersFundamentalDiagram = parametersFD;
-
-        this.maxCapacity =
-                parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+        this.setParametersFundamentalDiagram(parametersFD);
+        this.maxCapacity =  2000;
+//                parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }  
     
     /**
@@ -97,14 +90,14 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return
      */
     // @Override
-    public double retrieveSupply(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
+    public double retrieveSupply(final Double accumulatedCars, final ParametersFundamentalDiagram param)
     {
-        double carProduction = maximumCapacity;
+        double carProduction = this.getMaxCapacity();
         if (accumulatedCars > param.getAccCritical().get(0))
         {
-            carProduction = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
+            carProduction = retrieveCarProduction(accumulatedCars, this.getMaxCapacity(), param);
         }
-        double productionSupply = Math.min(maximumCapacity, carProduction); // supply
+        double productionSupply = Math.min(this.getMaxCapacity(), carProduction); // supply
         return productionSupply;
     }
 
@@ -116,9 +109,10 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return
      */
     // @Override
-    public double retrieveDemand(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
+    public double retrieveDemand(final Double accumulatedCars, final ParametersFundamentalDiagram param)
     {
-        double productionDemand = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
+        double capacity = this.getMaxCapacity();
+        double productionDemand = retrieveCarProduction(accumulatedCars, capacity, param);
         return productionDemand;
     }
 
@@ -138,16 +132,19 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return carProduction
      */
     public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,
-            final ParametersNTM param)
+            final ParametersFundamentalDiagram param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
+        // starting point
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
+        // the point of maximum capacity
         p.setLocation(param.getAccCritical().get(0), maximumCapacity);
         xyPairs.add(p);
         p = new Point2D.Double();
+        // the final breakdown
         p.setLocation(param.getAccCritical().get(1), 0);
         xyPairs.add(p);
         double carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
@@ -184,6 +181,22 @@ public class CellBehaviourFlow extends CellBehaviour
     public final void setCurrentSpeed(final DoubleScalar.Abs<SpeedUnit> currentSpeed)
     {
         this.currentSpeed = currentSpeed;
+    }
+
+    /**
+     * @return parametersFundamentalDiagram.
+     */
+    public ParametersFundamentalDiagram getParametersFundamentalDiagram()
+    {
+        return parametersFundamentalDiagram;
+    }
+
+    /**
+     * @param parametersFundamentalDiagram set parametersFundamentalDiagram.
+     */
+    public void setParametersFundamentalDiagram(ParametersFundamentalDiagram parametersFundamentalDiagram)
+    {
+        this.parametersFundamentalDiagram = parametersFundamentalDiagram;
     }
 
     

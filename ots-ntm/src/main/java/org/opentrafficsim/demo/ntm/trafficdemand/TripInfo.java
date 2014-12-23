@@ -32,6 +32,15 @@ public class TripInfo
         this.numberOfTrips = numberOfTrips;
     }
 
+
+    /**
+     * @param add number of Trips to be added
+     */
+    public final void addNumberOfTrips(double add)
+    {
+        this.numberOfTrips = this.getNumberOfTrips() + add;
+    }
+    
     /**
      * @return numberOfTrips
      */

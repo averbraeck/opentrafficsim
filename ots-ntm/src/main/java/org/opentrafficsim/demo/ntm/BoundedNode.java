@@ -53,12 +53,7 @@ public class BoundedNode extends Node
         {
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(40, SpeedUnit.KM_PER_HOUR);
             DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.KILOMETER);
-            //TODO parameters should depend on area characteristics
-            ArrayList<Double> accCritical = new ArrayList<Double>(); 
-            accCritical.add(25.0);
-            accCritical.add(50.0);
-            accCritical.add(100.0);
-            ParametersNTM parametersNTM = new ParametersNTM(accCritical, speed, roadLength);
+            ParametersNTM parametersNTM = new ParametersNTM(speed, roadLength);
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
             this.setArea(area);
 
@@ -67,10 +62,7 @@ public class BoundedNode extends Node
         {
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(40, SpeedUnit.KM_PER_HOUR);
             //TODO parameters should depend on area characteristics
-            ArrayList<Double> accCritical = new ArrayList<Double>(); 
-            accCritical.add(50.0);
-            accCritical.add(100.0);
-            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(accCritical, speed);
+            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed);
             this.setCellBehaviour(new CellBehaviourFlow(area, parametersCTM));
             this.setArea(area);
         }

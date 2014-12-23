@@ -45,6 +45,21 @@ public class ParametersFundamentalDiagram
     }
 
     /**
+     * @param accCritical defined per lane!! 
+     * @param freeSpeed
+     */
+    public ParametersFundamentalDiagram(Abs<SpeedUnit> freeSpeed)
+    {
+        super();
+        ArrayList<Double> accCritical = new ArrayList<Double>(); 
+        accCritical.add(20.0);
+        accCritical.add(150.0);
+        this.accCritical = accCritical;
+        this.freeSpeed = freeSpeed;
+    }
+
+
+    /**
      * @return freeSpeed.
      */
     public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
