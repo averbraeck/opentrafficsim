@@ -43,5 +43,5 @@ public interface WrappableSimulation
      * to make a protective copy and return that.
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
      */
-    public ArrayList<AbstractProperty<?>> getProperties();
+    ArrayList<AbstractProperty<?>> getProperties();
 }

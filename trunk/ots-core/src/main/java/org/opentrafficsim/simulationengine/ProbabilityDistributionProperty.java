@@ -37,8 +37,9 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @throws IncompatiblePropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
      *             the sum of the values is not equal to 1.0 within a small error margin
      */
-    public ProbabilityDistributionProperty(final String shortName, final String description, String[] elementNames,
-            final Double[] initialValue, boolean readOnly) throws IncompatiblePropertyException
+    public ProbabilityDistributionProperty(final String shortName, final String description,
+            final String[] elementNames, final Double[] initialValue, final boolean readOnly)
+            throws IncompatiblePropertyException
     {
         this.shortName = shortName;
         this.description = description;
@@ -50,10 +51,11 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
 
     /**
      * Verify that a provided array of probability values is acceptable.
-     * @param values
-     * @throws IncompatiblePropertyException
+     * @param values double[]; the array of values to verify
+     * @throws IncompatiblePropertyException when the number of values is 0, any value is outside [0..1], or the sum of
+     *             the values does not add up to 1.0 within a (very small) error margin
      */
-    private void verifyProposedValues(Double[] values) throws IncompatiblePropertyException
+    private void verifyProposedValues(final Double[] values) throws IncompatiblePropertyException
     {
         if (values.length < 1)
         {
@@ -79,7 +81,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
 
     /** {@inheritDoc} */
     @Override
-    public Double[] getValue()
+    public final Double[] getValue()
     {
         // Double is immutable; but we should return a shallow copy of the array so the caller can't replace the
         // elements of our array
@@ -91,38 +93,38 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @param index int; the index of the requested probability value
      * @return Double; the requested probability value
      */
-    Double getValue(int index)
+    final Double getValue(final int index)
     {
         return this.value[index];
     }
 
     /**
-     * Retrieve the name of one of the values of this ProbabilityDistributionProperty
+     * Retrieve the name of one of the values of this ProbabilityDistributionProperty.
      * @param index int; the index of the value
      * @return String; the name of the value at the requested index
      */
-    String getElementName(int index)
+    final String getElementName(final int index)
     {
         return this.names[index];
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getShortName()
+    public final String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getDescription()
+    public final String getDescription()
     {
         return this.description;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(Double[] newValue) throws IncompatiblePropertyException
+    public final void setValue(final Double[] newValue) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
@@ -136,14 +138,14 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * Return the names of the elements of this ProbabilityDistributionProperty.
      * @return String[]; the names of the elements of this ProbabilityDistributionProperty
      */
-    public String[] getElementNames()
+    public final String[] getElementNames()
     {
         return this.names.clone();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isReadOnly()
+    public final boolean isReadOnly()
     {
         return this.readOnly;
     }

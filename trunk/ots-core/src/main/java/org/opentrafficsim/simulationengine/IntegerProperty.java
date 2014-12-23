@@ -40,7 +40,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
      * @param readOnly boolean; if true this IntegerProperty can not be altered
      */
     public IntegerProperty(final String shortName, final String description, final Integer initialValue,
-            final Integer minimumValue, final Integer maximumValue, boolean readOnly)
+            final Integer minimumValue, final Integer maximumValue, final boolean readOnly)
     {
         this.shortName = shortName;
         this.description = description;
@@ -52,7 +52,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
 
     /** {@inheritDoc} */
     @Override
-    public Integer getValue()
+    public final Integer getValue()
     {
         return this.value;
     }
@@ -61,7 +61,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
      * Retrieve the minimum value of this IntegerProperty.
      * @return Integer; the minimum value of this IntegerProperty
      */
-    public int getMinimumValue()
+    public final Integer getMinimumValue()
     {
         return this.minimumValue;
     }
@@ -70,28 +70,28 @@ public class IntegerProperty extends AbstractProperty<Integer>
      * Retrieve the maximum value of this IntegerProperty.
      * @return Integer; the maximum value of this IntegerProperty
      */
-    public int getMaximumValue()
+    public final Integer getMaximumValue()
     {
         return this.maximumValue;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getShortName()
+    public final String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getDescription()
+    public final String getDescription()
     {
         return this.description;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(Integer newValue) throws IncompatiblePropertyException
+    public final void setValue(final Integer newValue) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
@@ -107,7 +107,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
 
     /** {@inheritDoc} */
     @Override
-    public boolean isReadOnly()
+    public final boolean isReadOnly()
     {
         return this.readOnly;
     }

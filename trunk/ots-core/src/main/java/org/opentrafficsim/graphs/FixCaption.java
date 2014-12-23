@@ -12,13 +12,21 @@ import org.jfree.chart.JFreeChart;
  * @version 19 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixCaption
+public final class FixCaption
 {
+    /**
+     * This class shall never be instantiated.
+     */
+    private FixCaption()
+    {
+        // Prevent instantiation of this class
+    }
+
     /**
      * Make the title text a little bit smaller.
      * @param chart JFreeChart; the chart of which to adjust the title size
      */
-    static void fixCaption(JFreeChart chart)
+    static void fixCaption(final JFreeChart chart)
     {
         chart.setTitle(new org.jfree.chart.title.TextTitle(chart.getTitle().getText(), new java.awt.Font("SansSerif",
                 java.awt.Font.BOLD, 16)));
