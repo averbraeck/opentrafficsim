@@ -31,6 +31,7 @@ import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.SimulatorControlPanel;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -114,7 +115,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     private JButton makeButton(final String name, final String iconPath, final String actionCommand,
             final String toolTipText, final boolean enabled)
     {
-        JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
+        // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
+        JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
