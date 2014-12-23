@@ -50,7 +50,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ControlPanel implements ActionListener, PropertyChangeListener
 {
     /** The simulator. */
-    protected final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /** The SimulatorInterface that is controlled by the buttons. */
     private final SimulatorInterface<?, ?, ?> target;
@@ -65,7 +65,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     private final ArrayList<JButton> buttons = new ArrayList<JButton>();
 
     /** Font used to display the clock and the stop time. */
-    protected final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
+    private final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
 
     /** The TimeEdit that lets the user set a time when the simulation will be stopped. */
     private final TimeEdit timeEdit;
@@ -190,7 +190,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     /**
      * Update the enabled state of all the buttons.
      */
-    protected void fixButtons()
+    protected final void fixButtons()
     {
         final boolean moreWorkToDo = this.simulator.getEventList().size() > 0;
         for (JButton button : this.buttons)
@@ -317,6 +317,22 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     }
 
+    /**
+     * @return simulator.
+     */
+    public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    {
+        return this.simulator;
+    }
+
+    /**
+     * @return timeFont.
+     */
+    public final Font getTimeFont()
+    {
+        return this.timeFont;
+    }
+
     /** JLabel that displays the simulation time. */
     class ClockPanel extends JLabel
     {
@@ -324,7 +340,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         private static final long serialVersionUID = 20141211L;
 
         /** The JLabel that displays the time. */
-        protected final JLabel clockLabel;
+        private final JLabel clockLabel;
 
         /** timer update in msec. */
         private final long updateInterval = 1000;
@@ -334,7 +350,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         {
             super("00:00:00.000");
             this.clockLabel = this;
-            this.setFont(ControlPanel.this.timeFont);
+            this.setFont(getTimeFont());
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, this.updateInterval);
 
@@ -354,13 +370,21 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             @Override
             public void run()
             {
-                double now = Math.round(ControlPanel.this.simulator.getSimulatorTime().get().getSI() * 1000) / 1000d;
+                double now = Math.round(getSimulator().getSimulatorTime().get().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
-                ClockPanel.this.clockLabel.setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600,
+                getClockLabel().setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600,
                         seconds / 60 % 60, seconds % 60, fractionalSeconds));
-                ClockPanel.this.clockLabel.repaint();
+                getClockLabel().repaint();
             }
+        }
+
+        /**
+         * @return clockLabel.
+         */
+        protected JLabel getClockLabel()
+        {
+            return this.clockLabel;
         }
 
     }
@@ -397,7 +421,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             this.timeMask.setOverwriteMode(true);
             this.timeMask.install(this);
             setTime(initialValue);
-            setFont(ControlPanel.this.timeFont);
+            setFont(getTimeFont());
         }
 
         /**

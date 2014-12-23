@@ -21,7 +21,7 @@ public class LabeledPanel extends JPanel
      * Create a JPanel with border and caption.
      * @param caption String; the caption of the LabeledPanel
      */
-    public LabeledPanel(String caption)
+    public LabeledPanel(final String caption)
     {
         super();
         setBorder(new TitledBorder(null, caption, TitledBorder.LEADING, TitledBorder.TOP, null, null));

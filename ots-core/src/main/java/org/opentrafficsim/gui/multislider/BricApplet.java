@@ -21,15 +21,16 @@ package org.opentrafficsim.gui.multislider;
 
 import javax.swing.JApplet;
 
-/** A JApplet with bug fixes/improvements built-in.
- * Currently the only improvement is: this activates
- * the <code>AppletPopupFactory</code>.
- *
+/**
+ * A JApplet with bug fixes/improvements built-in. Currently the only improvement is: this activates the
+ * <code>AppletPopupFactory</code>.
  */
-public class BricApplet extends JApplet {
-	private static final long serialVersionUID = 1L;
+public class BricApplet extends JApplet
+{
+    private static final long serialVersionUID = 1L;
 
-	public BricApplet() {
-		AppletPopupFactory.initialize();
-	}
+    public BricApplet()
+    {
+        AppletPopupFactory.initialize();
+    }
 }

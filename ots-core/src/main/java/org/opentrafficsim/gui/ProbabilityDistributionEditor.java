@@ -30,15 +30,15 @@ public class ProbabilityDistributionEditor extends JPanel
     private MultiThumbSlider<String> slider;
 
     /** The JLabels that indicate the current values. */
-    JLabel[] labels;
+    private JLabel[] labels;
 
     /**
      * Construct a graphical ProbabilityDistributioneEditor.
      * @param elementNames String[]; the names of the elements of the probability distribution
      * @param values Double[]; the initial values of the probabilities (should add up to 1.0 and should have same length
-     *            as <cite>elementNames</site>)
+     *            as <cite>elementNames</cite>)
      */
-    public ProbabilityDistributionEditor(String[] elementNames, Double[] values)
+    public ProbabilityDistributionEditor(final String[] elementNames, final Double[] values)
     {
         super(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -78,7 +78,7 @@ public class ProbabilityDistributionEditor extends JPanel
      * Retrieve the current probability values.
      * @return Double[]; the probability values
      */
-    public Double[] getProbabilities()
+    public final Double[] getProbabilities()
     {
         float[] positions = this.slider.getThumbPositions();
         Double[] result = new Double[positions.length + 1];
@@ -101,7 +101,7 @@ public class ProbabilityDistributionEditor extends JPanel
      * {@inheritDoc}
      */
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener pcl)
+    public final void addPropertyChangeListener(final PropertyChangeListener pcl)
     {
         this.slider.addPropertyChangeListener(pcl);
     }
@@ -110,7 +110,7 @@ public class ProbabilityDistributionEditor extends JPanel
      * {@inheritDoc}
      */
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener pcl)
+    public final void removePropertyChangeListener(final PropertyChangeListener pcl)
     {
         this.slider.removePropertyChangeListener(pcl);
     }
@@ -119,7 +119,7 @@ public class ProbabilityDistributionEditor extends JPanel
      * {@inheritDoc}
      */
     @Override
-    public void addPropertyChangeListener(String key, PropertyChangeListener pcl)
+    public final void addPropertyChangeListener(final String key, final PropertyChangeListener pcl)
     {
         this.slider.addPropertyChangeListener(key, pcl);
     }
@@ -128,7 +128,7 @@ public class ProbabilityDistributionEditor extends JPanel
      * {@inheritDoc}
      */
     @Override
-    public void removePropertyChangeListener(String key, PropertyChangeListener pcl)
+    public final void removePropertyChangeListener(final String key, final PropertyChangeListener pcl)
     {
         this.slider.removePropertyChangeListener(key, pcl);
     }

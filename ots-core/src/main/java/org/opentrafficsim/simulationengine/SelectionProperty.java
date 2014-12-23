@@ -13,22 +13,22 @@ package org.opentrafficsim.simulationengine;
 public class SelectionProperty extends AbstractProperty<String>
 {
     /** Short description of this SelectionProperty. */
-    String shortName;
+    private String shortName;
 
     /** Description of this SelectionProperty. */
-    String description;
+    private String description;
 
-    /** The set of options to select from */
-    String[] options;
+    /** The set of options to select from. */
+    private String[] options;
 
-    /** Index of the currently selected option */
-    int currentOption;
+    /** Index of the currently selected option. */
+    private int currentOption;
 
-    /** Indicates if this is SelectionProperty is read-only */
-    final boolean readOnly;
+    /** Indicates if this is SelectionProperty is read-only. */
+    private final boolean readOnly;
 
     /**
-     * Construct a new SelectionProperty
+     * Construct a new SelectionProperty.
      * @param shortName String; name of the new SelectionProperty
      * @param description String; description of the new SelectionProperty (may use HTML mark up)
      * @param options String[]; the possible values of the SelectionProperty
@@ -36,7 +36,7 @@ public class SelectionProperty extends AbstractProperty<String>
      * @param readOnly boolean; if true the selection cannot be altered.
      */
     public SelectionProperty(final String shortName, final String description, final String[] options,
-            int initialDefaultOption, boolean readOnly)
+            final int initialDefaultOption, final boolean readOnly)
     {
         this.shortName = shortName;
         this.description = description;
@@ -47,38 +47,38 @@ public class SelectionProperty extends AbstractProperty<String>
 
     /** {@inheritDoc} */
     @Override
-    public String getValue()
+    public final String getValue()
     {
         return this.options[this.currentOption];
     }
 
     /**
-     * Retrieve the name of one of the options of this SelectionProperty
+     * Retrieve the name of one of the options of this SelectionProperty.
      * @param index int; the index of the value
      * @return String; the name of the value at the requested index
      */
-    public String getOptionName(int index)
+    public final String getOptionName(final int index)
     {
         return this.options[index];
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getShortName()
+    public final String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getDescription()
+    public final String getDescription()
     {
         return this.description;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(String newValue) throws IncompatiblePropertyException
+    public final void setValue(final String newValue) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
@@ -99,14 +99,14 @@ public class SelectionProperty extends AbstractProperty<String>
      * Return the names of the options of this SelectionProperty.
      * @return String[]; the names of the options of this SelectionProperty
      */
-    public String[] getOptionNames()
+    public final String[] getOptionNames()
     {
         return this.options.clone();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isReadOnly()
+    public final boolean isReadOnly()
     {
         return this.readOnly;
     }
