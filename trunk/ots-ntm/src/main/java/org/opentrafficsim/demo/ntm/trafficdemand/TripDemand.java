@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.ntm.Area;
+import org.opentrafficsim.demo.ntm.Node;
 
 /**
  * <p>
@@ -49,51 +51,92 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @return startTime.
+     * Compresses the trip demand from detailed areas to larger areas
+     * @param tripDemand comprising the original demand
+     * @param centroids the detailed areas
+     * @param mapSmallAreaToBigArea provides the key from small to big areas (type Node!!)
+     * @return
      */
-    public final DoubleScalar.Abs<TimeUnit> getStartTime()
+    public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
+            Map<String, Node> centroids, HashMap<Node, Node> mapSmallAreaToBigArea)
     {
-        return this.startTime;
-    }
-
-    /**
-     * @param startTime set startTime.
-     */
-    public final void setStartTime(final DoubleScalar.Abs<TimeUnit> startTime)
-    {
-        this.startTime = startTime;
-    }
-
-    /**
-     * @return tripDemand
-     */
-    public final Map<String, Map<String, TripInformation>> getTripInfo()
-    {
-        return this.tripInfo;
-    }
-
-    /**
-     * @return timeSpan.
-     */
-    public final DoubleScalar.Rel<TimeUnit> getTimeSpan()
-    {
-        return this.timeSpan;
-    }
-
-    /**
-     * @param timeSpan set timeSpan.
-     */
-    public final void setTimeSpan(final DoubleScalar.Rel<TimeUnit> timeSpan)
-    {
-        this.timeSpan = timeSpan;
-    }
-
-    /**
-     * @param tripInfo sets tripInfo
-     */
-    public final void setTripInfo(final Map<String, Map<String, TripInformation>> tripInfo)
-    {
-        this.tripInfo = tripInfo;
+        TripDemand<TripInfoTimeDynamic> compressedTripDemand = new TripDemand<TripInfoTimeDynamic>();
+        compressedTripDemand.tripInfo = new HashMap<String, Map<String, TripInfoTimeDynamic>>();
+        compressedTripDemand.startTime = tripDemand.getStartTime();
+        compressedTripDemand.timeSpan = tripDemand.getTimeSpan();
+        int notFound = 0;
+        // loop through all detailed nodes/areas
+        for (Node node : centroids.values())
+        {
+            if (mapSmallAreaToBigArea.get(node)!= null)
+            {    
+                Map<String, TripInfoTimeDynamic> tripDemandRow;
+                Map<String, TripInfoTimeDynamic> bigTripDemandRow = null;
+                // create or retrieve the (partly filled) compressed data
+                if (mapSmallAreaToBigArea.get(node).getId() != null)
+                {
+                    bigTripDemandRow =
+                            compressedTripDemand.getTripDemandOriginToAllDestinations(mapSmallAreaToBigArea.get(node)
+                                    .getId());
+                }
+                else   //if not found we keep the old centroid
+                {
+                    bigTripDemandRow = compressedTripDemand.getTripDemandOriginToAllDestinations(node.getId());
+                }
+                if (bigTripDemandRow == null)
+                {
+                    bigTripDemandRow = new HashMap<String, TripInfoTimeDynamic>();
+                }
+                // retrieve the detailled trips
+                tripDemandRow = tripDemand.getTripDemandOriginToAllDestinations(node.getId());
+                // get all destinations
+                for (Map.Entry<String, TripInfoTimeDynamic> entry : tripDemandRow.entrySet())
+                {
+                    String idSmall = entry.getKey();
+                    // mapSmallAreaToBigArea.get(node);
+                    Node destination = centroids.get(idSmall);
+                    TripInfoTimeDynamic tripInfo = tripDemandRow.get(idSmall);
+                    if (destination != null)
+                    {
+                        if (mapSmallAreaToBigArea.get(destination).getId() != null)
+                        {
+                            System.out.println("node " + destination.getId() + "bigNode ID "
+                                    + mapSmallAreaToBigArea.get(destination).getId());
+                            TripInfoTimeDynamic bigTripInfo = bigTripDemandRow.get(mapSmallAreaToBigArea.get(destination).getId());
+                            if (bigTripInfo == null)
+                            {
+                                bigTripInfo = new TripInfoTimeDynamic(0, null);
+                            }
+                            bigTripInfo.addNumberOfTrips(tripInfo.getNumberOfTrips());
+                            bigTripInfo.setDepartureTimeProfile(tripInfo.getDepartureTimeProfile());
+                            bigTripDemandRow.put(mapSmallAreaToBigArea.get(destination).getId(), bigTripInfo);
+                        }
+                        else
+                        {
+                            System.out.println("node bigNode not found?");
+    
+                        }
+                    }
+                    else
+                    {
+                        notFound++;
+                        System.out.println("destination not found? " + notFound);
+                    }
+    
+                }
+                if (mapSmallAreaToBigArea.get(node).getId() != null)
+                {
+                    compressedTripDemand.tripInfo.put(mapSmallAreaToBigArea.get(node)
+                            .getId(), bigTripDemandRow);
+                }
+                else   //if not found we keep the old centroid
+                {
+                    compressedTripDemand.tripInfo.put(node.getId(), bigTripDemandRow);
+                }
+            }
+        }
+        // then compress the rows
+        return compressedTripDemand;
     }
 
     /**
@@ -101,8 +144,7 @@ public class TripDemand<TripInformation>
      * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
-    public final Map<String, TripInformation> getTripDemandOriginToAllDestinations(final String origin,
-            final String destination)
+    public final Map<String, TripInformation> getTripDemandOriginToAllDestinations(final String origin)
     {
         Map<String, Map<String, TripInformation>> demand = this.getTripInfo();
         Map<String, TripInformation> mapDestinations = demand.get(origin);
@@ -153,6 +195,54 @@ public class TripDemand<TripInformation>
         }
         map.put(destination, tripInfo);
         return tripInfoAll;
+    }
+
+    /**
+     * @return startTime.
+     */
+    public final DoubleScalar.Abs<TimeUnit> getStartTime()
+    {
+        return this.startTime;
+    }
+
+    /**
+     * @param startTime set startTime.
+     */
+    public final void setStartTime(final DoubleScalar.Abs<TimeUnit> startTime)
+    {
+        this.startTime = startTime;
+    }
+
+    /**
+     * @return tripDemand
+     */
+    public final Map<String, Map<String, TripInformation>> getTripInfo()
+    {
+        return this.tripInfo;
+    }
+
+    /**
+     * @return timeSpan.
+     */
+    public final DoubleScalar.Rel<TimeUnit> getTimeSpan()
+    {
+        return this.timeSpan;
+    }
+
+    /**
+     * @param timeSpan set timeSpan.
+     */
+    public final void setTimeSpan(final DoubleScalar.Rel<TimeUnit> timeSpan)
+    {
+        this.timeSpan = timeSpan;
+    }
+
+    /**
+     * @param tripInfo sets tripInfo
+     */
+    public final void setTripInfo(final Map<String, Map<String, TripInformation>> tripInfo)
+    {
+        this.tripInfo = tripInfo;
     }
 
 }

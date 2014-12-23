@@ -39,7 +39,7 @@ public class BuildGraph
     /**
      * Build the graph using roads between touching areas, flowLinks and Cordon areas (artificially created).
      */
-    static void buildGraph(NTMModel model)
+    static void buildGraph(NTMModel model, boolean COMPRESS_AREAS)
     {
         /** debug information?. */
         final boolean DEBUG = true;
@@ -52,8 +52,14 @@ public class BuildGraph
 
         allLinks.addAll(model.getShpLinks().values());
         allLinks.addAll(model.getFlowLinks().values());
-        allLinks.addAll(model.getShpConnectors().values());
-
+        if (COMPRESS_AREAS)
+        {
+            allLinks.addAll(model.getShpBigConnectors().values());
+        }
+        else
+        {
+            allLinks.addAll(model.getShpConnectors().values());
+        }
         // make a directed graph of the entire network
 
         // FIRST, add ALL VERTICES
@@ -555,7 +561,7 @@ public class BuildGraph
         ArrayList<FlowCell> cells =
                 LinkCellTransmission.createCells(link, model.getSettingsNTM()
                         .getTimeStepDurationCellTransmissionModel());
-        LinkCellTransmission linkCTM = new LinkCellTransmission(link, cells);
+        LinkCellTransmission linkCTM = new LinkCellTransmission(link, flowNodeStart, flowNodeEnd, cells);
         LinkEdge leNew = new LinkEdge(linkCTM);
         int hierarchy = le.getLink().getHierarchy();
         addLinkEdge(flowNodeStart, flowNodeEnd, leNew, TrafficBehaviourType.FLOW, model.getAreaGraph());

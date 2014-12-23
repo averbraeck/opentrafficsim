@@ -68,6 +68,20 @@ public class LinkCellTransmission extends Link
     }
 
     /**
+     * @param link original Link
+     * @param startNode
+     * @param endNode
+     * @param cells to add
+     */
+    public LinkCellTransmission(final Link link, BoundedNode startNode, BoundedNode endNode,
+            final ArrayList<FlowCell> cells)
+    {
+        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getSpeed(), link
+                .getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
+        this.cells = cells;
+    }
+
+    /**
      * @return cells.
      */
     public final ArrayList<FlowCell> getCells()

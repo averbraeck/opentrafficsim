@@ -8,6 +8,11 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
@@ -84,6 +89,9 @@ public class Area extends GeoObject implements LocatableInterface
     /** Centroid as a Point */
     private final Point centroid;
 
+    /** Road length of all roads in a length unit. */
+    private Rel<LengthUnit> roadLength;
+    
     /** polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
     
@@ -134,6 +142,7 @@ public class Area extends GeoObject implements LocatableInterface
         this.dhb = dhb;
         this.centroid = centroid;
         this.trafficBehaviourType = trafficBehaviourType;
+        this.roadLength = new Rel<LengthUnit>(0.0, LengthUnit.KILOMETER);
     }
 
     /** {@inheritDoc} */
@@ -282,7 +291,29 @@ public class Area extends GeoObject implements LocatableInterface
         this.trafficBehaviourType = areaType;
     }
 
+    /**
+     * @return roadLength.
+     */
+    public DoubleScalar.Rel<LengthUnit> getRoadLength()
+    {
+        return this.roadLength;
+    }
 
+    /**
+     * @param roadLength set roadLength.
+     */
+    public void setRoadLength(DoubleScalar.Rel<LengthUnit> roadLength)
+    {
+        this.roadLength = roadLength;
+    }
+
+    /**
+     * @param rel 
+     */
+    public void addRoadLength(Rel<LengthUnit> rel)
+    {
+        this.roadLength = DoubleScalar.plus(rel, this.roadLength).immutable();        
+    }
 
 
 }

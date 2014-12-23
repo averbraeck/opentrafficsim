@@ -37,7 +37,22 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         this.roadLength = roadLength;
     }
 
-
+    /**
+     * @param accCritical 
+     * @param freeSpeed
+     * @param roadLength
+     */
+    public ParametersNTM(Abs<SpeedUnit> freeSpeed, Abs<LengthUnit> roadLength)
+    {
+        super(null, freeSpeed);
+        //TODO parameters should depend on area characteristics
+        ArrayList<Double> accCritical = new ArrayList<Double>(); 
+        accCritical.add(25.0);
+        accCritical.add(50.0);
+        accCritical.add(100.0);
+        this.setAccCritical1(accCritical);
+        this.roadLength = roadLength;
+    }
     /**
      * @return roadLength.
      */

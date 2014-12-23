@@ -19,6 +19,9 @@ public class TripInfoByDestination
     private Node neighbour;
 
     /** the first Area/Node encountered on the path to Destination. */
+    private Node neighbourUp;
+
+    /** the first Area/Node encountered on the path to Destination. */
     private Node destination;
 
     /** trips on their journey within an area. */
@@ -121,6 +124,22 @@ public class TripInfoByDestination
     public void setDemandToNeighbour(double demandToNeighbour)
     {
         this.demandToNeighbour = demandToNeighbour;
+    }
+
+    /**
+     * @return neighbourUp.
+     */
+    public Node getNeighbourUp()
+    {
+        return this.neighbourUp;
+    }
+
+    /**
+     * @param neighbourUp set neighbourUp.
+     */
+    public void setNeighbourUp(Node neighbourUp)
+    {
+        this.neighbourUp = neighbourUp;
     }
 
 }
