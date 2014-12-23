@@ -108,14 +108,14 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
 
     /** {@inheritDoc} */
     @Override
-    String shortName()
+    public String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    String description()
+    public String getDescription()
     {
         return this.description;
     }
@@ -143,7 +143,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
 
     /** {@inheritDoc} */
     @Override
-    boolean isReadOnly()
+    public boolean isReadOnly()
     {
         return this.readOnly;
     }

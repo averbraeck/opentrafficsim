@@ -99,6 +99,10 @@ public class IDM implements GTUFollowingModel
         LaneBasedGTU<?> closestLeader = null;
         for (LaneBasedGTU<?> leader : leaders)
         {
+            if (follower == leader)
+            {
+                continue;
+            }
             DoubleScalar.Rel<LengthUnit> s =
                     DoubleScalar.minus(leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(),
                             myFrontPosition).immutable();
