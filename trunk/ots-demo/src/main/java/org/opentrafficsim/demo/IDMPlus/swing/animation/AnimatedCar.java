@@ -16,6 +16,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -33,11 +34,12 @@ public class AnimatedCar extends Car<Integer>
     private static final long serialVersionUID = 20141003L;
 
     /**
-     * Create a new Car with animation in case we schedule on an Animator.
+     * Create a new Car (with animation in case we schedule on an Animator and id >= 0).
      * @param id integer; the id of the new Car
      * @param gtuType GTUType&lt;String&gt;; the type of the GTU
      * @param simulator OTSDEVSSimulator
      * @param carFollowingModel CarFollowingModel; the car following model used by the new Car
+     * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new Car
      * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the first evaluation time of the new Car
      * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
      *            positions of the new Car
@@ -46,12 +48,12 @@ public class AnimatedCar extends Car<Integer>
      * @throws RemoteException in case of remote registration failure of the animation
      */
     public AnimatedCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-            final GTUFollowingModel carFollowingModel, final Abs<TimeUnit> initialTime,
+            final GTUFollowingModel carFollowingModel, Rel<LengthUnit> vehicleLength, final Abs<TimeUnit> initialTime,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
     {
-        super(id, gtuType, new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
+        super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
                 initialLongitudinalPositions, initialSpeed, simulator);
         if (simulator instanceof OTSAnimatorInterface && id >= 0)
         {

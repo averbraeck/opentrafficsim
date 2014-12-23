@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
@@ -37,6 +38,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.IDMPlus.swing.animation.AnimatedCar;
 import org.opentrafficsim.demo.geometry.LaneFactory;
 import org.opentrafficsim.demo.geometry.Node;
@@ -45,6 +47,7 @@ import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
@@ -71,6 +74,13 @@ public class Trajectories implements WrappableSimulation
     {
         try
         {
+            this.properties
+                    .add(new SelectionProperty(
+                            "Car following model",
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
+                                    + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
+                                    + "personality of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false));
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
                     "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                     new Double[]{0.8, 0.2}, false));
@@ -90,7 +100,8 @@ public class Trajectories implements WrappableSimulation
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable()
+        {
             @Override
             public void run()
             {
@@ -114,7 +125,7 @@ public class Trajectories implements WrappableSimulation
      */
     public SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
     {
-        InternalTrajectoriesModel model = new InternalTrajectoriesModel();
+        TrajectoriesModel model = new TrajectoriesModel(this.properties);
         SimpleSimulator result =
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
@@ -130,7 +141,7 @@ public class Trajectories implements WrappableSimulation
      * @param model the model.
      * @param panel DSOLPanel
      */
-    private static void makePlot(final InternalTrajectoriesModel model,
+    private static void makePlot(final TrajectoriesModel model,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         TablePanel charts = new TablePanel(1, 1);
@@ -183,8 +194,8 @@ public class Trajectories implements WrappableSimulation
         return "<html><H1>Trajectories</H1>"
                 + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
                 + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
-                + "500s. This blockade simulates a bridge opening.<br/>"
-                + "The blockade causes a traffic jam that slowly dissolves after the blockade is remove. <br />"
+                + "420s. This blockade simulates a bridge opening.<br/>"
+                + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
                 + "Output is a Trajectory plots.</html>";
     }
 
@@ -213,7 +224,7 @@ public class Trajectories implements WrappableSimulation
  * @version Aug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class InternalTrajectoriesModel implements OTSModelInterface
+class TrajectoriesModel implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -227,8 +238,14 @@ class InternalTrajectoriesModel implements OTSModelInterface
     /** number of cars created. */
     private int carsCreated = 0;
 
-    /** the car following model, e.g. IDM Plus. */
-    protected GTUFollowingModel carFollowingModel;
+    /** the car following model, e.g. IDM Plus for cars. */
+    protected GTUFollowingModel carFollowingModelCars;
+
+    /** the car following model, e.g. IDM Plus for trucks. */
+    protected GTUFollowingModel carFollowingModelTrucks;
+
+    /** The probability that the next generated GTU is a passenger car. */
+    double carProbability;
 
     /** cars in the model. */
     ArrayList<AnimatedCar> cars = new ArrayList<AnimatedCar>();
@@ -251,6 +268,20 @@ class InternalTrajectoriesModel implements OTSModelInterface
     /** the trajectory plot. */
     private TrajectoryPlot trajectoryPlot;
 
+    /** User settable properties */
+    ArrayList<AbstractProperty<?>> properties = null;
+
+    /** The random number generator used to decide what kind of GTU to generate. */
+    Random randomGenerator = new Random(12345);
+
+    /**
+     * @param properties
+     */
+    public TrajectoriesModel(ArrayList<AbstractProperty<?>> properties)
+    {
+        this.properties = properties;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
@@ -270,17 +301,70 @@ class InternalTrajectoriesModel implements OTSModelInterface
             exception1.printStackTrace();
         }
 
-        this.carFollowingModel =
-                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                TimeUnit.SECOND), 1d);
-        this.carFollowingModel =
-                new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                TimeUnit.SECOND), 1d);
-
+        for (AbstractProperty<?> p : this.properties)
+        {
+            if (p instanceof SelectionProperty)
+            {
+                SelectionProperty sp = (SelectionProperty) p;
+                if ("Car following model".equals(sp.getShortName()))
+                {
+                    String modelName = sp.getValue();
+                    if (modelName.equals("IDM"))
+                    {
+                        this.carFollowingModelCars =
+                                new IDM(
+                                        new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                        this.carFollowingModelTrucks =
+                                new IDM(
+                                        new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                    }
+                    else if (modelName.equals("IDM+"))
+                    {
+                        this.carFollowingModelCars =
+                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+                                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(
+                                        1.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
+                                        LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                        this.carFollowingModelTrucks =
+                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(
+                                        1.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
+                                        LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                    }
+                    else
+                    {
+                        throw new Error("Car following model " + modelName + " not implemented");
+                    }
+                }
+                else
+                {
+                    throw new Error("Unhandled SelectionProperty " + p.getShortName());
+                }
+            }
+            else if (p instanceof ProbabilityDistributionProperty)
+            {
+                ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
+                String modelName = p.getShortName();
+                if (modelName.equals("Traffic composition"))
+                {
+                    this.carProbability = pdp.getValue()[0];
+                }
+                else
+                {
+                    throw new Error("Unhandled ProbabilityDistributionProperty " + p.getShortName());
+                }
+            }
+            else
+            {
+                throw new Error("Unhandled property: " + p);
+            }
+        }
         // 1500 [vehicles / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
 
@@ -337,15 +421,19 @@ class InternalTrajectoriesModel implements OTSModelInterface
      */
     protected final void generateCar()
     {
+        boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         try
         {
+            DoubleScalar.Rel<LengthUnit> vehicleLength =
+                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
             IDMCar car =
-                    new IDMCar(++this.carsCreated, null, this.simulator, this.carFollowingModel, this.simulator
-                            .getSimulatorTime().get(), initialPositions, initialSpeed);
+                    new IDMCar(++this.carsCreated, null, this.simulator, generateTruck ? this.carFollowingModelTrucks
+                            : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(),
+                            initialPositions, initialSpeed);
             this.cars.add(0, car);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
@@ -376,24 +464,27 @@ class InternalTrajectoriesModel implements OTSModelInterface
          * @param gtuType GTUType&lt;String&gt;; the type of the GTU
          * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
+         * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
          * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
          *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException ...
+         * @throws NamingException on ???
          * @throws RemoteException on communication failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-                final GTUFollowingModel carFollowingModel, final DoubleScalar.Abs<TimeUnit> initialTime,
+                final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
+                final DoubleScalar.Abs<TimeUnit> initialTime,
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, gtuType, simulator, carFollowingModel, initialTime, initialLongitudinalPositions, initialSpeed);
+            super(id, gtuType, simulator, carFollowingModel, vehicleLength, initialTime, initialLongitudinalPositions,
+                    initialSpeed);
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
             }
-            catch (RemoteException | SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
@@ -409,24 +500,23 @@ class InternalTrajectoriesModel implements OTSModelInterface
             // System.out.println("move " + getId());
             if (positionOfFront().getLongitudinalPosition().getSI() > getMaximumDistance().getSI())
             {
-                InternalTrajectoriesModel.this.cars.remove(this);
+                TrajectoriesModel.this.cars.remove(this);
                 return;
             }
             Collection<Car<Integer>> leaders = new ArrayList<Car<Integer>>();
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
-            int carIndex = InternalTrajectoriesModel.this.cars.indexOf(this);
-            if (carIndex < InternalTrajectoriesModel.this.cars.size() - 1)
+            int carIndex = TrajectoriesModel.this.cars.indexOf(this);
+            if (carIndex < TrajectoriesModel.this.cars.size() - 1)
             {
-                leaders.add(InternalTrajectoriesModel.this.cars.get(carIndex + 1));
+                leaders.add(TrajectoriesModel.this.cars.get(carIndex + 1));
             }
             GTUFollowingModelResult cfmr =
-                    InternalTrajectoriesModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                            InternalTrajectoriesModel.this.speedLimit);
-            if (null != InternalTrajectoriesModel.this.block)
+                    getGTUFollowingModel().computeAcceleration(this, leaders, TrajectoriesModel.this.speedLimit);
+            if (null != TrajectoriesModel.this.block)
             {
                 leaders.clear();
-                leaders.add(InternalTrajectoriesModel.this.block);
+                leaders.add(TrajectoriesModel.this.block);
                 if (positionOfFront().getLongitudinalPosition().getSI() > 3850
                         && positionOfFront().getLongitudinalPosition().getSI() < 4000 && getId() == 57
                         && getNextEvaluationTime().getSI() > 312)
@@ -434,8 +524,7 @@ class InternalTrajectoriesModel implements OTSModelInterface
                     System.out.println("Pas op; vehicle " + this);
                 }
                 GTUFollowingModelResult blockCFMR =
-                        InternalTrajectoriesModel.this.carFollowingModel.computeAcceleration(this, leaders,
-                                InternalTrajectoriesModel.this.speedLimit);
+                        getGTUFollowingModel().computeAcceleration(this, leaders, TrajectoriesModel.this.speedLimit);
                 if (blockCFMR.getAcceleration().getSI() < cfmr.getAcceleration().getSI()
                         && blockCFMR.getAcceleration().getSI() >= -5)
                 {

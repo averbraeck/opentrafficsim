@@ -28,6 +28,9 @@ public class CarAnimation extends Renderable2D
     /** Color of this car. */
     final Color color;
     
+    /** Length of this car. */
+    final double length;
+    
     /**
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
@@ -38,6 +41,7 @@ public class CarAnimation extends Renderable2D
             throws NamingException, RemoteException
     {
         super(source, simulator);
+        this.length = source.getLength().getSI();
         this.color = colorTable[source.getId() % colorTable.length];
     }
 
@@ -51,9 +55,9 @@ public class CarAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(this.color);
-        graphics.draw(new Rectangle2D.Double(-2.0d, -1.0d, 4.0d, 2.0d));
+        graphics.draw(new Rectangle2D.Double(-this.length / 2, -1.0d, this.length, 2.0d));
         graphics.setColor(Color.WHITE);
-        graphics.draw(new Ellipse2D.Double(0.5d, -0.5d, 1d, 1d));
+        graphics.draw(new Ellipse2D.Double(this.length / 2 -1.5d, -0.5d, 1d, 1d));
     }
 
 }
