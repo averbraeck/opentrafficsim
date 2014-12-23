@@ -16,29 +16,30 @@ public abstract class AbstractProperty<T>
      * Retrieve the current value of the property.
      * @return T; the current value of the property
      */
-    abstract T getValue();
+    public abstract T getValue();
     
     /**
      * Return a short description of the property.
      * @return String; a short description of the property
      */
-    abstract String shortName();
+    public abstract String getShortName();
     
     /**
      * Return a description of the property (may use HTML markup).
      * @return String; the description of the property
      */
-    abstract String description();
+    public abstract String getDescription();
     
     /**
      * Change the value of the property.
      * @param newValue T; the new value for the property
+     * @throws IncompatiblePropertyException when this Property is read-only, or newValue is not valid
      */
-    abstract void setValue(T newValue) throws IncompatiblePropertyException;
+    public abstract void setValue(T newValue) throws IncompatiblePropertyException;
     
     /**
      * Return true if the property can not be altered.
      * @return boolean; true if this property can not be altered, false if this property can be altered
      */
-    abstract boolean isReadOnly();
+    public abstract boolean isReadOnly();
 }
