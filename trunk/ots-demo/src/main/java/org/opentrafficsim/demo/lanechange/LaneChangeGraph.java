@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.event.EventListenerList;
 
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
@@ -26,7 +27,6 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
-import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
@@ -387,6 +387,12 @@ class ChartData implements XYDataset
     /** The names of the series. */
     ArrayList<String> seriesKeys = new ArrayList<String>();
 
+    /** List of parties interested in changes of this ContourPlot. */
+    private transient EventListenerList listenerList = new EventListenerList();
+
+    /** Not used internally. */
+    private DatasetGroup datasetGroup = null;
+
     /**
      * Add storage for another series of XY values.
      * @param seriesName String; the name of the new series
@@ -421,14 +427,14 @@ class ChartData implements XYDataset
 
     /** {@inheritDoc} */
     @Override
-    public Comparable getSeriesKey(int series)
+    public Comparable<?> getSeriesKey(int series)
     {
         return this.seriesKeys.get(series);
     }
 
     /** {@inheritDoc} */
     @Override
-    public int indexOf(Comparable seriesKey)
+    public int indexOf(@SuppressWarnings("rawtypes") Comparable seriesKey)
     {
         return this.seriesKeys.indexOf(seriesKey);
     }
@@ -437,25 +443,28 @@ class ChartData implements XYDataset
     @Override
     public void addChangeListener(DatasetChangeListener listener)
     {
+        this.listenerList.add(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
     @Override
     public void removeChangeListener(DatasetChangeListener listener)
     {
+        this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
     @Override
     public DatasetGroup getGroup()
     {
-        return null;
+        return this.datasetGroup;
     }
 
     /** {@inheritDoc} */
     @Override
     public void setGroup(DatasetGroup group)
     {
+        this.datasetGroup = group;
     }
 
     /** {@inheritDoc} */
