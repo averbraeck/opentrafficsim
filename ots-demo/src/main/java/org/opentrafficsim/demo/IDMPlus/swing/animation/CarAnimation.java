@@ -3,7 +3,6 @@ package org.opentrafficsim.demo.IDMPlus.swing.animation;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
