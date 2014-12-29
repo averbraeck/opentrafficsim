@@ -121,10 +121,11 @@ public class CarTest
      *            getLastEvalutionTime())
      * @return Car; the new Car
      * @throws RemoteException on network error
+     * @throws NamingException 
      */
     public static Car<Integer> makeReferenceCar(final int nr, final Lane lane,
             final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final OTSDEVSSimulator simulator) throws RemoteException
+            final OTSDEVSSimulator simulator) throws RemoteException, NamingException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
