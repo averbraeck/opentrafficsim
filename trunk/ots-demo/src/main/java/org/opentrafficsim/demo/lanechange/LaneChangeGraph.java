@@ -304,11 +304,12 @@ public class LaneChangeGraph extends JFrame
      * @param mergeRight TODO
      * @return
      * @throws RemoteException
+     * @throws NamingException 
      */
     private LaneChangeModelResult computeLaneChange(Car<String> referenceCar,
             Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs, DoubleScalar.Abs<SpeedUnit> speedLimit,
             LaneChangeModel laneChangeModel, DoubleScalar.Rel<LengthUnit> otherCarPosition, Lane otherCarLane,
-            Rel<SpeedUnit> deltaV, boolean mergeRight) throws RemoteException
+            Rel<SpeedUnit> deltaV, boolean mergeRight) throws RemoteException, NamingException
     {
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
