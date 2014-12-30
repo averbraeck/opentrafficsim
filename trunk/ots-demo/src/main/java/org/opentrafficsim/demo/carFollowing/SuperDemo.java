@@ -2,7 +2,9 @@ package org.opentrafficsim.demo.carFollowing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -83,12 +85,15 @@ public class SuperDemo
         demonstrations.add(new FundamentalDiagrams());
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
-        final JPanel left = new JPanel();
+        final JPanel left = new LabeledPanel("Settings");
+        left.setPreferredSize(new Dimension(300, Integer.MAX_VALUE));
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-        final JLabel description = new JLabel();
+        final JLabel description = new JLabel("Please select a demonstration from the buttons on the left");
         final JPanel propertyPanel = new JPanel();
         propertyPanel.setLayout(new BoxLayout(propertyPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(description, BorderLayout.CENTER);
+        JPanel descriptionPanel = new LabeledPanel("Description");
+        descriptionPanel.add(description);
+        mainPanel.add(descriptionPanel, BorderLayout.CENTER);
         final JButton startButton = new JButton("Start simulation");
         ButtonGroup buttonGroup = new ButtonGroup();
         for (final WrappableSimulation demo : demonstrations)
@@ -101,6 +106,7 @@ public class SuperDemo
                 {
                     description.setText(demo.description());
                     startButton.setEnabled(true);
+                    startButton.setVisible(true);
                     propertyPanel.removeAll();
                     for (AbstractProperty<?> p : demo.getProperties())
                     {
@@ -161,7 +167,7 @@ public class SuperDemo
                                 }
 
                             });
-                            lp.add(pdpe, BorderLayout.CENTER);
+                            lp.add(pdpe, BorderLayout.LINE_END);
                             lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC")
                                     .getPreferredSize().getHeight()));
                             lp.setToolTipText(pdp.getDescription());
@@ -222,6 +228,7 @@ public class SuperDemo
         }
         mainPanel.add(left, BorderLayout.LINE_START);
         startButton.setEnabled(false);
+        startButton.setVisible(false);
         startButton.addActionListener(new ActionListener()
         {
             @Override
@@ -256,8 +263,8 @@ public class SuperDemo
                 }
             }
         });
-        left.add(startButton);
         left.add(propertyPanel);
+        left.add(startButton);
         return mainPanel;
     }
 
