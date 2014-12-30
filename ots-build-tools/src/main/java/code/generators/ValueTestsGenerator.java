@@ -2,7 +2,6 @@ package code.generators;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -128,7 +127,7 @@ public class ValueTestsGenerator
                                 in + mutable + type + aggregate + "." + absRel + dotDS + "<TemperatureUnit> "
                                         + shortName + " = new " + mutable + type + aggregate + "." + absRel + dotDS
                                         + "<TemperatureUnit>(value, tempUnit);",
-                                in + "String result = " + shortName + ".toString();",
+                                in + "String result = " + shortName + ".toString(true);",
                                 // "System.out.println(result);",
                                 in + "assertTrue(\"toString result contains \\\" " + absRel
                                         + " \\\"\", result.contains(\" " + absRel + " \"));",
