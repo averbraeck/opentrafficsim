@@ -1,0 +1,82 @@
+package org.opentrafficsim.simulationengine;
+
+/**
+ * Boolean property.
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version 29 dec. 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
+public class BooleanProperty extends AbstractProperty<Boolean>
+{
+    /** The current value of the property. */
+    private Boolean value;
+
+    /** The shortName of the property. */
+    private String shortName;
+
+    /** The description of the property. */
+    private String description;
+
+    /** The property is read-only. */
+    private final Boolean readOnly;
+
+    /**
+     * Construct an BooleanProperty.
+     * @param shortName String; the short name of the new BooleanProperty
+     * @param description String; description of the new BooleanProperty (may use HTML mark up)
+     * @param initialValue Integer; the initial value of the new BooleanProperty
+     * @param readOnly boolean; if true this BooleanProperty can not be altered
+     */
+    public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
+            final boolean readOnly)
+    {
+        this.shortName = shortName;
+        this.description = description;
+        this.value = initialValue;
+        this.readOnly = readOnly;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Boolean getValue()
+    {
+        return this.value;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getShortName()
+    {
+        return this.shortName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String getDescription()
+    {
+        return this.description;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setValue(final Boolean newValue) throws IncompatiblePropertyException
+    {
+        if (this.readOnly)
+        {
+            throw new IncompatiblePropertyException("This property is read-only");
+        }
+        this.value = newValue;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isReadOnly()
+    {
+        return this.readOnly;
+    }
+
+}

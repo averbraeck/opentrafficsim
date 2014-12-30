@@ -59,15 +59,12 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
             throws RemoteException, NamingException
     {
-        super(id, gtuType, length, width, maximumVelocity, gtuFollowingModel, initialLongitudinalPositions,
-                initialSpeed, simulator);
-        if (simulator instanceof OTSAnimatorInterface)
+        // HACK FIXME (negative length trick)
+        super(id, gtuType, length.getSI() < 0 ? new DoubleScalar.Rel<LengthUnit>(-length.getSI(), LengthUnit.METER)
+                : length, width, maximumVelocity, gtuFollowingModel, initialLongitudinalPositions, initialSpeed,
+                simulator);
+        if (simulator instanceof OTSAnimatorInterface && length.getSI() >= 0)
         {
-            // HACK (FIXME)
-            if (id instanceof Integer && (Integer) id < 0)
-            {
-                return;
-            }
             new CarAnimation(this, simulator);
         }
     }
@@ -102,10 +99,10 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
 class CarAnimation extends Renderable2D
 {
     /** Color of this car. */
-    final Color color;
+    private final Color color;
 
     /** Counter used to cycle through the colors in colorTable. */
-    static int nextIndex = 0;
+    private static int nextIndex = 0;
 
     /**
      * @param source the Car to draw
@@ -117,14 +114,14 @@ class CarAnimation extends Renderable2D
             RemoteException
     {
         super(source, simulator);
-        this.color = colorTable[++nextIndex % colorTable.length];
+        this.color = COLORTABLE[++nextIndex % COLORTABLE.length];
     }
 
     /**
      * Colors for the cars.
      */
-    static final Color[] colorTable = {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE, Color.YELLOW,
-            Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY};
+    private static final Color[] COLORTABLE = {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE,
+            Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY};
 
     /** {@inheritDoc} */
     @Override
