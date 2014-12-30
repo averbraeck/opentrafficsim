@@ -810,11 +810,13 @@ class RoadSimulationModel implements OTSModelInterface
                 position -= laneLength;
             }
             initialPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(position, LengthUnit.METER));
-            result.add(
-                    0,
-                    new IDMCar(-10000 - prototype.getId(), (GTUType<String>) prototype.getGTUType(), prototype
-                            .getSimulator(), prototype.getGTUFollowingModel(), prototype.getLength(), when,
-                            initialPositions, prototype.getLongitudinalVelocity()));
+            // HACK FIXME (negative length trick)
+            IDMCar fakeFollower =
+                    new IDMCar(-10000 - prototype.getId(), (GTUType<String>) prototype.getGTUType(),
+                            prototype.getSimulator(), prototype.getGTUFollowingModel(),
+                            new DoubleScalar.Rel<LengthUnit>(-prototype.getLength().getSI(), LengthUnit.METER), when,
+                            initialPositions, prototype.getLongitudinalVelocity());
+            result.add(0, fakeFollower);
             // Add a wrapped copy of the first (now second) car at the end
             prototype = (Car<Integer>) result.get(1);
             position = prototype.positionOfFront(lane, when).getSI();
@@ -824,9 +826,13 @@ class RoadSimulationModel implements OTSModelInterface
             }
             initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             initialPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(position, LengthUnit.METER));
-            result.add(new IDMCar(-20000 - prototype.getId(), (GTUType<String>) prototype.getGTUType(), prototype
-                    .getSimulator(), prototype.getGTUFollowingModel(), prototype.getLength(), when, initialPositions,
-                    prototype.getLongitudinalVelocity()));
+            // HACK FIXME (negative length trick)
+            IDMCar fakeLeader =
+                    new IDMCar(-20000 - prototype.getId(), (GTUType<String>) prototype.getGTUType(),
+                            prototype.getSimulator(), prototype.getGTUFollowingModel(),
+                            new DoubleScalar.Rel<LengthUnit>(-prototype.getLength().getSI(), LengthUnit.METER), when,
+                            initialPositions, prototype.getLongitudinalVelocity());
+            result.add(fakeLeader);
         }
         catch (RemoteException | NetworkException | NamingException exception)
         {

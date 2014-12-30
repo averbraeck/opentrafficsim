@@ -520,8 +520,9 @@ class LaneSimulationModel implements OTSModelInterface
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel, initialLongitudinalPositions,
-                    initialSpeed, simulator);
+            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
+                    initialLongitudinalPositions, initialSpeed, simulator);
             try
             {
                 if (id >= 0)
@@ -585,22 +586,13 @@ class LaneSimulationModel implements OTSModelInterface
                         + LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 try
                 {
+                    // HACK FIXME (negative length trick)
                     IDMCar fakeLeader =
                             new IDMCar(-99999, null, this.getSimulator(), this.getGTUFollowingModel(),
-                                    leader.getLength(), this.getSimulator().getSimulatorTime().get(), initialPositions,
+                                    new DoubleScalar.Rel<LengthUnit>(-leader.getLength().getSI(), LengthUnit.METER),
+                                    this.getSimulator().getSimulatorTime().get(), initialPositions,
                                     leader.getLongitudinalVelocity());
                     leaders.add(fakeLeader);
-                    /*-
-                    if (getSimulator().getSimulatorTime().get().getSI() > 300)
-                    {
-                        System.out.println("follower:   " + this);
-                        System.out.println("leader:     " + leader);
-                        System.out.println("fakeLeader: " + fakeLeader);
-                        System.out.println("headway:    "
-                                + (fakeLeader.positionOfRear(SimulationModel.this.lane).getSI() - positionOfFront(
-                                        SimulationModel.this.lane).getSI()) + "m");
-                    }
-                     */
                 }
                 catch (RemoteException exception)
                 {

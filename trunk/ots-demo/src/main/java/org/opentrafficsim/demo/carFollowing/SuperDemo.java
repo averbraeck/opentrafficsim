@@ -2,9 +2,7 @@ package org.opentrafficsim.demo.carFollowing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -31,7 +29,6 @@ import javax.swing.event.ChangeListener;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.locale.DefaultLocale;
-import org.opentrafficsim.demo.carFollowing.CircularLane;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.simulationengine.AbstractProperty;
