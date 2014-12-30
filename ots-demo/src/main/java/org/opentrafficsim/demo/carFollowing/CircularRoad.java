@@ -89,13 +89,13 @@ public class CircularRoad implements WrappableSimulation
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
                     "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                     new Double[]{0.8, 0.2}, false));
-            this.properties.add(new SelectionProperty("Lane change strategy",
+            this.properties.add(new SelectionProperty("Lane changing",
                     "<html>The lane change strategies vary in politeness.<br />"
                             + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                             + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                             + "the personal gain).</html>", new String[]{"Egoistic", "Altruistic"}, 0, false));
-            this.properties
-                    .add(new IntegerProperty("Track length", "Circumference of the track", 6000, 1000, 6000, false));
+            this.properties.add(new IntegerProperty("Track length", "Circumference of the track", 6000, 1000, 6000,
+                    false));
         }
         catch (IncompatiblePropertyException exception)
         {
@@ -350,7 +350,7 @@ class RoadSimulationModel implements OTSModelInterface
                             throw new Error("Car following model " + modelName + " not implemented");
                         }
                     }
-                    else if ("Lane change strategy".equals(sp.getShortName()))
+                    else if ("Lane changing".equals(sp.getShortName()))
                     {
                         String strategyName = sp.getValue();
                         if ("Egoistic".equals(strategyName))
@@ -363,7 +363,7 @@ class RoadSimulationModel implements OTSModelInterface
                         }
                         else
                         {
-                            throw new Error("Lane change strategy " + strategyName + " not implemented");
+                            throw new Error("Lane changing " + strategyName + " not implemented");
                         }
                     }
                     else
@@ -576,8 +576,9 @@ class RoadSimulationModel implements OTSModelInterface
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel, initialLongitudinalPositions,
-                    initialSpeed, simulator);
+            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
+                    initialLongitudinalPositions, initialSpeed, simulator);
             try
             {
                 if (id >= 0)
