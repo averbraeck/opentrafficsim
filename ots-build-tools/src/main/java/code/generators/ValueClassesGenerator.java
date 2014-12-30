@@ -86,7 +86,7 @@ public final class ValueClassesGenerator
                         + "Those versions of the JRE that do\r\n"
                         + " * <b>not</b> throw such Exceptions use one digit less than specified in the %g "
                         + "conversions. <br >\r\n"
-                        + " * TODO: check how to always format numbers corresponding to the Locale used.",
+                        + " * TODO check how to always format numbers corresponding to the Locale used.",
                 null,
                 "",
                 cg.buildField(cg.indent(1), "public static final int DEFAULTSIZE = 9",
@@ -1373,14 +1373,14 @@ public final class ValueClassesGenerator
                         "ValueException|when matrix A is neither Sparse nor Dense",
                         null,
                         new String[]{
-                                "// TODO: is this correct? Should lookup matrix algebra to find out unit for x when "
+                                "// TODO is this correct? Should lookup matrix algebra to find out unit for x when "
                                         + "solving A*x = b ?",
                                 "SIUnit targetUnit =",
                                 cg.indent(2) + "Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide("
                                         + "b.getUnit()." + "getSICoefficients(),",
                                 cg.indent(4) + "A.getUnit().getSICoefficients()).toString());",
                                 "",
-                                "// TODO: should the algorithm throw an exception when rows/columns do not match when "
+                                "// TODO should the algorithm throw an exception when rows/columns do not match when "
                                         + "solving A*x = b ?",
                                 type + "Matrix2D A2D = A.getMatrixSI();",
                                 "if (A instanceof SparseData)",
@@ -1512,7 +1512,7 @@ public final class ValueClassesGenerator
                 code.append(buildVectorOrMatrixPlusOrMinus(cg, outerIndent, type, "Rel.Sparse", "Rel.Sparse",
                         dimensions, false));
                 // Generate 10 times methods
-                code.append(outerIndent + "// TODO: Decide if you ever need multiply an Absolute with anything\r\n");
+                code.append(outerIndent + "// TODO Decide if you ever need multiply an Absolute with anything\r\n");
                 code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Dense", dimensions));
                 code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Dense", "Abs.Sparse", dimensions));
                 code.append(buildVectorOrMatrixTimes(cg, outerIndent, type, "Abs.Sparse", "Abs", dimensions));
@@ -1867,7 +1867,7 @@ public final class ValueClassesGenerator
                 }
                 construction.append(cg.buildMethod(indent, "public final|void|" + mf.name, null, null != mf.argument
                         ? new String[]{"final double|x|"} : null, null, null, new String[]{
-                        null != mf.toDoText ? "// TODO: " + mf.toDoText : null, code}, false));
+                        null != mf.toDoText ? "// TODO " + mf.toDoText : null, code}, false));
             }
             else
             {
