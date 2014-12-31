@@ -993,7 +993,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         return (MutableFloatVector.Rel.Sparse<U>) left.mutable().decrementBy(right);
     }
 
-    // TODO: Decide if you ever need multiply an Absolute with anything
+    // TODO Decide if you ever need multiply an Absolute with anything
     /**
      * Multiply two FloatVectors value by value and store the result in a new
      * MutableFloatVector.Abs.Dense&lt;SIUnit&gt;.

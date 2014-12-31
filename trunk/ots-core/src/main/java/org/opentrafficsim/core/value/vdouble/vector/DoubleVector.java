@@ -993,7 +993,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         return (MutableDoubleVector.Rel.Sparse<U>) left.mutable().decrementBy(right);
     }
 
-    // TODO: Decide if you ever need multiply an Absolute with anything
+    // TODO Decide if you ever need multiply an Absolute with anything
     /**
      * Multiply two DoubleVectors value by value and store the result in a new
      * MutableDoubleVector.Abs.Dense&lt;SIUnit&gt;.

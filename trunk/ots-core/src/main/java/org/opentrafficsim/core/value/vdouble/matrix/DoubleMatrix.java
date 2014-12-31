@@ -845,12 +845,12 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      */
     public static DoubleVector<SIUnit> solve(final DoubleMatrix<?> A, final DoubleVector<?> b) throws ValueException
     {
-        // TODO: is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
+        // TODO is this correct? Should lookup matrix algebra to find out unit for x when solving A*x = b ?
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(b.getUnit().getSICoefficients(),
                         A.getUnit().getSICoefficients()).toString());
         
-        // TODO: should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
+        // TODO should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
         DoubleMatrix2D A2D = A.getMatrixSI();
         if (A instanceof SparseData)
         {
@@ -1131,7 +1131,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         return (MutableDoubleMatrix.Rel.Sparse<U>) left.mutable().decrementBy(right);
     }
 
-    // TODO: Decide if you ever need multiply an Absolute with anything
+    // TODO Decide if you ever need multiply an Absolute with anything
     /**
      * Multiply two DoubleMatrices value by value and store the result in a new
      * MutableDoubleMatrix.Abs.Dense&lt;SIUnit&gt;.

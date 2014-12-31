@@ -74,7 +74,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             }
             catch (Exception exception)
             {
-                // TODO: professional logging of errors
+                // TODO professional logging of errors
                 // exception.printStackTrace();
                 System.err.println("Could not load class " + clazz.getCanonicalName());
             }
@@ -151,7 +151,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             {
                 throw new Error(ue);
             }
-            // TODO: complain wherever we can
+            // TODO complain wherever we can
         }
     }
 
@@ -192,7 +192,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             {
                 throw new Error(ue);
             }
-            // TODO: complain wherever we can
+            // TODO complain wherever we can
         }
     }
 
@@ -274,7 +274,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @return the set of defined units belonging to this Unit class. The empty set will be returned in case the unit
      *         type does not have any units.
      */
-    // TODO: call static method from the instance method? The two are now too similar.
+    // TODO call static method from the instance method? The two are now too similar.
     @SuppressWarnings("unchecked")
     public final Set<Unit<U>> getAllUnitsOfThisType()
     {
@@ -381,7 +381,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param normalizedSICoefficientsString the normalized string (e.g., kg.m/s2) to look up
      * @return a set of Units belonging to this string, or a set with a new unit when it does not yet exist
      */
-    // TODO: call other static method? The two are now too similar.
+    // TODO call other static method? The two are now too similar.
     public static Set<Unit<?>> lookupOrCreateUnitWithSICoefficients(final String normalizedSICoefficientsString)
     {
         if (!initialized)

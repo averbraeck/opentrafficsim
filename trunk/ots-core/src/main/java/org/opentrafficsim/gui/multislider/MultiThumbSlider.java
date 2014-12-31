@@ -78,7 +78,7 @@ public class MultiThumbSlider<T> extends JComponent {
 	
 	/** A set of possible behaviors when one thumb collides with another. */
 	public static enum Collision { 
-		/** TODO: When the user drags one thumb and it collides with another, nudge the other slider as far as possible. */
+		/** TODO When the user drags one thumb and it collides with another, nudge the other slider as far as possible. */
 		NUDGE_OTHER, 
 		/** When the user drags one thumb and it collides with another, skip over the other thumb. */
 		JUMP_OVER_OTHER, 
