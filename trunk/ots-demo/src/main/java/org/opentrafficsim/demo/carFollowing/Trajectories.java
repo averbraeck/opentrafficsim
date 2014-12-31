@@ -405,7 +405,7 @@ class TrajectoriesModel implements OTSModelInterface
                         new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
                                 SpeedUnit.KM_PER_HOUR), null, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
                                 SpeedUnit.KM_PER_HOUR), this.simulator);
-        // TODO: remove the animation
+        // TODO remove the animation
     }
 
     /**
