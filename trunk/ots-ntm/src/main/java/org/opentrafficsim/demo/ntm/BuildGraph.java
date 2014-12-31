@@ -78,8 +78,8 @@ public class BuildGraph
                 nodeB = addNodeToLinkGraph(shpLink, shpLink.getEndNode(), nodeB, nodeMap, model);
             }
 
-            // TODO: direction of a road?
-            // TODO: is the length in ShapeFiles in meters or in kilometers? I believe in km.
+            // TODO direction of a road?
+            // TODO is the length in ShapeFiles in meters or in kilometers? I believe in km.
             if (nodeA != null && nodeB != null)
             {
                 // DoubleScalar<LengthUnit> length =
@@ -207,7 +207,7 @@ public class BuildGraph
                 {
                     if (model.getAreaGraph().containsEdge(cA, cB))
                     {
-                        // TODO: if the link between these areas already exists, add the capacity to the link
+                        // TODO if the link between these areas already exists, add the capacity to the link
                     }
                     else
                     {
@@ -226,7 +226,7 @@ public class BuildGraph
                             LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                             addLinkEdge(cA, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
                         }
-                        // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in
+                        // TODO is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in
                         // km?
                     }
                 }
@@ -284,7 +284,7 @@ public class BuildGraph
     private static void addLinkEdge(BoundedNode flowNodeA, BoundedNode flowNodeB, LinkEdge<Link> linkEdge,
             TrafficBehaviourType type, SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> graph)
     {
-        // TODO: is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
+        // TODO is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
 
         if (!graph.containsEdge(flowNodeA, flowNodeB))
         {
@@ -306,7 +306,7 @@ public class BuildGraph
                 System.out.println("missing");
             }
         }
-        // TODO: average length? straight distance? straight distance + 20%?
+        // TODO average length? straight distance? straight distance + 20%?
         graph.setEdgeWeight(linkEdge, linkEdge.getLink().getLength().doubleValue());
     }
 

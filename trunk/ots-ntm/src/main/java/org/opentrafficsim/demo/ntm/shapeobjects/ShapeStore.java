@@ -314,7 +314,7 @@ public class ShapeStore
                 {
                     featureBuilder.add(value);
                 }
-                //TODO: add the date data type!
+                //TODO add the date data type!
                 index++;
             }
             SimpleFeature feature = featureBuilder.buildFeature(null);

@@ -81,7 +81,7 @@ public class DataViewerApplication extends DSOLApplication
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
 
         // tell the animation panel to update its statistics
-        // TODO: should be done automatically in DSOL!
+        // TODO should be done automatically in DSOL!
         animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
 
         new DataViewerApplication("Network Transmission Model", panel);

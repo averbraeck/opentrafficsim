@@ -345,7 +345,7 @@ public class CsvFileReader
                         // only the non-zero cells
                         if (Double.parseDouble(numberOfTrips) > 0.0)
                         {
-                            // TODO: now we simply take the first time profile.
+                            // TODO now we simply take the first time profile.
                             // This should be input in file: which profile is connected to which OD pair
                             DepartureTimeProfile profile = profiles.get(0);
                             Abs<TimeUnit> startSimulationTimeSinceMidnight = settingsNTM.getStartTimeSinceMidnight();
