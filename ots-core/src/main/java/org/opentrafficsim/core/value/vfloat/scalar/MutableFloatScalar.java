@@ -228,7 +228,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void acos()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.acos(getSI()));
     }
 
@@ -236,7 +236,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void asin()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.asin(getSI()));
     }
 
@@ -244,7 +244,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void atan()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.atan(getSI()));
     }
 
@@ -252,7 +252,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void cbrt()
     {
-        // TODO: dimension for all SI coefficients / 3.
+        // TODO dimension for all SI coefficients / 3.
         setValueSI((float) Math.cbrt(getSI()));
     }
 
@@ -267,7 +267,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void cos()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.cos(getSI()));
     }
 
@@ -275,7 +275,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void cosh()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.cosh(getSI()));
     }
 
@@ -283,7 +283,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void exp()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.exp(getSI()));
     }
 
@@ -291,7 +291,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void expm1()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.expm1(getSI()));
     }
 
@@ -306,7 +306,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void log()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.log(getSI()));
     }
 
@@ -314,7 +314,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void log10()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.log10(getSI()));
     }
 
@@ -322,7 +322,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void log1p()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.log1p(getSI()));
     }
 
@@ -330,7 +330,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void pow(final double x)
     {
-        // TODO: SI unit with coefficients * x.
+        // TODO SI unit with coefficients * x.
         setValueSI((float) Math.pow(getSI(), x));
     }
 
@@ -352,7 +352,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void signum()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI(Math.signum(getSI()));
     }
 
@@ -360,7 +360,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sin()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.sin(getSI()));
     }
 
@@ -368,7 +368,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sinh()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.sinh(getSI()));
     }
 
@@ -376,7 +376,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void sqrt()
     {
-        // TODO: dimension for all SI coefficients / 2.
+        // TODO dimension for all SI coefficients / 2.
         setValueSI((float) Math.sqrt(getSI()));
     }
 
@@ -384,7 +384,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void tan()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.tan(getSI()));
     }
 
@@ -392,7 +392,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void tanh()
     {
-        // TODO: dimensionless result (SIUnit.ONE).
+        // TODO dimensionless result (SIUnit.ONE).
         setValueSI((float) Math.tanh(getSI()));
     }
 
@@ -414,7 +414,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     @Override
     public final void inv()
     {
-        // TODO: negate all coefficients in the Unit.
+        // TODO negate all coefficients in the Unit.
         setValueSI(1.0f / getSI());
     }
 
