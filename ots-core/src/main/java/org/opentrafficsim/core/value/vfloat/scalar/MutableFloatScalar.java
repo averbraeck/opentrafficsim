@@ -189,7 +189,7 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
      * Replace the stored value by the supplied value which is expressed in the standard SI unit.
      * @param valueSI float; the value to store (value must already be in the standard SI unit)
      */
-     final void setSI(final float valueSI)
+    final void setSI(final float valueSI)
     {
         setValueSI(valueSI);
     }
@@ -460,9 +460,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Increment the value in this MutableFloatScalar by the value in a Relative FloatScalar. <br>
-     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an
-     * Absolute value to an existing Relative value would require the result to become Absolute, which is a type change
-     * that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an Absolute value
+     * to an existing Relative value would require the result to become Absolute, which is a type change that is impossible. For
+     * that operation use a static method.
      * @param rel FloatScalar.Rel&lt;U&gt;; the Relative FloatScalar
      * @return MutableFloatScalar&lt;U&gt;; this modified MutableFloatScalar
      */
@@ -474,9 +474,9 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
 
     /**
      * Decrement the value of a Relative FloatScalar from the value of this MutableFloatScalar. <br>
-     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting
-     * an Absolute value from an existing Absolute value would require the result to become Relative, which is a type
-     * change that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting an
+     * Absolute value from an existing Absolute value would require the result to become Relative, which is a type change that
+     * is impossible. For that operation use a static method.
      * @param rel FloatScalar.Rel&lt;U&gt;; the Relative FloatScalar
      * @return MutableFloatScalar&lt;U&gt;; this modified MutableFloatScalar
      */

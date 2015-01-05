@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -26,8 +27,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -44,14 +44,14 @@ public abstract class CrossSectionElement implements LocatableInterface
     private final DoubleScalar.Rel<LengthUnit> lateralCenterPosition;
 
     /**
-     * The right most (most negative) lateral position of the edge at the begin compared to the linear geometry of the
-     * Cross Section Link.
+     * The right most (most negative) lateral position of the edge at the begin compared to the linear geometry of the Cross
+     * Section Link.
      */
     private final DoubleScalar.Rel<LengthUnit> lateralBeginRightPosition;
 
     /**
-     * The left most (most positive) lateral position of the edge at the begin compared to the linear geometry of the
-     * Cross Section Link.
+     * The left most (most positive) lateral position of the edge at the begin compared to the linear geometry of the Cross
+     * Section Link.
      */
     private final DoubleScalar.Rel<LengthUnit> lateralBeginLeftPosition;
 
@@ -71,17 +71,16 @@ public abstract class CrossSectionElement implements LocatableInterface
     private final DoubleScalar.Rel<LengthUnit> length;
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
-     * direction from the StartNode towards the EndNode as the longitudinal direction.
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
+     * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
-     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section
-     *            Link.
+     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
     public CrossSectionElement(final CrossSectionLink<?, ?> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-            final DoubleScalar.Rel<LengthUnit> endWidth)
+        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
+        final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super();
         this.parentLink = parentLink;
@@ -89,39 +88,37 @@ public abstract class CrossSectionElement implements LocatableInterface
         this.beginWidth = beginWidth;
         this.endWidth = endWidth;
         this.contour = constructGeometry();
-        // TODO: LengthUnit and width might depend on CRS
+        // TODO LengthUnit and width might depend on CRS
         this.length = new DoubleScalar.Rel<LengthUnit>(this.offsetLine.getLength(), LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> halfWidth =
-                new DoubleScalar.Rel<>(beginWidth.getInUnit() / 2, beginWidth.getUnit());
+        DoubleScalar.Rel<LengthUnit> halfWidth = new DoubleScalar.Rel<>(beginWidth.getInUnit() / 2, beginWidth.getUnit());
         this.lateralBeginRightPosition = DoubleScalar.minus(lateralCenterPosition, halfWidth).immutable();
         this.lateralBeginLeftPosition = DoubleScalar.plus(lateralCenterPosition, halfWidth).immutable();
         this.parentLink.addCrossSectionElement(this);
     }
 
     /**
-     * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called
-     * "buffer" around it.
+     * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
+     * around it.
      * @return the geometry belonging to this CrossSectionElement.
      */
     private Geometry constructGeometry()
     {
         LineString line = this.parentLink.getGeometry().getLineString();
         double width =
-                this.beginWidth.doubleValue() > 0 ? Math
-                        .max(this.beginWidth.doubleValue(), this.endWidth.doubleValue()) : Math.min(
-                        this.beginWidth.doubleValue(), this.endWidth.doubleValue());
+            this.beginWidth.doubleValue() > 0 ? Math.max(this.beginWidth.doubleValue(), this.endWidth.doubleValue()) : Math
+                .min(this.beginWidth.doubleValue(), this.endWidth.doubleValue());
         this.offsetLine =
-                (this.lateralCenterPosition.doubleValue() == 0.0) ? line : offsetLineString(line,
-                        this.lateralCenterPosition.doubleValue());
+            (this.lateralCenterPosition.doubleValue() == 0.0) ? line : offsetLineString(line, this.lateralCenterPosition
+                .doubleValue());
         // CoordinateReferenceSystem crs = this.parentLink.getGeometry().getCRS();
         if (this.beginWidth.equals(this.endWidth))
         {
-            // TODO: This is done in meters. Does that always fit the geometry?
+            // TODO This is done in meters. Does that always fit the geometry?
             return this.offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
         }
         else
         {
-            // TODO: algorithm to make the gradual offset change...
+            // TODO algorithm to make the gradual offset change...
             return this.offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT);
         }
     }
@@ -173,8 +170,9 @@ public abstract class CrossSectionElement implements LocatableInterface
         Envelope e = this.contour.getEnvelopeInternal();
         double dx = 0.5 * (e.getMaxX() - e.getMinX());
         double dy = 0.5 * (e.getMaxY() - e.getMinY());
-        return new BoundingBox(new Point3d(e.getMinX() - dx, e.getMinY() - dy, 0.0), new Point3d(e.getMinX() + dx,
-                e.getMinY() + dy, 0.0));
+        return new BoundingBox(new Point3d(e.getMinX() - dx, e.getMinY() - dy, 0.0), new Point3d(e.getMinX() + dx, e
+            .getMinY()
+            + dy, 0.0));
     }
 
     /**
@@ -200,14 +198,14 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param fromIndex int; index of the first coordinate to print
      * @param toIndex int; one higher than the index of the last coordinate to print
      */
-    public static void printCoordinates(final String prefix, final Geometry geometry, final int fromIndex,
-            final int toIndex)
+    public static void
+        printCoordinates(final String prefix, final Geometry geometry, final int fromIndex, final int toIndex)
     {
         System.out.print(prefix);
         for (int i = fromIndex; i < toIndex; i++)
         {
-            System.out.print(String.format(Locale.US, " %8.8f,%8.3f   ", geometry.getCoordinates()[i].x,
-                    geometry.getCoordinates()[i].y));
+            System.out.print(String.format(Locale.US, " %8.8f,%8.3f   ", geometry.getCoordinates()[i].x, geometry
+                .getCoordinates()[i].y));
         }
         System.out.println("");
     }
@@ -231,7 +229,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate[] lineCoords = line.getCoordinates();
         Coordinate[] sc = perpBufferCoords(line, lineCoords[0], lineCoords[1], offsetPlus);
         Coordinate[] ec =
-                perpBufferCoords(line, lineCoords[lineCoords.length - 1], lineCoords[lineCoords.length - 2], offsetPlus);
+            perpBufferCoords(line, lineCoords[lineCoords.length - 1], lineCoords[lineCoords.length - 2], offsetPlus);
         GeometryFactory factory = new GeometryFactory();
         CoordinateSequence cs;
         int is0 = smallestIndex(bufferCoords, sc[0]);
@@ -307,14 +305,14 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return perpendicular buffer line
      */
     private Coordinate[] perpBufferCoords(final Geometry bufferLine, final Coordinate c0, final Coordinate c1,
-            final double offset)
+        final double offset)
     {
         double sdx = c1.x - c0.x;
         double sdy = c1.y - c0.y;
         double norm = Math.abs(offset / Math.sqrt(sdx * sdx + sdy * sdy));
         Coordinate p0 = new Coordinate(c0.x + norm * sdy, c0.y - norm * sdx);
         Coordinate p1 = new Coordinate(c0.x - norm * sdy, c0.y + norm * sdx);
-        return new Coordinate[]{p0, p1};
+        return new Coordinate[] {p0, p1};
     }
 
     /**
@@ -365,10 +363,12 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return String.format("offset %.2fm, beginWidth %.2fm, endWidth %.2fm", this.lateralCenterPosition.getSI(),
-                this.beginWidth.getSI(), this.endWidth.getSI());
+            this.beginWidth.getSI(), this.endWidth.getSI());
     }
 
     /**

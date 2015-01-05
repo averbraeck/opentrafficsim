@@ -5,8 +5,7 @@ import org.jfree.chart.JFreeChart;
 /**
  * Fix the font size of the caption of a JFreeChart.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 19 dec. 2014 <br>
@@ -29,6 +28,6 @@ public final class FixCaption
     static void fixCaption(final JFreeChart chart)
     {
         chart.setTitle(new org.jfree.chart.title.TextTitle(chart.getTitle().getText(), new java.awt.Font("SansSerif",
-                java.awt.Font.BOLD, 16)));
+            java.awt.Font.BOLD, 16)));
     }
 }

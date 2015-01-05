@@ -10,29 +10,31 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the ID type of the Link, e.g., String or Integer.
- * @param <N> the type of node that this link uses.
+ * @param <IDL> the ID type of the Link, e.g., String or Integer.
+ * @param <IDN> the ID type of the Node, e.g., String or Integer.
+ * @param <P> the type of Point that the Node uses.
+ * @param <N> the type of Node that this Link uses.
  */
-public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements Serializable, LocatableInterface
+public abstract class AbstractLink<IDL, IDN, P, N extends AbstractNode<IDN, P>> implements Link<IDL, N>, Serializable,
+    LocatableInterface
 {
     /** */
-    private static final long serialVersionUID = 20140920L;
+    private static final long serialVersionUID = 20150101L;
 
     /** Link id. */
-    private final ID id;
+    private final IDL id;
 
     /** Start node (directional). */
     private final N startNode;
 
-    /** Dnd node (directional). */
+    /** End node (directional). */
     private final N endNode;
 
     /** Link length in a length unit. */
@@ -41,51 +43,43 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
     /** Link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
     private DoubleScalar.Abs<FrequencyUnit> capacity;
 
-    /** Possible geometry for the link; can be null. */
-    private LinearGeometry geometry;
-
-    /** Hierarchy of the link, lower the number, higher the importance, min is 0. */
-    private int hierarchy;
-
     /**
      * Construct a new link.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
      * @param length link length in a length unit
-     * @param capacity link capacity in vehicles per hour
-     * @param hierarchy int; the hierarchy of the new Link
+     * @param capacity link capacity in GTUs per hour
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Abs<FrequencyUnit> capacity, final int hierarchy)
+    public AbstractLink(final IDL id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
+        final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         this.id = id;
         this.startNode = startNode;
+        this.startNode.addLinkOut(this);
         this.endNode = endNode;
+        this.endNode.addLinkIn(this);
         this.length = length;
-        this.setHierarchy(hierarchy < 0 ? 0 : hierarchy);
         setCapacity(capacity);
     }
 
     /**
-     * Construct a a new link.
+     * Construct a a new link with infinite capacity.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
      * @param length link length in a length unit
-     * @param hierarchy int; the hierarchie of the new Link
      */
-    public AbstractLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final int hierarchy)
+    public AbstractLink(final IDL id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
-                FrequencyUnit.PER_SECOND), hierarchy);
+            FrequencyUnit.PER_SECOND));
     }
 
     /**
      * @return id.
      */
-    public final ID getId()
+    public final IDL getId()
     {
         return this.id;
     }
@@ -130,42 +124,12 @@ public abstract class AbstractLink<ID, N extends AbstractNode<?, ?>> implements 
         return this.length;
     }
 
-    /**
-     * @return geometry.
-     */
-    public final LinearGeometry getGeometry()
-    {
-        return this.geometry;
-    }
-
-    /**
-     * @param geometry set geometry.
-     */
-    public final void setGeometry(final LinearGeometry geometry)
-    {
-        this.geometry = geometry;
-    }
-
     /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return this.id.toString();
-    }
-
-    /**
-     * @return hierarchy
-     */
-    public final int getHierarchy()
-    {
-        return this.hierarchy;
-    }
-
-    /**
-     * @param hierarchy set hierarchy
-     */
-    public final void setHierarchy(final int hierarchy)
-    {
-        this.hierarchy = hierarchy;
     }
 
 }

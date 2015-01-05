@@ -7,11 +7,11 @@ import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.network.Lane;
-import org.opentrafficsim.core.network.LaneType;
-import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -22,8 +22,7 @@ import com.vividsolutions.jts.geom.LineString;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 30 okt. 2014 <br>
@@ -44,7 +43,7 @@ public final class LaneFactory
      * @return Link; the updated link
      */
     private static Link makeLink(final String name, final Node from, final Node to,
-            final Coordinate[] intermediateCoordinates)
+        final Coordinate[] intermediateCoordinates)
     {
         int coordinateCount = 2 + (null == intermediateCoordinates ? 0 : intermediateCoordinates.length);
         Coordinate[] coordinates = new Coordinate[coordinateCount];
@@ -59,8 +58,7 @@ public final class LaneFactory
         }
         GeometryFactory factory = new GeometryFactory();
         LineString lineString = factory.createLineString(coordinates);
-        Link link =
-                new Link(name, from, to, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(), LengthUnit.METER));
+        Link link = new Link(name, from, to, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(), LengthUnit.METER));
         try
         {
             new LinearGeometry(link, lineString, null);
@@ -76,8 +74,8 @@ public final class LaneFactory
      * Create one Lane.
      * @param link Link; the link that owns the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPos DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral position of the new Lane with respect to the design
-     *            line of the link
+     * @param latPos DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral position of the new Lane with respect to the design line of
+     *            the link
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane
@@ -85,8 +83,7 @@ public final class LaneFactory
      * @throws NamingException on ???
      */
     private static Lane makeLane(Link link, LaneType<String> laneType, DoubleScalar.Rel<LengthUnit> latPos,
-            DoubleScalar.Rel<LengthUnit> width, OTSDEVSSimulatorInterface simulator) throws RemoteException,
-            NamingException
+        DoubleScalar.Rel<LengthUnit> width, OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
         Lane result = new Lane(link, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
@@ -109,9 +106,8 @@ public final class LaneFactory
      * @throws NamingException
      * @throws RemoteException
      */
-    public static Lane makeLane(final String name, final Node from, final Node to,
-            Coordinate[] intermediateCoordinates, LaneType<String> laneType, OTSDEVSSimulatorInterface simulator)
-            throws RemoteException, NamingException
+    public static Lane makeLane(final String name, final Node from, final Node to, Coordinate[] intermediateCoordinates,
+        LaneType<String> laneType, OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
@@ -133,8 +129,8 @@ public final class LaneFactory
      * @throws RemoteException
      */
     public static Lane[] makeMultiLane(final String name, final Node from, final Node to,
-            Coordinate[] intermediateCoordinates, int laneCount, LaneType<String> laneType,
-            OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+        Coordinate[] intermediateCoordinates, int laneCount, LaneType<String> laneType, OTSDEVSSimulatorInterface simulator)
+        throws RemoteException, NamingException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
@@ -144,7 +140,7 @@ public final class LaneFactory
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
             DoubleScalar.Rel<LengthUnit> latPos =
-                    new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
+                new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
             result[laneIndex] = makeLane(link, laneType, latPos, width, simulator);
         }
         return result;

@@ -3,8 +3,7 @@ package org.opentrafficsim.core.unit;
 /**
  * Exceptions in Unit package.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jun 18, 2014 <br>
@@ -31,7 +30,7 @@ public class UnitException extends Exception
      * @param writableStackTrace boolean
      */
     public UnitException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
+        final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }

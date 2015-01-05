@@ -8,7 +8,7 @@ package org.opentrafficsim.core.unit;
  * @version Jun 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public enum SI 
+public enum SI
 {
     /** kilogram. */
     kg,

@@ -46,7 +46,7 @@ class Axis
      * @param format String; format string for rendering a value along this axis
      */
     public Axis(final DoubleScalar<?> minimumValue, final DoubleScalar<?> maximumValue, final double[] granularities,
-            final double initialGranularity, final String name, final String shortName, final String format)
+        final double initialGranularity, final String name, final String shortName, final String format)
     {
         this.minimumValue = minimumValue;
         this.setMaximumValue(maximumValue);
@@ -96,7 +96,7 @@ class Axis
     public int getAggregatedBinCount()
     {
         return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
-                / this.getCurrentGranularity());
+            / this.getCurrentGranularity());
     }
 
     /**
@@ -105,7 +105,7 @@ class Axis
     public int getBinCount()
     {
         return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
-                / this.getGranularities()[0]);
+            / this.getGranularities()[0]);
     }
 
     /**

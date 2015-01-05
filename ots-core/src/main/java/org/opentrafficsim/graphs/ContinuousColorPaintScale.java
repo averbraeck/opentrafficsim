@@ -121,9 +121,9 @@ public class ContinuousColorPaintScale implements PaintScale
         }
         final double ratio = (value - this.bounds[bucket]) / (this.bounds[bucket + 1] - this.bounds[bucket]);
         Color mix =
-                new Color(mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
-                        mixComponent(ratio, this.boundColors[bucket].getGreen(), this.boundColors[bucket + 1].getGreen()),
-                        mixComponent(ratio, this.boundColors[bucket].getBlue(), this.boundColors[bucket + 1].getBlue()));
+            new Color(mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
+                mixComponent(ratio, this.boundColors[bucket].getGreen(), this.boundColors[bucket + 1].getGreen()),
+                mixComponent(ratio, this.boundColors[bucket].getBlue(), this.boundColors[bucket + 1].getBlue()));
         return mix;
     }
 

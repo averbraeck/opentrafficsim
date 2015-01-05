@@ -1,40 +1,37 @@
 package org.opentrafficsim.core.gtu;
 
-import org.opentrafficsim.core.network.LaneType;
+import java.io.Serializable;
 
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Jul 8, 2014 <br>
+ * @version Dec 31, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
  */
-public class GTUType<ID>
+public class GTUType<ID> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20141231L;
+
     /** The id of the GTUType to make it identifiable. */
     private final ID id;
 
-    /** ALL GTUType to define e.g., permeability for all GTU Types. */
-    public static final GTUType<String> ALL = new GTUType<>("ALL");
-    
+    /** ALL GTUType to be used only for permeability and accessibility. */
+    public static final GTUType<String> ALL = new GTUType<String>("ALL");
+
+    /** NONE GTUType to be used only for permeability and accessibility. */
+    public static final GTUType<String> NONE = new GTUType<String>("NONE");
+
     /**
-     * @param id the id of the GTU type.
+     * @param id The id of the GTUType to make it identifiable.
      */
     public GTUType(final ID id)
     {
-        super();
         this.id = id;
-    }
-
-    /**
-     * @param laneType lane type to look for compatibility.
-     * @return whether the GTUType is compatible with the lane type.
-     */
-    public final boolean isCompatible(final LaneType<?> laneType)
-    {
-        return laneType.isCompatible(this);
     }
 
     /**
@@ -44,4 +41,5 @@ public class GTUType<ID>
     {
         return this.id;
     }
+
 }

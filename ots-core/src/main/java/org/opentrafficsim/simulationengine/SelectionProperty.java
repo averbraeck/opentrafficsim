@@ -3,8 +3,7 @@ package org.opentrafficsim.simulationengine;
 /**
  * Property that is described by a set of Strings where exactly one can (and must) be true.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 19 dec. 2014 <br>
@@ -36,7 +35,7 @@ public class SelectionProperty extends AbstractProperty<String>
      * @param readOnly boolean; if true the selection cannot be altered.
      */
     public SelectionProperty(final String shortName, final String description, final String[] options,
-            final int initialDefaultOption, final boolean readOnly)
+        final int initialDefaultOption, final boolean readOnly)
     {
         this.shortName = shortName;
         this.description = description;

@@ -40,11 +40,10 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow">
- * Wikipedia: http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow</a>.
+ * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
+ * http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow</a>.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 31, 2014 <br>
@@ -83,8 +82,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Definition of the density axis. */
     private Axis densityAxis = new Axis(new DoubleScalar.Abs<LinearDensityUnit>(0, LinearDensityUnit.PER_KILOMETER),
-            new DoubleScalar.Abs<LinearDensityUnit>(200, LinearDensityUnit.PER_KILOMETER), null, 0d,
-            "Density [veh/km]", "Density", "density %.1f veh/km");
+        new DoubleScalar.Abs<LinearDensityUnit>(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]",
+        "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -96,8 +95,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Definition of the speed axis. */
     private Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-            new DoubleScalar.Abs<SpeedUnit>(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed",
-            "speed %.0f km/h");
+        new DoubleScalar.Abs<SpeedUnit>(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /**
      * @return speedAxis
@@ -117,8 +115,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Definition of the flow axis. */
     private Axis flowAxis = new Axis(new DoubleScalar.Abs<FrequencyUnit>(0, new FrequencyUnit(TimeUnit.HOUR,
-            "FrequencyUnit.PerHour", "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalar.Abs<FrequencyUnit>(3000d,
-            FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+        "FrequencyUnit.PerHour", "FrequencyUnit.PerH", SI_DERIVED)), new DoubleScalar.Abs<FrequencyUnit>(3000d,
+        FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -153,14 +151,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Graph a Fundamental Diagram.
      * @param caption String; the caption shown above the graphing area.
-     * @param numberOfLanes Integer; the number of lanes covered by the detector that generates the data for this
+     * @param numberOfLanes Integer; the number of lanes covered by the detector that generates the data for this Fundamental
+     *            diagram
+     * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data for this
      *            Fundamental diagram
-     * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data
-     *            for this Fundamental diagram
      * @param position DoubleScalarAbs&lt;LengthUnit&gt;; position of the detector (FIXME: should be a LOT more general)
      */
     public FundamentalDiagram(final String caption, final int numberOfLanes,
-            final DoubleScalar.Rel<TimeUnit> aggregationTime, final DoubleScalar.Abs<LengthUnit> position)
+        final DoubleScalar.Rel<TimeUnit> aggregationTime, final DoubleScalar.Abs<LengthUnit> position)
     {
         if (numberOfLanes <= 0)
         {
@@ -180,8 +178,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.position = new DoubleScalar.Abs<LengthUnit>(position);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
-                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
-                        false);
+            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         FixCaption.fixCaption(this.chartPanel);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
@@ -253,15 +250,15 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param group ButtonGroup; the buttonGroup for the new JRadioButtonMenuItem
      * @param xAxisToSelect Axis; the Axis that will become X-axis when this item is clicked
      * @param yAxisToSelect Axis; the Axis that will become Y-axis when this item is clicked
-     * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new
-     *            JRadioButtonMenuItem will <b>not</b> be selected
+     * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new JRadioButtonMenuItem
+     *            will <b>not</b> be selected
      * @return JRatioButtonMenuItem; the newly added item
      */
     private JRadioButtonMenuItem addMenuItem(final JMenu subMenu, final ButtonGroup group, final Axis xAxisToSelect,
-            final Axis yAxisToSelect, final boolean selected)
+        final Axis yAxisToSelect, final boolean selected)
     {
         final JRadioButtonMenuItem item =
-                new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
+            new JRadioButtonMenuItem(yAxisToSelect.getShortName() + " / " + xAxisToSelect.getShortName());
         item.setSelected(selected);
         item.setActionCommand(yAxisToSelect.getShortName() + "/" + xAxisToSelect.getShortName());
         item.addActionListener(this);
@@ -454,8 +451,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Storage for one sample of data collected by a point-detector that accumulates harmonic mean speed and flow.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -463,20 +459,20 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jul 31, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */

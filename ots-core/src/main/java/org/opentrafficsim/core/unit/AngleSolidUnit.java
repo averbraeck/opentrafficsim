@@ -28,8 +28,8 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
     {
         STERADIAN = new AngleSolidUnit("AngleSolidUnit.steradian", "AngleSolidUnit.sr", SI_DERIVED);
         SQUARE_DEGREE =
-                new AngleSolidUnit("AngleSolidUnit.square_degree", "AngleSolidUnit.sq_deg", SI_DERIVED, STERADIAN,
-                        (Math.PI / 180.0) * (Math.PI / 180.0));
+            new AngleSolidUnit("AngleSolidUnit.square_degree", "AngleSolidUnit.sq_deg", SI_DERIVED, STERADIAN,
+                (Math.PI / 180.0) * (Math.PI / 180.0));
     }
 
     /**
@@ -49,11 +49,10 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public AngleSolidUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final AngleSolidUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final AngleSolidUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

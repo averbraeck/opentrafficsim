@@ -28,14 +28,15 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 24, 2014 <br>
@@ -115,7 +116,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum position sampled by this TrajectoryPlot
      */
     public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval,
-            final DoubleScalar.Rel<LengthUnit> minimumPosition, final DoubleScalar.Rel<LengthUnit> maximumPosition)
+        final DoubleScalar.Rel<LengthUnit> minimumPosition, final DoubleScalar.Rel<LengthUnit> maximumPosition)
     {
         this.trajectories = new ArrayList<Trajectory>();
         this.sampleInterval = sampleInterval;
@@ -137,8 +138,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         container.add(statusLabel, BorderLayout.SOUTH);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         final JFreeChart result =
-                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
-                        false);
+            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         FixCaption.fixCaption(result);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
@@ -151,7 +151,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         result.getXYPlot().setDomainAxis(xAxis);
         result.getXYPlot().setRangeAxis(yAxis);
         configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(this.maximumPosition, this.minimumPosition)
-                .getSI());
+            .getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
@@ -300,18 +300,21 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /**
      * Add the scheduled motion of a car to this TrajectoryPlot.
      * @param car Car; the Car that has determined it's next move
+     * @throws NetworkException when vehicle is not on lane anymore
      * @throws RemoteException when communication fails
      */
-    public final void addData(final Car<?> car) throws RemoteException
+    public final void addData(final Car<?> car) throws NetworkException, RemoteException
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
-        final DoubleScalar.Rel<LengthUnit> startPosition = car.positionOfFront(startTime).getLongitudinalPosition();
+        // XXX we take the first (and only) lane on which the vehicle is registered.
+        Lane lane = car.getPositions(car.getFront()).keySet().iterator().next();
+        final DoubleScalar.Rel<LengthUnit> startPosition = car.getPosition(lane, car.getFront(), startTime);
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
         {
             if (t.getCurrentEndTime().getSI() == startTime.getSI()
-                    && t.getCurrentEndPosition().getSI() == startPosition.getSI())
+                && t.getCurrentEndPosition().getSI() == startPosition.getSI())
             {
                 if (null != carTrajectory)
                 {
@@ -331,8 +334,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /**
      * Store trajectory data.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -340,20 +342,20 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage.
      * @version Jul 24, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -390,17 +392,20 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
          * @param car Car; the Car whose currently committed trajectory segment must be added
+         * @throws NetworkException when car is not on lane anymore
          * @throws RemoteException when communication fails
          */
-        public final void addSegment(final Car<?> car) throws RemoteException
+        public final void addSegment(final Car<?> car) throws NetworkException, RemoteException
         {
+            // XXX we take the first (and only) lane on which the vehicle is registered.
+            Lane lane = car.getPositions(car.getFront()).keySet().iterator().next();
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
-                        new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                DoubleScalar.Rel<LengthUnit> position = car.positionOfFront(sampleTime).getLongitudinalPosition();
+                    new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                DoubleScalar.Rel<LengthUnit> position = car.getPosition(lane, car.getFront(), sampleTime);
                 if (position.getSI() < getMinimumPosition().getSI())
                 {
                     continue;
@@ -423,7 +428,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 this.positions.add(position.getSI());
             }
             this.currentEndTime = car.getNextEvaluationTime();
-            this.currentEndPosition = car.positionOfFront(this.currentEndTime).getLongitudinalPosition();
+            this.currentEndPosition = car.getPosition(lane, car.getFront(), this.currentEndTime);
             if (car.getNextEvaluationTime().getSI() > getMaximumTime().getSI())
             {
                 setMaximumTime(car.getNextEvaluationTime());

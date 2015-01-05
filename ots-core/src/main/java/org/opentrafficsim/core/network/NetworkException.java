@@ -57,7 +57,7 @@ public class NetworkException extends Exception
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public NetworkException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
+        final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }

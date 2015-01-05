@@ -6,8 +6,7 @@ import java.util.ResourceBundle;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jun 12, 2014 <br>
@@ -35,8 +34,8 @@ public class Localization
     }
 
     /**
-     * Retrieve a string from a locale bundle. If retrieval fails the value of key string, surrounded by exclamation
-     * marks is returned.
+     * Retrieve a string from a locale bundle. If retrieval fails the value of key string, surrounded by exclamation marks is
+     * returned.
      * @param key the key for the locale in the properties file
      * @return localized string, or, if a translation could not be found return the key surrounded by exclamation marks
      */
@@ -58,8 +57,7 @@ public class Localization
             {
                 try
                 {
-                    this.resourceBundle =
-                            ResourceBundle.getBundle("resources/" + this.bundleNamePrefix, this.currentLocale);
+                    this.resourceBundle = ResourceBundle.getBundle("resources/" + this.bundleNamePrefix, this.currentLocale);
                 }
                 catch (MissingResourceException e2)
                 {

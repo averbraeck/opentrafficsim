@@ -42,8 +42,8 @@ public interface MathFunctions extends Serializable
     void cbrt();
 
     /**
-     * Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the
-     * argument and equal to a mathematical integer.
+     * Set the value(s) to the smallest (closest to negative infinity) value(s) that are greater than or equal to the argument
+     * and equal to a mathematical integer.
      */
     void ceil();
 
@@ -68,8 +68,8 @@ public interface MathFunctions extends Serializable
     void expm1();
 
     /**
-     * Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the
-     * argument and equal to a mathematical integer.
+     * Set the value(s) to the largest (closest to positive infinity) value(s) that are less than or equal to the argument and
+     * equal to a mathematical integer.
      */
     void floor();
 
@@ -105,8 +105,8 @@ public interface MathFunctions extends Serializable
     void round();
 
     /**
-     * Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is
-         * greater than zero, -1.0 if the argument is less than zero.
+     * Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is greater
+     * than zero, -1.0 if the argument is less than zero.
      */
     void signum();
 

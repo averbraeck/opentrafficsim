@@ -37,7 +37,7 @@ public class TestGeometry extends DSOLApplication
      * @param panel p
      */
     public TestGeometry(final String title,
-            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+        final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -52,12 +52,12 @@ public class TestGeometry extends DSOLApplication
         OTSModelInterface model = new TestModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         OTSReplication replication =
-                new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model);
+            new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
+                new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+            new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
 
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 300, 100);
         Dimension size = new Dimension(1024, 768);
@@ -66,7 +66,7 @@ public class TestGeometry extends DSOLApplication
 
         // tell the animation panel to update its statistics
         animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
-        
+
         new TestGeometry("TestGeometry", panel);
     }
 

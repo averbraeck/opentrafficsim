@@ -19,8 +19,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 13, 2014 <br>
@@ -39,7 +38,7 @@ public class GeometryLinkAnimation extends Renderable2D
      * @throws RemoteException for problems with registering in context
      */
     public GeometryLinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
-            throws NamingException, RemoteException
+        throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;

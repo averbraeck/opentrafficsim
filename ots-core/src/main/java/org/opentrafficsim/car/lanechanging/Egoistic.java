@@ -8,8 +8,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 /**
  * The egoistic drive changes lane when this yields is personal advantage (totally ignoring any disadvantage to others).
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 19, 2014 <br>
@@ -20,7 +19,7 @@ public final class Egoistic extends AbstractLaneChangeModel
     /** {@inheritDoc} */
     @Override
     public DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(
-            final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
+        final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
     {
         try
         {

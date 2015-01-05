@@ -64,8 +64,8 @@ public class TimeUnitTest extends AbstractUnitTest<TimeUnit>
     public final void createLengthUnit()
     {
         TimeUnit myTU =
-                new TimeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "TimeUnit.Fortnight",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
+            new TimeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "TimeUnit.Fortnight",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "TimeUnit.fn", OTHER, TimeUnit.SECOND, 14 * 86400);
         assertTrue("Can create a new TimeUnit", null != myTU);
         checkUnitRatioNameAndAbbreviation(myTU, 14 * 86400, 1, "!Fortnight!", "!fn!");
     }

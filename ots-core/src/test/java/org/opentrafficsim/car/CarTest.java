@@ -6,8 +6,6 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -18,7 +16,6 @@ import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
@@ -27,13 +24,13 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
-import org.opentrafficsim.core.network.AbstractNode;
-import org.opentrafficsim.core.network.CrossSectionLink;
-import org.opentrafficsim.core.network.Lane;
-import org.opentrafficsim.core.network.LaneType;
-import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -49,8 +46,7 @@ import com.vividsolutions.jts.geom.LineString;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 11, 2014 <br>
@@ -77,12 +73,12 @@ public class CarTest
         Car<Integer> referenceCar = makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator);
 
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
-                referenceCar.positionOfFront(initialTime).getLongitudinalPosition().getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar
-                .getLongitudinalVelocity(initialTime).getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0,
-                referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
+            .getPosition(lane, referenceCar.getFront(), initialTime).getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getLongitudinalVelocity(
+            initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(initialTime)
+            .getSI(), 0.0001);
     }
 
     /**
@@ -97,16 +93,14 @@ public class CarTest
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
         Context context = new InitialContext();
-        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
-                new Experiment<>(context);
+        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp = new Experiment<>(context);
         Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
-                new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
-                        new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
-                                TimeUnit.SECOND));
+            new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
+                new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
         Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep =
-                new Replication<>(context, exp);
+            new Replication<>(context, exp);
         simulator.initialize(rep, ReplicationMode.TERMINATING);
         return simulator;
     }
@@ -121,11 +115,11 @@ public class CarTest
      *            getLastEvalutionTime())
      * @return Car; the new Car
      * @throws RemoteException on network error
-     * @throws NamingException 
+     * @throws NamingException on network error
      */
     public static Car<Integer> makeReferenceCar(final int nr, final Lane lane,
-            final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final OTSDEVSSimulator simulator) throws RemoteException, NamingException
+        final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+        final OTSDEVSSimulator simulator) throws RemoteException, NamingException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
@@ -134,12 +128,12 @@ public class CarTest
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         GTUFollowingModel cfm =
-                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                TimeUnit.SECOND), 1d);
-        return new Car<Integer>(nr, carType, length, width, maxSpeed, cfm, initialLongitudinalPositions, initialSpeed,
-                simulator);
+            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND),
+                1d);
+        return new Car<Integer>(nr, carType, cfm, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
+            simulator);
     }
 
     /**
@@ -148,12 +142,12 @@ public class CarTest
      */
     public static Lane makeLane() throws NetworkException
     {
-        Node n1 = new Node("n1", new Coordinate(0, 0));
-        Node n2 = new Node("n2", new Coordinate(10000.0, 0.0));
-        CrossSectionLink<String, Node> link12 =
-                new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Rel<LengthUnit>(10000.0, LengthUnit.METER));
+        NodeGeotools.STR n1 = new NodeGeotools.STR("n1", new Coordinate(0, 0));
+        NodeGeotools.STR n2 = new NodeGeotools.STR("n2", new Coordinate(10000.0, 0.0));
+        CrossSectionLink<String, String> link12 =
+            new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Rel<LengthUnit>(10000.0, LengthUnit.METER));
         GeometryFactory factory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
+        Coordinate[] coordinates = new Coordinate[] {new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
         LineString line = factory.createLineString(coordinates);
         new LinearGeometry(link12, line, null);
         LaneType<String> carLaneType = new LaneType<String>("CarLane");
@@ -162,36 +156,6 @@ public class CarTest
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         return new Lane(link12, latPos, width, width, carLaneType, LongitudinalDirectionality.FORWARD, f200);
 
-    }
-
-    /** node class. */
-    protected static class Node extends AbstractNode<String, Coordinate>
-    {
-        /** */
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * @param id id
-         * @param point point
-         */
-        public Node(final String id, final Coordinate point)
-        {
-            super(id, point);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final DirectedPoint getLocation() throws RemoteException
-        {
-            return new DirectedPoint(getPoint().x, getPoint().y, 0.0);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final Bounds getBounds() throws RemoteException
-        {
-            return new BoundingSphere();
-        }
     }
 
     /** the helper model. */
@@ -206,8 +170,8 @@ public class CarTest
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-                final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+            final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;
         }

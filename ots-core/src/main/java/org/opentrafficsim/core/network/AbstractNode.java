@@ -1,8 +1,16 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
@@ -15,18 +23,24 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> the ID type.
- * @param <P> the point type, e.g., com.vividsolutions.jts.geom.Point, DirectedPoint. 
+ * @param <P> the point type, e.g., com.vividsolutions.jts.geom.Point, DirectedPoint.
  */
-public abstract class AbstractNode<ID, P> implements LocatableInterface, Serializable
+public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140920L;
 
     /** the node id. */
-    private ID id;
+    private final ID id;
 
     /** the point. */
-    private P point;
+    private final P point;
+
+    /** the incoming links. */
+    private final Set<Link<?, ? extends Node<ID, P>>> linksIn = new HashSet<Link<?, ? extends Node<ID, P>>>();
+
+    /** the outgoing links. */
+    private final Set<Link<?, ? extends Node<ID, P>>> linksOut = new HashSet<Link<?, ? extends Node<ID, P>>>();
 
     /**
      * Construction of a Node.
@@ -56,4 +70,60 @@ public abstract class AbstractNode<ID, P> implements LocatableInterface, Seriali
         return this.point;
     }
 
+    /**
+     * @return the x-value of the point.
+     */
+    public abstract double getX();
+
+    /**
+     * @return the y-value of the point.
+     */
+    public abstract double getY();
+
+    /**
+     * @return the z-value of the point.
+     */
+    public abstract double getZ();
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addLinkIn(final Link<?, ? extends Node<ID, P>> linkIn)
+    {
+        this.linksIn.add(linkIn);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addLinkOut(final Link<?, ? extends Node<ID, P>> linkOut)
+    {
+        this.linksOut.add(linkOut);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Set<Link<?, ? extends Node<ID, P>>> getLinksIn()
+    {
+        return this.linksIn;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Set<Link<?, ? extends Node<ID, P>>> getLinksOut()
+    {
+        return this.linksOut;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        return new DirectedPoint(new double[] {getX(), getY(), getZ()});
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Bounds getBounds() throws RemoteException
+    {
+        return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
+    }
 }

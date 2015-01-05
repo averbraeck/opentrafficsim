@@ -23,15 +23,15 @@ public class AbstractOffsetUnitTest<OU extends OffsetUnit<OU>> extends AbstractU
      * @param expectedAbbreviation String; expected abbreviation in the resources
      */
     protected final void checkUnitRatioOffsetNameAndAbbreviation(final OU ou, final double expectedRatio,
-            final double expectedOffset, final double precision, final String expectedName, final String expectedAbbreviation)
+        final double expectedOffset, final double precision, final String expectedName, final String expectedAbbreviation)
     {
         assertEquals(String.format("zero %s is about %f reference unit", ou.getNameKey(), expectedOffset), expectedOffset,
-                ou.getOffsetToStandardUnit(), precision);
-        assertEquals(String.format("one %s is about %f reference unit", ou.getNameKey(), expectedRatio), expectedRatio,
-                ou.getConversionFactorToStandardUnit(), precision);
+            ou.getOffsetToStandardUnit(), precision);
+        assertEquals(String.format("one %s is about %f reference unit", ou.getNameKey(), expectedRatio), expectedRatio, ou
+            .getConversionFactorToStandardUnit(), precision);
         assertEquals(String.format("Name of %s is %s", ou.getNameKey(), expectedName), expectedName, ou.getName());
         assertEquals(String.format("Abbreviation of %s is %s", ou.getNameKey(), expectedAbbreviation), expectedAbbreviation,
-                ou.getAbbreviation());
+            ou.getAbbreviation());
     }
 
     /**

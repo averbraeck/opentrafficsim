@@ -12,7 +12,7 @@ package org.opentrafficsim.core.value;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SparseData 
+public interface SparseData
 {
     // This interface does not force anything to be implemented in classes that implement it
 }

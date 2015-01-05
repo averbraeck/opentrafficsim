@@ -32,7 +32,7 @@ public class UnitLocalizationsTest
     /**
      * Check that all defined units have all localizations.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public final void checkDefinedUnits()
     {
@@ -40,7 +40,7 @@ public class UnitLocalizationsTest
         Set<String> usedKeys = new HashSet<String>();
         ArrayList<String> errors = new ArrayList<String>();
         List<String> localeNames =
-                AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath() + "../../../../");
+            AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath() + "../../../../");
         for (String localeName : localeNames)
         {
             // System.out.println("Checking internationalization to " + localeName);
@@ -99,7 +99,8 @@ public class UnitLocalizationsTest
                     // + "->" + abbreviation);
                     if (abbreviation.startsWith("!") && abbreviation.endsWith("!"))
                     {
-                        errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey, localeName));
+                        errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
+                            localeName));
                     }
                     if (name.startsWith("!") && name.endsWith("!"))
                     {

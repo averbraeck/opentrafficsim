@@ -11,9 +11,9 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 import org.reflections.Reflections;
 
 /**
- * All units are internally <i>stored</i> relative to a standard unit with conversion factor. This means that e.g., a
- * meter is stored with conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This means
- * that if we want to display a meter as kilometers, we have to <i>divide</i> by the conversion factor.
+ * All units are internally <i>stored</i> relative to a standard unit with conversion factor. This means that e.g., a meter is
+ * stored with conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This means that if we want to
+ * display a meter as kilometers, we have to <i>divide</i> by the conversion factor.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -47,7 +47,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
 
     /** static map of all defined coefficient strings, mapped to the existing units. */
     private static final Map<String, Map<Class<Unit<?>>, Unit<?>>> SI_UNITS =
-            new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
+        new HashMap<String, Map<Class<Unit<?>>, Unit<?>>>();
 
     /** a static map of all defined units. */
     private static final Map<String, Set<Unit<?>>> UNITS = new HashMap<String, Set<Unit<?>>>();
@@ -104,12 +104,11 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      * @throws UnitException when unit cannot be added to the list of units
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
-            final double conversionFactorToReferenceUnit) throws UnitException
+        final double conversionFactorToReferenceUnit) throws UnitException
     {
         // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
         // the null pointer for the reference unit here.
@@ -120,7 +119,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         else
         {
             this.conversionFactorToStandardUnit =
-                    referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
+                referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
         }
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
@@ -161,12 +160,11 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      * @param safe Boolean; if true, a UnitException is silently ignored; if false a UnitException is an Error
      */
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
-            final double conversionFactorToReferenceUnit, final boolean safe)
+        final double conversionFactorToReferenceUnit, final boolean safe)
     {
         // as it can happen that this method is called for the standard unit (when it is still null) we have to catch
         // the null pointer for the reference unit here.
@@ -177,7 +175,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         else
         {
             this.conversionFactorToStandardUnit =
-                    referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
+                referenceUnit.getConversionFactorToStandardUnit() * conversionFactorToReferenceUnit;
         }
         this.nameKey = nameKey;
         this.abbreviationKey = abbreviationKey;
@@ -198,8 +196,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
 
     /**
      * Add a unit to the overview collection of existing units, and resolve the coefficients.
-     * @param unit the unit to add. It will be stored in a set belonging to the simple class name String, e.g.
-     *            "ForceUnit".
+     * @param unit the unit to add. It will be stored in a set belonging to the simple class name String, e.g. "ForceUnit".
      * @throws UnitException when parsing or normalizing the SI coefficient string fails.
      */
     private void addUnit(final Unit<U> unit) throws UnitException
@@ -248,8 +245,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * Return a set of defined units for a given unit type.
      * @param <V> the unit type to use in this method.
      * @param unitClass the class for which the units are requested, e.g. ForceUnit.class
-     * @return the set of defined units belonging to the provided class. The empty set will be returned in case the unit
-     *         type does not have any units.
+     * @return the set of defined units belonging to the provided class. The empty set will be returned in case the unit type
+     *         does not have any units.
      */
     @SuppressWarnings("unchecked")
     public static <V extends Unit<V>> Set<V> getUnits(final Class<V> unitClass)
@@ -271,8 +268,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
 
     /**
      * Return a copy of the set of all defined units for this unit type.
-     * @return the set of defined units belonging to this Unit class. The empty set will be returned in case the unit
-     *         type does not have any units.
+     * @return the set of defined units belonging to this Unit class. The empty set will be returned in case the unit type does
+     *         not have any units.
      */
     // TODO call static method from the instance method? The two are now too similar.
     @SuppressWarnings("unchecked")
@@ -347,8 +344,8 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
     public abstract U getStandardUnit();
 
     /**
-     * @return the SI standard coefficients for this unit, e.g., kgm/s2 or m-2s2A or m^-2.s^2.A or m^-2s^2A (not
-     *         necessarily normalized)
+     * @return the SI standard coefficients for this unit, e.g., kgm/s2 or m-2s2A or m^-2.s^2.A or m^-2s^2A (not necessarily
+     *         normalized)
      */
     public abstract String getSICoefficientsString();
 
@@ -409,7 +406,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
             initialize();
         }
         if (SI_UNITS.containsKey(normalizedSICoefficientsString)
-                && SI_UNITS.get(normalizedSICoefficientsString).containsKey(SIUnit.class))
+            && SI_UNITS.get(normalizedSICoefficientsString).containsKey(SIUnit.class))
         {
             return (SIUnit) SI_UNITS.get(normalizedSICoefficientsString).get(SIUnit.class);
         }

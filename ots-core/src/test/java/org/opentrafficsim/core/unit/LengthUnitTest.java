@@ -49,10 +49,10 @@ public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
         checkUnitRatioNameAndAbbreviation(LengthUnit.MILE, 1609, 0.5, "mile", "mi");
         checkUnitRatioNameAndAbbreviation(LengthUnit.CENTIMETER, 0.01, 0.000000001, "centimeter", "cm");
         // Check two conversions between non-standard units
-        assertEquals("one MILE is about 160900 CENTIMETER", 160900,
-                getMultiplicationFactorTo(LengthUnit.MILE, LengthUnit.CENTIMETER), 50);
-        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215,
-                getMultiplicationFactorTo(LengthUnit.CENTIMETER, LengthUnit.MILE), 0.000000002);
+        assertEquals("one MILE is about 160900 CENTIMETER", 160900, getMultiplicationFactorTo(LengthUnit.MILE,
+            LengthUnit.CENTIMETER), 50);
+        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215, getMultiplicationFactorTo(
+            LengthUnit.CENTIMETER, LengthUnit.MILE), 0.000000002);
         // Check conversion factor to standard unit for all remaining distance units
         checkUnitRatioNameAndAbbreviation(LengthUnit.MILLIMETER, 0.001, 0.000000001, "millimeter", "mm");
         checkUnitRatioNameAndAbbreviation(LengthUnit.DECIMETER, 0.1, 0.000000001, "decimeter", "dm");
@@ -72,8 +72,8 @@ public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
     public final void createLengthUnit()
     {
         LengthUnit myLU =
-                new LengthUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.Furlong",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
+            new LengthUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.Furlong",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
         assertTrue("Can create a new LengthUnit", null != myLU);
         checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
     }

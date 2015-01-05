@@ -42,8 +42,7 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 /**
  * Several demos in one application.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 17 dec. 2014 <br>
@@ -138,7 +137,7 @@ public class SuperDemo
                             panel.add(new JLabel(p.getShortName() + ": "), BorderLayout.LINE_START);
                             panel.add(comboBox, BorderLayout.CENTER);
                             panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) comboBox.getPreferredSize()
-                                    .getHeight()));
+                                .getHeight()));
                             propertyPanel.add(panel);
                         }
                         else if (p instanceof ProbabilityDistributionProperty)
@@ -147,7 +146,7 @@ public class SuperDemo
                             lp.setLayout(new BorderLayout());
                             final ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) p;
                             final ProbabilityDistributionEditor pdpe =
-                                    new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
+                                new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
                             pdpe.addPropertyChangeListener(new PropertyChangeListener()
                             {
                                 @Override
@@ -165,8 +164,8 @@ public class SuperDemo
 
                             });
                             lp.add(pdpe, BorderLayout.LINE_END);
-                            lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC")
-                                    .getPreferredSize().getHeight()));
+                            lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize()
+                                .getHeight()));
                             lp.setToolTipText(pdp.getDescription());
                             propertyPanel.add(lp);
                         }
@@ -181,16 +180,16 @@ public class SuperDemo
                             slider.setValue(ip.getValue());
                             slider.setPaintTicks(true);
                             final JLabel currentValue =
-                                    new JLabel(String.format(DefaultLocale.getLocale(), "Track length: %dm",
-                                            ip.getValue()), SwingConstants.RIGHT);
+                                new JLabel(String.format(DefaultLocale.getLocale(), "Track length: %dm", ip.getValue()),
+                                    SwingConstants.RIGHT);
                             slider.addChangeListener(new ChangeListener()
                             {
                                 @Override
                                 public void stateChanged(ChangeEvent changeEvent)
                                 {
                                     int value = slider.getValue();
-                                    currentValue.setText(String.format(DefaultLocale.getLocale(), "Track length: %dm",
-                                            value));
+                                    currentValue.setText(String
+                                        .format(DefaultLocale.getLocale(), "Track length: %dm", value));
                                     if (slider.getValueIsAdjusting())
                                     {
                                         return;
@@ -208,8 +207,7 @@ public class SuperDemo
                             lp.setToolTipText(p.getDescription());
                             lp.add(slider, BorderLayout.CENTER);
                             lp.add(currentValue, BorderLayout.SOUTH);
-                            lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) slider.getPreferredSize()
-                                    .getHeight()));
+                            lp.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) slider.getPreferredSize().getHeight()));
                             propertyPanel.add(lp);
                         }
                         else

@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.geotools;
 
 import java.io.Serializable;
 
@@ -9,6 +9,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -36,7 +37,7 @@ public class LinearGeometry implements Serializable
     private static final long serialVersionUID = 20141008L;
 
     /** link the geometry belongs to. */
-    private final AbstractLink<?, ?> link;
+    private final LinkGeotools<?, ?> link;
 
     /** geotools (or jts in this case) geometry that represents the link in 3D. */
     private final LineString line;
@@ -52,7 +53,7 @@ public class LinearGeometry implements Serializable
      * @param pointArray the geometry from geotools that represents the link in a CRS.
      * @throws NetworkException when transformation for distance calculation failed.
      */
-    public LinearGeometry(final AbstractLink<?, ?> link, final PointArray pointArray) throws NetworkException
+    public LinearGeometry(final LinkGeotools<?, ?> link, final PointArray pointArray) throws NetworkException
     {
         super();
         this.link = link;
@@ -79,7 +80,7 @@ public class LinearGeometry implements Serializable
                 catch (TransformException te)
                 {
                     throw new NetworkException("When constructing LinearGeometry for link=" + link.toString()
-                            + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
+                        + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
                 }
             }
             prevPos = p;
@@ -97,8 +98,8 @@ public class LinearGeometry implements Serializable
      * @param crs the Coordinate Reference System for this line.
      * @throws NetworkException when transformation for distance calculation failed.
      */
-    public LinearGeometry(final AbstractLink<?, ?> link, final LineString lineString, final CoordinateReferenceSystem crs)
-            throws NetworkException
+    public LinearGeometry(final LinkGeotools<?, ?> link, final LineString lineString, final CoordinateReferenceSystem crs)
+        throws NetworkException
     {
         super();
         this.link = link;
@@ -126,16 +127,18 @@ public class LinearGeometry implements Serializable
                     }
                     else
                     {
-                        // TODO: see if CRS is in meters...
-                        double dx = prevPos.getDirectPosition().getCoordinate()[0] - pos.getDirectPosition().getCoordinate()[0];
-                        double dy = prevPos.getDirectPosition().getCoordinate()[1] - pos.getDirectPosition().getCoordinate()[1];
+                        // TODO see if CRS is in meters...
+                        double dx =
+                            prevPos.getDirectPosition().getCoordinate()[0] - pos.getDirectPosition().getCoordinate()[0];
+                        double dy =
+                            prevPos.getDirectPosition().getCoordinate()[1] - pos.getDirectPosition().getCoordinate()[1];
                         len += Math.sqrt(dx * dx + dy * dy);
                     }
                 }
                 catch (TransformException te)
                 {
                     throw new NetworkException("When constructing LinearGeometry for link=" + link.toString()
-                            + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
+                        + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
                 }
             }
             prevPos = pos;
@@ -145,12 +148,12 @@ public class LinearGeometry implements Serializable
         link.setGeometry(this);
     }
 
-    // TODO: possibly add a couple of other constructors for convenience.
+    // TODO possibly add a couple of other constructors for convenience.
 
     /**
      * @return link.
      */
-    public final AbstractLink<?, ?> getLink()
+    public final LinkGeotools<?, ?> getLink()
     {
         return this.link;
     }

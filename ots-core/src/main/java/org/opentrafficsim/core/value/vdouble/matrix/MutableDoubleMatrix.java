@@ -29,8 +29,8 @@ import cern.jet.math.tdouble.DoubleFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableDoubleMatrix
  */
-public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatrix<U> implements 
-        WriteDoubleMatrixFunctions<U>, DoubleMathFunctions
+public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatrix<U> implements
+    WriteDoubleMatrixFunctions<U>, DoubleMathFunctions
 {
     /**  */
     private static final long serialVersionUID = 20141230L;
@@ -139,8 +139,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values of the entries in the new Absolute Dense
-             *            MutableDoubleMatrix
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Absolute Dense MutableDoubleMatrix
              * @param unit U; the unit of the new Absolute Dense MutableDoubleMatrix
              */
             protected Dense(final DoubleMatrix2D values, final U unit)
@@ -165,7 +164,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 setCopyOnWrite(true);
                 final MutableDoubleMatrix.Abs.Dense<U> result =
-                        new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
+                    new MutableDoubleMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -196,8 +195,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
             /**
              * Construct a new Absolute Sparse MutableDoubleMatrix.
-             * @param values double[][]; the initial values of the entries in the new Absolute Sparse
-             *            MutableDoubleMatrix
+             * @param values double[][]; the initial values of the entries in the new Absolute Sparse MutableDoubleMatrix
              * @param unit U; the unit of the new Absolute Sparse MutableDoubleMatrix
              * @throws ValueException when values is null, or is not rectangular
              */
@@ -223,8 +221,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values of the entries in the new Absolute Sparse
-             *            MutableDoubleMatrix
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Absolute Sparse MutableDoubleMatrix
              * @param unit U; the unit of the new Absolute Sparse MutableDoubleMatrix
              */
             protected Sparse(final DoubleMatrix2D values, final U unit)
@@ -249,7 +246,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 setCopyOnWrite(true);
                 final MutableDoubleMatrix.Abs.Sparse<U> result =
-                        new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
+                    new MutableDoubleMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -333,8 +330,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values of the entries in the new Relative Dense
-             *            MutableDoubleMatrix
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Relative Dense MutableDoubleMatrix
              * @param unit U; the unit of the new Relative Dense MutableDoubleMatrix
              */
             protected Dense(final DoubleMatrix2D values, final U unit)
@@ -359,7 +355,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 setCopyOnWrite(true);
                 final MutableDoubleMatrix.Rel.Dense<U> result =
-                        new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
+                    new MutableDoubleMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -390,8 +386,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
             /**
              * Construct a new Relative Sparse MutableDoubleMatrix.
-             * @param values double[][]; the initial values of the entries in the new Relative Sparse
-             *            MutableDoubleMatrix
+             * @param values double[][]; the initial values of the entries in the new Relative Sparse MutableDoubleMatrix
              * @param unit U; the unit of the new Relative Sparse MutableDoubleMatrix
              * @throws ValueException when values is null, or is not rectangular
              */
@@ -417,8 +412,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix2D; the initial values of the entries in the new Relative Sparse
-             *            MutableDoubleMatrix
+             * @param values DoubleMatrix2D; the initial values of the entries in the new Relative Sparse MutableDoubleMatrix
              * @param unit U; the unit of the new Relative Sparse MutableDoubleMatrix
              */
             protected Sparse(final DoubleMatrix2D values, final U unit)
@@ -443,7 +437,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             {
                 setCopyOnWrite(true);
                 final MutableDoubleMatrix.Rel.Sparse<U> result =
-                        new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
+                    new MutableDoubleMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -511,7 +505,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     /** {@inheritDoc} */
     @Override
     public final void setInUnit(final int row, final int column, final double value, final U valueUnit)
-            throws ValueException
+        throws ValueException
     {
         setSI(row, column, ValueUtil.expressAsSIUnit(value, valueUnit));
     }
@@ -772,9 +766,9 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Increment the values in this MutableDoubleMatrix by the corresponding values in a Relative DoubleMatrix. <br>
-     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an
-     * Absolute value to an existing Relative value would require the result to become Absolute, which is a type change
-     * that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an Absolute value
+     * to an existing Relative value would require the result to become Absolute, which is a type change that is impossible. For
+     * that operation use a static method.
      * @param rel DoubleMatrix.Rel&lt;U&gt;; the Relative DoubleMatrix
      * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
@@ -786,9 +780,9 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Decrement the corresponding values of a Relative DoubleMatrix from the values of this MutableDoubleMatrix. <br>
-     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting
-     * an Absolute value from an existing Absolute value would require the result to become Relative, which is a type
-     * change that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting an
+     * Absolute value from an existing Absolute value would require the result to become Relative, which is a type change that
+     * is impossible. For that operation use a static method.
      * @param rel DoubleMatrix.Rel&lt;U&gt;; the Relative DoubleMatrix
      * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
@@ -800,8 +794,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     // FIXME It makes no sense to subtract an Absolute from a Relative
     /**
-     * Decrement the values in this Relative MutableDoubleMatrix by the corresponding values in an Absolute
-     * DoubleMatrix.
+     * Decrement the values in this Relative MutableDoubleMatrix by the corresponding values in an Absolute DoubleMatrix.
      * @param abs DoubleMatrix.Abs&lt;U&gt;; the Absolute DoubleMatrix
      * @return MutableDoubleMatrix.Rel&lt;U&gt;; this modified Relative MutableDoubleMatrix
      * @throws ValueException when the matrices do not have the same size
@@ -831,8 +824,7 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
 
     /**
      * Scale the values in this MutableDoubleMatrix by the corresponding values in a double array.
-     * @param factor double[][]; contains the values by which to scale the corresponding values in this
-     *            MutableDoubleMatrix
+     * @param factor double[][]; contains the values by which to scale the corresponding values in this MutableDoubleMatrix
      * @return MutableDoubleMatrix&lt;U&gt;; this modified MutableDoubleMatrix
      * @throws ValueException when the matrix and the array do not have the same size
      */

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.LaneBasedGTU;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -14,13 +15,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
- * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter
- * J. Schakel, Bart van Arem, Member, IEEE, and Bart D. Netten. 2012. <br>
- * There are two nasty type setting errors in equation 7 in this published version of the paper. Both times an equals
- * sign (<cite>=</cite>) after <cite>a<sub>gain</sub></cite> should <b>not</b> be there.
+ * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter J.
+ * Schakel, Bart van Arem, Member, IEEE, and Bart D. Netten. 2012. <br>
+ * There are two nasty type setting errors in equation 7 in this published version of the paper. Both times an equals sign
+ * (<cite>=</cite>) after <cite>a<sub>gain</sub></cite> should <b>not</b> be there.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 4, 2014 <br>
@@ -41,23 +41,22 @@ public class IDMPlus implements GTUFollowingModel
     private final DoubleScalar.Rel<TimeUnit> tSafe;
 
     /**
-     * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean free speed equals 110% of the
-     * speed limit, etc.).
+     * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean free speed equals 110% of the speed
+     * limit, etc.).
      */
     private final double delta;
 
     /**
-     * Time slot size used by IDMPlus by (not defined in the paper, but 0.5s is a reasonable trade-off between
-     * computational speed and accuracy).
+     * Time slot size used by IDMPlus by (not defined in the paper, but 0.5s is a reasonable trade-off between computational
+     * speed and accuracy).
      */
     private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
 
     /**
      * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
-     * These values are from <b>Integrated Lane Change Model with Relaxation and Synchronization</b> by Wouter J.
-     * Schakel, Victor L. Knoop, and Bart van Arem, published in Transportation Research Record: Journal of the
-     * Transportation Research Board, No. 2316, Transportation Research Board of the National Academies, Washington,
-     * D.C., 2012, pp. 47–57.
+     * These values are from <b>Integrated Lane Change Model with Relaxation and Synchronization</b> by Wouter J. Schakel,
+     * Victor L. Knoop, and Bart van Arem, published in Transportation Research Record: Journal of the Transportation Research
+     * Board, No. 2316, Transportation Research Board of the National Academies, Washington, D.C., 2012, pp. 47–57.
      */
     public IDMPlus()
     {
@@ -70,17 +69,16 @@ public class IDMPlus implements GTUFollowingModel
 
     /**
      * Construct a new IDMPlus car following model.
-     * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of a stationary vehicle (normal value
-     *            is 1 m/s/s)
-     * @param b DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum deemed-safe deceleration (this is a positive
-     *            value)
+     * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of a stationary vehicle (normal value is 1
+     *            m/s/s)
+     * @param b DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum deemed-safe deceleration (this is a positive value)
      * @param s0 DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum stationary headway
      * @param tSafe DoubleScalar.Rel&lt;TimeUnit&gt;; the minimum time-headway
-     * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed
-     *            equals 110% of the speed limit; etc.)
+     * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
+     *            110% of the speed limit; etc.)
      */
     public IDMPlus(final DoubleScalar.Abs<AccelerationUnit> a, final DoubleScalar.Abs<AccelerationUnit> b,
-            final DoubleScalar.Rel<LengthUnit> s0, final DoubleScalar.Rel<TimeUnit> tSafe, final double delta)
+        final DoubleScalar.Rel<LengthUnit> s0, final DoubleScalar.Rel<TimeUnit> tSafe, final double delta)
     {
         this.a = a;
         this.b = b;
@@ -98,23 +96,16 @@ public class IDMPlus implements GTUFollowingModel
     private DoubleScalar.Rel<SpeedUnit> vDes(final GTU<?> follower, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getSI(), follower.getMaximumVelocity()
-                .getSI()), SpeedUnit.METER_PER_SECOND);
+            .getSI()), SpeedUnit.METER_PER_SECOND);
     }
 
     /** {@inheritDoc} */
     @Override
     public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
-            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException
+        final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+        throws RemoteException, NetworkException
     {
-        DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
-        // System.out.println("evaluation time is " + thisEvaluationTime);
-        // System.out.println("vDes is " + vDes);
-        DoubleScalar.Rel<LengthUnit> myFrontPosition =
-                follower.positionOfFront(thisEvaluationTime).getLongitudinalPosition();
-        // System.out.println("myFrontPosition is " + myFrontPosition);
-        DoubleScalar.Rel<LengthUnit> shortestHeadway =
-                new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> shortestHeadway = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
         LaneBasedGTU<?> closestLeader = null;
         for (LaneBasedGTU<?> leader : leaders)
         {
@@ -122,9 +113,9 @@ public class IDMPlus implements GTUFollowingModel
             {
                 continue;
             }
+            // TODO 100 m is arbitrary. What should this be based on?
             DoubleScalar.Rel<LengthUnit> s =
-                    DoubleScalar.minus(leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(),
-                            myFrontPosition).immutable();
+                follower.headway(leader, new DoubleScalar.Abs<LengthUnit>(100, LengthUnit.METER));
             // System.out.println("s is " + s);
             if (s.getSI() < 0)
             {
@@ -142,26 +133,24 @@ public class IDMPlus implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
-            final LaneBasedGTU<?> leader, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> leaderSpeed =
-                null == leader ? follower.getLongitudinalVelocity(thisEvaluationTime) : leader
-                        .getLongitudinalVelocity(thisEvaluationTime);
+            null == leader ? follower.getLongitudinalVelocity(thisEvaluationTime) : leader
+                .getLongitudinalVelocity(thisEvaluationTime);
+        // TODO 100 m is arbitrary. What should this be based on?
         DoubleScalar.Rel<LengthUnit> headway =
-                null == leader ? new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER) : DoubleScalar
-                        .minus(leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(),
-                                follower.positionOfFront(thisEvaluationTime).getLongitudinalPosition()).immutable();
-
+            follower.headway(leader, new DoubleScalar.Abs<LengthUnit>(100, LengthUnit.METER));
         return computeAcceleration(follower, leaderSpeed, headway, speedLimit);
     }
 
     /** {@inheritDoc} */
     @Override
     public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+        final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> followerCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
@@ -171,24 +160,21 @@ public class IDMPlus implements GTUFollowingModel
         // System.out.println("leftComponent is " + leftComponent);
         // }
         MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
-                new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
-                        AccelerationUnit.METER_PER_SECOND_2);
+            new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
+                AccelerationUnit.METER_PER_SECOND_2);
         logWeightedAccelerationTimes2.multiply(2); // don't forget the times 2
 
         DoubleScalar.Rel<SpeedUnit> dV =
-                DoubleScalar.minus(follower.getLongitudinalVelocity(thisEvaluationTime), leaderSpeed).immutable();
+            DoubleScalar.minus(follower.getLongitudinalVelocity(thisEvaluationTime), leaderSpeed).immutable();
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + gtu.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
         DoubleScalar.Rel<LengthUnit> sStar =
-                DoubleScalar.plus(
-                        DoubleScalar.plus(this.s0,
-                                Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe))
-                                .immutable(),
-                        Calc.speedTimesTime(
-                                dV,
-                                Calc.speedDividedByAcceleration(followerCurrentSpeed,
-                                        logWeightedAccelerationTimes2.immutable()))).immutable();
+            DoubleScalar.plus(
+                DoubleScalar.plus(this.s0,
+                    Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe)).immutable(),
+                Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerCurrentSpeed, logWeightedAccelerationTimes2
+                    .immutable()))).immutable();
         if (sStar.getSI() < 0)
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper
@@ -202,16 +188,15 @@ public class IDMPlus implements GTUFollowingModel
         // {
         // System.out.println("rightComponent is " + rightComponent);
         // }
-        MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration =
-                new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
+        MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration = new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
         newAcceleration.multiply(Math.min(leftComponent, rightComponent));
         // System.out.println("newAcceleration is " + newAcceleration);
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerCurrentSpeed.getSI() < 0)
         {
             // System.out.println("Preventing follower from driving backwards " + follower);
             newAcceleration =
-                    new MutableDoubleScalar.Abs<AccelerationUnit>(
-                            -followerCurrentSpeed.getSI() / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
+                new MutableDoubleScalar.Abs<AccelerationUnit>(-followerCurrentSpeed.getSI() / this.stepSize.getSI(),
+                    AccelerationUnit.METER_PER_SECOND_2);
         }
         MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = thisEvaluationTime.mutable();
         nextEvaluationTime.incrementBy(this.stepSize);
@@ -236,8 +221,8 @@ public class IDMPlus implements GTUFollowingModel
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
-                this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
+            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
 }

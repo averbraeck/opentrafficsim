@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -25,7 +25,7 @@ public class Barrier extends RoadMarkerAlong
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
     public Barrier(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super(parentLink, lateralCenterPosition, beginWidth, endWidth);
     }

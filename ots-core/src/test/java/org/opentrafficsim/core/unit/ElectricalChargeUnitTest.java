@@ -47,11 +47,11 @@ public class ElectricalChargeUnitTest extends AbstractUnitTest<ElectricalChargeU
         checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.MILLIAMPERE_HOUR, 3.6, 0.000000005, "milliampere hour", "mAh");
         checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.FARADAY, 96485.3365, 0.005, "faraday", "F");
         // Check two conversions between non-standard units
-        assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137,
-                getMultiplicationFactorTo(ElectricalChargeUnit.MILLIAMPERE_HOUR, ElectricalChargeUnit.FARADAY), 0.000000001);
+        assertEquals("one MILLIAMPERE_HOUR is about 0.00003731137 FARADAY", 0.00003731137, getMultiplicationFactorTo(
+            ElectricalChargeUnit.MILLIAMPERE_HOUR, ElectricalChargeUnit.FARADAY), 0.000000001);
         // Test the other units
-        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217653e-19, 1e-25, "elementary unit of charge",
-                "e");
+        checkUnitRatioNameAndAbbreviation(ElectricalChargeUnit.ATOMIC_UNIT, 1.60217653e-19, 1e-25,
+            "elementary unit of charge", "e");
     }
 
 }

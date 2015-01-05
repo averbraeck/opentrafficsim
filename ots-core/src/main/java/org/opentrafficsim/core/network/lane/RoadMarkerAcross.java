@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -25,7 +25,7 @@ public abstract class RoadMarkerAcross
      * @param longitudinalPosition Longitudinal position on the cross section element.
      */
     public RoadMarkerAcross(final CrossSectionElement crossSectionElement,
-            final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+        final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         super();
         this.crossSectionElement = crossSectionElement;

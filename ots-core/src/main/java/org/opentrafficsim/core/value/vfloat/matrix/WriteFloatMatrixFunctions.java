@@ -24,8 +24,8 @@ public interface WriteFloatMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to replace
      * @param column int; column of the value to replace
      * @param valueSI float; the value to store (expressed in the standard SI unit)
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     void setSI(int row, int column, float valueSI) throws ValueException;
 
@@ -34,8 +34,8 @@ public interface WriteFloatMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to replace
      * @param column int; column of the value to replace
      * @param value FloatScalar&lt;U&gt;; the strongly typed value to store
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     void set(int row, int column, FloatScalar<U> value) throws ValueException;
 
@@ -45,8 +45,8 @@ public interface WriteFloatMatrixFunctions<U extends Unit<U>>
      * @param column int; column of the value to replace
      * @param value float; the value to store (which is expressed in valueUnit)
      * @param valueUnit U; unit of the supplied value
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     void setInUnit(int row, int column, float value, U valueUnit) throws ValueException;
 

@@ -34,7 +34,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * Construct a new Immutable DoubleScalar.
      * @param unit U; the unit of the new DoubleScalar
      */
-    protected  DoubleScalar(final U unit)
+    protected DoubleScalar(final U unit)
     {
         super(unit);
         // System.out.println("Created DoubleScalar");
@@ -370,7 +370,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
         }
         if (obj == null)
         {
-        return false;
+            return false;
         }
         if (!(obj instanceof DoubleScalar))
         {
@@ -399,15 +399,15 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     /**********************************************************************************/
 
     /**
-     * Add a Relative value to an Absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the left argument.
+     * Add a Relative value to an Absolute value. Return a new instance of the value. The unit of the return value will be the
+     * unit of the left argument.
      * @param left DoubleScalar.Abs&lt;U&gt;; the left argument
      * @param right DoubleScalar.Rel&lt;U&gt;; the right argument
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableDoubleScalar.Abs&lt;U&gt;; the sum of the values as an Absolute value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> plus(final DoubleScalar.Abs<U> left,
-            final DoubleScalar.Rel<U> right)
+        final DoubleScalar.Rel<U> right)
     {
         MutableDoubleScalar.Abs<U> result = new MutableDoubleScalar.Abs<U>(left);
         result.incrementBy(right);
@@ -415,15 +415,15 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Add a Relative value to a Relative value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the left argument.
+     * Add a Relative value to a Relative value. Return a new instance of the value. The unit of the return value will be the
+     * unit of the left argument.
      * @param left DoubleScalar.Rel&lt;U&gt;; the left argument
      * @param right DoubleScalar.Rel&lt;U&gt;; the right argument
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableDoubleScalar.Rel&lt;U&gt;; the sum of the values as a Relative value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> plus(final DoubleScalar.Rel<U> left,
-            final DoubleScalar.Rel<U> right)
+        final DoubleScalar.Rel<U> right)
     {
         MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(left);
         result.incrementBy(right);
@@ -431,15 +431,15 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract a Relative value from an absolute value. Return a new instance of the value. The unit of the
-     * return value will be the unit of the left argument.
+     * Subtract a Relative value from an absolute value. Return a new instance of the value. The unit of the return value will
+     * be the unit of the left argument.
      * @param left DoubleScalar.Abs&lt;U&gt;; the left value
      * @param right DoubleScalar.Rel&lt;U&gt;; the right value
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableDoubleScalar.Abs&lt;U&gt;; the resulting value as an absolute value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> minus(final DoubleScalar.Abs<U> left,
-            final DoubleScalar.Rel<U> right)
+        final DoubleScalar.Rel<U> right)
     {
         MutableDoubleScalar.Abs<U> result = new MutableDoubleScalar.Abs<U>(left);
         result.decrementBy(right);
@@ -447,15 +447,15 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract a relative value from a relative value. Return a new instance of the value. The unit of the
-     * value will be the unit of the first argument.
+     * Subtract a relative value from a relative value. Return a new instance of the value. The unit of the value will be the
+     * unit of the first argument.
      * @param left DoubleScalar.Rel&lt;U&gt;; the left value
      * @param right DoubleScalar.Rel&lt;U&gt;; the right value
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableDoubleScalar.Rel&lt;U&gt;; the resulting value as a relative value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Rel<U> left,
-            final DoubleScalar.Rel<U> right)
+        final DoubleScalar.Rel<U> right)
     {
         MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(left);
         result.decrementBy(right);
@@ -463,15 +463,15 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
-     * will be the unit of the first argument.
+     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value will be
+     * the unit of the first argument.
      * @param valueAbs1 DoubleScalar.Abs&lt;U&gt;; value 1
      * @param valueAbs2 DoubleScalar.Abs&lt;U&gt;; value 2
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableDoubleScalar.Rel&lt;U&gt;; the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> minus(final DoubleScalar.Abs<U> valueAbs1,
-            final DoubleScalar.Abs<U> valueAbs2)
+        final DoubleScalar.Abs<U> valueAbs2)
     {
         MutableDoubleScalar.Rel<U> result = new MutableDoubleScalar.Rel<U>(valueAbs1.getInUnit(), valueAbs1.getUnit());
         result.decrementBy(valueAbs2);
@@ -484,12 +484,11 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @param right DoubleScalar.Abs&lt;?&gt;; the right operand
      * @return MutableDoubleScalar.Abs&lt;SIUnit&gt;; the product of the two values
      */
-    public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> left,
-            final DoubleScalar.Abs<?> right)
+    public static MutableDoubleScalar.Abs<SIUnit> multiply(final DoubleScalar.Abs<?> left, final DoubleScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableDoubleScalar.Abs<SIUnit>(left.getSI() * right.getSI(), targetUnit);
     }
 
@@ -499,12 +498,11 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @param right DoubleScalar.Rel&lt;?&gt;; the right operand
      * @return MutableDoubleScalar.Rel&lt;SIUnit&gt;; the product of the two values
      */
-    public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> left,
-            final DoubleScalar.Rel<?> right)
+    public static MutableDoubleScalar.Rel<SIUnit> multiply(final DoubleScalar.Rel<?> left, final DoubleScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableDoubleScalar.Rel<SIUnit>(left.getSI() * right.getSI(), targetUnit);
     }
 
@@ -517,8 +515,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     public static MutableDoubleScalar.Abs<SIUnit> divide(final DoubleScalar.Abs<?> left, final DoubleScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableDoubleScalar.Abs<SIUnit>(left.getSI() / right.getSI(), targetUnit);
     }
 
@@ -531,8 +529,8 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
     public static MutableDoubleScalar.Rel<SIUnit> divide(final DoubleScalar.Rel<?> left, final DoubleScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableDoubleScalar.Rel<SIUnit>(left.getSI() / right.getSI(), targetUnit);
     }
 
@@ -545,7 +543,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @return MutableDoubleScalar.Abs&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Abs<U> interpolate(final DoubleScalar.Abs<U> zero,
-            final DoubleScalar.Abs<U> one, final double ratio)
+        final DoubleScalar.Abs<U> one, final double ratio)
     {
         MutableDoubleScalar.Abs<U> result = zero.mutable();
         result.setSI(result.getSI() * (1 - ratio) + one.getSI() * ratio);
@@ -561,7 +559,7 @@ public abstract class DoubleScalar<U extends Unit<U>> extends Scalar<U>
      * @return MutableDoubleScalar.Rel&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableDoubleScalar.Rel<U> interpolate(final DoubleScalar.Rel<U> zero,
-            final DoubleScalar.Rel<U> one, final double ratio)
+        final DoubleScalar.Rel<U> one, final double ratio)
     {
         MutableDoubleScalar.Rel<U> result = zero.mutable();
         result.setSI(result.getSI() * (1 - ratio) + one.getSI() * ratio);

@@ -21,7 +21,7 @@ public class FormatTest
     @Test
     public final void format()
     {
-        double[] baseValues = {1, (float) (1 / 3d) };
+        double[] baseValues = {1, (float) (1 / 3d)};
         for (int width = 8; width <= 20; width++)
         {
             for (int precision = 0; precision <= 10; precision++)
@@ -47,7 +47,7 @@ public class FormatTest
                         }
                         double tolerance = Math.abs(value / Math.pow(10, expectedPrecision));
                         assertEquals("Parsed result should equal original value within tolerance " + tolerance, value,
-                                reverseValue, tolerance);
+                            reverseValue, tolerance);
                     }
                     for (double baseValue : baseValues)
                     {
@@ -64,7 +64,7 @@ public class FormatTest
                         }
                         double tolerance = Math.abs(value / Math.pow(10, expectedPrecision));
                         assertEquals("Parsed result should equal original value within tolerance " + tolerance, value,
-                                reverseValue, tolerance);
+                            reverseValue, tolerance);
                     }
                 }
             }

@@ -15,18 +15,19 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.AbstractLaneBasedIndividualGTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 22, 2014 <br>
@@ -34,7 +35,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> The type of ID, e.g., String or Integer
  */
-public class Car<ID> extends AbstractLaneBasedGTU<ID>
+public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
 {
     /** */
     private static final long serialVersionUID = 20141025L;
@@ -42,27 +43,27 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
     /**
      * @param id the id of the GTU, could be String or Integer
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param length the maximum length of the GTU (parallel with driving direction)
-     * @param width the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
      * @param gtuFollowingModel the following model, including a reference to the simulator
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
+     * @param length the maximum length of the GTU (parallel with driving direction)
+     * @param width the maximum width of the GTU (perpendicular to driving direction)
+     * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
      * @param simulator the simulator
      * @throws RemoteException in case the simulation time cannot be read
      * @throws NamingException if an error occurs when adding the animation handler
      */
-    public Car(final ID id, final GTUType<?> gtuType, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-            final GTUFollowingModel gtuFollowingModel,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
-            throws RemoteException, NamingException
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Car(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
+        final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         // HACK FIXME (negative length trick)
-        super(id, gtuType, length.getSI() < 0 ? new DoubleScalar.Rel<LengthUnit>(-length.getSI(), LengthUnit.METER)
-                : length, width, maximumVelocity, gtuFollowingModel, initialLongitudinalPositions, initialSpeed,
-                simulator);
+        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, length.getSI() < 0
+            ? new DoubleScalar.Rel<LengthUnit>(-length.getSI(), LengthUnit.METER) : length, width, maximumVelocity,
+            simulator);
         if (simulator instanceof OTSAnimatorInterface && length.getSI() >= 0)
         {
             new CarAnimation(this, simulator);
@@ -70,13 +71,38 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
     }
 
     /** {@inheritDoc} */
+    @Override
+    public final RelativePosition getFront()
+    {
+        // We take the front position of the Car to be the reference point.
+        DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
+        return new RelativePosition(zero, zero, zero, RelativePosition.FRONT);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final RelativePosition getRear()
+    {
+        // We take the front position of the Car to be the reference point. So the rear is the length
+        // of the Car away from the reference point in the negative (non-driving) X-direction.
+        DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(-getLength().getSI(), LengthUnit.METER);
+        return new RelativePosition(dx, zero, zero, RelativePosition.BACK);
+    }
+
+    /** {@inheritDoc} */
     public final String toString()
     {
         try
         {
-            return String.format("Car %s rear:%s front:%s", getId(), positionOfRear(), positionOfFront());
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> rearPositions = getPositions(getRear());
+            Lane rearLane = rearPositions.keySet().iterator().next();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = getPositions(getFront());
+            Lane frontLane = frontPositions.keySet().iterator().next();
+            return String.format("Car %s rear:%s[%s] front:%s[%s]", getId(), rearLane, rearPositions.get(rearLane),
+                frontLane, frontPositions.get(frontLane));
         }
-        catch (RemoteException exception)
+        catch (RemoteException | NetworkException exception)
         {
             exception.printStackTrace();
         }
@@ -88,8 +114,7 @@ public class Car<ID> extends AbstractLaneBasedGTU<ID>
 /**
  * Draw a car.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 29 dec. 2014 <br>
@@ -110,8 +135,7 @@ class CarAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public CarAnimation(final Car<?> source, final OTSSimulatorInterface simulator) throws NamingException,
-            RemoteException
+    public CarAnimation(final Car<?> source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = COLORTABLE[++nextIndex % COLORTABLE.length];
@@ -121,7 +145,7 @@ class CarAnimation extends Renderable2D
      * Colors for the cars.
      */
     private static final Color[] COLORTABLE = {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE,
-            Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY};
+        Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY};
 
     /** {@inheritDoc} */
     @Override

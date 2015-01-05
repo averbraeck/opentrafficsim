@@ -46,10 +46,10 @@ public class ElectricalCurrentUnitTest extends AbstractUnitTest<ElectricalCurren
         checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.AMPERE, 1, 0.00000001, "ampere", "A");
         checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.MILLIAMPERE, 0.001, 0.000000001, "milliampere", "mA");
         // Check two conversions between two units
-        assertEquals("one AMPERE is 1000 MILLI AMPERE", 1000,
-                getMultiplicationFactorTo(ElectricalCurrentUnit.AMPERE, ElectricalCurrentUnit.MILLIAMPERE), 0.01);
-        assertEquals("one MILLI AMPERE is 0.001 AMPERE", 0.001,
-                getMultiplicationFactorTo(ElectricalCurrentUnit.MILLIAMPERE, ElectricalCurrentUnit.AMPERE), 0.0001);
+        assertEquals("one AMPERE is 1000 MILLI AMPERE", 1000, getMultiplicationFactorTo(ElectricalCurrentUnit.AMPERE,
+            ElectricalCurrentUnit.MILLIAMPERE), 0.01);
+        assertEquals("one MILLI AMPERE is 0.001 AMPERE", 0.001, getMultiplicationFactorTo(ElectricalCurrentUnit.MILLIAMPERE,
+            ElectricalCurrentUnit.AMPERE), 0.0001);
     }
 
 }
