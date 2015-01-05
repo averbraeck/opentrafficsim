@@ -34,7 +34,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * Construct a new Immutable FloatScalar.
      * @param unit U; the unit of the new FloatScalar
      */
-    protected  FloatScalar(final U unit)
+    protected FloatScalar(final U unit)
     {
         super(unit);
         // System.out.println("Created FloatScalar");
@@ -368,7 +368,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
         if (obj == null)
         {
-        return false;
+            return false;
         }
         if (!(obj instanceof FloatScalar))
         {
@@ -397,15 +397,15 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /**********************************************************************************/
 
     /**
-     * Add a Relative value to an Absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the left argument.
+     * Add a Relative value to an Absolute value. Return a new instance of the value. The unit of the return value will be the
+     * unit of the left argument.
      * @param left FloatScalar.Abs&lt;U&gt;; the left argument
      * @param right FloatScalar.Rel&lt;U&gt;; the right argument
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableFloatScalar.Abs&lt;U&gt;; the sum of the values as an Absolute value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> plus(final FloatScalar.Abs<U> left,
-            final FloatScalar.Rel<U> right)
+        final FloatScalar.Rel<U> right)
     {
         MutableFloatScalar.Abs<U> result = new MutableFloatScalar.Abs<U>(left);
         result.incrementBy(right);
@@ -413,15 +413,15 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Add a Relative value to a Relative value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the left argument.
+     * Add a Relative value to a Relative value. Return a new instance of the value. The unit of the return value will be the
+     * unit of the left argument.
      * @param left FloatScalar.Rel&lt;U&gt;; the left argument
      * @param right FloatScalar.Rel&lt;U&gt;; the right argument
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableFloatScalar.Rel&lt;U&gt;; the sum of the values as a Relative value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> plus(final FloatScalar.Rel<U> left,
-            final FloatScalar.Rel<U> right)
+        final FloatScalar.Rel<U> right)
     {
         MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(left);
         result.incrementBy(right);
@@ -429,15 +429,15 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract a Relative value from an absolute value. Return a new instance of the value. The unit of the
-     * return value will be the unit of the left argument.
+     * Subtract a Relative value from an absolute value. Return a new instance of the value. The unit of the return value will
+     * be the unit of the left argument.
      * @param left FloatScalar.Abs&lt;U&gt;; the left value
      * @param right FloatScalar.Rel&lt;U&gt;; the right value
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableFloatScalar.Abs&lt;U&gt;; the resulting value as an absolute value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> minus(final FloatScalar.Abs<U> left,
-            final FloatScalar.Rel<U> right)
+        final FloatScalar.Rel<U> right)
     {
         MutableFloatScalar.Abs<U> result = new MutableFloatScalar.Abs<U>(left);
         result.decrementBy(right);
@@ -445,15 +445,15 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract a relative value from a relative value. Return a new instance of the value. The unit of the
-     * value will be the unit of the first argument.
+     * Subtract a relative value from a relative value. Return a new instance of the value. The unit of the value will be the
+     * unit of the first argument.
      * @param left FloatScalar.Rel&lt;U&gt;; the left value
      * @param right FloatScalar.Rel&lt;U&gt;; the right value
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableFloatScalar.Rel&lt;U&gt;; the resulting value as a relative value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Rel<U> left,
-            final FloatScalar.Rel<U> right)
+        final FloatScalar.Rel<U> right)
     {
         MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(left);
         result.decrementBy(right);
@@ -461,15 +461,15 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value
-     * will be the unit of the first argument.
+     * Subtract two absolute values. Return a new instance of a relative value of the difference. The unit of the value will be
+     * the unit of the first argument.
      * @param valueAbs1 FloatScalar.Abs&lt;U&gt;; value 1
      * @param valueAbs2 FloatScalar.Abs&lt;U&gt;; value 2
      * @param <U> Unit; the unit of the parameters and the result
      * @return MutableFloatScalar.Rel&lt;U&gt;; the difference of the two absolute values as a relative value
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> minus(final FloatScalar.Abs<U> valueAbs1,
-            final FloatScalar.Abs<U> valueAbs2)
+        final FloatScalar.Abs<U> valueAbs2)
     {
         MutableFloatScalar.Rel<U> result = new MutableFloatScalar.Rel<U>(valueAbs1.getInUnit(), valueAbs1.getUnit());
         result.decrementBy(valueAbs2);
@@ -485,8 +485,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     public static MutableFloatScalar.Abs<SIUnit> multiply(final FloatScalar.Abs<?> left, final FloatScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableFloatScalar.Abs<SIUnit>(left.getSI() * right.getSI(), targetUnit);
     }
 
@@ -499,8 +499,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     public static MutableFloatScalar.Rel<SIUnit> multiply(final FloatScalar.Rel<?> left, final FloatScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableFloatScalar.Rel<SIUnit>(left.getSI() * right.getSI(), targetUnit);
     }
 
@@ -513,8 +513,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     public static MutableFloatScalar.Abs<SIUnit> divide(final FloatScalar.Abs<?> left, final FloatScalar.Abs<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableFloatScalar.Abs<SIUnit>(left.getSI() / right.getSI(), targetUnit);
     }
 
@@ -527,8 +527,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     public static MutableFloatScalar.Rel<SIUnit> divide(final FloatScalar.Rel<?> left, final FloatScalar.Rel<?> right)
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         return new MutableFloatScalar.Rel<SIUnit>(left.getSI() / right.getSI(), targetUnit);
     }
 
@@ -541,7 +541,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @return MutableFloatScalar.Abs&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatScalar.Abs<U> interpolate(final FloatScalar.Abs<U> zero,
-            final FloatScalar.Abs<U> one, final float ratio)
+        final FloatScalar.Abs<U> one, final float ratio)
     {
         MutableFloatScalar.Abs<U> result = zero.mutable();
         result.setSI(result.getSI() * (1 - ratio) + one.getSI() * ratio);
@@ -557,7 +557,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * @return MutableFloatScalar.Rel&lt;U&gt;
      */
     public static <U extends Unit<U>> MutableFloatScalar.Rel<U> interpolate(final FloatScalar.Rel<U> zero,
-            final FloatScalar.Rel<U> one, final float ratio)
+        final FloatScalar.Rel<U> one, final float ratio)
     {
         MutableFloatScalar.Rel<U> result = zero.mutable();
         result.setSI(result.getSI() * (1 - ratio) + one.getSI() * ratio);

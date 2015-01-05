@@ -21,12 +21,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
- * Dummy implementation. The only working method is getSimulatorTime which returns 0s all the time. Every other method
- * throws and Error. <br />
+ * Dummy implementation. The only working method is getSimulatorTime which returns 0s all the time. Every other method throws
+ * and Error. <br />
  * This class was created in order to be able to run various tests without having to set up a real simulator.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 14 nov. 2014 <br>
@@ -54,7 +53,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEvent(final SimEventInterface<OTSSimTimeDouble> event) throws RemoteException,
-            SimRuntimeException
+        SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -62,7 +61,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEventRel(final Rel<TimeUnit> relativeDelay, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws RemoteException, SimRuntimeException
+        final Object target, final String method, final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -70,7 +69,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEventRel(final Rel<TimeUnit> relativeDelay, final Object source, final Object target,
-            final String method, final Object[] args) throws RemoteException, SimRuntimeException
+        final String method, final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -78,7 +77,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEventAbs(final OTSSimTimeDouble absoluteTime, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws RemoteException, SimRuntimeException
+        final Object target, final String method, final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -86,7 +85,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEventAbs(final Abs<TimeUnit> absoluteTime, final Object source, final Object target,
-            final String method, final Object[] args) throws RemoteException, SimRuntimeException
+        final String method, final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -94,7 +93,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEventAbs(final Abs<TimeUnit> absoluteTime, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws RemoteException, SimRuntimeException
+        final Object target, final String method, final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -102,23 +101,23 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void scheduleEventAbs(final OTSSimTimeDouble absoluteTime, final Object source, final Object target,
-            final String method, final Object[] args) throws RemoteException, SimRuntimeException
+        final String method, final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleEventNow(final short priority, final Object source, final Object target,
-            final String method, final Object[] args) throws RemoteException, SimRuntimeException
+    public final void scheduleEventNow(final short priority, final Object source, final Object target, final String method,
+        final Object[] args) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleEventNow(final Object source, final Object target, final String method,
-            final Object[] args) throws RemoteException, SimRuntimeException
+    public final void scheduleEventNow(final Object source, final Object target, final String method, final Object[] args)
+        throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -126,7 +125,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void setEventList(final EventListInterface<OTSSimTimeDouble> eventList) throws RemoteException,
-            SimRuntimeException
+        SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -148,7 +147,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final void initialize(final Replication<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> replication,
-            final ReplicationMode replicationMode) throws RemoteException, SimRuntimeException
+        final ReplicationMode replicationMode) throws RemoteException, SimRuntimeException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -198,7 +197,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final boolean addListener(final EventListenerInterface arg0, final EventType arg1, final boolean arg2)
-            throws RemoteException
+        throws RemoteException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -206,7 +205,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final boolean addListener(final EventListenerInterface arg0, final EventType arg1, final short arg2)
-            throws RemoteException
+        throws RemoteException
     {
         throw new Error("Not supported in the fake simulator");
     }
@@ -214,7 +213,7 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     /** {@inheritDoc} */
     @Override
     public final boolean addListener(final EventListenerInterface arg0, final EventType arg1, final short arg2,
-            final boolean arg3) throws RemoteException
+        final boolean arg3) throws RemoteException
     {
         throw new Error("Not supported in the fake simulator");
     }

@@ -10,8 +10,7 @@ import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 /**
  * Flow contour plot.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 29, 2014 <br>
@@ -29,13 +28,13 @@ public class FlowContourPlot extends ContourPlot
      * @param maximumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
     public FlowContourPlot(final String caption, final DoubleScalar.Rel<LengthUnit> minimumDistance,
-            final DoubleScalar.Rel<LengthUnit> maximumDistance)
+        final DoubleScalar.Rel<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(
-                minimumDistance, maximumDistance, STANDARDDISTANCEGRANULARITIES,
-                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"),
-                2500d, 1500d, 0d, "flow %.0f veh/h", "%.0f veh/h", 500d);
+            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(minimumDistance,
+            maximumDistance, STANDARDDISTANCEGRANULARITIES,
+            STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), 2500d, 1500d,
+            0d, "flow %.0f veh/h", "%.0f veh/h", 500d);
     }
 
     /** Storage for the total length traveled in each cell. */
@@ -57,14 +56,14 @@ public class FlowContourPlot extends ContourPlot
             this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
         }
         final int highestBinNeeded =
-                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit)
-                        * this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
+            (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeLengths.size())
         {
             try
             {
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                        .getBinCount()], LengthUnit.METER));
+                    .getBinCount()], LengthUnit.METER));
             }
             catch (ValueException exception)
             {
@@ -76,7 +75,7 @@ public class FlowContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-            final double distanceCovered, final double acceleration)
+        final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
@@ -87,7 +86,7 @@ public class FlowContourPlot extends ContourPlot
             try
             {
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                        .getBinCount()], LengthUnit.METER));
+                    .getBinCount()], LengthUnit.METER));
             }
             catch (ValueException exception)
             {
@@ -109,7 +108,7 @@ public class FlowContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
-            final int endDistanceBin)
+        final int endDistanceBin)
     {
         double cumulativeLengthInSI = 0;
         if (firstTimeBin >= this.cumulativeLengths.size())
@@ -134,11 +133,11 @@ public class FlowContourPlot extends ContourPlot
         catch (ValueException exception)
         {
             System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]",
-                    firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
+                firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
         return 3600 * cumulativeLengthInSI / this.getXAxis().getCurrentGranularity()
-                / this.getYAxis().getCurrentGranularity();
+            / this.getYAxis().getCurrentGranularity();
     }
 
 }

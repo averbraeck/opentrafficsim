@@ -29,8 +29,8 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableFloatVector
  */
-public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements 
-        WriteFloatVectorFunctions<U>, FloatMathFunctions
+public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<U> implements WriteFloatVectorFunctions<U>,
+    FloatMathFunctions
 {
     /**  */
     private static final long serialVersionUID = 20141230L;
@@ -136,8 +136,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix1D; the initial values of the entries in the new Absolute Dense
-             *            MutableFloatVector
+             * @param values FloatMatrix1D; the initial values of the entries in the new Absolute Dense MutableFloatVector
              * @param unit U; the unit of the new Absolute Dense MutableFloatVector
              */
             protected Dense(final FloatMatrix1D values, final U unit)
@@ -161,8 +160,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final MutableFloatVector.Abs.Dense<U> mutable()
             {
                 setCopyOnWrite(true);
-                final MutableFloatVector.Abs.Dense<U> result =
-                        new MutableFloatVector.Abs.Dense<U>(getVectorSI(), getUnit());
+                final MutableFloatVector.Abs.Dense<U> result = new MutableFloatVector.Abs.Dense<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -219,8 +217,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix1D; the initial values of the entries in the new Absolute Sparse
-             *            MutableFloatVector
+             * @param values FloatMatrix1D; the initial values of the entries in the new Absolute Sparse MutableFloatVector
              * @param unit U; the unit of the new Absolute Sparse MutableFloatVector
              */
             protected Sparse(final FloatMatrix1D values, final U unit)
@@ -245,7 +242,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             {
                 setCopyOnWrite(true);
                 final MutableFloatVector.Abs.Sparse<U> result =
-                        new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), getUnit());
+                    new MutableFloatVector.Abs.Sparse<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -329,8 +326,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix1D; the initial values of the entries in the new Relative Dense
-             *            MutableFloatVector
+             * @param values FloatMatrix1D; the initial values of the entries in the new Relative Dense MutableFloatVector
              * @param unit U; the unit of the new Relative Dense MutableFloatVector
              */
             protected Dense(final FloatMatrix1D values, final U unit)
@@ -354,8 +350,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             public final MutableFloatVector.Rel.Dense<U> mutable()
             {
                 setCopyOnWrite(true);
-                final MutableFloatVector.Rel.Dense<U> result =
-                        new MutableFloatVector.Rel.Dense<U>(getVectorSI(), getUnit());
+                final MutableFloatVector.Rel.Dense<U> result = new MutableFloatVector.Rel.Dense<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -412,8 +407,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix1D; the initial values of the entries in the new Relative Sparse
-             *            MutableFloatVector
+             * @param values FloatMatrix1D; the initial values of the entries in the new Relative Sparse MutableFloatVector
              * @param unit U; the unit of the new Relative Sparse MutableFloatVector
              */
             protected Sparse(final FloatMatrix1D values, final U unit)
@@ -438,7 +432,7 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             {
                 setCopyOnWrite(true);
                 final MutableFloatVector.Rel.Sparse<U> result =
-                        new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), getUnit());
+                    new MutableFloatVector.Rel.Sparse<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -760,9 +754,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Increment the values in this MutableFloatVector by the corresponding values in a Relative FloatVector. <br>
-     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an
-     * Absolute value to an existing Relative value would require the result to become Absolute, which is a type change
-     * that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an Absolute value
+     * to an existing Relative value would require the result to become Absolute, which is a type change that is impossible. For
+     * that operation use a static method.
      * @param rel FloatVector.Rel&lt;U&gt;; the Relative FloatVector
      * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size
@@ -774,9 +768,9 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
 
     /**
      * Decrement the corresponding values of a Relative FloatVector from the values of this MutableFloatVector. <br>
-     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting
-     * an Absolute value from an existing Absolute value would require the result to become Relative, which is a type
-     * change that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting an
+     * Absolute value from an existing Absolute value would require the result to become Relative, which is a type change that
+     * is impossible. For that operation use a static method.
      * @param rel FloatVector.Rel&lt;U&gt;; the Relative FloatVector
      * @return MutableFloatVector&lt;U&gt;; this modified MutableFloatVector
      * @throws ValueException when the vectors do not have the same size

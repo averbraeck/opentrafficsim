@@ -44,24 +44,24 @@ public class AccelerationUnitTest extends AbstractUnitTest<AccelerationUnit>
     public final void conversions()
     {
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.METER_PER_SECOND_2, 1, 0.00000001, "meter per second squared",
-                "m/s^2");
+            "m/s^2");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.KM_PER_HOUR_2, 1 / 3.6 / 3600, 0.0005, "km per hour squared",
-                "km/h^2");
+            "km/h^2");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.FOOT_PER_SECOND_2, 0.3048, 0.00001, "foot per second squared",
-                "ft/s^2");
+            "ft/s^2");
         // Check two conversions between non-standard units
-        assertEquals("one FOOT PER SECOND PER SECOND is ??? KM PER HOUR PER HOUR", 3950.208,
-                getMultiplicationFactorTo(AccelerationUnit.FOOT_PER_SECOND_2, AccelerationUnit.KM_PER_HOUR_2), 0.01);
+        assertEquals("one FOOT PER SECOND PER SECOND is ??? KM PER HOUR PER HOUR", 3950.208, getMultiplicationFactorTo(
+            AccelerationUnit.FOOT_PER_SECOND_2, AccelerationUnit.KM_PER_HOUR_2), 0.01);
         // Check conversion factor to standard unit for all remaining acceleration units
-        checkUnitRatioNameAndAbbreviation(AccelerationUnit.INCH_PER_SECOND_2, 0.0254, 0.0000000001, "inch per second squared",
-                "in/s^2");
+        checkUnitRatioNameAndAbbreviation(AccelerationUnit.INCH_PER_SECOND_2, 0.0254, 0.0000000001,
+            "inch per second squared", "in/s^2");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_2, 0.000124177778, 0.0000000001,
-                "mile per hour squared", "mi/h^2");
+            "mile per hour squared", "mi/h^2");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_SECOND_2, 1609.344, 0.000001, "mile per second squared",
-                "mi/s^2");
+            "mi/s^2");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.KNOT_PER_SECOND, 0.514444444, 0.000001, "knot per second", "kt/s");
         checkUnitRatioNameAndAbbreviation(AccelerationUnit.MILE_PER_HOUR_PER_SECOND, 0.44704, 0.00000001,
-                "mile per hour per second", "mi/h/s");
+            "mile per hour per second", "mi/h/s");
     }
 
     /**

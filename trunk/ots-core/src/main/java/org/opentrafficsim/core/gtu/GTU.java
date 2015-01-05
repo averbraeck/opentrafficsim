@@ -36,7 +36,13 @@ public interface GTU<ID> extends LocatableInterface, Serializable
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
     GTUType<?> getGTUType();
-    
+
     /** @return the simulator of the GTU. */
     OTSDEVSSimulatorInterface getSimulator();
+
+    /** @return the front position of the GTU, relative to its reference point. */
+    RelativePosition getFront();
+
+    /** @return the rear position of the GTU, relative to its reference point. */
+    RelativePosition getRear();
 }

@@ -6,9 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
-import org.opentrafficsim.core.network.CrossSectionLink;
-import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -21,8 +22,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 /**
  * Determine acceleration (deceleration) for a GTU that follows another GTU.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 19, 2014 <br>
@@ -37,8 +37,8 @@ public final class FollowAcceleration
      */
     private static DoubleVector.Abs.Dense<AccelerationUnit> tooDangerous() throws ValueException
     {
-        return new DoubleVector.Abs.Dense<AccelerationUnit>(new double[]{Double.NEGATIVE_INFINITY,
-                Double.NEGATIVE_INFINITY}, AccelerationUnit.METER_PER_SECOND_2);
+        return new DoubleVector.Abs.Dense<AccelerationUnit>(
+            new double[] {Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY}, AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /**
@@ -56,22 +56,22 @@ public final class FollowAcceleration
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current time
      * @param gtuFollowingModel GTUFollowingModel; the GTU following model that is used to compute the result
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (deceleration) for the following GTU in order
-     *         to not collide with the leader GTU
+     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (deceleration) for the following GTU in order to not
+     *         collide with the leader GTU
      * @throws RemoteException on communication failure
      * @throws NetworkException if follower and leader do not have a common CrossSectionLink
      */
     public static DoubleScalar.Abs<AccelerationUnit> acceleration(final AbstractLaneBasedGTU<?> follower,
-            final AbstractLaneBasedGTU<?> leader, final DoubleScalar.Abs<TimeUnit> when,
-            final GTUFollowingModel gtuFollowingModel, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+        final AbstractLaneBasedGTU<?> leader, final DoubleScalar.Abs<TimeUnit> when,
+        final GTUFollowingModel gtuFollowingModel, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
+        NetworkException
     {
         if (null != leader && null != follower)
         {
             // find a lane where follower and leader are jointly
             // OOOPS DONT DO IT THIS WAY: Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
-            Set<Lane> lanes = new HashSet<Lane>(leader.getLongitudinalPositions().keySet());
-            lanes.retainAll(follower.getLongitudinalPositions().keySet());
+            Set<Lane> lanes = new HashSet<Lane>(leader.getPositions(leader.getFront()).keySet());
+            lanes.retainAll(follower.getPositions(follower.getFront()).keySet());
             // TODO expand to lanes for next links as well, to a certain distance (which is...?)
             if (lanes.size() > 0)
             {
@@ -79,12 +79,13 @@ public final class FollowAcceleration
                 try
                 {
                     MutableDoubleScalar.Rel<LengthUnit> headway =
-                            DoubleScalar.minus(leader.positionOfRear(lane, when), follower.positionOfFront(lane, when));
+                        DoubleScalar.minus(leader.getPosition(lane, leader.getRear(), when), 
+                            follower.getPosition(lane, follower.getFront(), when));
                     if (headway.getSI() <= 0)
                     {
                         // Immediate collision; return a prohibitive negative value
                         return new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY,
-                                AccelerationUnit.METER_PER_SECOND_2);
+                            AccelerationUnit.METER_PER_SECOND_2);
                     }
                 }
                 catch (NetworkException ne)
@@ -96,7 +97,7 @@ public final class FollowAcceleration
             {
                 // Not on the same lane. Find a Link that is shared by both
                 Set<CrossSectionLink<?, ?>> links = new HashSet<CrossSectionLink<?, ?>>();
-                for (Lane lane : leader.getLongitudinalPositions().keySet())
+                for (Lane lane : leader.getPositions(leader.getFront()).keySet())
                 {
                     links.add(lane.getParentLink());
                 }
@@ -105,7 +106,7 @@ public final class FollowAcceleration
                     throw new NetworkException("Leader is not on any link");
                 }
                 Set<CrossSectionLink<?, ?>> followerLinks = new HashSet<CrossSectionLink<?, ?>>();
-                for (Lane lane : follower.getLongitudinalPositions().keySet())
+                for (Lane lane : follower.getPositions(follower.getFront()).keySet())
                 {
                     followerLinks.add(lane.getParentLink());
                 }
@@ -116,7 +117,7 @@ public final class FollowAcceleration
                 }
                 CrossSectionLink<?, ?> commonLink = links.iterator().next(); // Use the first one
                 Lane leaderLane = null;
-                for (Lane lane : leader.getLongitudinalPositions().keySet())
+                for (Lane lane : leader.getPositions(leader.getFront()).keySet())
                 {
                     if (lane.getParentLink() == commonLink)
                     {
@@ -129,7 +130,7 @@ public final class FollowAcceleration
                     throw new Error("Cannot happen -- Cannot find leaderLane");
                 }
                 Lane followerLane = null;
-                for (Lane lane : follower.getLongitudinalPositions().keySet())
+                for (Lane lane : follower.getPositions(RelativePosition.REFERENCE).keySet())
                 {
                     if (lane.getParentLink() == commonLink)
                     {
@@ -143,58 +144,57 @@ public final class FollowAcceleration
                 }
                 // Get the difference of the projections of both lanes onto the design line of the link
                 // leader.positionOfRear(leaderLane, when);
-                double leaderRatio = leader.positionOfRear(when).getFractionalLongitudinalPosition();
-                double followerRatio = follower.positionOfFront(when).getFractionalLongitudinalPosition();
-                double ratioDifference = leaderRatio - followerRatio; // TODO prove that this is always correct
-                // Scale that difference by the length of the lane of the follower to obtain the headway
-                DoubleScalar.Rel<LengthUnit> headway =
-                        new DoubleScalar.Rel<LengthUnit>(followerLane.getLength().getSI() * ratioDifference,
-                                LengthUnit.METER);
+                // TODO why not use the headway function???
+                DoubleScalar.Rel<LengthUnit> leaderPosition =
+                    leader.getPosition(leaderLane, leader.getRear(), when);
+                DoubleScalar.Rel<LengthUnit> followerPosition = follower.getPosition(leaderLane, follower.getFront(), when);
+                DoubleScalar.Rel<LengthUnit> headway = DoubleScalar.minus(leaderPosition, followerPosition).immutable();
                 return gtuFollowingModel.computeAcceleration(follower, leader.getLongitudinalVelocity(when), headway,
-                        speedLimit).getAcceleration();
+                    speedLimit).getAcceleration();
             }
         }
         return gtuFollowingModel.computeAcceleration(follower, leader, speedLimit).getAcceleration();
     }
 
     /**
-     * Compute the acceleration of this car and the (new) follower car in the current lane, or after a considered lane
-     * change. Both values are returned; the acceleration for the reference car at index 0, the acceleration of the
-     * (new) follower car at index 1. If changing lane is not possible because it would result in dangerous deceleration
-     * or collision, the returned value in both fields is Double.NEGATIVE_INFINITY.
-     * @param referenceGTU AbstractLaneBasedGTU&lt;?&gt;; the car that considers changing lane and whose
-     *            gtuFollowingModel will be used
+     * Compute the acceleration of this car and the (new) follower car in the current lane, or after a considered lane change.
+     * Both values are returned; the acceleration for the reference car at index 0, the acceleration of the (new) follower car
+     * at index 1. If changing lane is not possible because it would result in dangerous deceleration or collision, the returned
+     * value in both fields is Double.NEGATIVE_INFINITY.
+     * @param referenceGTU AbstractLaneBasedGTU&lt;?&gt;; the car that considers changing lane and whose gtuFollowingModel will
+     *            be used
      * @param otherCars Set&lt;Car&gt;; the cars in the target lane
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the
-     *         lane change is carried out
+     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the lowest acceleration (highest deceleration) incurred if the lane
+     *         change is carried out
      * @throws RemoteException on communication failure
      * @throws NetworkException when the network is inconsistent
      */
     @SuppressWarnings("unchecked")
     public static DoubleVector.Abs.Dense<AccelerationUnit> acceleration(final AbstractLaneBasedGTU<?> referenceGTU,
-            final Collection<AbstractLaneBasedGTU<?>> otherCars, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+        final Collection<AbstractLaneBasedGTU<?>> otherCars, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+        throws RemoteException, NetworkException
     {
         final DoubleScalar.Abs<AccelerationUnit> maximumDeceleration =
-                referenceGTU.getGTUFollowingModel().maximumSafeDeceleration();
+            referenceGTU.getGTUFollowingModel().maximumSafeDeceleration();
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
         AbstractLaneBasedGTU<?> leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
         AbstractLaneBasedGTU<?> follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
-        Lane referenceLane = referenceGTU.getLongitudinalPositions().keySet().iterator().next();
-        DoubleScalar.Rel<LengthUnit> referenceCarPosition = referenceGTU.positionOfFront(referenceLane, when);
+        Lane referenceLane = referenceGTU.getPositions(referenceGTU.getFront()).keySet().iterator().next();
+        DoubleScalar.Rel<LengthUnit> referenceCarPosition =
+            referenceGTU.getPosition(referenceLane, referenceGTU.getFront(), when);
         if (otherCars.size() > 0)
         {
             AbstractLaneBasedGTU<?> otherCar = otherCars.iterator().next();
-            Lane otherLane = otherCar.getLongitudinalPositions().keySet().iterator().next();
+            Lane otherLane = otherCar.getPositions(otherCar.getFront()).keySet().iterator().next();
             if (otherLane != referenceLane)
             {
                 // Project the referenceCarPosition on the lane of the otherCars
                 referenceCarPosition =
-                        new DoubleScalar.Rel<LengthUnit>(referenceCarPosition.getSI()
-                                / referenceLane.getLength().getSI() * otherLane.getLength().getSI(), LengthUnit.METER);
+                    new DoubleScalar.Rel<LengthUnit>(referenceCarPosition.getSI() / referenceLane.getLength().getSI()
+                        * otherLane.getLength().getSI(), LengthUnit.METER);
             }
         }
         // Find the nearest leader and the nearest follower.
@@ -204,9 +204,9 @@ public final class FollowAcceleration
             {
                 continue;
             }
-            Lane otherLane = c.getLongitudinalPositions().keySet().iterator().next();
+            Lane otherLane = c.getPositions(c.getFront()).keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> headway =
-                    DoubleScalar.minus(c.positionOfFront(otherLane, when), referenceCarPosition).immutable();
+                DoubleScalar.minus(c.getPosition(otherLane, c.getFront(), when), referenceCarPosition).immutable();
             if (headway.getSI() < 0)
             {
                 if (null == follower || followerHeadway.getSI() < headway.getSI())
@@ -224,7 +224,7 @@ public final class FollowAcceleration
                 }
             }
         }
-        //System.out.println("leader is " + (null == leader ? "NULL" : leader));
+        // System.out.println("leader is " + (null == leader ? "NULL" : leader));
         try
         {
             if (null != followerHeadway && DoubleScalar.plus(referenceGTU.getLength(), followerHeadway).getSI() >= 0)
@@ -240,9 +240,8 @@ public final class FollowAcceleration
             GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
             // System.out.println("referenceGTU: " + referenceGTU);
             DoubleScalar.Abs<AccelerationUnit> followerAcceleration =
-                    null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
-                            : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel,
-                                    speedLimit);
+                null == follower ? new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2)
+                    : FollowAcceleration.acceleration(follower, referenceGTU, when, gtuFollowingModel, speedLimit);
             if (followerAcceleration.getSI() >= -maximumDeceleration.getSI())
             {
                 if (null != leaderHeadway && leaderHeadway.getSI() <= referenceGTU.getLength().getSI())
@@ -250,14 +249,14 @@ public final class FollowAcceleration
                     return tooDangerous();
                 }
                 DoubleScalar.Abs<AccelerationUnit> referenceAcceleration =
-                        FollowAcceleration.acceleration(referenceGTU, leader, when, gtuFollowingModel, speedLimit);
+                    FollowAcceleration.acceleration(referenceGTU, leader, when, gtuFollowingModel, speedLimit);
                 if (referenceAcceleration.getSI() >= -maximumDeceleration.getSI())
                 {
-                    return new DoubleVector.Abs.Dense<AccelerationUnit>(new DoubleScalar.Abs[]{referenceAcceleration,
-                            followerAcceleration});
+                    return new DoubleVector.Abs.Dense<AccelerationUnit>(new DoubleScalar.Abs[] {referenceAcceleration,
+                        followerAcceleration});
                 }
             }
-            //System.out.println("Imposed follower acceleration is dangerous: " + followerAcceleration);
+            // System.out.println("Imposed follower acceleration is dangerous: " + followerAcceleration);
             return tooDangerous();
         }
         catch (ValueException exception)

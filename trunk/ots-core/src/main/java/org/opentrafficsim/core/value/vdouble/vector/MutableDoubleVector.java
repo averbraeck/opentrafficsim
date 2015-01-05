@@ -29,8 +29,8 @@ import cern.jet.math.tdouble.DoubleFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableDoubleVector
  */
-public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVector<U> implements 
-        WriteDoubleVectorFunctions<U>, DoubleMathFunctions
+public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVector<U> implements
+    WriteDoubleVectorFunctions<U>, DoubleMathFunctions
 {
     /**  */
     private static final long serialVersionUID = 20141230L;
@@ -136,8 +136,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix1D; the initial values of the entries in the new Absolute Dense
-             *            MutableDoubleVector
+             * @param values DoubleMatrix1D; the initial values of the entries in the new Absolute Dense MutableDoubleVector
              * @param unit U; the unit of the new Absolute Dense MutableDoubleVector
              */
             protected Dense(final DoubleMatrix1D values, final U unit)
@@ -162,7 +161,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 setCopyOnWrite(true);
                 final MutableDoubleVector.Abs.Dense<U> result =
-                        new MutableDoubleVector.Abs.Dense<U>(getVectorSI(), getUnit());
+                    new MutableDoubleVector.Abs.Dense<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -219,8 +218,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix1D; the initial values of the entries in the new Absolute Sparse
-             *            MutableDoubleVector
+             * @param values DoubleMatrix1D; the initial values of the entries in the new Absolute Sparse MutableDoubleVector
              * @param unit U; the unit of the new Absolute Sparse MutableDoubleVector
              */
             protected Sparse(final DoubleMatrix1D values, final U unit)
@@ -245,7 +243,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 setCopyOnWrite(true);
                 final MutableDoubleVector.Abs.Sparse<U> result =
-                        new MutableDoubleVector.Abs.Sparse<U>(getVectorSI(), getUnit());
+                    new MutableDoubleVector.Abs.Sparse<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -329,8 +327,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix1D; the initial values of the entries in the new Relative Dense
-             *            MutableDoubleVector
+             * @param values DoubleMatrix1D; the initial values of the entries in the new Relative Dense MutableDoubleVector
              * @param unit U; the unit of the new Relative Dense MutableDoubleVector
              */
             protected Dense(final DoubleMatrix1D values, final U unit)
@@ -355,7 +352,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 setCopyOnWrite(true);
                 final MutableDoubleVector.Rel.Dense<U> result =
-                        new MutableDoubleVector.Rel.Dense<U>(getVectorSI(), getUnit());
+                    new MutableDoubleVector.Rel.Dense<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -412,8 +409,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
             /**
              * For package internal use only.
-             * @param values DoubleMatrix1D; the initial values of the entries in the new Relative Sparse
-             *            MutableDoubleVector
+             * @param values DoubleMatrix1D; the initial values of the entries in the new Relative Sparse MutableDoubleVector
              * @param unit U; the unit of the new Relative Sparse MutableDoubleVector
              */
             protected Sparse(final DoubleMatrix1D values, final U unit)
@@ -438,7 +434,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             {
                 setCopyOnWrite(true);
                 final MutableDoubleVector.Rel.Sparse<U> result =
-                        new MutableDoubleVector.Rel.Sparse<U>(getVectorSI(), getUnit());
+                    new MutableDoubleVector.Rel.Sparse<U>(getVectorSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -760,9 +756,9 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
     /**
      * Increment the values in this MutableDoubleVector by the corresponding values in a Relative DoubleVector. <br>
-     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an
-     * Absolute value to an existing Relative value would require the result to become Absolute, which is a type change
-     * that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an Absolute value
+     * to an existing Relative value would require the result to become Absolute, which is a type change that is impossible. For
+     * that operation use a static method.
      * @param rel DoubleVector.Rel&lt;U&gt;; the Relative DoubleVector
      * @return MutableDoubleVector&lt;U&gt;; this modified MutableDoubleVector
      * @throws ValueException when the vectors do not have the same size
@@ -774,9 +770,9 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
     /**
      * Decrement the corresponding values of a Relative DoubleVector from the values of this MutableDoubleVector. <br>
-     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting
-     * an Absolute value from an existing Absolute value would require the result to become Relative, which is a type
-     * change that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting an
+     * Absolute value from an existing Absolute value would require the result to become Relative, which is a type change that
+     * is impossible. For that operation use a static method.
      * @param rel DoubleVector.Rel&lt;U&gt;; the Relative DoubleVector
      * @return MutableDoubleVector&lt;U&gt;; this modified MutableDoubleVector
      * @throws ValueException when the vectors do not have the same size
@@ -788,8 +784,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
     // FIXME It makes no sense to subtract an Absolute from a Relative
     /**
-     * Decrement the values in this Relative MutableDoubleVector by the corresponding values in an Absolute
-     * DoubleVector.
+     * Decrement the values in this Relative MutableDoubleVector by the corresponding values in an Absolute DoubleVector.
      * @param abs DoubleVector.Abs&lt;U&gt;; the Absolute DoubleVector
      * @return MutableDoubleVector.Rel&lt;U&gt;; this modified Relative MutableDoubleVector
      * @throws ValueException when the vectors do not have the same size
@@ -816,8 +811,7 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
 
     /**
      * Scale the values in this MutableDoubleVector by the corresponding values in a double array.
-     * @param factor double[]; contains the values by which to scale the corresponding values in this
-     *            MutableDoubleVector
+     * @param factor double[]; contains the values by which to scale the corresponding values in this MutableDoubleVector
      * @return MutableDoubleVector&lt;U&gt;; this modified MutableDoubleVector
      * @throws ValueException when the vector and the array do not have the same size
      */

@@ -42,8 +42,8 @@ public interface ReadOnlyDoubleMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to retrieve
      * @param column int; column of the value to retrieve
      * @return double; value at position row, column in the standard SI unit
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     double getSI(int row, int column) throws ValueException;
 
@@ -52,8 +52,8 @@ public interface ReadOnlyDoubleMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to retrieve
      * @param column int; column of the value to retrieve
      * @return double; value at position row, column in the original unit
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     double getInUnit(int row, int column) throws ValueException;
 
@@ -63,8 +63,8 @@ public interface ReadOnlyDoubleMatrixFunctions<U extends Unit<U>>
      * @param column int; column of the value to retrieve
      * @param targetUnit U; the unit for the result
      * @return double; value at position row, column converted into the specified unit
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     double getInUnit(int row, int column, U targetUnit) throws ValueException;
 
@@ -73,8 +73,8 @@ public interface ReadOnlyDoubleMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to retrieve
      * @param column int; column of the value to retrieve
      * @return DoubleScalar&lt;U&gt;; the strongly typed value of the selected cell
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     DoubleScalar<U> get(int row, int column) throws ValueException;
 

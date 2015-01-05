@@ -47,10 +47,10 @@ public class DensityUnitTest extends AbstractUnitTest<DensityUnit>
     {
         checkUnitRatioNameAndAbbreviation(DensityUnit.KG_PER_METER_3, 1, 0.00000001, "kilogram per cubic meter", "kg/m^3");
         checkUnitRatioNameAndAbbreviation(DensityUnit.GRAM_PER_CENTIMETER_3, 1000, 0.0001, "gram per cubic centimeter",
-                "g/cm^3");
+            "g/cm^3");
         // Check two conversions between two units
-        assertEquals("one KG PER CUBIC METER is 0.0001 GRAM PER CUBIC CENTIMETER", 0.001,
-                getMultiplicationFactorTo(DensityUnit.KG_PER_METER_3, DensityUnit.GRAM_PER_CENTIMETER_3), 0.000000001);
+        assertEquals("one KG PER CUBIC METER is 0.0001 GRAM PER CUBIC CENTIMETER", 0.001, getMultiplicationFactorTo(
+            DensityUnit.KG_PER_METER_3, DensityUnit.GRAM_PER_CENTIMETER_3), 0.000000001);
     }
 
     /**
@@ -60,9 +60,9 @@ public class DensityUnitTest extends AbstractUnitTest<DensityUnit>
     public final void createDensityUnit()
     {
         DensityUnit myDU =
-                new DensityUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "DensityUnit.DensityUnit",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "DensityUnit.SPCF", SI_DERIVED, DensityUnit.KG_PER_METER_3,
-                        515.317882);
+            new DensityUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "DensityUnit.DensityUnit",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "DensityUnit.SPCF", SI_DERIVED, DensityUnit.KG_PER_METER_3,
+                515.317882);
         assertTrue("Can create a new DensityUnit", null != myDU);
         checkUnitRatioNameAndAbbreviation(myDU, 515.3, 0.1, "!DensityUnit!", "!SPCF!");
     }

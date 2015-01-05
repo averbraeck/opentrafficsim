@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import java.util.HashSet;
 import java.util.Set;

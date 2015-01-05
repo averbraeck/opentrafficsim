@@ -1,8 +1,9 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -25,7 +26,7 @@ public class Stripe extends RoadMarkerAlong
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Rel<LengthUnit> width)
+        final DoubleScalar.Rel<LengthUnit> width)
     {
         super(parentLink, lateralCenterPosition, width, width);
     }
@@ -41,7 +42,7 @@ public class Stripe extends RoadMarkerAlong
      * @param permeable one of the enums of Stripe.Permeable to define the permeability.
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable)
+        final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable)
     {
         super(parentLink, lateralCenterPosition, width, width);
         for (GTUType<?> gtuType : gtuTypes)
@@ -60,7 +61,7 @@ public class Stripe extends RoadMarkerAlong
      * @param permeable one of the enums of Stripe.Permeable to define the permeability.
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable)
+        final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable)
     {
         super(parentLink, lateralCenterPosition, width, width);
         addPermeability(GTUType.ALL, permeable);

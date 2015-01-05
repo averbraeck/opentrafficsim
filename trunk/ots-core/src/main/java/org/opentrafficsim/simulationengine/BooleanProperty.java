@@ -3,8 +3,7 @@ package org.opentrafficsim.simulationengine;
 /**
  * Boolean property.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 29 dec. 2014 <br>
@@ -32,7 +31,7 @@ public class BooleanProperty extends AbstractProperty<Boolean>
      * @param readOnly boolean; if true this BooleanProperty can not be altered
      */
     public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
-            final boolean readOnly)
+        final boolean readOnly)
     {
         this.shortName = shortName;
         this.description = description;

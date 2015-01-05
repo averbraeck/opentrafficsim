@@ -12,15 +12,14 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Lane;
+import org.opentrafficsim.core.network.lane.Lane;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 17, 2014 <br>
@@ -30,7 +29,7 @@ public class LaneAnimation extends Renderable2D
 {
     /** color of the lane. */
     private final Color color;
-    
+
     /**
      * @param source s
      * @param simulator s
@@ -38,8 +37,8 @@ public class LaneAnimation extends Renderable2D
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator, final Color color) throws NamingException,
-            RemoteException
+    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator, final Color color)
+        throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = color;

@@ -22,8 +22,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 12 nov. 2014 <br>
@@ -51,15 +50,14 @@ public class SimpleSimulator
      * @throws SimRuntimeException on ???
      */
     public SimpleSimulator(final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
+        SimRuntimeException
     {
         this.simulator = new OTSDEVSSimulator();
-        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength,
+            model), ReplicationMode.TERMINATING);
         this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
-                        this.simulator);
+            new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this.simulator);
     }
 
     /**
@@ -74,15 +72,14 @@ public class SimpleSimulator
      * @throws SimRuntimeException on ???
      */
     public SimpleSimulator(final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
-            throws RemoteException, SimRuntimeException
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
+        throws RemoteException, SimRuntimeException
     {
         this.simulator = new OTSDEVSAnimator();
-        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength,
+            model), ReplicationMode.TERMINATING);
         this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
-                        this.simulator);
+            new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this.simulator);
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, this.simulator);
         this.panel.getTabbedPane().addTab(0, "animation", animationPanel);

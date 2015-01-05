@@ -53,7 +53,6 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** 1/day. */
     public static final FrequencyUnit PER_DAY;
 
-
     static
     {
         HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz", "FrequencyUnit.Hz", SI_DERIVED);
@@ -76,7 +75,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
-            final UnitSystem unitSystem)
+        final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit(), true);
         this.timeUnit = timeUnit;
@@ -88,11 +87,10 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public FrequencyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.timeUnit = referenceUnit.getTimeUnit();

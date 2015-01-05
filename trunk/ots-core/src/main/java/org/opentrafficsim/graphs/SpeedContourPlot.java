@@ -11,8 +11,7 @@ import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 /**
  * Speed contour plot.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 29, 2014 <br>
@@ -30,13 +29,13 @@ public class SpeedContourPlot extends ContourPlot
      * @param maximumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
      */
     public SpeedContourPlot(final String caption, final DoubleScalar.Rel<LengthUnit> minimumDistance,
-            final DoubleScalar.Rel<LengthUnit> maximumDistance)
+        final DoubleScalar.Rel<LengthUnit> maximumDistance)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(
-                minimumDistance, maximumDistance, STANDARDDISTANCEGRANULARITIES,
-                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), 0d,
-                40d, 150d, "speed %.1f km/h", "%.1f km/h", 20d);
+            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(minimumDistance,
+            maximumDistance, STANDARDDISTANCEGRANULARITIES,
+            STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), 0d, 40d, 150d,
+            "speed %.1f km/h", "%.1f km/h", 20d);
     }
 
     /** Storage for the total time spent in each cell. */
@@ -62,16 +61,16 @@ public class SpeedContourPlot extends ContourPlot
             this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
         }
         int highestBinNeeded =
-                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit)
-                        * this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
+            (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             try
             {
                 this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis()
-                        .getBinCount()], TimeUnit.SECOND));
+                    .getBinCount()], TimeUnit.SECOND));
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                        .getBinCount()], LengthUnit.METER));
+                    .getBinCount()], LengthUnit.METER));
             }
             catch (ValueException exception)
             {
@@ -83,7 +82,7 @@ public class SpeedContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-            final double distanceCovered, final double acceleration)
+        final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
@@ -106,7 +105,7 @@ public class SpeedContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
-            final int endDistanceBin)
+        final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;
         double cumulativeLengthInSI = 0;
@@ -134,7 +133,7 @@ public class SpeedContourPlot extends ContourPlot
         catch (ValueException exception)
         {
             System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]",
-                    firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
+                firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
         if (0 == cumulativeTimeInSI)

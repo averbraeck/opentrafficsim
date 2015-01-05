@@ -29,8 +29,8 @@ import cern.jet.math.tfloat.FloatFunctions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this MutableFloatMatrix
  */
-public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements 
-        WriteFloatMatrixFunctions<U>, FloatMathFunctions
+public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<U> implements WriteFloatMatrixFunctions<U>,
+    FloatMathFunctions
 {
     /**  */
     private static final long serialVersionUID = 20141230L;
@@ -139,8 +139,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries in the new Absolute Dense
-             *            MutableFloatMatrix
+             * @param values FloatMatrix2D; the initial values of the entries in the new Absolute Dense MutableFloatMatrix
              * @param unit U; the unit of the new Absolute Dense MutableFloatMatrix
              */
             protected Dense(final FloatMatrix2D values, final U unit)
@@ -164,8 +163,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final MutableFloatMatrix.Abs.Dense<U> mutable()
             {
                 setCopyOnWrite(true);
-                final MutableFloatMatrix.Abs.Dense<U> result =
-                        new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
+                final MutableFloatMatrix.Abs.Dense<U> result = new MutableFloatMatrix.Abs.Dense<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -222,8 +220,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries in the new Absolute Sparse
-             *            MutableFloatMatrix
+             * @param values FloatMatrix2D; the initial values of the entries in the new Absolute Sparse MutableFloatMatrix
              * @param unit U; the unit of the new Absolute Sparse MutableFloatMatrix
              */
             protected Sparse(final FloatMatrix2D values, final U unit)
@@ -248,7 +245,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             {
                 setCopyOnWrite(true);
                 final MutableFloatMatrix.Abs.Sparse<U> result =
-                        new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
+                    new MutableFloatMatrix.Abs.Sparse<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -332,8 +329,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries in the new Relative Dense
-             *            MutableFloatMatrix
+             * @param values FloatMatrix2D; the initial values of the entries in the new Relative Dense MutableFloatMatrix
              * @param unit U; the unit of the new Relative Dense MutableFloatMatrix
              */
             protected Dense(final FloatMatrix2D values, final U unit)
@@ -357,8 +353,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             public final MutableFloatMatrix.Rel.Dense<U> mutable()
             {
                 setCopyOnWrite(true);
-                final MutableFloatMatrix.Rel.Dense<U> result =
-                        new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
+                final MutableFloatMatrix.Rel.Dense<U> result = new MutableFloatMatrix.Rel.Dense<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -415,8 +410,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
             /**
              * For package internal use only.
-             * @param values FloatMatrix2D; the initial values of the entries in the new Relative Sparse
-             *            MutableFloatMatrix
+             * @param values FloatMatrix2D; the initial values of the entries in the new Relative Sparse MutableFloatMatrix
              * @param unit U; the unit of the new Relative Sparse MutableFloatMatrix
              */
             protected Sparse(final FloatMatrix2D values, final U unit)
@@ -441,7 +435,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             {
                 setCopyOnWrite(true);
                 final MutableFloatMatrix.Rel.Sparse<U> result =
-                        new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
+                    new MutableFloatMatrix.Rel.Sparse<U>(getMatrixSI(), getUnit());
                 result.setCopyOnWrite(true);
                 return result;
             }
@@ -508,8 +502,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /** {@inheritDoc} */
     @Override
-    public final void setInUnit(final int row, final int column, final float value, final U valueUnit)
-            throws ValueException
+    public final void setInUnit(final int row, final int column, final float value, final U valueUnit) throws ValueException
     {
         setSI(row, column, (float) ValueUtil.expressAsSIUnit(value, valueUnit));
     }
@@ -770,9 +763,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Increment the values in this MutableFloatMatrix by the corresponding values in a Relative FloatMatrix. <br>
-     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an
-     * Absolute value to an existing Relative value would require the result to become Absolute, which is a type change
-     * that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an Absolute value
+     * to an existing Relative value would require the result to become Absolute, which is a type change that is impossible. For
+     * that operation use a static method.
      * @param rel FloatMatrix.Rel&lt;U&gt;; the Relative FloatMatrix
      * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
      * @throws ValueException when the matrices do not have the same size
@@ -784,9 +777,9 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Decrement the corresponding values of a Relative FloatMatrix from the values of this MutableFloatMatrix. <br>
-     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting
-     * an Absolute value from an existing Absolute value would require the result to become Relative, which is a type
-     * change that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting an
+     * Absolute value from an existing Absolute value would require the result to become Relative, which is a type change that
+     * is impossible. For that operation use a static method.
      * @param rel FloatMatrix.Rel&lt;U&gt;; the Relative FloatMatrix
      * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
      * @throws ValueException when the matrices do not have the same size
@@ -828,8 +821,7 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
 
     /**
      * Scale the values in this MutableFloatMatrix by the corresponding values in a float array.
-     * @param factor float[][]; contains the values by which to scale the corresponding values in this
-     *            MutableFloatMatrix
+     * @param factor float[][]; contains the values by which to scale the corresponding values in this MutableFloatMatrix
      * @return MutableFloatMatrix&lt;U&gt;; this modified MutableFloatMatrix
      * @throws ValueException when the matrix and the array do not have the same size
      */

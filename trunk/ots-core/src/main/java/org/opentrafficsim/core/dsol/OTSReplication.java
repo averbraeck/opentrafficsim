@@ -23,7 +23,7 @@ public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, Doub
      * @param experiment Experiment
      */
     public OTSReplication(final Context context,
-            final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
+        final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
     {
         super(context, experiment);
     }
@@ -37,7 +37,7 @@ public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, Doub
      * @param model OTSModelInterface; the model
      */
     public OTSReplication(final String id, final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model)
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model)
     {
         super(id, startTime, warmupPeriod, runLength, model);
     }

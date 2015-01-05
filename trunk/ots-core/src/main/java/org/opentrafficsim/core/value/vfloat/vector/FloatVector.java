@@ -38,9 +38,9 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     /**  */
     private static final long serialVersionUID = 20141230L;
 
-    /** 
-     * The internal storage for the vector; internally the values are stored in standard SI unit; storage can be dense
-     * or sparse.
+    /**
+     * The internal storage for the vector; internally the values are stored in standard SI unit; storage can be dense or
+     * sparse.
      */
     private FloatMatrix1D vectorSI;
 
@@ -48,7 +48,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * Construct a new Immutable FloatVector.
      * @param unit U; the unit of the new FloatVector
      */
-    protected  FloatVector(final U unit)
+    protected FloatVector(final U unit)
     {
         super(unit);
         // System.out.println("Created FloatVector");
@@ -403,8 +403,8 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
 
     /**
      * Create a mutable version of this FloatVector. <br>
-     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first
-     * operation in the mutable version that modifies the data shall trigger a deep copy of the data.
+     * The mutable version is created with a shallow copy of the data and the internal copyOnWrite flag set. The first operation
+     * in the mutable version that modifies the data shall trigger a deep copy of the data.
      * @return MutableFloatVector&lt;U&gt;; mutable version of this FloatVector
      */
     public abstract MutableFloatVector<U> mutable();
@@ -458,7 +458,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         for (int index = 0; index < values.length; index++)
         {
             safeSet(index, values[index].getSI());
-            }
+        }
     }
 
     /**
@@ -667,7 +667,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     {
         if (size() != other.length)
         {
-        throw new ValueException("The vector and the array have different sizes: " + size() + " != " + other.length);
+            throw new ValueException("The vector and the array have different sizes: " + size() + " != " + other.length);
         }
     }
 
@@ -721,12 +721,11 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the array has length equal to 0
      */
     protected static <U extends Unit<U>> FloatScalar<U>[] checkNonEmpty(final FloatScalar<U>[] fsArray)
-            throws ValueException
+        throws ValueException
     {
         if (0 == fsArray.length)
         {
-            throw new ValueException(
-                    "Cannot create a FloatVector or MutableFloatVector from an empty array of FloatScalar");
+            throw new ValueException("Cannot create a FloatVector or MutableFloatVector from an empty array of FloatScalar");
         }
         return fsArray;
     }
@@ -751,7 +750,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
         }
         if (obj == null)
         {
-        return false;
+            return false;
         }
         if (!(obj instanceof FloatVector))
         {
@@ -789,7 +788,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Dense<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+        final FloatVector.Rel<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Dense<U>) left.mutable().incrementBy(right);
     }
@@ -803,7 +802,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> plus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Rel.Dense<U> right) throws ValueException
+        final FloatVector.Rel.Dense<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Dense<U>) sparseToDense(left).incrementBy(right);
     }
@@ -817,7 +816,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> plus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Rel.Sparse<U> right) throws ValueException
+        final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Sparse<U>) left.mutable().incrementBy(right);
     }
@@ -831,7 +830,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> plus(final FloatVector.Rel.Dense<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+        final FloatVector.Rel<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Dense<U>) left.mutable().incrementBy(right);
     }
@@ -845,7 +844,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> plus(final FloatVector.Rel.Sparse<U> left,
-            final FloatVector.Rel.Dense<U> right) throws ValueException
+        final FloatVector.Rel.Dense<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Dense<U>) sparseToDense(left).incrementBy(right);
     }
@@ -859,7 +858,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> plus(final FloatVector.Rel.Sparse<U> left,
-            final FloatVector.Rel.Sparse<U> right) throws ValueException
+        final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Sparse<U>) left.mutable().incrementBy(right);
     }
@@ -873,10 +872,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
-            final FloatVector.Abs<U> right) throws ValueException
+        final FloatVector.Abs<U> right) throws ValueException
     {
-        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
+            .decrementBy(right);
     }
 
     /**
@@ -888,10 +887,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Abs.Sparse<U> right) throws ValueException
+        final FloatVector.Abs.Sparse<U> right) throws ValueException
     {
-        return (MutableFloatVector.Rel.Sparse<U>) new MutableFloatVector.Rel.Sparse<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+        return (MutableFloatVector.Rel.Sparse<U>) new MutableFloatVector.Rel.Sparse<U>(left.deepCopyOfData(), left.getUnit())
+            .decrementBy(right);
     }
 
     /**
@@ -903,10 +902,10 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Abs.Dense<U> right) throws ValueException
+        final FloatVector.Abs.Dense<U> right) throws ValueException
     {
-        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+        return (MutableFloatVector.Rel.Dense<U>) new MutableFloatVector.Rel.Dense<U>(left.deepCopyOfData(), left.getUnit())
+            .decrementBy(right);
     }
 
     /**
@@ -918,7 +917,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> minus(final FloatVector.Abs.Dense<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+        final FloatVector.Rel<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Dense<U>) left.mutable().decrementBy(right);
     }
@@ -932,7 +931,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> minus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Rel.Dense<U> right) throws ValueException
+        final FloatVector.Rel.Dense<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Dense<U>) sparseToDense(left).decrementBy(right);
     }
@@ -946,7 +945,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> minus(final FloatVector.Abs.Sparse<U> left,
-            final FloatVector.Rel.Sparse<U> right) throws ValueException
+        final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Abs.Sparse<U>) left.mutable().decrementBy(right);
     }
@@ -960,7 +959,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Rel.Dense<U> left,
-            final FloatVector.Rel<U> right) throws ValueException
+        final FloatVector.Rel<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Dense<U>) left.mutable().decrementBy(right);
     }
@@ -974,7 +973,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> minus(final FloatVector.Rel.Sparse<U> left,
-            final FloatVector.Rel.Dense<U> right) throws ValueException
+        final FloatVector.Rel.Dense<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Dense<U>) sparseToDense(left).decrementBy(right);
     }
@@ -988,128 +987,122 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the vectors do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> minus(final FloatVector.Rel.Sparse<U> left,
-            final FloatVector.Rel.Sparse<U> right) throws ValueException
+        final FloatVector.Rel.Sparse<U> right) throws ValueException
     {
         return (MutableFloatVector.Rel.Sparse<U>) left.mutable().decrementBy(right);
     }
 
     // TODO Decide if you ever need multiply an Absolute with anything
     /**
-     * Multiply two FloatVectors value by value and store the result in a new
-     * MutableFloatVector.Abs.Dense&lt;SIUnit&gt;.
+     * Multiply two FloatVectors value by value and store the result in a new MutableFloatVector.Abs.Dense&lt;SIUnit&gt;.
      * @param left FloatVector.Abs.Dense&lt;?&gt;; the left operand
      * @param right FloatVector.Abs.Dense&lt;?&gt;; the right operand
      * @return MutableFloatVector.Abs.Dense&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Dense<SIUnit> times(final FloatVector.Abs.Dense<?> left,
-            final FloatVector.Abs.Dense<?> right) throws ValueException
+        final FloatVector.Abs.Dense<?> right) throws ValueException
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         MutableFloatVector.Abs.Dense<SIUnit> work =
-                new MutableFloatVector.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+            new MutableFloatVector.Abs.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatVectors value by value and store the result in a new
-     * MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;.
+     * Multiply two FloatVectors value by value and store the result in a new MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;.
      * @param left FloatVector.Abs.Dense&lt;?&gt;; the left operand
      * @param right FloatVector.Abs.Sparse&lt;?&gt;; the right operand
      * @return MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Sparse<SIUnit> times(final FloatVector.Abs.Dense<?> left,
-            final FloatVector.Abs.Sparse<?> right) throws ValueException
+        final FloatVector.Abs.Sparse<?> right) throws ValueException
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         MutableFloatVector.Abs.Sparse<SIUnit> work =
-                new MutableFloatVector.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+            new MutableFloatVector.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatVectors value by value and store the result in a new
-     * MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;.
+     * Multiply two FloatVectors value by value and store the result in a new MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;.
      * @param left FloatVector.Abs.Sparse&lt;?&gt;; the left operand
      * @param right FloatVector.Abs&lt;?&gt;; the right operand
      * @return MutableFloatVector.Abs.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Abs.Sparse<SIUnit> times(final FloatVector.Abs.Sparse<?> left,
-            final FloatVector.Abs<?> right) throws ValueException
+        final FloatVector.Abs<?> right) throws ValueException
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         MutableFloatVector.Abs.Sparse<SIUnit> work =
-                new MutableFloatVector.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+            new MutableFloatVector.Abs.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatVectors value by value and store the result in a new
-     * MutableFloatVector.Rel.Dense&lt;SIUnit&gt;.
+     * Multiply two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Dense&lt;SIUnit&gt;.
      * @param left FloatVector.Rel.Dense&lt;?&gt;; the left operand
      * @param right FloatVector.Rel.Dense&lt;?&gt;; the right operand
      * @return MutableFloatVector.Rel.Dense&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Rel.Dense<SIUnit> times(final FloatVector.Rel.Dense<?> left,
-            final FloatVector.Rel.Dense<?> right) throws ValueException
+        final FloatVector.Rel.Dense<?> right) throws ValueException
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         MutableFloatVector.Rel.Dense<SIUnit> work =
-                new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
+            new MutableFloatVector.Rel.Dense<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatVectors value by value and store the result in a new
-     * MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;.
+     * Multiply two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;.
      * @param left FloatVector.Rel.Dense&lt;?&gt;; the left operand
      * @param right FloatVector.Rel.Sparse&lt;?&gt;; the right operand
      * @return MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Rel.Sparse<SIUnit> times(final FloatVector.Rel.Dense<?> left,
-            final FloatVector.Rel.Sparse<?> right) throws ValueException
+        final FloatVector.Rel.Sparse<?> right) throws ValueException
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         MutableFloatVector.Rel.Sparse<SIUnit> work =
-                new MutableFloatVector.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+            new MutableFloatVector.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
 
     /**
-     * Multiply two FloatVectors value by value and store the result in a new
-     * MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;.
+     * Multiply two FloatVectors value by value and store the result in a new MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;.
      * @param left FloatVector.Rel.Sparse&lt;?&gt;; the left operand
      * @param right FloatVector.Rel&lt;?&gt;; the right operand
      * @return MutableFloatVector.Rel.Sparse&lt;SIUnit&gt;
      * @throws ValueException when the vectors do not have the same size
      */
     public static MutableFloatVector.Rel.Sparse<SIUnit> times(final FloatVector.Rel.Sparse<?> left,
-            final FloatVector.Rel<?> right) throws ValueException
+        final FloatVector.Rel<?> right) throws ValueException
     {
         SIUnit targetUnit =
-                Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
-                        right.getUnit().getSICoefficients()).toString());
+            Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.multiply(left.getUnit().getSICoefficients(),
+                right.getUnit().getSICoefficients()).toString());
         MutableFloatVector.Rel.Sparse<SIUnit> work =
-                new MutableFloatVector.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
+            new MutableFloatVector.Rel.Sparse<SIUnit>(left.deepCopyOfData(), targetUnit);
         work.scaleValueByValue(right);
         return work;
     }
@@ -1124,7 +1117,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> times(final FloatVector.Abs.Dense<U> left,
-            final float[] right) throws ValueException
+        final float[] right) throws ValueException
     {
         return (MutableFloatVector.Abs.Dense<U>) left.mutable().scaleValueByValue(right);
     }
@@ -1139,7 +1132,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> times(final FloatVector.Abs.Sparse<U> left,
-            final float[] right) throws ValueException
+        final float[] right) throws ValueException
     {
         return (MutableFloatVector.Abs.Sparse<U>) left.mutable().scaleValueByValue(right);
     }
@@ -1154,7 +1147,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> times(final FloatVector.Rel.Dense<U> left,
-            final float[] right) throws ValueException
+        final float[] right) throws ValueException
     {
         return (MutableFloatVector.Rel.Dense<U>) left.mutable().scaleValueByValue(right);
     }
@@ -1169,7 +1162,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when the FloatVector and the array do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> times(final FloatVector.Rel.Sparse<U> left,
-            final float[] right) throws ValueException
+        final float[] right) throws ValueException
     {
         return (MutableFloatVector.Rel.Sparse<U>) left.mutable().scaleValueByValue(right);
     }
@@ -1252,7 +1245,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when zero and one do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Dense<U> interpolate(final FloatVector.Abs.Dense<U> zero,
-            final FloatVector.Abs.Dense<U> one, final float ratio) throws ValueException
+        final FloatVector.Abs.Dense<U> one, final float ratio) throws ValueException
     {
         MutableFloatVector.Abs.Dense<U> result = zero.mutable();
         for (int index = result.size(); --index >= 0;)
@@ -1272,7 +1265,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when zero and one do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Dense<U> interpolate(final FloatVector.Rel.Dense<U> zero,
-            final FloatVector.Rel.Dense<U> one, final float ratio) throws ValueException
+        final FloatVector.Rel.Dense<U> one, final float ratio) throws ValueException
     {
         MutableFloatVector.Rel.Dense<U> result = zero.mutable();
         for (int index = result.size(); --index >= 0;)
@@ -1292,7 +1285,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when zero and one do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Abs.Sparse<U> interpolate(final FloatVector.Abs.Sparse<U> zero,
-            final FloatVector.Abs.Sparse<U> one, final float ratio) throws ValueException
+        final FloatVector.Abs.Sparse<U> one, final float ratio) throws ValueException
     {
         MutableFloatVector.Abs.Sparse<U> result = zero.mutable();
         for (int index = result.size(); --index >= 0;)
@@ -1312,7 +1305,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
      * @throws ValueException when zero and one do not have the same size
      */
     public static <U extends Unit<U>> MutableFloatVector.Rel.Sparse<U> interpolate(final FloatVector.Rel.Sparse<U> zero,
-            final FloatVector.Rel.Sparse<U> one, final float ratio) throws ValueException
+        final FloatVector.Rel.Sparse<U> one, final float ratio) throws ValueException
     {
         MutableFloatVector.Rel.Sparse<U> result = zero.mutable();
         for (int index = result.size(); --index >= 0;)

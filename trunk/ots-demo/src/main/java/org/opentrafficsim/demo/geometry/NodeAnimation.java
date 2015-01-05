@@ -40,5 +40,5 @@ public class NodeAnimation extends Renderable2D
         graphics.setColor(Color.BLACK);
         graphics.draw(new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
     }
-    
+
 }

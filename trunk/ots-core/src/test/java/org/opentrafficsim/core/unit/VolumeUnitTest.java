@@ -49,10 +49,10 @@ public class VolumeUnitTest extends AbstractUnitTest<VolumeUnit>
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_DECIMETER, 0.001, 0.0000000001, "cubic decimeter", "dm^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.LITER, 0.001, 0.0000000001, "liter", "L");
         // Check two conversions between non-standard units
-        assertEquals("one CUBIC MILE is about 5451776000 CUBIC YARD", 5451776000.,
-                getMultiplicationFactorTo(VolumeUnit.CUBIC_MILE, VolumeUnit.CUBIC_YARD), 0.5);
-        assertEquals("one CUBIC YARD is 1.83426465e-10 CUBIC MILE", 1.83426465e-10,
-                getMultiplicationFactorTo(VolumeUnit.CUBIC_YARD, VolumeUnit.CUBIC_MILE), 0.0000000001);
+        assertEquals("one CUBIC MILE is about 5451776000 CUBIC YARD", 5451776000., getMultiplicationFactorTo(
+            VolumeUnit.CUBIC_MILE, VolumeUnit.CUBIC_YARD), 0.5);
+        assertEquals("one CUBIC YARD is 1.83426465e-10 CUBIC MILE", 1.83426465e-10, getMultiplicationFactorTo(
+            VolumeUnit.CUBIC_YARD, VolumeUnit.CUBIC_MILE), 0.0000000001);
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_CENTIMETER, 0.000001, 0.000000000001, "cubic centimeter", "cm^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_KM, 1e9, 1, "cubic kilometer", "km^3");
@@ -61,7 +61,8 @@ public class VolumeUnitTest extends AbstractUnitTest<VolumeUnit>
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_INCH, 1.6387e-5, 1e-9, "cubic inch", "in^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.CUBIC_YARD, 0.764554858, 0.0000001, "cubic yard", "yd^3");
         checkUnitRatioNameAndAbbreviation(VolumeUnit.GALLON_US_FLUID, 0.0037854, 0.0000001, "gallon (US)", "gal(US)");
-        checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.000000001, "ounce (fluid US)", "US fl oz");
+        checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_US_FLUID, 0.000029574, 0.000000001, "ounce (fluid US)",
+            "US fl oz");
         // checkUnitRatioNameAndAbbreviation(VolumeUnit.OUNCE_IMP_FLUID, .00002841306, 0.00000000001,
         // "horsepower (metric)", "hp(M)");
         // checkUnitRatioNameAndAbbreviation(VolumeUnit.PINT_US_FLUID, 0.000473176473, 0.0000000000001, "pt(US fl)", "hp(M)");
@@ -77,8 +78,8 @@ public class VolumeUnitTest extends AbstractUnitTest<VolumeUnit>
     public final void createVolumeUnit()
     {
         VolumeUnit myVU =
-                new VolumeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "VolumeUnit.Barrel",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
+            new VolumeUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "VolumeUnit.Barrel",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "VolumeUnit.brl", OTHER, VolumeUnit.LITER, 119.240471);
         assertTrue("Can create a new VolumeUnit", null != myVU);
         checkUnitRatioNameAndAbbreviation(myVU, 0.119240471, 0.000001, "!Barrel!", "!brl!");
     }

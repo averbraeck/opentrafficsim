@@ -12,7 +12,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Shoulder;
+import org.opentrafficsim.core.network.lane.Shoulder;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -33,8 +33,8 @@ public class ShoulderAnimation extends Renderable2D
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator)
-            throws NamingException, RemoteException
+    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator) throws NamingException,
+        RemoteException
     {
         super(source, simulator);
     }

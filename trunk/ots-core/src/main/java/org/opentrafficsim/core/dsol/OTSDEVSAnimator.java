@@ -14,7 +14,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class OTSDEVSAnimator extends DEVSAnimator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-        implements OTSDEVSSimulatorInterface, OTSAnimatorInterface
+    implements OTSDEVSSimulatorInterface, OTSAnimatorInterface
 {
     /** */
     private static final long serialVersionUID = 20140909L;

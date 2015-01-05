@@ -42,8 +42,8 @@ public interface ReadOnlyFloatMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to retrieve
      * @param column int; column of the value to retrieve
      * @return float; value at position row, column in the standard SI unit
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     float getSI(int row, int column) throws ValueException;
 
@@ -52,8 +52,8 @@ public interface ReadOnlyFloatMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to retrieve
      * @param column int; column of the value to retrieve
      * @return float; value at position row, column in the original unit
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     float getInUnit(int row, int column) throws ValueException;
 
@@ -63,8 +63,8 @@ public interface ReadOnlyFloatMatrixFunctions<U extends Unit<U>>
      * @param column int; column of the value to retrieve
      * @param targetUnit U; the unit for the result
      * @return float; value at position row, column converted into the specified unit
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     float getInUnit(int row, int column, U targetUnit) throws ValueException;
 
@@ -73,8 +73,8 @@ public interface ReadOnlyFloatMatrixFunctions<U extends Unit<U>>
      * @param row int; row of the value to retrieve
      * @param column int; column of the value to retrieve
      * @return FloatScalar&lt;U&gt;; the strongly typed value of the selected cell
-     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column
-     *             &gt;= columns())
+     * @throws ValueException when row or column out of range (row &lt; 0 or row &gt;= rows() or column &lt; 0 or column &gt;=
+     *             columns())
      */
     FloatScalar<U> get(int row, int column) throws ValueException;
 

@@ -16,7 +16,7 @@ public abstract class AbstractExpansionNode<ID, P> extends AbstractNode<ID, P>
 {
     /** */
     private static final long serialVersionUID = 20140921L;
-    
+
     /** Network of expanded Node. */
     private Network<?, ?> network;
 

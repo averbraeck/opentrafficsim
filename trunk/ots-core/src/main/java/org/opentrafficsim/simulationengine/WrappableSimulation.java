@@ -8,8 +8,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 17 dec. 2014 <br>
@@ -39,8 +38,8 @@ public interface WrappableSimulation
 
     /**
      * Retrieve a list of visible properties of the simulation. <br>
-     * The caller can modify the returned result. If the internal format is also an ArrayList it is highly recommended
-     * to make a protective copy and return that.
+     * The caller can modify the returned result. If the internal format is also an ArrayList it is highly recommended to make a
+     * protective copy and return that.
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
      */
     ArrayList<AbstractProperty<?>> getProperties();

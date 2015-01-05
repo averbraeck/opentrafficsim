@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -65,7 +65,7 @@ public class LaneLocation
     public final DoubleScalar.Abs<LengthUnit> getLongitudinalPosition()
     {
         return new DoubleScalar.Abs<LengthUnit>(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition,
-                LengthUnit.METER);
+            LengthUnit.METER);
     }
 
 }

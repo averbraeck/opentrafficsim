@@ -50,7 +50,8 @@ public class MassUnitTest extends AbstractUnitTest<MassUnit>
         checkUnitRatioNameAndAbbreviation(MassUnit.POUND, 0.453592, 0.000001, "pound", "lb");
         // Check two conversions between non-standard units
         assertEquals("one POUND is 16 OUNCE", 16, getMultiplicationFactorTo(MassUnit.POUND, MassUnit.OUNCE), 0.00001);
-        assertEquals("one OUNCE is 0.0625 POUND", 0.0625, getMultiplicationFactorTo(MassUnit.OUNCE, MassUnit.POUND), 0.000001);
+        assertEquals("one OUNCE is 0.0625 POUND", 0.0625, getMultiplicationFactorTo(MassUnit.OUNCE, MassUnit.POUND),
+            0.000001);
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(MassUnit.OUNCE, 0.0283495, 0.0000001, "ounce", "oz");
         checkUnitRatioNameAndAbbreviation(MassUnit.TON_LONG, 1016.046906, 0.00001, "long ton", "long tn");
@@ -65,8 +66,8 @@ public class MassUnitTest extends AbstractUnitTest<MassUnit>
     public final void createMassUnit()
     {
         MassUnit myMU =
-                new MassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.Person", UnitLocalizationsTest.DONOTCHECKPREFIX
-                        + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
+            new MassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.Person", UnitLocalizationsTest.DONOTCHECKPREFIX
+                + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
         assertTrue("Can create a new MassUnit", null != myMU);
         checkUnitRatioNameAndAbbreviation(myMU, 80, 1, "!Person!", "!pn!");
     }

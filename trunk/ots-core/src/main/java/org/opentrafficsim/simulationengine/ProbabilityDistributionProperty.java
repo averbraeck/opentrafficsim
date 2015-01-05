@@ -3,8 +3,7 @@ package org.opentrafficsim.simulationengine;
 /**
  * Property that describes a probability distribution.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 18 dec. 2014 <br>
@@ -34,12 +33,11 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @param elementNames String[]; names of the elements that, together, add up to probability 1.0
      * @param initialValue Double[]; array of Double values
      * @param readOnly boolean; if true this ProbabilityDistributionProperty can not be altered
-     * @throws IncompatiblePropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
-     *             the sum of the values is not equal to 1.0 within a small error margin
+     * @throws IncompatiblePropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when the sum
+     *             of the values is not equal to 1.0 within a small error margin
      */
-    public ProbabilityDistributionProperty(final String shortName, final String description,
-            final String[] elementNames, final Double[] initialValue, final boolean readOnly)
-            throws IncompatiblePropertyException
+    public ProbabilityDistributionProperty(final String shortName, final String description, final String[] elementNames,
+        final Double[] initialValue, final boolean readOnly) throws IncompatiblePropertyException
     {
         this.shortName = shortName;
         this.description = description;
@@ -52,8 +50,8 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
     /**
      * Verify that a provided array of probability values is acceptable.
      * @param values double[]; the array of values to verify
-     * @throws IncompatiblePropertyException when the number of values is 0, any value is outside [0..1], or the sum of
-     *             the values does not add up to 1.0 within a (very small) error margin
+     * @throws IncompatiblePropertyException when the number of values is 0, any value is outside [0..1], or the sum of the
+     *             values does not add up to 1.0 within a (very small) error margin
      */
     private void verifyProposedValues(final Double[] values) throws IncompatiblePropertyException
     {
@@ -66,8 +64,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         {
             if (v < 0.0 || v > 1.0)
             {
-                throw new IncompatiblePropertyException("Probability value " + v
-                        + " is invalid (valid range is 0.0..1.0)");
+                throw new IncompatiblePropertyException("Probability value " + v + " is invalid (valid range is 0.0..1.0)");
             }
             sum += v;
         }

@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -31,8 +32,9 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      */
-    public RoadMarkerAlong(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+    public RoadMarkerAlong(final CrossSectionLink<?, ?> parentLink,
+        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
+        final DoubleScalar.Rel<LengthUnit> endWidth)
     {
         super(parentLink, lateralCenterPosition, beginWidth, endWidth);
     }

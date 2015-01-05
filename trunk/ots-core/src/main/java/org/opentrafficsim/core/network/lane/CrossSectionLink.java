@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.lane;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.opentrafficsim.core.network.geotools.LinkGeotools;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -22,10 +24,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the ID type of the Link, e.g., String or Integer.
- * @param <N> the type of node that this link uses.
+ * @param <IDL> the ID type of the Link, e.g., String or Integer.
+ * @param <IDN> the ID type of the Node, e.g., String or Integer.
  */
-public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends AbstractLink<ID, N>
+public class CrossSectionLink<IDL, IDN> extends LinkGeotools<IDL, IDN>
 {
     /** list of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
@@ -41,10 +43,10 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      * @param length link length in a length unit.
      * @param capacity link capacity in vehicles per hour.
      */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Abs<FrequencyUnit> capacity)
+    public CrossSectionLink(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
+        final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
-        super(id, startNode, endNode, length, capacity, 0 /* hierarchy */);
+        super(id, startNode, endNode, length, capacity);
     }
 
     /**
@@ -54,9 +56,10 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
      * @param endNode end node (directional).
      * @param length link length in a length unit.
      */
-    public CrossSectionLink(final ID id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
+    public CrossSectionLink(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
+        final DoubleScalar.Rel<LengthUnit> length)
     {
-        super(id, startNode, endNode, length, 0 /* hierarchy */);
+        super(id, startNode, endNode, length);
     }
 
     /**
@@ -100,7 +103,7 @@ public class CrossSectionLink<ID, N extends AbstractNode<?, ?>> extends Abstract
     public final Bounds getBounds() throws RemoteException
     {
         return new BoundingBox(getEndNode().getLocation().x - getStartNode().getLocation().x, getEndNode().getLocation().y
-                - getStartNode().getLocation().y, getEndNode().getLocation().z - getStartNode().getLocation().z);
+            - getStartNode().getLocation().y, getEndNode().getLocation().z - getStartNode().getLocation().z);
     }
 
 }

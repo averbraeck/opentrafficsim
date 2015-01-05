@@ -189,7 +189,7 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
      * Replace the stored value by the supplied value which is expressed in the standard SI unit.
      * @param valueSI double; the value to store (value must already be in the standard SI unit)
      */
-     final void setSI(final double valueSI)
+    final void setSI(final double valueSI)
     {
         setValueSI(valueSI);
     }
@@ -460,9 +460,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Increment the value in this MutableDoubleScalar by the value in a Relative DoubleScalar. <br>
-     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an
-     * Absolute value to an existing Relative value would require the result to become Absolute, which is a type change
-     * that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; adding an Absolute value to an Absolute value is not allowed. Adding an Absolute value
+     * to an existing Relative value would require the result to become Absolute, which is a type change that is impossible. For
+     * that operation use a static method.
      * @param rel DoubleScalar.Rel&lt;U&gt;; the Relative DoubleScalar
      * @return MutableDoubleScalar&lt;U&gt;; this modified MutableDoubleScalar
      */
@@ -474,9 +474,9 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
 
     /**
      * Decrement the value of a Relative DoubleScalar from the value of this MutableDoubleScalar. <br>
-     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting
-     * an Absolute value from an existing Absolute value would require the result to become Relative, which is a type
-     * change that is impossible. For that operation use a static method.
+     * Only Relative values are allowed; subtracting an Absolute value from a Relative value is not allowed. Subtracting an
+     * Absolute value from an existing Absolute value would require the result to become Relative, which is a type change that
+     * is impossible. For that operation use a static method.
      * @param rel DoubleScalar.Rel&lt;U&gt;; the Relative DoubleScalar
      * @return MutableDoubleScalar&lt;U&gt;; this modified MutableDoubleScalar
      */

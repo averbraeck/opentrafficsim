@@ -6,11 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be
- * maximized.
+ * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be maximized.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 16 dec. 2014 <br>
@@ -38,7 +36,7 @@ public class SimulatorFrame extends JFrame
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setVisible(true);
     }
-    
+
     /**
      * Wrap a WrappableSimulation in a JFrame.
      * @param simulation WrappableSimulation; the simulation that will be shown in the JFrame
