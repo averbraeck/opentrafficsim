@@ -97,7 +97,16 @@ public class NTMsimulation
         // for testing we open a file and write some results:
         // TODO testing
         // Initiate trips from OD to first Area (Origin)
-        Map<String, Map<String, TripInfoTimeDynamic>> trips = model.getTripDemand().getTripInfo();
+        
+        Map<String, Map<String, TripInfoTimeDynamic>> trips; 
+        if (model.COMPRESS_AREAS)
+        {
+            trips = model.getCompressedTripDemand().getTripInfo();
+        }
+        else
+        {
+            trips = model.getTripDemand().getTripInfo();
+        }
         if (model.DEBUG && steps == 1)
         {
             File file = new File("D:/gtamminga/My Documents/03 Case The Hague NTM/TestModel/NTMoutputTest.txt");
@@ -182,7 +191,7 @@ public class NTMsimulation
                                 }
                                 else
                                 {
-                                    System.out.println("NTM sim line 185   No path??????");
+                                    System.out.println("NTM sim line 194   No path??????");
                                 }
                                 // increases the total number of accumulated cars in the area, that is
                                 // used for NTM computations
@@ -375,7 +384,7 @@ public class NTMsimulation
                             }
                             else
                             {
-                                System.out.println("CTMsimulation line 114: no neighbour...");
+                                System.out.println("CTMsimulation line 387: no neighbour...");
                             }
                         }
                         else
@@ -458,11 +467,11 @@ public class NTMsimulation
                                 {
                                     if (neighbour == null)
                                     {
-                                        System.out.println("NTMSimulation line 364: no neighbour");
+                                        System.out.println("NTMSimulation line 470: no neighbour");
                                     }
                                     else if (tripInfoByDestination.getDemandToNeighbour() == 0.0)
                                     {
-                                        System.out.println("NTMSimulation line 364: no demand to neighbour");
+                                        System.out.println("NTMSimulation line 474: no demand to neighbour");
                                     }
                                 }
                             }
@@ -709,11 +718,6 @@ public class NTMsimulation
                 exception.printStackTrace();
             }
         }
-
-    }
-
-    private void cellTransmissionTimeStep()
-    {
 
     }
 

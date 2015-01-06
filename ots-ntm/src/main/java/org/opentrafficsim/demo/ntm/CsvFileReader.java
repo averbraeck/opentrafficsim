@@ -173,6 +173,10 @@ public class CsvFileReader
                         }
                         Link cordonConnector = null;
                         boolean createArea = false;
+                        if (name.equals("516821"))
+                        {
+                            System.out.println("Name =  516821");
+                        }
                         if (links.get(name) != null)
                         {
                             cordonConnector = links.get(name);
@@ -184,6 +188,8 @@ public class CsvFileReader
                         }
                         else if (connectors.get(name) != null)
                         {
+                            // link 516821 is gekoppeld aan zone C203, maar in de matrix als cordonzone benoemd:
+                            // TODO corrigeren
                             System.out.println("Strange: connector already defined???");
                             cordonConnector = connectors.get(name);
                             createArea = true;
@@ -246,6 +252,7 @@ public class CsvFileReader
                                 centroidsAndCordonConnectors.put(nodeB.getId(), nodeB);
                                 orderedZones.put(index, nodeB.getId());
                                 cordonPoint = nodeB;
+                                centroids.put(cordonPoint.getId(), cordonPoint);
                             }
                         }
                         else
@@ -266,11 +273,11 @@ public class CsvFileReader
                                 connectors.remove(cordonConnector);
                                 cordonConnector =
                                         new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
-                                                cordonConnector.getLength(), node, cordonConnector.getEndNode(), 
+                                                cordonConnector.getLength(), node, cordonConnector.getEndNode(),
                                                 cordonConnector.getSpeed(), cordonConnector.getCapacity(),
                                                 cordonConnector.getBehaviourType(), cordonConnector.getLinkData(),
                                                 cordonConnector.getHierarchy());
-                                
+
                                 connectors.put(name, cordonConnector);
                             }
                             else
@@ -278,6 +285,8 @@ public class CsvFileReader
                                 centroidsAndCordonConnectors.put(nodeA.getId(), nodeA);
                                 orderedZones.put(index, nodeA.getId());
                                 cordonPoint = nodeA;
+                                centroids.put(cordonPoint.getId(), cordonPoint);
+
                             }
                         }
                         if (createArea)
@@ -330,11 +339,8 @@ public class CsvFileReader
                     numberOfTrips = removeQuotes(numberOfTrips);
                     if (firstElement)
                     {
-                        /*
-                         * String checkedName = returnNumber(dataItem); origin = checkedName;
-                         */
-                        System.out.println("I " + indexRow + "  name: "
-                                + centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId());
+                        // System.out.println("I " + indexRow + "  name: "
+                        // + centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId());
                         origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId();
                         originLinknr = numberOfTrips;
                         firstElement = false;
@@ -363,7 +369,11 @@ public class CsvFileReader
                             {
                                 String destination =
                                         centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)).getId();
-                                tripDemandRow.put(destination, tripInfo);
+/*                                if (destination.equals("2430"))
+                                {
+                                    System.out.println("Strange: 2430");
+                                }
+*/                                tripDemandRow.put(destination, tripInfo);
                             }
                         }
                         indexColumn++;
@@ -439,7 +449,8 @@ public class CsvFileReader
         final String DURATION = "SegmentDuration";
 
         ArrayList<DepartureTimeProfile> profiles = new ArrayList<DepartureTimeProfile>();
-        NavigableMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> fractions = new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
+        NavigableMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> fractions =
+                new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
         DepartureTimeProfile profile = null;
         DoubleScalar.Rel<TimeUnit> duration = null;
         DoubleScalar.Abs<TimeUnit> segmentStartTime = null;

@@ -88,6 +88,7 @@ public class ShapeFileReader
 
         try
         {
+            // loop through the areas
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
@@ -105,13 +106,24 @@ public class ShapeFileReader
                 String regio = "empty";*/
                 double dhb = (double) 0.0;
 
-                Node centroid = null;
+                Node centroidNode = null;
                 if (centroids != null)
                 {
                     // search for areas within the centroids (from the "points")
-                    centroid = centroids.get(centroidNr);
+                    centroidNode = centroids.get(centroidNr);
                 }
-                if (centroid == null)
+                if (centroidNode == null) 
+                {
+                    for (Node node : centroids.values())
+                    {
+                       if (geometry.contains(node.getPoint()))
+                           {
+                               centroidNode = node;
+                               centroidNr = node.getId();
+                           }
+                    }
+                }
+                if (centroidNode == null)
                 {
                     // System.out.println("Centroid with number " + centroidNr + " not found for area " + nr + " (" +
                     // name
@@ -128,7 +140,7 @@ public class ShapeFileReader
                         centroidNr = newNr.toString();
                     }
                     Area area =
-                            new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid.getPoint(),
+                            new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint(),
                                     TrafficBehaviourType.NTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
@@ -372,10 +384,7 @@ public class ShapeFileReader
                     {
                         Link linkAB = null;
                         Link linkBA = null;
-                        if (lNodeA.equals("362917") || lNodeB.equals("362917"))
-                        {
-                            System.out.println("test");
-                        }
+
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         
                         linkAB =

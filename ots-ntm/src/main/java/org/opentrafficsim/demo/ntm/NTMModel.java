@@ -111,9 +111,12 @@ public class NTMModel implements OTSModelInterface
 
     /** graph containing the simplified network. */
     private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
-    
-    /** debugging.*/
+
+    /** debugging. */
     public boolean DEBUG = true;
+
+    /** use the bigger areas (true) or the detailed areas (false). */
+    public boolean COMPRESS_AREAS = true;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -136,7 +139,7 @@ public class NTMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         try
         {
-            boolean COMPRESS_AREAS = false;
+            // boolean DEBUG = true;
             // set the time step value at ten seconds;
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
@@ -223,8 +226,8 @@ public class NTMModel implements OTSModelInterface
             // save the selected and created areas to a shape file: at this position the connector areas are saved
             // also!!!
             // WriteToShp.createShape(this.areas);
-            
-            //compute the roadLength within the areas
+
+            // compute the roadLength within the areas
             determineRoadLengthInAreas(this.shpLinks, this.areas);
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, COMPRESS_AREAS);
@@ -248,7 +251,6 @@ public class NTMModel implements OTSModelInterface
             exception.printStackTrace();
         }
     }
-
 
     /**
      * @param areas
@@ -325,7 +327,6 @@ public class NTMModel implements OTSModelInterface
         return mapConnectors;
     }
 
-    
     /**
      * @param shpLinks2
      * @param areas2
@@ -347,7 +348,7 @@ public class NTMModel implements OTSModelInterface
         }
 
     }
-    
+
     /**
      * Generate demand at fixed intervals based on traffic demand (implemented by re-scheduling this method).
      */
@@ -379,11 +380,12 @@ public class NTMModel implements OTSModelInterface
                 Node node = path.getEdgeList().get(0).getLink().getStartNode();
                 BoundedNode startNode = null;
                 startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
-                //BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
+                // BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null,
+                // node.getBehaviourType());
                 node = path.getEdgeList().get(0).getLink().getEndNode();
                 BoundedNode endNode = null;
                 endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
-                //BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
+                // BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
 
                 // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
                 if (origin.equals(endNode))
@@ -394,13 +396,11 @@ public class NTMModel implements OTSModelInterface
 
                 TripInfoByDestination tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
                 startNode.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
-/*                for (BoundedNode vertex : this.getAreaGraph().vertexSet())
-                {
-                    if (vertex.getId().equals(startNode.getId()))
-                    {
-                        vertex.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
-                    }
-                }*/
+                /*
+                 * for (BoundedNode vertex : this.getAreaGraph().vertexSet()) { if
+                 * (vertex.getId().equals(startNode.getId())) {
+                 * vertex.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode); } }
+                 */
                 if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
                     // for the flow links we create the trip info by Node also for the flow cells
@@ -543,7 +543,7 @@ public class NTMModel implements OTSModelInterface
 
             if (showArea)
             {
-                for (Area area : this.areas.values())
+                for (Area area : this.bigAreas.values())
                 {
                     new AreaAnimation(area, this.simulator, 5f);
                 }
