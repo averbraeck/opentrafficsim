@@ -106,8 +106,8 @@ public class TripDemand<TripInformation>
 
                         else if (mapSmallAreaToBigArea.get(destination).getId() != null)
                         {
-                            System.out.println("node " + destination.getId() + "bigNode ID "
-                                    + mapSmallAreaToBigArea.get(destination).getId());
+//                            System.out.println("node " + destination.getId() + "bigNode ID "
+//                                    + mapSmallAreaToBigArea.get(destination).getId());
                             TripInfoTimeDynamic bigTripInfo = bigTripDemandRow.get(mapSmallAreaToBigArea.get(destination).getId());
                             if (bigTripInfo == null)
                             {

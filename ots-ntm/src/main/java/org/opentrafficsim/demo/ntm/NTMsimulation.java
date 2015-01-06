@@ -156,13 +156,16 @@ public class NTMsimulation
                     // contains this information for all destinations separately.
                     Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(origin.getId());
                     // loop through all destinations to get total demand and supply per origin and add the new trips
-                    for (BoundedNode destinationNode : model.getAreaGraph().vertexSet())
-                    {
+                    for (TripInfoByDestination tripInfoByDestination : cellBehaviourOrigin.getTripInfoByNodeMap()
+                            .values())
+//                    for (BoundedNode destinationNode : model.getAreaGraph().vertexSet())
+//                    {
                         // only select the final destinations: where Trips are heading to
-                        if (tripsFrom.containsKey(destinationNode.getId()))
+                       // if (tripsFrom.containsKey(destinationNode.getId()))
                         {
                             // retrieve the TRIPS from the demand file (2 hour period)
                             // first the total within the defined period
+                            BoundedNode destinationNode = (BoundedNode) tripInfoByDestination.getDestination();
                             double startingTrips = tripsFrom.get(destinationNode.getId()).getNumberOfTrips();
                             // get the share of Trips of this time slice (NTM simulation step of 10 seconds)
                             if (startingTrips > 0.0)
@@ -183,21 +186,18 @@ public class NTMsimulation
                                 startingTrips = share * startingTrips;
                                 // these new Trips are added to the TRIPS that are already on their way (passing an NTM
                                 // area): the AccumulatedCars specified by their specific destination (nodeTo.getId())
-                                TripInfoByDestination tripInfoByDestination =
-                                        origin.getCellBehaviour().getTripInfoByNodeMap().get(destinationNode);
+//                                TripInfoByDestination tripInfoByDestination =
+//                                        origin.getCellBehaviour().getTripInfoByNodeMap().get(destinationNode);
                                 if (tripInfoByDestination != null)
                                 {
                                     tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
                                 }
-                                else
-                                {
-                                    System.out.println("NTM sim line 194   No path??????");
-                                }
+
                                 // increases the total number of accumulated cars in the area, that is
                                 // used for NTM computations
                                 cellBehaviourOrigin.addAccumulatedCars(startingTrips);
                             }
-                        }
+                       // }
                     }
 
                     // only production, if there are accumulated cars!!
@@ -463,17 +463,15 @@ public class NTMsimulation
                                     // set the final flow to the neighbour
                                     tripInfoByDestination.setDemandToNeighbour(flowToNeighbour);
                                 }
+                                else if (tripInfoByDestination.getDemandToNeighbour() == 0.0)
+                                {
+                                    System.out.println("NTMSimulation line 471: no demand to neighbour");
+                                }
                                 else
                                 {
-                                    if (neighbour == null)
-                                    {
-                                        System.out.println("NTMSimulation line 470: no neighbour");
-                                    }
-                                    else if (tripInfoByDestination.getDemandToNeighbour() == 0.0)
-                                    {
-                                        System.out.println("NTMSimulation line 474: no demand to neighbour");
-                                    }
+                                    System.out.println("NTMSimulation line 475: no neighbour");
                                 }
+                               
                             }
 
                             // else do the simulation of flow links
