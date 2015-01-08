@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,7 +117,7 @@ public class NTMModel implements OTSModelInterface
     public boolean DEBUG = true;
 
     /** use the bigger areas (true) or the detailed areas (false). */
-    public boolean COMPRESS_AREAS = true;
+    public boolean COMPRESS_AREAS = false;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -158,7 +159,7 @@ public class NTMModel implements OTSModelInterface
             // false: return nodes
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed file with centroids (number starts with "C") and normal nodes
-            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis";
+            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
             this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
 
             // the Map areas contains a reference to the centroids!
@@ -374,17 +375,16 @@ public class NTMModel implements OTSModelInterface
             {
                 BoundedNode origin = path.getStartVertex();
                 BoundedNode destination = path.getEndVertex();
-
+                if (origin.getId().equals("481332"))
+                {
+                    System.out.println("Floyd ");                    
+                }
                 // determine the start and endnode of the first edge that starts from the origin
                 // the endNode of this edge is the "Neighbour" area
-                Node node = path.getEdgeList().get(0).getLink().getStartNode();
-                BoundedNode startNode = null;
-                startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
+                BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
                 // BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null,
                 // node.getBehaviourType());
-                node = path.getEdgeList().get(0).getLink().getEndNode();
-                BoundedNode endNode = null;
-                endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
+                BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
                 // BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
 
                 // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
@@ -395,7 +395,7 @@ public class NTMModel implements OTSModelInterface
                 // for all node - destination pairs add information on their first neighbour on the shortest path
 
                 TripInfoByDestination tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
-                startNode.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
+                origin.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
                 /*
                  * for (BoundedNode vertex : this.getAreaGraph().vertexSet()) { if
                  * (vertex.getId().equals(startNode.getId())) {
@@ -410,7 +410,7 @@ public class NTMModel implements OTSModelInterface
                     for (FlowCell cell : ctmLink.getCells())
                     {
                         tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
-                        cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(origin, tripInfoByNode);
+                        cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
                     }
                 }
                 // for all OD-pairs with trips, the TripInfo is already initiated
@@ -423,10 +423,11 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
+     * @throws IOException 
      * 
      */
     @SuppressWarnings("unchecked")
-    protected final void ntmFlowTimestep()
+    protected final void ntmFlowTimestep() throws IOException
     {
         NTMsimulation.simulate(this);
         // in case we run on an animator and not on a simulator, we create the animation
@@ -543,7 +544,7 @@ public class NTMModel implements OTSModelInterface
 
             if (showArea)
             {
-                for (Area area : this.bigAreas.values())
+                for (Area area : this.areas.values())
                 {
                     new AreaAnimation(area, this.simulator, 5f);
                 }
@@ -778,8 +779,8 @@ public class NTMModel implements OTSModelInterface
     public static Map<String, Link> createFlowLinks(final Map<String, Link> shpLinks)
     {
         Map<String, Link> flowLinks = new HashMap<String, Link>();
-        DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(65, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(3000, FrequencyUnit.PER_HOUR);
+        DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(45, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(1000, FrequencyUnit.PER_HOUR);
         for (Link shpLink : shpLinks.values())
         {
 
@@ -792,6 +793,8 @@ public class NTMModel implements OTSModelInterface
                     System.out.println("NTMModel line 694 ... no geometry");
                 }
                 flowLink.setBehaviourType(TrafficBehaviourType.FLOW);
+                flowLink.getStartNode().setBehaviourType(TrafficBehaviourType.FLOW);
+                flowLink.getEndNode().setBehaviourType(TrafficBehaviourType.FLOW);
                 flowLinks.put(flowLink.getId(), flowLink);
             }
         }
