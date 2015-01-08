@@ -19,16 +19,13 @@ public class TripInfoByDestination
     private Node neighbour;
 
     /** the first Area/Node encountered on the path to Destination. */
-    private Node neighbourUp;
-
-    /** the first Area/Node encountered on the path to Destination. */
     private Node destination;
 
     /** trips on their journey within an area. */
     private double accumulatedCarsToDestination;
 
-    /** flow to neighbour. */
-    private double demandToNeighbour;
+    /** demand to neighbour. */
+    private double demandToDestination;
 
     /**
      * @param neighbour
@@ -42,7 +39,7 @@ public class TripInfoByDestination
         this.neighbour = neighbour;
         this.destination = destination;
         this.accumulatedCarsToDestination = accumulatedCarsToDestination;
-        this.demandToNeighbour = demandToNeighbour;
+        this.demandToDestination = demandToNeighbour;
     }
 
     /**
@@ -105,41 +102,26 @@ public class TripInfoByDestination
     /**
      * @return flowToNeighbour.
      */
-    public double getDemandToNeighbour()
+    public double getDemandToDestination()
     {
-        return this.demandToNeighbour;
+        return this.demandToDestination;
     }
 
     /**
      * @param flowToNeighbour set flowToNeighbour.
      */
-    public void addDemandToNeighbour(double addDemandToNeighbour)
+    public void addDemandToDestination(double addDemandToDestination)
     {
-        this.demandToNeighbour += addDemandToNeighbour;
+        this.demandToDestination += addDemandToDestination;
     }
     
     /**
      * @param flowToNeighbour set flowToNeighbour.
      */
-    public void setDemandToNeighbour(double demandToNeighbour)
+    public void setDemandToDestination(double demandToDestination)
     {
-        this.demandToNeighbour = demandToNeighbour;
+        this.demandToDestination = demandToDestination;
     }
 
-    /**
-     * @return neighbourUp.
-     */
-    public Node getNeighbourUp()
-    {
-        return this.neighbourUp;
-    }
-
-    /**
-     * @param neighbourUp set neighbourUp.
-     */
-    public void setNeighbourUp(Node neighbourUp)
-    {
-        this.neighbourUp = neighbourUp;
-    }
 
 }

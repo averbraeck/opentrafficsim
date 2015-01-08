@@ -31,10 +31,10 @@ public class CellBehaviour
     private HashMap<Node, TripInfoByDestination> tripInfoByNodeMap;
 
     
-    /** */
+    /** maximum in-flow*/
     private double supply;
 
-    /** */
+    /** demand generated to leave*/
     private double demand;
 
     /** */

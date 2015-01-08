@@ -156,6 +156,7 @@ public class CsvFileReader
                     String nameBA = name + "_BA";
                     boolean isCentroid = ShapeFileReader.inspectNodeCentroid(name);
                     Node cordonPoint = null;
+                    
                     if (isCentroid)
                     {
                         centroidsAndCordonConnectors.put(name, centroids.get(name));
@@ -173,10 +174,6 @@ public class CsvFileReader
                         }
                         Link cordonConnector = null;
                         boolean createArea = false;
-                        if (name.equals("516821"))
-                        {
-                            System.out.println("Name =  516821");
-                        }
                         if (links.get(name) != null)
                         {
                             cordonConnector = links.get(name);
@@ -233,7 +230,7 @@ public class CsvFileReader
                                 double y = nodeB.getPoint().getY() + 3;
                                 Point point = Node.createPoint(x, y);
                                 String nr = nodeB.getId() + "_" + nodeA.getId();
-                                node = new Node(nr, point, null);
+                                node = new Node(nr, point, TrafficBehaviourType.CORDON);
                                 centroids.put(nr, node);
                                 centroidsAndCordonConnectors.put(node.getId(), node);
                                 orderedZones.put(index, node.getId());
@@ -249,6 +246,7 @@ public class CsvFileReader
                             }
                             else
                             {
+                                nodeB.setBehaviourType(TrafficBehaviourType.CORDON);
                                 centroidsAndCordonConnectors.put(nodeB.getId(), nodeB);
                                 orderedZones.put(index, nodeB.getId());
                                 cordonPoint = nodeB;
@@ -265,7 +263,7 @@ public class CsvFileReader
                                 double y = nodeA.getPoint().getY() + 3;
                                 Point point = Node.createPoint(x, y);
                                 String nr = nodeA.getId() + "_" + nodeB.getId();
-                                node = new Node(nr, point, TrafficBehaviourType.ROAD);
+                                node = new Node(nr, point, TrafficBehaviourType.CORDON);
                                 centroids.put(nr, node);
                                 centroidsAndCordonConnectors.put(node.getId(), node);
                                 orderedZones.put(index, node.getId());
@@ -282,11 +280,11 @@ public class CsvFileReader
                             }
                             else
                             {
+                                nodeA.setBehaviourType(TrafficBehaviourType.CORDON);
                                 centroidsAndCordonConnectors.put(nodeA.getId(), nodeA);
                                 orderedZones.put(index, nodeA.getId());
                                 cordonPoint = nodeA;
                                 centroids.put(cordonPoint.getId(), cordonPoint);
-
                             }
                         }
                         if (createArea)

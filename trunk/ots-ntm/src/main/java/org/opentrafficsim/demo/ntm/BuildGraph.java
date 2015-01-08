@@ -43,7 +43,7 @@ public class BuildGraph
     static void buildGraph(NTMModel model, boolean COMPRESS_AREAS)
     {
         /** debug information?. */
-        final boolean DEBUG = true;
+        final boolean DEBUG = false;
         // temporary storage for nodes and edges mapped from the number to the node
         Map<String, BoundedNode> nodeMap = new HashMap<>();
         Map<String, BoundedNode> nodeGraphMap = new HashMap<>();
@@ -53,7 +53,6 @@ public class BuildGraph
 
         allLinks.addAll(model.getShpLinks().values());
         allLinks.addAll(model.getFlowLinks().values());
-        
 
         Map<String, Area> areasToUse;
         Map<String, Node> centroidsToUse;
@@ -80,12 +79,12 @@ public class BuildGraph
             BoundedNode nodeA = nodeMap.get(shpLink.getStartNode().getId());
             if (nodeA == null)
             {
-                nodeA = addNodeToLinkGraph(shpLink, shpLink.getStartNode(), nodeA, nodeMap, areasToUse.values(), model);
+                nodeA = addNodeToLinkGraph(shpLink, shpLink.getStartNode(), nodeMap, areasToUse.values(), model);
             }
             BoundedNode nodeB = nodeMap.get(shpLink.getEndNode().getId());
             if (nodeB == null)
             {
-                nodeB = addNodeToLinkGraph(shpLink, shpLink.getEndNode(), nodeB, nodeMap, areasToUse.values(), model);
+                nodeB = addNodeToLinkGraph(shpLink, shpLink.getEndNode(), nodeMap, areasToUse.values(), model);
             }
 
             // TODO direction of a road?
@@ -118,15 +117,15 @@ public class BuildGraph
                 if (nodeA == null)
                 {
                     nodeA =
-                            addNodeToAreaGraph(shpLink, shpLink.getStartNode(), nodeA, nodeGraphMap,
-                                    areaNodeCentroidMap, areasToUse.values(), model);
+                            addNodeToAreaGraph(shpLink, shpLink.getStartNode(), nodeGraphMap, areaNodeCentroidMap,
+                                    areasToUse.values(), model);
                 }
 
                 nodeB = nodeGraphMap.get(shpLink.getEndNode().getId());
                 if (nodeB == null)
                 {
                     nodeB =
-                            addNodeToAreaGraph(shpLink, shpLink.getEndNode(), nodeB, nodeGraphMap, areaNodeCentroidMap,
+                            addNodeToAreaGraph(shpLink, shpLink.getEndNode(), nodeGraphMap, areaNodeCentroidMap,
                                     areasToUse.values(), model);
                 }
             }
@@ -138,8 +137,8 @@ public class BuildGraph
         {
             // find the new centroids in the big areas
             BoundedNode node = findCentroidInArea(area, centroidsToUse.values());
-            
-//            BoundedNode node = nodeMap.get(area.getCentroidNr());
+
+            // BoundedNode node = nodeMap.get(area.getCentroidNr());
             if (node != null)
             {
                 areaNodeCentroidMap.put(area, node);
@@ -167,7 +166,7 @@ public class BuildGraph
         findTouching(gisObjects);
 
         // Secondly, find the Areas that do not touch any other area and connect them with the nearest areas!!
-        connectIsolatedAreas(model.getBigAreas(), model.getLinkGraph(), model.getAreaGraph(), areaNodeCentroidMap,
+        connectIsolatedAreas(areasToUse, model.getLinkGraph(), model.getAreaGraph(), nodeGraphMap, areaNodeCentroidMap,
                 areasToUse.values());
 
         if (DEBUG)
@@ -209,7 +208,7 @@ public class BuildGraph
                 // create cellTransmissionLinks for the edges of the real FLOW connectors
                 // every CTM link receives a set of FlowCells that will be simulated as a nested process within the
                 // Network Transmission Model
-                createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap, model, areasToUse);
+                createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap, nodeGraphMap, model, areasToUse);
             }
             // for all other links, inspect if they connect areas
             else if (aA != null && aB != null && aA.getTouchingAreas().contains(aB))
@@ -334,15 +333,17 @@ public class BuildGraph
      * @param node node
      * @param map receives node
      */
-    private static BoundedNode addNodeToLinkGraph(Link shpLink, Node shpLinkNode, BoundedNode node,
-            Map<String, BoundedNode> map, Collection<Area> areas, NTMModel model)
+    private static BoundedNode addNodeToLinkGraph(Link shpLink, Node shpLinkNode, Map<String, BoundedNode> map,
+            Collection<Area> areas, NTMModel model)
     {
         Area area = findArea(shpLinkNode.getPoint(), areas);
         /*
          * if (area == null) { System.out.println("Could not find area for NodeA of shapeLink " + shpLinkNode); }
          */
-
-        node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
+        // BoundedNode node1 = (BoundedNode) shpLinkNode;
+        // node1.setArea(area);
+        BoundedNode node =
+                new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
         map.put(shpLinkNode.getId(), node);
         model.getLinkGraph().addVertex(node);
         return node;
@@ -353,7 +354,7 @@ public class BuildGraph
      * @param node node
      * @param nodeGraphMap receives node
      */
-    private static BoundedNode addNodeToAreaGraph(Link shpLink, Node shpLinkNode, BoundedNode node,
+    private static BoundedNode addNodeToAreaGraph(Link shpLink, Node shpLinkNode,
             Map<String, BoundedNode> nodeGraphMap, Map<Area, BoundedNode> areaNodeCentroidMap, Collection<Area> areas,
             NTMModel model)
     {
@@ -361,7 +362,10 @@ public class BuildGraph
         /*
          * if (area == null) { System.err.println("Could not find area for NodeA of shapeLink " + shpLinkNode); }
          */
-        node = new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
+        // BoundedNode node1 = (BoundedNode) shpLinkNode;
+        // node1.setArea(area);
+        BoundedNode node =
+                new BoundedNode(shpLinkNode.getPoint(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
         nodeGraphMap.put(shpLinkNode.getId(), node);
         areaNodeCentroidMap.put(area, node);
         model.getAreaGraph().addVertex(node);
@@ -389,7 +393,7 @@ public class BuildGraph
         }
         return centroid;
     }
-    
+
     /**
      * @param p the point to search.
      * @return the area that contains point p, or null if not found.
@@ -454,7 +458,8 @@ public class BuildGraph
     private static void connectIsolatedAreas(final Map<String, Area> areasAll,
             final SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> linkGraphIn,
             final SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraphIn,
-            final Map<Area, BoundedNode> areaNodeCentroidMap, Collection<Area> areas)
+            final Map<String, BoundedNode> nodeGraphMap, final Map<Area, BoundedNode> areaNodeCentroidMap,
+            Collection<Area> areas)
     {
         final SpatialIndex index = new STRtree();
         for (Area areaIndex : areasAll.values())
@@ -546,10 +551,14 @@ public class BuildGraph
                                     }
                                     else if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                                     {
-                                        BoundedNode bN =
-                                                new BoundedNode(le.getLink().getStartNode().getPoint(), le.getLink()
-                                                        .getStartNode().getId(), null, le.getLink().getStartNode()
-                                                        .getBehaviourType());
+                                        // BoundedNode bN =
+                                        // new BoundedNode(le.getLink().getStartNode().getPoint(), le.getLink()
+                                        // .getStartNode().getId(), null, le.getLink().getStartNode()
+                                        // .getBehaviourType());
+                                        BoundedNode bN = nodeGraphMap.get(le.getLink().getStartNode().getId());
+                                        /*
+                                         * if (flowNodeStart.getArea()== null) { cA.setArea(areaStart); }
+                                         */
 
                                         // BoundedNode bN = (BoundedNode) le.getLink().getStartNode();
 
@@ -590,12 +599,23 @@ public class BuildGraph
      */
     private static void createFlowConnectors(final Area areaStart, final Area areaEnd, final LinkEdge<Link> le,
             final Map<String, LinkEdge<Link>> linkMap, final Map<Area, BoundedNode> areaNodeCentroidMap,
-            NTMModel model, Map<String, Area> areasToUse)
+            final Map<String, BoundedNode> nodeGraphMap, NTMModel model, Map<String, Area> areasToUse)
     {
         Node node = le.getLink().getStartNode();
-        BoundedNode flowNodeStart = new BoundedNode(node.getPoint(), node.getId(), areaStart, node.getBehaviourType());
+        BoundedNode flowNodeStart = nodeGraphMap.get(node.getId());
+        if (flowNodeStart.getArea() == null)
+        {
+            flowNodeStart.setArea(areaStart);
+        }
+        // BoundedNode flowNodeStart = new BoundedNode(node.getPoint(), node.getId(), areaStart,
+        // node.getBehaviourType());
         node = le.getLink().getEndNode();
-        BoundedNode flowNodeEnd = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
+        BoundedNode flowNodeEnd = nodeGraphMap.get(node.getId());
+        if (flowNodeEnd.getArea() == null)
+        {
+            flowNodeEnd.setArea(areaStart);
+        }
+        // BoundedNode flowNodeEnd = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
         // BoundedNode flowNodeA = (BoundedNode) le.getLink().getStartNode();
         // BoundedNode flowNodeB = (BoundedNode) le.getLink().getEndNode();
         Link link = le.getLink();
@@ -609,8 +629,8 @@ public class BuildGraph
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
         BoundedNode cB = null;
-        cA = areaNodeCentroidMap.get(areaStart);
-        cB = areaNodeCentroidMap.get(areaEnd);
+        // cA = areaNodeCentroidMap.get(areaStart);
+        // cB = areaNodeCentroidMap.get(areaEnd);
         for (LinkEdge<Link> urbanLink : linkMap.values())
         {
             if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD)
@@ -676,7 +696,12 @@ public class BuildGraph
                 {
                     // from urban (Area) to Highway (flow)
                     node = urbanLink.getLink().getStartNode();
-                    cA = new BoundedNode(node.getPoint(), node.getId(), areaStart, node.getBehaviourType());
+                    cA = nodeGraphMap.get(node.getId());
+                    if (flowNodeStart.getArea() == null)
+                    {
+                        cA.setArea(areaStart);
+                    }
+                    // cA = new BoundedNode(node.getPoint(), node.getId(), areaStart, node.getBehaviourType());
                     // cA = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cA != null)
                     {
@@ -696,7 +721,12 @@ public class BuildGraph
                 {
                     // from Highway (flow) to urban (Area)
                     node = urbanLink.getLink().getEndNode();
-                    cB = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
+                    cB = nodeGraphMap.get(node.getId());
+                    if (flowNodeStart.getArea() == null)
+                    {
+                        cB.setArea(areaStart);
+                    }
+                    // cB = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
                     // cB = (BoundedNode) urbanLink.getLink().getStartNode();
                     if (cB != null)
                     {

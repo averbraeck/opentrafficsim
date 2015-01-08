@@ -189,8 +189,8 @@ public class ShapeFileReader
     /**
      * @param shapeFileName the nodes shapefile to read
      * @param numberType
-     * @param returnCentroid if true only loop through the centroid/zones (in case of mixed nodes and centroids)
-     * @param allCentroids if true: the file contains centroids (a centroid file)
+     * @param returnCentroid , if true only loop through the centroid/zones (in case of mixed nodes and centroids)
+     * @param allCentroids , if true: the file only contains centroids (a centroid file)
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
@@ -230,11 +230,13 @@ public class ShapeFileReader
                 Point point = (Point) feature.getAttribute("the_geom");
                 String nr = CsvFileReader.removeQuotes(String.valueOf(feature.getAttribute(numberType)));
                 boolean addThisNode = false;
+                TrafficBehaviourType type = null;
                 if (returnCentroid)
                 {
                     if (nr.substring(0, 1).equals("C") || allCentroids)
                     {
                         addThisNode = true;
+                        type = TrafficBehaviourType.NTM;
                     }
                 }
                 else
@@ -246,6 +248,7 @@ public class ShapeFileReader
                     if (!nr.substring(0, 1).equals("C"))
                     {
                         addThisNode = true;
+                        type = TrafficBehaviourType.ROAD;
                     }
                 }
                 if (addThisNode)
@@ -253,7 +256,7 @@ public class ShapeFileReader
                     double x = (double) feature.getAttribute("X");
                     double y = (double) feature.getAttribute("Y");
                     // initially, set the behaviour default to TrafficBehaviourType.ROAD
-                    Node node = new Node(nr, point, TrafficBehaviourType.ROAD);
+                    Node node = new Node(nr, point, type);
                     nodes.put(nr, node);
                 }
             }
@@ -384,9 +387,7 @@ public class ShapeFileReader
                     {
                         Link linkAB = null;
                         Link linkBA = null;
-
-                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
-                        
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
                         linkAB =
                                 new Link(null, nr, length, nodeA, nodeB, speed, capacity,
                                         TrafficBehaviourType.ROAD, linkData, hierarchy);
@@ -422,7 +423,6 @@ public class ShapeFileReader
                 else
                 { // possibly a link that connects to a centroid
                   // but first test the geometry of the node/centroid: is it a node or is it a centroid?
-                    LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                     if (centroidA != null)
                     {
                         if (testGeometry(geometry.getCoordinates()[0], centroidA.getPoint()))
@@ -445,26 +445,70 @@ public class ShapeFileReader
                     }
                     else if (nodeACentroid)
                     {
-                        Link link =
+                        Link linkAB = null;
+                        Link linkBA = null;
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
+                        linkAB =
                                 new Link(null, nr, length, centroidA, nodeB, speed, capacity,
                                         TrafficBehaviourType.NTM, linkData, hierarchy);
-                        LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
-                        link.setGeometry(linearGeometry);
-                        connectors.put(nr, link);
+                        LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
+                        linkAB.setGeometry(linearGeometry);
+                        linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
+                        linkBA =
+                                new Link(null, nrBA, length, nodeB, centroidA, speed, capacity,
+                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                        linearGeometry = new LinearGeometry(linkBA, line, null);
+                        linkBA.setGeometry(linearGeometry);
+                        if (direction == 1)
+                        {
+                            connectors.put(nr, linkAB);
+                        }
+                        else if (direction == 2)
+                        {
+                            connectors.put(nrBA, linkBA);
+                        }
+                        else if (direction == 3)
+                        {
+                            connectors.put(nr, linkAB);
+                            connectors.put(nrBA, linkBA);
+                        }
 
                     }
                     else if (nodeBCentroid)
                     {
-                        Link link =
+                        Link linkAB = null;
+                        Link linkBA = null;
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
+                        linkAB =
                                 new Link(null, nr, length, nodeA, centroidB, speed, capacity,
                                         TrafficBehaviourType.NTM, linkData, hierarchy);
-                        LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
-                        link.setGeometry(linearGeometry);
-                        connectors.put(nr, link);
+                        LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
+                        linkAB.setGeometry(linearGeometry);
+                        linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
+                        linkBA =
+                                new Link(null, nrBA, length, centroidB, nodeA, speed, capacity,
+                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                        linearGeometry = new LinearGeometry(linkBA, line, null);
+                        linkBA.setGeometry(linearGeometry);
+                        if (direction == 1)
+                        {
+                            connectors.put(nr, linkAB);
+                        }
+                        else if (direction == 2)
+                        {
+                            connectors.put(nrBA, linkBA);
+                        }
+                        else if (direction == 3)
+                        {
+                            connectors.put(nr, linkAB);
+                            connectors.put(nrBA, linkBA);
+                        }
 
                     }
                     else
+                        // should not happen
                     {
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
                         Link link =
                                 new Link(null, nr, length, nodeA, nodeB, speed, capacity,
                                         TrafficBehaviourType.ROAD, linkData, hierarchy);
