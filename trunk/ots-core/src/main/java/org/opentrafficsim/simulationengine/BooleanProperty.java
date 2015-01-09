@@ -29,14 +29,20 @@ public class BooleanProperty extends AbstractProperty<Boolean>
      * @param description String; description of the new BooleanProperty (may use HTML mark up)
      * @param initialValue Integer; the initial value of the new BooleanProperty
      * @param readOnly boolean; if true this BooleanProperty can not be altered
+     * @param displayPriority int; the displayPriority of the new BooleanProperty
      */
     public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
+<<<<<<< .mine
+            final boolean readOnly, final int displayPriority)
+=======
         final boolean readOnly)
+>>>>>>> .r606
     {
         this.shortName = shortName;
         this.description = description;
         this.value = initialValue;
         this.readOnly = readOnly;
+        this.displayPriority = displayPriority;
     }
 
     /** {@inheritDoc} */

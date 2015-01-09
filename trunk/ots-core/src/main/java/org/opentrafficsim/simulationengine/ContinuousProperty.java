@@ -1,18 +1,19 @@
 package org.opentrafficsim.simulationengine;
 
 /**
- * Integer property.
+ * Continuous property.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 18 dec. 2014 <br>
+ * @version 30 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IntegerProperty extends AbstractProperty<Integer>
+public class ContinuousProperty extends AbstractProperty<Double>
 {
-    /** The current value of the property. */
-    private Integer value;
+    /** The current value. */
+    private Double value;
 
     /** The shortName of the property. */
     private String shortName;
@@ -24,32 +25,28 @@ public class IntegerProperty extends AbstractProperty<Integer>
     private String format;
 
     /** The minimum value of the property. */
-    private Integer minimumValue;
+    private Double minimumValue;
 
     /** The maximum value of the property. */
-    private Integer maximumValue;
+    private Double maximumValue;
 
     /** The property is read-only. */
     private final Boolean readOnly;
 
     /**
-     * Construct an IntegerProperty.
-     * @param shortName String; the short name of the new IntegerProperty
-     * @param description String; description of the new IntegerProperty (may use HTML mark up)
-     * @param initialValue Integer; the initial value of the new IntegerProperty
-     * @param minimumValue Integer; the minimum value of the new IntegerProperty
-     * @param maximumValue Integer; the maximumValue of the new IntegerProperty
+     * Construct a ContinousProperty.
+     * @param shortName String; the short name of the new ContinuousProperty
+     * @param description String; description of the new ContinuousProperty (may use HTML mark up)
+     * @param initialValue Double; the initial value of the new ContinuousProperty
+     * @param minimumValue Double; the minimum value of the new ContinuousProperty
+     * @param maximumValue Double; the maximumValue of the new ContinuousProperty
      * @param formatString String; format string to display the value
-     * @param readOnly boolean; if true this IntegerProperty can not be altered
-     * @param displayPriority int; the display priority of the new IntegerProperty
+     * @param readOnly boolean; if true this ContinuousProperty can not be altered
+     * @param displayPriority int; the displayPriority of the new ContinuousProperty
      */
-    public IntegerProperty(final String shortName, final String description, final Integer initialValue,
-<<<<<<< .mine
-            final Integer minimumValue, final Integer maximumValue, String formatString, final boolean readOnly,
+    public ContinuousProperty(final String shortName, final String description, final Double initialValue,
+            final Double minimumValue, final Double maximumValue, String formatString, final boolean readOnly,
             int displayPriority)
-=======
-        final Integer minimumValue, final Integer maximumValue, final boolean readOnly)
->>>>>>> .r606
     {
         this.shortName = shortName;
         this.description = description;
@@ -63,46 +60,44 @@ public class IntegerProperty extends AbstractProperty<Integer>
 
     /** {@inheritDoc} */
     @Override
-    public final Integer getValue()
+    public Double getValue()
     {
         return this.value;
     }
 
     /**
-     * Retrieve the minimum value of this IntegerProperty.
-     * @return Integer; the minimum value of this IntegerProperty
+     * @return the minimum value
      */
-    public final Integer getMinimumValue()
+    public Double getMinimumValue()
     {
         return this.minimumValue;
     }
 
     /**
-     * Retrieve the maximum value of this IntegerProperty.
-     * @return Integer; the maximum value of this IntegerProperty
+     * @return the minimum value
      */
-    public final Integer getMaximumValue()
+    public Double getMaximumValue()
     {
         return this.maximumValue;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String getShortName()
+    public String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final String getDescription()
+    public String getDescription()
     {
         return this.description;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final Integer newValue) throws IncompatiblePropertyException
+    public void setValue(Double newValue) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
@@ -110,22 +105,17 @@ public class IntegerProperty extends AbstractProperty<Integer>
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
-<<<<<<< .mine
             throw new IncompatiblePropertyException("new value " + newValue + " is out of valid range ("
                     + this.minimumValue + ".." + this.maximumValue + ")");
-=======
-            throw new IncompatiblePropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue
-                + ".." + this.maximumValue);
->>>>>>> .r606
         }
         this.value = newValue;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isReadOnly()
+    public boolean isReadOnly()
     {
-        return this.readOnly;
+        return false;
     }
 
     /**

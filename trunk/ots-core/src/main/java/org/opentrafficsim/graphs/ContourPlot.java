@@ -31,7 +31,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -47,7 +47,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Jul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart
+public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart,
+        LaneBasedGTUSampler
 {
     /** */
     private static final long serialVersionUID = 20140716L;
@@ -499,6 +500,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cachedYAxisBins = -1;
     }
 
+<<<<<<< .mine
+    /** {@inheritDoc} */
+    @Override
+    public final void addData(final AbstractLaneBasedGTU<?> car) throws RemoteException
+=======
     /**
      * Add a fragment of a trajectory to this ContourPlot.
      * @param car Car; the GTU that is being sampled (should be a GTU)
@@ -506,6 +512,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @throws NetworkException when car cannot be found on a lane
      */
     public final void addData(final Car<?> car) throws NetworkException, RemoteException
+>>>>>>> .r606
     {
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();

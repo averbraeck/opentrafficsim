@@ -27,7 +27,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -42,7 +42,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart,
+        LaneBasedGTUSampler
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -297,6 +298,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /** All stored trajectories. */
     private ArrayList<Trajectory> trajectories;
 
+<<<<<<< .mine
+    /** {@inheritDoc} */
+    public final void addData(final AbstractLaneBasedGTU<?> car) throws RemoteException
+=======
     /**
      * Add the scheduled motion of a car to this TrajectoryPlot.
      * @param car Car; the Car that has determined it's next move
@@ -304,6 +309,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @throws RemoteException when communication fails
      */
     public final void addData(final Car<?> car) throws NetworkException, RemoteException
+>>>>>>> .r606
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         // XXX we take the first (and only) lane on which the vehicle is registered.
@@ -391,11 +397,15 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
 
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
-         * @param car Car; the Car whose currently committed trajectory segment must be added
+         * @param car AbstractLaneBasedGTU&lt;>&gt;; the GTU whose currently committed trajectory segment must be added
          * @throws NetworkException when car is not on lane anymore
          * @throws RemoteException when communication fails
          */
+<<<<<<< .mine
+        public final void addSegment(final AbstractLaneBasedGTU<?> car) throws RemoteException
+=======
         public final void addSegment(final Car<?> car) throws NetworkException, RemoteException
+>>>>>>> .r606
         {
             // XXX we take the first (and only) lane on which the vehicle is registered.
             Lane lane = car.positions(car.getFront()).keySet().iterator().next();
