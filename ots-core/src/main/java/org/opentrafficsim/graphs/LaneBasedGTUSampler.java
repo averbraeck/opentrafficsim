@@ -21,6 +21,7 @@ public interface LaneBasedGTUSampler
      * Add the movement of an AbstractLaneBasedGTU to a graph.
      * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the AbstractLaneBasedGTU
      * @throws RemoteException on communications failure
+     * @throws NetworkException on network-related inconsistency
      */
     public void addData(AbstractLaneBasedGTU<?> gtu) throws RemoteException, NetworkException;
     
