@@ -197,12 +197,12 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * algorithms have to look at multiple Lanes and return the minimum headway in each of the Lanes. When the Lanes (or
      * underlying CrossSectionLinks) converge, "parallel" traffic is not taken into account in the headway calculation. Instead,
      * gap acceptance algorithms or their equivalent should guide the merging behavior.<br>
-     * <b>Note:</b> Headway is calculated on a front-to-front basis.
+     * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param maxDistance the maximum distance to look for
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    DoubleScalar.Rel<LengthUnit> headway(DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException;
+    DoubleScalar.Rel<LengthUnit> headway(DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException;
 
     /**
      * Determine which GTU in front of us. Only positive values are returned. This method looks in all lanes where the GTU is
@@ -212,12 +212,12 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * diverge, the headway algorithms have to look at multiple Lanes and return the minimum headway in each of the Lanes. When
      * the Lanes (or underlying CrossSectionLinks) converge, "parallel" traffic is not taken into account in the headway
      * calculation. Instead, gap acceptance algorithms or their equivalent should guide the merging behavior.<br>
-     * <b>Note:</b> Headway is calculated on a front-to-front basis.
+     * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param maxDistance the maximum distance to look for
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    LaneBasedGTU<?> headwayGTU(DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException;
+    LaneBasedGTU<?> headwayGTU(DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException;
 
     /**
      * Determine by what distance the front of this GTU is ahead or behind the front an other GTU. Positive values indicate that
@@ -225,7 +225,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * into successive lanes if the maxDistance is larger than the length of the lane. If the other GTU is in the same lane, a
      * lane based distance will be returned. If the other GTU is in another lane, a distance based on a projection on the design
      * line will be returned. <br>
-     * <b>Note 1:</b> Headway is calculated on a front-to-front basis. <br>
+     * <b>Note 1:</b> Headway is the net headway and calculated on a front-to-back basis. <br>
      * <b>Note 2:</b> When the other vehicle's front is behind our front, a negative distance is returned. <br>
      * <b>Note 3:</b> The typical use of the method is <code>follower.headway(leader, maxX)</code>.<br>
      * <b>Note 4:</b> <code>headway</code> searches for maxDistance in front of the car when maxDistance is positive, and behind
@@ -239,7 +239,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle's route is inconclusive or vehicles are not registered correctly on their
      *             lanes.
      */
-    DoubleScalar.Rel<LengthUnit> headway(LaneBasedGTU<?> otherGTU, DoubleScalar.Abs<LengthUnit> maxDistance)
+    DoubleScalar.Rel<LengthUnit> headway(LaneBasedGTU<?> otherGTU, DoubleScalar.Rel<LengthUnit> maxDistance)
         throws RemoteException, NetworkException;
 
     /**
@@ -248,7 +248,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * into successive lanes if the maxDistance is larger than the length of the lane. If the other GTU is in the same lane, a
      * lane based distance will be returned. If the other GTU is in another lane, a distance based on a projection on the design
      * line will be returned. <br>
-     * <b>Note 1:</b> Headway is calculated on a front-to-front basis.<br>
+     * <b>Note 1:</b> Headway is the net headway and calculated on a front-to-back basis.<br>
      * <b>Note 2:</b> When the other vehicle's front is behind our front, a negative distance is returned. <br>
      * <b>Note 3:</b> The typical use of the method is <code>follower.headway(leader, maxX, time)</code>.<br>
      * <b>Note 4:</b> <code>headway</code> searches for maxDistance in front of the car when maxDistance is positive, and behind
@@ -263,7 +263,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle's route is inconclusive or vehicles are not registered correctly on their
      *             lanes.
      */
-    DoubleScalar.Rel<LengthUnit> headway(LaneBasedGTU<?> otherGTU, DoubleScalar.Abs<LengthUnit> maxDistance,
+    DoubleScalar.Rel<LengthUnit> headway(LaneBasedGTU<?> otherGTU, DoubleScalar.Rel<LengthUnit> maxDistance,
         DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException;
 
     /**
@@ -271,24 +271,24 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * This method only looks in the given lane, and not further than the given maxDistance. When no vehicle is found within the
      * given maxDistance, maxDistance is returned. The search will extend into successive lanes if the maxDistance is larger
      * than the length of the lane.<br>
-     * <b>Note:</b> Headway is calculated on a front-to-front basis.
+     * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param lane the lane to look for another GTU.
      * @param maxDistance the maximum distance to look for
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    DoubleScalar.Rel<LengthUnit> headway(Lane lane, DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException;
+    DoubleScalar.Rel<LengthUnit> headway(Lane lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException;
 
     /**
      * Determine which GTU in front of us. Only positive values are returned. This method only looks in the given lane, and not
      * further than the given maxDistance. When no GTU is found within the given maxDistance, <b>null</b> is returned. The
      * search will extend into successive lanes if the maxDistance is larger than the length of the lane.<br>
-     * <b>Note:</b> Headway is calculated on a front-to-front basis.
+     * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param lane the lane to look for another GTU.
      * @param maxDistance the maximum distance to look for
      * @return DoubleScalarRel&lt;LengthUnit&gt;; the headway
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    LaneBasedGTU<?> headwayGTU(Lane lane, DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException;
+    LaneBasedGTU<?> headwayGTU(Lane lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException;
 
 }
