@@ -460,28 +460,28 @@ public class newGUI
                     .getMinimumDistance(), model.lane.getLength());
             cp.setTitle("Density Contour Graph");
 
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp =
                 new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
                     model.lane.getLength());
             cp.setTitle("Speed Contour Graph");
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp =
                 new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
                     model.lane.getLength());
             cp.setTitle("FLow Contour Graph");
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp =
                 new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName(), model
                     .getMinimumDistance(), model.lane.getLength());
             cp.setTitle("Acceleration Contour Graph");
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             TrajectoryPlot trajectoryPlot =
@@ -516,28 +516,28 @@ public class newGUI
                             .getMinimumDistance(), model.lanes[laneIndex].getLength());
                 cp.setTitle("Density Contour Graph");
                 // cp.setExtendedState(MAXIMIZED_BOTH);
-                model.getContourPlots().get(laneIndex).add(cp);
+                model.getPlots().get(laneIndex).add(cp);
                 this.statPanel.add(cp.getContentPane());
 
                 cp =
                     new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName() + laneName, model
                         .getMinimumDistance(), model.lanes[laneIndex].getLength());
                 cp.setTitle("Speed Contour Graph");
-                model.getContourPlots().get(laneIndex).add(cp);
+                model.getPlots().get(laneIndex).add(cp);
                 this.statPanel.add(cp.getContentPane());
 
                 cp =
                     new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName() + laneName, model
                         .getMinimumDistance(), model.lanes[laneIndex].getLength());
                 cp.setTitle("FLow Contour Graph");
-                model.getContourPlots().get(laneIndex).add(cp);
+                model.getPlots().get(laneIndex).add(cp);
                 this.statPanel.add(cp.getContentPane());
 
                 cp =
                     new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName() + laneName,
                         model.getMinimumDistance(), model.lanes[laneIndex].getLength());
                 cp.setTitle("Acceleration Contour Graph");
-                model.getContourPlots().get(laneIndex).add(cp);
+                model.getPlots().get(laneIndex).add(cp);
                 this.statPanel.add(cp.getContentPane());
 
                 TrajectoryPlot trajectoryPlot =
@@ -546,7 +546,7 @@ public class newGUI
                         model.lanes[laneIndex].getLength());
                 trajectoryPlot.setTitle("Trajectories");
                 this.statPanel.add(trajectoryPlot.getContentPane());
-                model.getTrajectoryPlots().get(laneIndex).add(trajectoryPlot);
+                model.getPlots().get(laneIndex).add(trajectoryPlot);
             }
 
             if (this.showNewFrame.isSelected())
@@ -569,22 +569,22 @@ public class newGUI
             cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
             cp.setTitle("Density Contour Graph");
             // cp.setExtendedState(MAXIMIZED_BOTH);
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
             cp.setTitle("Speed Contour Graph");
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
             cp.setTitle("FLow Contour Graph");
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp = new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model.getMaximumDistance());
             cp.setTitle("Acceleration Contour Graph");
-            model.getContourPlots().add(cp);
+            model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             if (this.showNewFrame.isSelected())
@@ -656,28 +656,28 @@ public class newGUI
                 model.lane.getLength());
         cp.setTitle("Density Contour Graph");
         // cp.setExtendedState(MAXIMIZED_BOTH);
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 0);
 
         cp =
             new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
                 model.lane.getLength());
         cp.setTitle("Speed Contour Graph");
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 0);
 
         cp =
             new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
                 model.lane.getLength());
         cp.setTitle("FLow Contour Graph");
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 1);
 
         cp =
             new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName(), model
                 .getMinimumDistance(), model.lane.getLength());
         cp.setTitle("Acceleration Contour Graph");
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
 
         TrajectoryPlot trajectoryPlot =
@@ -720,28 +720,28 @@ public class newGUI
                     model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Density Contour Graph");
             // cp.setExtendedState(MAXIMIZED_BOTH);
-            model.getContourPlots().get(laneIndex).add(cp);
+            model.getPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 0);
 
             cp =
                 new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName() + laneName, model
                     .getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Speed Contour Graph");
-            model.getContourPlots().get(laneIndex).add(cp);
+            model.getPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 0);
 
             cp =
                 new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName() + laneName, model
                     .getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("FLow Contour Graph");
-            model.getContourPlots().get(laneIndex).add(cp);
+            model.getPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex, 1);
 
             cp =
                 new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName() + laneName,
                     model.getMinimumDistance(), model.lanes[laneIndex].getLength());
             cp.setTitle("Acceleration Contour Graph");
-            model.getContourPlots().get(laneIndex).add(cp);
+            model.getPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 1);
 
             TrajectoryPlot trajectoryPlot =
@@ -750,7 +750,7 @@ public class newGUI
                         .getLength());
             trajectoryPlot.setTitle("Trajectories");
             charts.setCell(trajectoryPlot.getContentPane(), 1 + laneIndex, 2);
-            model.getTrajectoryPlots().get(laneIndex).add(trajectoryPlot);
+            model.getPlots().get(laneIndex).add(trajectoryPlot);
         }
         this.separateFrame.add(charts);
         this.separateFrame.setVisible(true);
@@ -782,22 +782,22 @@ public class newGUI
         cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Density Contour Graph");
         // cp.setExtendedState(MAXIMIZED_BOTH);
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 0);
 
         cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Speed Contour Graph");
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 0);
 
         cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("FLow Contour Graph");
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 1);
 
         cp = new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model.getMaximumDistance());
         cp.setTitle("Acceleration Contour Graph");
-        model.getContourPlots().add(cp);
+        model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
         this.separateFrame.setVisible(true);
         this.separateFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
