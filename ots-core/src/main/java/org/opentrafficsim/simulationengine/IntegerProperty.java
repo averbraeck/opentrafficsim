@@ -3,7 +3,8 @@ package org.opentrafficsim.simulationengine;
 /**
  * Integer property.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 18 dec. 2014 <br>
@@ -44,12 +45,8 @@ public class IntegerProperty extends AbstractProperty<Integer>
      * @param displayPriority int; the display priority of the new IntegerProperty
      */
     public IntegerProperty(final String shortName, final String description, final Integer initialValue,
-<<<<<<< .mine
             final Integer minimumValue, final Integer maximumValue, String formatString, final boolean readOnly,
             int displayPriority)
-=======
-        final Integer minimumValue, final Integer maximumValue, final boolean readOnly)
->>>>>>> .r606
     {
         this.shortName = shortName;
         this.description = description;
@@ -110,13 +107,8 @@ public class IntegerProperty extends AbstractProperty<Integer>
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
-<<<<<<< .mine
             throw new IncompatiblePropertyException("new value " + newValue + " is out of valid range ("
                     + this.minimumValue + ".." + this.maximumValue + ")");
-=======
-            throw new IncompatiblePropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue
-                + ".." + this.maximumValue);
->>>>>>> .r606
         }
         this.value = newValue;
     }
