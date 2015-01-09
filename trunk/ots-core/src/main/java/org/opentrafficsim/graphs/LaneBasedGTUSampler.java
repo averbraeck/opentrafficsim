@@ -3,6 +3,7 @@ package org.opentrafficsim.graphs;
 import java.rmi.RemoteException;
 
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Interface implemented by graphs that sample movements of a lane-based GTU.
@@ -21,7 +22,7 @@ public interface LaneBasedGTUSampler
      * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the AbstractLaneBasedGTU
      * @throws RemoteException on communications failure
      */
-    public void addData(AbstractLaneBasedGTU<?> gtu) throws RemoteException;
+    public void addData(AbstractLaneBasedGTU<?> gtu) throws RemoteException, NetworkException;
     
     /**
      * Force redraw of the graph.
