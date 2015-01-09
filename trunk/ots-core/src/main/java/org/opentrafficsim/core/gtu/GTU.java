@@ -45,4 +45,4 @@ public interface GTU<ID> extends LocatableInterface, Serializable
 
     /** @return the rear position of the GTU, relative to its reference point. */
     RelativePosition getRear();
-}
+    }

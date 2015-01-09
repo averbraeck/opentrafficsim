@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -45,6 +46,18 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the speed at the specified time
      */
     DoubleScalar.Abs<SpeedUnit> getLongitudinalVelocity(DoubleScalar.Abs<TimeUnit> when);
+
+    /**
+     * @return the acceleration (or deceleration) of the GTU, in the direction of the lane
+     * @throws RemoteException in case of problems getting the simulation time.
+     */
+    DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException;
+
+    /** 
+     * @param when time for which the speed must be returned
+     * @return the acceleration (or deceleration) of the GTU, in the direction of the lane. 
+     */
+    DoubleScalar.Abs<AccelerationUnit> getAcceleration(DoubleScalar.Abs<TimeUnit> when);
 
     /**
      * @return the velocity of the GTU, perpendicular to the direction of the lane. Positive lateral velocity is "left" compared
