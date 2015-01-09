@@ -92,6 +92,21 @@ public final class Calc
     }
 
     /**
+     * (Braking) distance is speed squared divided by two times the acceleration. <br>
+     * t = v / a
+     * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the speed
+     * @param acceleration DoubleScalar.Rel&lt;AccelerationUnit&gt;; the acceleration
+     * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the time it takes to accelerate using the given acceleration from 0 to the
+     *         indicated speed
+     */
+    public static DoubleScalar.Rel<LengthUnit> speedSquaredDividedByDoubleAcceleration(final DoubleScalar<SpeedUnit> speed,
+        final DoubleScalar.Abs<AccelerationUnit> acceleration)
+    {
+        return new DoubleScalar.Rel<LengthUnit>(speed.getSI() * speed.getSI() / (2.0 * acceleration.getSI()),
+            LengthUnit.METER);
+    }
+
+    /**
      * Acceleration is speed difference divided by time difference. <br>
      * a = dv / dt
      * @param speedDifference DoubleScalar.Rel&lt;SpeedUnit&gt;; the speed difference

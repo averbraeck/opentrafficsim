@@ -2,8 +2,11 @@ package org.opentrafficsim.core.gtu.following;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -39,6 +42,9 @@ public class IDMPlus implements GTUFollowingModel
 
     /** Safe time headway. */
     private final DoubleScalar.Rel<TimeUnit> tSafe;
+
+    /** Cache of the braking distances, based on the maximum speed of the GTU. */
+    private final Map<GTUType<?>, DoubleScalar.Rel<LengthUnit>> maxBrakingDistances = new HashMap<>();
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean free speed equals 110% of the speed
@@ -99,6 +105,21 @@ public class IDMPlus implements GTUFollowingModel
             .getSI()), SpeedUnit.METER_PER_SECOND);
     }
 
+    /**
+     * @param gtu the gtu for which to calculate the maximum braking distance.
+     * @return the maximum braking distance of the GTU, based on parameter b and the maximum velocity of the GTU.
+     */
+    private DoubleScalar.Rel<LengthUnit> calcMaxBrakingDistance(final GTU<?> gtu)
+    {
+        DoubleScalar.Rel<LengthUnit> maxBrakingDistance = this.maxBrakingDistances.get(gtu.getGTUType());
+        if (maxBrakingDistance == null)
+        {
+            maxBrakingDistance = Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), this.b);
+            this.maxBrakingDistances.put(gtu.getGTUType(), maxBrakingDistance);
+        }
+        return maxBrakingDistance;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
@@ -113,9 +134,7 @@ public class IDMPlus implements GTUFollowingModel
             {
                 continue;
             }
-            // TODO 100 m is arbitrary. What should this be based on?
-            DoubleScalar.Rel<LengthUnit> s =
-                follower.headway(leader, new DoubleScalar.Abs<LengthUnit>(100, LengthUnit.METER));
+            DoubleScalar.Rel<LengthUnit> s = follower.headway(leader, calcMaxBrakingDistance(follower));
             // System.out.println("s is " + s);
             if (s.getSI() < 0)
             {
@@ -140,9 +159,7 @@ public class IDMPlus implements GTUFollowingModel
         DoubleScalar.Abs<SpeedUnit> leaderSpeed =
             null == leader ? follower.getLongitudinalVelocity(thisEvaluationTime) : leader
                 .getLongitudinalVelocity(thisEvaluationTime);
-        // TODO 100 m is arbitrary. What should this be based on?
-        DoubleScalar.Rel<LengthUnit> headway =
-            follower.headway(leader, new DoubleScalar.Abs<LengthUnit>(100, LengthUnit.METER));
+        DoubleScalar.Rel<LengthUnit> headway = follower.headway(leader, calcMaxBrakingDistance(follower));
         return computeAcceleration(follower, leaderSpeed, headway, speedLimit);
     }
 

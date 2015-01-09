@@ -290,7 +290,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> headway(final DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException
+    public final DoubleScalar.Rel<LengthUnit> headway(final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException
     {
         // TODO headway(maxDistance)
         return null;
@@ -298,7 +298,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> headway(final Lane lane, final DoubleScalar.Abs<LengthUnit> maxDistance)
+    public final DoubleScalar.Rel<LengthUnit> headway(final Lane lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
         throws RemoteException
     {
         // TODO headway(lane, maxDistance)
@@ -307,7 +307,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU<?> headwayGTU(final Lane lane, final DoubleScalar.Abs<LengthUnit> maxDistance)
+    public final LaneBasedGTU<?> headwayGTU(final Lane lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
         throws RemoteException
     {
         // TODO headwayGTU(lane, maxDistance)
@@ -316,7 +316,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU<?> headwayGTU(final DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException
+    public final LaneBasedGTU<?> headwayGTU(final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException
     {
         // TODO headwayGTU(maxDistance)
         return null;
@@ -325,7 +325,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU,
-        final DoubleScalar.Abs<LengthUnit> maxDistance) throws RemoteException, NetworkException
+        final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
     {
         return headway(otherGTU, maxDistance, getSimulator().getSimulatorTime().get());
     }
@@ -333,7 +333,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU,
-        final DoubleScalar.Abs<LengthUnit> maxDistance, final DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
+        final DoubleScalar.Rel<LengthUnit> maxDistance, final DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
         NetworkException
     {
         if (otherGTU == null)
@@ -348,7 +348,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             {
                 double distanceM =
                     otherGTU.position(lane, otherGTU.getFront(), when).getSI()
-                        - this.position(lane, this.getFront(), when).getSI();
+                        - this.position(lane, this.getFront(), when).getSI() - otherGTU.getLength().getSI();
                 double maxD = maxDistance.getSI();
                 if ((maxD > 0.0 && distanceM > 0.0) || (maxD < 0.0 && distanceM < 0.0))
                 {
