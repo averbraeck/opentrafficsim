@@ -15,7 +15,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opentrafficsim.core.network.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
