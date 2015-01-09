@@ -64,19 +64,20 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * should be displayed above or before those with higher values.
      * @return int; the display priority of this AbstractProperty
      */
-    public int getDisplayPriority()
+    public final int getDisplayPriority()
     {
         return this.displayPriority;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<AbstractProperty<T>> iterator()
+    public final Iterator<AbstractProperty<T>> iterator()
     {
         return new PropertyIterator(this);
     }
 
-    public String toString()
+    /** {@inheritDoc} */
+    public final String toString()
     {
         return this.getShortName();
     }
@@ -94,10 +95,10 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
     class PropertyIterator implements Iterator<AbstractProperty<T>>
     {
         /** Next in line in the main CompoundProperty. */
-        int currentIndex;
+        private int currentIndex;
 
         /** Full list of AbstractProperties. */
-        final ArrayList<AbstractProperty<T>> list;
+        private final ArrayList<AbstractProperty<T>> list;
 
         /**
          * Construct a new PropertyIterator.
@@ -113,7 +114,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
         /**
          * Recursively add all properties to the list. <br>
          * Compound properties are included <b>before</b> their contents.
-         * @param cp
+         * @param cp AbstractProperty&lt;T&gt;; the property to add (if compound it and all it's children are added)
          */
         @SuppressWarnings("unchecked")
         private void addToList(final AbstractProperty<T> cp)

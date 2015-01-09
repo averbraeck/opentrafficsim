@@ -37,7 +37,7 @@ public class SelectionProperty extends AbstractProperty<String>
      * @param displayPriority int; the display priority of the new SelectionProperty
      */
     public SelectionProperty(final String shortName, final String description, final String[] options,
-            final int initialDefaultOption, final boolean readOnly, int displayPriority)
+            final int initialDefaultOption, final boolean readOnly, final int displayPriority)
     {
         super(displayPriority);
         this.shortName = shortName;

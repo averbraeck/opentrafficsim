@@ -17,8 +17,16 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version 5 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IDMPropertySet
+public final class IDMPropertySet
 {
+    /**
+     * This class shall never be instantiated.
+     */
+    private IDMPropertySet()
+    {
+        // Prevent instantiation of this class
+    }
+
     /**
      * Create a CompoundProperty for the IDM or IDMPlus parameters for a specified car type.
      * @param carType String; the type of the car
@@ -29,9 +37,9 @@ public class IDMPropertySet
      * @param displayPriority int; the display priority of the returned CompoundProperty
      * @return CompoundProperty
      */
-    public static CompoundProperty makeIDMPropertySet(final String carType, DoubleScalar.Abs<AccelerationUnit> a,
-            DoubleScalar.Abs<AccelerationUnit> b, DoubleScalar.Rel<LengthUnit> s0, DoubleScalar.Rel<TimeUnit> tSafe,
-            int displayPriority)
+    public static CompoundProperty makeIDMPropertySet(final String carType, final DoubleScalar.Abs<AccelerationUnit> a,
+            final DoubleScalar.Abs<AccelerationUnit> b, final DoubleScalar.Rel<LengthUnit> s0,
+            final DoubleScalar.Rel<TimeUnit> tSafe, final int displayPriority)
     {
         ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
         subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.getSI(), 0.5, 5.0,
@@ -51,7 +59,7 @@ public class IDMPropertySet
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;
      */
-    public static DoubleScalar.Abs<AccelerationUnit> getA(CompoundProperty set)
+    public static DoubleScalar.Abs<AccelerationUnit> getA(final CompoundProperty set)
     {
         return new DoubleScalar.Abs<AccelerationUnit>(findSubProperty("a", set), AccelerationUnit.METER_PER_SECOND_2);
     }
@@ -61,7 +69,7 @@ public class IDMPropertySet
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;
      */
-    public static DoubleScalar.Abs<AccelerationUnit> getB(CompoundProperty set)
+    public static DoubleScalar.Abs<AccelerationUnit> getB(final CompoundProperty set)
     {
         return new DoubleScalar.Abs<AccelerationUnit>(findSubProperty("b", set), AccelerationUnit.METER_PER_SECOND_2);
     }
@@ -71,7 +79,7 @@ public class IDMPropertySet
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
      * @return DoubleScalar.Abs&lt;LengthUnit&gt;
      */
-    public static DoubleScalar.Rel<LengthUnit> getS0(CompoundProperty set)
+    public static DoubleScalar.Rel<LengthUnit> getS0(final CompoundProperty set)
     {
         return new DoubleScalar.Rel<LengthUnit>(findSubProperty("s0", set), LengthUnit.METER);
     }
@@ -81,13 +89,13 @@ public class IDMPropertySet
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
      * @return DoubleScalar.Abs&lt;TimeUnit&gt;
      */
-    public static DoubleScalar.Rel<TimeUnit> getTSafe(CompoundProperty set)
+    public static DoubleScalar.Rel<TimeUnit> getTSafe(final CompoundProperty set)
     {
         return new DoubleScalar.Rel<TimeUnit>(findSubProperty("tSafe", set), TimeUnit.SECOND);
     }
 
     /**
-     * Find the Continuous sub property with the specified name
+     * Find the Continuous sub property with the specified name.
      * @param name String; name of the sub property
      * @param set CompoundProperty; the set to search
      * @return Double; the value of the Continuous sub property with the specified name
