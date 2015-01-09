@@ -1,17 +1,22 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -36,7 +41,7 @@ public class Lane extends CrossSectionElement
     private DoubleScalar.Abs<FrequencyUnit> capacity;
 
     /** Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. */
-    private List<Sensor> sensors = new ArrayList<Sensor>();
+    private SortedMap<Double, Sensor> sensors = new TreeMap<>();
 
     /** GTUs on the lane at the last evaluation step of the traffic model. */
     private final List<LaneBasedGTU<?>> gtuList;
@@ -71,13 +76,12 @@ public class Lane extends CrossSectionElement
      */
     public final void addSensor(final Sensor sensor)
     {
-        int i = 0;
-        while (i < this.sensors.size()
-            && this.sensors.get(i).getLongitudinalPositionSI() < sensor.getLongitudinalPositionSI())
+        double position = sensor.getLongitudinalPositionSI();
+        while (this.sensors.containsKey(position))
         {
-            i++;
+            position += Math.ulp(position);
         }
-        this.sensors.add(i, sensor);
+        this.sensors.put(position, sensor);
     }
 
     /**
@@ -90,12 +94,93 @@ public class Lane extends CrossSectionElement
     }
 
     /**
+     * Trigger the sensors for a certain timestep; from now until the nextEvaluationTime of the GTU.
+     * @param gtu the LaneBasedGTU for which to trigger the sensors.
+     * @throws RemoteException when simulation time cannot be retrieved.
+     * @throws NetworkException when GTU not on this lane.
+     */
+    public final void scheduleTriggers(final LaneBasedGTU<?> gtu) throws RemoteException, NetworkException
+    {
+        double mStart = gtu.position(this, gtu.getFront()).getSI();
+        double mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime()).getSI();
+        List<Sensor> triggerSensors = new ArrayList<Sensor>(this.sensors.subMap(mStart, mEnd).values());
+        for (Sensor sensor : triggerSensors)
+        {
+            // the exact time of triggering is based on the distance between the current position of the GTU and the
+            // location of the sensor.
+            double d = Math.max(0.0, sensor.getLongitudinalPositionSI() - mStart);
+            // how much time to travel d meters? 0.5*a*t^2 + v0*t - d = 0
+            // => t = (-v0 +/- sqrt(v0^2 - 4*0.5*a*(-d))) / 2*0.5*a = (-v0 +/- sqrt(v0^2 + 2*a*d)) / a
+//            double v0 = gtu.getSpeed();
+//            double a = gtu.getAcceleration();
+//            double sq = Math.sqrt(v0 * v0 + 2.0 * a * d);
+//            double t1 = (v0 + sq) / a;
+//            double t2 = (v0 - sq) / a;
+//            double t = t1 < 0 ? t2 : t1;
+//            gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor, "trigger",
+//                new Object[] {gtu});
+        }
+    }
+
+    /**
      * Add a GTU to the GTU list of this lane.
      * @param gtu the GTU to add.
      */
     public final void addGTU(final LaneBasedGTU<?> gtu)
     {
-        this.gtuList.add(gtu);
+        addGTU(gtu, 0);
+    }
+
+    /**
+     * Register the GTU on a lane on a given position. This method is used when a GTU is changing lanes and inserts itself
+     * between / before / after other GTUs.
+     * @param gtu the GTU to insert into the list.
+     * @param index the index in the GTU list of the lane that this GTU will get.
+     * @throws IndexOutOfBoundsException when index < 0 or > gtuList.size()-1.
+     */
+    @SuppressWarnings("checkstyle:redundantthrows")
+    public final void addGTU(final LaneBasedGTU<?> gtu, final int index) throws IndexOutOfBoundsException
+    {
+        if (!this.gtuList.contains(gtu))
+        {
+            this.gtuList.add(index, gtu);
+            // schedule the triggers for the remainder of this timestep
+            
+        }
+    }
+
+    /**
+     * Register the GTU on a lane after another GTU. This method is used when a GTU is changing lanes and inserts itself after
+     * another GTU.
+     * @param gtu the GTU to insert into the list.
+     * @param otherGTU the other GTU of the lane after which this GTU will be entered in the GTU list.
+     * @throws NetworkException when other GTU not on the given lane.
+     */
+    public final void addGTUAfter(final LaneBasedGTU<?> gtu, final LaneBasedGTU<?> otherGTU) throws NetworkException
+    {
+        if (!this.gtuList.contains(otherGTU))
+        {
+            throw new NetworkException("Tried to insert GTU " + gtu + " after GTU " + otherGTU + " on lane " + this
+                + ", but 2nd GTU not on this lane.");
+        }
+        addGTU(gtu, this.gtuList.indexOf(otherGTU) + 1);
+    }
+
+    /**
+     * Register the GTU on a lane before another GTU. This method is used when a GTU is changing lanes and inserts itself before
+     * another GTU.
+     * @param gtu the GTU to insert into the list.
+     * @param otherGTU the other GTU of the lane before which this GTU will be entered in the GTU list.
+     * @throws NetworkException when other GTU not on the given lane.
+     */
+    public final void addGTUBefore(final LaneBasedGTU<?> gtu, final LaneBasedGTU<?> otherGTU) throws NetworkException
+    {
+        if (!this.gtuList.contains(otherGTU))
+        {
+            throw new NetworkException("Tried to insert GTU " + gtu + " before GTU " + otherGTU + " on lane " + this
+                + ", but 2nd GTU not on this lane.");
+        }
+        addGTU(gtu, this.gtuList.indexOf(otherGTU));
     }
 
     /**

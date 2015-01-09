@@ -95,9 +95,9 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
     {
         try
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> rearPositions = getPositions(getRear());
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> rearPositions = positions(getRear());
             Lane rearLane = rearPositions.keySet().iterator().next();
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = getPositions(getFront());
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
             Lane frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s rear:%s[%s] front:%s[%s]", getId(), rearLane, rearPositions.get(rearLane),
                 frontLane, frontPositions.get(frontLane));
