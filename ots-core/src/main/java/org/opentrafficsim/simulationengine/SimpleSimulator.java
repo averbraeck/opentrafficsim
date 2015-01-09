@@ -84,6 +84,7 @@ public class SimpleSimulator
         AnimationPanel animationPanel = new AnimationPanel(extent, size, this.simulator);
         this.panel.getTabbedPane().addTab(0, "animation", animationPanel);
         animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, this.simulator, null));
+        this.panel.getTabbedPane().setSelectedIndex(0); // Select the animation panel
     }
 
     /**

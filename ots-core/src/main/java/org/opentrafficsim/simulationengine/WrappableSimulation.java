@@ -18,11 +18,14 @@ public interface WrappableSimulation
 {
     /**
      * Build the simulation.
+     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;*gt;; the (possibly user-modified) properties. This list
+     *            must contain all the properties returned by getProperties(); any additional properties may be ignored
      * @return SimpleSimulator; the new simulation.
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      */
-    SimpleSimulator buildSimulator() throws SimRuntimeException, RemoteException;
+    SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> properties) throws SimRuntimeException,
+            RemoteException;
 
     /**
      * Return a very short description of the simulation.

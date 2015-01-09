@@ -33,15 +33,21 @@ public class SelectionProperty extends AbstractProperty<String>
      * @param options String[]; the possible values of the SelectionProperty
      * @param initialDefaultOption int; the index of the initially selected option
      * @param readOnly boolean; if true the selection cannot be altered.
+     * @param displayPriority int; the display priority of the new SelectionProperty
      */
     public SelectionProperty(final String shortName, final String description, final String[] options,
+<<<<<<< .mine
+            final int initialDefaultOption, final boolean readOnly, int displayPriority)
+=======
         final int initialDefaultOption, final boolean readOnly)
+>>>>>>> .r606
     {
         this.shortName = shortName;
         this.description = description;
         this.options = options;
         this.currentOption = initialDefaultOption;
         this.readOnly = readOnly;
+        this.displayPriority = displayPriority;
     }
 
     /** {@inheritDoc} */
