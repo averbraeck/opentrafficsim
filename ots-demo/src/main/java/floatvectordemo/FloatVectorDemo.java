@@ -71,6 +71,8 @@ public final class FloatVectorDemo
             exception.printStackTrace();
         }
         System.out.println("normalized mfad: " + mfad.toString());
+        mfad.multiply(0.5f).multiply(0.2f);
+        System.out.println("mfad * 0.5 * 0.2:" + mfad);
         System.out.println("ifad:            " + ifad);
     }
 }
