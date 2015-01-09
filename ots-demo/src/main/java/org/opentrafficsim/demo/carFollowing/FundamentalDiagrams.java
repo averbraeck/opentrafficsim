@@ -71,7 +71,6 @@ public class FundamentalDiagrams implements WrappableSimulation
     {
         try
         {
-<<<<<<< .mine
             this.properties
                     .add(new SelectionProperty(
                             "Car following model",
@@ -79,20 +78,9 @@ public class FundamentalDiagrams implements WrappableSimulation
                                     + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
                                     + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
                                     + "personality of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 500));
-=======
-            this.properties.add(new SelectionProperty("Car following model", "<html>The car following model determines "
-                + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
-                + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
-                + "personality of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false));
->>>>>>> .r605
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
-<<<<<<< .mine
                     "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                     new Double[]{0.8, 0.2}, false, 10));
-=======
-                "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"}, new Double[] {0.8,
-                    0.2}, false));
->>>>>>> .r605
         }
         catch (IncompatiblePropertyException exception)
         {
@@ -116,14 +104,9 @@ public class FundamentalDiagrams implements WrappableSimulation
             {
                 try
                 {
-<<<<<<< .mine
                     FundamentalDiagrams fundamentalDiagrams = new FundamentalDiagrams();
                     new SimulatorFrame("Fundamental Diagrams animation", fundamentalDiagrams.buildSimulator(
                             fundamentalDiagrams.getProperties()).getPanel());
-=======
-                    new SimulatorFrame("Fundamental Diagrams animation", new FundamentalDiagrams().buildSimulator()
-                        .getPanel());
->>>>>>> .r605
                 }
                 catch (RemoteException | SimRuntimeException exception)
                 {
@@ -535,15 +518,9 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-<<<<<<< .mine
-            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
-                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
-                    initialLongitudinalPositions, initialSpeed, simulator);
-=======
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                     SpeedUnit.KM_PER_HOUR), simulator);
->>>>>>> .r605
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);

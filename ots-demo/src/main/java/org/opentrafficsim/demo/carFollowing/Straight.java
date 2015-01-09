@@ -31,9 +31,9 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
-import org.opentrafficsim.core.network.Lane;
-import org.opentrafficsim.core.network.LaneType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -494,8 +494,9 @@ class ContourPlotsModel implements OTSModelInterface
      * Add one movement step of one Car to all contour plots.
      * @param car Car
      * @throws RemoteException on communications failure
+     * @throws NetworkException on network-related inconsistency
      */
-    protected final void addToContourPlots(final Car<?> car) throws RemoteException
+    protected final void addToContourPlots(final Car<?> car) throws RemoteException, NetworkException
     {
         for (LaneBasedGTUSampler plot : this.plots)
         {
@@ -630,9 +631,9 @@ class ContourPlotsModel implements OTSModelInterface
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
                 final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
-            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
-                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
-                    initialLongitudinalPositions, initialSpeed, simulator);
+            super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
+                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                        SpeedUnit.KM_PER_HOUR), simulator);
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
@@ -656,7 +657,7 @@ class ContourPlotsModel implements OTSModelInterface
             {
                 return;
             }
-            if (positionOfFront().getLongitudinalPosition().getSI() > getMaximumDistance().getSI())
+            if (position(lane, getFront()).getSI() > getMaximumDistance().getSI())
             {
                 ContourPlotsModel.this.cars.remove(this);
                 return;
