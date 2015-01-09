@@ -44,13 +44,13 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
             final String[] elementNames, final Double[] initialValue, final boolean readOnly, int displayPriority)
             throws IncompatiblePropertyException
     {
+        super(displayPriority);
         this.shortName = shortName;
         this.description = description;
         this.names = elementNames;
         verifyProposedValues(initialValue);
         this.value = initialValue;
         this.readOnly = readOnly;
-        this.displayPriority = displayPriority;
     }
 
     /**

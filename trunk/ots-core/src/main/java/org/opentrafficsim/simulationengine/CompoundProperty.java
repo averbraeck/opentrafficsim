@@ -40,11 +40,11 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
     public CompoundProperty(final String shortName, final String description,
             final ArrayList<AbstractProperty<?>> initialValue, final boolean readOnly, final int displayPriority)
     {
+        super(displayPriority);
         this.shortName = shortName;
         this.description = description;
         this.value = null == initialValue ? new ArrayList<AbstractProperty<?>>() : initialValue;
         this.readOnly = readOnly;
-        this.displayPriority = displayPriority;
     }
 
     /** {@inheritDoc} */

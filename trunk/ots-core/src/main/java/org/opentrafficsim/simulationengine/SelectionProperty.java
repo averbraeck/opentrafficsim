@@ -39,12 +39,12 @@ public class SelectionProperty extends AbstractProperty<String>
     public SelectionProperty(final String shortName, final String description, final String[] options,
             final int initialDefaultOption, final boolean readOnly, int displayPriority)
     {
+        super(displayPriority);
         this.shortName = shortName;
         this.description = description;
         this.options = options;
         this.currentOption = initialDefaultOption;
         this.readOnly = readOnly;
-        this.displayPriority = displayPriority;
     }
 
     /** {@inheritDoc} */

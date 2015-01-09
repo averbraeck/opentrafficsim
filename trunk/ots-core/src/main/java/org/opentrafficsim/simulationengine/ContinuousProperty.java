@@ -48,6 +48,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
             final Double minimumValue, final Double maximumValue, String formatString, final boolean readOnly,
             int displayPriority)
     {
+        super(displayPriority);
         this.shortName = shortName;
         this.description = description;
         this.value = initialValue;
@@ -55,7 +56,6 @@ public class ContinuousProperty extends AbstractProperty<Double>
         this.maximumValue = maximumValue;
         this.format = formatString;
         this.readOnly = readOnly;
-        this.displayPriority = displayPriority;
     }
 
     /** {@inheritDoc} */
