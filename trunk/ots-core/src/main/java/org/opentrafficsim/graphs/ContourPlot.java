@@ -500,19 +500,9 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cachedYAxisBins = -1;
     }
 
-<<<<<<< .mine
     /** {@inheritDoc} */
     @Override
     public final void addData(final AbstractLaneBasedGTU<?> car) throws RemoteException
-=======
-    /**
-     * Add a fragment of a trajectory to this ContourPlot.
-     * @param car Car; the GTU that is being sampled (should be a GTU)
-     * @throws RemoteException on communications failure
-     * @throws NetworkException when car cannot be found on a lane
-     */
-    public final void addData(final Car<?> car) throws NetworkException, RemoteException
->>>>>>> .r606
     {
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();
