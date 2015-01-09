@@ -65,7 +65,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * Circular lane simulation demo.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 21 nov. 2014 <br>
@@ -79,7 +80,6 @@ public class CircularLane implements WrappableSimulation
     /** Create a CircularLane simulation. */
     public CircularLane()
     {
-<<<<<<< .mine
         this.properties.add(new IntegerProperty("Track length", "Circumference of the track", 2000, 500, 6000,
                 "Track length %dm", false, 10));
         this.properties.add(new ContinuousProperty("Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
@@ -94,23 +94,6 @@ public class CircularLane implements WrappableSimulation
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
         this.properties
                 .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
-=======
-        try
-        {
-            this.properties.add(new SelectionProperty("Car following model", "<html>The car following model determines "
-                + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
-                + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
-                + "personality of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false));
-            this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
-                "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"}, new Double[] {0.8,
-                    0.2}, false));
-            this.properties.add(new IntegerProperty("Track length", "Circumference of the track", 6000, 1000, 6000, false));
-        }
-        catch (IncompatiblePropertyException exception)
-        {
-            exception.printStackTrace();
-        }
->>>>>>> .r605
     }
 
     /**
@@ -175,16 +158,9 @@ public class CircularLane implements WrappableSimulation
     {
         LaneSimulationModel model = new LaneSimulationModel(userModifiedProperties);
         SimpleSimulator result =
-<<<<<<< .mine
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
-=======
-            new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
-                new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 1000,
-                    1000));
->>>>>>> .r605
         new ControlPanel(result);
 
         // Make the tab with the plots
@@ -220,7 +196,6 @@ public class CircularLane implements WrappableSimulation
         TablePanel charts = new TablePanel(columns, rows);
         result.getPanel().getTabbedPane().addTab("statistics", charts);
 
-<<<<<<< .mine
         for (int i = 0; i < graphCount; i++)
         {
             String graphName = graphs.get(i).getShortName();
@@ -272,47 +247,6 @@ public class CircularLane implements WrappableSimulation
             charts.setCell(container, i % columns, i / columns);
             model.getPlots().add(graph);
         }
-=======
-        // Make the four contour plots
-        ContourPlot cp;
-
-        cp =
-            new DensityContourPlot("DensityPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                model.lane.getLength());
-        cp.setTitle("Density Contour Graph");
-        cp.setExtendedState(Frame.MAXIMIZED_BOTH);
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 0, 0);
-
-        cp =
-            new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                model.lane.getLength());
-        cp.setTitle("Speed Contour Graph");
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 1, 0);
-
-        cp =
-            new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                model.lane.getLength());
-        cp.setTitle("FLow Contour Graph");
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 0, 1);
-
-        cp =
-            new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName(), model
-                .getMinimumDistance(), model.lane.getLength());
-        cp.setTitle("Acceleration Contour Graph");
-        model.getContourPlots().add(cp);
-        charts.setCell(cp.getContentPane(), 1, 1);
-
-        TrajectoryPlot trajectoryPlot =
-            new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName(),
-                new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane.getLength());
-        trajectoryPlot.setTitle("Trajectories");
-        charts.setCell(trajectoryPlot.getContentPane(), 2, 0);
-        model.getTrajectoryPlots().add(trajectoryPlot);
-
->>>>>>> .r605
         return result;
     }
 
@@ -328,16 +262,10 @@ public class CircularLane implements WrappableSimulation
     public String description()
     {
         return "<html><h1>Circular Lane simulation</h1>"
-<<<<<<< .mine
                 + "Vehicles are unequally distributed over a one lane ring road.<br />"
                 + "When simulation starts, all vehicles begin driving and some shockwaves may develop (depending on "
                 + "the selected track length and car following parameters).<br />"
                 + "Selected trajectory and contour plots are generated during the simulation.</html>";
-=======
-            + "Vehicles are unequally distributed over a one lane ring road.<br />"
-            + "When simulation starts, all vehicles begin driving and some shockwaves should develop.<br />"
-            + "Trajectories and contourplots are generated during the simulation.</html>";
->>>>>>> .r605
     }
 
     /** {@inheritDoc} */
@@ -352,7 +280,8 @@ public class CircularLane implements WrappableSimulation
 /**
  * Simulate traffic on a circular, one-lane road.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 21 nov. 2014 <br>
@@ -413,7 +342,7 @@ class LaneSimulationModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         double radius = 2000 / 2 / Math.PI;
@@ -447,42 +376,7 @@ class LaneSimulationModel implements OTSModelInterface
                     SelectionProperty sp = (SelectionProperty) ap;
                     if ("Car following model".equals(sp.getShortName()))
                     {
-<<<<<<< .mine
                         carFollowingModelName = sp.getValue();
-=======
-                        String modelName = sp.getValue();
-                        if (modelName.equals("IDM"))
-                        {
-                            this.carFollowingModelCars =
-                                new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                        TimeUnit.SECOND), 1d);
-                            this.carFollowingModelTrucks =
-                                new IDM(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                        TimeUnit.SECOND), 1d);
-                        }
-                        else if (modelName.equals("IDM+"))
-                        {
-                            this.carFollowingModelCars =
-                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                        TimeUnit.SECOND), 1d);
-                            this.carFollowingModelTrucks =
-                                new IDMPlus(
-                                    new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                        TimeUnit.SECOND), 1d);
-                        }
-                        else
-                        {
-                            throw new Error("Car following model " + modelName + " not implemented");
-                        }
->>>>>>> .r605
                     }
                 }
                 else if (ap instanceof ProbabilityDistributionProperty)
@@ -572,7 +466,8 @@ class LaneSimulationModel implements OTSModelInterface
             // this.lane = LaneFactory.makeLane("Lane", startEnd, startEnd, intermediateCoordinates, laneType,
             // this.simulator);
             this.lane =
-                LaneFactory.makeMultiLane("Lane", startEnd, startEnd, intermediateCoordinates, 1, laneType, this.simulator)[0];
+                    LaneFactory.makeMultiLane("Lane", startEnd, startEnd, intermediateCoordinates, 1, laneType,
+                            this.simulator)[0];
             // Put the (not very evenly spaced) cars on the track
             double trackLength = this.lane.getLength().getSI();
             double variability = (headway - 20) * headwayVariability;
@@ -591,7 +486,7 @@ class LaneSimulationModel implements OTSModelInterface
             }
             // Schedule regular updates of the graph
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
-                "drawGraphs", null);
+                    "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException exception)
         {
@@ -633,8 +528,8 @@ class LaneSimulationModel implements OTSModelInterface
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(
-                this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
+                    .getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -655,7 +550,7 @@ class LaneSimulationModel implements OTSModelInterface
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
             GTUFollowingModel gtuFollowingModel =
                     generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
@@ -663,14 +558,8 @@ class LaneSimulationModel implements OTSModelInterface
                 throw new Error("gtuFollowingModel is null");
             }
             IDMCar car =
-<<<<<<< .mine
                     new IDMCar(++this.carsCreated, null, this.simulator, gtuFollowingModel, vehicleLength,
                             this.simulator.getSimulatorTime().get(), initialPositions, initialSpeed);
-=======
-                new IDMCar(++this.carsCreated, null, this.simulator, generateTruck ? this.carFollowingModelTrucks
-                    : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(), initialPositions,
-                    initialSpeed);
->>>>>>> .r605
             this.cars.add(car);
         }
         catch (RemoteException | NamingException exception)
@@ -724,21 +613,21 @@ class LaneSimulationModel implements OTSModelInterface
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
          * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
-         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane positions
-         *            of the new IDMCar
+         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
+         *            positions of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          * @throws NamingException on ???
          * @throws RemoteException on Communications failure
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-            final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
-            final DoubleScalar.Abs<TimeUnit> initialTime,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
+                final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
+                final DoubleScalar.Abs<TimeUnit> initialTime,
+                final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+                final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
-                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                    SpeedUnit.KM_PER_HOUR), simulator);
+                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                            SpeedUnit.KM_PER_HOUR), simulator);
             try
             {
                 if (id >= 0)
@@ -785,7 +674,7 @@ class LaneSimulationModel implements OTSModelInterface
                 for (Lane l : map.keySet())
                 {
                     map.put(l, new DoubleScalar.Rel<LengthUnit>(map.get(l).getSI()
-                        % LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
+                            % LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 }
             }
             // Even more horrible hack; create a fake leader for the vehicle closest to the wrap around point
@@ -793,19 +682,23 @@ class LaneSimulationModel implements OTSModelInterface
             Lane leaderLane = leader.positions(getFront()).keySet().iterator().next();
             // Figure out the headway
             if (leader.position(LaneSimulationModel.this.lane, leader.getRear()).getSI() < this.position(
-                LaneSimulationModel.this.lane, this.getFront()).getSI())
+                    LaneSimulationModel.this.lane, this.getFront()).getSI())
             {
-                Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-                initialPositions.put(LaneSimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader.position(
-                    LaneSimulationModel.this.lane, leader.getFront(), getNextEvaluationTime()).getSI()
-                    + LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
+                Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                        new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+                initialPositions.put(
+                        LaneSimulationModel.this.lane,
+                        new DoubleScalar.Rel<LengthUnit>(leader.position(LaneSimulationModel.this.lane,
+                                leader.getFront(), getNextEvaluationTime()).getSI()
+                                + LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 try
                 {
                     // HACK FIXME (negative length trick)
                     IDMCar fakeLeader =
-                        new IDMCar(-99999, null, this.getSimulator(), this.getGTUFollowingModel(),
-                            new DoubleScalar.Rel<LengthUnit>(-leader.getLength().getSI(), LengthUnit.METER), this
-                                .getSimulator().getSimulatorTime().get(), initialPositions, leader.getLongitudinalVelocity());
+                            new IDMCar(-99999, null, this.getSimulator(), this.getGTUFollowingModel(),
+                                    new DoubleScalar.Rel<LengthUnit>(-leader.getLength().getSI(), LengthUnit.METER),
+                                    this.getSimulator().getSimulatorTime().get(), initialPositions,
+                                    leader.getLongitudinalVelocity());
                     leaders.add(fakeLeader);
                 }
                 catch (RemoteException exception)
@@ -814,12 +707,13 @@ class LaneSimulationModel implements OTSModelInterface
                 }
             }
             GTUFollowingModelResult cfmr =
-                this.getGTUFollowingModel().computeAcceleration(this, leaders, LaneSimulationModel.this.speedLimit);
+                    this.getGTUFollowingModel().computeAcceleration(this, leaders, LaneSimulationModel.this.speedLimit);
             setState(cfmr);
             // Add the movement of this Car to the contour plots
             addToPlots(this);
             // Schedule the next evaluation of this car
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move", null);
+            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
+                    null);
         }
     }
 
