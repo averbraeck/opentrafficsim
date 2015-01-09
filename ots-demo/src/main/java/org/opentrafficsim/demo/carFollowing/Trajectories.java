@@ -71,13 +71,28 @@ public class Trajectories implements WrappableSimulation
     {
         try
         {
+<<<<<<< .mine
+            this.properties
+                    .add(new SelectionProperty(
+                            "Car following model",
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
+                                    + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
+                                    + "personality of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 10));
+=======
             this.properties.add(new SelectionProperty("Car following model", "<html>The car following model determines "
                 + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
                 + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
                 + "personality of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false));
+>>>>>>> .r605
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
+<<<<<<< .mine
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                    new Double[]{0.8, 0.2}, false, 9));
+=======
                 "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"}, new Double[] {0.8,
                     0.2}, false));
+>>>>>>> .r605
         }
         catch (IncompatiblePropertyException exception)
         {
@@ -101,7 +116,9 @@ public class Trajectories implements WrappableSimulation
             {
                 try
                 {
-                    new SimulatorFrame("Trajectory Plots animation", new Trajectories().buildSimulator().getPanel());
+                    Trajectories trajectories = new Trajectories();
+                    new SimulatorFrame("Trajectory Plots animation", trajectories.buildSimulator(
+                            trajectories.getProperties()).getPanel());
                 }
                 catch (RemoteException | SimRuntimeException exception)
                 {
@@ -117,9 +134,10 @@ public class Trajectories implements WrappableSimulation
      * @throws SimRuntimeException
      * @throws RemoteException
      */
-    public SimpleSimulator buildSimulator() throws RemoteException, SimRuntimeException
+    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
+            throws RemoteException, SimRuntimeException
     {
-        TrajectoriesModel model = new TrajectoriesModel(this.properties);
+        TrajectoriesModel model = new TrajectoriesModel(userModifiedProperties);
         SimpleSimulator result =
             new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                 new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
@@ -470,9 +488,15 @@ class TrajectoriesModel implements OTSModelInterface
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
         {
+<<<<<<< .mine
+            super(id, gtuType, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), carFollowingModel,
+                    initialLongitudinalPositions, initialSpeed, simulator);
+=======
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                     SpeedUnit.KM_PER_HOUR), simulator);
+>>>>>>> .r605
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
