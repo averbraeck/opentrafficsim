@@ -17,7 +17,16 @@ import java.util.Iterator;
 public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T>>
 {
     /** Determines sorting order when properties are displayed to the user. */
-    protected int displayPriority;
+    private final int displayPriority;
+
+    /**
+     * @param displayPriority sorting order when properties are displayed to the user.
+     */
+    public AbstractProperty(final int displayPriority)
+    {
+        super();
+        this.displayPriority = displayPriority;
+    }
 
     /**
      * Retrieve the current value of the property.
@@ -94,7 +103,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
          * Construct a new PropertyIterator.
          * @param ap AbstractProperty; root of the tree to iterate over
          */
-        public PropertyIterator(AbstractProperty<T> ap)
+        public PropertyIterator(final AbstractProperty<T> ap)
         {
             this.currentIndex = 0;
             this.list = new ArrayList<AbstractProperty<T>>();
@@ -107,7 +116,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
          * @param cp
          */
         @SuppressWarnings("unchecked")
-        private void addToList(AbstractProperty<T> cp)
+        private void addToList(final AbstractProperty<T> cp)
         {
             this.list.add(cp);
             if (cp instanceof CompoundProperty)

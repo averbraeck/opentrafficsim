@@ -34,11 +34,11 @@ public class BooleanProperty extends AbstractProperty<Boolean>
     public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
             final boolean readOnly, final int displayPriority)
     {
+        super(displayPriority);
         this.shortName = shortName;
         this.description = description;
         this.value = initialValue;
         this.readOnly = readOnly;
-        this.displayPriority = displayPriority;
     }
 
     /** {@inheritDoc} */
