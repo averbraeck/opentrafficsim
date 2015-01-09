@@ -502,7 +502,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** {@inheritDoc} */
     @Override
-    public final void addData(final AbstractLaneBasedGTU<?> car) throws RemoteException
+    public final void addData(final AbstractLaneBasedGTU<?> car) throws RemoteException, NetworkException
     {
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();
