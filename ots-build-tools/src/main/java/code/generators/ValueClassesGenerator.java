@@ -102,7 +102,8 @@ public final class ValueClassesGenerator
                                 new String[]{"return String.format(\"%%%d.%d%s\", width, precision, converter);"},
                                 false) + buildFormatMethods(cg, "float") + buildFormatMethods(cg, "double"));
         cg.generateInterface("value", "MathFunctions", new String[]{"java.io.Serializable"},
-                "Interface to force all functions of Math to be implemented.", null, "extends Serializable",
+                "Interface to force all functions of Math to be implemented.",
+                new String[]{"<T> the type of the value that the functions operate on"}, "<T> extends Serializable",
                 buildAllMathFunctions(cg));
         cg.generateInterface(
                 "value",
@@ -249,11 +250,11 @@ public final class ValueClassesGenerator
                 type + "MathFunctions",
                 new String[]{"org.opentrafficsim.core.value.MathFunctions"},
                 "Force implementation of multiply and divide.",
-                null,
-                "extends MathFunctions",
-                cg.buildMethod(cg.indent(1), "|void|multiply", "Scale the value(s) by a factor.",
+                new String[]{"<T> the type that these MathFunctions manipulate"},
+                "<T> extends MathFunctions<T>",
+                cg.buildMethod(cg.indent(1), "|T|multiply|the modified T", "Scale the value(s) by a factor.",
                         new String[]{type.toLowerCase() + "|factor|the multiplier"}, null, null, null, false)
-                        + cg.buildMethod(cg.indent(1), "|void|divide",
+                        + cg.buildMethod(cg.indent(1), "|T|divide|the modified T",
                                 "Scale the value(s) by the inverse of a factor; i.e. a divisor.",
                                 new String[]{type.toLowerCase() + "|divisor|the divisor"}, null, null, null, false));
         cg.generateFinalClass("value.v" + type.toLowerCase(), type + "MathFunctionsImpl",
@@ -432,8 +433,8 @@ public final class ValueClassesGenerator
         StringBuilder construction = new StringBuilder();
         for (MathFunction mf : MathFunction.mathFunctions)
         {
-            construction.append(cg.buildMethod(cg.indent(1), "|void|" + mf.name, mf.description, null == mf.argument
-                    ? new String[]{} : new String[]{mf.argument}, null, null, null, false));
+            construction.append(cg.buildMethod(cg.indent(1), "|T|" + mf.name + "|the modified T", mf.description,
+                    null == mf.argument ? new String[]{} : new String[]{mf.argument}, null, null, null, false));
         }
         return construction.toString();
     }
@@ -670,15 +671,15 @@ public final class ValueClassesGenerator
                                 "get" + aggregate + "SI().assign(" + type.substring(0, 1).toLowerCase() + ");"}, false));
             }
             code.append(cg.buildBlockComment(outerIndent, "MATH METHODS"));
-            code.append(buildVectorFunctions(cg, outerIndent, type, dimensions));
-            code.append(cg.buildMethod(outerIndent, "public final|void|multiply", null,
-                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null,
-                    new String[]{0 == dimensions ? "setValueSI(getSI() * constant);" : "assign(" + type
-                            + "Functions.mult(constant));"}, false));
-            code.append(cg.buildMethod(outerIndent, "public final|void|divide", null,
-                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null,
-                    new String[]{0 == dimensions ? "setValueSI(getSI() / constant);" : "assign(" + type
-                            + "Functions.div(constant));"}, false));
+            code.append(buildVectorFunctions(cg, outerIndent, type, aggregate, dimensions));
+            code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate + "<U>|multiply", null,
+                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null, new String[]{
+                            0 == dimensions ? "setValueSI(getSI() * constant);" : "assign(" + type
+                                    + "Functions.mult(constant));", "return this;"}, false));
+            code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate + "<U>|divide", null,
+                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null, new String[]{
+                            0 == dimensions ? "setValueSI(getSI() / constant);" : "assign(" + type
+                                    + "Functions.div(constant));", "return this;"}, false));
             code.append(cg.buildBlockComment(outerIndent, "NON-STATIC METHODS"));
             code.append(buildInOrDecrementValueByValue(cg, outerIndent, type, aggregate, pluralAggregateType,
                     dimensions, true));
@@ -1542,8 +1543,9 @@ public final class ValueClassesGenerator
                         + (mutable ? type + aggregate : 0 == dimensions ? "Scalar" : "AbstractValue")
                         + "<U>"
                         + (dimensions > 0 || mutable ? " implements "
-                                + (0 == dimensions ? type + "MathFunctions" : (mutable ? "\r\n" + cg.indent(2)
-                                        + "Write" + type + aggregate + "Functions<U>, " + type + "MathFunctions"
+                                + (0 == dimensions ? type + "MathFunctions<" + type + aggregate + "<U>>" : (mutable
+                                        ? "\r\n" + cg.indent(2) + "Write" + type + aggregate + "Functions<U>, " + type
+                                                + "MathFunctions<Mutable" + type + aggregate + "<U>>"
                                         : "Serializable,\r\n" + cg.indent(1) + "ReadOnly" + type + aggregate
                                                 + "Functions<U>")) : ""), code.toString());
     }
@@ -1842,11 +1844,12 @@ public final class ValueClassesGenerator
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
+     * @param aggregate TODO
      * @param dimensions int; number of dimensions of the value
      * @return String; Java code
      */
     private static String buildVectorFunctions(final CodeGenerator cg, final String indent, final String type,
-            final int dimensions)
+            String aggregate, final int dimensions)
     {
         StringBuilder construction = new StringBuilder();
         final String cast = (type.startsWith("F") ? "(float)" : null);
@@ -1865,17 +1868,21 @@ public final class ValueClassesGenerator
                             "setValueSI(" + (null != cast && mf.castToFloatRequired ? cast + " " : "") + "Math."
                                     + mf.name + "(" + "getSI()" + (null != mf.argument ? ", x" : "") + ")" + ");";
                 }
-                construction.append(cg.buildMethod(indent, "public final|void|" + mf.name, null, null != mf.argument
-                        ? new String[]{"final double|x|"} : null, null, null, new String[]{
-                        null != mf.toDoText ? "// TODO " + mf.toDoText : null, code}, false));
+                construction.append(cg.buildMethod(indent,
+                        "public final|Mutable" + type + aggregate + "<U>|" + mf.name, null, null != mf.argument
+                                ? new String[]{"final double|x|"} : null, null, null, new String[]{
+                                null != mf.toDoText ? "// TODO " + mf.toDoText : null, code, "return this;"}, false));
             }
             else
             {
-                construction.append(cg.buildMethod(indent, "public final|void|" + mf.name, null, null != mf.argument
-                        ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{"assign(" + type
-                        + (mf.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.") + mf.name
-                        + (null != mf.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
-                        + (null != mf.argument ? "x)" : "") + ");"}, false));
+                construction.append(cg.buildMethod(indent,
+                        "public final|Mutable" + type + aggregate + "<U>|" + mf.name, null, null != mf.argument
+                                ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{
+                                "assign(" + type
+                                        + (mf.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.")
+                                        + mf.name
+                                        + (null != mf.argument ? "(" + (type.startsWith("F") ? "(float) " : "") : "")
+                                        + (null != mf.argument ? "x)" : "") + ");", "return this;"}, false));
             }
         }
         return construction.toString();
