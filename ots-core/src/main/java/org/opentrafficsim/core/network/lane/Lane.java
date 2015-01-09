@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -98,8 +100,10 @@ public class Lane extends CrossSectionElement
      * @param gtu the LaneBasedGTU for which to trigger the sensors.
      * @throws RemoteException when simulation time cannot be retrieved.
      * @throws NetworkException when GTU not on this lane.
+     * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleTriggers(final LaneBasedGTU<?> gtu) throws RemoteException, NetworkException
+    public final void scheduleTriggers(final LaneBasedGTU<?> gtu) throws RemoteException, NetworkException,
+        SimRuntimeException
     {
         double mStart = gtu.position(this, gtu.getFront()).getSI();
         double mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime()).getSI();
@@ -111,14 +115,14 @@ public class Lane extends CrossSectionElement
             double d = Math.max(0.0, sensor.getLongitudinalPositionSI() - mStart);
             // how much time to travel d meters? 0.5*a*t^2 + v0*t - d = 0
             // => t = (-v0 +/- sqrt(v0^2 - 4*0.5*a*(-d))) / 2*0.5*a = (-v0 +/- sqrt(v0^2 + 2*a*d)) / a
-//            double v0 = gtu.getSpeed();
-//            double a = gtu.getAcceleration();
-//            double sq = Math.sqrt(v0 * v0 + 2.0 * a * d);
-//            double t1 = (v0 + sq) / a;
-//            double t2 = (v0 - sq) / a;
-//            double t = t1 < 0 ? t2 : t1;
-//            gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor, "trigger",
-//                new Object[] {gtu});
+            double v0 = gtu.getLongitudinalVelocity().getSI();
+            double a = gtu.getAcceleration().getSI();
+            double sq = Math.sqrt(v0 * v0 + 2.0 * a * d);
+            double t1 = (v0 + sq) / a;
+            double t2 = (v0 - sq) / a;
+            double t = t1 < 0 ? t2 : t1;
+            gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor, "trigger",
+                new Object[] {gtu});
         }
     }
 
@@ -145,7 +149,7 @@ public class Lane extends CrossSectionElement
         {
             this.gtuList.add(index, gtu);
             // schedule the triggers for the remainder of this timestep
-            
+
         }
     }
 

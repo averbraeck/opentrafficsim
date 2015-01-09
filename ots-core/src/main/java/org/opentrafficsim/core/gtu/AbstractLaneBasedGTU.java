@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -131,15 +132,19 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         return new DoubleScalar.Abs<TimeUnit>(this.nextEvaluationTime);
     }
 
-    /**
-     * Return the acceleration at a specified time.
-     * @param when DoubleScalarAbs&lt;TimeUnit&gt;; the time for which the acceleration must be returned
-     * @return DoubleScalarAbs&lt;AccelerationUnit&gt;; the acceleration at the given time
-     */
+    /** {@inheritDoc} */
+    @Override
     public final DoubleScalar.Abs<AccelerationUnit> getAcceleration(final DoubleScalar.Abs<TimeUnit> when)
     {
         // Currently the acceleration is independent of when; it is constant during the evaluation interval
         return new DoubleScalar.Abs<AccelerationUnit>(this.acceleration);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException
+    {
+        return getAcceleration(getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
@@ -175,8 +180,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @param cfmr GTUFollowingModelResult; the new state of this GTU
      * @throws RemoteException when simulator time could not be retrieved or sensor trigger scheduling fails.
      * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws SimRuntimeException when sensor trigger(s) cannot be scheduled on the simulator.
      */
-    public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException
+    public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException,
+        SimRuntimeException
     {
         for (Lane lane : this.longitudinalPositions.keySet())
         {
@@ -188,12 +195,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.getValidUntil();
         this.acceleration = cfmr.getAcceleration();
-        
+
         // for now: schedule all sensor triggers that are going to happen in the next timestep.
         for (Lane lane : this.longitudinalPositions.keySet())
         {
             lane.scheduleTriggers(this);
-        }        
+        }
     }
 
     /** {@inheritDoc} */
