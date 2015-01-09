@@ -45,8 +45,8 @@ public class ContinuousProperty extends AbstractProperty<Double>
      * @param displayPriority int; the displayPriority of the new ContinuousProperty
      */
     public ContinuousProperty(final String shortName, final String description, final Double initialValue,
-            final Double minimumValue, final Double maximumValue, String formatString, final boolean readOnly,
-            int displayPriority)
+            final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
+            final int displayPriority)
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -60,7 +60,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
 
     /** {@inheritDoc} */
     @Override
-    public Double getValue()
+    public final Double getValue()
     {
         return this.value;
     }
@@ -68,7 +68,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
     /**
      * @return the minimum value
      */
-    public Double getMinimumValue()
+    public final Double getMinimumValue()
     {
         return this.minimumValue;
     }
@@ -76,28 +76,28 @@ public class ContinuousProperty extends AbstractProperty<Double>
     /**
      * @return the minimum value
      */
-    public Double getMaximumValue()
+    public final Double getMaximumValue()
     {
         return this.maximumValue;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getShortName()
+    public final String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getDescription()
+    public final String getDescription()
     {
         return this.description;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(Double newValue) throws IncompatiblePropertyException
+    public final void setValue(final Double newValue) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
@@ -113,7 +113,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
 
     /** {@inheritDoc} */
     @Override
-    public boolean isReadOnly()
+    public final boolean isReadOnly()
     {
         return false;
     }
@@ -121,7 +121,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
     /**
      * @return String; the format string to display the value
      */
-    public String getFormatString()
+    public final String getFormatString()
     {
         return this.format;
     }

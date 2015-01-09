@@ -45,8 +45,8 @@ public class IntegerProperty extends AbstractProperty<Integer>
      * @param displayPriority int; the display priority of the new IntegerProperty
      */
     public IntegerProperty(final String shortName, final String description, final Integer initialValue,
-            final Integer minimumValue, final Integer maximumValue, String formatString, final boolean readOnly,
-            int displayPriority)
+            final Integer minimumValue, final Integer maximumValue, final String formatString, final boolean readOnly,
+            final int displayPriority)
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -123,7 +123,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
     /**
      * @return String; the format string to display the value
      */
-    public String getFormatString()
+    public final String getFormatString()
     {
         return this.format;
     }

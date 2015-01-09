@@ -40,7 +40,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Peter's improved simulation control panel.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 11 dec. 2014 <br>
@@ -83,14 +84,15 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.target = simulator.getSimulator();
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel = simulator.getPanel();
+        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
+                simulator.getPanel();
         SimulatorControlPanel controlPanel =
-            (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+                (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
         JPanel buttonPanel = (JPanel) controlPanel.getComponent(0);
         buttonPanel.removeAll();
         buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
         buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
-            "Execute all events scheduled for the current time", true));
+                "Execute all events scheduled for the current time", true));
         buttonPanel.add(makeButton("runButton", "/Play.png", "Run", "Run the simulation at maximum speed", true));
         buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", "Pause the simulator", false));
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
@@ -111,7 +113,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * @return JButton
      */
     private JButton makeButton(final String name, final String iconPath, final String actionCommand,
-        final String toolTipText, final boolean enabled)
+            final String toolTipText, final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
         JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
@@ -153,9 +155,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 double now = this.simulator.getSimulatorTime().get().getSI();
                 // System.out.println("now is " + now);
                 this.stopAtEvent =
-                    new SimEvent<OTSSimTimeDouble>(
-                        new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SECOND)),
-                        SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator", null);
+                        new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(now,
+                                TimeUnit.SECOND)), SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator",
+                                null);
                 try
                 {
                     this.simulator.scheduleEvent(this.stopAtEvent);
@@ -163,7 +165,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
-                        + "while trying to schedule an autoPauseSimulator event at the current simulator time");
+                            + "while trying to schedule an autoPauseSimulator event at the current simulator time");
                 }
                 this.target.start();
             }
@@ -241,8 +243,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 // Insert another autoPauseSimulator event just before what is now the time of the next event
                 // and let the simulator time increment to that time
                 this.stopAtEvent =
-                    new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(nextTick,
-                        TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
+                        new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(nextTick,
+                                TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator",
+                                null);
                 // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
@@ -252,7 +255,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
-                        "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
+                            "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
             else
@@ -301,9 +304,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         else
         {
             this.stopAtEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(
-                    new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this,
-                    "autoPauseSimulator", null);
+                    new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(stopTime,
+                            TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
             try
             {
                 this.simulator.scheduleEvent(this.stopAtEvent);
@@ -311,7 +313,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             catch (SimRuntimeException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
-                    "Caught an exception while trying to schedule an autoPauseSimulator event");
+                        "Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
 
@@ -374,8 +376,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
                 getClockLabel().setText(
-                    String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
-                        fractionalSeconds));
+                        String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
+                                fractionalSeconds));
                 getClockLabel().repaint();
             }
         }
@@ -435,17 +437,20 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             int integerPart = (int) Math.floor(v);
             int fraction = (int) Math.floor((v - integerPart) * 1000);
             String text =
-                String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60, fraction);
+                    String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60,
+                            fraction);
             this.setText(text);
         }
     }
 
     /**
      * Extension of a DefaultFormatter that uses a regular expression. <br />
-     * Derived from <a href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
+     * Derived from <a
+     * href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version 12 dec. 2014 <br>

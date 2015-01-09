@@ -18,7 +18,7 @@ import java.util.Iterator;
 public class CompoundProperty extends AbstractProperty<ArrayList<AbstractProperty<?>>>
 {
     /** Properties contained in this one. */
-    ArrayList<AbstractProperty<?>> value;
+    private ArrayList<AbstractProperty<?>> value;
 
     /** The shortName of the property. */
     private String shortName;
@@ -49,28 +49,28 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getValue()
+    public final ArrayList<AbstractProperty<?>> getValue()
     {
         return new ArrayList<AbstractProperty<?>>(this.value);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getShortName()
+    public final String getShortName()
     {
         return this.shortName;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getDescription()
+    public final String getDescription()
     {
         return this.description;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(ArrayList<AbstractProperty<?>> newValue) throws IncompatiblePropertyException
+    public final void setValue(final ArrayList<AbstractProperty<?>> newValue) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
@@ -81,7 +81,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
 
     /** {@inheritDoc} */
     @Override
-    public boolean isReadOnly()
+    public final boolean isReadOnly()
     {
         return this.readOnly;
     }
@@ -93,7 +93,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * @return AbstractProperty&lt;?&gt;; the first matching embedded AbstractProperty or null if there is no embedded
      *         AbstractProperty with the specified name
      */
-    public AbstractProperty<?> findByShortName(final String name)
+    public final AbstractProperty<?> findByShortName(final String name)
     {
         //System.out.println("Searching property " + name);
         Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> i = this.iterator();
@@ -115,13 +115,13 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * @param ap AbstractProperty; the property to add
      * @throws IncompatiblePropertyException when this CompoundProperty is read-only, or index is out of range
      */
-    public void add(int index, AbstractProperty<?> ap) throws IncompatiblePropertyException
+    public final void add(final int index, final AbstractProperty<?> ap) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
             throw new IncompatiblePropertyException("Cannot modify a read-only CompoundProperty");
         }
-        if (index < 0 || (index > this.value.size()))
+        if (index < 0 || index > this.value.size())
         {
             throw new IncompatiblePropertyException("index is out of range");
         }
@@ -133,7 +133,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * @param ap AbstractProperty; the property to add
      * @throws IncompatiblePropertyException when this CompoundProperty is read-only
      */
-    public void add(AbstractProperty<?> ap) throws IncompatiblePropertyException
+    public final void add(final AbstractProperty<?> ap) throws IncompatiblePropertyException
     {
         add(this.value.size(), ap);
     }
@@ -143,13 +143,13 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * @param index int; the position of the sub property to remove
      * @throws IncompatiblePropertyException when this CompoundProperty is read-only, or index is out of range
      */
-    public void remove(int index) throws IncompatiblePropertyException
+    public final void remove(final int index) throws IncompatiblePropertyException
     {
         if (this.readOnly)
         {
             throw new IncompatiblePropertyException("Cannot modify a read-only CompoundProperty");
         }
-        if (index < 0 || (index >= this.value.size()))
+        if (index < 0 || index >= this.value.size())
         {
             throw new IncompatiblePropertyException("index is out of range");
         }
@@ -160,7 +160,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * Return the number of sub properties of this CompoundProperty.
      * @return int; the number of sub properties of this CompoundProperty
      */
-    public int size()
+    public final int size()
     {
         return this.value.size();
     }
@@ -171,9 +171,9 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * @return AbstractProperty; the sub property at the specified index
      * @throws IncompatiblePropertyException when index is out of range
      */
-    public AbstractProperty<?> get(int index) throws IncompatiblePropertyException
+    public final AbstractProperty<?> get(final int index) throws IncompatiblePropertyException
     {
-        if (index < 0 || (index >= this.value.size()))
+        if (index < 0 || index >= this.value.size())
         {
             throw new IncompatiblePropertyException("index is out of range");
         }
@@ -184,7 +184,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * Return the sub-items in display order.
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the sub-items in display order
      */
-    public ArrayList<AbstractProperty<?>> displayOrderedValue()
+    public final ArrayList<AbstractProperty<?>> displayOrderedValue()
     {
         ArrayList<AbstractProperty<?>> result = new ArrayList<AbstractProperty<?>>(this.value);
         final ArrayList<AbstractProperty<?>> list = this.value;
@@ -192,7 +192,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
         {
 
             @Override
-            public int compare(AbstractProperty<?> arg0, AbstractProperty<?> arg1)
+            public int compare(final AbstractProperty<?> arg0, final AbstractProperty<?> arg1)
             {
                 int dp0 = arg0.getDisplayPriority();
                 int dp1 = arg1.getDisplayPriority();

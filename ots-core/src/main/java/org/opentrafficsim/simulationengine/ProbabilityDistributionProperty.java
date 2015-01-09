@@ -33,15 +33,13 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @param description String; the description of the new ProbabilityDistributionProperty (may use HTML markup)
      * @param elementNames String[]; names of the elements that, together, add up to probability 1.0
      * @param initialValue Double[]; array of Double values
-     * @param readOnly boolean; if true this ProbabilityDistributionProperty can not be altered <<<<<<< .mine
+     * @param readOnly boolean; if true this ProbabilityDistributionProperty can not be altered
      * @param displayPriority int; the display priority of the new ProbabilityDistributionProperty
      * @throws IncompatiblePropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
-     *             the sum of the values is not equal to 1.0 within a small error margin =======
-     * @throws IncompatiblePropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
-     *             the sum of the values is not equal to 1.0 within a small error margin >>>>>>> .r606
+     *             the sum of the values is not equal to 1.0 within a small error margin
      */
     public ProbabilityDistributionProperty(final String shortName, final String description,
-            final String[] elementNames, final Double[] initialValue, final boolean readOnly, int displayPriority)
+            final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
             throws IncompatiblePropertyException
     {
         super(displayPriority);
