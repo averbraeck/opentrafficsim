@@ -32,11 +32,7 @@ public class BooleanProperty extends AbstractProperty<Boolean>
      * @param displayPriority int; the displayPriority of the new BooleanProperty
      */
     public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
-<<<<<<< .mine
             final boolean readOnly, final int displayPriority)
-=======
-        final boolean readOnly)
->>>>>>> .r606
     {
         this.shortName = shortName;
         this.description = description;
