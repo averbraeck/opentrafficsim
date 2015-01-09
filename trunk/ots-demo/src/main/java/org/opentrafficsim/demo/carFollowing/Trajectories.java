@@ -490,9 +490,9 @@ class TrajectoriesModel implements OTSModelInterface
          */
         protected final void move() throws RemoteException, NetworkException, SimRuntimeException
         {
-            Lane currentLane = getPositions(getFront()).keySet().iterator().next();
+            Lane currentLane = positions(getFront()).keySet().iterator().next();
             // System.out.println("move " + getId());
-            if (getPosition(currentLane, getFront()).getSI() > getMaximumDistance().getSI())
+            if (position(currentLane, getFront()).getSI() > getMaximumDistance().getSI())
             {
                 TrajectoriesModel.this.cars.remove(this);
                 return;
@@ -511,8 +511,8 @@ class TrajectoriesModel implements OTSModelInterface
             {
                 leaders.clear();
                 leaders.add(TrajectoriesModel.this.block);
-                if (getPosition(currentLane, getFront()).getSI() > 3850
-                    && getPosition(currentLane, getFront()).getSI() < 4000 && getId() == 57
+                if (position(currentLane, getFront()).getSI() > 3850
+                    && position(currentLane, getFront()).getSI() < 4000 && getId() == 57
                     && getNextEvaluationTime().getSI() > 312)
                 {
                     System.out.println("Pas op; vehicle " + this);

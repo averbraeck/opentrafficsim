@@ -550,9 +550,9 @@ class LaneSimulationModel implements OTSModelInterface
                 leaders.add(LaneSimulationModel.this.cars.get(0));
             }
             // Horrible hack; wrap the position back to zero when vehicle exceeds length of the circuit
-            if (getPosition(lane, getFront()).getSI() > LaneSimulationModel.this.lane.getLength().getSI())
+            if (position(lane, getFront()).getSI() > LaneSimulationModel.this.lane.getLength().getSI())
             {
-                Map<Lane, DoubleScalar.Rel<LengthUnit>> map = this.getPositions(getFront());
+                Map<Lane, DoubleScalar.Rel<LengthUnit>> map = this.positions(getFront());
                 for (Lane l : map.keySet())
                 {
                     map.put(l, new DoubleScalar.Rel<LengthUnit>(map.get(l).getSI()
@@ -561,13 +561,13 @@ class LaneSimulationModel implements OTSModelInterface
             }
             // Even more horrible hack; create a fake leader for the vehicle closest to the wrap around point
             Car<Integer> leader = leaders.iterator().next();
-            Lane leaderLane = leader.getPositions(getFront()).keySet().iterator().next();
+            Lane leaderLane = leader.positions(getFront()).keySet().iterator().next();
             // Figure out the headway
-            if (leader.getPosition(LaneSimulationModel.this.lane, leader.getRear()).getSI() < this.getPosition(
+            if (leader.position(LaneSimulationModel.this.lane, leader.getRear()).getSI() < this.position(
                 LaneSimulationModel.this.lane, this.getFront()).getSI())
             {
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-                initialPositions.put(LaneSimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader.getPosition(
+                initialPositions.put(LaneSimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader.position(
                     LaneSimulationModel.this.lane, leader.getFront(), getNextEvaluationTime()).getSI()
                     + LaneSimulationModel.this.lane.getLength().getSI(), LengthUnit.METER));
                 try
