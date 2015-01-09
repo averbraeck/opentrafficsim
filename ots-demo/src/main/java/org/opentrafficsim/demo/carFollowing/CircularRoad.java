@@ -602,7 +602,7 @@ class RoadSimulationModel implements OTSModelInterface
             }
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
-            Lane lane = getPositions(getFront()).keySet().iterator().next();
+            Lane lane = positions(getFront()).keySet().iterator().next();
             int laneIndex = -1;
             for (int i = 0; i < RoadSimulationModel.this.lanes.length; i++)
             {
@@ -616,7 +616,7 @@ class RoadSimulationModel implements OTSModelInterface
                 throw new Error("Cannot find lane of vehicle " + this);
             }
             DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
-            DoubleScalar.Rel<LengthUnit> longitudinalPosition = getPosition(lane, getFront(), when);
+            DoubleScalar.Rel<LengthUnit> longitudinalPosition = position(lane, getFront(), when);
             double relativePosition = longitudinalPosition.getSI() / lane.getLength().getSI();
             Collection<AbstractLaneBasedGTU<?>> sameLaneTraffic = carsInSpecifiedLane(laneIndex);
             Collection<AbstractLaneBasedGTU<?>> leftLaneTraffic = carsInSpecifiedLane(laneIndex - 1);
@@ -631,7 +631,8 @@ class RoadSimulationModel implements OTSModelInterface
             if (lcmr.getLaneChange() != null)
             {
                 // Remember at what ratio on the old lane the vehicle was at the PREVIOUS time step
-                Map<Lane, Rel<LengthUnit>> longitudinalPositions = getPositions(getFront());
+                // FIXME: the longitudinal positions map should not be editable from the outside...
+                Map<Lane, Rel<LengthUnit>> longitudinalPositions = getLongitudinalPositions();
                 DoubleScalar.Rel<LengthUnit> oldPosition = longitudinalPositions.get(lane);
                 double oldRatio = oldPosition.getSI() / lane.getLength().getSI();
                 // Remove vehicle from it's current lane
@@ -694,7 +695,7 @@ class RoadSimulationModel implements OTSModelInterface
                 LaneLocation ll = null;
                 try
                 {
-                    ll = new LaneLocation(lane, car.getPosition(lane, car.getFront(), when));
+                    ll = new LaneLocation(lane, car.position(lane, car.getFront(), when));
                 }
                 catch (NetworkException exception)
                 {
@@ -706,7 +707,8 @@ class RoadSimulationModel implements OTSModelInterface
                     // It is wrong that we can modify it, but for now we'll make use of that mistake...
                     try
                     {
-                        Map<Lane, Rel<LengthUnit>> relativePositions = car.getPositions(car.getFront());
+                        // FIXME: the longitudinal positions map should not be editable from the outside...
+                        Map<Lane, Rel<LengthUnit>> relativePositions = car.getLongitudinalPositions();
                         double relativePosition = relativePositions.get(lane).getSI() / lane.getLength().getSI();
                         // System.out.println("Wrapping car " + car.getId() + " in lane " + laneIndex +
                         // " back to position 0");
@@ -746,13 +748,13 @@ class RoadSimulationModel implements OTSModelInterface
         try
         {
             DoubleScalar.Abs<TimeUnit> when = carsInLane.get(0).getSimulator().getSimulatorTime().get();
-            Lane lane = carsInLane.get(0).getPositions(carsInLane.get(0).getFront()).keySet().iterator().next();
+            Lane lane = carsInLane.get(0).positions(carsInLane.get(0).getFront()).keySet().iterator().next();
             double laneLength = lane.getLength().getSI();
             int result;
             for (result = 0; result < carsInLane.size(); result++)
             {
                 Car<Integer> pivotCar = carsInLane.get(result);
-                double pivotRelativePosition = pivotCar.getPosition(lane, pivotCar.getFront(), when).getSI() / laneLength;
+                double pivotRelativePosition = pivotCar.position(lane, pivotCar.getFront(), when).getSI() / laneLength;
                 if (pivotRelativePosition > relativePosition)
                 {
                     break;
@@ -794,7 +796,7 @@ class RoadSimulationModel implements OTSModelInterface
             Car<Integer> prototype = (Car<Integer>) result.get(result.size() - 1);
             Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             DoubleScalar.Abs<TimeUnit> when = RoadSimulationModel.this.simulator.getSimulatorTime().get();
-            double position = prototype.getPosition(lane, prototype.getFront(), when).getSI();
+            double position = prototype.position(lane, prototype.getFront(), when).getSI();
             if (position > 0)
             {
                 position -= laneLength;
@@ -808,7 +810,7 @@ class RoadSimulationModel implements OTSModelInterface
             result.add(0, fakeFollower);
             // Add a wrapped copy of the first (now second) car at the end
             prototype = (Car<Integer>) result.get(1);
-            position = prototype.getPosition(lane, prototype.getFront(), when).getSI();
+            position = prototype.position(lane, prototype.getFront(), when).getSI();
             if (position < laneLength)
             {
                 position += laneLength;
@@ -842,19 +844,19 @@ class RoadSimulationModel implements OTSModelInterface
         try
         {
             Car<Integer> first = list.get(0);
-            Lane lane = first.getPositions(first.getFront()).keySet().iterator().next();
+            Lane lane = first.positions(first.getFront()).keySet().iterator().next();
             DoubleScalar.Abs<TimeUnit> when = first.getSimulator().getSimulatorTime().get();
-            double position = first.getPosition(lane, first.getFront(), when).getSI();
+            double position = first.position(lane, first.getFront(), when).getSI();
             for (int rank = 1; rank < list.size(); rank++)
             {
                 Car<Integer> other = list.get(rank);
-                Lane otherLane = other.getPositions(other.getFront()).keySet().iterator().next();
+                Lane otherLane = other.positions(other.getFront()).keySet().iterator().next();
                 if (lane != otherLane)
                 {
                     printList(this.cars.indexOf(list));
                     stopSimulator(first.getSimulator(), "cars are not all in the same lane");
                 }
-                double otherPosition = other.getPosition(lane, other.getFront(), when).getSI();
+                double otherPosition = other.position(lane, other.getFront(), when).getSI();
                 if (otherPosition <= position)
                 {
                     printList(this.cars.indexOf(list));
@@ -884,7 +886,7 @@ class RoadSimulationModel implements OTSModelInterface
             try
             {
                 double relativePosition =
-                    car.getPosition(this.lanes[laneIndex], car.getFront(), this.simulator.getSimulatorTime().get()).getSI()
+                    car.position(this.lanes[laneIndex], car.getFront(), this.simulator.getSimulatorTime().get()).getSI()
                         / this.lanes[laneIndex].getLength().getSI();
                 System.out.println(String.format("lane %d rank %2d relpos %7.5f: %s", laneIndex, rank, relativePosition, car
                     .toString()));

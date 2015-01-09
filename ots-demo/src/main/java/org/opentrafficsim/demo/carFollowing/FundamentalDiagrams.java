@@ -538,8 +538,8 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             {
                 return;
             }
-            Lane lane = getPositions(getFront()).keySet().iterator().next();
-            if (getPosition(lane, getFront()).getSI() > getMaximumDistance().getSI())
+            Lane lane = positions(getFront()).keySet().iterator().next();
+            if (position(lane, getFront()).getSI() > getMaximumDistance().getSI())
             {
                 FundamentalDiagramPlotsModel.this.cars.remove(this);
                 return;
@@ -582,9 +582,9 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             DoubleScalar.Abs<TimeUnit> lowerBound = idmCar.getLastEvaluationTime();
             DoubleScalar.Abs<TimeUnit> upperBound = idmCar.getNextEvaluationTime();
             DoubleScalar.Rel<LengthUnit> beginPosition =
-                idmCar.getPosition(FundamentalDiagramPlotsModel.this.lane, idmCar.getFront(), lowerBound);
+                idmCar.position(FundamentalDiagramPlotsModel.this.lane, idmCar.getFront(), lowerBound);
             DoubleScalar.Rel<LengthUnit> endPosition =
-                idmCar.getPosition(FundamentalDiagramPlotsModel.this.lane, idmCar.getFront(), upperBound);
+                idmCar.position(FundamentalDiagramPlotsModel.this.lane, idmCar.getFront(), upperBound);
             for (FundamentalDiagram fd : getFundamentalDiagrams())
             {
                 DoubleScalar.Abs<LengthUnit> detectorPosition = fd.getPosition();
@@ -600,7 +600,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
                         passingTime =
                             new DoubleScalar.Abs<TimeUnit>((lowerBound.getSI() + upperBound.getSI()) / 2, TimeUnit.SECOND);
                         DoubleScalar.Rel<LengthUnit> position =
-                            idmCar.getPosition(FundamentalDiagramPlotsModel.this.lane, idmCar.getFront(), passingTime);
+                            idmCar.position(FundamentalDiagramPlotsModel.this.lane, idmCar.getFront(), passingTime);
                         if (position.getSI() > detectorPosition.getSI())
                         {
                             lowerBound = passingTime;

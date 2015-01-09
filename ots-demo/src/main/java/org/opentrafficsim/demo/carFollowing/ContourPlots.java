@@ -549,8 +549,8 @@ class ContourPlotsModel implements OTSModelInterface
             {
                 return;
             }
-            Lane currentLane = getPositions(getFront()).keySet().iterator().next();
-            if (getPosition(currentLane, getFront()).getSI() > getMaximumDistance().getSI())
+            Lane currentLane = positions(getFront()).keySet().iterator().next();
+            if (position(currentLane, getFront()).getSI() > getMaximumDistance().getSI())
             {
                 ContourPlotsModel.this.cars.remove(this);
                 return;
