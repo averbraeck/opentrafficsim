@@ -194,7 +194,7 @@ public class TrajectoryPlotTest
         RemoteException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
-        Lane lane = car.getPositions(car.getFront()).keySet().iterator().next();
+        Lane lane = car.positions(car.getFront()).keySet().iterator().next();
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
             DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
@@ -210,7 +210,7 @@ public class TrajectoryPlotTest
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
-            DoubleScalar.Rel<LengthUnit> actualPosition = car.getPosition(lane, car.getFront(), sampleTime);
+            DoubleScalar.Rel<LengthUnit> actualPosition = car.position(lane, car.getFront(), sampleTime);
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                 0.0001);

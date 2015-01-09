@@ -70,8 +70,8 @@ public final class FollowAcceleration
         {
             // find a lane where follower and leader are jointly
             // OOOPS DONT DO IT THIS WAY: Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
-            Set<Lane> lanes = new HashSet<Lane>(leader.getPositions(leader.getFront()).keySet());
-            lanes.retainAll(follower.getPositions(follower.getFront()).keySet());
+            Set<Lane> lanes = new HashSet<Lane>(leader.positions(leader.getFront()).keySet());
+            lanes.retainAll(follower.positions(follower.getFront()).keySet());
             // TODO expand to lanes for next links as well, to a certain distance (which is...?)
             if (lanes.size() > 0)
             {
@@ -79,8 +79,8 @@ public final class FollowAcceleration
                 try
                 {
                     MutableDoubleScalar.Rel<LengthUnit> headway =
-                        DoubleScalar.minus(leader.getPosition(lane, leader.getRear(), when), 
-                            follower.getPosition(lane, follower.getFront(), when));
+                        DoubleScalar.minus(leader.position(lane, leader.getRear(), when), 
+                            follower.position(lane, follower.getFront(), when));
                     if (headway.getSI() <= 0)
                     {
                         // Immediate collision; return a prohibitive negative value
@@ -97,7 +97,7 @@ public final class FollowAcceleration
             {
                 // Not on the same lane. Find a Link that is shared by both
                 Set<CrossSectionLink<?, ?>> links = new HashSet<CrossSectionLink<?, ?>>();
-                for (Lane lane : leader.getPositions(leader.getFront()).keySet())
+                for (Lane lane : leader.positions(leader.getFront()).keySet())
                 {
                     links.add(lane.getParentLink());
                 }
@@ -106,7 +106,7 @@ public final class FollowAcceleration
                     throw new NetworkException("Leader is not on any link");
                 }
                 Set<CrossSectionLink<?, ?>> followerLinks = new HashSet<CrossSectionLink<?, ?>>();
-                for (Lane lane : follower.getPositions(follower.getFront()).keySet())
+                for (Lane lane : follower.positions(follower.getFront()).keySet())
                 {
                     followerLinks.add(lane.getParentLink());
                 }
@@ -117,7 +117,7 @@ public final class FollowAcceleration
                 }
                 CrossSectionLink<?, ?> commonLink = links.iterator().next(); // Use the first one
                 Lane leaderLane = null;
-                for (Lane lane : leader.getPositions(leader.getFront()).keySet())
+                for (Lane lane : leader.positions(leader.getFront()).keySet())
                 {
                     if (lane.getParentLink() == commonLink)
                     {
@@ -130,7 +130,7 @@ public final class FollowAcceleration
                     throw new Error("Cannot happen -- Cannot find leaderLane");
                 }
                 Lane followerLane = null;
-                for (Lane lane : follower.getPositions(RelativePosition.REFERENCE).keySet())
+                for (Lane lane : follower.positions(RelativePosition.REFERENCE).keySet())
                 {
                     if (lane.getParentLink() == commonLink)
                     {
@@ -144,11 +144,13 @@ public final class FollowAcceleration
                 }
                 // Get the difference of the projections of both lanes onto the design line of the link
                 // leader.positionOfRear(leaderLane, when);
-                // TODO why not use the headway function???
-                DoubleScalar.Rel<LengthUnit> leaderPosition =
-                    leader.getPosition(leaderLane, leader.getRear(), when);
-                DoubleScalar.Rel<LengthUnit> followerPosition = follower.getPosition(leaderLane, follower.getFront(), when);
-                DoubleScalar.Rel<LengthUnit> headway = DoubleScalar.minus(leaderPosition, followerPosition).immutable();
+                double leaderRatio = leader.fractionalPosition(leaderLane, leader.getRear(), when);
+                double followerRatio = follower.fractionalPosition(followerLane, follower.getFront(), when);
+                double ratioDifference = leaderRatio - followerRatio; // TODO prove that this is always correct
+                // Scale that difference by the length of the lane of the follower to obtain the headway
+                DoubleScalar.Rel<LengthUnit> headway =
+                        new DoubleScalar.Rel<LengthUnit>(followerLane.getLength().getSI() * ratioDifference,
+                                LengthUnit.METER);
                 return gtuFollowingModel.computeAcceleration(follower, leader.getLongitudinalVelocity(when), headway,
                     speedLimit).getAcceleration();
             }
@@ -182,13 +184,13 @@ public final class FollowAcceleration
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
         AbstractLaneBasedGTU<?> follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
-        Lane referenceLane = referenceGTU.getPositions(referenceGTU.getFront()).keySet().iterator().next();
+        Lane referenceLane = referenceGTU.positions(referenceGTU.getFront()).keySet().iterator().next();
         DoubleScalar.Rel<LengthUnit> referenceCarPosition =
-            referenceGTU.getPosition(referenceLane, referenceGTU.getFront(), when);
+            referenceGTU.position(referenceLane, referenceGTU.getFront(), when);
         if (otherCars.size() > 0)
         {
             AbstractLaneBasedGTU<?> otherCar = otherCars.iterator().next();
-            Lane otherLane = otherCar.getPositions(otherCar.getFront()).keySet().iterator().next();
+            Lane otherLane = otherCar.positions(otherCar.getFront()).keySet().iterator().next();
             if (otherLane != referenceLane)
             {
                 // Project the referenceCarPosition on the lane of the otherCars
@@ -204,9 +206,9 @@ public final class FollowAcceleration
             {
                 continue;
             }
-            Lane otherLane = c.getPositions(c.getFront()).keySet().iterator().next();
+            Lane otherLane = c.positions(c.getFront()).keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> headway =
-                DoubleScalar.minus(c.getPosition(otherLane, c.getFront(), when), referenceCarPosition).immutable();
+                DoubleScalar.minus(c.position(otherLane, c.getFront(), when), referenceCarPosition).immutable();
             if (headway.getSI() < 0)
             {
                 if (null == follower || followerHeadway.getSI() < headway.getSI())

@@ -42,7 +42,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // System.out.println(String.format(
             // "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
             // preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
-            Lane lane = gtu.getPositions(RelativePosition.REFERENCE).keySet().iterator().next();
+            Lane lane = gtu.positions(RelativePosition.REFERENCE).keySet().iterator().next();
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;

@@ -59,10 +59,18 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     DoubleScalar.Abs<TimeUnit> getNextEvaluationTime();
 
     /**
-     * Register the GTU on a lane.
+     * Register the lane with a GTU, at the start of the lane. This means that the GTU will get an longitudinal position equal
+     * to 0.0 meters.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
      */
     void addLane(Lane lane);
+
+    /**
+     * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
+     * @param lane the lane to add to the list of lanes on which the GTU is registered.
+     * @param position the position on the lane.
+     */
+    void addLane(Lane lane, DoubleScalar.Rel<LengthUnit> position);
 
     /**
      * Unregister the GTU from a lane.
@@ -71,15 +79,19 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     void removeLane(Lane lane);
 
     /**
+     * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
+     * vehicle is registered. <br>
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws RemoteException when simulator time cannot be retrieved.
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, DoubleScalar.Rel<LengthUnit>> getPositions(RelativePosition relativePosition) throws NetworkException,
+    Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition) throws NetworkException,
         RemoteException;
 
     /**
+     * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
+     * vehicle is registered. <br>
      * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
@@ -87,22 +99,22 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      *         the GTU.
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, DoubleScalar.Rel<LengthUnit>> getPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+    Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
         throws NetworkException;
 
     /**
-     * Return the position of the relative position of this GTU, relative to the center line of the Lane.
+     * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane. <br>
      * @param lane the position on this lane will be returned.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    DoubleScalar.Rel<LengthUnit> getPosition(Lane lane, RelativePosition relativePosition) throws NetworkException,
+    DoubleScalar.Rel<LengthUnit> position(Lane lane, RelativePosition relativePosition) throws NetworkException,
         RemoteException;
 
     /**
-     * Return the position of the relative position of this GTU, relative to the center line of the Lane. <br>
+     * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane. <br>
      * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
      * @param lane the position on this lane will be returned.
      * @param relativePosition the position on the vehicle relative to the reference point.
@@ -110,8 +122,59 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws NetworkException when the vehicle is not on the given lane.
      */
-    DoubleScalar.Rel<LengthUnit> getPosition(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+    DoubleScalar.Rel<LengthUnit> position(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
         throws NetworkException;
+
+    /**
+     * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
+     * vehicle is registered, as fractions of the length of the lane. This is important when we want to see if two vehicles are
+     * next to each other and we compare an 'inner' and 'outer' curve.<br>
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
+     * @throws RemoteException when simulator time cannot be retrieved.
+     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     */
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws NetworkException, RemoteException;
+
+    /**
+     * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
+     * vehicle is registered, as fractions of the length of the lane. This is important when we want to see if two vehicles are
+     * next to each other and we compare an 'inner' and 'outer' curve.<br>
+     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param when the future time for which to calculate the positions.
+     * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
+     *         the GTU.
+     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     */
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+        throws NetworkException;
+
+    /**
+     * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
+     * of the length of the lane. This is important when we want to see if two vehicles are next to each other and we compare an
+     * 'inner' and 'outer' curve.<br>
+     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
+     * @param lane the position on this lane will be returned.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param when the future time for which to calculate the positions.
+     * @return the fractional relative position on the lane at the given time.
+     * @throws NetworkException when the vehicle is not on the given lane.
+     */
+    double fractionalPosition(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+        throws NetworkException;
+
+    /**
+     * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
+     * of the length of the lane. This is important when we want to see if two vehicles are next to each other and we compare an
+     * 'inner' and 'outer' curve.<br>
+     * @param lane the position on this lane will be returned.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @return the fractional relative position on the lane at the given time.
+     * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws RemoteException when simulator time cannot be retrieved.
+     */
+    double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException, RemoteException;
 
     /**
      * Determine by what distance the front of this GTU is behind the front an other GTU. Only positive values are returned.

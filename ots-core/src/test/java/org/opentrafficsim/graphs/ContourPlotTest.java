@@ -388,8 +388,8 @@ public class ContourPlotTest
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
                     new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x + useTimeGranularity),
                         TimeUnit.SECOND);
-                if (car.getPosition(lane, car.getFront(), cellStartTime).getSI() <= y + useDistanceGranularity
-                    && car.getPosition(lane, car.getFront(), cellEndTime).getSI() >= y)
+                if (car.position(lane, car.getFront(), cellStartTime).getSI() <= y + useDistanceGranularity
+                    && car.position(lane, car.getFront(), cellEndTime).getSI() >= y)
                 {
                     hit = true;
                 }

@@ -20,7 +20,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -51,12 +50,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private final Map<Lane, DoubleScalar.Rel<LengthUnit>> longitudinalPositions;
 
     /**
-     * FIXME: temp for debugging purposes.
+     * FIXME: temp for lane change purposes and hacks in the demos.
      * @return longitudinalPositions.
      */
-    public final String getLanePositions()
+    @Deprecated
+    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getLongitudinalPositions()
     {
-        return this.longitudinalPositions.toString();
+        return this.longitudinalPositions;
     }
 
     /** Speed at lastEvaluationTime. */
@@ -87,19 +87,19 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     {
         super(id, gtuType);
         this.gtuFollowingModel = gtuFollowingModel;
-        this.lastEvaluationTime = currentTime;
+        this.lastEvaluationTime = new DoubleScalar.Abs<TimeUnit>(currentTime);
         this.longitudinalPositions = new HashMap<>(initialLongitudinalPositions);
-        
+
         // register the GTUs on the lane
         for (Lane lane : initialLongitudinalPositions.keySet())
         {
             lane.addGTU(this);
         }
-        
+
         // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
         this.speed = new DoubleScalar.Abs<SpeedUnit>(initialSpeed);
         this.lateralVelocity = new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
-        this.nextEvaluationTime = currentTime;
+        this.nextEvaluationTime = new DoubleScalar.Abs<TimeUnit>(currentTime);
     }
 
     /** {@inheritDoc} */
@@ -153,7 +153,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final void addLane(final Lane lane)
     {
-        this.longitudinalPositions.put(lane, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER));
+        addLane(lane, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addLane(final Lane lane, final DoubleScalar.Rel<LengthUnit> position)
+    {
+        this.longitudinalPositions.put(lane, position);
     }
 
     /** {@inheritDoc} */
@@ -166,59 +173,68 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /**
      * Set the new state.
      * @param cfmr GTUFollowingModelResult; the new state of this GTU
-     * @exception NetworkException when the vehicle is not on the given lane.
+     * @throws RemoteException when simulator time could not be retrieved or sensor trigger scheduling fails.
+     * @throws NetworkException when the vehicle is not on the given lane.
      */
-    public final void setState(final GTUFollowingModelResult cfmr) throws NetworkException
+    public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException
     {
-        // TODO test when vehicle moves to next lane in the network; has to be done with sensors.
-
         for (Lane lane : this.longitudinalPositions.keySet())
         {
-            this.longitudinalPositions.put(lane, getPosition(lane, getFront(), this.nextEvaluationTime));
+            this.longitudinalPositions.put(lane, position(lane, getFront(), this.nextEvaluationTime));
         }
 
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
-        // TODO add a sanity check that time is increasing
+
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.getValidUntil();
         this.acceleration = cfmr.getAcceleration();
+        
+        // for now: schedule all sensor triggers that are going to happen in the next timestep.
+        for (Lane lane : this.longitudinalPositions.keySet())
+        {
+            lane.scheduleTriggers(this);
+        }        
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, Rel<LengthUnit>> getPositions(final RelativePosition relativePosition) throws NetworkException,
-        RemoteException
+    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition)
+        throws NetworkException, RemoteException
     {
-        return getPositions(relativePosition, getSimulator().getSimulatorTime().get());
+        return positions(relativePosition, getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getPositions(final RelativePosition relativePosition,
+    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = new HashMap<>();
         for (Lane lane : this.longitudinalPositions.keySet())
         {
-            positions.put(lane, getPosition(lane, relativePosition, when));
+            positions.put(lane, position(lane, relativePosition, when));
         }
         return positions;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getPosition(final Lane lane, final RelativePosition relativePosition)
+    public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        return getPosition(lane, relativePosition, getSimulator().getSimulatorTime().get());
+        return position(lane, relativePosition, getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getPosition(final Lane lane, final RelativePosition relativePosition,
+    public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         DoubleScalar.Rel<LengthUnit> longitudinalPosition = this.longitudinalPositions.get(lane);
+        if (longitudinalPosition == null)
+        {
+            throw new NetworkException("GetPosition: GTU " + toString() + " not in lane " + lane);
+        }
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
             DoubleScalar.minus(
@@ -226,6 +242,43 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable(),
                 relativePosition.getDx()).immutable();
         return loc;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws NetworkException,
+        RemoteException
+    {
+        return fractionalPositions(relativePosition, getSimulator().getSimulatorTime().get());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition,
+        final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+    {
+        Map<Lane, Double> positions = new HashMap<>();
+        for (Lane lane : this.longitudinalPositions.keySet())
+        {
+            positions.put(lane, fractionalPosition(lane, relativePosition, when));
+        }
+        return positions;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition,
+        final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+    {
+        return position(lane, relativePosition, when).getSI() / lane.getLength().getSI();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition)
+        throws NetworkException, RemoteException
+    {
+        return position(lane, relativePosition).getSI() / lane.getLength().getSI();
     }
 
     /** {@inheritDoc} */
@@ -282,13 +335,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
 
         // search for the otherGTU on the current lanes we are registered on.
-        for (Lane lane : getPositions(getFront()).keySet())
+        for (Lane lane : positions(getFront()).keySet())
         {
             if (lane.getGtuList().contains(otherGTU))
             {
                 double distanceM =
-                    otherGTU.getPosition(lane, otherGTU.getFront(), when).getSI()
-                        - this.getPosition(lane, this.getFront(), when).getSI();
+                    otherGTU.position(lane, otherGTU.getFront(), when).getSI()
+                        - this.position(lane, this.getFront(), when).getSI();
                 double maxD = maxDistance.getSI();
                 if ((maxD > 0.0 && distanceM > 0.0) || (maxD < 0.0 && distanceM < 0.0))
                 {
@@ -319,7 +372,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         try
         {
             // TODO solve problem when point is still on previous lane.
-            double fraction = (getPosition(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
+            double fraction = (position(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
             LineString line = lane.getOffsetLine();
             LengthIndexedLine lil = new LengthIndexedLine(line);
             Coordinate c = lil.extractPoint(fraction * line.getLength());
@@ -358,7 +411,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         double pos = Double.NaN;
         try
         {
-            pos = this.getPosition(lane, getFront(), when).getSI();
+            pos = this.position(lane, getFront(), when).getSI();
         }
         catch (NetworkException exception)
         {

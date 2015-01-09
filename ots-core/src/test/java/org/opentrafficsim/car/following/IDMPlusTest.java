@@ -80,7 +80,7 @@ public class IDMPlusTest
         // Check that the follower remains stationary
         DoubleScalar.Rel<LengthUnit> leaderPosition =
             new DoubleScalar.Rel<LengthUnit>(2 + referenceCar.getLength().getSI()
-                + referenceCar.getPosition(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
+                + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
         Car<Integer> leaderCar =
@@ -90,7 +90,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.getPosition(lane,
+            new DoubleScalar.Rel<LengthUnit>(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
                 referenceCar.getFront(), initialTime).getSI()), LengthUnit.METER);
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -108,7 +108,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(-(3 + referenceCar.getLength().getSI() + referenceCar.getPosition(lane,
+            new DoubleScalar.Rel<LengthUnit>(-(3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
                 referenceCar.getFront(), initialTime).getSI()), LengthUnit.METER);
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -124,7 +124,7 @@ public class IDMPlusTest
             leaders.clear();
             leaderPosition =
                 new DoubleScalar.Rel<LengthUnit>(spareDistance
-                    + (3 + referenceCar.getLength().getSI() + referenceCar.getPosition(lane, referenceCar.getFront(),
+                    + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane, referenceCar.getFront(),
                         initialTime).getSI()), LengthUnit.METER);
             leaderPositions = new HashMap<>();
             leaderPositions.put(lane, leaderPosition);
@@ -144,7 +144,7 @@ public class IDMPlusTest
         referenceAcceleration = Double.NEGATIVE_INFINITY;
         leaderPosition =
             new DoubleScalar.Rel<LengthUnit>(2 + 3 + referenceCar.getLength().getSI()
-                + referenceCar.getPosition(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
+                + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
         // In IDM+ the reference car must have non-zero speed for the leader speed to have any effect
@@ -183,7 +183,7 @@ public class IDMPlusTest
         leaders.clear();
         leaderPosition =
             new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
-                + referenceCar.getPosition(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
+                + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         leaderCar = new Car<Integer>(0, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed, simulator);
         leaders.add(leaderCar);
         // System.out.println("Setup    referenceCar: " + referenceCar);
@@ -195,10 +195,10 @@ public class IDMPlusTest
             // leaderCar));
             if (timeStep > 100)
             {
-                double position = referenceCar.getPosition(lane, referenceCar.getFront(), cfmr.getValidUntil()).getSI();
+                double position = referenceCar.position(lane, referenceCar.getFront(), cfmr.getValidUntil()).getSI();
                 assertEquals(
                     "After 20 seconds the referenceCar should now be very close to 2m before the rear of the leader",
-                    leaderCar.getPosition(lane, referenceCar.getRear()).getSI() - 2.0, position, 0.2);
+                    leaderCar.position(lane, referenceCar.getRear()).getSI() - 2.0, position, 0.2);
                 assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar
                     .getLongitudinalVelocity(cfmr.getValidUntil()).getSI(), 0.2);
             }

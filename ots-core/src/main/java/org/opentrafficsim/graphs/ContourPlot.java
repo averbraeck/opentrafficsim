@@ -526,12 +526,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
          */
         // The "relative" values are "counting" distance or time in the minimum bin size unit
         // XXX we take the first (and only) lane on which the vehicle is registered.
-        Lane lane = car.getPositions(car.getFront()).keySet().iterator().next();
+        Lane lane = car.positions(car.getFront()).keySet().iterator().next();
         final double relativeFromDistance =
-            (car.getPosition(lane, car.getFront(), fromTime).getSI() - this.getYAxis().getMinimumValue().getSI())
+            (car.position(lane, car.getFront(), fromTime).getSI() - this.getYAxis().getMinimumValue().getSI())
                 / this.getYAxis().getGranularities()[0];
         final double relativeToDistance =
-            (car.getPosition(lane, car.getFront(), toTime).getSI() - this.getYAxis().getMinimumValue().getSI())
+            (car.position(lane, car.getFront(), toTime).getSI() - this.getYAxis().getMinimumValue().getSI())
                 / this.getYAxis().getGranularities()[0];
         double relativeFromTime =
             (fromTime.getSI() - this.getXAxis().getMinimumValue().getSI()) / this.getXAxis().getGranularities()[0];
@@ -559,14 +559,14 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 continue; // no time spent in this timeBin
             }
             double binDistanceStart =
-                (car.getPosition(
+                (car.position(
                     lane,
                     car.getFront(),
                     new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
                     .getSI() - this.getYAxis().getMinimumValue().getSI())
                     / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
-                (car.getPosition(lane, car.getFront(),
+                (car.position(lane, car.getFront(),
                     new DoubleScalar.Abs<TimeUnit>(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
                     .getSI() - this.getYAxis().getMinimumValue().getSI())
                     / this.getYAxis().getGranularities()[0];

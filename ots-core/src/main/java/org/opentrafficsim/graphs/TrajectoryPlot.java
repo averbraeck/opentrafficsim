@@ -307,8 +307,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         // XXX we take the first (and only) lane on which the vehicle is registered.
-        Lane lane = car.getPositions(car.getFront()).keySet().iterator().next();
-        final DoubleScalar.Rel<LengthUnit> startPosition = car.getPosition(lane, car.getFront(), startTime);
+        Lane lane = car.positions(car.getFront()).keySet().iterator().next();
+        final DoubleScalar.Rel<LengthUnit> startPosition = car.position(lane, car.getFront(), startTime);
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
@@ -398,14 +398,14 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         public final void addSegment(final Car<?> car) throws NetworkException, RemoteException
         {
             // XXX we take the first (and only) lane on which the vehicle is registered.
-            Lane lane = car.getPositions(car.getFront()).keySet().iterator().next();
+            Lane lane = car.positions(car.getFront()).keySet().iterator().next();
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
                     new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                DoubleScalar.Rel<LengthUnit> position = car.getPosition(lane, car.getFront(), sampleTime);
+                DoubleScalar.Rel<LengthUnit> position = car.position(lane, car.getFront(), sampleTime);
                 if (position.getSI() < getMinimumPosition().getSI())
                 {
                     continue;
@@ -428,7 +428,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 this.positions.add(position.getSI());
             }
             this.currentEndTime = car.getNextEvaluationTime();
-            this.currentEndPosition = car.getPosition(lane, car.getFront(), this.currentEndTime);
+            this.currentEndPosition = car.position(lane, car.getFront(), this.currentEndTime);
             if (car.getNextEvaluationTime().getSI() > getMaximumTime().getSI())
             {
                 setMaximumTime(car.getNextEvaluationTime());

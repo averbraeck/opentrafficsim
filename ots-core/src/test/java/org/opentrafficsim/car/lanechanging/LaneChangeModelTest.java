@@ -171,9 +171,9 @@ public class LaneChangeModelTest
         System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT, laneChangeModelResult
             .getLaneChange());
-        DoubleScalar.Rel<LengthUnit> rear = car.getPosition(lanes[0], car.getRear());
-        DoubleScalar.Rel<LengthUnit> front = car.getPosition(lanes[0], car.getFront());
-        DoubleScalar.Rel<LengthUnit> reference = car.getPosition(lanes[0], RelativePosition.REFERENCE);
+        DoubleScalar.Rel<LengthUnit> rear = car.position(lanes[0], car.getRear());
+        DoubleScalar.Rel<LengthUnit> front = car.position(lanes[0], car.getFront());
+        DoubleScalar.Rel<LengthUnit> reference = car.position(lanes[0], RelativePosition.REFERENCE);
         System.out.println("rear:      " + rear);
         System.out.println("front:     " + front);
         System.out.println("reference: " + reference);
