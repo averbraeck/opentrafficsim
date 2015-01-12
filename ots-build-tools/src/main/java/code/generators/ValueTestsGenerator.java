@@ -127,11 +127,11 @@ public class ValueTestsGenerator
                                 in + mutable + type + aggregate + "." + absRel + dotDS + "<TemperatureUnit> "
                                         + shortName + " = new " + mutable + type + aggregate + "." + absRel + dotDS
                                         + "<TemperatureUnit>(value, tempUnit);",
-                                in + "String result = " + shortName + ".toString(true);",
+                                in + "String result = " + shortName + ".toString(true, true);",
                                 // "System.out.println(result);",
                                 in + "assertTrue(\"toString result contains \\\" " + absRel
                                         + " \\\"\", result.contains(\" " + absRel + " \"));",
-                                in + "assertTrue(\"toString result contains \\\"[K]\\\"\", result.contains(\"[K]\"));",
+                                in + "assertTrue(\"toString result contains \\\"K\\\"\", result.contains(\"K\"));",
                                 in + "assertTrue(\"toString result starts with \\\"Immutable \\\"\", "
                                         + "result.startsWith(\"" + (mutable.length() > 0 ? "Mutable" : "Immutable")
                                         + "\"));",
@@ -685,11 +685,9 @@ public class ValueTestsGenerator
         cg.generateClass("v" + type.toLowerCase() + "." + aggregate.toLowerCase(), type + aggregate
                 + (null != denseness ? denseness : "") + "Test", new String[]{"static org.junit.Assert.assertEquals",
                 "static org.junit.Assert.assertFalse", "static org.junit.Assert.assertTrue",
-                dimensions > 0 ? "static org.junit.Assert.fail" : null, "", dimensions > 0 ? "java.util.Set" : null,
-                dimensions > 0 ? "" : null, "org.junit.Test", otscu + "AreaUnit", otscu + "LengthUnit",
-                otscu + "SIUnit", otscu + "SpeedUnit", otscu + "TemperatureUnit", otscu + "TimeUnit",
-                "org.opentrafficsim.core.unit.Unit", "org.opentrafficsim.core.value.Absolute",
-                "org.opentrafficsim.core.value.Relative", "org.opentrafficsim.core.value.ValueException",
+                dimensions > 0 ? "static org.junit.Assert.fail" : null, "", dimensions > 0 ? "" : null,
+                "org.junit.Test", otscu + "LengthUnit", otscu + "TemperatureUnit", "org.opentrafficsim.core.unit.Unit",
+                dimensions > 0 ? "org.opentrafficsim.core.value.ValueException" : null,
                 "org.opentrafficsim.core.value.v" + type.toLowerCase() + ".scalar." + type + "Scalar"}, "Test the "
                 + type + aggregate + " class.", null, "public", "", false, code.toString());
 

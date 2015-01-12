@@ -1076,20 +1076,20 @@ public final class ValueClassesGenerator
             }
             code.append(cg.buildMethod(outerIndent, "public final|String|toString|printable string with the "
                     + aggregate.toLowerCase() + " contents", null, null, null, null,
-                    new String[]{"return toString(getUnit(), false);"}, false));
+                    new String[]{"return toString(getUnit(), false, true);"}, false));
             code.append(cg.buildMethod(outerIndent, "public final|String|toString|printable string with the "
                     + aggregate.toLowerCase() + " contents expressed in the specified unit",
                     "Print this " + type + aggregate + " with the value" + (dimensions > 0 ? "s" : "")
                             + " expressed in the specified unit.",
                     new String[]{"final U|displayUnit|the unit into which the value"
                             + (0 == dimensions ? " is" : "s are") + " converted for display"}, null, null,
-                    new String[]{"return toString(displayUnit, false);"}, false));
-            code.append(cg.buildMethod(
-                    outerIndent,
-                    "public final|String|toString|printable string with the " + aggregate.toLowerCase() + " contents",
-                    "Print this " + type + aggregate + " with optional type information.",
-                    new String[]{"final boolean|verbose|if true; include type info; if false; do not include type info"},
-                    null, null, new String[]{"return toString(getUnit(), verbose);"}, false));
+                    new String[]{"return toString(displayUnit, false, true);"}, false));
+            code.append(cg.buildMethod(outerIndent, "public final|String|toString|printable string with the "
+                    + aggregate.toLowerCase() + " contents", "Print this " + type + aggregate
+                    + " with optional type and unit information.", new String[]{
+                    "final boolean|verbose|if true; include type info; if false; exclude type info",
+                    "final boolean|withUnit|if true; include the unit; of false; exclude the unit"}, null, null,
+                    new String[]{"return toString(getUnit(), verbose, withUnit);"}, false));
             code.append(cg.buildMethod(
                     outerIndent,
                     "public final|String|toString|printable string with the " + aggregate.toLowerCase() + " contents",
@@ -1098,7 +1098,8 @@ public final class ValueClassesGenerator
                     new String[]{
                             "final U|displayUnit|the unit into which the value" + (0 == dimensions ? " is" : "s are")
                                     + " converted for display",
-                            "final boolean|verbose|if true; include type info; if false; do not include type info"},
+                            "final boolean|verbose|if true; include type info; if false; exclude type info",
+                            "final boolean|withUnit|if true; include the unit; of false; exclude the unit"},
                     null,
                     null,
                     dimensions == 0 ? new String[]{
@@ -1138,10 +1139,10 @@ public final class ValueClassesGenerator
                             cg.indent(2) + "}",
                             cg.indent(1) + "}",
                             "}",
-                            "buf.append(\"[\" + displayUnit.getAbbreviation() + \"] \");",
                             (type.startsWith("F") ? "float f = (float) " : "double d = ")
                                     + "ValueUtil.expressAsUnit(getSI(), displayUnit);",
-                            "buf.append(Format.format(" + type.substring(0, 1).toLowerCase() + "));",
+                            "buf.append(Format.format(" + type.substring(0, 1).toLowerCase() + "));", "if (withUnit)",
+                            "{", cg.indent(1) + "buf.append(displayUnit.getAbbreviation());", "}",
                             "return buf.toString();"} : new String[]{
                             "StringBuffer buf = new StringBuffer();",
                             "if (verbose)",
@@ -1195,7 +1196,6 @@ public final class ValueClassesGenerator
                             cg.indent(2) + "}",
                             cg.indent(1) + "}",
                             "}",
-                            "buf.append(\"[\" + displayUnit.getAbbreviation() + \"]\");",
                             (1 == dimensions ? "for (int i = 0; i < size(); i++)"
                                     : "for (int row = 0; row < rows(); row++)"),
                             "{",
@@ -1209,7 +1209,9 @@ public final class ValueClassesGenerator
                                     + "), displayUnit);",
                             cg.indent(1) + (dimensions > 1 ? cg.indent(1) : "") + "buf.append(\" \" + Format.format("
                                     + type.substring(0, 1).toLowerCase() + "));",
-                            (dimensions > 1 ? cg.indent(1) + "}" : null), "}", "return buf.toString();"}, false));
+                            (dimensions > 1 ? cg.indent(1) + "}" : null), "}", "if (withUnit)", "{",
+                            cg.indent(1) + "buf.append(displayUnit.getAbbreviation());", "}", "return buf.toString();"},
+                    false));
             if (dimensions > 0)
             {
                 code.append(cg.buildMethod(
@@ -2174,7 +2176,7 @@ public final class ValueClassesGenerator
                 "Format a floating point value.", new String[]{"final " + valueType + "|value|the value to format",
                         "final int|width|the number of characters in the result",
                         "final int|precision|the number of fractional digits in the result"}, null, null, new String[]{
-                        "if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 999.0)", "{",
+                        "if (0 == value || Math.abs(value) > 0.01 && Math.abs(value) < 9999.0)", "{",
                         cg.indent(1) + "return String.format(formatString(width, precision, \"f\"), value);", "}",
                         "return String.format(formatString(width, precision, \"e\"), value);"}, false)
                 + cg.buildMethod(cg.indent(1), "public static|String|format|the formatted floating point value",
