@@ -18,6 +18,9 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
+    /** The SI unit for solid angle is steradian. */
+    public static final AngleSolidUnit SI;
+
     /** steradian. */
     public static final AngleSolidUnit STERADIAN;
 
@@ -26,7 +29,7 @@ public class AngleSolidUnit extends Unit<AngleSolidUnit>
 
     static
     {
-        STERADIAN = new AngleSolidUnit("AngleSolidUnit.steradian", "AngleSolidUnit.sr", SI_DERIVED);
+        SI = STERADIAN = new AngleSolidUnit("AngleSolidUnit.steradian", "AngleSolidUnit.sr", SI_DERIVED);
         SQUARE_DEGREE =
             new AngleSolidUnit("AngleSolidUnit.square_degree", "AngleSolidUnit.sq_deg", SI_DERIVED, STERADIAN,
                 (Math.PI / 180.0) * (Math.PI / 180.0));

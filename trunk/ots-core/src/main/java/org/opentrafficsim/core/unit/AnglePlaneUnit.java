@@ -21,6 +21,9 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
+    /** The SI unit for plane angle is radian. */
+    public static final AnglePlaneUnit SI;
+
     /** radian. */
     public static final AnglePlaneUnit RADIAN;
 
@@ -44,7 +47,7 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
 
     static
     {
-        RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", SI_DERIVED);
+        SI = RADIAN = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", SI_DERIVED);
         DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg", SI_ACCEPTED, RADIAN, Math.PI / 180.0);
         ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute", "AnglePlaneUnit.arcmin", SI_ACCEPTED, DEGREE, 1.0 / 60.0);
         ARCSECOND =

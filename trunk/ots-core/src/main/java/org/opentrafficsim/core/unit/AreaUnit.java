@@ -20,8 +20,11 @@ public class AreaUnit extends Unit<AreaUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of length for the area unit, e.g., meter. */
+    /** The unit of length for the area unit, e.g., meter. */
     private final LengthUnit lengthUnit;
+
+    /** The SI unit for area is m^2. */
+    public static final AreaUnit SI;
 
     /** m^2. */
     public static final AreaUnit SQUARE_METER;
@@ -58,7 +61,7 @@ public class AreaUnit extends Unit<AreaUnit>
 
     static
     {
-        SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2", SI_DERIVED);
+        SI = SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2", SI_DERIVED);
         SQUARE_KM = new AreaUnit(LengthUnit.KILOMETER, "AreaUnit.square_kilometer", "AreaUnit.km^2", SI_DERIVED);
         SQUARE_CENTIMETER = new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter", "AreaUnit.cm^2", SI_DERIVED);
         SQUARE_MILLIMETER = new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter", "AreaUnit.mm^2", SI_DERIVED);

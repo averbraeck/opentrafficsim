@@ -24,6 +24,9 @@ public class DensityUnit extends Unit<DensityUnit>
     /** the actual length unit, e.g. meter. */
     private final LengthUnit lengthUnit;
 
+    /** The SI unit for standard density is kg/m^3. */
+    public static final DensityUnit SI;
+
     /** kg/m^3. */
     public static final DensityUnit KG_PER_METER_3;
 
@@ -32,7 +35,7 @@ public class DensityUnit extends Unit<DensityUnit>
 
     static
     {
-        KG_PER_METER_3 =
+        SI = KG_PER_METER_3 =
             new DensityUnit(MassUnit.KILOGRAM, LengthUnit.METER, "DensityUnit.kilogram_per_cubic_meter",
                 "DensityUnit.kg/m^3", SI_DERIVED);
         GRAM_PER_CENTIMETER_3 =
