@@ -46,7 +46,8 @@ public class ElectricalCurrentUnit extends Unit<ElectricalCurrentUnit>
 
     static
     {
-        SI = AMPERE = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A", SI_BASE);
+        SI = new ElectricalCurrentUnit("ElectricalCurrentUnit.ampere", "ElectricalCurrentUnit.A", SI_BASE);
+        AMPERE = SI;
         NANOAMPERE =
                 new ElectricalCurrentUnit("ElectricalCurrentUnit.nanoampere", "ElectricalCurrentUnit.nA", SI_BASE,
                         AMPERE, 1.0E-9);

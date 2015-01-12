@@ -58,7 +58,8 @@ public class MassUnit extends Unit<MassUnit>
 
     static
     {
-        SI = KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
+        SI = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
+        KILOGRAM = SI;
         GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", SI_BASE, KILOGRAM, 0.001);
         POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", IMPERIAL, KILOGRAM, 0.45359237);
         OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", IMPERIAL, POUND, 1.0 / 16.0);

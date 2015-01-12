@@ -7,31 +7,16 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.JComponent;
 
 public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
 {
 
-    int FOCUS_PADDING = 3;
+    protected int FOCUS_PADDING = 3;
 
-    float THUMB_RADIUS = 7;
-
-    PropertyChangeListener thumbShapeListener = new PropertyChangeListener()
-    {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt)
-        {
-            updateThumbRadius();
-        }
-
-    };
+    protected Color trackHighlightColor = new Color(0, 0, 0, 140);
 
     public DefaultMultiThumbSliderUI(MultiThumbSlider<T> slider)
     {
@@ -39,68 +24,37 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         DEPTH = 10;
     }
 
-    private void updateThumbRadius()
+    protected boolean isTrackHighlightActive()
     {
-        if ("circular".equals(getProperty(slider, "thumbShape", "circular")))
+        return slider.getThumbCount() == 2;
+    }
+
+    @Override
+    protected int getPreferredComponentDepth()
+    {
+        return 20;
+    }
+
+    @Override
+    protected Dimension getThumbSize(int thumbIndex)
+    {
+        Thumb thumb = getThumb(thumbIndex);
+        if (Thumb.Hourglass.equals(thumb))
         {
-            THUMB_RADIUS = 7;
+            return new Dimension(8, 16);
+        }
+        else if (Thumb.Triangle.equals(thumb))
+        {
+            return new Dimension(10, 18);
+        }
+        else if (Thumb.Rectangle.equals(thumb))
+        {
+            return new Dimension(10, 20);
         }
         else
         {
-            THUMB_RADIUS = 5;
+            return new Dimension(16, 16);
         }
-    }
-
-    @Override
-    public void installUI(JComponent slider)
-    {
-        super.installUI(slider);
-        slider.addPropertyChangeListener("thumbShape", thumbShapeListener);
-        updateThumbRadius();
-    }
-
-    @Override
-    public void uninstallUI(JComponent slider)
-    {
-        super.uninstallUI(slider);
-        slider.removePropertyChangeListener("thumbShape", thumbShapeListener);
-    }
-
-    @Override
-    public Dimension getMaximumSize(JComponent s)
-    {
-        return accomodateThumb(super.getMaximumSize(s));
-    }
-
-    @Override
-    public Dimension getMinimumSize(JComponent s)
-    {
-        return accomodateThumb(super.getMinimumSize(s));
-    }
-
-    @Override
-    public Dimension getPreferredSize(JComponent s)
-    {
-        return accomodateThumb(super.getPreferredSize(s));
-    }
-
-    private Dimension accomodateThumb(Dimension d)
-    {
-        if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
-        {
-            d.height = Math.max(d.height, (int) (2 * THUMB_RADIUS + .5f + FOCUS_PADDING * 2));
-        }
-        else
-        {
-            d.width = Math.max(d.width, (int) (2 * THUMB_RADIUS + .5f + FOCUS_PADDING * 2));
-        }
-        return d;
-    }
-
-    @Override
-    public int getThumbSpan()
-    {
-        return (int) (2 * THUMB_RADIUS + .5f);
     }
 
     @Override
@@ -121,6 +75,9 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
             g2.translate(0, .1f);
         }
         g2.dispose();
+
+        paintTrackHighlight(g);
+
         g.setColor(new Color(0x888888));
         g.setStroke(new BasicStroke(1));
         g.draw(trackOutline);
@@ -129,32 +86,68 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         {
             g.setColor(new Color(0x777777));
             g.setStroke(new BasicStroke(1));
-            paintTick(g, .25f, 4);
-            paintTick(g, .5f, 4);
-            paintTick(g, .75f, 4);
-            paintTick(g, 0f, 4);
-            paintTick(g, 1f, 4);
+            paintTick(g, .25f, 0, 4, true);
+            paintTick(g, .5f, 0, 4, true);
+            paintTick(g, .75f, 0, 4, true);
+            paintTick(g, 0f, 0, 4, true);
+            ;
+            paintTick(g, 1f, 0, 4, true);
         }
         g.dispose();
     }
 
-    protected void paintTick(Graphics2D g, float f, int d)
+    /**
+     * This optional method highlights the space on the track (by simply adding a shadow) between two thumbs.
+     * @param g
+     */
+    protected void paintTrackHighlight(Graphics2D g)
+    {
+        if (!isTrackHighlightActive())
+            return;
+        g = (Graphics2D) g.create();
+        Point2D p1 = getThumbCenter(0);
+        Point2D p2 = getThumbCenter(1);
+        Shape outline;
+        if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
+        {
+            float minX = (float) Math.min(p1.getX(), p2.getX());
+            float maxX = (float) Math.max(p1.getX(), p2.getX());
+            outline = new Rectangle2D.Float(minX, trackRect.y, maxX - minX, trackRect.height);
+        }
+        else
+        {
+            float minY = (float) Math.min(p1.getY(), p2.getY());
+            float maxY = (float) Math.max(p1.getY(), p2.getY());
+            outline = new Rectangle2D.Float(trackRect.x, minY, trackRect.width, maxY - minY);
+        }
+        g.setColor(trackHighlightColor);
+        g.fill(outline);
+        g.dispose();
+    }
+
+    protected void paintTick(Graphics2D g, float f, int d1, int d2, boolean mirror)
     {
         if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
         {
             int x = (int) (trackRect.x + trackRect.width * f + .5f);
             int y = trackRect.y + trackRect.height;
-            g.drawLine(x, y, x, y + d);
-            y = trackRect.y;
-            g.drawLine(x, y, x, y - d);
+            g.drawLine(x, y + d1, x, y + d2);
+            if (mirror)
+            {
+                y = trackRect.y;
+                g.drawLine(x, y - d1, x, y - d2);
+            }
         }
         else
         {
             int y = (int) (trackRect.y + trackRect.height * f + .5f);
             int x = trackRect.x + trackRect.width;
-            g.drawLine(x, y, x + d, y);
-            x = trackRect.x;
-            g.drawLine(x, y, x - d, y);
+            g.drawLine(x + d1, y, x + d2, y);
+            if (mirror)
+            {
+                x = trackRect.x;
+                g.drawLine(x - d1, y, x - d2, y);
+            }
         }
     }
 
@@ -170,7 +163,7 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
     @Override
     protected Rectangle calculateTrackRect()
     {
-        int k = (int) (THUMB_RADIUS + FOCUS_PADDING + .5);
+        int k = (int) (10 + FOCUS_PADDING + .5);
         if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
         {
             return new Rectangle(k, slider.getHeight() / 2 - DEPTH / 2, slider.getWidth() - 2 * k - 1, DEPTH);
@@ -184,14 +177,14 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
     protected Shape getTrackOutline()
     {
         trackRect = calculateTrackRect();
-        float k = Math.max(THUMB_RADIUS, FOCUS_PADDING) + 1;
+        float k = Math.max(10, FOCUS_PADDING) + 1;
+        int z = 3;
         if (slider.getOrientation() == MultiThumbSlider.VERTICAL)
         {
-            return new RoundRectangle2D.Float(trackRect.x, trackRect.y - THUMB_RADIUS, trackRect.width, trackRect.height + 2
-                * THUMB_RADIUS, k, k);
+            return new RoundRectangle2D.Float(trackRect.x, trackRect.y - z, trackRect.width, trackRect.height + 2 * z,
+                    k, k);
         }
-        return new RoundRectangle2D.Float(trackRect.x - THUMB_RADIUS, trackRect.y, trackRect.width + 2 * THUMB_RADIUS,
-            trackRect.height, k, k);
+        return new RoundRectangle2D.Float(trackRect.x - z, trackRect.y, trackRect.width + 2 * z, trackRect.height, k, k);
     }
 
     @Override
@@ -200,90 +193,16 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         float[] values = slider.getThumbPositions();
         for (int a = 0; a < values.length; a++)
         {
-            float value = values[a];
-            Number n = (Number) value;
             float darkness = a == slider.getSelectedThumb() ? 1 : thumbIndications[a] * .5f;
-            if (n.floatValue() >= 0 && n.floatValue() <= 1)
-            {
-                if (slider.getOrientation() == MultiThumbSlider.VERTICAL)
-                {
-                    float y;
-                    float height = (float) trackRect.height;
-                    float x = (float) trackRect.getCenterX();
-                    if (slider.isInverted())
-                    {
-                        y = (float) (n.floatValue() * height + trackRect.y);
-                    }
-                    else
-                    {
-                        y = (float) ((1 - n.floatValue()) * height + trackRect.y);
-                    }
-                    paintThumb(g, darkness, x, y);
-                }
-                else
-                {
-                    float x;
-                    float width = (float) trackRect.width;
-                    float y = (float) trackRect.getCenterY();
-                    if (slider.isInverted())
-                    {
-                        x = (float) ((1 - n.floatValue()) * width + trackRect.x);
-                    }
-                    else
-                    {
-                        x = (float) (n.floatValue() * width + trackRect.x);
-                    }
-                    paintThumb(g, darkness, x, y);
-                }
-            }
-            else
-            {
-                System.err.println("DefaultMultiThumbSliderUI Error: thumb index " + a
-                    + " was not within [0,1]. Current value = " + n);
-            }
+            paintThumb(g, a, darkness);
         }
     }
 
-    protected void paintThumb(Graphics2D g, float selected, float x, float y)
+    protected void paintThumb(Graphics2D g, int thumbIndex, float selected)
     {
         g = (Graphics2D) g.create();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Shape outline;
-        if ("circular".equals(getProperty(slider, "thumbShape", "circular")))
-        {
-            outline = new Ellipse2D.Float(x - THUMB_RADIUS, y - THUMB_RADIUS, 2 * THUMB_RADIUS, 2 * THUMB_RADIUS);
-        }
-        else
-        {
-            GeneralPath p = new GeneralPath();
-            int j = 2;
-            float k = THUMB_RADIUS;
-            if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
-            {
-                p.moveTo(x - k, trackRect.y - k + j);
-                p.lineTo(x + k, trackRect.y - k + j);
-                p.lineTo(x, trackRect.y + j);
-                p.lineTo(x, trackRect.y + trackRect.height - j);
-                p.lineTo(x - k, trackRect.y + trackRect.height + k - j);
-                p.lineTo(x + k, trackRect.y + trackRect.height + k - j);
-                p.lineTo(x, trackRect.y + trackRect.height - j);
-                p.lineTo(x, trackRect.y + j);
-                p.closePath();
-            }
-            else
-            {
-                p.moveTo(trackRect.x - k + j, y - k);
-                p.lineTo(trackRect.x - k + j, y + k);
-                p.lineTo(trackRect.x + j, y);
-                p.lineTo(trackRect.x + trackRect.width - j, y);
-                p.lineTo(trackRect.x + trackRect.width + k - j, y + k);
-                p.lineTo(trackRect.x + trackRect.width + k - j, y - k);
-                p.lineTo(trackRect.x + trackRect.width - j, y);
-                p.lineTo(trackRect.x + j, y);
-                p.closePath();
-            }
-            outline = p;
-        }
+        Shape outline = getThumbShape(thumbIndex);
         int gray = (int) ((1 - selected) * 100 + 30);
         g.setColor(new Color(gray, gray, gray));
         g.fill(outline);

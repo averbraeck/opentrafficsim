@@ -58,9 +58,9 @@ public class ForceUnit extends Unit<ForceUnit>
     static
     {
         SI =
-                NEWTON =
-                        new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton",
-                                "ForceUnit.N", SI_DERIVED);
+                new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton", "ForceUnit.N",
+                        SI_DERIVED);
+        NEWTON = SI;
         DYNE =
                 new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND, "ForceUnit.dyne", "ForceUnit.dyn",
                         CGS);

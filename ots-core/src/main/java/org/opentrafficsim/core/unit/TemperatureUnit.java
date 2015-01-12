@@ -41,7 +41,8 @@ public class TemperatureUnit extends OffsetUnit<TemperatureUnit>
 
     static
     {
-        SI = KELVIN = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K", SI_BASE, 1.0, 0.0);
+        SI = new TemperatureUnit("TemperatureUnit.kelvin", "TemperatureUnit.K", SI_BASE, 1.0, 0.0);
+        KELVIN = SI;
         DEGREE_CELSIUS =
                 new TemperatureUnit("TemperatureUnit.degree_Celsius", "TemperatureUnit.dgC", SI_DERIVED, 1.0, -273.15);
         DEGREE_FAHRENHEIT =

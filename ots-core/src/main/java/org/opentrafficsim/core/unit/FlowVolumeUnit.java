@@ -81,9 +81,9 @@ public class FlowVolumeUnit extends Unit<FlowVolumeUnit>
     static
     {
         SI =
-                CUBIC_METER_PER_SECOND =
-                        new FlowVolumeUnit(LengthUnit.METER, TimeUnit.SECOND, "FlowVolumeUnit.cubic_meter_per_second",
-                                "FlowVolumeUnit.m^3/s", SI_DERIVED);
+                new FlowVolumeUnit(LengthUnit.METER, TimeUnit.SECOND, "FlowVolumeUnit.cubic_meter_per_second",
+                        "FlowVolumeUnit.m^3/s", SI_DERIVED);
+        CUBIC_METER_PER_SECOND = SI;
         CUBIC_METER_PER_MINUTE =
                 new FlowVolumeUnit(LengthUnit.METER, TimeUnit.MINUTE, "FlowVolumeUnit.cubic_meter_per_minute",
                         "FlowVolumeUnit.m^3/min", SI_ACCEPTED);

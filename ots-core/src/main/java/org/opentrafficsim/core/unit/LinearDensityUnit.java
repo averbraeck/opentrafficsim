@@ -36,10 +36,8 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
 
     static
     {
-        SI =
-                PER_METER =
-                        new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m",
-                                SI_DERIVED);
+        SI = new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m", SI_DERIVED);
+        PER_METER = SI;
         PER_KILOMETER =
                 new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED,
                         PER_METER, 0.001);

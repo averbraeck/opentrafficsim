@@ -1,7 +1,7 @@
 /*
  * @(#)MultiThumbSlider.java
  *
- * $Date: 2014-12-22 22:03:03 -0600 (Mon, 22 Dec 2014) $
+ * $Date: 2015-01-04 21:15:07 -0500 (Sun, 04 Jan 2015) $
  *
  * Copyright (c) 2011 by Jeremy Wood.
  * All rights reserved.
@@ -32,60 +32,65 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ComponentUI;
 
 /**
- * This JComponent resembles a <code>JSlider</code>, except there are at least two thumbs. A <code>JSlider</code> is designed to
- * modify one number within a certain range of values. By contrast a <code>MultiThumbSlider</code> actually modifies a
- * <i>table</i> of data. Each thumb in a <code>MultiThumbSlider</code> should be thought of as a key, and it maps to an abstract
- * value. In the case of the <code>GradientSlider</code>: each value is a <code>java.awt.Color</code>. Other subclasses could
- * come along that map to other abstract objects. (For example, a <code>VolumeSlider</code> might map each thumb to a specific
- * volume level. This type of widget would let the user control fading in/out of an audio track.)
+ * This JComponent resembles a <code>JSlider</code>, except there are at least two thumbs. A <code>JSlider</code> is
+ * designed to modify one number within a certain range of values. By contrast a <code>MultiThumbSlider</code> actually
+ * modifies a <i>table</i> of data. Each thumb in a <code>MultiThumbSlider</code> should be thought of as a key, and it
+ * maps to an abstract value. In the case of the <code>GradientSlider</code>: each value is a
+ * <code>java.awt.Color</code>. Other subclasses could come along that map to other abstract objects. (For example, a
+ * <code>VolumeSlider</code> might map each thumb to a specific volume level. This type of widget would let the user
+ * control fading in/out of an audio track.)
  * <P>
- * The slider graphically represents the domain from zero to one, so each thumb is always positioned within that domain. If the
- * user drags a thumb outside this domain: that thumb disappears.
+ * The slider graphically represents the domain from zero to one, so each thumb is always positioned within that domain.
+ * If the user drags a thumb outside this domain: that thumb disappears.
  * <P>
- * There is always a selected thumb in each slider when this slider has the keyboard focus. The user can press the tab key (or
- * shift-tab) to transfer focus to different thumbs. Also the arrow keys can be used to control the selected thumb.
+ * There is always a selected thumb in each slider when this slider has the keyboard focus. The user can press the tab
+ * key (or shift-tab) to transfer focus to different thumbs. Also the arrow keys can be used to control the selected
+ * thumb.
  * <P>
- * The user can click and drag any thumb to a new location. If a thumb is dragged so it is less than zero or greater than one:
- * then that thumb is removed. If the user clicks between two existing thumbs: a new thumb is created if <code>autoAdd</code> is
- * set to <code>true</code>. (If <code>autoAdd</code> is set to false: nothing happens.)
+ * The user can click and drag any thumb to a new location. If a thumb is dragged so it is less than zero or greater
+ * than one: then that thumb is removed. If the user clicks between two existing thumbs: a new thumb is created if
+ * <code>autoAdd</code> is set to <code>true</code>. (If <code>autoAdd</code> is set to false: nothing happens.)
  * <P>
- * There are unimplemented methods in this class: <code>doDoubleClick()</code> and <code>doPopup()</code>. The UI will invoke
- * these methods as needed; this gives the user a chance to edit the values represented at a particular point.
+ * There are unimplemented methods in this class: <code>doDoubleClick()</code> and <code>doPopup()</code>. The UI will
+ * invoke these methods as needed; this gives the user a chance to edit the values represented at a particular point.
  * <P>
  * Also using the keyboard:
  * <ul>
- * <LI>In a horizontal slider, the user can press modifier+left or modifer+right to insert a new thumb to the left/right of the
- * currently selected thumb. (Where "modifier" refers to <code>Toolkit.getDefaultTookit().getMenuShortcutKeyMask()</code>. On
- * Mac this is META, and on Windows this is CONTROL.) Likewise on a vertical slider the up/down arrow keys can be used to add
- * thumbs.</li>
+ * <LI>In a horizontal slider, the user can press modifier+left or modifer+right to insert a new thumb to the left/right
+ * of the currently selected thumb. (Where "modifier" refers to
+ * <code>Toolkit.getDefaultTookit().getMenuShortcutKeyMask()</code>. On Mac this is META, and on Windows this is
+ * CONTROL.) Likewise on a vertical slider the up/down arrow keys can be used to add thumbs.</li>
  * <LI>The delete/backspace key can be used to remove thumbs.</li>
  * <LI>In a horizontal slider, the down arrow key can be used to invoke <code>doPopup()</code>. This should invoke a
- * <code>JPopupMenu</code> that is keyboard accessible, so the user should be able to navigate this component without a mouse.
- * Likewise on a vertical slider the right arrow key should do the same.</li>
+ * <code>JPopupMenu</code> that is keyboard accessible, so the user should be able to navigate this component without a
+ * mouse. Likewise on a vertical slider the right arrow key should do the same.</li>
  * <LI>The space bar or return key invokes <code>doDoubleClick()</code>.</LI>
  * </ul>
  * <P>
- * Because thumbs can be abstractly inserted, this values each thumb represents should be tween-able. That is, if there is a
- * value at zero and a value at one, the call <code>getValue(.5f)</code> must return a value that is halfway between those
- * values.
+ * Because thumbs can be abstractly inserted, the values each thumb represents should be tween-able. That is, if there
+ * is a value at zero and a value at one, the call <code>getValue(.5f)</code> must return a value that is halfway
+ * between those values.
  * <P>
- * Also note that although the thumbs must always be between zero and one: the minimum and maximum thumbs do not have to be zero
- * and one. The user can adjust them so the minimum thumb is, say, .2f, and the maximum thumb is .5f.
+ * Also note that although the thumbs must always be between zero and one: the minimum and maximum thumbs do not have to
+ * be zero and one. The user can adjust them so the minimum thumb is, say, .2f, and the maximum thumb is .5f.
+ * @param <T> the type of data each float maps to. For example: in the GradientSlider this value is a Color. Sometimes
+ *            this property may be unnecessary. If this slider is only meant to store the relative position of thumbs,
+ *            then you may set this to a trivial stub-like object like a String or Character.
  */
 public class MultiThumbSlider<T> extends JComponent
 {
+    @SuppressWarnings("javadoc")
     private static final long serialVersionUID = 1L;
 
     /** A set of possible behaviors when one thumb collides with another. */
-    public static enum Collision
-    {
-        /** TODO When the user drags one thumb and it collides with another, nudge the other slider as far as possible. */
+    public static enum Collision {
+        /** When the user drags one thumb and it collides with another, nudge the other thumb as far as possible. */
         NUDGE_OTHER,
         /** When the user drags one thumb and it collides with another, skip over the other thumb. */
         JUMP_OVER_OTHER,
         /**
-         * When the user drags one thumb and it collides with another, bump into the other thumb and don't allow any more
-         * movement.
+         * When the user drags one thumb and it collides with another, bump into the other thumb and don't allow any
+         * more movement.
          */
         STOP_AGAINST
     };
@@ -105,15 +110,19 @@ public class MultiThumbSlider<T> extends JComponent
     /** The property that is changed when <code>setInverted(b)</code> is called. */
     public static final String INVERTED_PROPERTY = MultiThumbSlider.class.getName() + ".inverted";
 
+    /** The property that is changed when <code>setInverted(b)</code> is called. */
+    public static final String THUMB_OVERLAP_PROPERTY = MultiThumbSlider.class.getName() + ".thumb-overlap";
+
     /** The property that is changed when <code>setMinimumThumbnailCount(b)</code> is called. */
-    public static final String THUMBNAIL_MINIMUM_PROPERTY = MultiThumbSlider.class.getName() + ".thumb-minimum";
+    public static final String THUMB_MINIMUM_PROPERTY = MultiThumbSlider.class.getName() + ".thumb-minimum";
 
     /** The property that is changed when <code>setOrientation(i)</code> is called. */
     public static final String ORIENTATION_PROPERTY = MultiThumbSlider.class.getName() + ".orientation";
 
     /**
-     * The property that is changed when <code>setValues()</code> is called. Note this is used when either the positions or the
-     * values are updated, because they need to be updated at the same time to maintain an exact one-to-one ratio.
+     * The property that is changed when <code>setValues()</code> is called. Note this is used when either the positions
+     * or the values are updated, because they need to be updated at the same time to maintain an exact one-to-one
+     * ratio.
      */
     public static final String VALUES_PROPERTY = MultiThumbSlider.class.getName() + ".values";
 
@@ -143,6 +152,16 @@ public class MultiThumbSlider<T> extends JComponent
     public static final int VERTICAL = SwingConstants.VERTICAL;
 
     /**
+     * Creates a new horizontal MultiThumbSlider.
+     * @param thumbPositions an array of values from zero to one.
+     * @param values an array of values, each value corresponds to a value in <code>thumbPositions</code>.
+     */
+    public MultiThumbSlider(float[] thumbPositions, T[] values)
+    {
+        this(HORIZONTAL, thumbPositions, values);
+    }
+
+    /**
      * Creates a new MultiThumbSlider.
      * @param orientation must be <code>HORIZONTAL</code> or <code>VERTICAL</code>
      * @param thumbPositions an array of values from zero to one.
@@ -156,12 +175,31 @@ public class MultiThumbSlider<T> extends JComponent
         updateUI();
     }
 
+    @SuppressWarnings({"unchecked", "javadoc"})
+    public MultiThumbSliderUI<T> getUI()
+    {
+        return (MultiThumbSliderUI<T>) this.ui;
+    }
+
     @Override
     public void updateUI()
     {
         String name = UIManager.getString("MultiThumbSliderUI");
         if (name == null)
-            name = "org.opentrafficsim.gui.multislider.DefaultMultiThumbSliderUI";
+        {
+            if (JVM.isMac)
+            {
+                name = "org.opentrafficsim.gui.multislider.AquaMultiThumbSliderUI";
+            }
+            else if (JVM.isWindows)
+            {
+                name = "org.opentrafficsim.gui.multislider.VistaMultiThumbSliderUI";
+            }
+            else
+            {
+                name = "org.opentrafficsim.gui.multislider.DefaultMultiThumbSliderUI";
+            }
+        }
         try
         {
             Class<?> c = Class.forName(name);
@@ -171,7 +209,7 @@ public class MultiThumbSlider<T> extends JComponent
                 Class<?>[] types = constructors[a].getParameterTypes();
                 if (types.length == 1 && types[0].equals(MultiThumbSlider.class))
                 {
-                    ComponentUI ui = (ComponentUI) constructors[a].newInstance(new Object[] {this});
+                    MultiThumbSliderUI<T> ui = (MultiThumbSliderUI<T>) constructors[a].newInstance(new Object[]{this});
                     setUI(ui);
                     return;
                 }
@@ -189,20 +227,25 @@ public class MultiThumbSlider<T> extends JComponent
         }
     }
 
+    public void setUI(MultiThumbSliderUI<T> ui)
+    {
+        super.setUI((ComponentUI) ui);
+    }
+
     /**
      * This listener will be notified when the colors/positions of this slider are modified.
      * <P>
-     * Note you can also listen to these events by listening to the <code>VALUES_PROPERTY</code>, but this mechanism is provided
-     * as a convenience to resemble the <code>JSlider</code> model.
+     * Note you can also listen to these events by listening to the <code>VALUES_PROPERTY</code>, but this mechanism is
+     * provided as a convenience to resemble the <code>JSlider</code> model.
      * @param l the <code>ChangeListener</code> to add.
      */
     public void addChangeListener(ChangeListener l)
     {
-        if (changeListeners == null)
-            changeListeners = new Vector<ChangeListener>();
-        if (changeListeners.contains(l))
+        if (this.changeListeners == null)
+            this.changeListeners = new Vector<ChangeListener>();
+        if (this.changeListeners.contains(l))
             return;
-        changeListeners.add(l);
+        this.changeListeners.add(l);
     }
 
     /**
@@ -210,21 +253,21 @@ public class MultiThumbSlider<T> extends JComponent
      */
     public void removeChangeListener(ChangeListener l)
     {
-        if (changeListeners == null)
+        if (this.changeListeners == null)
             return;
-        changeListeners.remove(l);
+        this.changeListeners.remove(l);
     }
 
     /** Invokes all the ChangeListeners. */
     protected void fireChangeListeners()
     {
-        if (changeListeners == null)
+        if (this.changeListeners == null)
             return;
-        for (int a = 0; a < changeListeners.size(); a++)
+        for (int a = 0; a < this.changeListeners.size(); a++)
         {
             try
             {
-                (changeListeners.get(a)).stateChanged(new ChangeEvent(this));
+                (this.changeListeners.get(a)).stateChanged(new ChangeEvent(this));
             }
             catch (Throwable t)
             {
@@ -234,8 +277,8 @@ public class MultiThumbSlider<T> extends JComponent
     }
 
     /**
-     * Depending on which thumb is selected, this may shift the focus to the next available thumb, or it may shift the focus to
-     * the next focusable <code>JComponent</code>.
+     * Depending on which thumb is selected, this may shift the focus to the next available thumb, or it may shift the
+     * focus to the next focusable <code>JComponent</code>.
      */
     @Override
     public void transferFocus()
@@ -263,7 +306,7 @@ public class MultiThumbSlider<T> extends JComponent
         int selectedThumb = getSelectedThumb();
         if (direction == 1)
         {
-            if (selectedThumb != thumbPositions.length - 1)
+            if (selectedThumb != this.thumbPositions.length - 1)
             {
                 setSelectedThumb(selectedThumb + 1);
                 return;
@@ -288,8 +331,8 @@ public class MultiThumbSlider<T> extends JComponent
     }
 
     /**
-     * Depending on which thumb is selected, this may shift the focus to the previous available thumb, or it may shift the focus
-     * to the previous focusable <code>JComponent</code>.
+     * Depending on which thumb is selected, this may shift the focus to the previous available thumb, or it may shift
+     * the focus to the previous focusable <code>JComponent</code>.
      */
     @Override
     public void transferFocusBackward()
@@ -307,7 +350,7 @@ public class MultiThumbSlider<T> extends JComponent
     public T createValueForInsertion(float pos)
     {
         throw new NullPointerException(
-            "this method is undefined. Either auto-adding should be disabled, or this method needs to be overridden to return a value");
+                "this method is undefined. Either auto-adding should be disabled, or this method needs to be overridden to return a value");
     }
 
     /**
@@ -316,15 +359,15 @@ public class MultiThumbSlider<T> extends JComponent
      */
     public void removeThumb(int thumbIndex)
     {
-        if (thumbIndex < 0 || thumbIndex > thumbPositions.length)
+        if (thumbIndex < 0 || thumbIndex > this.thumbPositions.length)
             throw new IllegalArgumentException("There is no thumb at index " + thumbIndex + " to remove.");
 
-        float[] f = new float[thumbPositions.length - 1];
-        T[] c = createSimilarArray(values, values.length - 1);
-        System.arraycopy(thumbPositions, 0, f, 0, thumbIndex);
-        System.arraycopy(values, 0, c, 0, thumbIndex);
-        System.arraycopy(thumbPositions, thumbIndex + 1, f, thumbIndex, f.length - thumbIndex);
-        System.arraycopy(values, thumbIndex + 1, c, thumbIndex, f.length - thumbIndex);
+        float[] f = new float[this.thumbPositions.length - 1];
+        T[] c = createSimilarArray(this.values, this.values.length - 1);
+        System.arraycopy(this.thumbPositions, 0, f, 0, thumbIndex);
+        System.arraycopy(this.values, 0, c, 0, thumbIndex);
+        System.arraycopy(this.thumbPositions, thumbIndex + 1, f, thumbIndex, f.length - thumbIndex);
+        System.arraycopy(this.values, thumbIndex + 1, c, thumbIndex, f.length - thumbIndex);
         setValues(f, c);
     }
 
@@ -336,17 +379,17 @@ public class MultiThumbSlider<T> extends JComponent
     }
 
     /**
-     * An optional method subclasses can override to react to the user's double-click. When a thumb is double-clicked the user
-     * is trying to edit the value for that thumb. A double-click probably suggests the user wants a detailed set of controls to
-     * edit a value, such as a dialog.
+     * An optional method subclasses can override to react to the user's double-click. When a thumb is double-clicked
+     * the user is trying to edit the value for that thumb. A double-click probably suggests the user wants a detailed
+     * set of controls to edit a value, such as a dialog.
      * <P>
      * Note this method will be called with arguments (-1,-1) if the space bar or return key is pressed.
      * <P>
      * By default this method does nothing, and returns <code>false</code>
      * <P>
-     * Note the (x,y) information passed to this method is only provided so subclasses can position components (such as a
-     * JPopupMenu). It can be assumed for a double-click event that the user has selected a thumb (since one click will
-     * click/create a thumb) and intends to edit the currently selected thumb.
+     * Note the (x,y) information passed to this method is only provided so subclasses can position components (such as
+     * a JPopupMenu). It can be assumed for a double-click event that the user has selected a thumb (since one click
+     * will click/create a thumb) and intends to edit the currently selected thumb.
      * @param x the x-value of the mouse click location
      * @param y the y-value of the mouse click location
      * @return <code>true</code> if this event was consumed, or acted upon. <code>false</code> if this is unimplemented.
@@ -358,8 +401,8 @@ public class MultiThumbSlider<T> extends JComponent
 
     /**
      * An optional method subclasses can override to react to the user's request for a contextual menu. When a thumb is
-     * right-clicked the user is trying to edit the value for that thumb. A right-click probably suggests the user wants very
-     * quick, simple options to adjust a thumb.
+     * right-clicked the user is trying to edit the value for that thumb. A right-click probably suggests the user wants
+     * very quick, simple options to adjust a thumb.
      * <P>
      * By default this method does nothing, and returns <code>false</code>
      * @param x the x-value of the mouse click location
@@ -397,7 +440,8 @@ public class MultiThumbSlider<T> extends JComponent
     /**
      * This creats and inserts a thumb at a position indicated.
      * <P>
-     * This method relies on the abstract <code>getValue(float)</code> to determine what value to put at the new thumb location.
+     * This method relies on the abstract <code>getValue(float)</code> to determine what value to put at the new thumb
+     * location.
      * @param pos the new thumb position
      * @return the index of the newly created thumb
      */
@@ -406,22 +450,22 @@ public class MultiThumbSlider<T> extends JComponent
         if (pos < 0 || pos > 1)
             throw new IllegalArgumentException("the new position (" + pos + ") must be between zero and one");
         T newValue = createValueForInsertion(pos);
-        float[] f = new float[thumbPositions.length + 1];
-        T[] c = createSimilarArray(values, values.length + 1);
+        float[] f = new float[this.thumbPositions.length + 1];
+        T[] c = createSimilarArray(this.values, this.values.length + 1);
 
         int newIndex = -1;
-        if (pos < thumbPositions[0])
+        if (pos < this.thumbPositions[0])
         {
-            System.arraycopy(thumbPositions, 0, f, 1, thumbPositions.length);
-            System.arraycopy(values, 0, c, 1, values.length);
+            System.arraycopy(this.thumbPositions, 0, f, 1, this.thumbPositions.length);
+            System.arraycopy(this.values, 0, c, 1, this.values.length);
             newIndex = 0;
             f[0] = pos;
             c[0] = newValue;
         }
-        else if (pos > thumbPositions[thumbPositions.length - 1])
+        else if (pos > this.thumbPositions[this.thumbPositions.length - 1])
         {
-            System.arraycopy(thumbPositions, 0, f, 0, thumbPositions.length);
-            System.arraycopy(values, 0, c, 0, values.length);
+            System.arraycopy(this.thumbPositions, 0, f, 0, this.thumbPositions.length);
+            System.arraycopy(this.values, 0, c, 0, this.values.length);
             newIndex = f.length - 1;
             f[f.length - 1] = pos;
             c[c.length - 1] = newValue;
@@ -431,10 +475,10 @@ public class MultiThumbSlider<T> extends JComponent
             boolean addedYet = false;
             for (int a = 0; a < f.length; a++)
             {
-                if (addedYet == false && thumbPositions[a] < pos)
+                if (addedYet == false && this.thumbPositions[a] < pos)
                 {
-                    f[a] = thumbPositions[a];
-                    c[a] = values[a];
+                    f[a] = this.thumbPositions[a];
+                    c[a] = this.values[a];
                 }
                 else
                 {
@@ -447,8 +491,8 @@ public class MultiThumbSlider<T> extends JComponent
                     }
                     else
                     {
-                        f[a] = thumbPositions[a - 1];
-                        c[a] = values[a - 1];
+                        f[a] = this.thumbPositions[a - 1];
+                        c[a] = this.values[a - 1];
                     }
                 }
             }
@@ -460,8 +504,8 @@ public class MultiThumbSlider<T> extends JComponent
     /**
      * This is used to notify other objects when the user is in the process of adjusting values in this slider.
      * <P>
-     * A listener may not want to act on certain changes until this property is <code>false</code> if it is expensive to process
-     * certain changes.
+     * A listener may not want to act on certain changes until this property is <code>false</code> if it is expensive to
+     * process certain changes.
      * <P>
      * This triggers a <code>PropertyChangeEvent</code> for <code>ADJUST_PROPERTY</code>.
      * @param b
@@ -493,8 +537,8 @@ public class MultiThumbSlider<T> extends JComponent
      */
     public float[] getThumbPositions()
     {
-        float[] f = new float[thumbPositions.length];
-        System.arraycopy(thumbPositions, 0, f, 0, f.length);
+        float[] f = new float[this.thumbPositions.length];
+        System.arraycopy(this.thumbPositions, 0, f, 0, f.length);
         return f;
     }
 
@@ -506,8 +550,8 @@ public class MultiThumbSlider<T> extends JComponent
      */
     public T[] getValues()
     {
-        T[] c = createSimilarArray(values, values.length);
-        System.arraycopy(values, 0, c, 0, c.length);
+        T[] c = createSimilarArray(this.values, this.values.length);
+        System.arraycopy(this.values, 0, c, 0, c.length);
         return c;
     }
 
@@ -532,21 +576,21 @@ public class MultiThumbSlider<T> extends JComponent
     }
 
     /**
-     * This assigns new positions/values for the thumbs in this slider. The two must be assigned at exactly the same time, so
-     * there is always the same number of thumbs/sliders.
+     * This assigns new positions/values for the thumbs in this slider. The two must be assigned at exactly the same
+     * time, so there is always the same number of thumbs/sliders.
      * <P>
      * This triggers a <code>PropertyChangeEvent</code> for <code>VALUES_PROPERTY</code>, and possibly for the
      * <code>SELECTED_THUMB_PROPERTY</code> if that had to be adjusted, too.
      * @param thumbPositions an array of the new position of each thumb
      * @param values an array of the value associated with each thumb
-     * @throws IllegalArgumentException if the size of the arrays are different, or if the thumbPositions array is not sorted in
-     *             ascending order.
+     * @throws IllegalArgumentException if the size of the arrays are different, or if the thumbPositions array is not
+     *             sorted in ascending order.
      */
     public void setValues(float[] thumbPositions, T[] values)
     {
         if (values.length != thumbPositions.length)
             throw new IllegalArgumentException("there number of positions (" + thumbPositions.length
-                + ") must equal the number of values (" + values.length + ")");
+                    + ") must equal the number of values (" + values.length + ")");
 
         for (int a = 0; a < values.length; a++)
         {
@@ -554,10 +598,10 @@ public class MultiThumbSlider<T> extends JComponent
                 throw new NullPointerException();
             if (a > 0 && thumbPositions[a] < thumbPositions[a - 1])
                 throw new IllegalArgumentException("the thumb positions must be ascending order ("
-                    + toString(thumbPositions) + ")");
+                        + toString(thumbPositions) + ")");
             if (thumbPositions[a] < 0 || thumbPositions[a] > 1)
                 throw new IllegalArgumentException("illegal thumb value " + thumbPositions[a]
-                    + " (must be between zero and one)");
+                        + " (must be between zero and one)");
         }
 
         // don't clone arrays and fire off events if
@@ -603,13 +647,14 @@ public class MultiThumbSlider<T> extends JComponent
      */
     public int getThumbCount()
     {
-        return thumbPositions.length;
+        return this.thumbPositions.length;
     }
 
     /**
      * Assigns the currently selected thumb. A value of -1 indicates that no thumb is currently selected.
      * <P>
-     * A slider should always have a selected thumb if it has the keyboard focus, though, so be careful when you modify this.
+     * A slider should always have a selected thumb if it has the keyboard focus, though, so be careful when you modify
+     * this.
      * <P>
      * This triggers a <code>PropertyChangeEvent</code> for <code>SELECTED_THUMB_PROPERTY</code>.
      * @param index the new selected thumb
@@ -633,11 +678,11 @@ public class MultiThumbSlider<T> extends JComponent
      * <P>
      * Note this might be -1, indicating that there is no selected thumb.
      * <P>
-     * It is recommend you use the <code>getSelectedThumb()</code> method most of the time. This method is made public so UI's
-     * can provide a better user experience as this component gains and loses focus.
-     * @param ignoreIfUnfocused if this component doesn't have focus and this is <code>true</code>, then this returns -1. If this
-     *            is <code>false</code> then this returns the internal value used to store the selected index, but the user may
-     *            not realize this thumb is "selected".
+     * It is recommend you use the <code>getSelectedThumb()</code> method most of the time. This method is made public
+     * so UI's can provide a better user experience as this component gains and loses focus.
+     * @param ignoreIfUnfocused if this component doesn't have focus and this is <code>true</code>, then this returns
+     *            -1. If this is <code>false</code> then this returns the internal value used to store the selected
+     *            index, but the user may not realize this thumb is "selected".
      * @return the selected thumb
      */
     public int getSelectedThumb(boolean ignoreIfUnfocused)
@@ -651,7 +696,8 @@ public class MultiThumbSlider<T> extends JComponent
     }
 
     /**
-     * Controls whether thumbs are automatically added when the user clicks in a space that doesn't already have a thumb.
+     * Controls whether thumbs are automatically added when the user clicks in a space that doesn't already have a
+     * thumb.
      * @param b whether auto adding is active or not
      */
     public void setAutoAdding(boolean b)
@@ -696,6 +742,7 @@ public class MultiThumbSlider<T> extends JComponent
     /**
      * Whether this slider is inverted or not.
      */
+    @SuppressWarnings("javadoc")
     public boolean isInverted()
     {
         Boolean b = (Boolean) getClientProperty(INVERTED_PROPERTY);
@@ -742,14 +789,27 @@ public class MultiThumbSlider<T> extends JComponent
 
     public void setMinimumThumbnailCount(int i)
     {
-        putClientProperty(THUMBNAIL_MINIMUM_PROPERTY, i);
+        putClientProperty(THUMB_MINIMUM_PROPERTY, i);
     }
 
     public int getMinimumThumbnailCount()
     {
-        Integer i = (Integer) getClientProperty(THUMBNAIL_MINIMUM_PROPERTY);
+        Integer i = (Integer) getClientProperty(THUMB_MINIMUM_PROPERTY);
         if (i == null)
             return 1;
         return i;
+    }
+
+    public void setThumbOverlap(boolean i)
+    {
+        putClientProperty(THUMB_OVERLAP_PROPERTY, i);
+    }
+
+    public boolean isThumbOverlap()
+    {
+        Boolean b = (Boolean) getClientProperty(THUMB_OVERLAP_PROPERTY);
+        if (b == null)
+            return false;
+        return b;
     }
 }

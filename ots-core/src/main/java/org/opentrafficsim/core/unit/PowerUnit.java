@@ -67,9 +67,9 @@ public class PowerUnit extends Unit<PowerUnit>
     static
     {
         SI =
-                WATT =
-                        new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PowerUnit.watt",
-                                "PowerUnit.W", SI_DERIVED);
+                new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PowerUnit.watt", "PowerUnit.W",
+                        SI_DERIVED);
+        WATT = SI;
         KILOWATT = new PowerUnit("PowerUnit.kilowatt", "PowerUnit.kW", SI_DERIVED, WATT, 1000.0);
         MEGAWATT = new PowerUnit("PowerUnit.megawatt", "PowerUnit.MW", SI_DERIVED, WATT, 1.0E6);
         GIGAWATT = new PowerUnit("PowerUnit.gigawatt", "PowerUnit.GW", SI_DERIVED, WATT, 1.0E9);

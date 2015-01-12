@@ -61,7 +61,8 @@ public class LengthUnit extends Unit<LengthUnit>
 
     static
     {
-        SI = METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", SI_BASE);
+        SI = new LengthUnit("LengthUnit.meter", "LengthUnit.m", SI_BASE);
+        METER = SI;
         MILLIMETER = new LengthUnit("LengthUnit.millimeter", "LengthUnit.mm", SI_BASE, METER, 0.001);
         CENTIMETER = new LengthUnit("LengthUnit.centimeter", "LengthUnit.cm", SI_BASE, METER, 0.01);
         DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", SI_BASE, METER, 0.1);

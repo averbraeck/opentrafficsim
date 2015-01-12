@@ -48,10 +48,10 @@ public class ElectricalResistanceUnit extends Unit<ElectricalResistanceUnit>
     static
     {
         SI =
-                OHM =
-                        new ElectricalResistanceUnit(MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE,
-                                TimeUnit.SECOND, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm",
-                                SI_DERIVED);
+                new ElectricalResistanceUnit(MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE,
+                        TimeUnit.SECOND, "ElectricalResistanceUnit.ohm_(name)", "ElectricalResistanceUnit.ohm",
+                        SI_DERIVED);
+        OHM = SI;
         MILLIOHM =
                 new ElectricalResistanceUnit("ElectricalResistanceUnit.milli_ohm", "ElectricalResistanceUnit.m_ohm",
                         SI_DERIVED, OHM, 0.001);

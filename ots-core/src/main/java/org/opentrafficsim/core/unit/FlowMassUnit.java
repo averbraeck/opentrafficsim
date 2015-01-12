@@ -37,9 +37,9 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     static
     {
         SI =
-                KILOGRAM_PER_SECOND =
-                        new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND, "FlowMassUnit.kilogram_per_second",
-                                "FlowMassUnit.kg/s", SI_DERIVED);
+                new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND, "FlowMassUnit.kilogram_per_second",
+                        "FlowMassUnit.kg/s", SI_DERIVED);
+        KILOGRAM_PER_SECOND = SI;
         POUND_PER_SECOND =
                 new FlowMassUnit(MassUnit.POUND, TimeUnit.SECOND, "FlowMassUnit.pound_per_second", "FlowMassUnit.lb/s",
                         IMPERIAL);

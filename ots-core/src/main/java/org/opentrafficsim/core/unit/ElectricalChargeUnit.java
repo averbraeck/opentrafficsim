@@ -61,9 +61,9 @@ public class ElectricalChargeUnit extends Unit<ElectricalChargeUnit>
     static
     {
         SI =
-                COULOMB =
-                        new ElectricalChargeUnit(ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND,
-                                "ElectricalChargeUnit.coulomb", "ElectricalChargeUnit.C", SI_DERIVED);
+                new ElectricalChargeUnit(ElectricalCurrentUnit.AMPERE, TimeUnit.SECOND, "ElectricalChargeUnit.coulomb",
+                        "ElectricalChargeUnit.C", SI_DERIVED);
+        COULOMB = SI;
         MILLIAMPERE_HOUR =
                 new ElectricalChargeUnit(ElectricalCurrentUnit.MILLIAMPERE, TimeUnit.HOUR,
                         "ElectricalChargeUnit.milliampere_hour", "ElectricalChargeUnit.mAh", SI_DERIVED);
