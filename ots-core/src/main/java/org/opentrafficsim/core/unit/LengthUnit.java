@@ -20,6 +20,9 @@ public class LengthUnit extends Unit<LengthUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
+    /** The SI unit for length is meter. */
+    public static final LengthUnit SI;
+
     /** meter. */
     public static final LengthUnit METER;
 
@@ -58,7 +61,7 @@ public class LengthUnit extends Unit<LengthUnit>
 
     static
     {
-        METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", SI_BASE);
+        SI = METER = new LengthUnit("LengthUnit.meter", "LengthUnit.m", SI_BASE);
         MILLIMETER = new LengthUnit("LengthUnit.millimeter", "LengthUnit.mm", SI_BASE, METER, 0.001);
         CENTIMETER = new LengthUnit("LengthUnit.centimeter", "LengthUnit.cm", SI_BASE, METER, 0.01);
         DECIMETER = new LengthUnit("LengthUnit.decimeter", "LengthUnit.dm", SI_BASE, METER, 0.1);
@@ -89,10 +92,11 @@ public class LengthUnit extends Unit<LengthUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public LengthUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final LengthUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final LengthUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

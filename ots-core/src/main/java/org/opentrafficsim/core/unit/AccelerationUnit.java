@@ -26,6 +26,9 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
     /** the actual time unit, e.g. HOUR. */
     private final TimeUnit timeUnit;
 
+    /** The SI unit for acceleration is m/s^2. */
+    public static final AccelerationUnit SI;
+
     /** m/s^2. */
     public static final AccelerationUnit METER_PER_SECOND_2;
 
@@ -58,7 +61,7 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
 
     static
     {
-        METER_PER_SECOND_2 =
+        SI = METER_PER_SECOND_2 =
             new AccelerationUnit(LengthUnit.METER, TimeUnit.SECOND, "AccelerationUnit.meter_per_second_squared",
                 "AccelerationUnit.m/s^2", SI_DERIVED);
         KM_PER_HOUR_2 =

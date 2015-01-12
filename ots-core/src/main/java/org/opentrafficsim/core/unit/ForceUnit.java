@@ -31,6 +31,9 @@ public class ForceUnit extends Unit<ForceUnit>
     /** the unit of time for the force unit, e.g., second. */
     private final TimeUnit timeUnit;
 
+    /** The SI unit for force is Newton. */
+    public static final ForceUnit SI;
+
     /** Newton. */
     public static final ForceUnit NEWTON;
 
@@ -54,24 +57,28 @@ public class ForceUnit extends Unit<ForceUnit>
 
     static
     {
-        NEWTON =
-            new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton", "ForceUnit.N",
-                SI_DERIVED);
-        DYNE = new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND, "ForceUnit.dyne", "ForceUnit.dyn", CGS);
+        SI =
+                NEWTON =
+                        new ForceUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "ForceUnit.newton",
+                                "ForceUnit.N", SI_DERIVED);
+        DYNE =
+                new ForceUnit(MassUnit.GRAM, LengthUnit.CENTIMETER, TimeUnit.SECOND, "ForceUnit.dyne", "ForceUnit.dyn",
+                        CGS);
         KILOGRAM_FORCE =
-            new ForceUnit(MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.kilogram-force", "ForceUnit.kgf",
-                OTHER);
+                new ForceUnit(MassUnit.KILOGRAM, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.kilogram-force",
+                        "ForceUnit.kgf", OTHER);
         OUNCE_FORCE =
-            new ForceUnit(MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ounce-force", "ForceUnit.ozf",
-                IMPERIAL);
+                new ForceUnit(MassUnit.OUNCE, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ounce-force",
+                        "ForceUnit.ozf", IMPERIAL);
         POUND_FORCE =
-            new ForceUnit(MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.pound-force", "ForceUnit.lbf",
-                IMPERIAL);
+                new ForceUnit(MassUnit.POUND, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.pound-force",
+                        "ForceUnit.lbf", IMPERIAL);
         TON_FORCE =
-            new ForceUnit(MassUnit.TON_SHORT, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ton-force", "ForceUnit.tnf",
-                IMPERIAL);
+                new ForceUnit(MassUnit.TON_SHORT, AccelerationUnit.STANDARD_GRAVITY, "ForceUnit.ton-force",
+                        "ForceUnit.tnf", IMPERIAL);
         STHENE =
-            new ForceUnit(MassUnit.TON_METRIC, AccelerationUnit.METER_PER_SECOND_2, "ForceUnit.sthene", "ForceUnit.sn", MTS);
+                new ForceUnit(MassUnit.TON_METRIC, AccelerationUnit.METER_PER_SECOND_2, "ForceUnit.sthene",
+                        "ForceUnit.sn", MTS);
     }
 
     /**
@@ -83,12 +90,12 @@ public class ForceUnit extends Unit<ForceUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public ForceUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
-        final String abbreviationKey, final UnitSystem unitSystem)
+    public ForceUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON, massUnit.getConversionFactorToStandardUnit()
-            * lengthUnit.getConversionFactorToStandardUnit()
-            / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
+                * lengthUnit.getConversionFactorToStandardUnit()
+                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -103,10 +110,10 @@ public class ForceUnit extends Unit<ForceUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public ForceUnit(final MassUnit massUnit, final AccelerationUnit accelerationUnit, final String nameKey,
-        final String abbreviationKey, final UnitSystem unitSystem)
+            final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, NEWTON, massUnit.getConversionFactorToStandardUnit()
-            * accelerationUnit.getConversionFactorToStandardUnit(), true);
+                * accelerationUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = massUnit;
         this.lengthUnit = accelerationUnit.getLengthUnit();
         this.timeUnit = accelerationUnit.getTimeUnit();
@@ -117,10 +124,11 @@ public class ForceUnit extends Unit<ForceUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public ForceUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final ForceUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final ForceUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();

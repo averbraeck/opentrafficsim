@@ -23,6 +23,9 @@ public class MassUnit extends Unit<MassUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
+    /** The SI unit for mass is kilogram. */
+    public static final MassUnit SI;
+
     /** kilogram. */
     public static final MassUnit KILOGRAM;
 
@@ -55,7 +58,7 @@ public class MassUnit extends Unit<MassUnit>
 
     static
     {
-        KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
+        SI = KILOGRAM = new MassUnit("MassUnit.kilogram", "MassUnit.kg", SI_BASE);
         GRAM = new MassUnit("MassUnit.gram", "MassUnit.g", SI_BASE, KILOGRAM, 0.001);
         POUND = new MassUnit("MassUnit.pound", "MassUnit.lb", IMPERIAL, KILOGRAM, 0.45359237);
         OUNCE = new MassUnit("MassUnit.ounce", "MassUnit.oz", IMPERIAL, POUND, 1.0 / 16.0);
@@ -84,10 +87,11 @@ public class MassUnit extends Unit<MassUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public MassUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final MassUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final MassUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

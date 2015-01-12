@@ -7,7 +7,8 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 /**
  * Objects per unit of distance.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 11 nov. 2014 <br>
@@ -21,6 +22,9 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
     /** the actual length unit, e.g. meter. */
     private final LengthUnit lengthUnit;
 
+    /** The SI unit for objects per unit of distance is 1/meter. */
+    public static final LinearDensityUnit SI;
+
     /** 1/meter. */
     public static final LinearDensityUnit PER_METER;
 
@@ -32,12 +36,16 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
 
     static
     {
-        PER_METER =
-            new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m", SI_DERIVED);
+        SI =
+                PER_METER =
+                        new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m",
+                                SI_DERIVED);
         PER_KILOMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED, PER_METER, 0.001);
+                new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED,
+                        PER_METER, 0.001);
         PER_MILLIMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_millimeter", "LinearDensityUnit./mm", SI_DERIVED, PER_METER, 1000);
+                new LinearDensityUnit("LinearDensityUnit.per_millimeter", "LinearDensityUnit./mm", SI_DERIVED,
+                        PER_METER, 1000);
     }
 
     /**
@@ -48,9 +56,10 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public LinearDensityUnit(final LengthUnit lengthUnit, final String nameKey, final String abbreviationKey,
-        final UnitSystem unitSystem)
+            final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem, PER_METER, 1.0 / lengthUnit.getConversionFactorToStandardUnit(), true);
+        super(nameKey, abbreviationKey, unitSystem, PER_METER, 1.0 / lengthUnit.getConversionFactorToStandardUnit(),
+                true);
         this.lengthUnit = lengthUnit;
     }
 
@@ -60,10 +69,11 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public LinearDensityUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final LinearDensityUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final LinearDensityUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();

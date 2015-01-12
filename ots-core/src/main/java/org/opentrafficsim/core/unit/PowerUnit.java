@@ -31,6 +31,9 @@ public class PowerUnit extends Unit<PowerUnit>
     /** the unit of time for the power unit, e.g., second. */
     private final TimeUnit timeUnit;
 
+    /** The SI unit for power is watt. */
+    public static final PowerUnit SI;
+
     /** watt. */
     public static final PowerUnit WATT;
 
@@ -63,27 +66,29 @@ public class PowerUnit extends Unit<PowerUnit>
 
     static
     {
-        WATT =
-            new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PowerUnit.watt", "PowerUnit.W", SI_DERIVED);
+        SI =
+                WATT =
+                        new PowerUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PowerUnit.watt",
+                                "PowerUnit.W", SI_DERIVED);
         KILOWATT = new PowerUnit("PowerUnit.kilowatt", "PowerUnit.kW", SI_DERIVED, WATT, 1000.0);
         MEGAWATT = new PowerUnit("PowerUnit.megawatt", "PowerUnit.MW", SI_DERIVED, WATT, 1.0E6);
         GIGAWATT = new PowerUnit("PowerUnit.gigawatt", "PowerUnit.GW", SI_DERIVED, WATT, 1.0E9);
         FOOT_POUND_FORCE_PER_HOUR =
-            new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.HOUR, "PowerUnit.foot_pound-force_per_hour",
-                "PowerUnit.ft.lbf/h", IMPERIAL);
+                new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.HOUR,
+                        "PowerUnit.foot_pound-force_per_hour", "PowerUnit.ft.lbf/h", IMPERIAL);
         FOOT_POUND_FORCE_PER_MINUTE =
-            new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.MINUTE, "PowerUnit.foot_pound-force_per_minute",
-                "PowerUnit.ft.lbf/min", IMPERIAL);
+                new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.MINUTE,
+                        "PowerUnit.foot_pound-force_per_minute", "PowerUnit.ft.lbf/min", IMPERIAL);
         FOOT_POUND_FORCE_PER_SECOND =
-            new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.SECOND, "PowerUnit.foot_pound-force_per_second",
-                "PowerUnit.ft.lbf/s", IMPERIAL);
+                new PowerUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, TimeUnit.SECOND,
+                        "PowerUnit.foot_pound-force_per_second", "PowerUnit.ft.lbf/s", IMPERIAL);
         HORSEPOWER_METRIC = new PowerUnit("PowerUnit.horsepower_(metric)", "PowerUnit.hp", OTHER, WATT, 735.49875);
         STHENE_METER_PER_SECOND =
-            new PowerUnit(LengthUnit.METER, ForceUnit.STHENE, TimeUnit.SECOND, "PowerUnit.sthene-meter_per_second",
-                "PowerUnit.sn.m/s", MTS);
+                new PowerUnit(LengthUnit.METER, ForceUnit.STHENE, TimeUnit.SECOND, "PowerUnit.sthene-meter_per_second",
+                        "PowerUnit.sn.m/s", MTS);
         ERG_PER_SECOND =
-            new PowerUnit(LengthUnit.CENTIMETER, ForceUnit.DYNE, TimeUnit.SECOND, "PowerUnit.erg_per_second",
-                "PowerUnit.erg/s", CGS);
+                new PowerUnit(LengthUnit.CENTIMETER, ForceUnit.DYNE, TimeUnit.SECOND, "PowerUnit.erg_per_second",
+                        "PowerUnit.erg/s", CGS);
     }
 
     /**
@@ -94,12 +99,12 @@ public class PowerUnit extends Unit<PowerUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public PowerUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
-        final String abbreviationKey, final UnitSystem unitSystem)
+    public PowerUnit(final MassUnit massUnit, final LengthUnit lengthUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, WATT, massUnit.getConversionFactorToStandardUnit()
-            * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
-            / Math.pow(timeUnit.getConversionFactorToStandardUnit(), 3.0), true);
+                * lengthUnit.getConversionFactorToStandardUnit() * lengthUnit.getConversionFactorToStandardUnit()
+                / Math.pow(timeUnit.getConversionFactorToStandardUnit(), 3.0), true);
         this.massUnit = massUnit;
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
@@ -113,11 +118,11 @@ public class PowerUnit extends Unit<PowerUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
-    public PowerUnit(final LengthUnit lengthUnit, final ForceUnit forceUnit, final TimeUnit timeUnit, final String nameKey,
-        final String abbreviationKey, final UnitSystem unitSystem)
+    public PowerUnit(final LengthUnit lengthUnit, final ForceUnit forceUnit, final TimeUnit timeUnit,
+            final String nameKey, final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, WATT, lengthUnit.getConversionFactorToStandardUnit()
-            * forceUnit.getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit(), true);
+                * forceUnit.getConversionFactorToStandardUnit() / timeUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = forceUnit.getMassUnit();
         this.lengthUnit = forceUnit.getLengthUnit();
         this.timeUnit = forceUnit.getTimeUnit();
@@ -128,10 +133,11 @@ public class PowerUnit extends Unit<PowerUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public PowerUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final PowerUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final PowerUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();

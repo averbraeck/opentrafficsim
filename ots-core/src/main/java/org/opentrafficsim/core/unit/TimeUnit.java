@@ -20,6 +20,9 @@ public class TimeUnit extends Unit<TimeUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
+    /** The SI unit for time is second. */
+    public static final TimeUnit SI;
+
     /** second. */
     public static final TimeUnit SECOND;
 
@@ -40,7 +43,7 @@ public class TimeUnit extends Unit<TimeUnit>
 
     static
     {
-        SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
+        SI = SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
         MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND, 0.001);
         MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SI_ACCEPTED, SECOND, 60.0);
         HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", SI_ACCEPTED, MINUTE, 60.0);
@@ -65,10 +68,11 @@ public class TimeUnit extends Unit<TimeUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public TimeUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final TimeUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final TimeUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }

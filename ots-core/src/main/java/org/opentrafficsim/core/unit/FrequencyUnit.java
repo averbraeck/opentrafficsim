@@ -23,6 +23,9 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** the actual time unit, e.g. second. */
     private final TimeUnit timeUnit;
 
+    /** The SI unit for frequency is Hertz. */
+    public static final FrequencyUnit SI;
+
     /** Hertz. */
     public static final FrequencyUnit HERTZ;
 
@@ -55,7 +58,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
 
     static
     {
-        HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz", "FrequencyUnit.Hz", SI_DERIVED);
+        SI = HERTZ = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz", "FrequencyUnit.Hz", SI_DERIVED);
         KILOHERTZ = new FrequencyUnit("FrequencyUnit.kilohertz", "FrequencyUnit.kHz", SI_DERIVED, HERTZ, 1000.0);
         MEGAHERTZ = new FrequencyUnit("FrequencyUnit.megahertz", "FrequencyUnit.MHz", SI_DERIVED, HERTZ, 1.0E6);
         GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz", SI_DERIVED, HERTZ, 1.0E9);
@@ -75,7 +78,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
-        final UnitSystem unitSystem)
+            final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit(), true);
         this.timeUnit = timeUnit;
@@ -87,10 +90,11 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public FrequencyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.timeUnit = referenceUnit.getTimeUnit();
