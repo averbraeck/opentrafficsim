@@ -88,9 +88,9 @@ public class PressureUnit extends Unit<PressureUnit>
     static
     {
         SI =
-                PASCAL =
-                        new PressureUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PressureUnit.pascal",
-                                "PressureUnit.Pa", SI_DERIVED);
+                new PressureUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "PressureUnit.pascal",
+                        "PressureUnit.Pa", SI_DERIVED);
+        PASCAL = SI;
         HECTOPASCAL = new PressureUnit("PressureUnit.hectopascal", "PressureUnit.hPa", SI_DERIVED, PASCAL, 100.0);
         KILOPASCAL = new PressureUnit("PressureUnit.kilopascal", "PressureUnit.kPa", SI_DERIVED, PASCAL, 1000.0);
         ATMOSPHERE_STANDARD =

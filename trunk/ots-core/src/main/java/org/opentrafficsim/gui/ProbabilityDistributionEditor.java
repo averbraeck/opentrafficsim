@@ -1,5 +1,6 @@
 package org.opentrafficsim.gui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.beans.PropertyChangeListener;
@@ -10,6 +11,8 @@ import javax.swing.SwingConstants;
 
 import org.opentrafficsim.core.locale.DefaultLocale;
 import org.opentrafficsim.gui.multislider.MultiThumbSlider;
+import org.opentrafficsim.gui.multislider.MultiThumbSliderUI;
+import org.opentrafficsim.gui.multislider.MultiThumbSliderUI.Thumb;
 
 /**
  * Wrapper for Jeremy Wood's MultiThumbSlider.
@@ -55,6 +58,10 @@ public class ProbabilityDistributionEditor extends JPanel
             reducedNames[i] = elementNames[i];
         }
         this.slider = new MultiThumbSlider<String>(MultiThumbSlider.HORIZONTAL, initialValues, reducedNames);
+        this.slider.setThumbOverlap(true);
+        this.slider.putClientProperty(MultiThumbSliderUI.THUMB_SHAPE_PROPERTY, Thumb.Hourglass);
+        this.slider.setThumbOverlap(true);
+        this.slider.setPreferredSize(new Dimension(250, 50));
         add(this.slider, gbc);
         gbc.gridwidth = 1;
         this.labels = new JLabel[values.length];

@@ -43,7 +43,8 @@ public class TimeUnit extends Unit<TimeUnit>
 
     static
     {
-        SI = SECOND = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
+        SI = new TimeUnit("TimeUnit.second", "TimeUnit.s", SI_BASE);
+        SECOND = SI;
         MILLISECOND = new TimeUnit("TimeUnit.millisecond", "TimeUnit.ms", SI_BASE, SECOND, 0.001);
         MINUTE = new TimeUnit("TimeUnit.minute", "TimeUnit.m", SI_ACCEPTED, SECOND, 60.0);
         HOUR = new TimeUnit("TimeUnit.hour", "TimeUnit.h", SI_ACCEPTED, MINUTE, 60.0);

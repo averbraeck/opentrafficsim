@@ -20,13 +20,13 @@ public class TorqueUnit extends Unit<TorqueUnit>
     /** */
     private static final long serialVersionUID = 20140607L;
 
-    /** the unit of mass for the torque unit, e.g., kilogram. */
+    /** The unit of mass for the torque unit, e.g., kilogram. */
     private final MassUnit massUnit;
 
-    /** the unit of length for the torque unit, e.g., length. */
+    /** The unit of length for the torque unit, e.g., length. */
     private final LengthUnit lengthUnit;
 
-    /** the unit of time for the torque unit, e.g., second. */
+    /** The unit of time for the torque unit, e.g., second. */
     private final TimeUnit timeUnit;
 
     /** The SI unit for torque is Newton meter. */
@@ -47,9 +47,9 @@ public class TorqueUnit extends Unit<TorqueUnit>
     static
     {
         SI =
-                NEWTON_METER =
-                        new TorqueUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "TorqueUnit.Newton_meter",
-                                "TorqueUnit.N.m", SI_DERIVED);
+                new TorqueUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "TorqueUnit.Newton_meter",
+                        "TorqueUnit.N.m", SI_DERIVED);
+        NEWTON_METER = SI;
         METER_KILOGRAM_FORCE =
                 new TorqueUnit(ForceUnit.KILOGRAM_FORCE, LengthUnit.METER, "TorqueUnit.meter_kilogram-force",
                         "TorqueUnit.m.kgf", OTHER);

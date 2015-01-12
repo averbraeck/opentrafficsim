@@ -59,10 +59,9 @@ public class ElectricalPotentialUnit extends Unit<ElectricalPotentialUnit>
     static
     {
         SI =
-                VOLT =
-                        new ElectricalPotentialUnit(MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE,
-                                TimeUnit.SECOND, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V",
-                                SI_DERIVED);
+                new ElectricalPotentialUnit(MassUnit.KILOGRAM, LengthUnit.METER, ElectricalCurrentUnit.AMPERE,
+                        TimeUnit.SECOND, "ElectricalPotentialUnit.volt", "ElectricalPotentialUnit.V", SI_DERIVED);
+        VOLT = SI;
         MICROVOLT =
                 new ElectricalPotentialUnit("ElectricalPotentialUnit.microvolt", "ElectricalPotentialUnit.muV",
                         SI_DERIVED, VOLT, 1.0E-6);

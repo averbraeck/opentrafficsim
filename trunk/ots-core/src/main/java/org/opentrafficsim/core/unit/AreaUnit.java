@@ -61,10 +61,13 @@ public class AreaUnit extends Unit<AreaUnit>
 
     static
     {
-        SI = SQUARE_METER = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2", SI_DERIVED);
+        SI = new AreaUnit(LengthUnit.METER, "AreaUnit.square_meter", "AreaUnit.m^2", SI_DERIVED);
+        SQUARE_METER = SI;
         SQUARE_KM = new AreaUnit(LengthUnit.KILOMETER, "AreaUnit.square_kilometer", "AreaUnit.km^2", SI_DERIVED);
-        SQUARE_CENTIMETER = new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter", "AreaUnit.cm^2", SI_DERIVED);
-        SQUARE_MILLIMETER = new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter", "AreaUnit.mm^2", SI_DERIVED);
+        SQUARE_CENTIMETER =
+                new AreaUnit(LengthUnit.CENTIMETER, "AreaUnit.square_centimeter", "AreaUnit.cm^2", SI_DERIVED);
+        SQUARE_MILLIMETER =
+                new AreaUnit(LengthUnit.MILLIMETER, "AreaUnit.square_millimeter", "AreaUnit.mm^2", SI_DERIVED);
         ARE = new AreaUnit("AreaUnit.are", "AreaUnit.a", OTHER, SQUARE_METER, 100.0);
         HECTARE = new AreaUnit("AreaUnit.hectare", "AreaUnit.ha", OTHER, ARE, 100.0);
         SQUARE_MILE = new AreaUnit(LengthUnit.MILE, "AreaUnit.square_mile", "AreaUnit.mi^2", IMPERIAL);
@@ -82,10 +85,10 @@ public class AreaUnit extends Unit<AreaUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public AreaUnit(final LengthUnit lengthUnit, final String nameKey, final String abbreviationKey,
-        final UnitSystem unitSystem)
+            final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, SQUARE_METER, lengthUnit.getConversionFactorToStandardUnit()
-            * lengthUnit.getConversionFactorToStandardUnit(), true);
+                * lengthUnit.getConversionFactorToStandardUnit(), true);
         this.lengthUnit = lengthUnit;
     }
 
@@ -95,10 +98,11 @@ public class AreaUnit extends Unit<AreaUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public AreaUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final AreaUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final AreaUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();

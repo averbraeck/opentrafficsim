@@ -110,9 +110,9 @@ public class EnergyUnit extends Unit<EnergyUnit>
     static
     {
         SI =
-                JOULE =
-                        new EnergyUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "EnergyUnit.Joule",
-                                "EnergyUnit.J", SI_DERIVED);
+                new EnergyUnit(MassUnit.KILOGRAM, LengthUnit.METER, TimeUnit.SECOND, "EnergyUnit.Joule",
+                        "EnergyUnit.J", SI_DERIVED);
+        JOULE = SI;
         FOOT_POUND_FORCE =
                 new EnergyUnit(LengthUnit.FOOT, ForceUnit.POUND_FORCE, "EnergyUnit.foot_pound-force",
                         "EnergyUnit.ft.lbf", IMPERIAL);

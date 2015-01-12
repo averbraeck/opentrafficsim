@@ -43,7 +43,7 @@ public class FormatTest
                         int expectedPrecision = precision - 2;
                         if (expectedPrecision > 6)
                         {
-                            expectedPrecision = 6;
+                            expectedPrecision = 6; 
                         }
                         double tolerance = Math.abs(value / Math.pow(10, expectedPrecision));
                         assertEquals("Parsed result should equal original value within tolerance " + tolerance, value,

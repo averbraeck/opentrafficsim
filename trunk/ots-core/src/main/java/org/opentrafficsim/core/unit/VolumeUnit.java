@@ -21,7 +21,7 @@ public class VolumeUnit extends Unit<VolumeUnit>
     /** */
     private static final long serialVersionUID = 20140604L;
 
-    /** the unit of length for the volume unit, e.g., meter. */
+    /** The unit of length for the volume unit, e.g., meter. */
     private final LengthUnit lengthUnit;
 
     /** The SI unit for volume is m^3. */
@@ -80,7 +80,8 @@ public class VolumeUnit extends Unit<VolumeUnit>
 
     static
     {
-        SI = CUBIC_METER = new VolumeUnit(LengthUnit.METER, "VolumeUnit.cubic_meter", "VolumeUnit.m^3", SI_DERIVED);
+        SI = new VolumeUnit(LengthUnit.METER, "VolumeUnit.cubic_meter", "VolumeUnit.m^3", SI_DERIVED);
+        CUBIC_METER = SI;
         CUBIC_DECIMETER =
                 new VolumeUnit(LengthUnit.DECIMETER, "VolumeUnit.cubic_decimeter", "VolumeUnit.dm^3", SI_DERIVED);
         LITER = new VolumeUnit("VolumeUnit.liter", "VolumeUnit.L", SI_ACCEPTED, CUBIC_DECIMETER, 1.0);

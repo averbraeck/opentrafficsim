@@ -47,9 +47,9 @@ public class SpeedUnit extends Unit<SpeedUnit>
     static
     {
         SI =
-                METER_PER_SECOND =
-                        new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s",
-                                SI_DERIVED);
+                new SpeedUnit(LengthUnit.METER, TimeUnit.SECOND, "SpeedUnit.meter_per_second", "SpeedUnit.m/s",
+                        SI_DERIVED);
+        METER_PER_SECOND = SI;
         KM_PER_HOUR =
                 new SpeedUnit(LengthUnit.KILOMETER, TimeUnit.HOUR, "SpeedUnit.kilometer_per_hour", "SpeedUnit.km/h",
                         SI_DERIVED);
