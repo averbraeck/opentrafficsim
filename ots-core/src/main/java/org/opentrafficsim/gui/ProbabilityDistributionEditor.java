@@ -61,6 +61,7 @@ public class ProbabilityDistributionEditor extends JPanel
         this.slider.setThumbOverlap(true);
         this.slider.putClientProperty(MultiThumbSliderUI.THUMB_SHAPE_PROPERTY, Thumb.Hourglass);
         this.slider.setThumbOverlap(true);
+        this.slider.setAutoAdding(false);
         this.slider.setPreferredSize(new Dimension(250, 50));
         add(this.slider, gbc);
         gbc.gridwidth = 1;

@@ -21,12 +21,12 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
     public DefaultMultiThumbSliderUI(MultiThumbSlider<T> slider)
     {
         super(slider);
-        DEPTH = 10;
+        this.DEPTH = 10;
     }
 
     protected boolean isTrackHighlightActive()
     {
-        return slider.getThumbCount() == 2;
+        return this.slider.getThumbCount() == 2;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         g.setStroke(new BasicStroke(1));
         g.draw(trackOutline);
 
-        if (slider.isPaintTicks())
+        if (this.slider.isPaintTicks())
         {
             g.setColor(new Color(0x777777));
             g.setStroke(new BasicStroke(1));
@@ -108,44 +108,44 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         Point2D p1 = getThumbCenter(0);
         Point2D p2 = getThumbCenter(1);
         Shape outline;
-        if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
+        if (this.slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
         {
             float minX = (float) Math.min(p1.getX(), p2.getX());
             float maxX = (float) Math.max(p1.getX(), p2.getX());
-            outline = new Rectangle2D.Float(minX, trackRect.y, maxX - minX, trackRect.height);
+            outline = new Rectangle2D.Float(minX, this.trackRect.y, maxX - minX, this.trackRect.height);
         }
         else
         {
             float minY = (float) Math.min(p1.getY(), p2.getY());
             float maxY = (float) Math.max(p1.getY(), p2.getY());
-            outline = new Rectangle2D.Float(trackRect.x, minY, trackRect.width, maxY - minY);
+            outline = new Rectangle2D.Float(this.trackRect.x, minY, this.trackRect.width, maxY - minY);
         }
-        g.setColor(trackHighlightColor);
+        g.setColor(this.trackHighlightColor);
         g.fill(outline);
         g.dispose();
     }
 
     protected void paintTick(Graphics2D g, float f, int d1, int d2, boolean mirror)
     {
-        if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
+        if (this.slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
         {
-            int x = (int) (trackRect.x + trackRect.width * f + .5f);
-            int y = trackRect.y + trackRect.height;
+            int x = (int) (this.trackRect.x + this.trackRect.width * f + .5f);
+            int y = this.trackRect.y + this.trackRect.height;
             g.drawLine(x, y + d1, x, y + d2);
             if (mirror)
             {
-                y = trackRect.y;
+                y = this.trackRect.y;
                 g.drawLine(x, y - d1, x, y - d2);
             }
         }
         else
         {
-            int y = (int) (trackRect.y + trackRect.height * f + .5f);
-            int x = trackRect.x + trackRect.width;
+            int y = (int) (this.trackRect.y + this.trackRect.height * f + .5f);
+            int x = this.trackRect.x + this.trackRect.width;
             g.drawLine(x + d1, y, x + d2, y);
             if (mirror)
             {
-                x = trackRect.x;
+                x = this.trackRect.x;
                 g.drawLine(x - d1, y, x - d2, y);
             }
         }
@@ -156,44 +156,44 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
     {
         Shape trackOutline = getTrackOutline();
         g = (Graphics2D) g.create();
-        PlafPaintUtils.paintFocus(g, trackOutline, FOCUS_PADDING);
+        PlafPaintUtils.paintFocus(g, trackOutline, this.FOCUS_PADDING);
         g.dispose();
     }
 
     @Override
     protected Rectangle calculateTrackRect()
     {
-        int k = (int) (10 + FOCUS_PADDING + .5);
-        if (slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
+        int k = (int) (10 + this.FOCUS_PADDING + .5);
+        if (this.slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
         {
-            return new Rectangle(k, slider.getHeight() / 2 - DEPTH / 2, slider.getWidth() - 2 * k - 1, DEPTH);
+            return new Rectangle(k, this.slider.getHeight() / 2 - this.DEPTH / 2, this.slider.getWidth() - 2 * k - 1, this.DEPTH);
         }
         else
         {
-            return new Rectangle(slider.getWidth() / 2 - DEPTH / 2, k, DEPTH, slider.getHeight() - 2 * k - 1);
+            return new Rectangle(this.slider.getWidth() / 2 - this.DEPTH / 2, k, this.DEPTH, this.slider.getHeight() - 2 * k - 1);
         }
     }
 
     protected Shape getTrackOutline()
     {
-        trackRect = calculateTrackRect();
-        float k = Math.max(10, FOCUS_PADDING) + 1;
+        this.trackRect = calculateTrackRect();
+        float k = Math.max(10, this.FOCUS_PADDING) + 1;
         int z = 3;
-        if (slider.getOrientation() == MultiThumbSlider.VERTICAL)
+        if (this.slider.getOrientation() == MultiThumbSlider.VERTICAL)
         {
-            return new RoundRectangle2D.Float(trackRect.x, trackRect.y - z, trackRect.width, trackRect.height + 2 * z,
+            return new RoundRectangle2D.Float(this.trackRect.x, this.trackRect.y - z, this.trackRect.width, this.trackRect.height + 2 * z,
                     k, k);
         }
-        return new RoundRectangle2D.Float(trackRect.x - z, trackRect.y, trackRect.width + 2 * z, trackRect.height, k, k);
+        return new RoundRectangle2D.Float(this.trackRect.x - z, this.trackRect.y, this.trackRect.width + 2 * z, this.trackRect.height, k, k);
     }
 
     @Override
     protected void paintThumbs(Graphics2D g)
     {
-        float[] values = slider.getThumbPositions();
+        float[] values = this.slider.getThumbPositions();
         for (int a = 0; a < values.length; a++)
         {
-            float darkness = a == slider.getSelectedThumb() ? 1 : thumbIndications[a] * .5f;
+            float darkness = a == this.slider.getSelectedThumb() ? 1 : this.thumbIndications[a] * .5f;
             paintThumb(g, a, darkness);
         }
     }
