@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -45,6 +46,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private DoubleScalar.Abs<TimeUnit> lastEvaluationTime;
 
     /** Time of next evaluation. */
+    @Deprecated
     private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
 
     /** Longitudinal positions on one or more lanes. */
@@ -72,7 +74,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** CarFollowingModel used by this Car. */
     private final GTUFollowingModel gtuFollowingModel;
-
+    
     /**
      * @param id the id of the GTU, could be String or Integer.
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
@@ -127,6 +129,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
+    @Deprecated
     public final DoubleScalar.Abs<TimeUnit> getNextEvaluationTime()
     {
         return new DoubleScalar.Abs<TimeUnit>(this.nextEvaluationTime);
@@ -342,23 +345,51 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
 
         // search for the otherGTU on the current lanes we are registered on.
+        double maxD = maxDistance.getSI();
         for (Lane lane : positions(getFront()).keySet())
         {
+            double myLanePosition = this.position(lane, this.getFront(), when).getSI();
             if (lane.getGtuList().contains(otherGTU))
             {
                 double distanceM =
                     otherGTU.position(lane, otherGTU.getFront(), when).getSI()
-                        - this.position(lane, this.getFront(), when).getSI() - otherGTU.getLength().getSI();
-                double maxD = maxDistance.getSI();
+                        - myLanePosition - otherGTU.getLength().getSI();
                 if ((maxD > 0.0 && distanceM > 0.0) || (maxD < 0.0 && distanceM < 0.0))
                 {
                     return new DoubleScalar.Rel<LengthUnit>(distanceM, LengthUnit.METER);
                 }
                 return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
             }
+            if (maxD > 0)
+            {
+                // Continue search on successor lanes.
+                if (lane.getLength().getSI() - myLanePosition > maxD)
+                {
+                    // is there a successor link?
+                    Set<Lane> nextLanes = lane.nextLanes();
+                    if (nextLanes.size() > 0)
+                    {
+                        // TODO: do we have a route?
+                        for (Lane nextLane : nextLanes)
+                        {
+                            // nextLaneHeadway = headway()
+                        }
+                    }
+                }
+            }
+            else if (maxD < 0)
+            {
+                // Continue search on predecessor lanes.
+                if (myLanePosition > -maxD)
+                {
+                    
+                }
+
+            }
+
         }
 
-        // TODO the otherGTU was not on one of the current lanes.
+        // The otherGTU was not on one of the current lanes or their successors.
         return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
     }
 

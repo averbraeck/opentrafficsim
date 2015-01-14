@@ -147,7 +147,7 @@ public class UnitLocalizationsTest
         }
         for (String s : errors)
         {
-            System.out.println(s);
+            System.err.println("UnitLocalizations error: " + s);
         }
         assertTrue("There should be no errors in UnitLocalizations", errors.isEmpty());
     }
