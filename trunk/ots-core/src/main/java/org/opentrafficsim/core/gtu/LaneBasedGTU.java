@@ -70,6 +70,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     DoubleScalar.Abs<TimeUnit> getLastEvaluationTime();
 
     /** @return DoubleScalarAbs&lt;TimeUnit&gt;; the time of next evaluation. */
+    @Deprecated
     DoubleScalar.Abs<TimeUnit> getNextEvaluationTime();
 
     /**

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
+import org.opentrafficsim.core.network.Route;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -20,6 +22,9 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
 
     /** the type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType<?> gtuType;
+    
+    /** Route of the gtu to follow. */
+    private Route route = null;
 
     /**
      * @param id the id of the GTU, could be String or Integer.
@@ -45,6 +50,22 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     public GTUType<?> getGTUType()
     {
         return this.gtuType;
+    }
+
+    /**
+     * @return route.
+     */
+    public final Route getRoute()
+    {
+        return this.route;
+    }
+
+    /**
+     * @param route set route.
+     */
+    public final void setRoute(final Route route)
+    {
+        this.route = route;
     }
 
 }

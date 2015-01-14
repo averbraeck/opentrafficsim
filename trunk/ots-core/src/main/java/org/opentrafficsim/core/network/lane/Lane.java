@@ -118,9 +118,9 @@ public class Lane extends CrossSectionElement
             double v0 = gtu.getLongitudinalVelocity().getSI();
             double a = gtu.getAcceleration().getSI();
             double sq = Math.sqrt(v0 * v0 + 2.0 * a * d);
-            double t1 = (v0 + sq) / a;
-            double t2 = (v0 - sq) / a;
-            double t = t1 < 0 ? t2 : t1;
+            double t1 = (-v0 + sq) / a;
+            double t2 = (-v0 - sq) / a;
+            double t = t1 < 0 ? t2 : t1 < t2 ? t1 : t2;
             gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor, "trigger",
                 new Object[] {gtu});
         }
@@ -193,7 +193,7 @@ public class Lane extends CrossSectionElement
      */
     public final void removeGTU(final LaneBasedGTU<?> gtu)
     {
-        this.sensors.remove(gtu);
+        this.gtuList.remove(gtu);
     }
 
     /**

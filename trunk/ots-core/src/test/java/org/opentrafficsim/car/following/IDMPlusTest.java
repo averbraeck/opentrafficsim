@@ -184,6 +184,8 @@ public class IDMPlusTest
         leaderPosition =
             new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
+        leaderPositions.clear();
+        leaderPositions.put(lane, leaderPosition);
         leaderCar = new Car<Integer>(0, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed, simulator);
         leaders.add(leaderCar);
         // System.out.println("Setup    referenceCar: " + referenceCar);
@@ -191,8 +193,11 @@ public class IDMPlusTest
         {
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             referenceCar.setState(cfmr);
-            // System.out.println(String.format("step %3d referenceCar: %s, leaderCar: %s", timeStep, referenceCar,
-            // leaderCar));
+            DoubleScalar.Abs<TimeUnit> thisEvaluationTime = referenceCar.getNextEvaluationTime();
+            DoubleScalar.Abs<SpeedUnit> currentSpeed = referenceCar.getLongitudinalVelocity(thisEvaluationTime);
+            System.out.println(String.format("step %3d, t=%s, v=%s, a=%s, referenceCar: %s, leaderCar: %s", timeStep, 
+                cfmr.getValidUntil().getSI(), currentSpeed, referenceCar.getAcceleration(),
+                referenceCar, leaderCar));
             if (timeStep > 100)
             {
                 double position = referenceCar.position(lane, referenceCar.getFront(), cfmr.getValidUntil()).getSI();

@@ -367,8 +367,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("offset %.2fm, beginWidth %.2fm, endWidth %.2fm", this.lateralCenterPosition.getSI(),
-            this.beginWidth.getSI(), this.endWidth.getSI());
+        return String.format("offset %.2fm", this.lateralCenterPosition.getSI());
     }
 
     /**
