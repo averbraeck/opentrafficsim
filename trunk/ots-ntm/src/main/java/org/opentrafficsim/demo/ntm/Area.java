@@ -9,6 +9,7 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -89,8 +90,11 @@ public class Area extends GeoObject implements LocatableInterface
     /** Centroid as a Point */
     private final Point centroid;
 
-    /** Road length of all roads in a length unit. */
-    private Rel<LengthUnit> roadLength;
+    /** */
+    private DoubleScalar.Abs<SpeedUnit> averageSpeed;
+
+    /** */
+    private DoubleScalar.Rel<LengthUnit> roadLength;
     
     /** polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
@@ -127,11 +131,14 @@ public class Area extends GeoObject implements LocatableInterface
      * @param regio REGIO class java.lang.String Den_Haag
      * @param dhb DHB class java.lang.Double 70.0
      * @param centroid Centroid as a Point
-     * @param areaType 
+     * @param trafficBehaviourType 
+     * @param roadLength 
+     * @param averageSpeed 
 
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
-            final String regio, final double dhb, final Point centroid, final TrafficBehaviourType trafficBehaviourType)
+            final String regio, final double dhb, final Point centroid, final TrafficBehaviourType trafficBehaviourType,
+            Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed)
     {
         super(geometry);
         this.centroidNr = centroidNr;
@@ -142,7 +149,8 @@ public class Area extends GeoObject implements LocatableInterface
         this.dhb = dhb;
         this.centroid = centroid;
         this.trafficBehaviourType = trafficBehaviourType;
-        this.roadLength = new Rel<LengthUnit>(0.0, LengthUnit.KILOMETER);
+        this.roadLength = roadLength;
+        this.averageSpeed = averageSpeed;
     }
 
     /** {@inheritDoc} */
@@ -314,6 +322,23 @@ public class Area extends GeoObject implements LocatableInterface
     {
         this.roadLength = DoubleScalar.plus(rel, this.roadLength).immutable();        
     }
+
+    /**
+     * @return averageSpeed.
+     */
+    public DoubleScalar.Abs<SpeedUnit> getAverageSpeed()
+    {
+        return averageSpeed;
+    }
+
+    /**
+     * @param averageSpeed set averageSpeed.
+     */
+    public void setAverageSpeed(DoubleScalar.Abs<SpeedUnit> averageSpeed)
+    {
+        this.averageSpeed = averageSpeed;
+    }
+
 
 
 }

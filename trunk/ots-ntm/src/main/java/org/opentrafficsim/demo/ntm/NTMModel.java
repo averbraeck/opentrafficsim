@@ -10,13 +10,14 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import java.util.Map;
 
 import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -24,15 +25,17 @@ import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.LinkEdge;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.IO.WriteToShp;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
@@ -113,6 +116,9 @@ public class NTMModel implements OTSModelInterface
 
     /** graph containing the simplified network. */
     private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
+
+    /** subset of links from shape file used as flow links. */
+    private LinkedHashMap<String, Link> debugLinkList;
 
     /** debugging. */
     public boolean DEBUG = true;
@@ -203,7 +209,9 @@ public class NTMModel implements OTSModelInterface
                 {
                     Area bigArea =
                             new Area(shape.getGeometry(), shape.getValues().get(0), "name", "gemeente", "gebied",
-                                    "regio", 0, shape.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
+                                    "regio", 0, shape.getGeometry().getCentroid(), TrafficBehaviourType.NTM,
+                                    new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0,
+                                            SpeedUnit.KM_PER_HOUR));
                     this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
                 }
                 // create new centroids
@@ -231,11 +239,12 @@ public class NTMModel implements OTSModelInterface
 
             // compute the roadLength within the areas
             determineRoadLengthInAreas(this.shpLinks, this.areas);
+            
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, COMPRESS_AREAS);
 
             // shortest paths creation
-            initiateSimulationNTM();
+            initiateSimulationNTM(this);
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
@@ -335,6 +344,8 @@ public class NTMModel implements OTSModelInterface
      */
     private void determineRoadLengthInAreas(Map<String, Link> shpLinks, Map<String, Area> areas)
     {
+        Double speedTotal; 
+        Map<Area, java.lang.Double> speedTotalByArea = new HashMap<Area, java.lang.Double>();
         for (Link link : shpLinks.values())
         {
             for (Area area : areas.values())
@@ -343,9 +354,27 @@ public class NTMModel implements OTSModelInterface
                 {
                     if (area != null)
                     {
-                        area.addRoadLength(link.getLength());
+                        // TODO check units!!!!!!!!!!!!!!!
+                        double length = link.getLength().doubleValue() * link.getNumberOfLanes();
+                        DoubleScalar.Rel<LengthUnit> laneLength =
+                                new DoubleScalar.Rel<LengthUnit>(length, link.getLength().getUnit());
+                        area.addRoadLength(laneLength);
+                        java.lang.Double speedLaneLength = new java.lang.Double(link.getSpeed().doubleValue() * link.getNumberOfLanes()); 
+                        speedTotalByArea.put(area, speedLaneLength);
                     }
                 }
+            }
+        }
+        for (Area area : areas.values())
+        {
+            if (speedTotalByArea.get(area) != null && area.getRoadLength() != null)
+            {
+                double averageSpeed = speedTotalByArea.get(area) / area.getRoadLength().doubleValue();
+                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
+            }
+            else
+            {
+                System.out.println("FlowLink Area");
             }
         }
 
@@ -354,7 +383,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * Generate demand at fixed intervals based on traffic demand (implemented by re-scheduling this method).
      */
-    protected final void initiateSimulationNTM()
+    protected final void initiateSimulationNTM(NTMModel model)
     {
         // At time zero, there are no cars in the network
         // we start the simulation by injecting traffic into the areas, based on the traffic demand input
@@ -371,51 +400,81 @@ public class NTMModel implements OTSModelInterface
 
         if (floyd)
         {
-            sp1 = new FloydWarshallShortestPaths(this.areaGraph).getShortestPaths();
+            model.setDebugLinkList(new LinkedHashMap<String, Link>());
+            sp1 = new FloydWarshallShortestPaths(model.areaGraph).getShortestPaths();
             for (GraphPath<BoundedNode, LinkEdge<Link>> path : sp1)
             {
                 BoundedNode origin = path.getStartVertex();
                 BoundedNode destination = path.getEndVertex();
-                if (origin.getId().equals("481332"))
-                {
-                    System.out.println("Floyd ");                    
-                }
-                // determine the start and endnode of the first edge that starts from the origin
-                // the endNode of this edge is the "Neighbour" area
-                BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
-                // BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null,
-                // node.getBehaviourType());
-                BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
-                // BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null, node.getBehaviourType());
 
-                // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
-                if (origin.equals(endNode))
+                // only generate to "real" destinations
+                if (destination.getBehaviourType() == TrafficBehaviourType.NTM
+                        || destination.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    endNode = startNode;
-                }
-                // for all node - destination pairs add information on their first neighbour on the shortest path
 
-                TripInfoByDestination tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
-                origin.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
-                /*
-                 * for (BoundedNode vertex : this.getAreaGraph().vertexSet()) { if
-                 * (vertex.getId().equals(startNode.getId())) {
-                 * vertex.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode); } }
-                 */
-                if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
-                {
-                    // for the flow links we create the trip info by Node also for the flow cells
-                    LinkCellTransmission ctmLink =
-                            (LinkCellTransmission) this.getAreaGraph().getEdge(origin, endNode).getLink();
-                    // Loop through the cells and do transmission
-                    for (FlowCell cell : ctmLink.getCells())
+                    // TODO select OD pairs with trips only. to generate the relevant paths
+                    Map<String, Map<String, TripInfoTimeDynamic>> trips;
+                    if (model.COMPRESS_AREAS)
                     {
-                        tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
-                        cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
+                        trips = model.getCompressedTripDemand().getTripInfo();
                     }
+                    else
+                    {
+                        trips = model.getTripDemand().getTripInfo();
+                    }
+
+                    if (trips.get(origin.getId()) != null)
+                    {
+                        if (trips.get(origin.getId()).get(destination.getId()) != null)
+                        {
+                            double trip = trips.get(origin.getId()).get(destination.getId()).getNumberOfTrips();
+                            // generate the paths between origins and destinations only
+                            if (trip > 0.0)
+                            {
+                                for (LinkEdge<Link> edge : path.getEdgeList())
+                                {
+                                    Link link = edge.getLink();
+                                    model.getDebugLinkList().put(edge.getLink().getId(), link);
+                                }
+                            }
+
+                        }
+                    }
+
+                    // determine the start and endnode of the first edge that starts from the origin
+                    // the endNode of this edge is the "Neighbour" area
+                    BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
+                    // BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null,
+                    // node.getBehaviourType());
+                    BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
+                    // BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null,
+                    // node.getBehaviourType());
+
+                    // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
+                    if (origin.equals(endNode))
+                    {
+                        endNode = startNode;
+                    }
+                    // for all node - destination pairs add information on their first neighbour on the shortest path
+
+                    TripInfoByDestination tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
+                    origin.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
+
+                    if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
+                    {
+                        // for the flow links we create the trip info by Node also for the flow cells
+                        LinkCellTransmission ctmLink =
+                                (LinkCellTransmission) this.getAreaGraph().getEdge(origin, endNode).getLink();
+                        // Loop through the cells and do transmission
+                        for (FlowCell cell : ctmLink.getCells())
+                        {
+                            tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
+                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
+                        }
+                    }
+                    // for all OD-pairs with trips, the TripInfo is already initiated
+                    // here we add the intermediate trip information at all nodes
                 }
-                // for all OD-pairs with trips, the TripInfo is already initiated
-                // here we add the intermediate trip information at all nodes
             }
         }
 
@@ -424,8 +483,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @throws IOException 
-     * 
+     * @throws IOException
      */
     @SuppressWarnings("unchecked")
     protected final void ntmFlowTimestep() throws IOException
@@ -859,6 +917,22 @@ public class NTMModel implements OTSModelInterface
     public void setCompressedTripDemand(TripDemand<TripInfoTimeDynamic> compressedTripDemand)
     {
         this.compressedTripDemand = compressedTripDemand;
+    }
+
+    /**
+     * @return debugLinkList.
+     */
+    public Map<String, Link> getDebugLinkList()
+    {
+        return debugLinkList;
+    }
+
+    /**
+     * @param debugLinkList set debugLinkList.
+     */
+    public void setDebugLinkList(LinkedHashMap<String, Link> debugLinkList)
+    {
+        this.debugLinkList = debugLinkList;
     }
 
     /*

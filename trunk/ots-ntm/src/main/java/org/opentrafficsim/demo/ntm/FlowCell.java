@@ -9,7 +9,9 @@ import javax.media.j3d.Bounds;
 
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
@@ -37,29 +39,33 @@ public class FlowCell implements LocatableInterface
     private DoubleScalar<LengthUnit> cellLength;
 
     /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
-    private DoubleScalar<FrequencyUnit> capacity;
+    private DoubleScalar<FrequencyUnit> capacityPerLane;
 
-    
+    /** lanes in a link */
+    private int numberOfLanes;
+
     /** */
     private CellBehaviourFlow cellBehaviour;
 
     /**
      * @param cellLength
      * @param capacity
+     * @param speed
+     * @param numberOfLanes
      * @param behaviourType
      */
-    public FlowCell(final DoubleScalar<LengthUnit> cellLength, final DoubleScalar<FrequencyUnit> capacity,
-            final TrafficBehaviourType behaviourType)
+    public FlowCell(final DoubleScalar<LengthUnit> cellLength, final DoubleScalar.Abs<FrequencyUnit> capacityPerLane,
+            DoubleScalar.Abs<SpeedUnit> speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
     {
-        this.setCellLength(cellLength);
-        this.setCapacity(capacity);
+        this.cellLength = cellLength;
+        this.capacityPerLane = capacityPerLane;
+        this.numberOfLanes = numberOfLanes;
+        ParametersFundamentalDiagram parametersFD = new ParametersFundamentalDiagram(speed, capacityPerLane);
         if (behaviourType == TrafficBehaviourType.FLOW)
         {
-            this.setCellBehaviourFlow(new CellBehaviourFlow(null, null));
+            this.cellBehaviour = new CellBehaviourFlow(null, parametersFD);
         }
     }
-
-
 
     /** {@inheritDoc} */
     @Override
@@ -96,7 +102,7 @@ public class FlowCell implements LocatableInterface
      */
     public DoubleScalar<FrequencyUnit> getCapacity()
     {
-        return this.capacity;
+        return this.capacityPerLane;
     }
 
     /**
@@ -104,7 +110,7 @@ public class FlowCell implements LocatableInterface
      */
     public void setCapacity(DoubleScalar<FrequencyUnit> capacity)
     {
-        this.capacity = capacity;
+        this.capacityPerLane = capacity;
     }
 
     /**
@@ -112,7 +118,7 @@ public class FlowCell implements LocatableInterface
      */
     public CellBehaviourFlow getCellBehaviourFlow()
     {
-        return cellBehaviour;
+        return this.cellBehaviour;
     }
 
     /**
@@ -123,5 +129,20 @@ public class FlowCell implements LocatableInterface
         this.cellBehaviour = cellBehaviour;
     }
 
+    /**
+     * @return numberOfLanes.
+     */
+    public int getNumberOfLanes()
+    {
+        return this.numberOfLanes;
+    }
+
+    /**
+     * @param numberOfLanes set numberOfLanes.
+     */
+    public void setNumberOfLanes(int numberOfLanes)
+    {
+        this.numberOfLanes = numberOfLanes;
+    }
 
 }

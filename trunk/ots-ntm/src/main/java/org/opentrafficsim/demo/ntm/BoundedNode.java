@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -32,6 +33,7 @@ public class BoundedNode extends Node
     /** */
     private CellBehaviour cellBehaviour;
 
+
     /**
      * /**
      * @param centroid the center of the area for the simplified graph.
@@ -51,9 +53,9 @@ public class BoundedNode extends Node
         }
         else if (behaviourType == TrafficBehaviourType.NTM)
         {
-            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(40, SpeedUnit.KM_PER_HOUR);
-            DoubleScalar.Abs<LengthUnit> roadLength = new DoubleScalar.Abs<LengthUnit>(1, LengthUnit.KILOMETER);
-            ParametersNTM parametersNTM = new ParametersNTM(speed, roadLength);
+            DoubleScalar.Abs<SpeedUnit> averageSpeed = area.getAverageSpeed();
+            DoubleScalar.Rel<LengthUnit> roadLength = area.getRoadLength();
+            ParametersNTM parametersNTM = new ParametersNTM(averageSpeed, roadLength);
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
             this.setArea(area);
 
@@ -62,7 +64,8 @@ public class BoundedNode extends Node
         {
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(40, SpeedUnit.KM_PER_HOUR);
             //TODO parameters should depend on area characteristics
-            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed);
+            DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
+            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
             this.setCellBehaviour(new CellBehaviourFlow(area, parametersCTM));
             this.setArea(area);
         }

@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -33,29 +34,44 @@ public class ParametersFundamentalDiagram
      */
     private final DoubleScalar.Abs<SpeedUnit> freeSpeed;
 
+
+    /** */
+    private DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane;
+    
+    /**
+     * @param accCritical
+     * @param speed
+     */
+    public ParametersFundamentalDiagram(final ArrayList<Double> accCritical, final Abs<SpeedUnit> speed)
+    {
+        super();
+        this.accCritical = accCritical;
+        this.freeSpeed = speed;
+    }    
+
     /**
      * @param accCritical
      * @param freeSpeed
      */
-    public ParametersFundamentalDiagram(ArrayList<Double> accCritical, Abs<SpeedUnit> freeSpeed)
+    public ParametersFundamentalDiagram(final ArrayList<Double> accCritical, final DoubleScalar.Abs<SpeedUnit> freeSpeed,  final DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane)
     {
         super();
         this.accCritical = accCritical;
         this.freeSpeed = freeSpeed;
+        this.maxCapacityPerLane = maxCapacityPerLane;
     }
 
     /**
-     * @param accCritical defined per lane!! 
      * @param freeSpeed
      */
-    public ParametersFundamentalDiagram(Abs<SpeedUnit> freeSpeed)
+    public ParametersFundamentalDiagram(final DoubleScalar.Abs<SpeedUnit> freeSpeed, final DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane)
     {
         super();
-        ArrayList<Double> accCritical = new ArrayList<Double>(); 
-        accCritical.add(20.0);
-        accCritical.add(150.0);
-        this.accCritical = accCritical;
+        this.accCritical = new ArrayList<Double>(); 
+        this.accCritical.add(20.0);
+        this.accCritical.add(150.0);
         this.freeSpeed = freeSpeed;
+        this.maxCapacityPerLane = maxCapacityPerLane;
     }
 
 
@@ -78,9 +94,25 @@ public class ParametersFundamentalDiagram
     /**
      * @param accCritical1 set accCritical1.
      */
-    public void setAccCritical1(ArrayList<Double> accCritical)
+    public void setAccCritical(ArrayList<Double> accCritical)
     {
         this.accCritical = accCritical;
+    }
+
+    /**
+     * @return maxCapacityPerLane.
+     */
+    public DoubleScalar.Abs<FrequencyUnit> getMaxCapacityPerLane()
+    {
+        return this.maxCapacityPerLane;
+    }
+
+    /**
+     * @param maxCapacityPerLane set maxCapacityPerLane.
+     */
+    public void setMaxCapacityPerLane(DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane)
+    {
+        this.maxCapacityPerLane = maxCapacityPerLane;
     }
 
 }

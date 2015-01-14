@@ -16,7 +16,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opentrafficsim.core.network.AbstractLink;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SIUnit;
@@ -66,11 +66,12 @@ public class Link extends AbstractLink<String, Node>
     /** */
     private LinkData linkData;
 
+    /** */
+    private int numberOfLanes;
+    
     /** traffic behaviour. */
     private TrafficBehaviourType behaviourType;
-
-    private ArrayList<FlowCell> flowCells;
-
+    
     /**
      * @param geometry
      * @param nr
@@ -82,6 +83,8 @@ public class Link extends AbstractLink<String, Node>
      * @param speed
      * @param capacity
      * @param behaviourType
+     * @param linkData 
+     * @param hierarchy 
      */
 
     public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
@@ -93,6 +96,7 @@ public class Link extends AbstractLink<String, Node>
         setGeometry(geometry);
         this.speed = speed;
         this.behaviourType = behaviourType;
+        this.numberOfLanes = estimateLanes(capacity, speed);
         this.linkData = linkData;
         this.setGeometry(geometry);
         if (geometry != null)
@@ -119,6 +123,98 @@ public class Link extends AbstractLink<String, Node>
     }
 
     /**
+     * @param capacity
+     * @param speed2
+     * @return
+     */
+    private int estimateLanes(Abs<FrequencyUnit> capacity, Abs<SpeedUnit> speed)
+    {
+        int lanes = 1;
+        if (speed.getInUnit(SpeedUnit.KM_PER_HOUR) >= 80)
+        {
+            if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3000)
+            {
+               lanes = 1; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5000)
+            {
+               lanes = 2; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 7000)
+            {
+               lanes = 3; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 9000)
+            {
+               lanes = 4; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 10500)
+            {
+               lanes = 5; 
+            }
+            else 
+            {
+               lanes = 6; 
+            }
+        }
+        else if (speed.getInUnit(SpeedUnit.KM_PER_HOUR) >= 40)
+        {
+            if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2000)
+            {
+               lanes = 1; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3000)
+            {
+               lanes = 2; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4000)
+            {
+               lanes = 3; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5000)
+            {
+               lanes = 4; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
+            {
+               lanes = 5; 
+            }
+            else 
+            {
+               lanes = 6; 
+            }
+        }
+        else 
+        {
+            if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 1800)
+            {
+               lanes = 1; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2400)
+            {
+               lanes = 2; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3600)
+            {
+               lanes = 3; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4800)
+            {
+               lanes = 4; 
+            }
+            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
+            {
+               lanes = 5; 
+            }
+            else 
+            {
+               lanes = 6; 
+            }
+        }
+        return lanes;
+    }
+
+    /**
      * @param link
      */
     public Link(final Link link)
@@ -126,6 +222,7 @@ public class Link extends AbstractLink<String, Node>
         super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link.getHierarchy());
         setGeometry(link.getGeometry());
         this.speed = link.speed;
+        this.numberOfLanes = link.getNumberOfLanes();
         if (this.getGeometry() != null)
         {
             Coordinate[] cc = this.getGeometry().getLineString().getCoordinates();
@@ -516,6 +613,22 @@ public class Link extends AbstractLink<String, Node>
     public String toString()
     {
         return "ShpLink [nr=" + this.getId() + ", nodeA=" + this.getStartNode() + ", nodeB=" + this.getEndNode() + "]";
+    }
+
+    /**
+     * @return numberOfLanes.
+     */
+    public int getNumberOfLanes()
+    {
+        return numberOfLanes;
+    }
+
+    /**
+     * @param numberOfLanes set numberOfLanes.
+     */
+    public void setNumberOfLanes(int numberOfLanes)
+    {
+        this.numberOfLanes = numberOfLanes;
     }
 
     /**

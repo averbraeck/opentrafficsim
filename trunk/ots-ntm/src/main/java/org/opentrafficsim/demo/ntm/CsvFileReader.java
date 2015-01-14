@@ -156,7 +156,7 @@ public class CsvFileReader
                     String nameBA = name + "_BA";
                     boolean isCentroid = ShapeFileReader.inspectNodeCentroid(name);
                     Node cordonPoint = null;
-                    
+
                     if (isCentroid)
                     {
                         centroidsAndCordonConnectors.put(name, centroids.get(name));
@@ -301,7 +301,8 @@ public class CsvFileReader
                             double dhb = 0.0;
                             Area area =
                                     new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid,
-                                            TrafficBehaviourType.CORDON);
+                                            TrafficBehaviourType.CORDON, new Rel<LengthUnit>(0, LengthUnit.METER),
+                                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                             areas.put(nr, area);
                         }
 
@@ -367,11 +368,9 @@ public class CsvFileReader
                             {
                                 String destination =
                                         centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)).getId();
-/*                                if (destination.equals("2430"))
-                                {
-                                    System.out.println("Strange: 2430");
-                                }
-*/                                tripDemandRow.put(destination, tripInfo);
+                                /*
+                                 * if (destination.equals("2430")) { System.out.println("Strange: 2430"); }
+                                 */tripDemandRow.put(destination, tripInfo);
                             }
                         }
                         indexColumn++;

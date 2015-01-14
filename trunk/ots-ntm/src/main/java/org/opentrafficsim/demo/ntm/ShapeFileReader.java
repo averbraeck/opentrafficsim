@@ -15,11 +15,13 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -99,11 +101,11 @@ public class ShapeFileReader
                 String gemeente = (String) feature.getAttribute("GEMEENTEVM");
                 String gebied = (String) feature.getAttribute("GEBIEDSNAA");
                 String regio = (String) feature.getAttribute("REGIO");
-//                double dhb = (double) feature.getAttribute("DHB");
+                // double dhb = (double) feature.getAttribute("DHB");
 
-/*                String gemeente = "empty";
-                String gebied = "empty";
-                String regio = "empty";*/
+                /*
+                 * String gemeente = "empty"; String gebied = "empty"; String regio = "empty";
+                 */
                 double dhb = (double) 0.0;
 
                 Node centroidNode = null;
@@ -112,15 +114,15 @@ public class ShapeFileReader
                     // search for areas within the centroids (from the "points")
                     centroidNode = centroids.get(centroidNr);
                 }
-                if (centroidNode == null) 
+                if (centroidNode == null)
                 {
                     for (Node node : centroids.values())
                     {
-                       if (geometry.contains(node.getPoint()))
-                           {
-                               centroidNode = node;
-                               centroidNr = node.getId();
-                           }
+                        if (geometry.contains(node.getPoint()))
+                        {
+                            centroidNode = node;
+                            centroidNr = node.getId();
+                        }
                     }
                 }
                 if (centroidNode == null)
@@ -141,7 +143,8 @@ public class ShapeFileReader
                     }
                     Area area =
                             new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint(),
-                                    TrafficBehaviourType.NTM);
+                                    TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
+                                    new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -163,13 +166,13 @@ public class ShapeFileReader
             storeAreas.dispose();
         }
         int teller = 0;
-        
+
         if (centroids != null)
         {
             for (Node centroid : centroids.values())
             {
                 boolean found = false;
-    
+
                 if (areas.containsKey(centroid.getId()))
                 {
                     found = true;
@@ -387,16 +390,16 @@ public class ShapeFileReader
                     {
                         Link linkAB = null;
                         Link linkBA = null;
-                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
+                                new Link(null, nr, length, nodeA, nodeB, speed, capacity, TrafficBehaviourType.ROAD,
+                                        linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, nodeB, nodeA, speed, capacity,
-                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
+                                new Link(null, nrBA, length, nodeB, nodeA, speed, capacity, TrafficBehaviourType.ROAD,
+                                        linkData, hierarchy);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
@@ -447,10 +450,10 @@ public class ShapeFileReader
                     {
                         Link linkAB = null;
                         Link linkBA = null;
-                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, centroidA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                                new Link(null, nr, length, centroidA, nodeB, speed, capacity, TrafficBehaviourType.NTM,
+                                        linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
@@ -478,10 +481,10 @@ public class ShapeFileReader
                     {
                         Link linkAB = null;
                         Link linkBA = null;
-                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, centroidB, speed, capacity,
-                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                                new Link(null, nr, length, nodeA, centroidB, speed, capacity, TrafficBehaviourType.NTM,
+                                        linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
@@ -506,12 +509,12 @@ public class ShapeFileReader
 
                     }
                     else
-                        // should not happen
+                    // should not happen
                     {
-                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);                    
+                        LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         Link link =
-                                new Link(null, nr, length, nodeA, nodeB, speed, capacity,
-                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
+                                new Link(null, nr, length, nodeA, nodeB, speed, capacity, TrafficBehaviourType.ROAD,
+                                        linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         links.put(nr, link);

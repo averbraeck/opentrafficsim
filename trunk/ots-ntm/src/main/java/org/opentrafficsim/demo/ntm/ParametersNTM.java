@@ -6,6 +6,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -24,14 +25,14 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     /**
      * roadLength: aggregated road lengths in CELL.
      */
-    private final DoubleScalar.Abs<LengthUnit> roadLength;
+    private final DoubleScalar.Rel<LengthUnit> roadLength;
 
     /**
      * @param accCritical 
      * @param freeSpeed
      * @param roadLength
      */
-    public ParametersNTM(ArrayList<Double> accCritical, Abs<SpeedUnit> freeSpeed, Abs<LengthUnit> roadLength)
+    public ParametersNTM(ArrayList<Double> accCritical, Abs<SpeedUnit> freeSpeed, Rel<LengthUnit> roadLength)
     {
         super(accCritical, freeSpeed);
         this.roadLength = roadLength;
@@ -42,7 +43,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
      * @param freeSpeed
      * @param roadLength
      */
-    public ParametersNTM(Abs<SpeedUnit> freeSpeed, Abs<LengthUnit> roadLength)
+    public ParametersNTM(Abs<SpeedUnit> freeSpeed, Rel<LengthUnit> roadLength)
     {
         super(null, freeSpeed);
         //TODO parameters should depend on area characteristics
@@ -50,13 +51,13 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         accCritical.add(25.0);
         accCritical.add(50.0);
         accCritical.add(100.0);
-        this.setAccCritical1(accCritical);
+        this.setAccCritical(accCritical);
         this.roadLength = roadLength;
     }
     /**
      * @return roadLength.
      */
-    public DoubleScalar.Abs<LengthUnit> getRoadLength()
+    public Rel<LengthUnit> getRoadLength()
     {
         return this.roadLength;
     }

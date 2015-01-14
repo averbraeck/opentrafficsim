@@ -4,13 +4,17 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
-/**The CellBehaviourFlow is used for cell transmission models and can be linked to the cells of a Link
+/**
+ * The CellBehaviourFlow is used for cell transmission models and can be linked to the cells of a Link
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -28,16 +32,11 @@ public class CellBehaviourFlow extends CellBehaviour
     /** */
     private static final long serialVersionUID = 20140903L;
 
-
     /** */
     private HashMap<String, Double> numberOfTripsTo;
-    
 
     /** currentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
-
-    /** */
-    private double maxCapacity;
 
     /**
      * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
@@ -56,20 +55,40 @@ public class CellBehaviourFlow extends CellBehaviour
     {
         if (parametersFD == null)
         {
-            parametersFD = new ParametersFundamentalDiagram(new DoubleScalar.Abs<SpeedUnit>(70.0, SpeedUnit.KM_PER_HOUR));
-            
+            parametersFD =
+                    new ParametersFundamentalDiagram(new DoubleScalar.Abs<SpeedUnit>(70.0, SpeedUnit.KM_PER_HOUR),
+                            new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR));
+            System.out.println("Cell BehaviourfLOW at line 60: should not happen that speed and capacity are not set");
+
         }
         this.setParametersFundamentalDiagram(parametersFD);
-        this.maxCapacity =  2000;
-//                parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-    }  
-    
+        // parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+    }
+
+    /**
+     * @param parametersFD contains a set of params
+     * @param area that contains this behaviour
+     * @param maxCapacityPerLane
+     * @param maxSpeed
+     */
+    public CellBehaviourFlow(final Area area, ParametersFundamentalDiagram parametersFD,
+            DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane, DoubleScalar.Abs<SpeedUnit> maxSpeed)
+    {
+        if (parametersFD == null)
+        {
+            parametersFD = new ParametersFundamentalDiagram(maxSpeed, maxCapacityPerLane);
+
+        }
+        this.setParametersFundamentalDiagram(parametersFD);
+        // parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+    }
+
     /**
      * @return numberOfTripsTo.
      */
     public HashMap<String, Double> getNumberOfTripsTo()
     {
-        return numberOfTripsTo;
+        return this.numberOfTripsTo;
     }
 
     /**
@@ -80,8 +99,6 @@ public class CellBehaviourFlow extends CellBehaviour
         this.numberOfTripsTo = numberOfTripsTo;
     }
 
-
-
     /**
      * {@inheritDoc}
      * @param accumulatedCars
@@ -90,49 +107,32 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return
      */
     // @Override
-    public double retrieveSupply(final Double accumulatedCars, final ParametersFundamentalDiagram param)
+    public DoubleScalar.Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars,
+            final ParametersFundamentalDiagram param, int numberOfLanes)
     {
-        double carProduction = this.getMaxCapacity();
-        if (accumulatedCars > param.getAccCritical().get(0))
+        DoubleScalar.Abs<FrequencyUnit> carProduction;
+        if (accumulatedCars / numberOfLanes > param.getAccCritical().get(0))
         {
-            carProduction = retrieveCarProduction(accumulatedCars, this.getMaxCapacity(), param);
+            carProduction = retrieveDemand(accumulatedCars, param, numberOfLanes);
         }
-        double productionSupply = Math.min(this.getMaxCapacity(), carProduction); // supply
-        return productionSupply;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param accumulatedCars
-     * @param maxCapacity
-     * @param param
-     * @return
-     */
-    // @Override
-    public double retrieveDemand(final Double accumulatedCars, final ParametersFundamentalDiagram param)
-    {
-        double capacity = this.getMaxCapacity();
-        double productionDemand = retrieveCarProduction(accumulatedCars, capacity, param);
-        return productionDemand;
-    }
-
-    /** {@inheritDoc} */
-    // @Override
-    public double computeAccumulation()
-    {
-        double accumulation = 0.0;
-        return accumulation;
+        else
+        {
+            carProduction =
+                    new DoubleScalar.Abs<FrequencyUnit>(param.getMaxCapacityPerLane().getSI() * numberOfLanes,
+                            FrequencyUnit.PER_SECOND);
+        }
+        return carProduction;
     }
 
     /**
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
      * @param maximumCapacity based on area information
-     * @param param  kkk
+     * @param param kkk
      * @return carProduction
      */
-    public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,
-            final ParametersFundamentalDiagram param)
+    public final DoubleScalar.Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
+            final ParametersFundamentalDiagram param, int numberOfLanes)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
@@ -141,14 +141,16 @@ public class CellBehaviourFlow extends CellBehaviour
         xyPairs.add(p);
         p = new Point2D.Double();
         // the point of maximum capacity
-        p.setLocation(param.getAccCritical().get(0), maximumCapacity);
+        p.setLocation(param.getAccCritical().get(0), param.getMaxCapacityPerLane().doubleValue() * 3600);
         xyPairs.add(p);
         p = new Point2D.Double();
         // the final breakdown
         p.setLocation(param.getAccCritical().get(1), 0);
         xyPairs.add(p);
-        double carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
-        return carProduction;
+        DoubleScalar.Abs<FrequencyUnit> carProductionPerLane =
+                FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars / numberOfLanes);
+        return new DoubleScalar.Abs<FrequencyUnit>(carProductionPerLane.getSI() * numberOfLanes,
+                FrequencyUnit.PER_SECOND);
     }
 
     /**
@@ -157,22 +159,6 @@ public class CellBehaviourFlow extends CellBehaviour
     public final DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
     {
         return this.currentSpeed;
-    }
-
-    /**
-     * @return maxCapacity
-     */
-    public final double getMaxCapacity()
-    {
-        return this.maxCapacity;
-    }
-
-    /**
-     * @param maxCapacity set maxCapacity.
-     */
-    public final void setMaxCapacity(final double maxCapacity)
-    {
-        this.maxCapacity = maxCapacity;
     }
 
     /**
@@ -188,7 +174,7 @@ public class CellBehaviourFlow extends CellBehaviour
      */
     public ParametersFundamentalDiagram getParametersFundamentalDiagram()
     {
-        return parametersFundamentalDiagram;
+        return this.parametersFundamentalDiagram;
     }
 
     /**
@@ -199,5 +185,20 @@ public class CellBehaviourFlow extends CellBehaviour
         this.parametersFundamentalDiagram = parametersFundamentalDiagram;
     }
 
-    
+    /**
+     * @return area.
+     */
+    public Area getArea()
+    {
+        return this.area;
+    }
+
+    /**
+     * @param area set area.
+     */
+    public void setArea(Area area)
+    {
+        this.area = area;
+    }
+
 }
