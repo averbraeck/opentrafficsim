@@ -29,6 +29,8 @@ import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.LaneFactory;
+import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -38,8 +40,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.geometry.LaneFactory;
-import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -671,7 +671,8 @@ class LaneSimulationModel implements OTSModelInterface
                 leaders.add(LaneSimulationModel.this.cars.get(0));
             }
             // Horrible hack; wrap the position back to zero when vehicle exceeds length of the circuit
-            if (position(lane, getFront()).getSI() > LaneSimulationModel.this.lane.getLength().getSI())
+            if (position(LaneSimulationModel.this.lane, getFront()).getSI() > LaneSimulationModel.this.lane.getLength()
+                    .getSI())
             {
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> map = this.positions(getFront());
                 for (Lane l : map.keySet())
@@ -682,7 +683,6 @@ class LaneSimulationModel implements OTSModelInterface
             }
             // Even more horrible hack; create a fake leader for the vehicle closest to the wrap around point
             Car<Integer> leader = leaders.iterator().next();
-            Lane leaderLane = leader.positions(getFront()).keySet().iterator().next();
             // Figure out the headway
             if (leader.position(LaneSimulationModel.this.lane, leader.getRear()).getSI() < this.position(
                     LaneSimulationModel.this.lane, this.getFront()).getSI())
