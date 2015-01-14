@@ -32,6 +32,8 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModel
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.LaneFactory;
+import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -39,8 +41,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.demo.geometry.LaneFactory;
-import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -271,7 +271,7 @@ public class Straight implements WrappableSimulation
     public String description()
     {
         return "<html><h1>Simulation of a straight one-lane road with opening bridge</H1>"
-                + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
+                + "Simulation of a single lane road of 5 km length. Vehicles are generated at a constant rate of "
                 + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at "
                 + "time 420s. This blockade simulates a bridge opening.<br/>"
                 + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
@@ -657,7 +657,7 @@ class ContourPlotsModel implements OTSModelInterface
             {
                 return;
             }
-            if (position(lane, getFront()).getSI() > getMaximumDistance().getSI())
+            if (position(ContourPlotsModel.this.lane, getFront()).getSI() > getMaximumDistance().getSI())
             {
                 ContourPlotsModel.this.cars.remove(this);
                 return;

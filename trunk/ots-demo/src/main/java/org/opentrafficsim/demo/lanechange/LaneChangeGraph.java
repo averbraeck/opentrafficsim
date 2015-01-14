@@ -40,6 +40,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.network.factory.LaneFactory;
+import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -49,8 +51,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
-import org.opentrafficsim.demo.geometry.LaneFactory;
-import org.opentrafficsim.demo.geometry.Node;
 import org.opentrafficsim.simulationengine.FakeSimulator;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -291,7 +291,7 @@ public class LaneChangeGraph extends JFrame
      * @param otherCarPosition
      * @param otherCarLane
      * @param deltaV
-     * @param mergeRight TODO
+     * @param mergeRight
      * @return
      * @throws RemoteException
      * @throws NamingException
