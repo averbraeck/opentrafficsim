@@ -27,6 +27,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
@@ -468,6 +469,8 @@ class LaneSimulationModel implements OTSModelInterface
             this.lane =
                     LaneFactory.makeMultiLane("Lane", startEnd, startEnd, intermediateCoordinates, 1, laneType,
                             this.simulator)[0];
+            Link link = this.lane.getParentLink();
+            this.lane.getParentLink().getStartNode().addLinkIn(link);
             // Put the (not very evenly spaced) cars on the track
             double trackLength = this.lane.getLength().getSI();
             double variability = (headway - 20) * headwayVariability;
