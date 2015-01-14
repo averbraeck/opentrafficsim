@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -106,19 +106,22 @@ public class LinkCellTransmission extends Link
     {
         ArrayList<FlowCell> flowCells = new ArrayList<FlowCell>();
         // the length of the cell depends on the speed and simulation time step
-        DoubleScalar<SpeedUnit> speed = link.getSpeed();
-        DoubleScalar<LengthUnit> cellLength =
-                new DoubleScalar.Abs<LengthUnit>(speed.getSI() * timeStepDurationCellTransmission.getSI(),
+        DoubleScalar.Abs<SpeedUnit> speed = link.getSpeed();
+        Rel<LengthUnit> cellLength =
+                new DoubleScalar.Rel<LengthUnit>(speed.getSI() * timeStepDurationCellTransmission.getSI(),
                         LengthUnit.METER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.rint(link.getLength().getSI() / cellLength.getSI());
+        DoubleScalar.Abs<FrequencyUnit> capPerLane =
+                new DoubleScalar.Abs<FrequencyUnit>(link.getCapacity().doubleValue() * 3600 / link.getNumberOfLanes(),
+                        FrequencyUnit.PER_HOUR);
         // compute the amount of cells
         for (int i = 0; i < numberOfCells; i++)
         {
-            FlowCell cell = new FlowCell(cellLength, link.getCapacity(), TrafficBehaviourType.FLOW);
+            FlowCell cell =
+                    new FlowCell(cellLength, capPerLane, speed, link.getNumberOfLanes(), TrafficBehaviourType.FLOW);
             flowCells.add(cell);
         }
         return flowCells;
     }
-
 }

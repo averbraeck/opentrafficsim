@@ -3,9 +3,11 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
@@ -30,7 +32,7 @@ public class CellBehaviourNTM extends CellBehaviour
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
 
     /** */
-    private double maxCapacity;
+    private Abs<FrequencyUnit> maxCapacity;
 
     /** */
     private double speedSupply;
@@ -54,10 +56,12 @@ public class CellBehaviourNTM extends CellBehaviour
     public CellBehaviourNTM(final Area area, final ParametersNTM parametersNTM)
     {
         this.parametersNTM = parametersNTM;
-        this.maxCapacity =
-                parametersNTM.getAccCritical().get(0) * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
-                        * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);// gedeeld door gemiddelde triplengte in een gebied (lengte zone?)
-        
+        double maxCap = parametersNTM.getAccCritical().get(0) * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
+                * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        this.maxCapacity = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
+        // gedeeld door gemiddelde triplengte in een gebied  
+        // (lengte zone?)
+
     }
 
     /**
@@ -68,63 +72,45 @@ public class CellBehaviourNTM extends CellBehaviour
      * @return
      */
     // @Override
-    public double retrieveSupply(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
+    public Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars, final Abs<FrequencyUnit> maximumCapacity,
+            final ParametersNTM param)
     {
-        double carProduction = maximumCapacity;
+        Abs<FrequencyUnit> carProduction = maximumCapacity;
         if (accumulatedCars > param.getAccCritical().get(1))
         {
-            carProduction = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
+            carProduction = retrieveDemand(accumulatedCars, maximumCapacity, param);
         }
-        double productionSupply = Math.min(maximumCapacity, carProduction); // supply
-        return productionSupply;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param accumulatedCars
-     * @param maxCapacity
-     * @param param
-     * @return
-     */
-    // @Override
-    public double retrieveDemand(final Double accumulatedCars, final Double maximumCapacity, final ParametersNTM param)
-    {
-        double productionDemand = retrieveCarProduction(accumulatedCars, maximumCapacity, param);
-        return productionDemand;
-    }
-
-    /** {@inheritDoc} */
-    // @Override
-    public double computeAccumulation()
-    {
-        double accumulation = 0.0;
-        return accumulation;
+        else
+        {
+            carProduction = maximumCapacity;
+        }
+        return carProduction;
     }
 
     /**
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
      * @param maximumCapacity based on area information
-     * @param param
+     * @param param  
      * @return carProduction
      */
-    public final double retrieveCarProduction(final double accumulatedCars, final double maximumCapacity,
-            final ParametersNTM param)
+    public final Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
+            final Abs<FrequencyUnit> maximumCapacity, final ParametersNTM param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(0), maximumCapacity);
+        p.setLocation(param.getAccCritical().get(0), maximumCapacity.doubleValue());
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(1), maximumCapacity);
+        p.setLocation(param.getAccCritical().get(1), maximumCapacity.doubleValue());
         xyPairs.add(p);
         p = new Point2D.Double();
         p.setLocation(param.getAccCritical().get(2), 0);
         xyPairs.add(p);
-        double carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
+        Abs<FrequencyUnit> carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
         return carProduction;
     }
 
@@ -171,7 +157,7 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @return maxCapacity
      */
-    public final double getMaxCapacity()
+    public final Abs<FrequencyUnit> getMaxCapacity()
     {
         return this.maxCapacity;
     }
@@ -179,7 +165,7 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @param maxCapacity set maxCapacity.
      */
-    public final void setMaxCapacity(final double maxCapacity)
+    public final void setMaxCapacity(final Abs<FrequencyUnit> maxCapacity)
     {
         this.maxCapacity = maxCapacity;
     }

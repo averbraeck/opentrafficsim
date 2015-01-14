@@ -10,8 +10,11 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -762,7 +765,9 @@ public class BuildGraph
         String gebied = "Area is missing for: " + centroid.getId();
         String regio = "Missing";
         double dhb = 0.0;
-        Area area = new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1, TrafficBehaviourType.NTM);
+        Area area =
+                new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1, TrafficBehaviourType.NTM,
+                        new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
         return area;
     }
 

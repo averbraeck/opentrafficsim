@@ -3,6 +3,8 @@ package org.opentrafficsim.demo.ntm.fundamentaldiagrams;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.LinearFunctionLibrary;
 
 /**
@@ -42,10 +44,10 @@ public class FundamentalDiagram
      * @param accumulatedCars
      * @return piecewise linear
      */
-    public static double PieceWiseLinear(ArrayList<Point2D> xyPairs, double accumulatedCars)
+    public static DoubleScalar.Abs<FrequencyUnit> PieceWiseLinear(ArrayList<Point2D> xyPairs, double accumulatedCars)
     {
-        return LinearFunctionLibrary.createPieceWiseLinear(xyPairs, accumulatedCars);
-
+        double production = LinearFunctionLibrary.createPieceWiseLinear(xyPairs, accumulatedCars);
+        return new DoubleScalar.Abs<FrequencyUnit>(production, FrequencyUnit.PER_HOUR);
     }
 
 }
