@@ -1,6 +1,7 @@
 package org.opentrafficsim.gtu;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.geom.Rectangle2D;
@@ -64,7 +65,8 @@ public class AbstractLaneBasedGTUTest
      * @throws NetworkException
      */
     @Test
-    public void constructorTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException
+    public void abstractLaneBasedGTUTest() throws RemoteException, SimRuntimeException, NamingException,
+            NetworkException
     {
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
@@ -121,6 +123,10 @@ public class AbstractLaneBasedGTUTest
                 car.position(lanesGroupA[1], car.getFront()).getSI(), 0.0001);
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(),
                 car.position(lanesGroupB[1], car.getFront()).getSI(), 0.0001);
+        assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
+        assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getLongitudinalVelocity()
+                .getSI(), 0.00001);
+        assertEquals("lastEvaluation time is 0", 0, car.getLastEvaluationTime().getSI(), 0.00001);
         // Test the position(Lane, RelativePosition) method
         try
         {
@@ -175,13 +181,14 @@ public class AbstractLaneBasedGTUTest
                 }
             }
         }
-        // Assign a movement to the car
+        // Assign a movement to the car (10 seconds of acceleration of 2 m/s/s)
         DoubleScalar.Abs<AccelerationUnit> acceleration =
                 new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
         DoubleScalar.Abs<TimeUnit> validUntil = new DoubleScalar.Abs<TimeUnit>(10, TimeUnit.SECOND);
         car.setState(new GTUFollowingModelResult(acceleration, validUntil));
-        // Increase the simulator clock in small steps and verify the positions of the Car at each step
-        final double step = 0.01d;
+        assertEquals("lastEvaluation time is 0", 0, car.getLastEvaluationTime().getSI(), 0.00001);
+        // Increase the simulator clock in small steps and verify the both positions on all lanes at each step
+        double step = 0.01d;
         for (int i = 0;; i++)
         {
             DoubleScalar.Abs<TimeUnit> stopTime = new DoubleScalar.Abs<TimeUnit>(i * step, TimeUnit.SECOND);
@@ -189,9 +196,30 @@ public class AbstractLaneBasedGTUTest
             {
                 break;
             }
-            //System.out.println("Simulating until " + stopTime.getSI());
+            if (stopTime.getSI() > 0.5)
+            {
+                step = 0.1; // Reduce testing time by increasing the step size
+            }
+            // System.out.println("Simulating until " + stopTime.getSI());
             simulateUntil((OTSDEVSSimulatorInterface) simulator.getSimulator(), stopTime);
-            //System.out.println("Clock is now " + simulator.getSimulator().getSimulatorTime().get().getSI());
+            // System.out.println("Clock is now " + simulator.getSimulator().getSimulatorTime().get().getSI());
+            assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI() + stopTime.getSI()
+                    * acceleration.getSI(), car.getLongitudinalVelocity().getSI(), 0.00001);
+            assertEquals("acceleration is 0", acceleration.getSI(), car.getAcceleration().getSI(), 0.00001);
+            assertEquals("lateral velocity is 0", 0, car.getLateralVelocity().getSI(), 0.00001);
+            for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
+            {
+                Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
+                assertEquals("Car should be in two lanes", 2, positions.size());
+                Double pos = positions.get(lanesGroupA[1]);
+                assertTrue("Car should be in lane 1 of lane group A", null != pos);
+                assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                        car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
+                pos = positions.get(lanesGroupB[1]);
+                assertTrue("Car should be in lane 1 of lane group B", null != pos);
+                assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                        car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
+            }
             for (Lane[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
@@ -205,6 +233,49 @@ public class AbstractLaneBasedGTUTest
                         try
                         {
                             DoubleScalar.Rel<LengthUnit> position = car.position(lane, relativePosition);
+                            if (expectException)
+                            {
+                                // System.out.println("position: " + position);
+                                fail("Calling position on lane that the car is NOT on should have thrown a "
+                                        + "NetworkException");
+                            }
+                            else
+                            {
+                                DoubleScalar.Rel<LengthUnit> expectedPosition =
+                                        laneGroup == lanesGroupA ? positionA : positionB;
+                                expectedPosition =
+                                        DoubleScalar.plus(
+                                                expectedPosition,
+                                                new DoubleScalar.Rel<LengthUnit>(stopTime.getSI()
+                                                        * initialSpeed.getSI(), LengthUnit.SI)).immutable();
+                                expectedPosition =
+                                        DoubleScalar.plus(
+                                                expectedPosition,
+                                                new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI()
+                                                        * stopTime.getSI() * stopTime.getSI(), LengthUnit.SI))
+                                                .immutable();
+                                // FIXME There should be a (better) way to check equality of RelativePosition
+                                if (relativePosition.getDx().getSI() != 0)
+                                {
+                                    expectedPosition = DoubleScalar.minus(expectedPosition, carLength).immutable();
+                                }
+                                // System.out.println("reported position: " + position);
+                                // System.out.println("expected position: " + expectedPosition);
+                                assertEquals("Position should match initial position", expectedPosition.getSI(),
+                                        position.getSI(), 0.0001);
+                            }
+                        }
+                        catch (NetworkException ne)
+                        {
+                            if (!expectException)
+                            {
+                                System.out.println(ne);
+                                fail("Calling position on lane that the car is on should NOT have thrown a NetworkException");
+                            }
+                        }
+                        try
+                        {
+                            double fractionalPosition = car.fractionalPosition(lane, relativePosition);
                             if (expectException)
                             {
                                 // System.out.println("position: " + position);
@@ -225,15 +296,16 @@ public class AbstractLaneBasedGTUTest
                                                 new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI()
                                                         * stopTime.getSI() * stopTime.getSI(), LengthUnit.SI))
                                                 .immutable();
-                                // FIXME There should be a better way to check equality of RelativePosition
+                                // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
                                     expectedPosition = DoubleScalar.minus(expectedPosition, carLength).immutable();
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
-                                assertEquals("Position should match initial position", expectedPosition.getSI(),
-                                        position.getSI(), 0.0001);
+                                double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();
+                                assertEquals("Position should match initial position", expectedFractionalPosition,
+                                        fractionalPosition, 0.000001);
                             }
                         }
                         catch (NetworkException ne)
@@ -241,14 +313,62 @@ public class AbstractLaneBasedGTUTest
                             if (!expectException)
                             {
                                 System.out.println(ne);
-                                fail("Calling position on lane that the car is on should NOT have thrown a NetworkException");
+                                fail("Calling fractionalPosition on lane that the car is on should NOT have thrown a "
+                                        + "NetworkException");
                             }
                         }
                     }
                 }
             }
-
         }
+        // A GTU can exist on several lanes at once; create another lane group to test that
+        Node nodeCFrom = new Node("CFrom", new Coordinate(10, 100, 0));
+        Node nodeCTo = new Node("CTo", new Coordinate(1000, 0, 0));
+        Lane[] lanesGroupC =
+                LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType,
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        car.addLane(lanesGroupC[0]);
+        for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
+        {
+            Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
+            assertEquals("Car should be in three lanes", 3, positions.size());
+            Double pos = positions.get(lanesGroupA[1]);
+            assertTrue("Car should be in lane 1 of lane group A", null != pos);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
+            pos = positions.get(lanesGroupB[1]);
+            assertTrue("Car should be in lane 1 of lane group B", null != pos);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
+            pos = positions.get(lanesGroupC[0]);
+            assertTrue("Car should be in lane 0 of lane group C", null != pos);
+            // The next one fails - maybe I don't understand something - PK
+            //assertEquals("fractional position should be 0", 0,
+            //        car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+        }
+        car.removeLane(lanesGroupA[1]);
+        for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
+        {
+            Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
+            assertEquals("Car should be in two lanes", 2, positions.size());
+            Double pos = positions.get(lanesGroupB[1]);
+            assertTrue("Car should be in lane 1 of lane group B", null != pos);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
+            pos = positions.get(lanesGroupC[0]);
+            assertTrue("Car should be in lane 0 of lane group C", null != pos);
+            // The next one fails - maybe I don't understand something - PK
+            //assertEquals("fractional position should be 0", 0,
+            //        car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+        }
+        // TODO
+        // removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
+        // TODO
+        // figure out why the added lane has a non-zero position
     }
 
     /** Flag to indicate that the autoPauseSimulator event was executed. */
