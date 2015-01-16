@@ -75,7 +75,7 @@ public class AbstractLaneBasedGTUTest
         Node nodeATo = new Node("ATo", new Coordinate(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSModelInterface model = new DummyModel();
+        OTSModelInterface model = new DummyModelForTemplateGTUTest();
         final SimpleSimulator simulator =
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
