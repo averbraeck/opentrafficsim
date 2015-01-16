@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * OpenStreetMap Link.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -14,22 +15,22 @@ import java.util.Objects;
  */
 public class Link
 {
-    /** This is the Link ID. It is generated out of the Start ID and the End ID */
+    /** This is the Link ID. It is generated out of the Start ID and the End ID. */
     private String iD;
-    /** This is the startnode of the link.*/
+    /** This is the start Node of the link. */
     private Node start;
-    /** This is the endnode of the link.*/
+    /** This is the end Node of the link. */
     private Node end;
-    /** This is a List of nodes that are used just for mapping purposes */
+    /** This is a List of nodes that are used just for mapping purposes. */
     private List<Node> splineList;
     /** This is the length of the link.*/
     private double length;
-    /** These are the tags that this link inherits from it's way.*/
+    /** These are the tags that this link inherits from it's way. */
     private List<Tag> linktags;
-    /** This is the number of lanes this link has*/
+    /** This is the number of lanes this link has. */
     private byte lanes;
-    /** This is the number of lanes going forward*/
-    private byte flanes;
+    /** This is the number of lanes going forward. */
+    private byte forwardLanes;
     /** Is this link one way?*/
     private boolean oneway;
     /**
@@ -42,7 +43,7 @@ public class Link
     {
         if (n1 == n2)
         {
-            throw new Error("start and end of link are the same Node: " + n1);
+            throw new Error("Start and end of link are the same Node: " + n1);
         }
         this.iD = Objects.toString(n1.getID()) + Objects.toString(n2.getID());
         this.start = n1;
@@ -50,7 +51,7 @@ public class Link
         this.linktags = lt;
         this.length = length;
         this.lanes = 2;
-        this.flanes = 1;
+        this.forwardLanes = 1;
         boolean forwardDefined = false;
         Tag t = new Tag("oneway", "yes");
         if (lt.contains(t))
@@ -58,7 +59,7 @@ public class Link
             this.setOneway(true);
             lt.remove(t);
             this.lanes = 1;
-            this.flanes = this.lanes;
+            this.forwardLanes = this.lanes;
         }
         List<Tag> lt2 = lt;
         for (Tag t2: lt2)
@@ -67,22 +68,22 @@ public class Link
             {
                 this.lanes = Byte.parseByte(t2.getValue());
                 lt.remove(t2);
-                if (this.oneway == true)
+                if (this.oneway)
                 {
-                    this.flanes = this.lanes;
+                    this.forwardLanes = this.lanes;
                     forwardDefined = true;
                 }
             }
             if (t2.getKey() == "lanes:forward")
             {
-                this.flanes = Byte.parseByte(t2.getValue());
+                this.forwardLanes = Byte.parseByte(t2.getValue());
                 lt.remove(t2);
                 forwardDefined = true;
             }
         }
         if (!forwardDefined)
         {
-            this.flanes = (byte) (this.lanes / 2);
+            this.forwardLanes = (byte) (this.lanes / 2);
         }
         this.splineList = new ArrayList<Node>(); 
     }
@@ -107,7 +108,7 @@ public class Link
         this.linktags = lt;
         this.length = length;
         this.lanes = lanes;
-        this.flanes = flanes;
+        this.forwardLanes = flanes;
         this.splineList = new ArrayList<Node>();
     }
     
@@ -166,7 +167,7 @@ public class Link
     /**
      * @return oneway.
      */
-    public boolean isOneway()
+    public final boolean isOneway()
     {
         return this.oneway;
     }
@@ -174,7 +175,7 @@ public class Link
     /**
      * @param oneway set if link is one way.
      */
-    public void setOneway(boolean oneway)
+    public final void setOneway(final boolean oneway)
     {
         this.oneway = oneway;
     }
@@ -182,7 +183,7 @@ public class Link
     /**
      * @return lanes.
      */
-    public byte getLanes()
+    public final byte getLanes()
     {
         return this.lanes;
     }
@@ -190,32 +191,34 @@ public class Link
     /**
      * @return ForwardLanes.
      */
-    public byte getForwardLanes()
+    public final byte getForwardLanes()
     {
-        return this.flanes;
+        return this.forwardLanes;
     }
     
     /**
      * @param lanes set lanes.
      */
-    public void setLanes(byte lanes)
+    public final void setLanes(final byte lanes)
     {
         this.lanes = lanes;
     }
 
     /**
-     * @param flanes set flanes.
+     * Set the number of forward lanes of this Link.
+     * @param forwardLanes byte; the number of forward lanes
      */
-    public void setForwardLanes(byte flanes)
+    public final void setForwardLanes(final byte forwardLanes)
     {
-        this.flanes = flanes;
+        this.forwardLanes = forwardLanes;
     }
     /**
-     * @param t
+     * Add a Tag to this Link.
+     * @param tag Tag; the Tag that must be added
      */
-    public final void addTag(Tag t)
+    public final void addTag(final Tag tag)
     {
-        this.linktags.add(t);
+        this.linktags.add(tag);
     }
 
     /**
@@ -237,7 +240,7 @@ public class Link
     /**
      * @return splineList.
      */
-    public List<Node> getSplineList()
+    public final List<Node> getSplineList()
     {
         return this.splineList;
     }
@@ -245,17 +248,22 @@ public class Link
     /**
      * @param splineList set splineList.
      */
-    public void setSplineList(final List<Node> splineList)
+    public final void setSplineList(final List<Node> splineList)
     {
         this.splineList = splineList;
     }
     
-    public void addSpline(final Node spline)
+    /**
+     * Append a Node to the spline of this Link.
+     * @param spline Node; the Node to add to the splineList
+     */
+    public final void addSpline(final Node spline)
     {
         this.splineList.add(spline);
     }
     
-    public String toString()
+    /** {@inheritDoc} */
+    public final String toString()
     {
         return String.format("Link %s from %d to %d", getID(), getStart().getID(), getEnd().getID());
     }
