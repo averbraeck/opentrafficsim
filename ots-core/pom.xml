@@ -40,12 +40,12 @@
 			<groupId>dsol</groupId>
 			<artifactId>dsol-core</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>
@@ -54,6 +54,30 @@
 		<dependency>
 			<groupId>dsol</groupId>
 			<artifactId>dsol-swing</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openstreetmap.osmosis</groupId>
+			<artifactId>osmosis-core</artifactId>
+			<version>0.43.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.openstreetmap.osmosis</groupId>
+			<artifactId>osmosis-xml</artifactId>
+			<version>0.43.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.openstreetmap.osmosis</groupId>
+			<artifactId>osmosis-pbf</artifactId>
+			<version>0.43.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.openstreetmap.osmosis</groupId>
+			<artifactId>osmosis-osm-binary</artifactId>
+			<version>0.43.1</version>
 		</dependency>
 	</dependencies>
 </project>

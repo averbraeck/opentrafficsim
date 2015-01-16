@@ -195,9 +195,9 @@ public class IDMPlusTest
             referenceCar.setState(cfmr);
             DoubleScalar.Abs<TimeUnit> thisEvaluationTime = referenceCar.getNextEvaluationTime();
             DoubleScalar.Abs<SpeedUnit> currentSpeed = referenceCar.getLongitudinalVelocity(thisEvaluationTime);
-            System.out.println(String.format("step %3d, t=%s, v=%s, a=%s, referenceCar: %s, leaderCar: %s", timeStep, 
-                cfmr.getValidUntil().getSI(), currentSpeed, referenceCar.getAcceleration(),
-                referenceCar, leaderCar));
+            //System.out.println(String.format("step %3d, t=%s, v=%s, a=%s, referenceCar: %s, leaderCar: %s", timeStep, 
+            //    cfmr.getValidUntil().getSI(), currentSpeed, referenceCar.getAcceleration(),
+            //    referenceCar, leaderCar));
             if (timeStep > 100)
             {
                 double position = referenceCar.position(lane, referenceCar.getFront(), cfmr.getValidUntil()).getSI();

@@ -78,6 +78,8 @@ public class Lane extends CrossSectionElement
      */
     public final void addSensor(final Sensor sensor)
     {
+        // XXX PK asks: Could this place a SensorLaneEnd BEYOND the end of the Lane? Would that be bad?
+        // If true, is there another work-around? Like, arrange sensors at the same position in a linked list?
         double position = sensor.getLongitudinalPositionSI();
         while (this.sensors.containsKey(position))
         {

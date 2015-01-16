@@ -168,15 +168,15 @@ public class LaneChangeModelTest
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
                     AccelerationUnit.METER_PER_SECOND_2));
-        System.out.println(laneChangeModelResult.toString());
+        //System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT, laneChangeModelResult
             .getLaneChange());
         DoubleScalar.Rel<LengthUnit> rear = car.position(lanes[0], car.getRear());
         DoubleScalar.Rel<LengthUnit> front = car.position(lanes[0], car.getFront());
         DoubleScalar.Rel<LengthUnit> reference = car.position(lanes[0], RelativePosition.REFERENCE);
-        System.out.println("rear:      " + rear);
-        System.out.println("front:     " + front);
-        System.out.println("reference: " + reference);
+        //System.out.println("rear:      " + rear);
+        //System.out.println("front:     " + front);
+        //System.out.println("reference: " + reference);
         DoubleScalar.Rel<LengthUnit> vehicleLength = DoubleScalar.minus(front, rear).immutable();
         DoubleScalar.Rel<LengthUnit> collisionStart = DoubleScalar.minus(reference, vehicleLength).immutable();
         DoubleScalar.Rel<LengthUnit> collisionEnd = DoubleScalar.plus(reference, vehicleLength).immutable();
@@ -201,7 +201,7 @@ public class LaneChangeModelTest
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
                         AccelerationUnit.METER_PER_SECOND_2));
-            System.out.println(laneChangeModelResult.toString());
+            //System.out.println(laneChangeModelResult.toString());
             assertEquals("Vehicle cannot to change to the right lane because that would result in an immediate collision",
                 null, laneChangeModelResult.getLaneChange());
         }
@@ -226,14 +226,14 @@ public class LaneChangeModelTest
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
                         AccelerationUnit.METER_PER_SECOND_2));
-            System.out.println(String.format("pos=%5fm Egoistic:   %s", pos, laneChangeModelResult.toString()));
+            //System.out.println(String.format("pos=%5fm Egoistic:   %s", pos, laneChangeModelResult.toString()));
             laneChangeModelResult =
                 new Altruistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
                     nonPreferredLaneGTUs, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
                     new DoubleScalar.Rel<AccelerationUnit>(0.3, AccelerationUnit.METER_PER_SECOND_2),
                     new DoubleScalar.Rel<AccelerationUnit>(0.1, AccelerationUnit.METER_PER_SECOND_2),
                     new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
-            System.out.println(String.format("pos=%5fm Altruistic: %s", pos, laneChangeModelResult.toString()));
+            //System.out.println(String.format("pos=%5fm Altruistic: %s", pos, laneChangeModelResult.toString()));
             // assertEquals(
             // "Vehicle cannot to change to the right lane because that would result in an immediate collision",
             // null, laneChangeModelResult.getLaneChange());
