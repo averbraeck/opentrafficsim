@@ -60,12 +60,12 @@ public class ReadOSMFile
     private List<String> filterKeys;
 
     /**
-     * @param location
-     * @param wt
-     * @param ft
-     * @throws URISyntaxException
-     * @throws FileNotFoundException
-     * @throws MalformedURLException
+     * @param location String; the location of the OSM file
+     * @param wt List&lt;Tag&gt;; the list of wanted tags
+     * @param ft List&lt;String&gt;; the list of filtered keys
+     * @throws URISyntaxException when <cite>location</cite> is not a valid URL
+     * @throws FileNotFoundException when the OSM file can not be found
+     * @throws MalformedURLException when <cite>location</cite> is not valid
      */
     public ReadOSMFile(final String location, final List<Tag> wt, final List<String> ft) throws URISyntaxException,
             FileNotFoundException, MalformedURLException

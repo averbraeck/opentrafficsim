@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -20,23 +18,24 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 public class Network
 {
-    /** */
+    /** The Nodes of the Network. */
     private HashMap<Long, Node> nodes;
 
-    /** */
+    /** The Ways of the Network. */
     private HashMap<Long, Way> ways;
 
-    /** */
+    /** The Relations of the Network. */
     private HashMap<Long, Relation> relations;
 
-    /** */
+    /** The name of the Network. */
     private String name;
 
-    /** */
+    /** The Links of the Network. */
     private List<Link> links;
 
     /**
-     * @param name
+     * Construct a new Network.
+     * @param name String; the name of the new Network
      */
     public Network(final String name)
     {
@@ -48,9 +47,10 @@ public class Network
     }
 
     /**
-     * @param wayid
-     * @return List of NodeIds from specific way
-     * @throws IOException
+     * Retrieve a list of Nodes that form a Way from this Network.
+     * @param wayid long; the id of the Way
+     * @return List&lt;Long*gt;; the list of NodeIds of way with the specified id
+     * @throws IOException when no Way with the specified id exists in this Network
      */
     public final List<Long> getNodesFromWay(final Long wayid) throws IOException
     {
@@ -65,9 +65,10 @@ public class Network
     }
 
     /**
-     * @param nodeid
-     * @return node
-     * @throws IOException
+     * Retrieve a Node from this Network.
+     * @param nodeid long; the id of the Node
+     * @return node Node; the node with the specified id
+     * @throws IOException when no Node with the specified id exist in this Network
      */
     public final Node getNode(final long nodeid) throws IOException
     {
@@ -90,9 +91,10 @@ public class Network
     }
 
     /**
-     * @param relid
+     * Retrieve a Relation from this Network.
+     * @param relid long; the id of the Relation
      * @return Relation
-     * @throws IOException
+     * @throws IOException when no Relation with the specified id exists in this Network
      */
     public final Relation getRelation(final long relid) throws IOException
     {
@@ -115,9 +117,10 @@ public class Network
     }
 
     /**
-     * @param wayid
+     * Retrieve a Way from this Network.
+     * @param wayid long; the id of a Way
      * @return Way
-     * @throws IOException
+     * @throws IOException when no Way with the specified id exist in this network
      */
     public final Way getWay(final long wayid) throws IOException
     {
@@ -140,7 +143,8 @@ public class Network
     }
 
     /**
-     * @param name
+     * Set/update the name of this Network.
+     * @param name String; the new name
      */
     public final void setName(final String name)
     {
@@ -148,7 +152,9 @@ public class Network
     }
 
     /**
-     * @param newnodes
+     * Set/replace the Nodes of this Network.<br>
+     * The provided list is <b>not copied</b>; the caller should not modify the list after setting it.
+     * @param newnodes HashMap&lt;Long, Node&gt;; the (new) Nodes for this Network
      */
     public final void setNodes(final HashMap<Long, Node> newnodes)
     {
@@ -156,7 +162,8 @@ public class Network
     }
 
     /**
-     * @param node
+     * Add a Node to this Network.
+     * @param node Node; the node to add to this Network
      */
     public final void addNode(final Node node)
     {
@@ -164,7 +171,8 @@ public class Network
     }
 
     /**
-     * @param node
+     * Delete a Node from this Network.
+     * @param node Node; the Node to delete
      */
     public final void delNode(final Node node)
     {
@@ -172,7 +180,8 @@ public class Network
     }
 
     /**
-     * @param nodeid
+     * Delete a Node from this Network.
+     * @param nodeid Long; the id of the Node to delete
      */
     public final void delNode(final Long nodeid)
     {
@@ -180,7 +189,8 @@ public class Network
     }
 
     /**
-     * @param way
+     * Add a Way to this Network.
+     * @param way Way; the Way to add
      */
     public final void addWay(final Way way)
     {
@@ -188,7 +198,8 @@ public class Network
     }
 
     /**
-     * @param rel
+     * Add a Relation to this Network.
+     * @param rel Relation; the relation to add
      */
     public final void addRelation(final Relation rel)
     {
@@ -213,7 +224,7 @@ public class Network
 
     /**
      * Creates links out of the ways in this network.
-     * @throws IOException
+     * @throws IOException on read errors
      */
     public final void makeLinks() throws IOException
     {
@@ -284,7 +295,7 @@ public class Network
     /**
      * This function checks for and removes redundancies between the networks links.
      */
-    public void removeRedundancy()
+    public final void removeRedundancy()
     {
         boolean again = false;
         do
@@ -296,8 +307,10 @@ public class Network
 
     /**
      * This function checks the networks links for redundancy.
+     * @return boolean; true if the Network was modified (further reduction may be possible by calling this method
+     *         again)
      */
-    private final boolean redundancyCheck()
+    private boolean redundancyCheck()
     {
         List<Link> checkedLinks = new ArrayList<Link>();
         List<Link> removedLinks = new ArrayList<Link>();
@@ -365,21 +378,21 @@ public class Network
                             lnew.addSpline(n2);
                         }
                     }
-                    //System.out.println("removing " + l1 + " and " + l2);
-                    //System.out.println("adding " + lnew);
+                    // System.out.println("removing " + l1 + " and " + l2);
+                    // System.out.println("adding " + lnew);
                     checkedLinks.add(lnew);
                     removedLinks.add(l1);
                     removedLinks.add(l2);
-                    break;  // don't merge any other links with l1; do that on the next iteration.
+                    break; // don't merge any other links with l1; do that on the next iteration.
                 }
             }
         }
-        //System.out.println("Combining " + removedLinks.size() + " to " + checkedLinks.size());
-        //if (removedLinks.size() < 40)
-        //{
-        //    for (Link l : removedLinks)
-        //        System.out.println("Removing link " + l);
-        //}
+        // System.out.println("Combining " + removedLinks.size() + " to " + checkedLinks.size());
+        // if (removedLinks.size() < 40)
+        // {
+        // for (Link l : removedLinks)
+        // System.out.println("Removing link " + l);
+        // }
         this.links.removeAll(removedLinks);
         this.links.addAll(checkedLinks);
         System.out.println("there are now " + this.links.size() + " links");
@@ -387,27 +400,27 @@ public class Network
     }
 
     /**
-     * This method transforms Longitudal/Latitudal coordinates to ECEF coordinates. WGS84 as source is assumed.
-     * @param longitude radian
-     * @param latitude radian
-     * @param height in meters
-     * @return
+     * This method transforms Longitudinal/Latitudinal coordinates to ECEF coordinates. WGS84 as source is assumed.
+     * @param longitude double; longitude in radians
+     * @param latitude double; latitude in radians
+     * @param height double; elevation in meters
+     * @return Coordinate
      */
-    public final Coordinate localCoordinate(final double longitude, final double latitude, double height)
+    public final Coordinate localCoordinate(final double longitude, final double latitude, final double height)
     {
         /* WGS84 local constants */
         final double a = 6378137; /* semi major axis */
         final double e = 8.1819190842622 * Math.exp(-2); /* first numerical eccentricity */
 
         /* Intermediate calculation of the prime vertical radius of curvature */
-        final double N = a / (Math.sqrt(1 - Math.pow(e, 2) * Math.pow(Math.sin(latitude), 2)));
+        final double n = a / (Math.sqrt(1 - Math.pow(e, 2) * Math.pow(Math.sin(latitude), 2)));
 
         /* Calculation of ECEF coordinates */
-        final double X = (N + height) * Math.cos(latitude) * Math.cos(longitude);
-        final double Y = (N + height) * Math.cos(latitude) * Math.sin(longitude);
-        final double Z = (1 - Math.pow(e, 2) * N + height) * Math.sin(latitude);
+        final double x = (n + height) * Math.cos(latitude) * Math.cos(longitude);
+        final double y = (n + height) * Math.cos(latitude) * Math.sin(longitude);
+        final double z = (1 - Math.pow(e, 2) * n + height) * Math.sin(latitude);
 
-        Coordinate coord = new Coordinate(X, Y, Z);
+        Coordinate coord = new Coordinate(x, y, z);
         return coord;
     }
 }

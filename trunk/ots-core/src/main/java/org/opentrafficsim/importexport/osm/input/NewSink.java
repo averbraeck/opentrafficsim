@@ -1,7 +1,5 @@
 package org.opentrafficsim.importexport.osm.input;
 
-//import java.util.ArrayList;
-//import java.util.HashMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,7 +168,7 @@ public class NewSink implements Sink
     }
 
     /** The complete method removes all Nodes which are not used within any imported way or relation. */
-    public void complete()
+    public final void complete()
     {
         HashMap<Long, org.opentrafficsim.importexport.osm.Node> usednodes =
                 new HashMap<Long, org.opentrafficsim.importexport.osm.Node>();
@@ -184,7 +182,9 @@ public class NewSink implements Sink
                     if (this.net.getNodes().keySet().contains(nid))
                     {
                         if (!usednodes.containsKey(nid))
+                        {
                             usednodes.put(nid, this.net.getNode(nid));
+                        }
                     }
                 }
             }
@@ -203,7 +203,9 @@ public class NewSink implements Sink
                     if (this.net.getNodes().keySet().contains(nid))
                     {
                         if (!usednodes.containsKey(nid))
+                        {
                             usednodes.put(nid, this.net.getNode(nid));
+                        }
                     }
                 }
             }
@@ -224,7 +226,9 @@ public class NewSink implements Sink
     }
 
     /**
-     * @param tags
+     * Set/replace the list of wanted tags.<br>
+     * This method makes a deep copy of the supplied list.
+     * @param tags List&lt;Tag&gt;; the list of wanted tags
      */
     public final void setWantedTags(final List<org.opentrafficsim.importexport.osm.Tag> tags)
     {
@@ -237,7 +241,9 @@ public class NewSink implements Sink
     }
 
     /**
-     * @param keys
+     * Set/replace the filter keys.<br/>
+     * The provided list is <b>not copied</b>; the caller should not modify the list afterwards.
+     * @param keys List&lt;String&gt; list of filter keys
      */
     public final void setFilterKeys(final List<String> keys)
     {

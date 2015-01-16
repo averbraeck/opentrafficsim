@@ -51,11 +51,12 @@ public class Way
     }
 
     /**
-     * @param waynodes 
+     * Set/replace the list of way nodes.
+     * @param theWayNodes List&lt;Long&gt;; the new list of way nodes
      */
-    public final void setNodes(final List<Long> waynodes)
+    public final void setNodes(final List<Long> theWayNodes)
     {
-        this.waynodes = waynodes;
+        this.waynodes = theWayNodes;
     }
 
     /**
@@ -85,11 +86,12 @@ public class Way
     }
 
     /**
-     * @param waytags 
+     * Set/replace the list of way tags.
+     * @param theWayTags List&lt;Tag&gt;; the new list of way tags
      */
-    public final void setTags(final List<Tag> waytags)
+    public final void setTags(final List<Tag> theWayTags)
     {
-        this.waytags = waytags;
+        this.waytags = theWayTags;
     }
 
     /**

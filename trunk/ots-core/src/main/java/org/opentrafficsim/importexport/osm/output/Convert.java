@@ -20,37 +20,44 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
-
-
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 30.12.2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a>Moritz Bergmann</a>
  */
-public class Convert
+public final class Convert
 {
+    /** Do not instantiate this class. */
+    private Convert()
+    {
+        // Cannot be instantiated.
+    }
+
     /**
-     * This method converts an OSM link to an OTS link
-     * @param l OSM Link to be converted
+     * This method converts an OSM link to an OTS link.
+     * @param link OSM Link to be converted
      * @return OTS Link
      */
-    public static Link convertLink(org.opentrafficsim.importexport.osm.Link l)
+    public static Link convertLink(final org.opentrafficsim.importexport.osm.Link link)
     {
-        Node start = convertNode(l.getStart());
-        Node end = convertNode(l.getEnd());
+        Node start = convertNode(link.getStart());
+        Node end = convertNode(link.getEnd());
         Link l2;
-        if (l.getSplineList().isEmpty())
+        if (link.getSplineList().isEmpty())
         {
-            l2 = new Link(l.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(l.getLength(), LengthUnit.METER));
+            l2 =
+                    new Link(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(link.getLength(),
+                            LengthUnit.METER));
         }
         else
         {
             List<Coordinate> iC = new ArrayList<Coordinate>();
-            for (org.opentrafficsim.importexport.osm.Node spline: l.getSplineList())
+            for (org.opentrafficsim.importexport.osm.Node spline : link.getSplineList())
             {
                 Coordinate coord = new Coordinate(spline.getLongitude(), spline.getLatitude());
                 iC.add(coord);
@@ -70,7 +77,9 @@ public class Convert
             }
             GeometryFactory factory = new GeometryFactory();
             LineString lineString = factory.createLineString(coordinates);
-            l2 = new Link(l.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(), LengthUnit.METER));
+            l2 =
+                    new Link(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                            LengthUnit.METER));
             try
             {
                 new LinearGeometry(l2, lineString, null);
@@ -82,60 +91,73 @@ public class Convert
         }
         return l2;
     }
+
     /**
-     * This method converts an OSM node to an OTS node
-     * @param n OSM Node to be converted
+     * This method converts an OSM node to an OTS node.
+     * @param node OSM Node to be converted
      * @return OTS Link
      */
-    public static Node convertNode(org.opentrafficsim.importexport.osm.Node n)
+    public static Node convertNode(final org.opentrafficsim.importexport.osm.Node node)
     {
-        Coordinate coord = new Coordinate(n.getLongitude(), n.getLatitude());
-        Node n2 = new Node(Objects.toString(n.getID()), coord);
+        Coordinate coord = new Coordinate(node.getLongitude(), node.getLatitude());
+        Node n2 = new Node(Objects.toString(node.getID()), coord);
         return n2;
     }
-    
+
     /**
-     * This method creates lanes out of an OSM link
-     * LaneTypes are not jet extensive and can be further increased through Tags provided by OSM.
-     * The standard lanewidth of 3.05 is an estimation based on the european width limitation for vehicles (2.55m) + 25cm each side.
-     * @param osmlink 
+     * This method creates lanes out of an OSM link LaneTypes are not jet extensive and can be further increased through
+     * Tags provided by OSM. The standard lane width of 3.05 is an estimation based on the Wuropean width limitation for
+     * vehicles (2.55m) + 25cm each side.
+     * @param osmlink Link; the OSM link to make lanes for
      * @return Lanes
      */
-    public static List<Lane> makeLanes(org.opentrafficsim.importexport.osm.Link osmlink)
+    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink)
     {
         Link otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
         LaneType<String> lt = null;
-        boolean widthOverride = false; /*In case the OSM link provides a width the standard width will be overridden*/
-        
+        boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */
+
         List<Coordinate> iC = new ArrayList<Coordinate>();
-        for (org.opentrafficsim.importexport.osm.Node spline: osmlink.getSplineList())
+        for (org.opentrafficsim.importexport.osm.Node spline : osmlink.getSplineList())
         {
             Coordinate coord = new Coordinate(spline.getLongitude(), spline.getLatitude());
             iC.add(coord);
         }
         Coordinate[] intermediateCoordinates = (Coordinate[]) iC.toArray();
-        
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /*estimation*/
-        for (org.opentrafficsim.importexport.osm.Tag t: osmlink.getTags())
+
+        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /* estimation */
+        for (org.opentrafficsim.importexport.osm.Tag t : osmlink.getTags())
         {
-            if(t.getKey().equals("highway") && (t.getValue().equals("primary") || t.getValue().equals("secondary") || t.getValue().equals("tertiary") || t.getValue().equals("residential") || t.getValue().equals("trunk") || t.getValue().equals("motorway") || t.getValue().equals("service")))
+            if (t.getKey().equals("highway")
+                    && (t.getValue().equals("primary") || t.getValue().equals("secondary")
+                            || t.getValue().equals("tertiary") || t.getValue().equals("residential")
+                            || t.getValue().equals("trunk") || t.getValue().equals("motorway") || t.getValue().equals(
+                            "service")))
             {
                 lt = makeLaneType(new GTUType<String>(GTUTypes.CAR.toString()));
             }
-            if(t.getKey().equals("highway") && t.getValue().equals("cycleway"))
+            if (t.getKey().equals("highway") && t.getValue().equals("cycleway"))
             {
                 lt = makeLaneType(new GTUType<String>(GTUTypes.BIKE.toString()));
-                if(!widthOverride) width = new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER); /*estimation*/
+                if (!widthOverride)
+                {
+                    width = new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER); /* estimation */
+                }
             }
-            if(t.getKey().equals("highway") && t.getValue().equals("footway"))
+            if (t.getKey().equals("highway") && t.getValue().equals("footway"))
             {
                 lt = makeLaneType(new GTUType<String>(GTUTypes.PEDESTRIAN.toString()));
-                if(!widthOverride) width = new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER); /*estimation*/
+                if (!widthOverride)
+                {
+                    width = new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER); /* estimation */
+                }
             }
-            if(t.getKey().equals("width"))
+            if (t.getKey().equals("width"))
             {
-                width = new DoubleScalar.Rel<LengthUnit>((Double.parseDouble(t.getValue()) / osmlink.getLanes()), LengthUnit.METER);
+                width =
+                        new DoubleScalar.Rel<LengthUnit>((Double.parseDouble(t.getValue()) / osmlink.getLanes()),
+                                LengthUnit.METER);
                 widthOverride = true;
             }
         }
@@ -143,8 +165,10 @@ public class Convert
         if (osmlink.isOneway())
         {
             for (int i = 0; i < osmlink.getLanes(); i++)
-            {    
-                DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR); /** temporary */
+            {
+                DoubleScalar.Abs<FrequencyUnit> f2000 =
+                        new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+                /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
                 Lane result = new Lane(otslink, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
@@ -154,15 +178,21 @@ public class Convert
         {
             for (int i = 0; i < osmlink.getForwardLanes(); i++) /** Create forward lanes */
             {
-                DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR); /** temporary */
-                DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit()), LengthUnit.METER);
+                DoubleScalar.Abs<FrequencyUnit> f2000 =
+                        new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+                /** temporary */
+                DoubleScalar.Rel<LengthUnit> latPos =
+                        new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit()), LengthUnit.METER);
                 Lane result = new Lane(otslink, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
             }
             for (int i = 0; i < (osmlink.getLanes() - osmlink.getForwardLanes()); i++) /** Create backward lanes */
             {
-                DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR); /** temporary */
-                DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit() * (-1)), LengthUnit.METER);
+                DoubleScalar.Abs<FrequencyUnit> f2000 =
+                        new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+                /** temporary */
+                DoubleScalar.Rel<LengthUnit> latPos =
+                        new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit() * (-1)), LengthUnit.METER);
                 Lane result = new Lane(otslink, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
                 lanes.add(result);
             }
@@ -170,45 +200,49 @@ public class Convert
         if (osmlink.getTags().contains(new org.opentrafficsim.importexport.osm.Tag("cycleway", "lane")))
         {
             lt = makeLaneType(new GTUType<String>(GTUTypes.BIKE.toString()));
-            DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR); /** temporary */
-            DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>((osmlink.getLanes() * width.getInUnit()), LengthUnit.METER);
-            Lane result = new Lane(otslink, latPos, new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), lt, LongitudinalDirectionality.FORWARD, f2000);
+            DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+            /** temporary */
+            DoubleScalar.Rel<LengthUnit> latPos =
+                    new DoubleScalar.Rel<LengthUnit>((osmlink.getLanes() * width.getInUnit()), LengthUnit.METER);
+            Lane result =
+                    new Lane(otslink, latPos, new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
+                            new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), lt,
+                            LongitudinalDirectionality.FORWARD, f2000);
             lanes.add(result);
         }
         return lanes;
     }
-    
+
     /**
      * This method creates a LaneType which supports all GTUTypes that have been specified in the GTUType List "GTUs".
-     * @param GTUs List of GTU Types
-     * @return specific LaneType
+     * @param gtuTypes List&lt;GTUType&lt;String&gt;&gt;; list of GTUTypes
+     * @return LaneType permeable for all of the specific GTUTypes
      */
-    public static LaneType<String> makeLaneType(final List<GTUType<String>> GTUs)
+    public static LaneType<String> makeLaneType(final List<GTUType<String>> gtuTypes)
     {
         String iD = "";
-        for (GTUType<String> gtu: GTUs)
+        for (GTUType<String> gtu : gtuTypes)
         {
             iD.concat(gtu.getId());
         }
         LaneType<String> lt = new LaneType<String>(iD);
-        for (GTUType<String> gtu: GTUs)
+        for (GTUType<String> gtu : gtuTypes)
         {
             lt.addPermeability(gtu);
         }
         return lt;
     }
-    
+
     /**
      * This method creates a LaneType which supports the specified GTUType.
-     * @param GTUType
+     * @param gtuType GTUType; the type of GTU that can travel on the new LaneType
      * @return LaneType
      */
-    public static LaneType<String> makeLaneType(final GTUType<String> GTUType)
+    public static LaneType<String> makeLaneType(final GTUType<String> gtuType)
     {
-        String iD = GTUType.getId();
+        String iD = gtuType.getId();
         LaneType<String> lt = new LaneType<String>(iD);
-        lt.addPermeability(GTUType);
+        lt.addPermeability(gtuType);
         return lt;
     }
 }
-

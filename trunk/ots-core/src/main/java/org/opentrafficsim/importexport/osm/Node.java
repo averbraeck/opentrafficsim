@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
+ * OpenStreetmap Node.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -121,11 +122,12 @@ public class Node
     }
 
     /**
-     * @param nodetags 
+     * Set/replace the Node Tags.
+     * @param theNodeTags List&lt;Tag&gt;; the list of Node tags
      */
-    public final void setTags(final List<Tag> nodetags)
+    public final void setTags(final List<Tag> theNodeTags)
     {
-        this.nodetags = nodetags;
+        this.nodetags = theNodeTags;
     }
 
     /**
@@ -136,7 +138,8 @@ public class Node
             this.nodetags.add(nodetag);
     }
     
-    public String toString()
+    /** {@inheritDoc} */
+    public final String toString()
     {
         return String.format("Node %d %.6f %.6f", getID(), getLongitude(), getLatitude());
     }
