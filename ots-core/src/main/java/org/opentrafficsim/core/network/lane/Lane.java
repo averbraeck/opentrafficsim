@@ -98,6 +98,17 @@ public class Lane extends CrossSectionElement
     }
 
     /**
+     * Retrieve the list of Sensors of this Lane in the specified distance range.
+     * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum distance on the Lane
+     * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance on the Lane
+     * @return List&lt;Sensor&gt;; list of the sensor in the specified range
+     */
+    public List<Sensor> getSensors(DoubleScalar.Rel<LengthUnit> minimumPosition, DoubleScalar.Rel<LengthUnit> maximumPosition)
+    {
+        return new ArrayList<Sensor>(this.sensors.subMap(minimumPosition.getSI(), maximumPosition.getSI()).values());
+    }
+    
+    /**
      * Trigger the sensors for a certain timestep; from now until the nextEvaluationTime of the GTU.
      * @param gtu the LaneBasedGTU for which to trigger the sensors.
      * @throws RemoteException when simulation time cannot be retrieved.
@@ -430,4 +441,5 @@ public class Lane extends CrossSectionElement
         return String.format("Lane %d of %s, %s", link.getCrossSectionElementList().indexOf(this), link.toString(), super
             .toString());
     }
+
 }

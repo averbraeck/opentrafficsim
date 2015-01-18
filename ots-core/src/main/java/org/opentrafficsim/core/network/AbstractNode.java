@@ -103,6 +103,7 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     @Override
     public final Set<Link<?, ? extends Node<ID, P>>> getLinksIn()
     {
+        // XXXXX: should return a copy?
         return this.linksIn;
     }
 
@@ -110,6 +111,7 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     @Override
     public final Set<Link<?, ? extends Node<ID, P>>> getLinksOut()
     {
+        // XXXXX: should return a copy?
         return this.linksOut;
     }
 
