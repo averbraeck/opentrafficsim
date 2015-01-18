@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.network.lane;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -33,7 +36,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * Test SensorLaneEnd and SensorLaneStart.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 16 jan. 2015 <br>
@@ -43,9 +47,9 @@ public class SensorTest
 {
     /**
      * Test the constructors of SensorLaneEnd and SensorLaneStart
-     * @throws SimRuntimeException 
-     * @throws RemoteException 
-     * @throws NamingException 
+     * @throws SimRuntimeException
+     * @throws RemoteException
+     * @throws NamingException
      */
     @Test
     public void sensorLaneStartEndTest() throws RemoteException, SimRuntimeException, NamingException
@@ -64,12 +68,31 @@ public class SensorTest
         Lane[] lanes =
                 LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
-        
+        // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane
         for (Lane l : lanes)
         {
-            
+            int sensorsFound = 0;
+            for (Sensor sensor : l.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER),
+                    new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)))
+            {
+                sensorsFound++;
+                if (sensor instanceof SensorLaneStart)
+                {
+                    assertEquals("SensorLaneStart should be at beginning of the Lane", 0, sensor
+                            .getLongitudinalPosition().getSI(), 0.00001);
+                }
+                else if (sensor instanceof SensorLaneEnd)
+                {
+                    assertEquals("SensorLaneEnd should be (almost) at end of the Lane", l.getLength().getSI(), sensor
+                            .getLongitudinalPosition().getSI(), 0.00001);
+                }
+                else
+                {
+                    fail("Unexpected sensor: " + sensor.toString());
+                }
+            }
+            assertEquals("There should be two sensor on each Lane", 2, sensorsFound);
         }
-
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
 
@@ -93,8 +116,7 @@ public class SensorTest
         Car<String> car =
                 new Car<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
                         maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
-    
-        
+
     }
 }
 
