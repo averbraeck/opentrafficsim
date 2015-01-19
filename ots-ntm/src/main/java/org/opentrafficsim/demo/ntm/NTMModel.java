@@ -11,12 +11,9 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-
 import java.util.Map;
 
 import javax.naming.NamingException;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
@@ -25,19 +22,15 @@ import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.network.LinearGeometry;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
-import org.opentrafficsim.demo.ntm.IO.WriteToShp;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
@@ -45,11 +38,9 @@ import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
+import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * <p>
@@ -151,7 +142,7 @@ public class NTMModel implements OTSModelInterface
             // set the time step value at ten seconds;
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
-                    new DoubleScalar.Rel<TimeUnit>(2, TimeUnit.SECOND);
+                    new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(7200, TimeUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 7, 0, 0);
@@ -166,6 +157,7 @@ public class NTMModel implements OTSModelInterface
             // false: return nodes
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed file with centroids (number starts with "C") and normal nodes
+            // String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
             String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
             this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
 
@@ -186,7 +178,8 @@ public class NTMModel implements OTSModelInterface
                     this.nodes, this.centroids);
 
             // read the time profile curves: these will be attached to the demands afterwards
-            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";", "\\s+"));
+            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(
+                    path + "/profiles_only_firstHour.txt", ";", "\\s+"));
 
             // read TrafficDemand from /src/main/resources
             // including information on the time period this demand covers!
@@ -227,7 +220,9 @@ public class NTMModel implements OTSModelInterface
             // create a key between the larger areas and the original smaller areas
             // this enables the creation of compressed zones
 
-            this.flowLinks = createFlowLinks(this.shpLinks);
+            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(30, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(300, FrequencyUnit.PER_HOUR);
+            this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
             // merge link segments between junctions:
             Link.findSequentialLinks(this.flowLinks, this.nodes);
@@ -239,7 +234,7 @@ public class NTMModel implements OTSModelInterface
 
             // compute the roadLength within the areas
             determineRoadLengthInAreas(this.shpLinks, this.areas);
-            
+
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, COMPRESS_AREAS);
 
@@ -344,7 +339,7 @@ public class NTMModel implements OTSModelInterface
      */
     private void determineRoadLengthInAreas(Map<String, Link> shpLinks, Map<String, Area> areas)
     {
-        Double speedTotal; 
+        Double speedTotal;
         Map<Area, java.lang.Double> speedTotalByArea = new HashMap<Area, java.lang.Double>();
         for (Link link : shpLinks.values())
         {
@@ -355,11 +350,16 @@ public class NTMModel implements OTSModelInterface
                     if (area != null)
                     {
                         // TODO check units!!!!!!!!!!!!!!!
-                        double length = link.getLength().doubleValue() * link.getNumberOfLanes();
+                        double length = link.getLength().getSI() * link.getNumberOfLanes();
                         DoubleScalar.Rel<LengthUnit> laneLength =
-                                new DoubleScalar.Rel<LengthUnit>(length, link.getLength().getUnit());
+                                new DoubleScalar.Rel<LengthUnit>(length, LengthUnit.METER);
                         area.addRoadLength(laneLength);
-                        java.lang.Double speedLaneLength = new java.lang.Double(link.getSpeed().doubleValue() * link.getNumberOfLanes()); 
+                        // in SI (m*m/s)
+                        java.lang.Double speedLaneLength = new java.lang.Double(link.getSpeed().getSI() * length);
+                        if (speedTotalByArea.get(area) != null)
+                        {
+                            speedLaneLength += speedTotalByArea.get(area);
+                        }
                         speedTotalByArea.put(area, speedLaneLength);
                     }
                 }
@@ -369,8 +369,8 @@ public class NTMModel implements OTSModelInterface
         {
             if (speedTotalByArea.get(area) != null && area.getRoadLength() != null)
             {
-                double averageSpeed = speedTotalByArea.get(area) / area.getRoadLength().doubleValue();
-                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
+                double averageSpeed = speedTotalByArea.get(area) / area.getRoadLength().getSI();
+                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.METER_PER_SECOND));
             }
             else
             {
@@ -406,7 +406,12 @@ public class NTMModel implements OTSModelInterface
             {
                 BoundedNode origin = path.getStartVertex();
                 BoundedNode destination = path.getEndVertex();
-
+                for (BoundedNode v : model.areaGraph.vertexSet())
+                {
+                    // String a = v.getId();
+                    // System.out.println("Node " + a);
+                }
+                System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
                 // only generate to "real" destinations
                 if (destination.getBehaviourType() == TrafficBehaviourType.NTM
                         || destination.getBehaviourType() == TrafficBehaviourType.CORDON)
@@ -521,7 +526,7 @@ public class NTMModel implements OTSModelInterface
             boolean showNodes = true;
             boolean showEdges = true;
             boolean showAreaNode = true;
-            boolean showArea = false;
+            boolean showArea = true;
 
             if (showArea)
             {
@@ -835,11 +840,10 @@ public class NTMModel implements OTSModelInterface
      * @param shpLinks the links of this model
      * @return the flowLinks
      */
-    public static Map<String, Link> createFlowLinks(final Map<String, Link> shpLinks)
+    public static Map<String, Link> createFlowLinks(final Map<String, Link> shpLinks, DoubleScalar<SpeedUnit> maxSpeed,
+            DoubleScalar<FrequencyUnit> maxCapacity)
     {
         Map<String, Link> flowLinks = new HashMap<String, Link>();
-        DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(45, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(1000, FrequencyUnit.PER_HOUR);
         for (Link shpLink : shpLinks.values())
         {
 

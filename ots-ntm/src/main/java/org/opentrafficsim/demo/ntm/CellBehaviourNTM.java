@@ -102,10 +102,10 @@ public class CellBehaviourNTM extends CellBehaviour
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(0), maximumCapacity.doubleValue());
+        p.setLocation(param.getAccCritical().get(0), maximumCapacity.getInUnit());
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(1), maximumCapacity.doubleValue());
+        p.setLocation(param.getAccCritical().get(1), maximumCapacity.getInUnit());
         xyPairs.add(p);
         p = new Point2D.Double();
         p.setLocation(param.getAccCritical().get(2), 0);

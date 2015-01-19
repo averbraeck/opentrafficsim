@@ -39,7 +39,7 @@ public class FlowCell implements LocatableInterface
     private DoubleScalar<LengthUnit> cellLength;
 
     /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
-    private DoubleScalar<FrequencyUnit> capacityPerLane;
+    private DoubleScalar<FrequencyUnit> capacity;
 
     /** lanes in a link */
     private int numberOfLanes;
@@ -54,13 +54,13 @@ public class FlowCell implements LocatableInterface
      * @param numberOfLanes
      * @param behaviourType
      */
-    public FlowCell(final DoubleScalar<LengthUnit> cellLength, final DoubleScalar.Abs<FrequencyUnit> capacityPerLane,
+    public FlowCell(final DoubleScalar<LengthUnit> cellLength, final DoubleScalar.Abs<FrequencyUnit> capacity,
             DoubleScalar.Abs<SpeedUnit> speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
     {
         this.cellLength = cellLength;
-        this.capacityPerLane = capacityPerLane;
+        this.capacity = capacity;
         this.numberOfLanes = numberOfLanes;
-        ParametersFundamentalDiagram parametersFD = new ParametersFundamentalDiagram(speed, capacityPerLane);
+        ParametersFundamentalDiagram parametersFD = new ParametersFundamentalDiagram(speed, capacity, numberOfLanes, cellLength);
         if (behaviourType == TrafficBehaviourType.FLOW)
         {
             this.cellBehaviour = new CellBehaviourFlow(null, parametersFD);
@@ -102,7 +102,7 @@ public class FlowCell implements LocatableInterface
      */
     public DoubleScalar<FrequencyUnit> getCapacity()
     {
-        return this.capacityPerLane;
+        return this.capacity;
     }
 
     /**
@@ -110,7 +110,7 @@ public class FlowCell implements LocatableInterface
      */
     public void setCapacity(DoubleScalar<FrequencyUnit> capacity)
     {
-        this.capacityPerLane = capacity;
+        this.capacity = capacity;
     }
 
     /**

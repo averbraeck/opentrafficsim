@@ -45,7 +45,8 @@ public class AreaAnimation extends Renderable2D
         this.width = width;
         if (source.getAccumulatedCars() > 0)
         {
-            this.colorArea = colorFor(normalize(0, 5, source.getAccumulatedCars()));
+            //this.colorArea = colorFor(normalize(0, 0.1, source.getAccumulatedCars()));
+            this.colorArea = Color.RED;    
         }
         else
         {

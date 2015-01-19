@@ -97,9 +97,9 @@ public class DepartureTimeProfile
                 double share = durationWithinSimulation.getSI() / segment.getDuration().getSI();
                 double newShare = share * segment.getShareOfDemand();
                 FractionOfTripDemandByTimeSegment newSegment =
-                        new FractionOfTripDemandByTimeSegment(startSimulationTimeSinceMidnight,
+                        new FractionOfTripDemandByTimeSegment(segment.getTimeSinceMidnight(),
                                 durationWithinSimulation, newShare);
-                segmentsOut.put(startSimulationTimeSinceMidnight, newSegment);
+                segmentsOut.put(segment.getTimeSinceMidnight(), newSegment);
                 totalShare += newSegment.getShareOfDemand();
                 // now leave this loop: we have passed all segments of this simulation period
                 break;
@@ -116,8 +116,22 @@ public class DepartureTimeProfile
             }
 
         }
+        for (FractionOfTripDemandByTimeSegment curve  : segmentsOut.values())
+        {
+            System.out.println("Curve " + curve.getShareOfDemand() + "tijd " + curve.getTimeSinceMidnight() );
+        }
+        System.out.println("Curve end");
+
+
         for (FractionOfTripDemandByTimeSegment segment : segmentsOut.values())
         {
+            {
+                for (FractionOfTripDemandByTimeSegment curve  : segmentsOut.values())
+                {
+                    System.out.println("Curve " + curve.getShareOfDemand() + "tijd " + curve.getTimeSinceMidnight() );
+                }
+                System.out.println("Curve end");
+            } 
             // Normalise the share as a fraction of the sum of all shares (a value between 0.0 and 1.0)
             segment.setShareOfDemand(segment.getShareOfDemand() / totalShare);
         }
