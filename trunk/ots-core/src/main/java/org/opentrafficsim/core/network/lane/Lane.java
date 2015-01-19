@@ -153,13 +153,18 @@ public class Lane extends CrossSectionElement
             }
             else
             {
-                if (t2 >= now)
+                if (t2 < now)
                 {
-                    t = t2;
+                    t = t1;
+                }
+                // Both solutions are > now; take the earliest
+                else if (t1 < t2)
+                {
+                    t = t1;
                 }
                 else
                 {
-                    t = t1;
+                    t = t2;
                 }
             }
             // System.out.println(String.format("t1=%.3fs, t2=%.3fs, now=%.3fs, scheduleing %.3fs", t1, t2, gtu
