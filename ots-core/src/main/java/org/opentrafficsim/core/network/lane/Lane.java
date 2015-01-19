@@ -104,8 +104,8 @@ public class Lane extends CrossSectionElement
      * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance on the Lane
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
-    public List<Sensor> getSensors(DoubleScalar.Rel<LengthUnit> minimumPosition,
-            DoubleScalar.Rel<LengthUnit> maximumPosition)
+    public final List<Sensor> getSensors(final DoubleScalar.Rel<LengthUnit> minimumPosition,
+            final DoubleScalar.Rel<LengthUnit> maximumPosition)
     {
         return new ArrayList<Sensor>(this.sensors.subMap(minimumPosition.getSI(), maximumPosition.getSI()).values());
     }
@@ -122,7 +122,7 @@ public class Lane extends CrossSectionElement
     {
         double mStart = gtu.position(this, gtu.getFront()).getSI();
         double mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime()).getSI();
-        //System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
+        // System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
         List<Sensor> triggerSensors = new ArrayList<Sensor>(this.sensors.subMap(mStart, mEnd).values());
         for (Sensor sensor : triggerSensors)
         {
