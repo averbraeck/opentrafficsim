@@ -32,48 +32,37 @@ public class ParametersFundamentalDiagram
     /**
      * freeSpeed: average free speed of cars in CELL.
      */
-    private final DoubleScalar.Abs<SpeedUnit> freeSpeed;
-
+    private DoubleScalar.Abs<SpeedUnit> freeSpeed;
 
     /** */
-    private DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane;
-    
+    private DoubleScalar.Abs<FrequencyUnit> capacity;
+
     /**
      * @param accCritical
      * @param speed
      */
-    public ParametersFundamentalDiagram(final ArrayList<Double> accCritical, final Abs<SpeedUnit> speed)
+    public ParametersFundamentalDiagram()
     {
-        super();
-        this.accCritical = accCritical;
-        this.freeSpeed = speed;
-    }    
-
-    /**
-     * @param accCritical
-     * @param freeSpeed
-     */
-    public ParametersFundamentalDiagram(final ArrayList<Double> accCritical, final DoubleScalar.Abs<SpeedUnit> freeSpeed,  final DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane)
-    {
-        super();
-        this.accCritical = accCritical;
-        this.freeSpeed = freeSpeed;
-        this.maxCapacityPerLane = maxCapacityPerLane;
     }
 
     /**
      * @param freeSpeed
+     * @param capacity
+     * @param numberOfLanes
+     * @param cellLength
      */
-    public ParametersFundamentalDiagram(final DoubleScalar.Abs<SpeedUnit> freeSpeed, final DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane)
+    public ParametersFundamentalDiagram(final DoubleScalar.Abs<SpeedUnit> freeSpeed,
+            final DoubleScalar.Abs<FrequencyUnit> capacity, final int numberOfLanes,
+            final DoubleScalar<LengthUnit> cellLength)
     {
         super();
-        this.accCritical = new ArrayList<Double>(); 
-        this.accCritical.add(20.0);
-        this.accCritical.add(150.0);
+        this.accCritical = new ArrayList<Double>();
+        this.accCritical.add((capacity.getInUnit(FrequencyUnit.PER_HOUR) / freeSpeed.getInUnit(SpeedUnit.KM_PER_HOUR))
+                 * cellLength.getInUnit(LengthUnit.KILOMETER));
+        this.accCritical.add(150.0 * numberOfLanes * cellLength.getInUnit(LengthUnit.KILOMETER));
         this.freeSpeed = freeSpeed;
-        this.maxCapacityPerLane = maxCapacityPerLane;
+        this.capacity = capacity;
     }
-
 
     /**
      * @return freeSpeed.
@@ -81,6 +70,14 @@ public class ParametersFundamentalDiagram
     public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
     {
         return this.freeSpeed;
+    }
+
+    /**
+     * @param freeSpeed set freeSpeed.
+     */
+    public void setFreeSpeed(DoubleScalar.Abs<SpeedUnit> freeSpeed)
+    {
+        this.freeSpeed = freeSpeed;
     }
 
     /**
@@ -100,19 +97,19 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @return maxCapacityPerLane.
+     * @return capacity.
      */
-    public DoubleScalar.Abs<FrequencyUnit> getMaxCapacityPerLane()
+    public DoubleScalar.Abs<FrequencyUnit> getCapacity()
     {
-        return this.maxCapacityPerLane;
+        return capacity;
     }
 
     /**
-     * @param maxCapacityPerLane set maxCapacityPerLane.
+     * @param capacity set capacity.
      */
-    public void setMaxCapacityPerLane(DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane)
+    public void setCapacity(DoubleScalar.Abs<FrequencyUnit> capacity)
     {
-        this.maxCapacityPerLane = maxCapacityPerLane;
+        this.capacity = capacity;
     }
 
 }

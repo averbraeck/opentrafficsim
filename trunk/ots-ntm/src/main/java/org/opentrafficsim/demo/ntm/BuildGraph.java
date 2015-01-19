@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -221,6 +222,12 @@ public class BuildGraph
                 cA = areaNodeCentroidMap.get(aA);
                 cB = areaNodeCentroidMap.get(aB);
                 // first, test if these links connect two different areas (not within one area)
+                if (cA.getId() == cB.getId())
+                {
+                    {
+                        System.out.println("Equal???");
+                    }
+                }
                 if (cA != cB)
                 {
                     if (model.getAreaGraph().containsEdge(cA, cB))
@@ -249,6 +256,10 @@ public class BuildGraph
                         // km?
                     }
                 }
+            }
+            else
+            {
+                    System.out.println("test");
             }
         }
 
@@ -309,23 +320,31 @@ public class BuildGraph
 
         if (!graph.containsEdge(flowNodeA, flowNodeB))
         {
-            if (graph.containsVertex(flowNodeA) && graph.containsVertex(flowNodeB))
+            try
             {
-                if (flowNodeA != flowNodeB)
+                if (graph.containsVertex(flowNodeA) && graph.containsVertex(flowNodeB))
                 {
-                    graph.addEdge(flowNodeA, flowNodeB, linkEdge);
-
+                    if (flowNodeA != flowNodeB)
+                    {
+                        graph.addEdge(flowNodeA, flowNodeB, linkEdge);
+    
+                    }
+                    else
+                    {
+                        System.out.println("same nodes????");
+                    }
+    
                 }
                 else
                 {
-                    System.out.println("same nodes????");
+                    System.out.println("missing");
                 }
-
             }
-            else
+            catch (Exception exception1)
             {
-                System.out.println("missing");
+                exception1.printStackTrace();
             }
+            
         }
         // TODO average length? straight distance? straight distance + 20%?
         graph.setEdgeWeight(linkEdge, linkEdge.getLink().getLength().doubleValue());
@@ -391,7 +410,14 @@ public class BuildGraph
                  * if (area != null) { System.out.println("findArea: point " + p.toText() + " is in multiple areas: " +
                  * a.getCentroidNr() + " and " + area.getCentroidNr()); }
                  */
-                centroid = new BoundedNode(node.getPoint(), node.getId(), area, node.getBehaviourType());
+                if (node.getId().equals(area.getName()) )
+                {
+                    centroid = new BoundedNode(node.getPoint(), node.getId(), area, node.getBehaviourType());
+                }
+                else if (centroid == null) 
+                {
+                    centroid = new BoundedNode(node.getPoint(), node.getId(), area, node.getBehaviourType());
+                }
             }
         }
         return centroid;
@@ -479,7 +505,7 @@ public class BuildGraph
         }
 
         // try and find
-        final double MAX_SEARCH_DISTANCE = 2000.0; // meters?
+        final double MAX_SEARCH_DISTANCE = 8000.0; // meters?
         final int NUMBER_OF_AREAS = 6;
         for (Area isolatedArea : areasAll.values())
         {

@@ -43,17 +43,33 @@ public class LinearFunctionLibrary
     public static double createPieceWiseLinear(final ArrayList<Point2D> xyPairs, final double valueX)
     {
         double result = 0;
-        Point2D prevPoint = null;
-        for (Point2D p : xyPairs)
+        if (valueX < 0)
         {
-            if (p.getX() > valueX)
+            System.out.println("Strange: negative X value");
+        }
+        else if (valueX > xyPairs.get(xyPairs.size() - 1).getX())
+        {
+            System.out.println("Strange: X value above maximum");
+
+        }
+        else
+        {
+            Point2D prevPoint = null;
+            for (Point2D p : xyPairs)
             {
-                result =
-                        prevPoint.getY() + (p.getY() - prevPoint.getY()) * (valueX - prevPoint.getX())
-                                / (p.getX() - prevPoint.getX());
-                break;
+                if (p.getX() > valueX)
+                {
+                    if (prevPoint == null)
+                    {
+                        System.out.println("test");
+                    }
+                    result =
+                            prevPoint.getY() + (p.getY() - prevPoint.getY()) * (valueX - prevPoint.getX())
+                                    / (p.getX() - prevPoint.getX());
+                    break;
+                }
+                prevPoint = p;
             }
-            prevPoint = p;
         }
         return result;
 

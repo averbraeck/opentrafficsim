@@ -62,10 +62,11 @@ public class BoundedNode extends Node
         }
         else if (behaviourType == TrafficBehaviourType.FLOW)
         {
-            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(40, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
             //TODO parameters should depend on area characteristics
-            DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
-            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
+//            DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
+//            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
+            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram();
             this.setCellBehaviour(new CellBehaviourFlow(area, parametersCTM));
             this.setArea(area);
         }
