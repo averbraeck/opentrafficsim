@@ -38,10 +38,12 @@ public final class LaneFactory
     }
 
     /**
-     * Add the LinearGeometry to a Link.
-     * @param link Link; the Link that must be fitted with a Geometry
-     * @param lineString Coordinate[]; the coordinates of the Geometry
-     * @return Link; the updated link
+     * Create a Link along intermediate coordinates from one Node to another.
+     * @param name String; name of the new Link
+     * @param from Node; start Node of the new Link
+     * @param to Node; end Node of the new Link
+     * @param intermediateCoordinates Coordinate[]; array of intermediate coordinates (may be null)
+     * @return Link; the newly constructed Link
      */
     private static Link makeLink(final String name, final Node from, final Node to,
             final Coordinate[] intermediateCoordinates)
@@ -81,12 +83,12 @@ public final class LaneFactory
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane
+     * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
-     * @throws NamingException on ???
      */
-    private static Lane makeLane(Link link, LaneType<String> laneType, DoubleScalar.Rel<LengthUnit> latPos,
-            DoubleScalar.Rel<LengthUnit> width, OTSDEVSSimulatorInterface simulator) throws RemoteException,
-            NamingException
+    private static Lane makeLane(final Link link, final LaneType<String> laneType,
+            final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
         Lane result = new Lane(link, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
@@ -106,12 +108,12 @@ public final class LaneFactory
      * @param laneType LaneType; type of the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane; the new Lane
-     * @throws NamingException
-     * @throws RemoteException
+     * @throws NamingException when names cannot be registered for animation
+     * @throws RemoteException on communications failure
      */
     public static Lane makeLane(final String name, final Node from, final Node to,
-            Coordinate[] intermediateCoordinates, LaneType<String> laneType, OTSDEVSSimulatorInterface simulator)
-            throws RemoteException, NamingException
+            final Coordinate[] intermediateCoordinates, final LaneType<String> laneType,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
@@ -131,12 +133,12 @@ public final class LaneFactory
      * @param laneType LaneType; type of the new Lanes
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane[]; array containing the new Lanes
-     * @throws NamingException
-     * @throws RemoteException
+     * @throws NamingException when names cannot be registered for animation
+     * @throws RemoteException on communications failure
      */
     public static Lane[] makeMultiLane(final String name, final Node from, final Node to,
-            Coordinate[] intermediateCoordinates, int laneCount, LaneType<String> laneType,
-            OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+            final Coordinate[] intermediateCoordinates, final int laneCount, final LaneType<String> laneType,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
