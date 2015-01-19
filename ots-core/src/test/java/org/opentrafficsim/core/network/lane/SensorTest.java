@@ -7,10 +7,13 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
@@ -20,9 +23,12 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -50,9 +56,10 @@ public class SensorTest
      * @throws SimRuntimeException
      * @throws RemoteException
      * @throws NamingException
+     * @throws NetworkException
      */
     @Test
-    public void sensorLaneStartEndTest() throws RemoteException, SimRuntimeException, NamingException
+    public void sensorLaneStartEndTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException
     {
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
@@ -84,7 +91,7 @@ public class SensorTest
                 else if (sensor instanceof SensorLaneEnd)
                 {
                     assertEquals("SensorLaneEnd should be (almost) at end of the Lane", l.getLength().getSI(), sensor
-                            .getLongitudinalPosition().getSI(), 0.00001);
+                            .getLongitudinalPosition().getSI(), 2 * Math.ulp(l.getLength().getSI()));
                 }
                 else
                 {
@@ -116,6 +123,27 @@ public class SensorTest
         Car<String> car =
                 new Car<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
                         maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        GTUFollowingModelResult gtuFollowingModelResult =
+                new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND));
+        car.setState(gtuFollowingModelResult);
+        Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();
+        SimEventInterface<OTSSimTimeDouble> triggerEvent = null;
+        int index = 0;
+        for (SimEventInterface<OTSSimTimeDouble> event : eventList)
+        {
+            //System.out.println("Scheduled Event " + event);
+            if (1 == index)
+            {
+                triggerEvent = event;
+            }
+            index++;
+        }
+        assertEquals("There should be three scheduled events (warmup, trigger, terminate)", 3, eventList.size());
+        // The sensor should be triggered around t=38.3403
+        //System.out.println("trigger event is " + triggerEvent);
+        assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
+                .getSI(), 0.001);
 
     }
 }
