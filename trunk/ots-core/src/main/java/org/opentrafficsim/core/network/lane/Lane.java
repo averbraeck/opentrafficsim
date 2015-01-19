@@ -122,7 +122,7 @@ public class Lane extends CrossSectionElement
     {
         double mStart = gtu.position(this, gtu.getFront()).getSI();
         double mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime()).getSI();
-        System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
+        //System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
         List<Sensor> triggerSensors = new ArrayList<Sensor>(this.sensors.subMap(mStart, mEnd).values());
         for (Sensor sensor : triggerSensors)
         {
@@ -168,7 +168,7 @@ public class Lane extends CrossSectionElement
                     t = t2;
                 }
             }
-            // System.out.println(String.format("t1=%.3fs, t2=%.3fs, now=%.3fs, scheduleing %.3fs", t1, t2, gtu
+            // System.out.println(String.format("t1=%.3fs, t2=%.3fs, now=%.3fs, scheduling %.3fs", t1, t2, gtu
             // .getSimulator().getSimulatorTime().get().getSI(), t));
             gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor,
                     "trigger", new Object[]{gtu});
