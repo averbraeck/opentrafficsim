@@ -191,6 +191,9 @@ public class IDMPlusTest
         // System.out.println("Setup    referenceCar: " + referenceCar);
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
+            //System.out.println("timeStep: " + timeStep);
+            // This crashes at timeStep 62.
+            // TODO: re-write and USE that simulator to do run the car.
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             referenceCar.setState(cfmr);
             DoubleScalar.Abs<TimeUnit> thisEvaluationTime = referenceCar.getNextEvaluationTime();

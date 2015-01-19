@@ -122,6 +122,7 @@ public class Lane extends CrossSectionElement
     {
         double mStart = gtu.position(this, gtu.getFront()).getSI();
         double mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime()).getSI();
+        System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
         List<Sensor> triggerSensors = new ArrayList<Sensor>(this.sensors.subMap(mStart, mEnd).values());
         for (Sensor sensor : triggerSensors)
         {
