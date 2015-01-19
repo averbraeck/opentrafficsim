@@ -141,9 +141,15 @@ public class Lane extends CrossSectionElement
             double t;
             if (t1 < now)
             {
-                // We're in trouble - NB. t1 >= t2
-                System.err.println("Oops, both possible trigger times are in the past");
-                t = Double.NEGATIVE_INFINITY; // This will cause an exception when scheduling the event
+                if (t2 < now)
+                {
+                    System.err.println("Oops, both possible trigger times are in the past");
+                    t = Double.NEGATIVE_INFINITY; // This will cause an exception when scheduling the event
+                }
+                else
+                {
+                    t = t2;
+                }
             }
             else
             {
