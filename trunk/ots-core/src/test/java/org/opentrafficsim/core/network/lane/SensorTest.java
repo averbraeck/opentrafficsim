@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.naming.NamingException;
 
@@ -140,10 +139,10 @@ public class SensorTest
             index++;
         }
         assertEquals("There should be three scheduled events (warmup, trigger, terminate)", 3, eventList.size());
-        // The sensor should be triggered around t=38.3403
+        // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
         //System.out.println("trigger event is " + triggerEvent);
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
-                .getSI(), 0.001);
+                .getSI(), 0.0001);
 
     }
 }
