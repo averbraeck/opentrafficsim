@@ -45,7 +45,7 @@ import org.opentrafficsim.simulationengine.BooleanProperty;
 import org.opentrafficsim.simulationengine.CompoundProperty;
 import org.opentrafficsim.simulationengine.ContinuousProperty;
 import org.opentrafficsim.simulationengine.IDMPropertySet;
-import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.IntegerProperty;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SelectionProperty;
@@ -272,7 +272,7 @@ public class SuperDemo
             }
             properties.add(0, simulationSettings);
         }
-        catch (IncompatiblePropertyException exception)
+        catch (PropertyException exception)
         {
             exception.printStackTrace();
         }
@@ -321,7 +321,7 @@ public class SuperDemo
                         {
                             sp.setValue(itemText);
                         }
-                        catch (IncompatiblePropertyException exception)
+                        catch (PropertyException exception)
                         {
                             exception.printStackTrace();
                         }
@@ -365,7 +365,7 @@ public class SuperDemo
                     {
                         pdp.setValue(pdpe.getProbabilities());
                     }
-                    catch (IncompatiblePropertyException exception)
+                    catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -405,7 +405,7 @@ public class SuperDemo
                     {
                         ip.setValue(value);
                     }
-                    catch (IncompatiblePropertyException exception)
+                    catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -447,7 +447,7 @@ public class SuperDemo
                     {
                         cp.setValue(value);
                     }
-                    catch (IncompatiblePropertyException exception)
+                    catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -474,7 +474,7 @@ public class SuperDemo
                     {
                         bp.setValue(checkBox.isSelected());
                     }
-                    catch (IncompatiblePropertyException exception)
+                    catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }

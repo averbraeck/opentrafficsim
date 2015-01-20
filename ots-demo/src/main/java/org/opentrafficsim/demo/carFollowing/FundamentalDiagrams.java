@@ -43,7 +43,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.FundamentalDiagram;
 import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
-import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
@@ -82,7 +82,7 @@ public class FundamentalDiagrams implements WrappableSimulation
                     "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                     new Double[]{0.8, 0.2}, false, 10));
         }
-        catch (IncompatiblePropertyException exception)
+        catch (PropertyException exception)
         {
             exception.printStackTrace();
         }

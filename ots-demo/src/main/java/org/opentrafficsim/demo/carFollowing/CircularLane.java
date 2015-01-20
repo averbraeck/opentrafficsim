@@ -53,7 +53,7 @@ import org.opentrafficsim.simulationengine.CompoundProperty;
 import org.opentrafficsim.simulationengine.ContinuousProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.IDMPropertySet;
-import org.opentrafficsim.simulationengine.IncompatiblePropertyException;
+import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.IntegerProperty;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SelectionProperty;
@@ -120,7 +120,7 @@ public class CircularLane implements WrappableSimulation
                                 "<html>Mix of passenger cars and trucks</html>",
                                 new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2}, false, 10));
                     }
-                    catch (IncompatiblePropertyException exception)
+                    catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
