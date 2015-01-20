@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.FloydWarshallShortestPaths;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -222,12 +224,7 @@ public class BuildGraph
                 cA = areaNodeCentroidMap.get(aA);
                 cB = areaNodeCentroidMap.get(aB);
                 // first, test if these links connect two different areas (not within one area)
-                if (cA.getId() == cB.getId())
-                {
-                    {
-                        System.out.println("Equal???");
-                    }
-                }
+
                 if (cA != cB)
                 {
                     if (model.getAreaGraph().containsEdge(cA, cB))
@@ -242,6 +239,26 @@ public class BuildGraph
                         }
                         else
                         {
+                            BoundedNode cAVertex = null;
+                            BoundedNode cBVertex = null;
+
+                            for (BoundedNode node : model.getLinkGraph().vertexSet())
+                            {
+                                if (node.getId().equals(cA.getId()))
+                                {
+                                    cAVertex = node;
+                                }
+                                if (node.getId().equals(cB.getId()))
+                                {
+                                    cBVertex = node;
+                                }
+                            }
+                            DijkstraShortestPath<BoundedNode, LinkEdge<Link>> sp =
+                                    new DijkstraShortestPath<BoundedNode, LinkEdge<Link>>(model.getLinkGraph(),
+                                            cAVertex, cBVertex);
+
+                            System.out.println("Length= " + sp.getPathLength());
+
                             DoubleScalar.Abs<FrequencyUnit> capacity =
                                     new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                             DoubleScalar.Abs<SpeedUnit> speed =
@@ -259,7 +276,7 @@ public class BuildGraph
             }
             else
             {
-                    System.out.println("test: cA == cB??");
+                System.out.println("test: cA == cB??");
             }
         }
 
@@ -327,13 +344,13 @@ public class BuildGraph
                     if (flowNodeA != flowNodeB)
                     {
                         graph.addEdge(flowNodeA, flowNodeB, linkEdge);
-    
+
                     }
                     else
                     {
                         System.out.println("same nodes????");
                     }
-    
+
                 }
                 else
                 {
@@ -344,7 +361,7 @@ public class BuildGraph
             {
                 exception1.printStackTrace();
             }
-            
+
         }
         // TODO average length? straight distance? straight distance + 20%?
         graph.setEdgeWeight(linkEdge, linkEdge.getLink().getLength().doubleValue());
@@ -410,11 +427,11 @@ public class BuildGraph
                  * if (area != null) { System.out.println("findArea: point " + p.toText() + " is in multiple areas: " +
                  * a.getCentroidNr() + " and " + area.getCentroidNr()); }
                  */
-                if (node.getId().equals(area.getName()) )
+                if (node.getId().equals(area.getName()))
                 {
                     centroid = new BoundedNode(node.getPoint(), node.getId(), area, node.getBehaviourType());
                 }
-                else if (centroid == null) 
+                else if (centroid == null)
                 {
                     centroid = new BoundedNode(node.getPoint(), node.getId(), area, node.getBehaviourType());
                 }
