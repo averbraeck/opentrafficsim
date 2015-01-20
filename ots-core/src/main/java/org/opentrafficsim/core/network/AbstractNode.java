@@ -128,4 +128,10 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
     }
+    
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        return "Node " + this.id;
+    }
 }
