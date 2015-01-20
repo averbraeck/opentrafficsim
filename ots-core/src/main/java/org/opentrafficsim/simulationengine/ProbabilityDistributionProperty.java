@@ -35,12 +35,12 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @param initialValue Double[]; array of Double values
      * @param readOnly boolean; if true this ProbabilityDistributionProperty can not be altered
      * @param displayPriority int; the display priority of the new ProbabilityDistributionProperty
-     * @throws IncompatiblePropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
+     * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
      *             the sum of the values is not equal to 1.0 within a small error margin
      */
     public ProbabilityDistributionProperty(final String shortName, final String description,
             final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
-            throws IncompatiblePropertyException
+            throws PropertyException
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -54,21 +54,21 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
     /**
      * Verify that a provided array of probability values is acceptable.
      * @param values double[]; the array of values to verify
-     * @throws IncompatiblePropertyException when the number of values is 0, any value is outside [0..1], or the sum of
+     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of
      *             the values does not add up to 1.0 within a (very small) error margin
      */
-    private void verifyProposedValues(final Double[] values) throws IncompatiblePropertyException
+    private void verifyProposedValues(final Double[] values) throws PropertyException
     {
         if (values.length < 1)
         {
-            throw new IncompatiblePropertyException("Array of probability values may not be empty");
+            throw new PropertyException("Array of probability values may not be empty");
         }
         double sum = 0.0;
         for (double v : values)
         {
             if (v < 0.0 || v > 1.0)
             {
-                throw new IncompatiblePropertyException("Probability value " + v
+                throw new PropertyException("Probability value " + v
                         + " is invalid (valid range is 0.0..1.0)");
             }
             sum += v;
@@ -76,7 +76,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         double maximumError = Math.ulp(1.0) * values.length;
         if (sum < 1.0 - maximumError || sum > 1.0 + maximumError)
         {
-            throw new IncompatiblePropertyException("Probabilities do not add up to 1.0 (actual sum is " + sum + ")");
+            throw new PropertyException("Probabilities do not add up to 1.0 (actual sum is " + sum + ")");
         }
 
     }
@@ -126,11 +126,11 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final Double[] newValue) throws IncompatiblePropertyException
+    public final void setValue(final Double[] newValue) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("This property is read-only");
+            throw new PropertyException("This property is read-only");
         }
         verifyProposedValues(newValue);
         this.value = newValue;

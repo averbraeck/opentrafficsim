@@ -97,15 +97,15 @@ public class ContinuousProperty extends AbstractProperty<Double>
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final Double newValue) throws IncompatiblePropertyException
+    public final void setValue(final Double newValue) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("This property is read-only");
+            throw new PropertyException("This property is read-only");
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
-            throw new IncompatiblePropertyException("new value " + newValue + " is out of valid range ("
+            throw new PropertyException("new value " + newValue + " is out of valid range ("
                     + this.minimumValue + ".." + this.maximumValue + ")");
         }
         this.value = newValue;

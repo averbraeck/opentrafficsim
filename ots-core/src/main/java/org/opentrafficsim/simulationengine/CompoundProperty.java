@@ -70,11 +70,11 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final ArrayList<AbstractProperty<?>> newValue) throws IncompatiblePropertyException
+    public final void setValue(final ArrayList<AbstractProperty<?>> newValue) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("Cannot modify a read-only CompoundProperty");
+            throw new PropertyException("Cannot modify a read-only CompoundProperty");
         }
         this.value = newValue;
     }
@@ -113,17 +113,17 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * Add an AbstractProperty at a specified position.
      * @param index int; the position where the AbstractProperty must be added
      * @param ap AbstractProperty; the property to add
-     * @throws IncompatiblePropertyException when this CompoundProperty is read-only, or index is out of range
+     * @throws PropertyException when this CompoundProperty is read-only, or index is out of range
      */
-    public final void add(final int index, final AbstractProperty<?> ap) throws IncompatiblePropertyException
+    public final void add(final int index, final AbstractProperty<?> ap) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("Cannot modify a read-only CompoundProperty");
+            throw new PropertyException("Cannot modify a read-only CompoundProperty");
         }
         if (index < 0 || index > this.value.size())
         {
-            throw new IncompatiblePropertyException("index is out of range");
+            throw new PropertyException("index is out of range");
         }
         this.value.add(index, ap);
     }
@@ -131,9 +131,9 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
     /**
      * Add an AbstractProperty at the end of the list.
      * @param ap AbstractProperty; the property to add
-     * @throws IncompatiblePropertyException when this CompoundProperty is read-only
+     * @throws PropertyException when this CompoundProperty is read-only
      */
-    public final void add(final AbstractProperty<?> ap) throws IncompatiblePropertyException
+    public final void add(final AbstractProperty<?> ap) throws PropertyException
     {
         add(this.value.size(), ap);
     }
@@ -141,17 +141,17 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
     /**
      * Remove a sub property from this CompoundProperty.
      * @param index int; the position of the sub property to remove
-     * @throws IncompatiblePropertyException when this CompoundProperty is read-only, or index is out of range
+     * @throws PropertyException when this CompoundProperty is read-only, or index is out of range
      */
-    public final void remove(final int index) throws IncompatiblePropertyException
+    public final void remove(final int index) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("Cannot modify a read-only CompoundProperty");
+            throw new PropertyException("Cannot modify a read-only CompoundProperty");
         }
         if (index < 0 || index >= this.value.size())
         {
-            throw new IncompatiblePropertyException("index is out of range");
+            throw new PropertyException("index is out of range");
         }
         this.value.remove(index);
     }
@@ -169,13 +169,13 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * Return the sub property at a specified index.
      * @param index int; the index of the property to retrieve
      * @return AbstractProperty; the sub property at the specified index
-     * @throws IncompatiblePropertyException when index is out of range
+     * @throws PropertyException when index is out of range
      */
-    public final AbstractProperty<?> get(final int index) throws IncompatiblePropertyException
+    public final AbstractProperty<?> get(final int index) throws PropertyException
     {
         if (index < 0 || index >= this.value.size())
         {
-            throw new IncompatiblePropertyException("index is out of range");
+            throw new PropertyException("index is out of range");
         }
         return this.value.get(index);
     }
