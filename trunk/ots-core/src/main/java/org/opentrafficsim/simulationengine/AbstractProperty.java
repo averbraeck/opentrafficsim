@@ -49,9 +49,9 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
     /**
      * Change the value of the property.
      * @param newValue T; the new value for the property
-     * @throws IncompatiblePropertyException when this Property is read-only, or newValue is not valid
+     * @throws PropertyException when this Property is read-only, or newValue is not valid
      */
-    public abstract void setValue(T newValue) throws IncompatiblePropertyException;
+    public abstract void setValue(T newValue) throws PropertyException;
 
     /**
      * Return true if the property can not be altered.

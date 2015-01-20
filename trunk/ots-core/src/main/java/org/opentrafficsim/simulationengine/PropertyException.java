@@ -9,7 +9,7 @@ package org.opentrafficsim.simulationengine;
  * @version 18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IncompatiblePropertyException extends Exception
+public class PropertyException extends Exception
 {
     /**  */
     private static final long serialVersionUID = 20141023L;
@@ -17,7 +17,7 @@ public class IncompatiblePropertyException extends Exception
     /**
      * Construct a new IncompatiblePropertyException.
      */
-    public IncompatiblePropertyException()
+    public PropertyException()
     {
         super();
     }
@@ -26,7 +26,7 @@ public class IncompatiblePropertyException extends Exception
      * Construct a new IncompatiblePropertyException.
      * @param message String; description of the problem
      */
-    public IncompatiblePropertyException(final String message)
+    public PropertyException(final String message)
     {
         super(message);
     }
@@ -35,7 +35,7 @@ public class IncompatiblePropertyException extends Exception
      * Construct a new IncompatiblePropertyException.
      * @param cause Throwable; the cause of this ValueException
      */
-    public IncompatiblePropertyException(final Throwable cause)
+    public PropertyException(final Throwable cause)
     {
         super(cause);
     }
@@ -45,7 +45,7 @@ public class IncompatiblePropertyException extends Exception
      * @param message String; description of the problem
      * @param cause Throwable; the cause of this ValueException
      */
-    public IncompatiblePropertyException(final String message, final Throwable cause)
+    public PropertyException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -57,7 +57,7 @@ public class IncompatiblePropertyException extends Exception
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
-    public IncompatiblePropertyException(final String message, final Throwable cause, final boolean enableSuppression,
+    public PropertyException(final String message, final Throwable cause, final boolean enableSuppression,
         final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);

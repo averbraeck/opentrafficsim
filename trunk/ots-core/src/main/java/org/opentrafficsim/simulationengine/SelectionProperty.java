@@ -80,11 +80,11 @@ public class SelectionProperty extends AbstractProperty<String>
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final String newValue) throws IncompatiblePropertyException
+    public final void setValue(final String newValue) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("Cannot modify a read-only SelectionProperty");
+            throw new PropertyException("Cannot modify a read-only SelectionProperty");
         }
         for (int index = 0; index < this.options.length; index++)
         {
@@ -94,7 +94,7 @@ public class SelectionProperty extends AbstractProperty<String>
                 return;
             }
         }
-        throw new IncompatiblePropertyException("The value " + newValue + " is not among the valid options");
+        throw new PropertyException("The value " + newValue + " is not among the valid options");
     }
 
     /**

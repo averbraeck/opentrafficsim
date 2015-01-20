@@ -64,11 +64,11 @@ public class BooleanProperty extends AbstractProperty<Boolean>
 
     /** {@inheritDoc} */
     @Override
-    public final void setValue(final Boolean newValue) throws IncompatiblePropertyException
+    public final void setValue(final Boolean newValue) throws PropertyException
     {
         if (this.readOnly)
         {
-            throw new IncompatiblePropertyException("This property is read-only");
+            throw new PropertyException("This property is read-only");
         }
         this.value = newValue;
     }
