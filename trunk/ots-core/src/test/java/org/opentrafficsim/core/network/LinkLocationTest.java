@@ -7,10 +7,8 @@ import org.opentrafficsim.core.network.factory.Link;
 import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * Test the LinkLocation class.
@@ -61,7 +59,7 @@ public class LinkLocationTest
             double delta = referenceLocationDistance.getSI() - position;
             assertEquals("distance from reference should be " + delta, delta, linkLocation.distance(referenceLocation)
                     .getSI(), 0.0001);
-            // TODO distance to location on another link (not yet possible)
+            // TODO distance to location on another link (not yet possible; currently ALWAYS returns null)
         }
     }
 }
