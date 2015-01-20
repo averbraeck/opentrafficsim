@@ -55,7 +55,8 @@ public class BoundedNode extends Node
         {
             DoubleScalar.Abs<SpeedUnit> averageSpeed = area.getAverageSpeed();
             DoubleScalar.Rel<LengthUnit> roadLength = area.getRoadLength();
-            ParametersNTM parametersNTM = new ParametersNTM(averageSpeed, roadLength);
+            ParametersNTM parametersNTM = area.getParametersNTM();
+            //ParametersNTM parametersNTM = new ParametersNTM(averageSpeed, roadLength);
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
             this.setArea(area);
 

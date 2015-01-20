@@ -50,7 +50,7 @@ public class AreaAnimation extends Renderable2D
         }
         else
         {
-            this.colorArea = Color.YELLOW;    
+            this.colorArea = Color.GRAY;    
         }
 
         //

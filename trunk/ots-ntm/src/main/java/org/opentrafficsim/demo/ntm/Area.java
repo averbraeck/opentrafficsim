@@ -93,6 +93,9 @@ public class Area extends GeoObject implements LocatableInterface
     /** */
     private DoubleScalar.Abs<SpeedUnit> averageSpeed;
 
+    /** from file or directly computed*/
+    private ParametersNTM parametersNTM;
+    
     /** */
     private DoubleScalar.Rel<LengthUnit> roadLength;
     
@@ -337,6 +340,22 @@ public class Area extends GeoObject implements LocatableInterface
     public void setAverageSpeed(DoubleScalar.Abs<SpeedUnit> averageSpeed)
     {
         this.averageSpeed = averageSpeed;
+    }
+
+    /**
+     * @return parametersNTM.
+     */
+    public ParametersNTM getParametersNTM()
+    {
+        return this.parametersNTM;
+    }
+
+    /**
+     * @param parametersNTM set parametersNTM.
+     */
+    public void setParametersNTM(ParametersNTM parametersNTM)
+    {
+        this.parametersNTM = parametersNTM;
     }
 
 

@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -40,6 +41,20 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         this.roadLength = roadLength;
     }
 
+    /**
+     * @param accCritical 
+     * @param capacityPerLaneLength 
+
+     */
+    public ParametersNTM(ArrayList<Double> accCritical, double capacityPerLaneLength, Rel<LengthUnit> roadLength)
+    {
+        super();
+        //TODO parameters should depend on area characteristics
+        this.setAccCritical(accCritical);
+        this.setCapacity(new DoubleScalar.Abs<FrequencyUnit>( capacityPerLaneLength, FrequencyUnit.PER_HOUR));
+        this.roadLength = roadLength;
+    }
+    
     /**
      * @param accCritical 
      * @param freeSpeed

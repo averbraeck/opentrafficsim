@@ -259,7 +259,7 @@ public class BuildGraph
             }
             else
             {
-                    System.out.println("test");
+                    System.out.println("test: cA == cB??");
             }
         }
 
