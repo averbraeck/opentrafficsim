@@ -554,6 +554,87 @@ public class CsvFileReader
         return profiles;
     }
 
+    
+    /**
+     * @param csvFileName
+     * @param csvSplitBy
+     * @param csvSplitInternalBy
+     * @return an ArrayList<DepartureTimeProfile<?>>
+     * @throws IOException
+     * @throws ParseException
+     */
+    public static HashMap<String, ArrayList<Double>> readParametersNTM(final String csvFileName,
+            final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
+    {
+        BufferedReader bufferedReader = null;
+        String line = "";
+        URL url;
+        if (new File(csvFileName).canRead())
+        {
+            url = new File(csvFileName).toURI().toURL();
+        }
+        else
+        {
+            url = ShapeFileReader.class.getResource(csvFileName);
+        }
+
+        String path = url.getPath();
+        HashMap<String, ArrayList<Double>> parametersNTM = new HashMap<String, ArrayList<Double>>();
+
+        try
+        {
+            bufferedReader = new BufferedReader(new FileReader(path));
+            // read all lines: first column contains the name of the origin
+            // this can be either a link or a centroid (starts with "C")
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                String centroidName;
+                ArrayList<Double> parameters = new ArrayList<Double>();   
+                String[] completeLine = line.split(csvSplitBy);
+                for (String lineSegment : completeLine)
+                {
+                    lineSegment = lineSegment.trim();
+                    String[] dataItem = lineSegment.split(csvSplitInternalBy);
+                    if (dataItem.length > 0)
+                    {
+                        centroidName = dataItem[0];
+                        parameters.add(Double.parseDouble(dataItem[1])); 
+                        parameters.add(Double.parseDouble(dataItem[2])); 
+                        parameters.add(Double.parseDouble(dataItem[3])); 
+                        parameters.add(Double.parseDouble(dataItem[4])); 
+                        parametersNTM.put(centroidName, parameters);
+                    }
+                }
+
+            }
+            // test if the fractions are read correctly
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (bufferedReader != null)
+            {
+                try
+                {
+                    bufferedReader.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return parametersNTM;
+    }
+    
+    
     /**
      * @param name
      * @return name without quotes

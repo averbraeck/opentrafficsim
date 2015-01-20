@@ -56,10 +56,12 @@ public class CellBehaviourNTM extends CellBehaviour
     public CellBehaviourNTM(final Area area, final ParametersNTM parametersNTM)
     {
         this.parametersNTM = parametersNTM;
-        double maxCap = parametersNTM.getAccCritical().get(0) * parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
-                * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        // double maxCap = parametersNTM.getAccCritical().get(0) *
+        // parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
+        // * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        double maxCap = parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR) * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         this.maxCapacity = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
-        // gedeeld door gemiddelde triplengte in een gebied  
+        // gedeeld door gemiddelde triplengte in een gebied
         // (lengte zone?)
 
     }
@@ -91,7 +93,7 @@ public class CellBehaviourNTM extends CellBehaviour
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
      * @param maximumCapacity based on area information
-     * @param param  
+     * @param param
      * @return carProduction
      */
     public final Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,

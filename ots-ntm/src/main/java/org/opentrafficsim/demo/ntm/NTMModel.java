@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -158,7 +159,7 @@ public class NTMModel implements OTSModelInterface
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed file with centroids (number starts with "C") and normal nodes
             // String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
-            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
+            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug2";
             this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
 
             // the Map areas contains a reference to the centroids!
@@ -192,6 +193,17 @@ public class NTMModel implements OTSModelInterface
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
 
+            HashMap<String, ArrayList<java.lang.Double>> parametersNTM =
+                    CsvFileReader.readParametersNTM(path + "/parametersNTM.txt", ";", ",");
+            for (Area area : this.areas.values())
+            {
+                ArrayList<java.lang.Double> param = parametersNTM.get(area.getCentroidNr());
+                double capacity = param.get(param.size() - 1);
+                param.remove(param.size() - 1);
+                ParametersNTM paramNTM = new ParametersNTM(param, capacity, area.getRoadLength());
+                area.setParametersNTM(paramNTM);
+            }
+
             if (COMPRESS_AREAS)
             {
                 // to compress the areas into bigger units
@@ -220,7 +232,7 @@ public class NTMModel implements OTSModelInterface
             // create a key between the larger areas and the original smaller areas
             // this enables the creation of compressed zones
 
-            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(30, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(999, SpeedUnit.KM_PER_HOUR);
             DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(300, FrequencyUnit.PER_HOUR);
             this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
@@ -237,6 +249,36 @@ public class NTMModel implements OTSModelInterface
 
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, COMPRESS_AREAS);
+
+            // !!!!!!!!!!!!!!!!!!
+            // temporary: make a file with NTM parameters per area
+/*            BufferedWriter parametersNTMOut = null;
+            String textOut;
+            File fileParametersNTM =
+                    new File("D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1/output/parametersNTM.txt");
+            parametersNTMOut = NTMsimulation.createWriter(fileParametersNTM);
+            for (BoundedNode node : this.getAreaGraph().vertexSet())
+            {
+                if (node.getBehaviourType() == TrafficBehaviourType.NTM)
+                {
+                    CellBehaviourNTM nodeBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
+                    textOut = node.getArea().getCentroidNr();
+                    textOut += ", ";
+                    textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(0));
+                    textOut += ", ";
+                    textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(1));
+                    textOut += ", ";
+                    textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(2));
+                    textOut += ", ";
+                    textOut +=
+                            String.format("%.1f", (nodeBehaviour.getMaxCapacity().getInUnit(FrequencyUnit.PER_HOUR))
+                                    / nodeBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER));
+                    parametersNTMOut.write(textOut + " \n");
+                }
+            }
+            parametersNTMOut.close();*/
+            // temporary: end
+            // !!!!!!!!!!!!!!!!!!
 
             // shortest paths creation
             initiateSimulationNTM(this);
