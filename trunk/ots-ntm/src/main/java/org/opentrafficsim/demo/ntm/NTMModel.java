@@ -193,16 +193,6 @@ public class NTMModel implements OTSModelInterface
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
 
-            HashMap<String, ArrayList<java.lang.Double>> parametersNTM =
-                    CsvFileReader.readParametersNTM(path + "/parametersNTM.txt", ";", ",");
-            for (Area area : this.areas.values())
-            {
-                ArrayList<java.lang.Double> param = parametersNTM.get(area.getCentroidNr());
-                double capacity = param.get(param.size() - 1);
-                param.remove(param.size() - 1);
-                ParametersNTM paramNTM = new ParametersNTM(param, capacity, area.getRoadLength());
-                area.setParametersNTM(paramNTM);
-            }
 
             if (COMPRESS_AREAS)
             {
@@ -246,6 +236,25 @@ public class NTMModel implements OTSModelInterface
 
             // compute the roadLength within the areas
             determineRoadLengthInAreas(this.shpLinks, this.areas);
+
+            HashMap<String, ArrayList<java.lang.Double>> parametersNTM =
+                    CsvFileReader.readParametersNTM(path + "/parametersNTM.txt", ";", ",");
+            for (Area area : this.areas.values())
+            {
+                ParametersNTM paramNTM = null;
+                ArrayList<java.lang.Double> param = parametersNTM.get(area.getCentroidNr());
+                if (param != null)
+                {
+                    double capacity = param.get(param.size() - 1);
+                    param.remove(param.size() - 1);
+                    paramNTM = new ParametersNTM(param, capacity, area.getRoadLength());
+                }
+                else
+                {
+                    paramNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());                    
+                }
+                area.setParametersNTM(paramNTM);
+            }
 
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, COMPRESS_AREAS);
@@ -563,12 +572,12 @@ public class NTMModel implements OTSModelInterface
         {
             // let's make several layers with the different types of information
             boolean showLinks = true;
-            boolean showFlowLinks = true;
-            boolean showConnectors = true;
+            boolean showFlowLinks = false;
+            boolean showConnectors = false;
             boolean showNodes = true;
-            boolean showEdges = true;
+            boolean showGraphEdges = false;
             boolean showAreaNode = true;
-            boolean showArea = true;
+            boolean showArea = false;
 
             if (showArea)
             {
@@ -579,9 +588,9 @@ public class NTMModel implements OTSModelInterface
             }
             if (showLinks)
             {
-                for (Link shpLink : this.shpLinks.values())
+                for (LinkEdge<Link> shpLink : this.linkGraph.edgeSet())
                 {
-                    new ShpLinkAnimation(shpLink, this.simulator, 2.0F, Color.GRAY);
+                    new ShpLinkAnimation(shpLink.getLink(), this.simulator, 2.0F, Color.RED);
                 }
             }
             if (showConnectors)
@@ -610,7 +619,7 @@ public class NTMModel implements OTSModelInterface
             // {
             // new LinkAnimation(linkEdge.getEdge(), this.simulator, 0.5f);
             // }
-            if (showEdges)
+            if (showGraphEdges)
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
                 {
