@@ -24,7 +24,7 @@ public class Shoulder extends CrossSectionElement
     public Shoulder(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralStartPosition,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
     {
-        super(parentLink, lateralStartPosition, beginWidth, endWidth);
+        super(parentLink, lateralStartPosition, XXXX, beginWidth, endWidth);
     }
 
 }

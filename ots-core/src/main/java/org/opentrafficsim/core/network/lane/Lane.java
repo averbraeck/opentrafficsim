@@ -21,6 +21,7 @@ import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -40,34 +41,46 @@ public class Lane extends CrossSectionElement
     /** in direction of geometry, reverse, or both. */
     private final LongitudinalDirectionality directionality;
 
-    /** Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
+    /** Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage); thus not final. */
     private DoubleScalar.Abs<FrequencyUnit> capacity;
 
     /** Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. */
-    private SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
+    private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
     /** GTUs on the lane at the last evaluation step of the traffic model. */
-    private final List<LaneBasedGTU<?>> gtuList;
+    private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
+
+    /** Adjacent left lanes that some GTU types can change onto. */
+    private Set<Lane> leftNeighbors = new HashSet<Lane>();
+
+    /** Adjacent right lanes that some GTU types can change onto. */
+    private Set<Lane> rightNeighbors = new HashSet<Lane>();
 
     /**
      * @param parentLink Cross Section Link to which the element belongs.
-     * @param lateralStartPosition the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
-     * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
-     * @param laneType type of lane to deduce compatibility with GTU types.
-     * @param directionality in direction of geometry, reverse, or both.
-     * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage).
+     * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+     *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+     *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
+     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the
+     *            design line
+     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design
+     *            line
+     * @param laneType type of lane to deduce compatibility with GTU types
+     * @param directionality in direction of geometry, reverse, or both
+     * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
+     * @throws NetworkException
      */
-    public Lane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralStartPosition,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth,
-        final LaneType<?> laneType, final LongitudinalDirectionality directionality,
-        final DoubleScalar.Abs<FrequencyUnit> capacity)
+    public Lane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
+            Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
+            final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
+            final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity)
+            throws NetworkException
     {
-        super(parentLink, lateralStartPosition, beginWidth, endWidth);
+        super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
         this.directionality = directionality;
         this.capacity = capacity;
-        this.gtuList = new ArrayList<LaneBasedGTU<?>>();
         // TODO Take care of directionality.
         try
         {
@@ -78,6 +91,45 @@ public class Lane extends CrossSectionElement
         {
             throw new Error("Oops - Caught NetworkException adding sensor at begin or and of Lane " + exception);
         }
+    }
+
+    /**
+     * Retrieve one of the sets of neighboring Lanes.
+     * @param direction LateralDirectionality; either LEFT or RIGHT
+     * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
+     */
+    private Set<Lane> neighbors(LateralDirectionality direction)
+    {
+        return direction == LateralDirectionality.LEFT ? this.leftNeighbors : this.rightNeighbors;
+    }
+
+    /**
+     * Indicate that a Lane is adjacent to this Lane.
+     * @param adjacentLane Lane; the adjacent Lane
+     * @param direction LateralDirectionality; the direction in which the Lane is adjacent to this Lane
+     */
+    public final void addAccessibleAdjacentLane(Lane adjacentLane, LateralDirectionality direction)
+    {
+        neighbors(direction).add(adjacentLane);
+    }
+
+    /**
+     * Indicate that a Lane is no longer adjacent to this Lane (may be useful for lanes that are sometimes closed, e.g.
+     * tidal flow lanes).
+     * @param adjacentLane Lane; the adjacent Lane that must be unregistered
+     * @param direction LateralDirectionality; the direction in which the Lane was adjacent to this Lane
+     * @throws NetworkException when the adjacentLane was not registered as adjacent in the indicated direction
+     */
+    public final void removeAccessibleAdjacentLane(Lane adjacentLane, LateralDirectionality direction)
+            throws NetworkException
+    {
+        Set<Lane> neighbors = neighbors(direction);
+        if (!neighbors.contains(adjacentLane))
+        {
+            throw new NetworkException("Lane " + adjacentLane + " is not among the " + direction
+                    + " neighbors of this Lane");
+        }
+        neighbors.remove(adjacentLane);
     }
 
     /**
@@ -105,14 +157,14 @@ public class Lane extends CrossSectionElement
     /**
      * Remove a sensor from the sensor list of this lane.
      * @param sensor the sensor to remove.
-     * @throws NetworkException  when the sensor was not found on this Lane
+     * @throws NetworkException when the sensor was not found on this Lane
      */
     public final void removeSensor(final Sensor sensor) throws NetworkException
     {
         List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition());
         if (null == sensorList)
         {
-            throw new NetworkException("No sensor at "+ sensor.getLongitudinalPositionSI());
+            throw new NetworkException("No sensor at " + sensor.getLongitudinalPositionSI());
         }
         sensorList.remove(sensor);
         if (sensorList.size() == 0)
@@ -139,7 +191,7 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Trigger the sensors for a certain timestep; from now until the nextEvaluationTime of the GTU.
+     * Trigger the sensors for a certain time step; from now until the nextEvaluationTime of the GTU.
      * @param gtu the LaneBasedGTU for which to trigger the sensors.
      * @throws RemoteException when simulation time cannot be retrieved.
      * @throws NetworkException when GTU not on this lane.
@@ -467,52 +519,23 @@ public class Lane extends CrossSectionElement
      * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
      * returned. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
-     * TODO this should be done once in the constructor and then cached: too expensive to do every time...
      * @param lateralDirection LEFT or RIGHT.
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the GTU along this Lane
      * @param gtuType the type of GTU for which this an adjacent lane.
      * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
      *         not match.
      */
-    public final Lane accessibleAdjacentLane(final LateralDirectionality lateralDirection, final GTUType<?> gtuType)
+    public final Lane accessibleAdjacentLane(final LateralDirectionality lateralDirection,
+            Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
     {
-        final double delta = 0.1; // in meters
         Set<Lane> candidates = new HashSet<>();
-        LateralDirectionality reverseDirection =
-            lateralDirection == LateralDirectionality.LEFT ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
-        for (CrossSectionElement cse : getParentLink().getCrossSectionElementList())
+        for (Lane l : lateralDirection == LateralDirectionality.LEFT ? this.leftNeighbors : this.rightNeighbors)
         {
-            if (!(cse instanceof Lane))
+            if (l.getLaneType().isCompatible(gtuType)
+                    && (l.getDirectionality().equals(LongitudinalDirectionality.BOTH) || l.getDirectionality().equals(
+                            this.getDirectionality())))
             {
-                continue; // Not a Lane (probably a road marker)
-            }
-            Lane cseLane = (Lane) cse;
-            if (!cseLane.getLaneType().isCompatible(gtuType))
-            {
-                continue; // Not compatible with our GTU type
-            }
-            if (cseLane.getDirectionality().equals(LongitudinalDirectionality.BOTH)
-                || cseLane.getDirectionality().equals(this.getDirectionality()))
-            {
-                // The driving direction of our GTU is compatible with cseLane
-                // System.out.println("this: " + toString());
-                // System.out.println(" cse: " + cse.toString());
-                if (this == cse)
-                {
-                    // System.out.println("Current lane is not adjacent to itself");
-                    continue; // Current lane is not adjacent to itself
-                }
-                // System.out.println("checking for " + lateralDirection + " adjacency");
-                if (Math.abs(DoubleScalar.minus(this.getLateralBeginPosition(lateralDirection),
-                    cse.getLateralBeginPosition(reverseDirection)).getSI()) > delta)
-                {
-                    continue; // Not adjacent (within error margin delta)
-                }
-                // System.out.println("Lanes are adjacent!");
-                // Lanes are adjacent. Can we cross?
-                if (canCrossTo(gtuType, this.getLateralBeginPosition(lateralDirection).getSI(), delta, lateralDirection))
-                {
-                    candidates.add(cseLane); // Yes! Our GTU type can cross into this adjacent Lane
-                }
+                candidates.add(l);
             }
         }
         if (candidates.isEmpty())
@@ -528,41 +551,13 @@ public class Lane extends CrossSectionElement
         double widthM = -1.0;
         for (Lane lane : candidates)
         {
-            if (lane.getBeginWidth().getSI() > widthM)
+            if (lane.getWidth(longitudinalPosition).getSI() > widthM)
             {
-                widthM = lane.getBeginWidth().getSI();
+                widthM = lane.getWidth(longitudinalPosition).getSI();
                 bestLane = lane;
             }
         }
         return bestLane;
-    }
-
-    /**
-     * Find all longitudinal road markers along between the lanes and test if we can cross.
-     * @param gtuType the GTU type for which we have to check permeability.
-     * @param edgeOffset the offset
-     * @param delta the margin to use to find the road markers.
-     * @param lateralDirection direction to cross to.
-     * @return whether we can cross or not.
-     */
-    private boolean canCrossTo(final GTUType<?> gtuType, final double edgeOffset, final double delta,
-        final LateralDirectionality lateralDirection)
-    {
-        for (CrossSectionElement cse : getParentLink().getCrossSectionElementList())
-        {
-            if (cse instanceof RoadMarkerAlong)
-            {
-                RoadMarkerAlong marker = (RoadMarkerAlong) cse;
-                if (Math.abs(marker.getLateralCenterPosition().getSI() - edgeOffset) < delta)
-                {
-                    if (!marker.isPermeable(gtuType, lateralDirection))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     /** {@inheritDoc} */
