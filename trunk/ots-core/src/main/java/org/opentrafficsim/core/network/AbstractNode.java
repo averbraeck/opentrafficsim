@@ -134,4 +134,38 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     {
         return "Node " + this.id;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        @SuppressWarnings("unchecked")
+        AbstractNode<ID, P> other = (AbstractNode<ID, P>) obj;
+        if (this.id == null)
+        {
+            if (other.id != null)
+                return false;
+        }
+        else if (!this.id.equals(other.id))
+            return false;
+        return true;
+    }
 }
