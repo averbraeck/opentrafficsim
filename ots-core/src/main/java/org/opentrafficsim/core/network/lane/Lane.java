@@ -51,10 +51,10 @@ public class Lane extends CrossSectionElement
     private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
 
     /** Adjacent left lanes that some GTU types can change onto. */
-    private Set<Lane> leftNeighbors = new HashSet<Lane>();
+    private Set<Lane> leftNeighbors = new HashSet<Lane>(1);
 
     /** Adjacent right lanes that some GTU types can change onto. */
-    private Set<Lane> rightNeighbors = new HashSet<Lane>();
+    private Set<Lane> rightNeighbors = new HashSet<Lane>(1);
 
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -392,7 +392,7 @@ public class Lane extends CrossSectionElement
             }
             else
             {
-                throw new NetworkException("Can only use Lane.getGtuAfter(...) method with FRONT and BACK positions");
+                throw new NetworkException("Can only use Lane.getGtuAfter(...) method with FRONT and REAR positions");
             }
         }
         return null;
@@ -529,7 +529,7 @@ public class Lane extends CrossSectionElement
             Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
     {
         Set<Lane> candidates = new HashSet<>();
-        for (Lane l : lateralDirection == LateralDirectionality.LEFT ? this.leftNeighbors : this.rightNeighbors)
+        for (Lane l : neighbors(lateralDirection))
         {
             if (l.getLaneType().isCompatible(gtuType)
                     && (l.getDirectionality().equals(LongitudinalDirectionality.BOTH) || l.getDirectionality().equals(
@@ -564,7 +564,7 @@ public class Lane extends CrossSectionElement
     public final String toString()
     {
         CrossSectionLink<?, ?> link = getParentLink();
-        // FIXME indexOf may not be the correct way to determine the rank of a Lane
+        // FIXME indexOf may not be the correct way to determine the rank of a Lane (counts stripes as well)
         return String.format("Lane %d of %s, %s", link.getCrossSectionElementList().indexOf(this), link.toString(), super
             .toString());
     }
