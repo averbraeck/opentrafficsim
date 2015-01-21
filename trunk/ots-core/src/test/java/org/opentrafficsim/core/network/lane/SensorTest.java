@@ -144,7 +144,6 @@ public class SensorTest
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
                 .getSI(), 0.0001);
         //TODO setup a test that verifies trigger of a SensorLaneStart; this is not (yet) possible
-
     }
 }
 

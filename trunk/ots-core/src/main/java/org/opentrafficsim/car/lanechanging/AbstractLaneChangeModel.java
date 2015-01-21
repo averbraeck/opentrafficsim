@@ -2,6 +2,7 @@ package org.opentrafficsim.car.lanechanging;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Map;
 
 import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -10,8 +11,10 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
@@ -45,13 +48,15 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // System.out.println(String.format(
             // "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
             // preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
-            Lane lane = gtu.positions(RelativePosition.REFERENCE).keySet().iterator().next();
+            Map<Lane, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE);
+            Lane lane = positions.keySet().iterator().next();
+            DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane = lane.accessibleAdjacentLane(nonPreferred, gtu.getGTUType());
-            Lane preferredLane = lane.accessibleAdjacentLane(preferred, gtu.getGTUType());
+            Lane nonPreferredLane = lane.accessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
+            Lane preferredLane = lane.accessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             DoubleScalar.Abs<AccelerationUnit> straightA =
                     DoubleScalar.plus(
                             applyDriverPersonality(FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit)),

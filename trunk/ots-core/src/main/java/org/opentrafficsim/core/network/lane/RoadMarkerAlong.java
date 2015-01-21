@@ -36,7 +36,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth)
     {
-        super(parentLink, lateralCenterPosition, beginWidth, endWidth);
+        super(parentLink, lateralCenterPosition, XXXX, beginWidth, endWidth);
     }
 
     /**

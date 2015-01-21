@@ -85,13 +85,14 @@ public final class LaneFactory
      * @return Lane
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
+     * @throws NetworkException 
      */
     private static Lane makeLane(final Link link, final LaneType<String> laneType,
             final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width,
-            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane result = new Lane(link, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
+        Lane result = new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
         if (simulator instanceof OTSAnimatorInterface)
         {
             new LaneAnimation(result, simulator, Color.LIGHT_GRAY);
@@ -110,10 +111,11 @@ public final class LaneFactory
      * @return Lane; the new Lane
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
+     * @throws NetworkException 
      */
     public static Lane makeLane(final String name, final Node from, final Node to,
             final Coordinate[] intermediateCoordinates, final LaneType<String> laneType,
-            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
@@ -135,10 +137,11 @@ public final class LaneFactory
      * @return Lane[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
+     * @throws NetworkException 
      */
     public static Lane[] makeMultiLane(final String name, final Node from, final Node to,
             final Coordinate[] intermediateCoordinates, final int laneCount, final LaneType<String> laneType,
-            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final Link link = makeLink(name, from, to, intermediateCoordinates);
