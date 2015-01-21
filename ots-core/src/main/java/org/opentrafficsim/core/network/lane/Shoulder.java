@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -17,14 +18,15 @@ public class Shoulder extends CrossSectionElement
 {
     /**
      * @param parentLink Cross Section Link to which the element belongs.
-     * @param lateralStartPosition the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param lateralPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
+     * @throws NetworkException 
      */
-    public Shoulder(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralStartPosition,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+    public Shoulder(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralPosition,
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
     {
-        super(parentLink, lateralStartPosition, XXXX, beginWidth, endWidth);
+        super(parentLink, lateralPosition, lateralPosition, beginWidth, endWidth);
     }
 
 }

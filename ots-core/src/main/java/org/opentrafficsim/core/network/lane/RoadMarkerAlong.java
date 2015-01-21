@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -31,12 +32,13 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
+     * @throws NetworkException 
      */
     public RoadMarkerAlong(final CrossSectionLink<?, ?> parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth)
+        final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
     {
-        super(parentLink, lateralCenterPosition, XXXX, beginWidth, endWidth);
+        super(parentLink, lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }
 
     /**

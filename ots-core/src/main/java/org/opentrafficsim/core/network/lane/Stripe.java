@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -24,9 +25,10 @@ public class Stripe extends RoadMarkerAlong
      * @param parentLink Cross Section Link to which the element belongs.
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
+     * @throws NetworkException 
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-        final DoubleScalar.Rel<LengthUnit> width)
+        final DoubleScalar.Rel<LengthUnit> width) throws NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
     }
@@ -40,9 +42,10 @@ public class Stripe extends RoadMarkerAlong
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
      * @param gtuTypes the GTU types for which the permeability is defined.
      * @param permeable one of the enums of Stripe.Permeable to define the permeability.
+     * @throws NetworkException 
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-        final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable)
+        final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable) throws NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
         for (GTUType<?> gtuType : gtuTypes)
@@ -59,9 +62,10 @@ public class Stripe extends RoadMarkerAlong
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
      * @param permeable one of the enums of Stripe.Permeable to define the permeability.
+     * @throws NetworkException 
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-        final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable)
+        final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable) throws NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
         addPermeability(GTUType.ALL, permeable);
