@@ -110,8 +110,9 @@ public final class Convert
      * vehicles (2.55m) + 25cm each side.
      * @param osmlink Link; the OSM link to make lanes for
      * @return Lanes
+     * @throws NetworkException 
      */
-    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink)
+    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink) throws NetworkException
     {
         Link otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
@@ -170,7 +171,7 @@ public final class Convert
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
-                Lane result = new Lane(otslink, latPos, xxxx, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
             }
         }
@@ -183,7 +184,7 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit()), LengthUnit.METER);
-                Lane result = new Lane(otslink, latPos, xxxx, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
             }
             for (int i = 0; i < (osmlink.getLanes() - osmlink.getForwardLanes()); i++) /** Create backward lanes */
@@ -193,7 +194,7 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit() * (-1)), LengthUnit.METER);
-                Lane result = new Lane(otslink, latPos, xxxx, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
+                Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
                 lanes.add(result);
             }
         }
@@ -205,7 +206,7 @@ public final class Convert
             DoubleScalar.Rel<LengthUnit> latPos =
                     new DoubleScalar.Rel<LengthUnit>((osmlink.getLanes() * width.getInUnit()), LengthUnit.METER);
             Lane result =
-                    new Lane(otslink, latPos, xxxx,
+                    new Lane(otslink, latPos, latPos,
                             new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
                             lt, LongitudinalDirectionality.FORWARD, f2000);
             lanes.add(result);
