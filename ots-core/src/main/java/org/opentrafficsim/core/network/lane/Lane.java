@@ -44,7 +44,7 @@ public class Lane extends CrossSectionElement
     private DoubleScalar.Abs<FrequencyUnit> capacity;
 
     /** Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. */
-    private SortedMap<Double, Sensor> sensors = new TreeMap<>();
+    private SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
     /** GTUs on the lane at the last evaluation step of the traffic model. */
     private final List<LaneBasedGTU<?>> gtuList;
@@ -69,33 +69,56 @@ public class Lane extends CrossSectionElement
         this.capacity = capacity;
         this.gtuList = new ArrayList<LaneBasedGTU<?>>();
         // TODO Take care of directionality.
-        addSensor(new SensorLaneStart(this));
-        addSensor(new SensorLaneEnd(this));
+        try
+        {
+            addSensor(new SensorLaneStart(this));
+            addSensor(new SensorLaneEnd(this));
+        }
+        catch (NetworkException exception)
+        {
+            throw new Error("Oops - Caught NetworkException adding sensor at begin or and of Lane " + exception);
+        }
     }
 
     /**
      * Insert the sensor at the right place in the sensor list of this lane.
-     * @param sensor the sensor to add.
+     * @param sensor the sensor to add
+     * @throws NetworkException when the position of the sensor is beyond (or before) the range of this Lane
      */
-    public final void addSensor(final Sensor sensor)
+    public final void addSensor(final Sensor sensor) throws NetworkException
     {
-        // XXX PK asks: Could this place a SensorLaneEnd BEYOND the end of the Lane? Would that be bad?
-        // If true, is there another work-around? Like, arrange sensors at the same position in a linked list?
         double position = sensor.getLongitudinalPositionSI();
-        while (this.sensors.containsKey(position))
+        if (position < 0 || position > getLength().getSI())
         {
-            position += Math.ulp(position);
+            throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.."
+                    + getLength().getSI());
         }
-        this.sensors.put(position, sensor);
+        List<Sensor> sensorList = this.sensors.get(position);
+        if (null == sensorList)
+        {
+            sensorList = new ArrayList<Sensor>(1);
+            this.sensors.put(position, sensorList);
+        }
+        sensorList.add(sensor);
     }
 
     /**
      * Remove a sensor from the sensor list of this lane.
      * @param sensor the sensor to remove.
+     * @throws NetworkException  when the sensor was not found on this Lane
      */
-    public final void removeSensor(final Sensor sensor)
+    public final void removeSensor(final Sensor sensor) throws NetworkException
     {
-        this.sensors.remove(sensor);
+        List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition());
+        if (null == sensorList)
+        {
+            throw new NetworkException("No sensor at "+ sensor.getLongitudinalPositionSI());
+        }
+        sensorList.remove(sensor);
+        if (sensorList.size() == 0)
+        {
+            this.sensors.remove(sensorList);
+        }
     }
 
     /**
@@ -107,7 +130,12 @@ public class Lane extends CrossSectionElement
     public final List<Sensor> getSensors(final DoubleScalar.Rel<LengthUnit> minimumPosition,
             final DoubleScalar.Rel<LengthUnit> maximumPosition)
     {
-        return new ArrayList<Sensor>(this.sensors.subMap(minimumPosition.getSI(), maximumPosition.getSI()).values());
+        ArrayList<Sensor> result = new ArrayList<Sensor>();
+        for (List<Sensor> sensorList : this.sensors.subMap(minimumPosition.getSI(), maximumPosition.getSI()).values())
+        {
+            result.addAll(sensorList);
+        }
+        return result;
     }
 
     /**
@@ -120,15 +148,15 @@ public class Lane extends CrossSectionElement
     public final void scheduleTriggers(final LaneBasedGTU<?> gtu) throws RemoteException, NetworkException,
             SimRuntimeException
     {
-        double mStart = gtu.position(this, gtu.getFront()).getSI();
-        double mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime()).getSI();
+        DoubleScalar.Rel<LengthUnit> mStart = gtu.position(this, gtu.getFront());
+        DoubleScalar.Rel<LengthUnit> mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime());
         // System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
-        List<Sensor> triggerSensors = new ArrayList<Sensor>(this.sensors.subMap(mStart, mEnd).values());
+        List<Sensor> triggerSensors = getSensors(mStart, mEnd);
         for (Sensor sensor : triggerSensors)
         {
             // the exact time of triggering is based on the distance between the current position of the GTU and the
             // location of the sensor.
-            double d = Math.max(0.0, sensor.getLongitudinalPositionSI() - mStart);
+            double d = Math.max(0.0, sensor.getLongitudinalPositionSI() - mStart.getSI());
             // how much time to travel d meters? 0.5*a*t^2 + v0*t - d = 0
             // => t = (-v0 +/- sqrt(v0^2 - 4*0.5*a*(-d))) / 2*0.5*a = (-v0 +/- sqrt(v0^2 + 2*a*d)) / a
             double v0 = gtu.getLongitudinalVelocity().getSI();
@@ -136,7 +164,6 @@ public class Lane extends CrossSectionElement
             double sq = Math.sqrt(v0 * v0 + 2.0 * a * d);
             double t1 = (-v0 + sq) / a;
             double t2 = (-v0 - sq) / a;
-            // PK: Wrong: double t = t1 < 0 ? t2 : t1 < t2 ? t1 : t2;
             // Figure out which one comes first (but not in the past)
             double now = gtu.getSimulator().getSimulatorTime().get().getSI();
             double t;
@@ -474,7 +501,7 @@ public class Lane extends CrossSectionElement
     public final String toString()
     {
         CrossSectionLink<?, ?> link = getParentLink();
-        // FIXME indexOf is the the correct way to determine the rank of a Lane
+        // FIXME indexOf may not be the correct way to determine the rank of a Lane
         return String.format("Lane %d of %s, %s", link.getCrossSectionElementList().indexOf(this), link.toString(),
                 super.toString());
     }
