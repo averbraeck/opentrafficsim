@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -74,7 +76,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** CarFollowingModel used by this Car. */
     private final GTUFollowingModel gtuFollowingModel;
-    
+
     /**
      * @param id the id of the GTU, could be String or Integer.
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
@@ -291,38 +293,338 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         return position(lane, relativePosition).getSI() / lane.getLength().getSI();
     }
 
+    /**
+     * Calculate the minimum headway, possibly on subsequent lanes, in forward direction.
+     * @param lane the lane where we are looking right now
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the GTU
+     *            when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
+     * @param cumDistanceSI the distance we have already covered searching on previous lanes
+     * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls
+     * @param when the current or future time for which to calculate the headway
+     * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
+     *         no other GTU could not be found within maxDistanceSI meters
+     * @throws RemoteException when the simulation time cannot be retrieved
+     * @throws NetworkException when there is a problem with the geometry of the network
+     */
+    private GTUDistanceSI headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI,
+        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
+        throws RemoteException, NetworkException
+    {
+        LaneBasedGTU<?> otherGTU =
+            lane.getGtuAfter(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
+        if (otherGTU != null)
+        {
+            double distanceM = cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
+            if (distanceM > 0 && distanceM <= maxDistanceSI)
+            {
+                return new GTUDistanceSI(otherGTU, distanceM);
+            }
+            return new GTUDistanceSI(null, Double.MAX_VALUE);
+        }
+
+        // Continue search on successor lanes.
+        if (cumDistanceSI + lane.getLength().getSI() - lanePositionSI < maxDistanceSI)
+        {
+            // is there a successor link?
+            Set<Lane> nextLanes = lane.nextLanes();
+            if (nextLanes.size() > 0)
+            {
+                GTUDistanceSI foundMaxGTUDistanceSI = new GTUDistanceSI(null, Double.MAX_VALUE);
+                for (Lane nextLane : nextLanes)
+                {
+                    // Only follow links on the Route if there is a Route
+                    if (this.getRoute() == null
+                        || (this.getRoute() != null && this.getRoute().containsLink(lane.getParentLink())))
+                    {
+                        double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
+                        GTUDistanceSI closest =
+                            headwayRecursiveForwardSI(nextLane, 0.0, traveledDistanceSI, maxDistanceSI, when);
+                        if (closest.getDistanceSI() < maxDistanceSI
+                            && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                        {
+                            foundMaxGTUDistanceSI = closest;
+                        }
+                    }
+                }
+                return foundMaxGTUDistanceSI;
+            }
+        }
+
+        // No other GTU was not on one of the current lanes or their successors.
+        return new GTUDistanceSI(null, Double.MAX_VALUE);
+    }
+
+    /**
+     * Calculate the minimum headway, possibly on subsequent lanes, in backward direction (so between our back, and the other
+     * GTU's front). Note: this method returns a POSITIVE number.
+     * @param lane the lane where we are looking right now
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the rear of
+     *            the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength() for each
+     *            subsequent lane.
+     * @param cumDistanceSI the distance we have already covered searching on previous lanes. Note: This is a POSITIVE number.
+     * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls. Note: this is a
+     *            POSITIVE number.
+     * @param when the current or future time for which to calculate the headway
+     * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
+     *         no other GTU could not be found within maxDistanceSI meters
+     * @throws RemoteException when the simulation time cannot be retrieved
+     * @throws NetworkException when there is a problem with the geometry of the network
+     */
+    private GTUDistanceSI headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI,
+        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
+        throws RemoteException, NetworkException
+    {
+        LaneBasedGTU<?> otherGTU =
+            lane.getGtuBefore(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.FRONT,
+                when);
+        if (otherGTU != null)
+        {
+            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            if (distanceM > 0 && distanceM <= maxDistanceSI)
+            {
+                return new GTUDistanceSI(otherGTU, distanceM);
+            }
+            return new GTUDistanceSI(null, Double.MAX_VALUE);
+        }
+
+        // Continue search on predecessor lanes.
+        if (cumDistanceSI + lanePositionSI < maxDistanceSI)
+        {
+            // is there a predecessor link?
+            Set<Lane> prevLanes = lane.prevLanes();
+            if (prevLanes.size() > 0)
+            {
+                GTUDistanceSI foundMaxGTUDistanceSI = new GTUDistanceSI(null, Double.MAX_VALUE);
+                for (Lane prevLane : prevLanes)
+                {
+                    // What is behind us is INDEPENDENT of the followed route!
+                    double traveledDistanceSI = cumDistanceSI + lanePositionSI;
+                    GTUDistanceSI closest =
+                        headwayRecursiveBackwardSI(prevLane, prevLane.getLength().getSI(), traveledDistanceSI,
+                            maxDistanceSI, when);
+                    if (closest.getDistanceSI() < maxDistanceSI
+                        && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                    {
+                        foundMaxGTUDistanceSI = closest;
+                    }
+                }
+                return foundMaxGTUDistanceSI;
+            }
+        }
+
+        // No other GTU was not on one of the current lanes or their successors.
+        return new GTUDistanceSI(null, Double.MAX_VALUE);
+    }
+
+    /**
+     * @param maxDistanceSI the maximum distance to look for in SI units
+     * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
+     *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
+     * @throws RemoteException when the simulation time cannot be retrieved
+     * @throws NetworkException when there is a problem with the geometry of the network
+     */
+    private GTUDistanceSI headwayGTUSI(final double maxDistanceSI) throws RemoteException, NetworkException
+    {
+        DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
+        GTUDistanceSI foundMaxGTUDistanceSI = new GTUDistanceSI(null, Double.MAX_VALUE);
+        // search for the closest GTU on all current lanes we are registered on.
+        if (maxDistanceSI > 0.0)
+        {
+            // look forward.
+            for (Lane lane : positions(getFront()).keySet())
+            {
+                GTUDistanceSI closest =
+                    headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(), when).getSI(), 0.0, maxDistanceSI,
+                        when);
+                if (closest.getDistanceSI() < maxDistanceSI
+                    && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                {
+                    foundMaxGTUDistanceSI = closest;
+                }
+            }
+        }
+        else
+        {
+            // look backward.
+            for (Lane lane : positions(getRear()).keySet())
+            {
+                GTUDistanceSI closest =
+                    headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(), when).getSI(), 0.0, -maxDistanceSI,
+                        when);
+                if (closest.getDistanceSI() < -maxDistanceSI
+                    && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                {
+                    foundMaxGTUDistanceSI = closest;
+                }
+            }
+        }
+        return foundMaxGTUDistanceSI;
+    }
+
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> headway(final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException
+    public final DoubleScalar.Rel<LengthUnit> headway(final DoubleScalar.Rel<LengthUnit> maxDistance)
+        throws RemoteException, NetworkException
     {
-        // TODO headway(maxDistance)
-        return null;
+        return new DoubleScalar.Rel<LengthUnit>(headwayGTUSI(maxDistance.getSI()).getDistanceSI(), LengthUnit.METER);
     }
 
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final Lane lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
-        throws RemoteException
+        throws RemoteException, NetworkException
     {
-        // TODO headway(lane, maxDistance)
-        return null;
+        DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
+        if (maxDistance.getSI() > 0.0)
+        {
+            return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveForwardSI(lane,
+                this.position(lane, this.getFront(), when).getSI(), 0.0, maxDistance.getSI(), when).getDistanceSI(),
+                LengthUnit.METER);
+        }
+        else
+        {
+            return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveBackwardSI(lane,
+                this.position(lane, this.getRear(), when).getSI(), 0.0, -maxDistance.getSI(), when).getDistanceSI(),
+                LengthUnit.METER);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final LaneBasedGTU<?> headwayGTU(final Lane lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
-        throws RemoteException
+        throws RemoteException, NetworkException
     {
-        // TODO headwayGTU(lane, maxDistance)
-        return null;
+        DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
+        if (maxDistance.getSI() > 0.0)
+        {
+            return headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(), when).getSI(), 0.0,
+                maxDistance.getSI(), when).getOtherGTU();
+        }
+        else
+        {
+            return headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(), when).getSI(), 0.0,
+                -maxDistance.getSI(), when).getOtherGTU();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU<?> headwayGTU(final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException
+    public final LaneBasedGTU<?> headwayGTU(final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException,
+        NetworkException
     {
-        // TODO headwayGTU(maxDistance)
-        return null;
+        return headwayGTUSI(maxDistance.getSI()).getOtherGTU();
+    }
+
+    /**
+     * Calculate the headway to a GTU, possibly on subsequent lanes, in forward direction.
+     * @param lane the lane where we are looking right now
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the (front
+     *            of the) GTU when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
+     * @param otherGTU the GTU to which the headway must be returned
+     * @param cumDistanceSI the distance we have already covered searching on previous lanes
+     * @param maxDistanceSI the maximum distance to look for; stays the same in subsequent calls
+     * @param when the future time for which to calculate the headway
+     * @return the headway in SI units when we have found the GTU, or Double.MAX_VALUE when the otherGTU could not be found
+     *         within maxDistanceSI
+     * @throws RemoteException when the simulation time cannot be retrieved
+     * @throws NetworkException when there is a problem with the geometry of the network
+     */
+    private double headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI, final LaneBasedGTU<?> otherGTU,
+        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
+        throws RemoteException, NetworkException
+    {
+        if (lane.getGtuList().contains(otherGTU))
+        {
+            double distanceM = cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
+            if (distanceM > 0 && distanceM <= maxDistanceSI)
+            {
+                return distanceM;
+            }
+            return Double.MAX_VALUE;
+        }
+
+        // Continue search on successor lanes.
+        if (cumDistanceSI + lane.getLength().getSI() - lanePositionSI < maxDistanceSI)
+        {
+            // is there a successor link?
+            Set<Lane> nextLanes = lane.nextLanes();
+            if (nextLanes.size() > 0)
+            {
+                for (Lane nextLane : nextLanes)
+                {
+                    // Only follow links on the Route if there is a Route
+                    if (this.getRoute() == null
+                        || (this.getRoute() != null && this.getRoute().containsLink(lane.getParentLink())))
+                    {
+                        double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
+                        double headwaySuccessor =
+                            headwayRecursiveForwardSI(nextLane, 0.0, otherGTU, traveledDistanceSI, maxDistanceSI, when);
+                        if (headwaySuccessor < maxDistanceSI)
+                        {
+                            return headwaySuccessor;
+                        }
+                    }
+                }
+            }
+        }
+
+        // The otherGTU was not on one of the current lanes or their successors.
+        return Double.MAX_VALUE;
+    }
+
+    /**
+     * Calculate the headway to a GTU, possibly on subsequent lanes, in backward direction.
+     * @param lane the lane where we are looking right now
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the (back
+     *            of) the GTU when we measure in the lane where the original GTU is positioned, and the length of the lane for
+     *            each subsequent lane
+     * @param otherGTU the GTU to which the headway must be returned
+     * @param cumDistanceSI the distance we have already covered searching on previous lanes, as a POSITIVE number
+     * @param maxDistanceSI the maximum distance to look for; stays the same in subsequent calls, as a POSITIVE number
+     * @param when the future time for which to calculate the headway
+     * @return the headway in SI units when we have found the GTU, or Double.MAX_VALUE when the otherGTU could not be found
+     *         within maxDistanceSI
+     * @throws RemoteException when the simulation time cannot be retrieved
+     * @throws NetworkException when there is a problem with the geometry of the network
+     */
+    private double headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI, final LaneBasedGTU<?> otherGTU,
+        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
+        throws RemoteException, NetworkException
+    {
+        if (lane.getGtuList().contains(otherGTU))
+        {
+            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            if (distanceM > 0 && distanceM <= maxDistanceSI)
+            {
+                return distanceM;
+            }
+            return Double.MAX_VALUE;
+        }
+
+        // Continue search on successor lanes.
+        if (cumDistanceSI + lanePositionSI < maxDistanceSI)
+        {
+            // is there a successor link?
+            Set<Lane> prevLanes = lane.prevLanes();
+            if (prevLanes.size() > 0)
+            {
+                for (Lane prevLane : prevLanes)
+                {
+                    // Routes are NOT IMPORTANT when we look backward.
+                    double traveledDistanceSI = cumDistanceSI + lanePositionSI;
+                    double headwayPredecessor =
+                        headwayRecursiveForwardSI(prevLane, prevLane.getLength().getSI(), otherGTU, traveledDistanceSI,
+                            maxDistanceSI, when);
+                    if (headwayPredecessor < maxDistanceSI)
+                    {
+                        return headwayPredecessor;
+                    }
+                }
+            }
+        }
+
+        // The otherGTU was not on one of the current lanes or their successors.
+        return Double.MAX_VALUE;
     }
 
     /** {@inheritDoc} */
@@ -345,52 +647,50 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
 
         // search for the otherGTU on the current lanes we are registered on.
-        double maxD = maxDistance.getSI();
-        for (Lane lane : positions(getFront()).keySet())
+        if (maxDistance.getSI() > 0.0)
         {
-            double myLanePosition = this.position(lane, this.getFront(), when).getSI();
-            if (lane.getGtuList().contains(otherGTU))
+            for (Lane lane : positions(getFront()).keySet())
             {
-                double distanceM =
-                    otherGTU.position(lane, otherGTU.getFront(), when).getSI()
-                        - myLanePosition - otherGTU.getLength().getSI();
-                if ((maxD > 0.0 && distanceM > 0.0) || (maxD < 0.0 && distanceM < 0.0))
-                {
-                    return new DoubleScalar.Rel<LengthUnit>(distanceM, LengthUnit.METER);
-                }
-                return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+                // call an internal recursive method
+                return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(),
+                    when).getSI(), otherGTU, 0.0, maxDistance.getSI(), when), LengthUnit.METER);
             }
-            if (maxD > 0)
-            {
-                // Continue search on successor lanes.
-                if (lane.getLength().getSI() - myLanePosition > maxD)
-                {
-                    // is there a successor link?
-                    Set<Lane> nextLanes = lane.nextLanes();
-                    if (nextLanes.size() > 0)
-                    {
-                        // TODO: do we have a route?
-                        for (Lane nextLane : nextLanes)
-                        {
-                            // nextLaneHeadway = headway()
-                        }
-                    }
-                }
-            }
-            else if (maxD < 0)
-            {
-                // Continue search on predecessor lanes.
-                if (myLanePosition > -maxD)
-                {
-                    
-                }
-
-            }
-
+            // other GTU not found within maxDistance
+            return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
         }
+        else
+        {
+            for (Lane lane : positions(getRear()).keySet())
+            {
+                // call an internal recursive method
+                return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(),
+                    when).getSI(), otherGTU, 0.0, maxDistance.getSI(), when), LengthUnit.METER);
+            }
+            // other GTU not found within maxDistance
+            return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+        }
+    }
 
-        // The otherGTU was not on one of the current lanes or their successors.
-        return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+    /** {@inheritDoc} */
+    @Override
+    public final Set<LaneBasedGTU<?>> parallel(final Lane lane) throws RemoteException, NetworkException
+    {
+        // compare based on fractional positions.
+        Lane comparisonLane = null;
+        for (Lane l : this.longitudinalPositions.keySet())
+        {
+            // TODO
+        }
+        return new HashSet<LaneBasedGTU<?>>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Set<LaneBasedGTU<?>> parallel(final LateralDirectionality direction) throws RemoteException,
+        NetworkException
+    {
+        // TODO
+        return new HashSet<LaneBasedGTU<?>>();
     }
 
     /**
@@ -461,4 +761,50 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 .getSI(), this.getAcceleration(when).getSI());
     }
 
+    /**
+     * Helper class to store another GTU and the distance of this GTU to the other GTU.
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+     * All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version Jan 21, 2015 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    private class GTUDistanceSI
+    {
+        /** the other GTU. */
+        private final LaneBasedGTU<?> otherGTU;
+
+        /** the distance to the GTU in meters. */
+        private final double distanceSI;
+
+        /**
+         * @param otherGTU the other GTU
+         * @param distanceSI the distance to the other GTU in meters
+         */
+        public GTUDistanceSI(final LaneBasedGTU<?> otherGTU, final double distanceSI)
+        {
+            super();
+            this.otherGTU = otherGTU;
+            this.distanceSI = distanceSI;
+        }
+
+        /**
+         * @return the other GTU.
+         */
+        public final LaneBasedGTU<?> getOtherGTU()
+        {
+            return this.otherGTU;
+        }
+
+        /**
+         * @return distanceSI the distance to the other GTU in meters.
+         */
+        public final double getDistanceSI()
+        {
+            return this.distanceSI;
+        }
+
+    }
 }

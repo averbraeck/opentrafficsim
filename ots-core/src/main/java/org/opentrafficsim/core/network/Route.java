@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+
 /**
  * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
  * indicate the next node to visit. Routes can be expanded (e.g. for node expansion), collapsed (e.g. to use a macro
@@ -224,7 +226,23 @@ public class Route implements Serializable
         return getNode(this.lastNode);
     }
 
+    /**
+     * @param link the link to check in the route.
+     * @return whether the link is part of the route or not.
+     */
+    public final boolean containsLink(final CrossSectionLink<?, ?> link)
+    {
+        Node<?, ?> sn = link.getStartNode();
+        Node<?, ?> en = link.getEndNode();
+        if (this.nodes.contains(sn) && this.nodes.contains(en))
+        {
+            return (this.nodes.indexOf(en) - this.nodes.indexOf(sn) == 1);
+        }
+        return false;
+    }
+    
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         StringBuilder result = new StringBuilder();

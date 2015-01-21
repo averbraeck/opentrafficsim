@@ -29,7 +29,7 @@ public class SensorLaneEnd extends AbstractSensor
     public SensorLaneEnd(final Lane lane)
     {
         super(lane, new DoubleScalar.Abs<LengthUnit>(lane.getLength().getSI() - Math.ulp(lane.getLength().getSI()),
-            LengthUnit.METER), RelativePosition.BACK);
+            LengthUnit.METER), RelativePosition.REAR);
     }
 
     /**

@@ -87,7 +87,7 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
         // of the Car away from the reference point in the negative (non-driving) X-direction.
         DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(-getLength().getSI(), LengthUnit.METER);
-        return new RelativePosition(dx, zero, zero, RelativePosition.BACK);
+        return new RelativePosition(dx, zero, zero, RelativePosition.REAR);
     }
 
     /** {@inheritDoc} */

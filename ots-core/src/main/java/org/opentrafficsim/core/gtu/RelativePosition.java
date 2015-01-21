@@ -35,7 +35,7 @@ public class RelativePosition implements Serializable
     public static final TYPE FRONT = new TYPE("FRONT");
 
     /** Standard relative position type BACK. */
-    public static final TYPE BACK = new TYPE("BACK");
+    public static final TYPE REAR = new TYPE("REAR");
 
     /** Standard relative position type CENTER. */
     public static final TYPE CENTER = new TYPE("CENTER");
@@ -115,6 +115,63 @@ public class RelativePosition implements Serializable
         return "(" + this.dx + ", " + this.dy + ", " + this.dz + "): " + this.type;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.dx == null) ? 0 : this.dx.hashCode());
+        result = prime * result + ((this.dy == null) ? 0 : this.dy.hashCode());
+        result = prime * result + ((this.dz == null) ? 0 : this.dz.hashCode());
+        result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RelativePosition other = (RelativePosition) obj;
+        if (this.dx == null)
+        {
+            if (other.dx != null)
+                return false;
+        }
+        else if (!this.dx.equals(other.dx))
+            return false;
+        if (this.dy == null)
+        {
+            if (other.dy != null)
+                return false;
+        }
+        else if (!this.dy.equals(other.dy))
+            return false;
+        if (this.dz == null)
+        {
+            if (other.dz != null)
+                return false;
+        }
+        else if (!this.dz.equals(other.dz))
+            return false;
+        if (this.type == null)
+        {
+            if (other.type != null)
+                return false;
+        }
+        else if (!this.type.equals(other.type))
+            return false;
+        return true;
+    }
+
     /**
      * The type of relative position, e.g., Front, Back, etc.
      * <p>
@@ -156,6 +213,39 @@ public class RelativePosition implements Serializable
         public final String toString()
         {
             return this.name;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:designforextension")
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+        public boolean equals(final Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            TYPE other = (TYPE) obj;
+            if (this.name == null)
+            {
+                if (other.name != null)
+                    return false;
+            }
+            else if (!this.name.equals(other.name))
+                return false;
+            return true;
         }
         
         
