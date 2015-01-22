@@ -222,6 +222,13 @@ public class IDMPlus implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
+    public final DoubleScalar.Rel<TimeUnit> getStepSize()
+    {
+        return new DoubleScalar.Rel<TimeUnit>(this.stepSize);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
     {
         return this.b;

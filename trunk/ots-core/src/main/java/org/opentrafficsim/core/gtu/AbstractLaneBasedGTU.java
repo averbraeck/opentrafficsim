@@ -47,22 +47,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** Time of last evaluation. */
     private DoubleScalar.Abs<TimeUnit> lastEvaluationTime;
 
-    /** Time of next evaluation. */
-    @Deprecated
-    private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
-
-    /** Longitudinal positions on one or more lanes. */
-    private final Map<Lane, DoubleScalar.Rel<LengthUnit>> longitudinalPositions;
-
     /**
-     * FIXME: temp for lane change purposes and hacks in the demos.
-     * @return longitudinalPositions.
+     * Longitudinal positions of the reference point of the GTU (currently the front) on one or more lanes at the
+     * lastEvaluationTime. Because the front of the GTU is not on all the lanes the GTU is registered on, the longitudinal
+     * positions can be more than the length of the lane, or less than zero.
      */
-    @Deprecated
-    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getLongitudinalPositions()
-    {
-        return this.longitudinalPositions;
-    }
+    private final Map<Lane, DoubleScalar.Rel<LengthUnit>> longitudinalPositions;
 
     /** Speed at lastEvaluationTime. */
     private DoubleScalar.Abs<SpeedUnit> speed;
@@ -70,7 +60,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** lateral velocity at lastEvaluationTime. */
     private DoubleScalar.Abs<SpeedUnit> lateralVelocity;
 
-    /** Current acceleration (negative values indicate deceleration). */
+    /** acceleration (negative values indicate deceleration) at the lastEvaluationTime. */
     private DoubleScalar.Abs<AccelerationUnit> acceleration = new DoubleScalar.Abs<AccelerationUnit>(0,
         AccelerationUnit.METER_PER_SECOND_2);
 
@@ -104,7 +94,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
         this.speed = new DoubleScalar.Abs<SpeedUnit>(initialSpeed);
         this.lateralVelocity = new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
-        this.nextEvaluationTime = new DoubleScalar.Abs<TimeUnit>(currentTime);
     }
 
     /** {@inheritDoc} */
@@ -131,10 +120,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    @Deprecated
     public final DoubleScalar.Abs<TimeUnit> getNextEvaluationTime()
     {
-        return new DoubleScalar.Abs<TimeUnit>(this.nextEvaluationTime);
+        return DoubleScalar.plus(this.lastEvaluationTime, this.gtuFollowingModel.getStepSize()).immutable();
     }
 
     /** {@inheritDoc} */
@@ -190,15 +178,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException,
         SimRuntimeException
     {
+        DoubleScalar.Abs<TimeUnit> nextEvaluationTime = getNextEvaluationTime();
         for (Lane lane : this.longitudinalPositions.keySet())
         {
-            this.longitudinalPositions.put(lane, position(lane, getFront(), this.nextEvaluationTime));
+            this.longitudinalPositions.put(lane, position(lane, getFront(), nextEvaluationTime));
         }
 
-        this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
+        this.speed = getLongitudinalVelocity(nextEvaluationTime);
 
-        this.lastEvaluationTime = this.nextEvaluationTime;
-        this.nextEvaluationTime = cfmr.getValidUntil();
+        this.lastEvaluationTime = nextEvaluationTime;
         this.acceleration = cfmr.getAcceleration();
 
         // for now: schedule all sensor triggers that are going to happen in the next timestep.
@@ -673,23 +661,49 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final Set<LaneBasedGTU<?>> parallel(final Lane lane) throws RemoteException, NetworkException
+    public final Set<LaneBasedGTU<?>> parallel(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
+        throws RemoteException, NetworkException
     {
-        // compare based on fractional positions.
-        Lane comparisonLane = null;
+        Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
         for (Lane l : this.longitudinalPositions.keySet())
         {
-            // TODO
+            // only take lanes that we can compare based on a shared design line
+            if (l.getParentLink().equals(lane.getParentLink()))
+            {
+                // compare based on fractional positions.
+                double posFractionFront = Math.max(0.0, this.fractionalPosition(l, getFront(), when));
+                double posFractionRear = Math.min(1.0, this.fractionalPosition(l, getRear(), when));
+                for (LaneBasedGTU<?> gtu : lane.getGtuList())
+                {
+                    if (!gtu.equals(this))
+                    {
+                        double gtuFractionFront = Math.max(0.0, gtu.fractionalPosition(l, getFront(), when));
+                        double gtuFractionRear = Math.min(1.0, gtu.fractionalPosition(l, getRear(), when));
+                        if ((gtuFractionFront >= posFractionFront && gtuFractionFront <= posFractionRear)
+                            || (gtuFractionRear >= posFractionFront && gtuFractionRear <= posFractionRear))
+                        {
+                            gtuSet.add(gtu);
+                        }
+                    }
+                }
+            }
         }
-        return new HashSet<LaneBasedGTU<?>>();
+        return gtuSet;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<LaneBasedGTU<?>> parallel(final LateralDirectionality direction) throws RemoteException,
-        NetworkException
+    public final Set<LaneBasedGTU<?>> parallel(final LateralDirectionality lateralDirection,
+        final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
-        // TODO
+        Set<Lane> adjacentLanes = new HashSet<Lane>();
+        for (Lane lane : this.longitudinalPositions.keySet())
+        {
+            adjacentLanes.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
+        }
+
+        Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
+
         return new HashSet<LaneBasedGTU<?>>();
     }
 
@@ -757,7 +771,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", getId(),
-            this.lastEvaluationTime.getSI(), this.nextEvaluationTime.getSI(), pos, this.getLongitudinalVelocity(when)
+            this.lastEvaluationTime.getSI(), getNextEvaluationTime().getSI(), pos, this.getLongitudinalVelocity(when)
                 .getSI(), this.getAcceleration(when).getSI());
     }
 

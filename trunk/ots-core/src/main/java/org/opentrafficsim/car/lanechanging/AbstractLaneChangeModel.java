@@ -55,8 +55,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane = lane.accessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
-            Lane preferredLane = lane.accessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
+            Lane nonPreferredLane = lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
+            Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             DoubleScalar.Abs<AccelerationUnit> straightA =
                     DoubleScalar.plus(
                             applyDriverPersonality(FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit)),

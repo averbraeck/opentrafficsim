@@ -15,6 +15,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -39,6 +40,12 @@ public class IDM implements GTUFollowingModel
 
     /** Safe time headway. */
     private final DoubleScalar.Rel<TimeUnit> tSafe;
+
+    /**
+     * Time slot size used by IDM (not defined in the paper, but 0.5s is a reasonable trade-off between computational speed and
+     * accuracy).
+     */
+    private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean speed limit equals 110% of the speed
@@ -81,12 +88,6 @@ public class IDM implements GTUFollowingModel
         this.tSafe = tSafe;
         this.delta = delta;
     }
-
-    /**
-     * Time slot size used by IDM (not defined in the paper, but 0.5s is a reasonable trade-off between computational speed and
-     * accuracy).
-     */
-    private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
 
     /**
      * @param gtu the gtu for which to calculate the maximum braking distance.
@@ -218,6 +219,13 @@ public class IDM implements GTUFollowingModel
         nextEvaluationTime.incrementBy(this.stepSize);
         return new GTUFollowingModelResult(newAcceleration, nextEvaluationTime.immutable());
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DoubleScalar.Rel<TimeUnit> getStepSize()
+    {
+        return new DoubleScalar.Rel<TimeUnit>(this.stepSize);
     }
 
     /** {@inheritDoc} */
