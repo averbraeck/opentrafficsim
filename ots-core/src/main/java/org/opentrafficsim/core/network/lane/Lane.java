@@ -481,7 +481,7 @@ public class Lane extends CrossSectionElement
     public final Set<Lane> prevLanes()
     {
         Set<Lane> lanes = new HashSet<Lane>();
-        for (Link<?, ?> link : getParentLink().getEndNode().getLinksIn())
+        for (Link<?, ?> link : getParentLink().getStartNode().getLinksIn())
         {
             if (link instanceof CrossSectionLink<?, ?>)
             {

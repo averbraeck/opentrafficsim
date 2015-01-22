@@ -131,7 +131,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     {
         double angle = Math.atan2(directionPoint.y - referencePoint.y, directionPoint.x - referencePoint.x);
         angle += Math.PI / 2;
-        return new Coordinate(referencePoint.x + offset * Math.sin(angle), referencePoint.y + offset * Math.cos(angle));
+        return new Coordinate(referencePoint.x + offset * Math.cos(angle), referencePoint.y + offset * Math.sin(angle));
     }
 
     /** Precision of buffer operations */
@@ -181,9 +181,22 @@ public abstract class CrossSectionElement implements LocatableInterface
     private Geometry offsetGeometry(Geometry referenceLine, double offset) throws NetworkException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
+        // printCoordinates("reference", referenceCoordinates);
         Coordinate[] bufferCoordinates =
                 referenceLine.buffer(Math.abs(offset), this.quadrantSegments, BufferParameters.CAP_FLAT)
                         .getCoordinates();
+        // printCoordinates("buffer           ", bufferCoordinates);
+        if (bufferCoordinates[0].distance(bufferCoordinates[bufferCoordinates.length - 1]) == 0)
+        {
+            // System.out.println("Removing last Coordinate from buffer");
+            Coordinate[] tempBuffer = new Coordinate[bufferCoordinates.length - 1];
+            for (int i = 0; i < tempBuffer.length; i++)
+            {
+                tempBuffer[i] = bufferCoordinates[i];
+            }
+            bufferCoordinates = tempBuffer;
+        }
+        // printCoordinates("buffer           ", bufferCoordinates);
         Coordinate startCoordinate = offsetPoint(referenceCoordinates[0], referenceCoordinates[1], offset);
         int startIndex = findClosest(startCoordinate, bufferCoordinates);
         final int referenceLast = referenceCoordinates.length - 1;
@@ -279,7 +292,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate[] resultCoordinates = new Coordinate[size];
         for (int resultIndex = 0; resultIndex < size; resultIndex++)
         {
-            resultCoordinates[resultIndex++] = bufferCoordinates[index];
+            resultCoordinates[resultIndex] = bufferCoordinates[index];
             index += step;
             if (index < 0)
             {
@@ -290,6 +303,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                 index = 0;
             }
         }
+        //printCoordinates("result           ", resultCoordinates);
         GeometryFactory factory = new GeometryFactory();
         Geometry result = factory.createLineString(resultCoordinates);
         return result;
@@ -309,29 +323,67 @@ public abstract class CrossSectionElement implements LocatableInterface
     private Geometry offsetLine(Geometry referenceLine, double offsetAtStart, double offsetAtEnd)
             throws NetworkException
     {
+        // printCoordinates("referenceLine    ", referenceLine);
         Geometry offsetLineAtStart = offsetGeometry(referenceLine, offsetAtStart);
+        // System.out.println("offsetAtStart  " + offsetAtStart);
+        // printCoordinates("offsetLineAtStart", offsetLineAtStart);
         if (offsetAtStart == offsetAtEnd)
         {
             return offsetLineAtStart;
         }
         Geometry offsetLineAtEnd = offsetGeometry(referenceLine, offsetAtEnd);
+        // System.out.println("offsetAtEnd    " + offsetAtEnd);
+        // printCoordinates("offsetLineAtEnd  ", offsetLineAtEnd);
         LengthIndexedLine first = new LengthIndexedLine(offsetLineAtStart);
         double firstLength = offsetLineAtStart.getLength();
         LengthIndexedLine second = new LengthIndexedLine(offsetLineAtEnd);
         double secondLength = offsetLineAtEnd.getLength();
-        Coordinate[] coordinatesAtStart = offsetLineAtStart.getCoordinates();
-        Coordinate[] coordinatesAtEnd = offsetLineAtEnd.getCoordinates();
-        int size = Math.max(coordinatesAtStart.length, coordinatesAtEnd.length);
-        Coordinate[] resultCoordinates = new Coordinate[size];
-        for (int index = 0; index < size; index++)
+        ArrayList<Coordinate> out = new ArrayList<Coordinate>();
+        Coordinate[] firstCoordinates = offsetLineAtStart.getCoordinates();
+        Coordinate[] secondCoordinates = offsetLineAtEnd.getCoordinates();
+        int firstIndex = 0;
+        int secondIndex = 0;
+        Coordinate prevCoordinate = null;
+        final double tooClose = 0.05;   // cm
+        while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
-            double ratio = 1.0 * index / size;
+            double firstRatio =
+                    firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                            : Double.MAX_VALUE;
+            double secondRatio =
+                    secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex])
+                            / secondLength : Double.MAX_VALUE;
+            double ratio;
+            if (firstRatio < secondRatio)
+            {
+                ratio = firstRatio;
+                firstIndex++;
+            }
+            else
+            {
+                ratio = secondRatio;
+                secondIndex++;
+            }
             Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
             Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
-            resultCoordinates[index] =
+            Coordinate resultCoordinate =
                     new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
                             * firstCoordinate.y + ratio * secondCoordinate.y);
+            //System.out.println(String.format(Locale.US,
+            //        "ratio: %7.5f, first  %8.3f,%8.3f, second: %8.3f,%8.3f -> %8.3f,%8.3f", ratio, firstCoordinate.x,
+            //        firstCoordinate.y, secondCoordinate.x, secondCoordinate.y, resultCoordinate.x, resultCoordinate.y));
+            if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
+            {
+                out.add(resultCoordinate);
+                prevCoordinate = resultCoordinate;
+            }
         }
+        Coordinate[] resultCoordinates = new Coordinate[out.size()];
+        for (int index = 0; index < out.size(); index++)
+        {
+            resultCoordinates[index] = out.get(index);
+        }
+        // printCoordinates("resultCoordinates", resultCoordinates);
         GeometryFactory factory = new GeometryFactory();
         return factory.createLineString(resultCoordinates);
     }
@@ -347,18 +399,22 @@ public abstract class CrossSectionElement implements LocatableInterface
 
         GeometryFactory factory = new GeometryFactory();
         Coordinate[] referenceCoordinates = this.parentLink.getGeometry().getLineString().getCoordinates();
+        //printCoordinates("Link design line:", referenceCoordinates);
         Geometry referenceGeometry = factory.createLineString(referenceCoordinates);
         Geometry resultLine;
         resultLine =
                 offsetLine(referenceGeometry, this.designLineOffsetAtBegin.getSI(), this.designLineOffsetAtEnd.getSI());
+        //printCoordinates("Lane design line:", resultLine);
         this.crossSectionDesignLine = factory.createLineString(resultLine.getCoordinates());
         Coordinate[] rightBoundary =
                 offsetLine(this.crossSectionDesignLine, -this.beginWidth.getSI() / 2, -this.endWidth.getSI() / 2)
                         .getCoordinates();
+        //printCoordinates("Right boundary:  ", rightBoundary);
         Coordinate[] leftBoundary =
                 offsetLine(this.crossSectionDesignLine, this.beginWidth.getSI() / 2, this.endWidth.getSI() / 2)
                         .getCoordinates();
-        int size = rightBoundary.length + leftBoundary.length;
+        //printCoordinates("Left boundary:   ", leftBoundary);
+        int size = rightBoundary.length + leftBoundary.length + 1;
         Coordinate[] result = new Coordinate[size];
         int resultIndex = 0;
         for (int index = 0; index < rightBoundary.length; index++)
@@ -369,6 +425,8 @@ public abstract class CrossSectionElement implements LocatableInterface
         {
             result[resultIndex++] = leftBoundary[index];
         }
+        result[resultIndex] = rightBoundary[0]; // close the contour
+        //printCoordinates("Lane contour:    ", result);
         return factory.createLineString(result);
         /*
          * LineString line = this.parentLink.getGeometry().getLineString(); double width = this.beginWidth.doubleValue()
@@ -466,11 +524,43 @@ public abstract class CrossSectionElement implements LocatableInterface
     public static void printCoordinates(final String prefix, final Geometry geometry, final int fromIndex,
             final int toIndex)
     {
+        printCoordinates(prefix, geometry.getCoordinates(), fromIndex, toIndex);
+    }
+
+    /**
+     * Print the coordinates on the console.
+     * @param prefix String; text to put before the output
+     * @param geometry Geometry; the coordinates to print
+     */
+    public static void printCoordinates(final String prefix, final Geometry geometry)
+    {
+        printCoordinates(prefix, geometry.getCoordinates());
+    }
+
+    /**
+     * Print the coordinates on the console.
+     * @param prefix String; text to put before the output
+     * @param coordinates Coordinate[]; the coordinates to print
+     */
+    public static void printCoordinates(final String prefix, final Coordinate[] coordinates)
+    {
+        printCoordinates(prefix, coordinates, 0, coordinates.length);
+    }
+
+    /**
+     * Print the coordinates on the console.
+     * @param prefix String; text to put before the output
+     * @param coordinates Coordinate[]; the coordinates to print
+     * @param fromIndex int; index of the first coordinate to print
+     * @param toIndex int; one higher than the index of the last coordinate to print
+     */
+    public static void printCoordinates(final String prefix, final Coordinate[] coordinates, final int fromIndex,
+            final int toIndex)
+    {
         System.out.print(prefix);
         for (int i = fromIndex; i < toIndex; i++)
         {
-            System.out.print(String.format(Locale.US, " %8.3f,%8.3f   ", geometry.getCoordinates()[i].x,
-                    geometry.getCoordinates()[i].y));
+            System.out.print(String.format(Locale.US, " %8.3f,%8.3f   ", coordinates[i].x, coordinates[i].y));
         }
         System.out.println("");
     }
