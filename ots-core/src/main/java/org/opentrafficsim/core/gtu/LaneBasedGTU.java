@@ -71,7 +71,6 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     DoubleScalar.Abs<TimeUnit> getLastEvaluationTime();
 
     /** @return DoubleScalarAbs&lt;TimeUnit&gt;; the time of next evaluation. */
-    @Deprecated
     DoubleScalar.Abs<TimeUnit> getNextEvaluationTime();
 
     /**
@@ -305,19 +304,21 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * Determine which GTUs are parallel with us on another lane, based on fractional positions. <br>
      * Note: When the GTU that calls the method is also registered on the given lane, it is excluded from the return set.
      * @param lane the lane to look for parallel (partial or full overlapping) GTUs.
+     * @param when the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on the other lane (partial overlap counts as parallel), based on fractional
      *         positions, or an empty set when no GTUs were found.
      * @throws RemoteException when simulator time cannot be retrieved.
      * @throws NetworkException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their
      *             lanes, or when the given lane is not parallel to one of the lanes where we are registered.
      */
-    Set<LaneBasedGTU<?>> parallel(Lane lane) throws RemoteException, NetworkException;
+    Set<LaneBasedGTU<?>> parallel(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException;
 
     /**
      * Determine which GTUs are parallel with us in a certain lateral direction, based on fractional positions. <br>
      * Note 1: This method will look to the adjacent lanes of all lanes where the vehicle has been registered.<br>
      * Note 2: When the GTU that calls the method is also registered on the given lane, it is excluded from the return set.
-     * @param direction the direction of the adjacent lane(s) to look for parallel (partial or full overlapping) GTUs.
+     * @param lateralDirection the direction of the adjacent lane(s) to look for parallel (partial or full overlapping) GTUs.
+     * @param when the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on other lane(s) in the given direction (partial overlap counts as parallel),
      *         based on fractional positions, or an empty set when no GTUs were found.
      * @throws RemoteException when simulator time cannot be retrieved.
@@ -325,5 +326,6 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      *             lanes, or when there are no lanes parallel to one of the lanes where we are registered in the given
      *             direction.
      */
-    Set<LaneBasedGTU<?>> parallel(LateralDirectionality direction) throws RemoteException, NetworkException;
+    Set<LaneBasedGTU<?>> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
+        throws RemoteException, NetworkException;
 }

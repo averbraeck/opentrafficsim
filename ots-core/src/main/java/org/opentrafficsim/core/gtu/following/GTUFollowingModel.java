@@ -77,6 +77,12 @@ public interface GTUFollowingModel
     DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration();
 
     /**
+     * Return the step size of this GTU following model.
+     * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the step size of the GTU following model
+     */
+    DoubleScalar.Rel<TimeUnit> getStepSize();
+
+    /**
      * Return the name of this GTU following model.
      * @return String; just the name of the GTU following model
      */
