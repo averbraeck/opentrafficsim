@@ -96,7 +96,7 @@ public class Lane extends CrossSectionElement
      * @param direction LateralDirectionality; either LEFT or RIGHT
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
      */
-    private Set<Lane> neighbors(LateralDirectionality direction)
+    private Set<Lane> neighbors(final LateralDirectionality direction)
     {
         return direction == LateralDirectionality.LEFT ? this.leftNeighbors : this.rightNeighbors;
     }
@@ -106,7 +106,7 @@ public class Lane extends CrossSectionElement
      * @param adjacentLane Lane; the adjacent Lane
      * @param direction LateralDirectionality; the direction in which the Lane is adjacent to this Lane
      */
-    public final void addAccessibleAdjacentLane(Lane adjacentLane, LateralDirectionality direction)
+    public final void addAccessibleAdjacentLane(final Lane adjacentLane, final LateralDirectionality direction)
     {
         neighbors(direction).add(adjacentLane);
     }
@@ -118,7 +118,7 @@ public class Lane extends CrossSectionElement
      * @param direction LateralDirectionality; the direction in which the Lane was adjacent to this Lane
      * @throws NetworkException when the adjacentLane was not registered as adjacent in the indicated direction
      */
-    public final void removeAccessibleAdjacentLane(Lane adjacentLane, LateralDirectionality direction)
+    public final void removeAccessibleAdjacentLane(final Lane adjacentLane, final LateralDirectionality direction)
         throws NetworkException
     {
         Set<Lane> neighbors = neighbors(direction);

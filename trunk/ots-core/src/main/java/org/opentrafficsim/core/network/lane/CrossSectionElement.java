@@ -99,7 +99,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param list Coordinate[]; the array
      * @return int index of the Coordinate in the list that is closest to the reference
      */
-    private int findClosest(Coordinate reference, Coordinate[] list)
+    private int findClosest(final Coordinate reference, final Coordinate[] list)
     {
         double closest = Double.MAX_VALUE;
         int result = -1;
@@ -124,7 +124,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param offset double; distance of the result from the reference point
      * @return Coordinate
      */
-    private Coordinate offsetPoint(Coordinate referencePoint, Coordinate directionPoint, double offset)
+    private Coordinate offsetPoint(final Coordinate referencePoint, final Coordinate directionPoint, final double offset)
     {
         double angle = Math.atan2(directionPoint.y - referencePoint.y, directionPoint.x - referencePoint.x);
         angle += Math.PI / 2;
@@ -141,7 +141,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param tolerance double; the tolerance (in Radians)
      * @return boolean; true if the angles are approximately equal; false otherwise
      */
-    private boolean anglesApproximatelyEqual(double angle1, double angle2, double tolerance)
+    private boolean anglesApproximatelyEqual(final double angle1, final double angle2, final double tolerance)
     {
         double deltaAngle = angle2 - angle1;
         if (Math.abs(deltaAngle) <= tolerance)
@@ -163,7 +163,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param other Coordinate; the other point
      * @return double; the angle of the direction from reference to other in Radians
      */
-    double angle(Coordinate reference, Coordinate other)
+    double angle(final Coordinate reference, final Coordinate other)
     {
         return Math.atan2(other.y - reference.y, other.x - reference.x);
     }
@@ -175,18 +175,23 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return Geometry; the Geometry of a line that has the specified offset from the reference line
      * @throws NetworkException on failure
      */
-    private Geometry offsetGeometry(Geometry referenceLine, double offset) throws NetworkException
+    private Geometry offsetGeometry(final Geometry referenceLine, final double offset) throws NetworkException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
-        // printCoordinates("reference", referenceCoordinates);
+        printCoordinates("reference", referenceCoordinates);
+        double bufferOffset = Math.abs(offset);
+        if (0 == bufferOffset)
+        {
+            // The buffer operation does not work for offset 0.000
+            bufferOffset = 0.0001;
+        }
         Coordinate[] bufferCoordinates =
-                referenceLine.buffer(Math.abs(offset), this.quadrantSegments, BufferParameters.CAP_FLAT)
-                        .getCoordinates();
-        // printCoordinates("buffer           ", bufferCoordinates);
+                referenceLine.buffer(bufferOffset, this.quadrantSegments, BufferParameters.CAP_FLAT).getCoordinates();
+        printCoordinates("buffer           ", bufferCoordinates);
         boolean ringDetected = bufferCoordinates[0].distance(bufferCoordinates[bufferCoordinates.length - 1]) > 0;
         if (!ringDetected)
         {
-            //System.out.println("Removing last Coordinate from buffer");
+            // System.out.println("Removing last Coordinate from buffer");
             Coordinate[] tempBuffer = new Coordinate[bufferCoordinates.length - 1];
             for (int i = 0; i < tempBuffer.length; i++)
             {
@@ -196,7 +201,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         }
         else
         {
-            //System.out.println("NOT removing last coordinate from bufferCoordinates");
+            // System.out.println("NOT removing last coordinate from bufferCoordinates");
         }
         // printCoordinates("buffer           ", bufferCoordinates);
         Coordinate startCoordinate = offsetPoint(referenceCoordinates[0], referenceCoordinates[1], offset);
@@ -205,10 +210,10 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate endCoordinate =
                 offsetPoint(referenceCoordinates[referenceLast], referenceCoordinates[referenceLast - 1], -offset);
         int endIndex = findClosest(endCoordinate, bufferCoordinates);
-        //System.out.println(String.format("startIndex: %d, (%8.3f,%8.3f) endIndex: %d (%8.3f, %8.3f), distance %f",
-        //        startIndex, bufferCoordinates[startIndex].x, bufferCoordinates[startIndex].y, endIndex,
-        //        bufferCoordinates[endIndex].x, bufferCoordinates[endIndex].y,
-        //        bufferCoordinates[startIndex].distance(bufferCoordinates[endIndex])));
+        // System.out.println(String.format("startIndex: %d, (%8.3f,%8.3f) endIndex: %d (%8.3f, %8.3f), distance %f",
+        // startIndex, bufferCoordinates[startIndex].x, bufferCoordinates[startIndex].y, endIndex,
+        // bufferCoordinates[endIndex].x, bufferCoordinates[endIndex].y,
+        // bufferCoordinates[startIndex].distance(bufferCoordinates[endIndex])));
         double expectedAngle = angle(referenceCoordinates[0], referenceCoordinates[1]);
         final double tolerance = Math.PI / 6; // 30 degrees
         final double tooClose = 0.001;
@@ -216,17 +221,17 @@ public abstract class CrossSectionElement implements LocatableInterface
         {
             // Trouble; probably a circular referenceLine.
             // This generates two sets of coordinates that are stored consecutively as a single polygon
-            //System.out.println("Trouble");
-            //printCoordinates("bufferCoordinates", bufferCoordinates);
+            // System.out.println("Trouble");
+            // printCoordinates("bufferCoordinates", bufferCoordinates);
             for (int i = 0; i < bufferCoordinates.length; i++)
             {
                 if (startCoordinate.distance(bufferCoordinates[i]) < tooClose)
                 {
-                    //System.out.println(String.format("coordinate %d matches startcoordinate", i));
+                    // System.out.println(String.format("coordinate %d matches startcoordinate", i));
                 }
                 if (endCoordinate.distance(bufferCoordinates[i]) < tooClose)
                 {
-                    //System.out.println(String.format("coordinate %d matches endcoordinate", i));
+                    // System.out.println(String.format("coordinate %d matches endcoordinate", i));
                 }
             }
             // Separate the bufferCoordinates in an inner an outer ring
@@ -241,8 +246,8 @@ public abstract class CrossSectionElement implements LocatableInterface
                     break;
                 }
             }
-            //System.out.println(String.format("boundary %d: %8.3f,%8.3f", boundary, bufferCoordinates[boundary].x,
-            //        bufferCoordinates[boundary].y));
+            // System.out.println(String.format("boundary %d: %8.3f,%8.3f", boundary, bufferCoordinates[boundary].x,
+            // bufferCoordinates[boundary].y));
             if (boundary < 0 || bufferCoordinates.length - boundary < 3)
             {
                 throw new NetworkException("Cannot figure out offsetGeometry (ring1 took too many coordinates)");
@@ -266,7 +271,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                         double angle = angle(c, bufferCoordinates[(i + 1) % bufferCoordinates.length]);
                         if (anglesApproximatelyEqual(expectedAngle, angle, tolerance))
                         {
-                            //System.out.println("Updating startIndex to " + i + " (forward match)");
+                            // System.out.println("Updating startIndex to " + i + " (forward match)");
                             startIndex = i;
                         }
                         angle =
@@ -274,7 +279,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                                         % bufferCoordinates.length]);
                         if (anglesApproximatelyEqual(expectedAngle, angle, tolerance))
                         {
-                            //System.out.println("Updating startIndex to " + i + " (backward match)");
+                            // System.out.println("Updating startIndex to " + i + " (backward match)");
                             startIndex = i;
                         }
                     }
@@ -287,7 +292,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                         double angle = angle(bufferCoordinates[(i + 1) % bufferCoordinates.length], c);
                         if (anglesApproximatelyEqual(endExpectedAngle, angle, tolerance))
                         {
-                            //System.out.println("Updating endIndex to " + i + " (backward match)");
+                            // System.out.println("Updating endIndex to " + i + " (backward match)");
                             endIndex = i;
                         }
                         angle =
@@ -295,7 +300,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                                         c);
                         if (anglesApproximatelyEqual(endExpectedAngle, angle, tolerance))
                         {
-                            //System.out.println("Updating endIndex to " + i + " (forward match)");
+                            // System.out.println("Updating endIndex to " + i + " (forward match)");
                             endIndex = i;
                         }
                     }
@@ -335,8 +340,8 @@ public abstract class CrossSectionElement implements LocatableInterface
                 bufferCoordinates = newSet;
                 // The values of startIndex and endIndex are correct
             }
-            //printCoordinates("selection ", bufferCoordinates);
-            //System.out.println("startIndex " + startIndex + ", endIndex " + endIndex);
+            // printCoordinates("selection ", bufferCoordinates);
+            // System.out.println("startIndex " + startIndex + ", endIndex " + endIndex);
         }
         // Figure out which part of the buffer we need and in which direction.
         // The initial direction should be approximately parallel to the initial direction of the reference line
@@ -435,7 +440,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws NetworkException when this method fails to create the offset line
      */
-    private Geometry offsetLine(Geometry referenceLine, double offsetAtStart, double offsetAtEnd)
+    private Geometry offsetLine(final Geometry referenceLine, final double offsetAtStart, final double offsetAtEnd)
             throws NetworkException
     {
         // printCoordinates("referenceLine    ", referenceLine);
@@ -514,12 +519,15 @@ public abstract class CrossSectionElement implements LocatableInterface
 
         GeometryFactory factory = new GeometryFactory();
         Coordinate[] referenceCoordinates = this.parentLink.getGeometry().getLineString().getCoordinates();
+        if (referenceCoordinates.length < 2)
+        {
+            throw new NetworkException("Parent Link has bad Geometry");
+        }
         // printCoordinates("Link design line:", referenceCoordinates);
         Geometry referenceGeometry = factory.createLineString(referenceCoordinates);
-        Geometry resultLine;
-        resultLine =
+        Geometry resultLine =
                 offsetLine(referenceGeometry, this.designLineOffsetAtBegin.getSI(), this.designLineOffsetAtEnd.getSI());
-        //printCoordinates("Lane design line:", resultLine);
+        // printCoordinates("Lane design line:", resultLine);
         this.crossSectionDesignLine = factory.createLineString(resultLine.getCoordinates());
         Coordinate[] rightBoundary =
                 offsetLine(this.crossSectionDesignLine, -this.beginWidth.getSI() / 2, -this.endWidth.getSI() / 2)
@@ -567,7 +575,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified longitudinal
      *         position.
      */
-    public final DoubleScalar<LengthUnit> getWidth(DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final DoubleScalar<LengthUnit> getWidth(final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         return getWidth(longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -578,7 +586,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified fractional
      *         longitudinal position.
      */
-    public final DoubleScalar<LengthUnit> getWidth(double fractionalPosition)
+    public final DoubleScalar<LengthUnit> getWidth(final double fractionalPosition)
     {
         return DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalPosition);
     }
