@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Point;
 public class BoundedNode extends Node
 {
     /** */
-    private static final long serialVersionUID = 20140920L;
+    private static final long serialrsionUID = 20140920L;
 
     /** */
     private Area area;

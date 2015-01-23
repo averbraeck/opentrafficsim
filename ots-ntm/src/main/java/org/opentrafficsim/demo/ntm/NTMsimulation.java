@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -181,8 +182,9 @@ public class NTMsimulation
 
         if (steps == 1)
         {
-            for (BoundedNode origin : model.getAreaGraph().vertexSet())
+            for (Node node : model.getAreaGraph().vertexSet())
             {
+                BoundedNode origin = (BoundedNode) node;
                 // **** RELEVANT: set SUPPLY of all areas at maximum in first step
                 if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
                 {
@@ -218,8 +220,9 @@ public class NTMsimulation
         }
 
         // Loop through all areas to detect the trips to the destination area
-        for (BoundedNode origin : model.getAreaGraph().vertexSet())
+        for (Node node : model.getAreaGraph().vertexSet())
         {
+            BoundedNode origin = (BoundedNode) node;
             try
             {
                 // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
@@ -301,7 +304,6 @@ public class NTMsimulation
                                     // used for NTM computations
                                     // **** RELEVANT
                                     origin.getCellBehaviour().addAccumulatedCars(startingTrips);
-
                                 }
                             }
                         }
@@ -341,6 +343,10 @@ public class NTMsimulation
                             // TODO implement roadLength and length simulation step !!!!!!!!!!!!!!!!!!!!!!!!
 
                             // **** RELEVANT: set SUPPLY
+                            if (origin.getId().equals("C1407"))
+                            {
+                                System.out.println("Set supply");
+                            }
                             tripByHour =
                                     cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
                                             cellBehaviourNTM.getMaxCapacity(), cellBehaviourNTM.getParametersNTM());
@@ -370,6 +376,42 @@ public class NTMsimulation
                     }
 
                     // NEXT STEP!!!!
+                    // Are there any capacity restrictions from area to area??
+                    if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                    {
+                        CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) origin.getCellBehaviour();
+                        HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand =
+                                new HashMap<BoundedNode, Abs<FrequencyUnit>>();
+                        cellBehaviour.setBorderDemand(borderDemand);
+                        for (TripInfoByDestination tripInfoByDestination : origin.getCellBehaviour()
+                                .getTripInfoByNodeMap().values())
+                        {
+                            BoundedNode neighbour = (BoundedNode) tripInfoByDestination.getNeighbour();
+                            // Compute the share of the accumulated trips to a certain destination as part of the
+                            // total accumulation
+                            if (neighbour != null)
+                            {
+                                if (tripInfoByDestination.getAccumulatedCarsToDestination() >= 0)
+                                {
+                                    double demandToNeighbour =
+                                            (tripInfoByDestination.getAccumulatedCarsToDestination() / origin
+                                                    .getCellBehaviour().getAccumulatedCars())
+                                                    * origin.getCellBehaviour().getDemand();
+                                    double demandToNeighbourPerHour =
+                                            demandToNeighbour * 3600
+                                                    / model.getSettingsNTM().getTimeStepDurationNTM().getSI();
+                                    Abs<FrequencyUnit> demand =
+                                            new Abs<FrequencyUnit>(demandToNeighbourPerHour, FrequencyUnit.PER_HOUR);
+                                    if (demand.getSI() > 0)
+                                    {
+                                        cellBehaviour.addBorderDemand(neighbour, demand);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // NEXT STEP!!!!
                     // after determining new demand, we compute the demand for traffic to other nodes or areas by
                     // looping through all nodes on a path from every origin
                     for (TripInfoByDestination tripInfoByDestination : origin.getCellBehaviour().getTripInfoByNodeMap()
@@ -394,10 +436,22 @@ public class NTMsimulation
                                 double demandToNeighbour = 0;
                                 if (origin.getCellBehaviour().getAccumulatedCars() > 0)
                                 {
-                                    demandToNeighbour =
-                                            (tripInfoByDestination.getAccumulatedCarsToDestination() / origin
-                                                    .getCellBehaviour().getAccumulatedCars())
-                                                    * origin.getCellBehaviour().getDemand();
+                                    if (tripInfoByDestination.getAccumulatedCarsToDestination() > 0)
+                                    {
+                                        demandToNeighbour =
+                                                (tripInfoByDestination.getAccumulatedCarsToDestination() / origin
+                                                        .getCellBehaviour().getAccumulatedCars())
+                                                        * origin.getCellBehaviour().getDemand();
+                                        if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                                        {
+                                            CellBehaviourNTM cellBehaviour =
+                                                    (CellBehaviourNTM) origin.getCellBehaviour();
+                                            double ratio =
+                                                    cellBehaviour.getBorderCapacity().get(neighbour).getSI()
+                                                            / cellBehaviour.getBorderDemand().get(neighbour).getSI();
+                                            demandToNeighbour = Math.min(ratio, 1) * demandToNeighbour;
+                                        }
+                                    }
                                 }
 
                                 // **** RELEVANT
@@ -601,8 +655,9 @@ public class NTMsimulation
         // STEP 3: FLUXES!!!!!
         // Monitor whether the demand of traffic from outside areas is able to enter a certain Area
         // Perhaps SUPPLY poses an upper bound on the Demand!
-        for (BoundedNode origin : model.getAreaGraph().vertexSet())
+        for (Node node : model.getAreaGraph().vertexSet())
         {
+            BoundedNode origin = (BoundedNode) node;
             try
             {
                 if (origin.getCellBehaviour().getAccumulatedCars() < 0.0)
@@ -642,7 +697,8 @@ public class NTMsimulation
                                                         .getCellBehaviour().getSupply());
 
                                         double flowToNeighbour = 0;
-                                        if (neighbour.getCellBehaviour().getDemandToEnter() > 0)
+                                        if (neighbour.getCellBehaviour().getDemandToEnter() > 0
+                                                && demandToNeighbour > 0)
                                         {
                                             flowToNeighbour =
                                                     (demandToNeighbour / neighbour.getCellBehaviour()
@@ -651,7 +707,7 @@ public class NTMsimulation
                                         // Compute the final flow based on the share of Trips
                                         // to a certain destination and this maximum supply of the Cell.
                                         // set the final flow to the neighbour
-                                        
+
                                         // **** RELEVANT
                                         if (neighbour != destination)
                                         {

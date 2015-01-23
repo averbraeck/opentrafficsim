@@ -392,13 +392,13 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, nodeB, speed, capacity, TrafficBehaviourType.ROAD,
+                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity, TrafficBehaviourType.ROAD,
                                         linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, nodeB, nodeA, speed, capacity, TrafficBehaviourType.ROAD,
+                                new Link(null, nrBA, length, nodeB, nodeA, speed, null, capacity, TrafficBehaviourType.ROAD,
                                         linkData, hierarchy);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
@@ -452,13 +452,13 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, centroidA, nodeB, speed, capacity, TrafficBehaviourType.NTM,
+                                new Link(null, nr, length, centroidA, nodeB, speed, null, capacity, TrafficBehaviourType.NTM,
                                         linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, nodeB, centroidA, speed, capacity,
+                                new Link(null, nrBA, length, nodeB, centroidA, speed, null, capacity,
                                         TrafficBehaviourType.NTM, linkData, hierarchy);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
@@ -483,13 +483,13 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, centroidB, speed, capacity, TrafficBehaviourType.NTM,
+                                new Link(null, nr, length, nodeA, centroidB, speed, null, capacity, TrafficBehaviourType.NTM,
                                         linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, centroidB, nodeA, speed, capacity,
+                                new Link(null, nrBA, length, centroidB, nodeA, speed, null, capacity,
                                         TrafficBehaviourType.NTM, linkData, hierarchy);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
@@ -513,7 +513,7 @@ public class ShapeFileReader
                     {
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         Link link =
-                                new Link(null, nr, length, nodeA, nodeB, speed, capacity, TrafficBehaviourType.ROAD,
+                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity, TrafficBehaviourType.ROAD,
                                         linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);

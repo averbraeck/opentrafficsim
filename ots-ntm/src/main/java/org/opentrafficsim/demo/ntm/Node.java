@@ -1,6 +1,8 @@
 package org.opentrafficsim.demo.ntm;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -56,8 +58,7 @@ public class Node extends AbstractNode<String, Point>
 
     /** */
     private TrafficBehaviourType behaviourType;
-
-    /** NODEID class java.lang.Long 18. */
+    /** */
     //private final long id;
     
     /**
@@ -70,6 +71,7 @@ public class Node extends AbstractNode<String, Point>
         super(nr, point);
         // long index = indexNumber++;
         this.behaviourType = behaviourType;
+
     }
 
     /**
@@ -121,7 +123,8 @@ public class Node extends AbstractNode<String, Point>
     @Override
     public String toString()
     {
-        return "Node [centroid=" + getPoint() + "]";
+        //return "Node [centroid=" + getPoint() + "]";
+        return getId();
     }
 
     /** {@inheritDoc} */

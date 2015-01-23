@@ -49,10 +49,10 @@ public class LinkCellTransmission extends Link
      */
 
     public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length,
-            Node startNode, Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Abs<FrequencyUnit> capacity,
+            Node startNode, Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time, DoubleScalar.Abs<FrequencyUnit> capacity,
             TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells, int hierarchy)
     {
-        super(geometry, nr, length, startNode, endNode, speed, capacity, behaviourType, linkData, hierarchy);
+        super(geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData, hierarchy);
         this.cells = cells;
     }
 
@@ -63,7 +63,8 @@ public class LinkCellTransmission extends Link
     public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
     {
         super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), link
-                .getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
+                .getSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link
+                .getHierarchy());
         this.cells = cells;
     }
 
@@ -76,8 +77,8 @@ public class LinkCellTransmission extends Link
     public LinkCellTransmission(final Link link, BoundedNode startNode, BoundedNode endNode,
             final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getSpeed(), link
-                .getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
+        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getSpeed(), link.getTime(),
+                link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
         this.cells = cells;
     }
 
@@ -108,8 +109,8 @@ public class LinkCellTransmission extends Link
         // the length of the cell depends on the speed and simulation time step
         DoubleScalar.Abs<SpeedUnit> speed = link.getSpeed();
         Rel<LengthUnit> cellLength =
-                new DoubleScalar.Rel<LengthUnit>(speed.getInUnit(SpeedUnit.KM_PER_HOUR) * timeStepDurationCellTransmission.getInUnit(TimeUnit.HOUR),
-                        LengthUnit.KILOMETER);
+                new DoubleScalar.Rel<LengthUnit>(speed.getInUnit(SpeedUnit.KM_PER_HOUR)
+                        * timeStepDurationCellTransmission.getInUnit(TimeUnit.HOUR), LengthUnit.KILOMETER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.rint(link.getLength().getSI() / cellLength.getSI());
         DoubleScalar.Abs<FrequencyUnit> capPerLane =
@@ -119,7 +120,8 @@ public class LinkCellTransmission extends Link
         for (int i = 0; i < numberOfCells; i++)
         {
             FlowCell cell =
-                    new FlowCell(cellLength, link.getCapacity(), speed, link.getNumberOfLanes(), TrafficBehaviourType.FLOW);
+                    new FlowCell(cellLength, link.getCapacity(), speed, link.getNumberOfLanes(),
+                            TrafficBehaviourType.FLOW);
             flowCells.add(cell);
         }
         return flowCells;

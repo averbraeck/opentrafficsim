@@ -21,6 +21,7 @@ import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
@@ -55,10 +56,13 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Link extends AbstractLink<String, Node> 
+public class Link extends AbstractLink<String, Node>
 {
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Abs<SpeedUnit> speed;
+
+    /** SPEEDAB class java.lang.Double 120.0. */
+    private DoubleScalar.Rel<TimeUnit> time;
 
     /** the lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
@@ -67,11 +71,15 @@ public class Link extends AbstractLink<String, Node>
     private LinkData linkData;
 
     /** */
+    private Abs<FrequencyUnit> corridorCapacity;
+
+    /** */
     private int numberOfLanes;
-    
+
     /** traffic behaviour. */
     private TrafficBehaviourType behaviourType;
-    
+
+
     /**
      * @param geometry
      * @param nr
@@ -81,20 +89,23 @@ public class Link extends AbstractLink<String, Node>
      * @param startNode
      * @param endNode
      * @param speed
+     * @param time
      * @param capacity
      * @param behaviourType
-     * @param linkData 
-     * @param hierarchy 
+     * @param linkData
+     * @param hierarchy
      */
 
-    public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
-            final Node endNode, DoubleScalar.Abs<SpeedUnit> speed, final DoubleScalar.Abs<FrequencyUnit> capacity,
+    public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length,
+            final Node startNode, final Node endNode, DoubleScalar.Abs<SpeedUnit> speed,
+            DoubleScalar.Rel<TimeUnit> time, final DoubleScalar.Abs<FrequencyUnit> capacity,
             final TrafficBehaviourType behaviourType, LinkData linkData, int hierarchy)
     {
 
         super(nr, startNode, endNode, length, capacity, hierarchy);
         setGeometry(geometry);
         this.speed = speed;
+        this.time = time;
         this.behaviourType = behaviourType;
         this.numberOfLanes = estimateLanes(capacity, speed);
         this.linkData = linkData;
@@ -129,86 +140,89 @@ public class Link extends AbstractLink<String, Node>
      */
     private int estimateLanes(Abs<FrequencyUnit> capacity, Abs<SpeedUnit> speed)
     {
-        int lanes = 1;
-        if (speed.getInUnit(SpeedUnit.KM_PER_HOUR) >= 80)
+        int lanes = 0;
+        if (capacity != null)
         {
-            if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3000)
+            if (speed.getInUnit(SpeedUnit.KM_PER_HOUR) >= 80)
             {
-               lanes = 1; 
+                if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3000)
+                {
+                    lanes = 1;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5000)
+                {
+                    lanes = 2;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 7000)
+                {
+                    lanes = 3;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 9000)
+                {
+                    lanes = 4;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 10500)
+                {
+                    lanes = 5;
+                }
+                else
+                {
+                    lanes = 6;
+                }
             }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5000)
+            else if (speed.getInUnit(SpeedUnit.KM_PER_HOUR) >= 40)
             {
-               lanes = 2; 
+                if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2000)
+                {
+                    lanes = 1;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3000)
+                {
+                    lanes = 2;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4000)
+                {
+                    lanes = 3;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5000)
+                {
+                    lanes = 4;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
+                {
+                    lanes = 5;
+                }
+                else
+                {
+                    lanes = 6;
+                }
             }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 7000)
+            else
             {
-               lanes = 3; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 9000)
-            {
-               lanes = 4; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 10500)
-            {
-               lanes = 5; 
-            }
-            else 
-            {
-               lanes = 6; 
-            }
-        }
-        else if (speed.getInUnit(SpeedUnit.KM_PER_HOUR) >= 40)
-        {
-            if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2000)
-            {
-               lanes = 1; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3000)
-            {
-               lanes = 2; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4000)
-            {
-               lanes = 3; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5000)
-            {
-               lanes = 4; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
-            {
-               lanes = 5; 
-            }
-            else 
-            {
-               lanes = 6; 
-            }
-        }
-        else 
-        {
-            if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 1800)
-            {
-               lanes = 1; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2400)
-            {
-               lanes = 2; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3600)
-            {
-               lanes = 3; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4800)
-            {
-               lanes = 4; 
-            }
-            else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
-            {
-               lanes = 5; 
-            }
-            else 
-            {
-               lanes = 6; 
+                if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 1800)
+                {
+                    lanes = 1;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2400)
+                {
+                    lanes = 2;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3600)
+                {
+                    lanes = 3;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4800)
+                {
+                    lanes = 4;
+                }
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
+                {
+                    lanes = 5;
+                }
+                else
+                {
+                    lanes = 6;
+                }
             }
         }
         return lanes;
@@ -219,7 +233,8 @@ public class Link extends AbstractLink<String, Node>
      */
     public Link(final Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link.getHierarchy());
+        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link
+                .getHierarchy());
         setGeometry(link.getGeometry());
         this.speed = link.speed;
         this.numberOfLanes = link.getNumberOfLanes();
@@ -251,7 +266,8 @@ public class Link extends AbstractLink<String, Node>
      * @return
      */
     public static Link createLink(Node startNode, Node endNode, Abs<FrequencyUnit> capacity,
-            DoubleScalar.Abs<SpeedUnit> speed, TrafficBehaviourType trafficBehaviourType,  int hierarchy)
+            DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
+            TrafficBehaviourType trafficBehaviourType, int hierarchy)
 
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
@@ -261,9 +277,10 @@ public class Link extends AbstractLink<String, Node>
         LineString line = geometryFactory.createLineString(coords);
         DoubleScalar.Rel<LengthUnit> length =
                 new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
-
         String nr = startNode.getId() + " - " + endNode.getId();
-        Link newLink = new Link(null, nr, length, startNode, endNode, speed, capacity, trafficBehaviourType, null, hierarchy);
+        Link newLink =
+                new Link(null, nr, length, startNode, endNode, speed, null, capacity, trafficBehaviourType, null,
+                        hierarchy);
         try
         {
             LinearGeometry geometry = new LinearGeometry(newLink, line, null);
@@ -509,8 +526,8 @@ public class Link extends AbstractLink<String, Node>
                 new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
 
         mergedLink =
-                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(), up.getCapacity(),
-                        up.getBehaviourType(), up.getLinkData(), up.getHierarchy());
+                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(), up.getTime(),
+                        up.getCapacity(), up.getBehaviourType(), up.getLinkData(), up.getHierarchy());
 
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();
@@ -592,6 +609,50 @@ public class Link extends AbstractLink<String, Node>
         return this.speed;
     }
 
+
+    /**
+     * @return corridorCapacity.
+     */
+    public Abs<FrequencyUnit> getCorridorCapacity()
+    {
+        return this.corridorCapacity;
+    }
+
+    /**
+     * @param corridorCapacity set corridorCapacity.
+     */
+    public void setCorridorCapacity(Abs<FrequencyUnit> corridorCapacity)
+    {
+        this.corridorCapacity = corridorCapacity;
+    }
+    
+    /**
+     * @param roadCapacity 
+     * @param linkData set linkData.
+     */
+    public void addCorridorCapacity(Abs<FrequencyUnit>roadCapacity)
+    {
+        double cap = roadCapacity.getInUnit(FrequencyUnit.PER_HOUR);
+        Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+        this.corridorCapacity = DoubleScalar.plus(this.getCorridorCapacity(), addCap).immutable();
+    }
+    
+    /**
+     * @return time.
+     */
+    public Rel<TimeUnit> getTime()
+    {
+        return this.time;
+    }
+
+    /**
+     * @param time set time.
+     */
+    public void setTime(Rel<TimeUnit> time)
+    {
+        this.time = time;
+    }
+
     /**
      * @return behaviourType.
      */
@@ -607,6 +668,7 @@ public class Link extends AbstractLink<String, Node>
     {
         this.behaviourType = behaviourType;
     }
+
 
     /** {@inheritDoc} */
     @Override
