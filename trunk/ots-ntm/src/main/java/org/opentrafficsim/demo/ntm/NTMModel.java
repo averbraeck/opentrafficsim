@@ -13,11 +13,13 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -104,10 +106,13 @@ public class NTMModel implements OTSModelInterface
     private ArrayList<DepartureTimeProfile> departureTimeProfiles;
 
     /** graph containing the original network. */
-    private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> linkGraph;
+    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> linkGraph;
 
     /** graph containing the simplified network. */
-    private SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> areaGraph;
+    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> areaGraph;
+    
+    /** */
+    private Map<String, Node> nodeAreaGraphMap = new HashMap<>();
 
     /** subset of links from shape file used as flow links. */
     private LinkedHashMap<String, Link> debugLinkList;
@@ -116,7 +121,7 @@ public class NTMModel implements OTSModelInterface
     public boolean DEBUG = true;
 
     /** use the bigger areas (true) or the detailed areas (false). */
-    public boolean COMPRESS_AREAS = false;
+    public boolean COMPRESS_AREAS = true;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -126,9 +131,9 @@ public class NTMModel implements OTSModelInterface
     {
         LinkEdge<Link> l = new LinkEdge<Link>(null);
         this.linkGraph =
-                new SimpleWeightedGraph<BoundedNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+                new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
         this.areaGraph =
-                new SimpleWeightedGraph<BoundedNode, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+                new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
     }
 
     /** {@inheritDoc} */
@@ -227,8 +232,8 @@ public class NTMModel implements OTSModelInterface
             this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
             // merge link segments between junctions:
-            Link.findSequentialLinks(this.flowLinks, this.nodes);
-            Link.findSequentialLinks(this.shpLinks, this.nodes);
+            //Link.findSequentialLinks(this.flowLinks, this.nodes);
+            //Link.findSequentialLinks(this.shpLinks, this.nodes);
 
             // save the selected and created areas to a shape file: at this position the connector areas are saved
             // also!!!
@@ -255,23 +260,26 @@ public class NTMModel implements OTSModelInterface
                 }
                 area.setParametersNTM(paramNTM);
             }
+            
+            HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap = CsvFileReader.readCapResNTM(path + "/capRestraintsAreas.txt", ";", ",");
 
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, COMPRESS_AREAS);
 
             // !!!!!!!!!!!!!!!!!!
             // temporary: make a file with NTM parameters per area
-/*            BufferedWriter parametersNTMOut = null;
+            BufferedWriter parametersNTMOut = null;
             String textOut;
             File fileParametersNTM =
                     new File("D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1/output/parametersNTM.txt");
             parametersNTMOut = NTMsimulation.createWriter(fileParametersNTM);
-            for (BoundedNode node : this.getAreaGraph().vertexSet())
+            for (Node node : this.getAreaGraph().vertexSet())
             {
                 if (node.getBehaviourType() == TrafficBehaviourType.NTM)
                 {
-                    CellBehaviourNTM nodeBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
-                    textOut = node.getArea().getCentroidNr();
+                    BoundedNode bNode = (BoundedNode) node;
+                    CellBehaviourNTM nodeBehaviour = (CellBehaviourNTM) bNode.getCellBehaviour();
+                    textOut = bNode.getArea().getCentroidNr();
                     textOut += ", ";
                     textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(0));
                     textOut += ", ";
@@ -285,10 +293,65 @@ public class NTMModel implements OTSModelInterface
                     parametersNTMOut.write(textOut + " \n");
                 }
             }
-            parametersNTMOut.close();*/
+            parametersNTMOut.close();
             // temporary: end
             // !!!!!!!!!!!!!!!!!!
 
+            BufferedWriter capResFileWriter = null;
+            File filecapRestraintsAreas =
+                    new File("D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1/output/capRestraintsAreas.txt");
+            capResFileWriter = NTMsimulation.createWriter(filecapRestraintsAreas);
+            boolean header = true;
+            double capacity = 1000;
+            for (Node origin : this.getAreaGraph().vertexSet())
+            {
+                if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                {
+                    String textOutCapRes = origin.getId();
+                    String textHeader ="Capacity";
+                    for (Node destination: this.getAreaGraph().vertexSet())
+                    {
+                        if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                        {
+                            if (header)
+                            {
+                                textHeader += ", ";
+                                textHeader += destination.getId();
+                            }
+                            textOutCapRes += ", ";
+                            textOutCapRes += String.format("%.1f", capacity);
+                        }
+                    }
+                    if (header)
+                    {
+                        capResFileWriter.write(textHeader + " \n");
+                        header = false;
+                    }
+                    capResFileWriter.write(textOutCapRes + " \n");                    
+                }
+            }
+            capResFileWriter.close();
+            // temporary: end
+            // !!!!!!!!!!!!!!!!!!
+            
+            // set the border capacity
+            for (Node origin : this.getAreaGraph().vertexSet())
+            {
+                if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                {
+                    HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity = new HashMap<BoundedNode, Abs<FrequencyUnit>>(); 
+                    BoundedNode node = (BoundedNode) origin;
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
+                    Set<LinkEdge<Link>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
+                    for (LinkEdge<Link> link : outGoing)
+                    {
+                        Node neighbourNode = link.getLink().getEndNode();
+                        BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
+                        borderCapacity.put(graphEndNode, borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()));
+                    }
+                    cellBehaviour.setBorderCapacity(borderCapacity);               
+                }
+            }
             // shortest paths creation
             initiateSimulationNTM(this);
 
@@ -365,14 +428,14 @@ public class NTMModel implements OTSModelInterface
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), startNode, link.getEndNode(),
-                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
+                                link.getSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
                                 link.getHierarchy());
             }
             else if (endNode != null)
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), endNode,
-                                link.getSpeed(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
+                                link.getSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
                                 link.getHierarchy());
             }
             else
@@ -448,6 +511,7 @@ public class NTMModel implements OTSModelInterface
         Collection<GraphPath<BoundedNode, LinkEdge<Link>>> sp1 = null;
 
         long initial = System.currentTimeMillis();
+        BoundedNode nodeTest = null;
 
         if (floyd)
         {
@@ -457,11 +521,6 @@ public class NTMModel implements OTSModelInterface
             {
                 BoundedNode origin = path.getStartVertex();
                 BoundedNode destination = path.getEndVertex();
-                for (BoundedNode v : model.areaGraph.vertexSet())
-                {
-                    // String a = v.getId();
-                    // System.out.println("Node " + a);
-                }
                 System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
                 // only generate to "real" destinations
                 if (destination.getBehaviourType() == TrafficBehaviourType.NTM
@@ -493,7 +552,6 @@ public class NTMModel implements OTSModelInterface
                                     model.getDebugLinkList().put(edge.getLink().getId(), link);
                                 }
                             }
-
                         }
                     }
 
@@ -512,15 +570,15 @@ public class NTMModel implements OTSModelInterface
                         endNode = startNode;
                     }
                     // for all node - destination pairs add information on their first neighbour on the shortest path
-
-                    TripInfoByDestination tripInfoByNode = new TripInfoByDestination(endNode, destination, 0, 0);
+                    BoundedNode graphEndNode = (BoundedNode) model.getNodeAreaGraphMap().get(endNode.getId());
+                    TripInfoByDestination tripInfoByNode = new TripInfoByDestination(graphEndNode, destination, 0, 0);
                     origin.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
 
                     if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                     {
                         // for the flow links we create the trip info by Node also for the flow cells
                         LinkCellTransmission ctmLink =
-                                (LinkCellTransmission) this.getAreaGraph().getEdge(origin, endNode).getLink();
+                                (LinkCellTransmission) this.getAreaGraph().getEdge(origin, graphEndNode).getLink();
                         // Loop through the cells and do transmission
                         for (FlowCell cell : ctmLink.getCells())
                         {
@@ -528,12 +586,9 @@ public class NTMModel implements OTSModelInterface
                             cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
                         }
                     }
-                    // for all OD-pairs with trips, the TripInfo is already initiated
-                    // here we add the intermediate trip information at all nodes
                 }
             }
         }
-
         long now = System.currentTimeMillis() - initial;
         System.out.println("Floyd: time duration in millis = " + now);
     }
@@ -793,7 +848,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return areaGraph.
      */
-    public final SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> getAreaGraph()
+    public final SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getAreaGraph()
     {
         return this.areaGraph;
     }
@@ -881,7 +936,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return linkGraph.
      */
-    public final SimpleWeightedGraph<BoundedNode, LinkEdge<Link>> getLinkGraph()
+    public final SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getLinkGraph()
     {
         return this.linkGraph;
     }
@@ -988,6 +1043,22 @@ public class NTMModel implements OTSModelInterface
     public void setDebugLinkList(LinkedHashMap<String, Link> debugLinkList)
     {
         this.debugLinkList = debugLinkList;
+    }
+
+    /**
+     * @return nodeAreaGraphMap.
+     */
+    public Map<String, Node> getNodeAreaGraphMap()
+    {
+        return nodeAreaGraphMap;
+    }
+
+    /**
+     * @param nodeAreaGraphMap set nodeAreaGraphMap.
+     */
+    public void setNodeAreaGraphMap(Map<String, Node> nodeAreaGraphMap)
+    {
+        this.nodeAreaGraphMap = nodeAreaGraphMap;
     }
 
     /*

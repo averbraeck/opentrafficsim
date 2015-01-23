@@ -2,12 +2,14 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
@@ -38,6 +40,12 @@ public class CellBehaviourNTM extends CellBehaviour
     private double speedSupply;
 
     /** */
+    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity;
+
+    /** */
+    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand;
+
+    /** */
     private double speedDemand;
 
     /**
@@ -59,7 +67,9 @@ public class CellBehaviourNTM extends CellBehaviour
         // double maxCap = parametersNTM.getAccCritical().get(0) *
         // parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
         // * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-        double maxCap = parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR) * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        double maxCap =
+                parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
+                        * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         this.maxCapacity = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
         // gedeeld door gemiddelde triplengte in een gebied
         // (lengte zone?)
@@ -214,6 +224,56 @@ public class CellBehaviourNTM extends CellBehaviour
         this.speedDemand = speedDemand;
     }
 
+    /**
+     * @return borderCapacity.
+     */
+    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderCapacity()
+    {
+        return borderCapacity;
+    }
+
+    /**
+     * @param borderCapacity set borderCapacity.
+     */
+    public void setBorderCapacity(HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity)
+    {
+        this.borderCapacity = borderCapacity;
+    }
+
+    /**
+     * @return borderDemand.
+     */
+    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderDemand()
+    {
+        return borderDemand;
+    }
+
+    /**
+     * @param borderDemand set borderDemand.
+     */
+    public void setBorderDemand(HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand)
+    {
+        this.borderDemand = borderDemand;
+    }
+
+    /**
+     * @param demand
+     * @param linkData set linkData.
+     */
+    public void addBorderDemand(BoundedNode node, Abs<FrequencyUnit> demand)
+    {
+        double cap = demand.getInUnit(FrequencyUnit.PER_HOUR);
+        Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+        if (this.getBorderDemand().get(node) == null)
+        {
+            Abs<FrequencyUnit> zeroCap = new Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
+            this.getBorderDemand().put(node, zeroCap);
+        }
+        Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap).immutable();
+        HashMap<BoundedNode, Abs<FrequencyUnit>> newDemand = new HashMap<BoundedNode, Abs<FrequencyUnit>>();
+        newDemand.put(node, total);
+        this.setBorderDemand(newDemand);
+    }
     /*    *//**
      * not used
      * @param accumulatedCars number of cars in Cell
