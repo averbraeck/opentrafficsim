@@ -154,7 +154,7 @@ public class CarTest
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
-        return new Lane(link12, latPos, xxxx, width, width, carLaneType, LongitudinalDirectionality.FORWARD, f200);
+        return new Lane(link12, latPos, latPos, width, width, carLaneType, LongitudinalDirectionality.FORWARD, f200);
     }
 
     /** the helper model. */

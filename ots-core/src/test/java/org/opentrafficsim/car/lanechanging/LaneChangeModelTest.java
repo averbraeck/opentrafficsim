@@ -93,13 +93,14 @@ public class LaneChangeModelTest
      * @return Lane
      * @throws RemoteException on communications failure
      * @throws NamingException on ???
+     * @throws NetworkException 
      */
     private static Lane makeLane(final CrossSectionLink<String, String> link, final LaneType<String> laneType,
         final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width) throws RemoteException,
-        NamingException
+        NamingException, NetworkException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane result = new Lane(link, latPos, xxxx, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
+        Lane result = new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
         return result;
     }
 
@@ -113,9 +114,10 @@ public class LaneChangeModelTest
      * @return Lane[]; array containing the new Lanes
      * @throws NamingException when network error occurs
      * @throws RemoteException when netwprk error occurs
+     * @throws NetworkException 
      */
     public static Lane[] makeMultiLane(final String name, final NodeGeotools.STR from, final NodeGeotools.STR to,
-        final LaneType<String> laneType, final int laneCount) throws RemoteException, NamingException
+        final LaneType<String> laneType, final int laneCount) throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final CrossSectionLink<String, String> link = makeLink(name, from, to, width);
