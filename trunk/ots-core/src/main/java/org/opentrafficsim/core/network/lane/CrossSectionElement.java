@@ -2,7 +2,6 @@ package org.opentrafficsim.core.network.lane;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.media.j3d.Bounds;
@@ -19,12 +18,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
@@ -186,15 +183,20 @@ public abstract class CrossSectionElement implements LocatableInterface
                 referenceLine.buffer(Math.abs(offset), this.quadrantSegments, BufferParameters.CAP_FLAT)
                         .getCoordinates();
         // printCoordinates("buffer           ", bufferCoordinates);
-        if (bufferCoordinates[0].distance(bufferCoordinates[bufferCoordinates.length - 1]) == 0)
+        boolean ringDetected = bufferCoordinates[0].distance(bufferCoordinates[bufferCoordinates.length - 1]) > 0;
+        if (!ringDetected)
         {
-            // System.out.println("Removing last Coordinate from buffer");
+            //System.out.println("Removing last Coordinate from buffer");
             Coordinate[] tempBuffer = new Coordinate[bufferCoordinates.length - 1];
             for (int i = 0; i < tempBuffer.length; i++)
             {
                 tempBuffer[i] = bufferCoordinates[i];
             }
             bufferCoordinates = tempBuffer;
+        }
+        else
+        {
+            //System.out.println("NOT removing last coordinate from bufferCoordinates");
         }
         // printCoordinates("buffer           ", bufferCoordinates);
         Coordinate startCoordinate = offsetPoint(referenceCoordinates[0], referenceCoordinates[1], offset);
@@ -203,34 +205,141 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate endCoordinate =
                 offsetPoint(referenceCoordinates[referenceLast], referenceCoordinates[referenceLast - 1], -offset);
         int endIndex = findClosest(endCoordinate, bufferCoordinates);
-        if (endIndex == startIndex)
+        //System.out.println(String.format("startIndex: %d, (%8.3f,%8.3f) endIndex: %d (%8.3f, %8.3f), distance %f",
+        //        startIndex, bufferCoordinates[startIndex].x, bufferCoordinates[startIndex].y, endIndex,
+        //        bufferCoordinates[endIndex].x, bufferCoordinates[endIndex].y,
+        //        bufferCoordinates[startIndex].distance(bufferCoordinates[endIndex])));
+        double expectedAngle = angle(referenceCoordinates[0], referenceCoordinates[1]);
+        final double tolerance = Math.PI / 6; // 30 degrees
+        final double tooClose = 0.001;
+        if (ringDetected)
         {
             // Trouble; probably a circular referenceLine.
-            // There should be another point very close to the current one
-            double closest = Double.MAX_VALUE;
-            endIndex = -1;
-            for (int index = 0; index < bufferCoordinates.length; index++)
+            // This generates two sets of coordinates that are stored consecutively as a single polygon
+            //System.out.println("Trouble");
+            //printCoordinates("bufferCoordinates", bufferCoordinates);
+            for (int i = 0; i < bufferCoordinates.length; i++)
             {
-                if (index == startIndex)
+                if (startCoordinate.distance(bufferCoordinates[i]) < tooClose)
                 {
-                    continue;
+                    //System.out.println(String.format("coordinate %d matches startcoordinate", i));
                 }
-                double distance = bufferCoordinates[endIndex].distance(bufferCoordinates[startIndex]);
-                if (distance < closest)
+                if (endCoordinate.distance(bufferCoordinates[i]) < tooClose)
                 {
-                    endIndex = index;
-                    closest = distance;
+                    //System.out.println(String.format("coordinate %d matches endcoordinate", i));
                 }
             }
-            if (endIndex < 0)
+            // Separate the bufferCoordinates in an inner an outer ring
+            // Some experimentation has shown (but NOT proved) that there is only one transition between the inner and
+            // outer rings and both rings are closed.
+            int boundary = -1;
+            for (int index = 1; index < bufferCoordinates.length; index++)
             {
-                throw new Error("Cannot find endIndex");
+                if (bufferCoordinates[index].distance(bufferCoordinates[0]) == 0)
+                {
+                    boundary = index + 1;
+                    break;
+                }
             }
+            //System.out.println(String.format("boundary %d: %8.3f,%8.3f", boundary, bufferCoordinates[boundary].x,
+            //        bufferCoordinates[boundary].y));
+            if (boundary < 0 || bufferCoordinates.length - boundary < 3)
+            {
+                throw new NetworkException("Cannot figure out offsetGeometry (ring1 took too many coordinates)");
+            }
+            if (bufferCoordinates[boundary].distance(bufferCoordinates[bufferCoordinates.length - 1]) > 0)
+            {
+                throw new NetworkException("Cannot figure out offsetGeometry (ring2 is not closed)");
+            }
+            // Figure out which ring must be discarded
+            // startIndex may be wrong; search again
+            double endExpectedAngle =
+                    angle(referenceCoordinates[referenceCoordinates.length - 2],
+                            referenceCoordinates[referenceCoordinates.length - 1]);
+            for (int i = 0; i < bufferCoordinates.length; i++)
+            {
+                if (startIndex != i)
+                {
+                    Coordinate c = bufferCoordinates[i];
+                    if (startCoordinate.distance(c) < tooClose)
+                    {
+                        double angle = angle(c, bufferCoordinates[(i + 1) % bufferCoordinates.length]);
+                        if (anglesApproximatelyEqual(expectedAngle, angle, tolerance))
+                        {
+                            //System.out.println("Updating startIndex to " + i + " (forward match)");
+                            startIndex = i;
+                        }
+                        angle =
+                                angle(c, bufferCoordinates[(i + bufferCoordinates.length - 1)
+                                        % bufferCoordinates.length]);
+                        if (anglesApproximatelyEqual(expectedAngle, angle, tolerance))
+                        {
+                            //System.out.println("Updating startIndex to " + i + " (backward match)");
+                            startIndex = i;
+                        }
+                    }
+                }
+                if (endIndex != i)
+                {
+                    Coordinate c = bufferCoordinates[i];
+                    if (endCoordinate.distance(c) < tooClose)
+                    {
+                        double angle = angle(bufferCoordinates[(i + 1) % bufferCoordinates.length], c);
+                        if (anglesApproximatelyEqual(endExpectedAngle, angle, tolerance))
+                        {
+                            //System.out.println("Updating endIndex to " + i + " (backward match)");
+                            endIndex = i;
+                        }
+                        angle =
+                                angle(bufferCoordinates[(i + bufferCoordinates.length - 1) % bufferCoordinates.length],
+                                        c);
+                        if (anglesApproximatelyEqual(endExpectedAngle, angle, tolerance))
+                        {
+                            //System.out.println("Updating endIndex to " + i + " (forward match)");
+                            endIndex = i;
+                        }
+                    }
+
+                }
+            }
+            if (startIndex >= boundary)
+            {
+                if (endIndex < boundary)
+                {
+                    throw new NetworkException("startIndex and endIndex are not at same side of boundary");
+                }
+                // Discard the part before boundary
+                Coordinate[] newSet = new Coordinate[bufferCoordinates.length - boundary - 1];
+                // Copy all except the last (which is the wrap around of the first)
+                for (int i = boundary; i < bufferCoordinates.length - 1; i++)
+                {
+                    newSet[i - boundary] = bufferCoordinates[i];
+                }
+                bufferCoordinates = newSet;
+                // Update startIndex and endIndex
+                startIndex -= boundary;
+                endIndex -= boundary;
+            }
+            else
+            {
+                if (endIndex >= boundary)
+                {
+                    throw new NetworkException("startIndex and endIndex are not at same side of boundary");
+                }
+                // Discard the part starting at boundary
+                Coordinate[] newSet = new Coordinate[boundary - 1];
+                for (int i = 0; i < newSet.length; i++)
+                {
+                    newSet[i] = bufferCoordinates[i];
+                }
+                bufferCoordinates = newSet;
+                // The values of startIndex and endIndex are correct
+            }
+            //printCoordinates("selection ", bufferCoordinates);
+            //System.out.println("startIndex " + startIndex + ", endIndex " + endIndex);
         }
         // Figure out which part of the buffer we need and in which direction.
         // The initial direction should be approximately parallel to the initial direction of the reference line
-        double expectedAngle = angle(referenceCoordinates[0], referenceCoordinates[1]);
-        final double tolerance = Math.PI / 6; // 30 degrees
         final int initialIndex;
         final int finalIndex;
         final boolean forward;
@@ -270,6 +379,8 @@ public abstract class CrossSectionElement implements LocatableInterface
         }
         else
         {
+            System.out.println("ringDetected is " + ringDetected + " offset is " + offset + " startCoordinate is "
+                    + startCoordinate);
             throw new NetworkException("Cannot determine start and end coordinates in buffer");
         }
         // Figure out how many Coordinates we will use
@@ -283,6 +394,10 @@ public abstract class CrossSectionElement implements LocatableInterface
             size = initialIndex - finalIndex;
         }
         if (size < 0)
+        {
+            size += bufferCoordinates.length;
+        }
+        if (0 == size)
         {
             size += bufferCoordinates.length;
         }
@@ -303,7 +418,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                 index = 0;
             }
         }
-        //printCoordinates("result           ", resultCoordinates);
+        // printCoordinates("result           ", resultCoordinates);
         GeometryFactory factory = new GeometryFactory();
         Geometry result = factory.createLineString(resultCoordinates);
         return result;
@@ -344,7 +459,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         int firstIndex = 0;
         int secondIndex = 0;
         Coordinate prevCoordinate = null;
-        final double tooClose = 0.05;   // cm
+        final double tooClose = 0.05; // cm
         while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
             double firstRatio =
@@ -369,9 +484,9 @@ public abstract class CrossSectionElement implements LocatableInterface
             Coordinate resultCoordinate =
                     new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
                             * firstCoordinate.y + ratio * secondCoordinate.y);
-            //System.out.println(String.format(Locale.US,
-            //        "ratio: %7.5f, first  %8.3f,%8.3f, second: %8.3f,%8.3f -> %8.3f,%8.3f", ratio, firstCoordinate.x,
-            //        firstCoordinate.y, secondCoordinate.x, secondCoordinate.y, resultCoordinate.x, resultCoordinate.y));
+            // System.out.println(String.format(Locale.US,
+            // "ratio: %7.5f, first  %8.3f,%8.3f, second: %8.3f,%8.3f -> %8.3f,%8.3f", ratio, firstCoordinate.x,
+            // firstCoordinate.y, secondCoordinate.x, secondCoordinate.y, resultCoordinate.x, resultCoordinate.y));
             if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
             {
                 out.add(resultCoordinate);
@@ -399,7 +514,7 @@ public abstract class CrossSectionElement implements LocatableInterface
 
         GeometryFactory factory = new GeometryFactory();
         Coordinate[] referenceCoordinates = this.parentLink.getGeometry().getLineString().getCoordinates();
-        //printCoordinates("Link design line:", referenceCoordinates);
+        // printCoordinates("Link design line:", referenceCoordinates);
         Geometry referenceGeometry = factory.createLineString(referenceCoordinates);
         Geometry resultLine;
         resultLine =
@@ -409,11 +524,11 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate[] rightBoundary =
                 offsetLine(this.crossSectionDesignLine, -this.beginWidth.getSI() / 2, -this.endWidth.getSI() / 2)
                         .getCoordinates();
-        //printCoordinates("Right boundary:  ", rightBoundary);
+        // printCoordinates("Right boundary:  ", rightBoundary);
         Coordinate[] leftBoundary =
                 offsetLine(this.crossSectionDesignLine, this.beginWidth.getSI() / 2, this.endWidth.getSI() / 2)
                         .getCoordinates();
-        //printCoordinates("Left boundary:   ", leftBoundary);
+        // printCoordinates("Left boundary:   ", leftBoundary);
         int size = rightBoundary.length + leftBoundary.length + 1;
         Coordinate[] result = new Coordinate[size];
         int resultIndex = 0;
@@ -426,19 +541,8 @@ public abstract class CrossSectionElement implements LocatableInterface
             result[resultIndex++] = leftBoundary[index];
         }
         result[resultIndex] = rightBoundary[0]; // close the contour
-        //printCoordinates("Lane contour:    ", result);
+        // printCoordinates("Lane contour:    ", result);
         return factory.createLineString(result);
-        /*
-         * LineString line = this.parentLink.getGeometry().getLineString(); double width = this.beginWidth.doubleValue()
-         * > 0 ? Math .max(this.beginWidth.doubleValue(), this.endWidth.doubleValue()) : Math.min(
-         * this.beginWidth.doubleValue(), this.endWidth.doubleValue()); this.offsetLine =
-         * (this.designLineOffsetAtBegin.doubleValue() == 0.0) ? line : offsetLineString(line,
-         * this.designLineOffsetAtBegin.doubleValue()); // CoordinateReferenceSystem crs =
-         * this.parentLink.getGeometry().getCRS(); if (this.beginWidth.equals(this.endWidth)) { // TODO This is done in
-         * meters. Does that always fit the geometry? return this.offsetLine.buffer(0.5 * width, 8,
-         * BufferParameters.CAP_FLAT); } else { // TODO algorithm to make the gradual offset change... return
-         * this.offsetLine.buffer(0.5 * width, 8, BufferParameters.CAP_FLAT); }
-         */
     }
 
     /**
@@ -544,7 +648,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      */
     public static void printCoordinates(final String prefix, final Coordinate[] coordinates)
     {
-        printCoordinates(prefix, coordinates, 0, coordinates.length);
+        printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length);
     }
 
     /**
@@ -558,139 +662,14 @@ public abstract class CrossSectionElement implements LocatableInterface
             final int toIndex)
     {
         System.out.print(prefix);
+        String operator = "M"; // Move absolute
         for (int i = fromIndex; i < toIndex; i++)
         {
-            System.out.print(String.format(Locale.US, " %8.3f,%8.3f   ", coordinates[i].x, coordinates[i].y));
+            System.out.print(String
+                    .format(Locale.US, "%s %8.3f,%8.3f   ", operator, coordinates[i].x, coordinates[i].y));
+            operator = "L"; // LineTo Absolute
         }
         System.out.println("");
-    }
-
-    /**
-     * @param line original line
-     * @param offset offset in meters (negative: left; positive: right)
-     * @return line with a certain offset towards the original line
-     */
-    private LineString offsetLineString(final LineString line, final double offset)
-    {
-        // printCoordinates("      Line:", line, 0, line.getNumPoints());
-        // System.out.println("  Offset: " + offset);
-        // create the buffer around the line
-        double offsetPlus = Math.abs(offset);
-        boolean right = offset < 0.0;
-        Geometry bufferLine = line.buffer(offsetPlus, 8, BufferParameters.CAP_FLAT);
-        // printCoordinates("bufferLine:", bufferLine, 0, bufferLine.getNumPoints());
-        Coordinate[] bufferCoords = bufferLine.getCoordinates();
-        // intersect with perpendicular lines at the start and end
-        Coordinate[] lineCoords = line.getCoordinates();
-        Coordinate[] sc = perpBufferCoords(line, lineCoords[0], lineCoords[1], offsetPlus);
-        Coordinate[] ec =
-                perpBufferCoords(line, lineCoords[lineCoords.length - 1], lineCoords[lineCoords.length - 2], offsetPlus);
-        GeometryFactory factory = new GeometryFactory();
-        CoordinateSequence cs;
-        int is0 = smallestIndex(bufferCoords, sc[0]);
-        int is1 = smallestIndex(bufferCoords, sc[1]);
-        int ie0 = smallestIndex(bufferCoords, ec[0]);
-        int ie1 = smallestIndex(bufferCoords, ec[1]);
-        List<Coordinate> cList = new ArrayList<Coordinate>();
-        if (right)
-        {
-            // from sc[0] to ec[1]
-            for (int i = Math.max(is0, ie1); i >= Math.min(is0, ie1); i--)
-            {
-                cList.add(bufferCoords[i]);
-            }
-            if (cList.contains(sc[1]) || cList.contains(ec[0]))
-            {
-                // wrong path (U-shape) -- take the other one
-                cList = new ArrayList<Coordinate>();
-                for (int i = Math.max(is0, ie1); i <= Math.min(is0, ie1) + bufferCoords.length; i++)
-                {
-                    int index = i % bufferCoords.length;
-                    cList.add(bufferCoords[index]);
-                }
-            }
-            /*- original code
-            // from sc[0] to ec[1]
-            for (int i = Math.min(is0, ie1); i <= Math.max(is0, ie1); i++)
-            {
-                cList.add(bufferCoords[i]);
-            }
-            if (cList.contains(sc[1]) || cList.contains(ec[0]))
-            {
-                // wrong path (U-shape) -- take the other one
-                cList = new ArrayList<Coordinate>();
-                for (int i = Math.max(is0, ie1); i <= Math.min(is0, ie1) + bufferCoords.length; i++)
-                {
-                    int index = i % bufferCoords.length;
-                    cList.add(bufferCoords[index]);
-                }
-            }
-             */
-        }
-        else
-        {
-            // from sc[1] to ec[0]
-            for (int i = Math.min(is1, ie0); i <= Math.max(is1, ie0); i++)
-            {
-                cList.add(bufferCoords[i]);
-            }
-            if (cList.contains(sc[0]) || cList.contains(ec[1]))
-            {
-                // wrong path (U-shape) -- take the other one
-                cList = new ArrayList<Coordinate>();
-                for (int i = Math.max(is1, ie0); i <= Math.min(is1, ie0) + bufferCoords.length; i++)
-                {
-                    int index = i % bufferCoords.length;
-                    cList.add(bufferCoords[index]);
-                }
-            }
-        }
-        Coordinate[] cc = new Coordinate[cList.size()];
-        cs = new CoordinateArraySequence(cList.toArray(cc));
-        LineString ls = new LineString(cs, factory);
-        // printCoordinates("Result CSE: ", ls, 0, ls.getNumPoints());
-        return ls;
-    }
-
-    /**
-     * @param bufferLine Geometry
-     * @param c0 Coordinate
-     * @param c1 Coordinate
-     * @param offset double; offset with respoct to the bufferLine
-     * @return perpendicular buffer line
-     */
-    private Coordinate[] perpBufferCoords(final Geometry bufferLine, final Coordinate c0, final Coordinate c1,
-            final double offset)
-    {
-        double sdx = c1.x - c0.x;
-        double sdy = c1.y - c0.y;
-        double norm = Math.abs(offset / Math.sqrt(sdx * sdx + sdy * sdy));
-        Coordinate p0 = new Coordinate(c0.x + norm * sdy, c0.y - norm * sdx);
-        Coordinate p1 = new Coordinate(c0.x - norm * sdy, c0.y + norm * sdx);
-        return new Coordinate[]{p0, p1};
-    }
-
-    /**
-     * Find the index of the closest coordinate to the search coordinate.
-     * @param coords the coordinates to search in
-     * @param search the coordinate to search
-     * @return the index of the closest coordinate to the search coordinate
-     */
-    private int smallestIndex(final Coordinate[] coords, final Coordinate search)
-    {
-        int bestI = -1;
-        double bestD = Double.MAX_VALUE;
-        int start = coords[0].equals(coords[coords.length - 1]) ? 1 : 0;
-        for (int i = start; i < coords.length; i++)
-        {
-            double d = search.distance(coords[i]);
-            if (d < bestD)
-            {
-                bestD = d;
-                bestI = i;
-            }
-        }
-        return bestI;
     }
 
     /**

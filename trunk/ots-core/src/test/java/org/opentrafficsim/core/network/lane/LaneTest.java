@@ -20,7 +20,6 @@ import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -49,8 +48,8 @@ public class LaneTest
     public void laneConstructorTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException
     {
         // First we need two Nodes
-        Node nodeFrom = new Node("AFrom", new Coordinate(0, 0, 0));
-        Node nodeTo = new Node("ATo", new Coordinate(1000, 0, 0));
+        Node nodeFrom = new Node("A", new Coordinate(0, 0, 0));
+        Node nodeTo = new Node("B", new Coordinate(1000, 0, 0));
         // Now we can make a Link
         Coordinate[] coordinates = new Coordinate[2];
         coordinates[0] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
@@ -58,7 +57,7 @@ public class LaneTest
         GeometryFactory factory = new GeometryFactory();
         LineString lineString = factory.createLineString(coordinates);
         Link link =
-                new Link("AtoB", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                new Link("A to B", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                         LengthUnit.METER));
         new LinearGeometry(link, lineString, null);
         DoubleScalar.Rel<LengthUnit> startLateralPos = new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER);
@@ -119,7 +118,7 @@ public class LaneTest
         coordinates[2] = new Coordinate(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         lineString = factory.createLineString(coordinates);
         link =
-                new Link("AtoB", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                new Link("A to B with Kink", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                         LengthUnit.METER));
         new LinearGeometry(link, lineString, null);
         lane =
@@ -160,7 +159,7 @@ public class LaneTest
                 .getLongitudinalPosition().getSI(), 0.01);
         assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
                 .getLongitudinalPositionSI(), 0.01);
-        System.out.println("Add another line at the inside of the corner in the design line");
+        System.out.println("Add another Lane at the inside of the corner in the design line");
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
@@ -201,6 +200,95 @@ public class LaneTest
                 .getLongitudinalPosition().getSI(), 0.01);
         assertEquals("This sensor should be at the end of the lane", lane2.getLength().getSI(), sensors.get(0)
                 .getLongitudinalPositionSI(), 0.01);
+        // Now for the really hard case - circular Link with Lanes
+        final int numberOfCoordinates = 10;
+        coordinates = new Coordinate[numberOfCoordinates];
+        //nodeFrom = new Node("newA", new Coordinate(-1000, -1000));
+        coordinates[0] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
+        coordinates[numberOfCoordinates - 1] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
+        double radius = 100;
+        for (int index = 1; index < numberOfCoordinates - 1; index++)
+        {
+            double angle = Math.PI * 2 * index / (numberOfCoordinates - 1);
+            coordinates[index] =
+                    new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
+                            + radius * Math.sin(angle));
+            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+        }
+        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        link =
+                new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                        LengthUnit.METER));
+        lineString = factory.createLineString(coordinates);
+        new LinearGeometry(link, lineString, null);
+        lane =
+                new Lane(link, startLateralPos, startLateralPos, startWidth, startWidth, laneType,
+                        longitudinalDirectionality, f2000);
+        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        System.out.println("Clockwise ring, lane completely outside ring design line");
+        // Try the same with a ring that is traveled in clockwise direction
+        radius = 20;
+        for (int index = 1; index < numberOfCoordinates - 1; index++)
+        {
+            double angle = -Math.PI * 2 * index / (numberOfCoordinates - 1);
+            coordinates[index] =
+                    new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
+                            + radius * Math.sin(angle));
+            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+        }
+        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        link =
+                new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                        LengthUnit.METER));
+        lineString = factory.createLineString(coordinates);
+        new LinearGeometry(link, lineString, null);
+        lane =
+                new Lane(link, startLateralPos, startLateralPos, startWidth, startWidth, laneType,
+                        longitudinalDirectionality, f2000);
+        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        System.out.println("Clockwise ring, lane touching ring design line");
+        // Try the same with a ring that is traveled in clockwise direction
+        radius = 20;
+        for (int index = 1; index < numberOfCoordinates - 1; index++)
+        {
+            double angle = -Math.PI * 2 * index / (numberOfCoordinates - 1);
+            coordinates[index] =
+                    new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
+                            + radius * Math.sin(angle));
+            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+        }
+        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        link =
+                new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                        LengthUnit.METER));
+        lineString = factory.createLineString(coordinates);
+        new LinearGeometry(link, lineString, null);
+        lane =
+                new Lane(link, startLateralPos, startLateralPos, endWidth, endWidth, laneType,
+                        longitudinalDirectionality, f2000);
+        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        System.out.println("Clockwise ring, lane overlapping ring design line");
+        // Try the same with a ring that is traveled in clockwise direction
+        radius = 20;
+        for (int index = 1; index < numberOfCoordinates - 1; index++)
+        {
+            double angle = -Math.PI * 2 * index / (numberOfCoordinates - 1);
+            coordinates[index] =
+                    new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
+                            + radius * Math.sin(angle));
+            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+        }
+        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        link =
+                new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                        LengthUnit.METER));
+        lineString = factory.createLineString(coordinates);
+        new LinearGeometry(link, lineString, null);
+        endWidth = new DoubleScalar.Rel<LengthUnit>(5, LengthUnit.METER);
+        lane =
+                new Lane(link, startLateralPos, startLateralPos, endWidth, endWidth, laneType,
+                        longitudinalDirectionality, f2000);
+        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
     }
 
 }
