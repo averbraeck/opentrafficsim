@@ -40,6 +40,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -108,8 +109,9 @@ public class LaneChangeGraph extends JFrame
      * @param args String[]; the command line arguments (not used)
      * @throws NamingException
      * @throws RemoteException
+     * @throws NetworkException
      */
-    public static void main(String[] args) throws RemoteException, NamingException
+    public static void main(String[] args) throws RemoteException, NamingException, NetworkException
     {
         JPanel mainPanel = new JPanel(new BorderLayout());
         LaneChangeGraph lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
@@ -201,11 +203,12 @@ public class LaneChangeGraph extends JFrame
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      * @throws RemoteException
      * @throws NamingException
+     * @throws NetworkException 
      */
     private DoubleScalar.Rel<LengthUnit> findDecisionPoint(DoubleScalar.Rel<LengthUnit> low,
         DoubleScalar.Rel<LengthUnit> high, DoubleScalar.Abs<SpeedUnit> referenceSpeed,
         DoubleScalar.Rel<SpeedUnit> speedDifference, LaneChangeModel laneChangeModel, boolean mergeRight)
-        throws RemoteException, NamingException
+        throws RemoteException, NamingException, NetworkException
     {
         // Set up the network
         GTUType<String> gtuType = new GTUType<String>("car");

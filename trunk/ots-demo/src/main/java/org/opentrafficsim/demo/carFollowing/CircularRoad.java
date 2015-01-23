@@ -535,7 +535,7 @@ class RoadSimulationModel implements OTSModelInterface
             checkOrdering(RoadSimulationModel.this.cars.get(0));
             checkOrdering(RoadSimulationModel.this.cars.get(1));
         }
-        catch (RemoteException | SimRuntimeException | NamingException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }

@@ -53,7 +53,7 @@ public class TestModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSSimulatorInterface) pSimulator;
 
@@ -64,39 +64,50 @@ public class TestModel implements OTSModelInterface
         Node n0 = new Node("N0", new Coordinate(-25.0, 0.0));
         Node n1 = new Node("N1", new Coordinate(0.0, 0.0));
         Link l01 = new Link("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
-        LineString ls01 = factory.createLineString(new Coordinate[] {new Coordinate(-25.0, 0.0), new Coordinate(0.0, 0.0)});
+        LineString ls01 =
+                factory.createLineString(new Coordinate[]{new Coordinate(-25.0, 0.0), new Coordinate(0.0, 0.0)});
 
         Node n2 = new Node("N2", new Coordinate(25.0, 20.0));
-        Link l12 = new Link("L12", n1, n2, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
-        LineString ls12 = factory.createLineString(new Coordinate[] {new Coordinate(0.0, 0.0), new Coordinate(25.0, 20.0)});
+        Link l12 =
+                new Link("L12", n1, n2,
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+        LineString ls12 =
+                factory.createLineString(new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(25.0, 20.0)});
 
         Node n3 = new Node("N3", new Coordinate(50.0, 0.0));
-        Link l23 = new Link("L23", n2, n3, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
-        LineString ls23 = factory.createLineString(new Coordinate[] {new Coordinate(25.0, 20.0), new Coordinate(50.0, 0.0)});
+        Link l23 =
+                new Link("L23", n2, n3,
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+        LineString ls23 =
+                factory.createLineString(new Coordinate[]{new Coordinate(25.0, 20.0), new Coordinate(50.0, 0.0)});
 
         Node n4 = new Node("N4", new Coordinate(75.0, -20.0));
-        Link l34 = new Link("L34", n3, n4, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+        Link l34 =
+                new Link("L34", n3, n4,
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls34 =
-            factory.createLineString(new Coordinate[] {new Coordinate(50.0, 0.0), new Coordinate(75.0, -20.0)});
+                factory.createLineString(new Coordinate[]{new Coordinate(50.0, 0.0), new Coordinate(75.0, -20.0)});
 
         Node n5 = new Node("N5", new Coordinate(100.0, 0.0));
-        Link l45 = new Link("L45", n4, n5, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+        Link l45 =
+                new Link("L45", n4, n5,
+                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls45 =
-            factory.createLineString(new Coordinate[] {new Coordinate(75.0, -20.0), new Coordinate(100.0, 0.0)});
+                factory.createLineString(new Coordinate[]{new Coordinate(75.0, -20.0), new Coordinate(100.0, 0.0)});
 
         Node n6 = new Node("N6", new Coordinate(125.0, 0.0));
         Link l56 = new Link("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls56 =
-            factory.createLineString(new Coordinate[] {new Coordinate(100.0, 0.0), new Coordinate(125.0, 0.0)});
+                factory.createLineString(new Coordinate[]{new Coordinate(100.0, 0.0), new Coordinate(125.0, 0.0)});
 
         Node n7 = new Node("N7", new Coordinate(300.0, 0.0));
         Link l67 =
-            new Link("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20),
-                LengthUnit.METER));
+                new Link("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20),
+                        LengthUnit.METER));
         LineString ls67 =
-            factory.createLineString(new Coordinate[] {new Coordinate(125.0, 0.0), new Coordinate(150.0, 0.0),
-                new Coordinate(175.0, 20.0), new Coordinate(200.0, 0.0), new Coordinate(225.0, -20.0),
-                new Coordinate(250.0, 0.0), new Coordinate(300.0, 0.0)});
+                factory.createLineString(new Coordinate[]{new Coordinate(125.0, 0.0), new Coordinate(150.0, 0.0),
+                        new Coordinate(175.0, 20.0), new Coordinate(200.0, 0.0), new Coordinate(225.0, -20.0),
+                        new Coordinate(250.0, 0.0), new Coordinate(300.0, 0.0)});
 
         try
         {
@@ -113,13 +124,20 @@ public class TestModel implements OTSModelInterface
             throw new SimRuntimeException(ne);
         }
 
-        add2x2Lanes(l01);
-        add2x2Lanes(l12);
-        add2x2Lanes(l23);
-        add2x2Lanes(l34);
-        add2x2Lanes(l45);
-        add2x2Lanes(l56);
-        add2x2Lanes(l67);
+        try
+        {
+            add2x2Lanes(l01);
+            add2x2Lanes(l12);
+            add2x2Lanes(l23);
+            add2x2Lanes(l34);
+            add2x2Lanes(l45);
+            add2x2Lanes(l56);
+            add2x2Lanes(l67);
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -153,8 +171,9 @@ public class TestModel implements OTSModelInterface
      *
      * <br>
      * @param link link.
+     * @throws NetworkException
      */
-    private void add2x2Lanes(final Link link)
+    private void add2x2Lanes(final Link link) throws NetworkException
     {
         // four lanes, grass underneath, lines between lane1-2 and lane 2-3, barrier between lane 2-3
         // lane is 3.5 meters wide. gap between 3-4 is one meter. outside 0.5 meters on both sides
@@ -167,32 +186,40 @@ public class TestModel implements OTSModelInterface
         Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
 
         Lane laneELL =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null,
-                LongitudinalDirectionality.NONE, f0);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null,
+                        LongitudinalDirectionality.NONE, f0);
         Lane laneL1 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.BACKWARD, f200);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), m35, m35, null,
+                        LongitudinalDirectionality.BACKWARD, f200);
         Lane laneL2 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.BACKWARD, f200);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), m35, m35, null,
+                        LongitudinalDirectionality.BACKWARD, f200);
         Lane laneELM =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null,
-                LongitudinalDirectionality.NONE, f0);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null,
+                        LongitudinalDirectionality.NONE, f0);
 
         Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
 
         Lane laneERM =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null,
-                LongitudinalDirectionality.NONE, f0);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null,
+                        LongitudinalDirectionality.NONE, f0);
         Lane laneR2 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.FORWARD, f200);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
+                        LongitudinalDirectionality.FORWARD, f200);
         Lane laneR1 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.FORWARD, f200);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
+                        LongitudinalDirectionality.FORWARD, f200);
         Lane laneERR =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null,
-                LongitudinalDirectionality.NONE, f0);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null,
+                        LongitudinalDirectionality.NONE, f0);
 
         Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
 
@@ -219,7 +246,8 @@ public class TestModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+            throws RemoteException
     {
         return this.simulator;
     }

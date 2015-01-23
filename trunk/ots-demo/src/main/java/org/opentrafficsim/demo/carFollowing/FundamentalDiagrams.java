@@ -296,7 +296,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         {
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
         }
-        catch (NamingException exception)
+        catch (NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }
