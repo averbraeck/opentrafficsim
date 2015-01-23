@@ -297,7 +297,7 @@ class TrajectoriesModel implements OTSModelInterface
         {
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
         }
-        catch (NamingException exception1)
+        catch (NamingException | NetworkException exception1)
         {
             exception1.printStackTrace();
         }

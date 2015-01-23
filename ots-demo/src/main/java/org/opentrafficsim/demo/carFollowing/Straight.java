@@ -484,7 +484,7 @@ class ContourPlotsModel implements OTSModelInterface
                         "drawGraphs", null);
             }
         }
-        catch (RemoteException | SimRuntimeException | NamingException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }

@@ -491,7 +491,7 @@ class LaneSimulationModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
                     "drawGraphs", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }
