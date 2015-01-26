@@ -12,6 +12,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.Link;
@@ -87,6 +88,37 @@ public class LaneTest
                 lane.getDirectionality());
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
+        for (int i = 0; i < 10; i++)
+        {
+            double expectedLateralCenterOffset =
+                    startLateralPos.getSI() + (endLateralPos.getSI() - startLateralPos.getSI()) * i / 10;
+            assertEquals(String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset),
+                    expectedLateralCenterOffset, lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01);
+            DoubleScalar.Rel<LengthUnit> longitudinalPosition =
+                    new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() * i / 10, LengthUnit.METER);
+            assertEquals("Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset,
+                    expectedLateralCenterOffset, lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01);
+            double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
+            assertEquals(String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth), expectedWidth, lane
+                    .getWidth(i / 10.0).getSI(), 0.0001);
+            assertEquals("Width at " + longitudinalPosition + " should be " + expectedWidth, expectedWidth, lane
+                    .getWidth(longitudinalPosition).getSI(), 0.0001);
+            double expectedLeftOffset = expectedLateralCenterOffset - expectedWidth / 2;
+            // The next test caught a bug
+            assertEquals(String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset),
+                    expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(),
+                    0.001);
+            assertEquals("Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset,
+                    expectedLeftOffset,
+                    lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(), 0.001);
+            double expectedRightOffset = expectedLateralCenterOffset + expectedWidth / 2;
+            assertEquals(String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset),
+                    expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(),
+                    0.001);
+            assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset,
+                    expectedRightOffset,
+                    lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001);
+        }
         List<Sensor> sensors =
                 lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(9999, LengthUnit.METER));
@@ -111,7 +143,7 @@ public class LaneTest
                 .getLongitudinalPositionSI(), 0.01);
 
         // Harder case; create a Link with form points along the way
-        System.out.println("Constructing Link and lane with one form point");
+        System.out.println("Constructing Link and Lane with one form point");
         coordinates = new Coordinate[3];
         coordinates[0] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new Coordinate(200, 100);
@@ -126,7 +158,7 @@ public class LaneTest
                         longitudinalDirectionality, f2000);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
-        assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size()); // this one caught a bug!
+        assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size());
         assertEquals("NextLanes should be empty", 0, lane.nextLanes().size());
         approximateLengthOfContour =
                 2 * (coordinates[0].distance(coordinates[1]) + coordinates[1].distance(coordinates[2]))
@@ -167,7 +199,7 @@ public class LaneTest
                         longitudinalDirectionality, f2000);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane2.getCapacity().getSI(), 0.001);
-        assertEquals("PrevLanes should be empty", 0, lane2.prevLanes().size()); // this one caught a bug!
+        assertEquals("PrevLanes should be empty", 0, lane2.prevLanes().size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes().size());
         approximateLengthOfContour =
                 2 * (coordinates[0].distance(coordinates[1]) + coordinates[1].distance(coordinates[2]))
@@ -203,7 +235,7 @@ public class LaneTest
         // Now for the really hard case - circular Link with Lanes
         final int numberOfCoordinates = 10;
         coordinates = new Coordinate[numberOfCoordinates];
-        //nodeFrom = new Node("newA", new Coordinate(-1000, -1000));
+        // nodeFrom = new Node("newA", new Coordinate(-1000, -1000));
         coordinates[0] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[numberOfCoordinates - 1] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         double radius = 100;
@@ -213,9 +245,9 @@ public class LaneTest
             coordinates[index] =
                     new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
                             + radius * Math.sin(angle));
-            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+            // CrossSectionElement.printCoordinate("",  coordinates[index]);
         }
-        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        // CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
         link =
                 new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                         LengthUnit.METER));
@@ -224,7 +256,7 @@ public class LaneTest
         lane =
                 new Lane(link, startLateralPos, startLateralPos, startWidth, startWidth, laneType,
                         longitudinalDirectionality, f2000);
-        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        // CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
         System.out.println("Clockwise ring, lane completely outside ring design line");
         // Try the same with a ring that is traveled in clockwise direction
         radius = 20;
@@ -234,9 +266,9 @@ public class LaneTest
             coordinates[index] =
                     new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
                             + radius * Math.sin(angle));
-            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+            // CrossSectionElement.printCoordinate(String.format("angle %6.3f ", angle),  coordinates[index]);
         }
-        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        // CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
         link =
                 new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                         LengthUnit.METER));
@@ -245,7 +277,7 @@ public class LaneTest
         lane =
                 new Lane(link, startLateralPos, startLateralPos, startWidth, startWidth, laneType,
                         longitudinalDirectionality, f2000);
-        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        // CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
         System.out.println("Clockwise ring, lane touching ring design line");
         // Try the same with a ring that is traveled in clockwise direction
         radius = 20;
@@ -255,9 +287,9 @@ public class LaneTest
             coordinates[index] =
                     new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
                             + radius * Math.sin(angle));
-            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+            // CrossSectionElement.printCoordinate(String.format("angle %6.3f ", angle),  coordinates[index]);
         }
-        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        // CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
         link =
                 new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                         LengthUnit.METER));
@@ -266,7 +298,7 @@ public class LaneTest
         lane =
                 new Lane(link, startLateralPos, startLateralPos, endWidth, endWidth, laneType,
                         longitudinalDirectionality, f2000);
-        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        // CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
         System.out.println("Clockwise ring, lane overlapping ring design line");
         // Try the same with a ring that is traveled in clockwise direction
         radius = 20;
@@ -276,9 +308,9 @@ public class LaneTest
             coordinates[index] =
                     new Coordinate(nodeFrom.getPoint().x - radius + radius * Math.cos(angle), nodeFrom.getPoint().y
                             + radius * Math.sin(angle));
-            //System.out.println(String.format("angle %6.3f %8.3f %8.3f", angle, coordinates[index].x, coordinates[index].y));
+            // CrossSectionElement.printCoordinate(String.format("angle %6.3f ", angle),  coordinates[index]);
         }
-        //CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
+        // CrossSectionElement.printCoordinates("Design coordinates of ring", coordinates);
         link =
                 new Link("Ring", nodeFrom, nodeTo, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                         LengthUnit.METER));
@@ -288,7 +320,7 @@ public class LaneTest
         lane =
                 new Lane(link, startLateralPos, startLateralPos, endWidth, endWidth, laneType,
                         longitudinalDirectionality, f2000);
-        //CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
+        // CrossSectionElement.printCoordinates("Lane contour", lane.getContour());
     }
 
 }

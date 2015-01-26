@@ -725,7 +725,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             // TODO solve problem when point is still on previous lane.
             double fraction = (position(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
-            LineString line = lane.getOffsetLine();
+            LineString line = lane.getCenterLine();
             LengthIndexedLine lil = new LengthIndexedLine(line);
             Coordinate c = lil.extractPoint(fraction * line.getLength());
             // HACK (FIXME)

@@ -15,7 +15,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -94,7 +93,8 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Find the coordinate in an array that is closest to a given reference.
+     * Find the coordinate in an array that is closest to a given reference. If several coordinates in the array have
+     * the exact same distance to the reference, the index of the first one is returned.
      * @param reference Coordinate; the reference
      * @param list Coordinate[]; the array
      * @return int index of the Coordinate in the list that is closest to the reference
@@ -136,9 +136,9 @@ public abstract class CrossSectionElement implements LocatableInterface
 
     /**
      * Check if two directions are approximately equal (possibly plus or minus 2 * PI).
-     * @param angle1 double; the first angle (in Radians)
-     * @param angle2 double; the second angle (in Radians)
-     * @param tolerance double; the tolerance (in Radians)
+     * @param angle1 double; the first angle (in radians)
+     * @param angle2 double; the second angle (in radians)
+     * @param tolerance double; the tolerance (in radians)
      * @return boolean; true if the angles are approximately equal; false otherwise
      */
     private boolean anglesApproximatelyEqual(final double angle1, final double angle2, final double tolerance)
@@ -201,10 +201,6 @@ public abstract class CrossSectionElement implements LocatableInterface
             }
             bufferCoordinates = tempBuffer;
         }
-        else
-        {
-            // System.out.println("NOT removing last coordinate from bufferCoordinates");
-        }
         // printCoordinates("buffer           ", bufferCoordinates);
         Coordinate startCoordinate = offsetPoint(referenceCoordinates[0], referenceCoordinates[1], offset);
         int startIndex = findClosest(startCoordinate, bufferCoordinates);
@@ -221,8 +217,8 @@ public abstract class CrossSectionElement implements LocatableInterface
         final double tooClose = 0.001;
         if (ringDetected)
         {
-            // Trouble; probably a circular referenceLine.
-            // This generates two sets of coordinates that are stored consecutively as a single polygon
+            // For a ring the buffer consists of two sets of coordinates that are stored consecutively as a single
+            // polygon
             // System.out.println("Trouble");
             // printCoordinates("bufferCoordinates", bufferCoordinates);
             /*-
@@ -240,7 +236,7 @@ public abstract class CrossSectionElement implements LocatableInterface
              */
             // Separate the bufferCoordinates in an inner an outer ring
             // Some experimentation has shown (but NOT proved) that there is only one transition between the inner and
-            // outer rings and both rings are closed.
+            // outer rings and (consequently) that both rings are closed.
             int boundary = -1;
             for (int index = 1; index < bufferCoordinates.length; index++)
             {
@@ -434,8 +430,8 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Create the Geometry of a line at offset from a reference line. The offset changes linearly from its initial value
-     * at the start of the reference line to its final offset value at the end of the reference line.
+     * Create the Geometry of a line at offset from a reference line. The offset may change linearly from its initial
+     * value at the start of the reference line to its final offset value at the end of the reference line.
      * @param referenceLine Geometry; the Geometry of the reference line
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is
      *            Right)
@@ -453,7 +449,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         // printCoordinates("offsetLineAtStart", offsetLineAtStart);
         if (offsetAtStart == offsetAtEnd)
         {
-            return offsetLineAtStart;
+            return offsetLineAtStart; // offset does not change
         }
         Geometry offsetLineAtEnd = offsetGeometry(referenceLine, offsetAtEnd);
         // System.out.println("offsetAtEnd    " + offsetAtEnd);
@@ -468,7 +464,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         int firstIndex = 0;
         int secondIndex = 0;
         Coordinate prevCoordinate = null;
-        final double tooClose = 0.05; // cm
+        final double tooClose = 0.05; // 5 cm
         while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
             double firstRatio =
@@ -520,7 +516,6 @@ public abstract class CrossSectionElement implements LocatableInterface
      */
     private Geometry constructGeometry() throws NetworkException
     {
-
         GeometryFactory factory = new GeometryFactory();
         Coordinate[] referenceCoordinates = this.parentLink.getGeometry().getLineString().getCoordinates();
         if (referenceCoordinates.length < 2)
@@ -541,8 +536,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                 offsetLine(this.crossSectionDesignLine, this.beginWidth.getSI() / 2, this.endWidth.getSI() / 2)
                         .getCoordinates();
         // printCoordinates("Left boundary:   ", leftBoundary);
-        int size = rightBoundary.length + leftBoundary.length + 1;
-        Coordinate[] result = new Coordinate[size];
+        Coordinate[] result = new Coordinate[rightBoundary.length + leftBoundary.length + 1];
         int resultIndex = 0;
         for (int index = 0; index < rightBoundary.length; index++)
         {
@@ -566,15 +560,28 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @return lateralCenterPosition.
+     * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
+     * @param fractionalPosition double; fractional longitudinal position on this Lane
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
      */
-    public final DoubleScalar<LengthUnit> getLateralCenterPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLateralCenterPosition(double fractionalPosition)
     {
-        return this.designLineOffsetAtBegin;
+        return DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition)
+                .immutable();
     }
 
     /**
-     * Compute the width of this CrossSectionElement at a specified longitudinal position.
+     * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position on this Lane
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
+     */
+    public final DoubleScalar<LengthUnit> getLateralCenterPosition(DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    {
+        return getLateralCenterPosition(longitudinalPosition.getSI() / getLength().getSI());
+    }
+
+    /**
+     * Return the width of this CrossSectionElement at a specified longitudinal position.
      * @param longitudinalPosition DoubleScalar&lt;LengthUnit&gt;; the longitudinal position
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified longitudinal
      *         position.
@@ -585,7 +592,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Compute the width of this CrossSectionElement at a specified fractional longitudinal position.
+     * Return the width of this CrossSectionElement at a specified fractional longitudinal position.
      * @param fractionalPosition double; the fractional longitudinal position
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified fractional
      *         longitudinal position.
@@ -615,7 +622,8 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @return the contour of the cross section element.
+     * @return the contour of this CrossSectionElement. <br>
+     *         <b>Do not modify the returned object or chaos will ensue.</b>
      */
     public final Geometry getContour()
     {
@@ -623,15 +631,28 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * @return offsetLine.
+     * Retrieve the center line or design line of this CrossSectionElement. <br>
+     * <b>Do not modify the returned object or chaos will ensue.</b>
+     * @return LineString; the design line of this CrossSectionElement (which equals the center line of this
+     *         CrossSectionElement)
      */
-    public final LineString getOffsetLine()
+    public final LineString getCenterLine()
     {
         return this.crossSectionDesignLine;
     }
 
     /**
-     * Print the coordinates on the console.
+     * Print one Coordinate on the console.
+     * @param prefix String; text to put before the output
+     * @param coordinate Coordinate; the coordinate to print
+     */
+    public static void printCoordinate(final String prefix, final Coordinate coordinate)
+    {
+        System.out.print(String.format(Locale.US, "%s %8.3f,%8.3f   ", prefix, coordinate.x, coordinate.y));
+    }
+
+    /**
+     * Print coordinates of a Geometry on the console.
      * @param prefix String; text to put before the output
      * @param geometry Geometry; the coordinates to print
      * @param fromIndex int; index of the first coordinate to print
@@ -644,7 +665,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Print the coordinates on the console.
+     * Print coordinates of a Geometry on the console.
      * @param prefix String; text to put before the output
      * @param geometry Geometry; the coordinates to print
      */
@@ -654,8 +675,8 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Print the coordinates on the console.
-     * @param prefix String; text to put before the output
+     * Print an array of coordinates on the console.
+     * @param prefix String; text to put before the coordinates
      * @param coordinates Coordinate[]; the coordinates to print
      */
     public static void printCoordinates(final String prefix, final Coordinate[] coordinates)
@@ -664,7 +685,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Print the coordinates on the console.
+     * Print part of an array of coordinates on the console.
      * @param prefix String; text to put before the output
      * @param coordinates Coordinate[]; the coordinates to print
      * @param fromIndex int; index of the first coordinate to print
@@ -677,15 +698,15 @@ public abstract class CrossSectionElement implements LocatableInterface
         String operator = "M"; // Move absolute
         for (int i = fromIndex; i < toIndex; i++)
         {
-            System.out.print(String
-                    .format(Locale.US, "%s %8.3f,%8.3f   ", operator, coordinates[i].x, coordinates[i].y));
+            printCoordinate(operator, coordinates[i]);
             operator = "L"; // LineTo Absolute
         }
         System.out.println("");
     }
 
     /**
-     * @return length.
+     * Return the length of this CrossSectionElement as measured along the design line (which equals the center line).
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the length of this CrossSectionElement
      */
     public final DoubleScalar.Rel<LengthUnit> getLength()
     {
@@ -701,13 +722,13 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Return the lateral offset from the design line of the parent Link of the Left or Right edge of this
+     * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified fractional longitudinal position.
      * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
      * @param fractionalLongitudinalPosition double; ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralBeginPosition(final LateralDirectionality lateralDirection,
+    public final DoubleScalar.Rel<LengthUnit> getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
             final double fractionalLongitudinalPosition)
     {
         DoubleScalar.Rel<LengthUnit> designLineOffset =
@@ -720,11 +741,26 @@ public abstract class CrossSectionElement implements LocatableInterface
         switch (lateralDirection)
         {
             case LEFT:
-                return DoubleScalar.plus(designLineOffset, halfWidth).immutable();
-            case RIGHT:
                 return DoubleScalar.minus(designLineOffset, halfWidth).immutable();
+            case RIGHT:
+                return DoubleScalar.plus(designLineOffset, halfWidth).immutable();
             default:
                 throw new Error("Bad switch on LateralDirectionality " + lateralDirection);
         }
     }
+
+    /**
+     * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
+     * CrossSectionElement at the specified longitudinal position.
+     * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position along the length of this
+     *            CrossSectionElement
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;
+     */
+    public final DoubleScalar.Rel<LengthUnit> getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
+            final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    {
+        return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
+    }
+
 }
