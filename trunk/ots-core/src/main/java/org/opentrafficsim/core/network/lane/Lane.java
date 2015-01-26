@@ -48,7 +48,7 @@ public class Lane extends CrossSectionElement
     /** Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. */
     private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
-    /** GTUs on the lane at the last evaluation step of the traffic model. */
+    /** GTUs ordered by increasing longitudinal position. */
     private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
 
     /** Adjacent left lanes that some GTU types can change onto. */
@@ -256,64 +256,62 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Add a GTU to the GTU list of this lane.
-     * @param gtu the GTU to add.
+     * Add a LaneBasedGTU&lt;?&gt; to the list of this Lane.
+     * @param gtu LaneBasedGTU&lt;?&gt;; the GTU to add
+     * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
+     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this
+     *         Lane due to a lane change operation)
+     * @throws RemoteException on communication failure
+     * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered
+     *             on this Lane
      */
-    public final void addGTU(final LaneBasedGTU<?> gtu)
+    public final int addGTU(final LaneBasedGTU<?> gtu, double fractionalPosition) throws RemoteException,
+            NetworkException
     {
-        addGTU(gtu, 0);
+        if (fractionalPosition < 0 || fractionalPosition > 1)
+        {
+            throw new NetworkException("position is out of range");
+        }
+        // figure out the rank for the new GTU
+        int index;
+        for (index = 0; index < this.gtuList.size(); index++)
+        {
+            LaneBasedGTU<?> otherGTU = this.gtuList.get(index);
+            if (gtu == otherGTU)
+            {
+                throw new NetworkException("GTU already registered on this Lane");
+            }
+            try
+            {
+                if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
+                {
+                    break;
+                }
+            }
+            catch (NetworkException exception)
+            {
+                // Should never happen; implies that there is a GTU on this Lane that does not think it is on this Lane
+                exception.printStackTrace();
+            }
+        }
+        this.gtuList.add(index, gtu);
+        return index;
     }
 
     /**
-     * Register the GTU on a lane on a given position. This method is used when a GTU is changing lanes and inserts
-     * itself between / before / after other GTUs.
-     * @param gtu the GTU to insert into the list.
-     * @param index the index in the GTU list of the lane that this GTU will get.
-     * @throws IndexOutOfBoundsException when index < 0 or > gtuList.size()-1.
+     * Add a LaneBasedGTU&lt;?&gt; to the list of this Lane.
+     * @param gtu LaneBasedGTU&lt;?&gt;; the GTU to add
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position that the newly added
+     *            GTU will have on this Lane
+     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this
+     *         Lane due to a lane change operation)
+     * @throws RemoteException on communication failure
+     * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    @SuppressWarnings("checkstyle:redundantthrows")
-    public final void addGTU(final LaneBasedGTU<?> gtu, final int index) throws IndexOutOfBoundsException
+    public final int addGTU(final LaneBasedGTU<?> gtu, DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+            throws RemoteException, NetworkException
     {
-        if (!this.gtuList.contains(gtu))
-        {
-            this.gtuList.add(index, gtu);
-            // schedule the triggers for the remainder of this timestep
-
-        }
-    }
-
-    /**
-     * Register the GTU on a lane after another GTU. This method is used when a GTU is changing lanes and inserts itself
-     * after another GTU.
-     * @param gtu the GTU to insert into the list.
-     * @param otherGTU the other GTU of the lane after which this GTU will be entered in the GTU list.
-     * @throws NetworkException when other GTU not on the given lane.
-     */
-    public final void addGTUAfter(final LaneBasedGTU<?> gtu, final LaneBasedGTU<?> otherGTU) throws NetworkException
-    {
-        if (!this.gtuList.contains(otherGTU))
-        {
-            throw new NetworkException("Tried to insert GTU " + gtu + " after GTU " + otherGTU + " on lane " + this
-                    + ", but 2nd GTU not on this lane.");
-        }
-        addGTU(gtu, this.gtuList.indexOf(otherGTU) + 1);
-    }
-
-    /**
-     * Register the GTU on a lane before another GTU. This method is used when a GTU is changing lanes and inserts
-     * itself before another GTU.
-     * @param gtu the GTU to insert into the list.
-     * @param otherGTU the other GTU of the lane before which this GTU will be entered in the GTU list.
-     * @throws NetworkException when other GTU not on the given lane.
-     */
-    public final void addGTUBefore(final LaneBasedGTU<?> gtu, final LaneBasedGTU<?> otherGTU) throws NetworkException
-    {
-        if (!this.gtuList.contains(otherGTU))
-        {
-            throw new NetworkException("Tried to insert GTU " + gtu + " before GTU " + otherGTU + " on lane " + this
-                    + ", but 2nd GTU not on this lane.");
-        }
-        addGTU(gtu, this.gtuList.indexOf(otherGTU));
+        return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
 
     /**
