@@ -722,7 +722,7 @@ class RoadSimulationModel implements OTSModelInterface
             {
                 // Remember at what ratio on the old lane the vehicle was at the PREVIOUS time step
                 // FIXME: the longitudinal positions map should not be editable from the outside...
-                Map<Lane, Rel<LengthUnit>> longitudinalPositions = getLongitudinalPositions();
+                Map<Lane, Rel<LengthUnit>> longitudinalPositions = positions(getFront());
                 DoubleScalar.Rel<LengthUnit> oldPosition = longitudinalPositions.get(lane);
                 double oldRatio = oldPosition.getSI() / lane.getLength().getSI();
                 // Remove vehicle from it's current lane
@@ -799,7 +799,7 @@ class RoadSimulationModel implements OTSModelInterface
                     try
                     {
                         // FIXME: the longitudinal positions map should not be editable from the outside...
-                        Map<Lane, Rel<LengthUnit>> relativePositions = car.getLongitudinalPositions();
+                        Map<Lane, Rel<LengthUnit>> relativePositions = car.positions(car.getFront());
                         double relativePosition = relativePositions.get(lane).getSI() / lane.getLength().getSI();
                         // System.out.println("Wrapping car " + car.getId() + " in lane " + laneIndex +
                         // " back to position 0");
