@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
@@ -153,6 +154,12 @@ public final class LaneFactory
             DoubleScalar.Rel<LengthUnit> latPos =
                     new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
             result[laneIndex] = makeLane(link, laneType, latPos, width, simulator);
+        }
+        // Make lanes adjacent in their natural order
+        for (int laneIndex = 1; laneIndex < laneCount; laneIndex++)
+        {
+            result[laneIndex - 1].addAccessibleAdjacentLane(result[laneIndex], LateralDirectionality.RIGHT);
+            result[laneIndex].addAccessibleAdjacentLane(result[laneIndex - 1], LateralDirectionality.LEFT);
         }
         return result;
     }
