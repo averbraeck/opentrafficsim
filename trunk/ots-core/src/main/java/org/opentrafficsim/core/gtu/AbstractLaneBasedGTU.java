@@ -47,6 +47,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** Time of last evaluation. */
     private DoubleScalar.Abs<TimeUnit> lastEvaluationTime;
 
+    /** Time of next evaluation. */
+    private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
+
     /**
      * Longitudinal positions of the reference point of the GTU (currently the front) on one or more lanes at the
      * lastEvaluationTime. Because the front of the GTU is not on all the lanes the GTU is registered on, the longitudinal
@@ -103,6 +106,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
         this.speed = new DoubleScalar.Abs<SpeedUnit>(initialSpeed);
         this.lateralVelocity = new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
+        this.nextEvaluationTime = new DoubleScalar.Abs<TimeUnit>(currentTime);
     }
 
     /** {@inheritDoc} */
@@ -131,7 +135,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DoubleScalar.Abs<TimeUnit> getNextEvaluationTime()
     {
-        return DoubleScalar.plus(this.lastEvaluationTime, this.gtuFollowingModel.getStepSize()).immutable();
+        return this.nextEvaluationTime;
     }
 
     /** {@inheritDoc} */
@@ -187,15 +191,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException,
         SimRuntimeException
     {
-        DoubleScalar.Abs<TimeUnit> nextEvaluationTime = getNextEvaluationTime();
         for (Lane lane : this.longitudinalPositions.keySet())
         {
-            this.longitudinalPositions.put(lane, position(lane, getFront(), nextEvaluationTime));
+            this.longitudinalPositions.put(lane, position(lane, getFront(), this.nextEvaluationTime));
         }
 
-        this.speed = getLongitudinalVelocity(nextEvaluationTime);
+        this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
 
-        this.lastEvaluationTime = nextEvaluationTime;
+        this.lastEvaluationTime = this.nextEvaluationTime;
+        this.nextEvaluationTime = cfmr.getValidUntil();
         this.acceleration = cfmr.getAcceleration();
 
         // for now: schedule all sensor triggers that are going to happen in the next timestep.
