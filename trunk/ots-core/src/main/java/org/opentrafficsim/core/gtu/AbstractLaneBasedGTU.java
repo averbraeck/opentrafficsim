@@ -712,8 +712,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
 
         Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
-
-        return new HashSet<LaneBasedGTU<?>>();
+        for (Lane adjacentLane : adjacentLanes)
+        {
+            gtuSet.addAll(parallel(adjacentLane, when));
+        }
+        return gtuSet;
     }
 
     /**
