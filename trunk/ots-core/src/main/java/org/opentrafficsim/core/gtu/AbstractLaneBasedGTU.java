@@ -732,9 +732,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        Lane lane = this.longitudinalPositions.keySet().iterator().next();
         try
         {
+            Lane lane = this.longitudinalPositions.keySet().iterator().next();
             // TODO solve problem when point is still on previous lane.
             double fraction = (position(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
             LineString line = lane.getCenterLine();
@@ -749,9 +749,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             double angle = Math.atan2(cb.y - ca.y, cb.x - ca.x);
             return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0, angle);
         }
-        catch (NetworkException ne)
+        catch (Exception ne)
         {
-            return null;
+            System.out.print(".");
+            return new DirectedPoint(0, 0, 0);
         }
     }
 
