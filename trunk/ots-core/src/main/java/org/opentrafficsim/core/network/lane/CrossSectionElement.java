@@ -74,12 +74,12 @@ public abstract class CrossSectionElement implements LocatableInterface
      *            design line
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at end, positioned <i>symmetrically around</i> the
      *            design line
-     * @throws NetworkException
+     * @throws NetworkException when creation of the geometry fails
      */
     public CrossSectionElement(final CrossSectionLink<?, ?> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin, Rel<LengthUnit> lateralOffsetAtEnd,
-            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
-            throws NetworkException
+            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin,
+            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
+            final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
     {
         super();
         this.parentLink = parentLink;
@@ -131,7 +131,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         return new Coordinate(referencePoint.x + offset * Math.cos(angle), referencePoint.y + offset * Math.sin(angle));
     }
 
-    /** Precision of buffer operations */
+    /** Precision of buffer operations. */
     private final int quadrantSegments = 8;
 
     /**
@@ -145,7 +145,9 @@ public abstract class CrossSectionElement implements LocatableInterface
     {
         double deltaAngle = angle2 - angle1;
         if (Math.abs(deltaAngle) <= tolerance)
+        {
             return true;
+        }
         if (deltaAngle > 0)
         {
             deltaAngle -= Math.PI * 2;
@@ -158,12 +160,12 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /**
-     * Compute the direction from a reference to another point
+     * Compute the direction from a reference to another point.
      * @param reference Coordinate; the reference point
      * @param other Coordinate; the other point
      * @return double; the angle of the direction from reference to other in Radians
      */
-    double angle(final Coordinate reference, final Coordinate other)
+    private double angle(final Coordinate reference, final Coordinate other)
     {
         return Math.atan2(other.y - reference.y, other.x - reference.x);
     }
@@ -223,17 +225,19 @@ public abstract class CrossSectionElement implements LocatableInterface
             // This generates two sets of coordinates that are stored consecutively as a single polygon
             // System.out.println("Trouble");
             // printCoordinates("bufferCoordinates", bufferCoordinates);
+            /*-
             for (int i = 0; i < bufferCoordinates.length; i++)
             {
                 if (startCoordinate.distance(bufferCoordinates[i]) < tooClose)
                 {
-                    // System.out.println(String.format("coordinate %d matches startcoordinate", i));
+                    System.out.println(String.format("coordinate %d matches startcoordinate", i));
                 }
                 if (endCoordinate.distance(bufferCoordinates[i]) < tooClose)
                 {
-                    // System.out.println(String.format("coordinate %d matches endcoordinate", i));
+                    System.out.println(String.format("coordinate %d matches endcoordinate", i));
                 }
             }
+             */
             // Separate the bufferCoordinates in an inner an outer ring
             // Some experimentation has shown (but NOT proved) that there is only one transition between the inner and
             // outer rings and both rings are closed.
@@ -512,7 +516,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called
      * "buffer" around it.
      * @return the geometry belonging to this CrossSectionElement.
-     * @throws NetworkException
+     * @throws NetworkException when construction of the geometry fails (which should never happen)
      */
     private Geometry constructGeometry() throws NetworkException
     {
@@ -704,7 +708,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
     public final DoubleScalar.Rel<LengthUnit> getLateralBeginPosition(final LateralDirectionality lateralDirection,
-            double fractionalLongitudinalPosition)
+            final double fractionalLongitudinalPosition)
     {
         DoubleScalar.Rel<LengthUnit> designLineOffset =
                 DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd,

@@ -1,8 +1,5 @@
 package org.opentrafficsim.graphs;
 
-import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
-import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
