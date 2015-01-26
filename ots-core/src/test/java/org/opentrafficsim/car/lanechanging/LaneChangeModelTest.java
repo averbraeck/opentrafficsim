@@ -129,6 +129,17 @@ public class LaneChangeModelTest
                 new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
             result[laneIndex] = makeLane(link, laneType, latPos, width);
         }
+        for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
+        {
+            if (laneIndex < laneCount - 1)
+            {
+                result[laneIndex].addAccessibleAdjacentLane(result[laneIndex + 1], LateralDirectionality.RIGHT);
+            }
+            if (laneIndex > 0)
+            {
+                result[laneIndex].addAccessibleAdjacentLane(result[laneIndex - 1], LateralDirectionality.LEFT);
+            }
+        }
         return result;
     }
 
@@ -170,7 +181,7 @@ public class LaneChangeModelTest
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
                     AccelerationUnit.METER_PER_SECOND_2));
-        //System.out.println(laneChangeModelResult.toString());
+        System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT, laneChangeModelResult
             .getLaneChange());
         DoubleScalar.Rel<LengthUnit> rear = car.position(lanes[0], car.getRear());
