@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
+import java.util.HashMap;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -16,7 +18,7 @@ package org.opentrafficsim.demo.ntm;
 public class TripInfoByDestination
 {
     /** the first Area/Node encountered on the path to Destination. */
-    private Node neighbour;
+    private HashMap<BoundedNode, Double> neighboursAndRouteShare;
 
     /** the first Area/Node encountered on the path to Destination. */
     private Node destination;
@@ -33,10 +35,10 @@ public class TripInfoByDestination
      * @param accumulatedCarsToDestination
      * @param flowToNeighbour
      */
-    public TripInfoByDestination(Node neighbour, Node destination, double accumulatedCarsToDestination, double demandToNeighbour)
+    public TripInfoByDestination(HashMap<BoundedNode, Double> neighbour, Node destination, double accumulatedCarsToDestination, double demandToNeighbour)
     {
         super();
-        this.neighbour = neighbour;
+        this.neighboursAndRouteShare = neighbour;
         this.destination = destination;
         this.accumulatedCarsToDestination = accumulatedCarsToDestination;
         this.demandToDestination = demandToNeighbour;
@@ -45,17 +47,17 @@ public class TripInfoByDestination
     /**
      * @return neighbour.
      */
-    public Node getNeighbour()
+    public HashMap<BoundedNode, Double> getNeighbourAndRouteShare()
     {
-        return this.neighbour;
+        return this.neighboursAndRouteShare;
     }
 
     /**
      * @param neighbour set neighbour.
      */
-    public void setNeighbour(Node neighbour)
+    public void setNeighbourAndRouteShare(HashMap<BoundedNode, Double> neighbour)
     {
-        this.neighbour = neighbour;
+        this.neighboursAndRouteShare = neighbour;
     }
 
 

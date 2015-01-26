@@ -55,7 +55,7 @@ public class Routes
                 }
                 // for all node - destination pairs add information on their first neighbour on the shortest path
                 BoundedNode graphEndNode = (BoundedNode) model.getNodeAreaGraphMap().get(endNode.getId());
-                origin.getCellBehaviour().getTripInfoByNodeMap().get(destination).setNeighbour(graphEndNode);
+                //origin.getCellBehaviour().getTripInfoByNodeMap().get(destination).setNeighbour(graphEndNode);
 
                 if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
@@ -65,7 +65,7 @@ public class Routes
                     // Loop through the cells and do transmission
                     for (FlowCell cell : ctmLink.getCells())
                     {
-                        cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination).setNeighbour(graphEndNode);
+                  //      cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination).setNeighbour(graphEndNode);
                     }
                 }
             }

@@ -48,13 +48,14 @@ public class BuildGraph
     /**
      * Build the graph using roads between touching areas, flowLinks and Cordon areas (artificially created).
      */
-    static void buildGraph(NTMModel model, boolean COMPRESS_AREAS)
+    static void buildGraph(NTMModel model, Map<String, Area> areasToUse, Map<String, Node> centroidsToUse,
+            Map<String, Link> shpConnectorsToUse)
     {
         /** debug information?. */
         final boolean DEBUG = false;
         // temporary storage for nodes and edges mapped from the number to the node
         Map<String, Node> nodeMap = new HashMap<>();
-//        Map<String, Node> nodeAreaGraphMap = new HashMap<>();
+        // Map<String, Node> nodeAreaGraphMap = new HashMap<>();
 
         Map<Area, Node> areaNodeCentroidMap = new HashMap<>();
         Map<String, LinkEdge<Link>> linkMap = new HashMap<>();
@@ -62,31 +63,13 @@ public class BuildGraph
 
         allLinks.addAll(model.getShpLinks().values());
         allLinks.addAll(model.getFlowLinks().values());
+        allLinks.addAll(shpConnectorsToUse.values());
 
-        Map<String, Area> areasToUse;
-        Map<String, Node> centroidsToUse;
-        // the connectors depend on the area size (detailed/original or compressed/larger ones)
-        if (COMPRESS_AREAS)
-        {
-            allLinks.addAll(model.getShpBigConnectors().values());
-            areasToUse = model.getBigAreas();
-            centroidsToUse = model.getBigCentroids();
-        }
-        else
-        {
-            allLinks.addAll(model.getShpConnectors().values());
-            areasToUse = model.getAreas();
-            centroidsToUse = model.getCentroids();
-        }
-        
-/*        //generate the incoming and outgoing links from nodes
-        for (Link link: allLinks)
-        {
-            link.getStartNode().getIncomingLinks().add(link);
-            link.getEndNode().getIncomingLinks().add(link);
-        }
-*/        // make a directed graph of the entire network
-        // FIRST CREATE the LinkGraph
+        /*
+         * //generate the incoming and outgoing links from nodes for (Link link: allLinks) {
+         * link.getStartNode().getIncomingLinks().add(link); link.getEndNode().getIncomingLinks().add(link); }
+         */// make a directed graph of the entire network
+           // FIRST CREATE the LinkGraph
         for (Link shpLink : allLinks)
         {
             // area node: copies a node from a link and connects the area
@@ -124,16 +107,16 @@ public class BuildGraph
                 if (nodeA == null)
                 {
                     nodeA =
-                            addNodeToAreaGraph(shpLink, shpLink.getStartNode(), model.getNodeAreaGraphMap(), areaNodeCentroidMap,
-                                    areasToUse.values(), model);
+                            addNodeToAreaGraph(shpLink, shpLink.getStartNode(), model.getNodeAreaGraphMap(),
+                                    areaNodeCentroidMap, areasToUse.values(), model);
                 }
 
                 nodeB = (BoundedNode) model.getNodeAreaGraphMap().get(shpLink.getEndNode().getId());
                 if (nodeB == null)
                 {
                     nodeB =
-                            addNodeToAreaGraph(shpLink, shpLink.getEndNode(), model.getNodeAreaGraphMap(), areaNodeCentroidMap,
-                                    areasToUse.values(), model);
+                            addNodeToAreaGraph(shpLink, shpLink.getEndNode(), model.getNodeAreaGraphMap(),
+                                    areaNodeCentroidMap, areasToUse.values(), model);
                 }
             }
         }
@@ -147,7 +130,7 @@ public class BuildGraph
             // BoundedNode node = nodeMap.get(area.getCentroidNr());
             if (node != null)
             {
-                //put centroid back in links
+                // put centroid back in links
                 areaNodeCentroidMap.put(area, node);
                 model.getNodeAreaGraphMap().put(node.getId(), node);
                 model.getAreaGraph().addVertex(node);
@@ -211,7 +194,8 @@ public class BuildGraph
                 // create cellTransmissionLinks for the edges of the real FLOW connectors
                 // every CTM link receives a set of FlowCells that will be simulated as a nested process within the
                 // Network Transmission Model
-                createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap, model.getNodeAreaGraphMap(), model, areasToUse);
+                createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap, model.getNodeAreaGraphMap(), model,
+                        areasToUse);
             }
             // for all other links, inspect if they connect areas (startNode in areaA and endNode in area B (or vice
             // versa))
@@ -337,7 +321,8 @@ public class BuildGraph
      * @param cAVertex
      * @param cBVertex
      */
-    private static void addGraphConnector(NTMModel model, Node cAVertex, Node cBVertex, LinkEdge le, TrafficBehaviourType trafficBehaviourType)
+    private static void addGraphConnector(NTMModel model, Node cAVertex, Node cBVertex, LinkEdge le,
+            TrafficBehaviourType trafficBehaviourType)
     {
         DijkstraShortestPath<Node, LinkEdge<Link>> sp =
                 new DijkstraShortestPath<Node, LinkEdge<Link>>(model.getLinkGraph(), cAVertex, cBVertex);
@@ -351,8 +336,7 @@ public class BuildGraph
                 // DoubleScalar.Abs<SpeedUnit> speed =
                 // new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                 int hierarchy = le.getLink().getHierarchy();
-                Link newLink =
-                        Link.createLink(cAVertex, cBVertex, null, null, time, trafficBehaviourType, hierarchy);
+                Link newLink = Link.createLink(cAVertex, cBVertex, null, null, time, trafficBehaviourType, hierarchy);
                 if (le.getLink().getCapacity() != null)
                 {
                     newLink.setCorridorCapacity(le.getLink().getCapacity());
@@ -649,7 +633,8 @@ public class BuildGraph
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         Node centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                        addGraphConnector(model, nodeIsolated, centroidEntered, le, nodeIsolated.getBehaviourType());
+                                        addGraphConnector(model, nodeIsolated, centroidEntered, le,
+                                                nodeIsolated.getBehaviourType());
                                         /*
                                          * DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(99999,
                                          * SpeedUnit.KM_PER_HOUR); DoubleScalar.Abs<FrequencyUnit> capacity = new
@@ -675,16 +660,16 @@ public class BuildGraph
                                         // BoundedNode bN = (BoundedNode) le.getLink().getStartNode();
                                         addGraphConnector(model, nodeIsolated, bN, le, nodeIsolated.getBehaviourType());
 
-//                                        DoubleScalar.Abs<SpeedUnit> speed =
-//                                                new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-//                                        DoubleScalar.Abs<FrequencyUnit> capacity =
-//                                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-//                                        Link newLink =
-//                                                Link.createLink(nodeIsolated, bN, capacity, speed, null,
-//                                                        TrafficBehaviourType.NTM, hierarchy);
-//                                        LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
-//                                        addLinkEdge(nodeIsolated, bN, newLinkEdge, TrafficBehaviourType.FLOW,
-//                                                model.getAreaGraph());
+                                        // DoubleScalar.Abs<SpeedUnit> speed =
+                                        // new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                                        // DoubleScalar.Abs<FrequencyUnit> capacity =
+                                        // new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                                        // Link newLink =
+                                        // Link.createLink(nodeIsolated, bN, capacity, speed, null,
+                                        // TrafficBehaviourType.NTM, hierarchy);
+                                        // LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+                                        // addLinkEdge(nodeIsolated, bN, newLinkEdge, TrafficBehaviourType.FLOW,
+                                        // model.getAreaGraph());
                                         break;
                                     }
                                 }
