@@ -75,10 +75,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @param initialSpeed the initial speed of the car on the lane.
      * @param currentTime to initialize the evaluation. getSimulator() does not work yet, because the super constructors have
      *            not finished yet.
+     * @throws RemoteException 
      */
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Abs<TimeUnit> currentTime)
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Abs<TimeUnit> currentTime) throws RemoteException
     {
         super(id, gtuType);
         this.gtuFollowingModel = gtuFollowingModel;
@@ -88,7 +89,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // register the GTUs on the lane
         for (Lane lane : initialLongitudinalPositions.keySet())
         {
-            lane.addGTU(this);
+            try
+            {
+                lane.addGTU(this, initialLongitudinalPositions.get(lane));
+            }
+            catch (NetworkException exception)
+            {
+                // This should never happen...
+                exception.printStackTrace();
+            }
         }
 
         // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
