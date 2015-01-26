@@ -131,7 +131,7 @@ public class SensorTest
         int index = 0;
         for (SimEventInterface<OTSSimTimeDouble> event : eventList)
         {
-            //System.out.println("Scheduled Event " + event);
+            System.out.println("Scheduled Event " + event);
             if (1 == index)
             {
                 triggerEvent = event;
