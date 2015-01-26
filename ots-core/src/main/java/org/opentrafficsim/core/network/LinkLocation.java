@@ -86,7 +86,7 @@ public class LinkLocation
     }
 
     /** {@inheritDoc} */
-    public String toString()
+    public final String toString()
     {
         return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(), getLongitudinalPosition()
             .getUnit());
