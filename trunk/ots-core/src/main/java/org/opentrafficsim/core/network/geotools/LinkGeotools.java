@@ -18,6 +18,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 
 /**
+ * Link using Geotools Coordinates.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -64,7 +65,8 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
     }
 
     /**
-     * @return the geometry of this link.
+     * @return the geometry of this link. <br>
+     * <b>Do not modify the returned object or chaos will ensue.</b>
      */
     public final LinearGeometry getGeometry()
     {
