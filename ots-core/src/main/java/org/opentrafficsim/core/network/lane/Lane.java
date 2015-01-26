@@ -215,10 +215,10 @@ public class Lane extends CrossSectionElement
             double v0 = gtu.getLongitudinalVelocity().getSI();
             double a = gtu.getAcceleration().getSI();
             double sq = Math.sqrt(v0 * v0 + 2.0 * a * d);
-            double t1 = (-v0 + sq) / a;
-            double t2 = (-v0 - sq) / a;
-            // Figure out which one comes first (but not in the past)
             double now = gtu.getSimulator().getSimulatorTime().get().getSI();
+            double t1 = now + (-v0 + sq) / a;
+            double t2 = now + (-v0 - sq) / a;
+            // Figure out which one comes first (but not in the past)
             double t;
             if (t1 < now)
             {
@@ -265,13 +265,9 @@ public class Lane extends CrossSectionElement
      * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered
      *             on this Lane
      */
-    public final int addGTU(final LaneBasedGTU<?> gtu, double fractionalPosition) throws RemoteException,
+    public final int addGTU(final LaneBasedGTU<?> gtu, final double fractionalPosition) throws RemoteException,
             NetworkException
     {
-        if (fractionalPosition < 0 || fractionalPosition > 1)
-        {
-            throw new NetworkException("position is out of range");
-        }
         // figure out the rank for the new GTU
         int index;
         for (index = 0; index < this.gtuList.size(); index++)
@@ -308,7 +304,7 @@ public class Lane extends CrossSectionElement
      * @throws RemoteException on communication failure
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU<?> gtu, DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final int addGTU(final LaneBasedGTU<?> gtu, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
             throws RemoteException, NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
