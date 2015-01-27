@@ -94,8 +94,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         this.gtuFollowingModel = gtuFollowingModel;
         this.lastEvaluationTime = new DoubleScalar.Abs<TimeUnit>(currentTime);
         this.longitudinalPositions = new HashMap<>(initialLongitudinalPositions);
-
-        // register the GTUs on the lane
+        // register the GTU on the lanes
         for (Lane lane : initialLongitudinalPositions.keySet())
         {
             lane.addGTU(this, initialLongitudinalPositions.get(lane));

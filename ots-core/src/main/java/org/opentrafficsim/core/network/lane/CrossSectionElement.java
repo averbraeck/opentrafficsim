@@ -13,6 +13,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -517,7 +518,12 @@ public abstract class CrossSectionElement implements LocatableInterface
     private Geometry constructGeometry() throws NetworkException
     {
         GeometryFactory factory = new GeometryFactory();
-        Coordinate[] referenceCoordinates = this.parentLink.getGeometry().getLineString().getCoordinates();
+        LinearGeometry parentGeometry = this.parentLink.getGeometry();
+        if (null == parentGeometry)
+        {
+            return null; // If the Link does not have a Geometry; this CrossSectionElement can't have one either
+        }
+        Coordinate[] referenceCoordinates = parentGeometry.getLineString().getCoordinates();
         if (referenceCoordinates.length < 2)
         {
             throw new NetworkException("Parent Link has bad Geometry");
