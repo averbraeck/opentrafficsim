@@ -1,10 +1,14 @@
-package org.opentrafficsim.core.gtu;
+package org.opentrafficsim.core.gtu.lane;
 
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -47,13 +51,16 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
      * @param width the maximum width of the GTU (perpendicular to driving direction).
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction).
      * @param simulator the simulator.
-     * @throws RemoteException in case the simulation time cannot be read.
+     * @throws RemoteException when the simulator cannot be reached.
+     * @throws NetworkException when the GTU cannot be placed on the given lane.
+     * @throws SimRuntimeException when the move method cannot be scheduled.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-        final OTSDEVSSimulatorInterface simulator) throws RemoteException
+        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException
     {
         super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, simulator.getSimulatorTime().get());
         this.length = length;

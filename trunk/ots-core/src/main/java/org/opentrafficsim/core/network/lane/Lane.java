@@ -11,8 +11,8 @@ import java.util.TreeMap;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -21,12 +21,10 @@ import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -57,26 +55,31 @@ public class Lane extends CrossSectionElement
     /** Adjacent right lanes that some GTU types can change onto. */
     private Set<Lane> rightNeighbors = new HashSet<Lane>(1);
 
+    /** Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called. */
+    private Set<Lane> nextLanes = null;
+
+    /** Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called. */
+    private Set<Lane> prevLanes = null;
+
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
      * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the
-     *            design line
-     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design
-     *            line
+     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
      * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
-     * @throws NetworkException
+     * @throws NetworkException when creation of the geometry fails
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
-            Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
-            final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
-            final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity)
-            throws NetworkException
+        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
+        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
+        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity)
+        throws NetworkException
     {
         super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
@@ -115,20 +118,19 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Indicate that a Lane is no longer adjacent to this Lane (may be useful for lanes that are sometimes closed, e.g.
-     * tidal flow lanes).
+     * Indicate that a Lane is no longer adjacent to this Lane (may be useful for lanes that are sometimes closed, e.g. tidal
+     * flow lanes).
      * @param adjacentLane Lane; the adjacent Lane that must be unregistered
      * @param direction LateralDirectionality; the direction in which the Lane was adjacent to this Lane
      * @throws NetworkException when the adjacentLane was not registered as adjacent in the indicated direction
      */
     public final void removeAccessibleAdjacentLane(final Lane adjacentLane, final LateralDirectionality direction)
-            throws NetworkException
+        throws NetworkException
     {
         Set<Lane> neighbors = neighbors(direction);
         if (!neighbors.contains(adjacentLane))
         {
-            throw new NetworkException("Lane " + adjacentLane + " is not among the " + direction
-                    + " neighbors of this Lane");
+            throw new NetworkException("Lane " + adjacentLane + " is not among the " + direction + " neighbors of this Lane");
         }
         neighbors.remove(adjacentLane);
     }
@@ -144,7 +146,7 @@ public class Lane extends CrossSectionElement
         if (position < 0 || position > getLength().getSI())
         {
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.."
-                    + getLength().getSI());
+                + getLength().getSI());
         }
         List<Sensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
@@ -181,7 +183,7 @@ public class Lane extends CrossSectionElement
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
     public final List<Sensor> getSensors(final DoubleScalar.Rel<LengthUnit> minimumPosition,
-            final DoubleScalar.Rel<LengthUnit> maximumPosition)
+        final DoubleScalar.Rel<LengthUnit> maximumPosition)
     {
         ArrayList<Sensor> result = new ArrayList<Sensor>();
         for (List<Sensor> sensorList : this.sensors.subMap(minimumPosition.getSI(), maximumPosition.getSI()).values())
@@ -199,7 +201,7 @@ public class Lane extends CrossSectionElement
      * @throws SimRuntimeException when method cannot be scheduled.
      */
     public final void scheduleTriggers(final LaneBasedGTU<?> gtu) throws RemoteException, NetworkException,
-            SimRuntimeException
+        SimRuntimeException
     {
         DoubleScalar.Rel<LengthUnit> mStart = gtu.position(this, gtu.getFront());
         DoubleScalar.Rel<LengthUnit> mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime());
@@ -250,8 +252,8 @@ public class Lane extends CrossSectionElement
             }
             // System.out.println(String.format("t1=%.3fs, t2=%.3fs, now=%.3fs, scheduling %.3fs", t1, t2, gtu
             // .getSimulator().getSimulatorTime().get().getSI(), t));
-            gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor,
-                    "trigger", new Object[]{gtu});
+            gtu.getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(t, TimeUnit.SECOND), this, sensor, "trigger",
+                new Object[] {gtu});
         }
     }
 
@@ -259,14 +261,14 @@ public class Lane extends CrossSectionElement
      * Add a LaneBasedGTU&lt;?&gt; to the list of this Lane.
      * @param gtu LaneBasedGTU&lt;?&gt;; the GTU to add
      * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
-     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this
-     *         Lane due to a lane change operation)
+     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
+     *         a lane change operation)
      * @throws RemoteException on communication failure
-     * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered
-     *             on this Lane
+     * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this
+     *             Lane
      */
     public final int addGTU(final LaneBasedGTU<?> gtu, final double fractionalPosition) throws RemoteException,
-            NetworkException
+        NetworkException
     {
         // figure out the rank for the new GTU
         int index;
@@ -275,7 +277,8 @@ public class Lane extends CrossSectionElement
             LaneBasedGTU<?> otherGTU = this.gtuList.get(index);
             if (gtu == otherGTU)
             {
-                throw new NetworkException("GTU already registered on this Lane");
+                throw new NetworkException("GTU " + gtu + " already registered on Lane " + this + " [registered lanes: "
+                    + gtu.positions(gtu.getFront()).keySet() + "]");
             }
             try
             {
@@ -297,15 +300,15 @@ public class Lane extends CrossSectionElement
     /**
      * Add a LaneBasedGTU&lt;?&gt; to the list of this Lane.
      * @param gtu LaneBasedGTU&lt;?&gt;; the GTU to add
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position that the newly added
-     *            GTU will have on this Lane
-     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this
-     *         Lane due to a lane change operation)
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position that the newly added GTU will
+     *            have on this Lane
+     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
+     *         a lane change operation)
      * @throws RemoteException on communication failure
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
     public final int addGTU(final LaneBasedGTU<?> gtu, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
-            throws RemoteException, NetworkException
+        throws RemoteException, NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -367,8 +370,7 @@ public class Lane extends CrossSectionElement
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGTU<?> getGtuAfter(final DoubleScalar.Rel<LengthUnit> position,
-            final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when)
-            throws NetworkException
+        final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         for (LaneBasedGTU<?> gtu : this.gtuList)
         {
@@ -402,8 +404,7 @@ public class Lane extends CrossSectionElement
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGTU<?> getGtuBefore(final DoubleScalar.Rel<LengthUnit> position,
-            final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when)
-            throws NetworkException
+        final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         for (int i = this.gtuList.size() - 1; i >= 0; i--)
         {
@@ -431,102 +432,107 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * TODO this should be done once in the constructor and then cached: too expensive to do every time...
-     * @return set of Lanes following this lane. There are several possibilities: returning an empty set when the lane
-     *         stops and there is no longitudinal transfer method to a next lane. Returning a set with just one lane if
-     *         the lateral position of the next lane matches the lateral position of this lane (based on an overlap of
-     *         the lateral positions of the two joining lanes of more than a certain percentage). Multiple lanes in case
-     *         the Node where the underlying Link for this Lane has multiple outgoing Links, and there are multiple
-     *         lanes that match the lateral position of this lane.
+     * The next lane(s) are cached, as it is too expensive to make the calculation every time. There are several possibilities:
+     * returning an empty set when the lane stops and there is no longitudinal transfer method to a next lane. Returning a set
+     * with just one lane if the lateral position of the next lane matches the lateral position of this lane (based on an
+     * overlap of the lateral positions of the two joining lanes of more than a certain percentage). Multiple lanes in case the
+     * Node where the underlying Link for this Lane has multiple outgoing Links, and there are multiple lanes that match the
+     * lateral position of this lane.
+     * @return set of Lanes following this lane.
      */
     public final Set<Lane> nextLanes()
     {
-        Set<Lane> lanes = new HashSet<Lane>();
-        for (Link<?, ?> link : getParentLink().getEndNode().getLinksOut())
+        if (this.nextLanes == null)
         {
-            if (link instanceof CrossSectionLink<?, ?>)
+            this.nextLanes = new HashSet<Lane>(1);
+            for (Link<?, ?> link : getParentLink().getEndNode().getLinksOut())
             {
-                for (CrossSectionElement cse : ((CrossSectionLink<?, ?>) link).getCrossSectionElementList())
+                if (link instanceof CrossSectionLink<?, ?>)
                 {
-                    if (cse instanceof Lane)
+                    for (CrossSectionElement cse : ((CrossSectionLink<?, ?>) link).getCrossSectionElementList())
                     {
-                        /*
-                         * TODO only center position? Or also width? What is a good cutoff? Base on average width of the
-                         * GTU type that can drive on this Lane? E.g., for a Tram or Train, a 5 cm deviation is a
-                         * problem; for a Car or a Bicycle, more deviation is acceptable.
-                         */
-                        if (Math.abs(cse.getLateralCenterPosition(0).getSI() - this.getLateralCenterPosition(1).getSI()) < 0.5)
+                        if (cse instanceof Lane)
                         {
-                            lanes.add((Lane) cse);
+                            /*
+                             * TODO only center position? Or also width? What is a good cutoff? Base on average width of the GTU
+                             * type that can drive on this Lane? E.g., for a Tram or Train, a 5 cm deviation is a problem; for a
+                             * Car or a Bicycle, more deviation is acceptable.
+                             */
+                            if (Math.abs(cse.getLateralCenterPosition(0).getSI() - this.getLateralCenterPosition(1).getSI()) < 0.5)
+                            {
+                                this.nextLanes.add((Lane) cse);
+                            }
                         }
                     }
                 }
             }
         }
-        return lanes;
+        return this.nextLanes;
     }
 
     /**
-     * TODO this should be done once in the constructor and then cached: too expensive to do every time...
-     * @return set of Lanes preceding this lane. There are several possibilities: returning an empty set when the lane
-     *         starts and there is no longitudinal transfer method from a previous lane. Returning a set with just one
-     *         lane if the lateral position of the previous lane matches the lateral position of this lane (based on an
-     *         overlap of the lateral positions of the two joining lanes of more than a certain percentage). Multiple
-     *         lanes in case the Node where the underlying Link for this Lane has multiple incoming Links, and there are
-     *         multiple lanes that match the lateral position of this lane.
+     * The previous lane(s) are cached, as it is too expensive to make the calculation every time. There are several
+     * possibilities: returning an empty set when the lane starts and there is no longitudinal transfer method from a previous
+     * lane. Returning a set with just one lane if the lateral position of the previous lane matches the lateral position of
+     * this lane (based on an overlap of the lateral positions of the two joining lanes of more than a certain percentage).
+     * Multiple lanes in case the Node where the underlying Link for this Lane has multiple incoming Links, and there are
+     * multiple lanes that match the lateral position of this lane.
+     * @return set of Lanes preceding this lane.
      */
     public final Set<Lane> prevLanes()
     {
-        Set<Lane> lanes = new HashSet<Lane>();
-        for (Link<?, ?> link : getParentLink().getStartNode().getLinksIn())
+        if (this.prevLanes == null)
         {
-            if (link instanceof CrossSectionLink<?, ?>)
+            this.prevLanes = new HashSet<Lane>(1);
+            for (Link<?, ?> link : getParentLink().getStartNode().getLinksIn())
             {
-                for (CrossSectionElement cse : ((CrossSectionLink<?, ?>) link).getCrossSectionElementList())
+                if (link instanceof CrossSectionLink<?, ?>)
                 {
-                    if (cse instanceof Lane)
+                    for (CrossSectionElement cse : ((CrossSectionLink<?, ?>) link).getCrossSectionElementList())
                     {
-                        /*
-                         * TODO only center position? Or also width? What is a good cutoff? Base on average width of the
-                         * GTU type that can drive on this Lane? E.g., for a Tram or Train, a 5 cm deviation is a
-                         * problem; for a Car or a Bicycle, more deviation is acceptable.
-                         */
-                        if (Math.abs(cse.getLateralCenterPosition(1).getSI() - this.getLateralCenterPosition(0).getSI()) < 0.5)
+                        if (cse instanceof Lane)
                         {
-                            lanes.add((Lane) cse);
+                            /*
+                             * TODO only center position? Or also width? What is a good cutoff? Base on average width of the GTU
+                             * type that can drive on this Lane? E.g., for a Tram or Train, a 5 cm deviation is a problem; for a
+                             * Car or a Bicycle, more deviation is acceptable.
+                             */
+                            if (Math.abs(cse.getLateralCenterPosition(1).getSI() - this.getLateralCenterPosition(0).getSI()) < 0.5)
+                            {
+                                this.prevLanes.add((Lane) cse);
+                            }
                         }
                     }
                 }
             }
         }
-        return lanes;
+        return this.prevLanes;
     }
 
     /**
-     * Determine the set of lanes to the left or to the right of this lane, which are accessible from this lane, or an
-     * empty set if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In
-     * other words, if we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of
-     * that lane is not FORWARD or BOTH, it will not be included.<br>
-     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This
-     * means that a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
-     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability
-     * for a GTU. A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta
-     * distance from the relevant lateral edges of the two adjacent lanes. <br>
+     * Determine the set of lanes to the left or to the right of this lane, which are accessible from this lane, or an empty set
+     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
+     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
+     * or BOTH, it will not be included.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
+     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
+     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
+     * relevant lateral edges of the two adjacent lanes. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
      * @param lateralDirection LEFT or RIGHT.
      * @param gtuType the type of GTU for which this an adjacent lane.
-     * @return the set of lanes that are accessible, or null if there is no lane that is accessiblewith a matching
-     *         driving direction.
+     * @return the set of lanes that are accessible, or null if there is no lane that is accessiblewith a matching driving
+     *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,
-            final GTUType<?> gtuType)
+    public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType<?> gtuType)
     {
         Set<Lane> candidates = new HashSet<>();
         for (Lane l : neighbors(lateralDirection))
         {
             if (l.getLaneType().isCompatible(gtuType)
-                    && (l.getDirectionality().equals(LongitudinalDirectionality.BOTH) || l.getDirectionality().equals(
-                            this.getDirectionality())))
+                && (l.getDirectionality().equals(LongitudinalDirectionality.BOTH) || l.getDirectionality().equals(
+                    this.getDirectionality())))
             {
                 candidates.add(l);
             }
@@ -535,27 +541,27 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane,
-     * or null if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In
-     * other words, if we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of
-     * that lane is not FORWARD or BOTH, null will be returned.<br>
-     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This
-     * means that a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
-     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability
-     * for a GTU. A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta
-     * distance from the relevant lateral edges of the two adjacent lanes. <br>
-     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a
-     * car lane are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the
-     * provided GTUType is returned. <br>
+     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
+     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
+     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
+     * or BOTH, null will be returned.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
+     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
+     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
+     * relevant lateral edges of the two adjacent lanes. <br>
+     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
+     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
+     * returned. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
      * @param lateralDirection LEFT or RIGHT.
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the GTU along this Lane
      * @param gtuType the type of GTU for which this an adjacent lane.
-     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction
-     *         does not match.
+     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
+     *         not match.
      */
     public final Lane bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
-            final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
+        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
     {
         Set<Lane> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
 
@@ -586,8 +592,7 @@ public class Lane extends CrossSectionElement
     {
         CrossSectionLink<?, ?> link = getParentLink();
         // FIXME indexOf may not be the correct way to determine the rank of a Lane (counts stripes as well)
-        return String.format("Lane %d of %s, %s", link.getCrossSectionElementList().indexOf(this), link.toString(),
-                super.toString());
+        return String.format("Lane %d of %s", link.getCrossSectionElementList().indexOf(this), link.toString());
     }
 
 }
