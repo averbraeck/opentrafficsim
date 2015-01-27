@@ -46,7 +46,7 @@ public final class LaneFactory
      * @param intermediateCoordinates Coordinate[]; array of intermediate coordinates (may be null)
      * @return Link; the newly constructed Link
      */
-    private static Link makeLink(final String name, final Node from, final Node to,
+    public static Link makeLink(final String name, final Node from, final Node to,
             final Coordinate[] intermediateCoordinates)
     {
         int coordinateCount = 2 + (null == intermediateCoordinates ? 0 : intermediateCoordinates.length);
@@ -138,7 +138,7 @@ public final class LaneFactory
      * @return Lane[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
-     * @throws NetworkException 
+     * @throws NetworkException on topological problems
      */
     public static Lane[] makeMultiLane(final String name, final Node from, final Node to,
             final Coordinate[] intermediateCoordinates, final int laneCount, final LaneType<String> laneType,
