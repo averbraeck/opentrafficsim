@@ -648,43 +648,15 @@ public class BuildGraph
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         Node centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                        addGraphConnector(model, nodeIsolated, centroidEntered, le,
+                                        addGraphConnector(model, nodeIsolated, centroidEntered, null, null, le,
                                                 nodeIsolated.getBehaviourType());
-                                        /*
-                                         * DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(99999,
-                                         * SpeedUnit.KM_PER_HOUR); DoubleScalar.Abs<FrequencyUnit> capacity = new
-                                         * DoubleScalar.Abs<FrequencyUnit>(999999.0, FrequencyUnit.PER_HOUR); Link
-                                         * newLink = Link.createLink(nodeIsolated, centroidEntered, capacity, speed,
-                                         * null, TrafficBehaviourType.NTM, hierarchy); LinkEdge<Link> newLinkEdge = new
-                                         * LinkEdge<>(newLink); addLinkEdge(nodeIsolated, centroidEntered, newLinkEdge,
-                                         * TrafficBehaviourType.NTM, areaGraphIn);
-                                         */
                                         break;
                                     }
                                     else if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                                     {
-                                        // BoundedNode bN =
-                                        // new BoundedNode(le.getLink().getStartNode().getPoint(), le.getLink()
-                                        // .getStartNode().getId(), null, le.getLink().getStartNode()
-                                        // .getBehaviourType());
                                         Node bN = nodeGraphMap.get(le.getLink().getStartNode().getId());
-                                        /*
-                                         * if (flowNodeStart.getArea()== null) { cA.setArea(areaStart); }
-                                         */
+                                        addGraphConnector(model, nodeIsolated, bN, null, null, le, nodeIsolated.getBehaviourType());
 
-                                        // BoundedNode bN = (BoundedNode) le.getLink().getStartNode();
-                                        addGraphConnector(model, nodeIsolated, bN, le, nodeIsolated.getBehaviourType());
-
-                                        // DoubleScalar.Abs<SpeedUnit> speed =
-                                        // new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                                        // DoubleScalar.Abs<FrequencyUnit> capacity =
-                                        // new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                                        // Link newLink =
-                                        // Link.createLink(nodeIsolated, bN, capacity, speed, null,
-                                        // TrafficBehaviourType.NTM, hierarchy);
-                                        // LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
-                                        // addLinkEdge(nodeIsolated, bN, newLinkEdge, TrafficBehaviourType.FLOW,
-                                        // model.getAreaGraph());
                                         break;
                                     }
                                 }
