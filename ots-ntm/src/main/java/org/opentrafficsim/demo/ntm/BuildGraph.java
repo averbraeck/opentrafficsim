@@ -255,7 +255,9 @@ public class BuildGraph
                             {
                                 throw new RuntimeException("cAVertex == null || cBVertex == null");
                             }
-                            addGraphConnector(model, cAVertex, cBVertex, le, TrafficBehaviourType.NTM);
+                            Abs<SpeedUnit> speedA = aA.getParametersNTM().getFreeSpeed();
+                            Abs<SpeedUnit> speedB = aB.getParametersNTM().getFreeSpeed();
+                            addGraphConnector(model, cAVertex, cBVertex, speedA, speedB, le, TrafficBehaviourType.NTM);
 
                         }
                         // TODO is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in
@@ -321,8 +323,8 @@ public class BuildGraph
      * @param cAVertex
      * @param cBVertex
      */
-    private static void addGraphConnector(NTMModel model, Node cAVertex, Node cBVertex, LinkEdge le,
-            TrafficBehaviourType trafficBehaviourType)
+    private static void addGraphConnector(NTMModel model, Node cAVertex, Node cBVertex, Abs<SpeedUnit> speedA,
+            Abs<SpeedUnit> speedB, LinkEdge le, TrafficBehaviourType trafficBehaviourType)
     {
         DijkstraShortestPath<Node, LinkEdge<Link>> sp =
                 new DijkstraShortestPath<Node, LinkEdge<Link>>(model.getLinkGraph(), cAVertex, cBVertex);
@@ -332,9 +334,18 @@ public class BuildGraph
         {
             if (sp.getPath() != null)
             {
+
                 time = new DoubleScalar.Rel<TimeUnit>(sp.getPath().getWeight(), TimeUnit.HOUR);
-                DoubleScalar.Abs<SpeedUnit> speed =
-                new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                double xA = cAVertex.getPoint().getCoordinate().x;
+                double yA = cAVertex.getPoint().getCoordinate().y;
+                double xB = cBVertex.getPoint().getCoordinate().x;
+                double yB = cBVertex.getPoint().getCoordinate().y;
+                // TODO check distance by coordinates!!!!
+                double distance = 1.3 * Math.sqrt(Math.pow(xB - xA, 2) + Math.pow(yB - yA, 2));
+                double timeDouble = 0.5 * distance / speedA.getSI() + 0.5 * distance / speedA.getSI();
+                time = new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.SECOND);
+                
+                DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                 int hierarchy = le.getLink().getHierarchy();
                 Link newLink = Link.createLink(cAVertex, cBVertex, null, speed, time, trafficBehaviourType, hierarchy);
                 if (le.getLink().getCapacity() != null)

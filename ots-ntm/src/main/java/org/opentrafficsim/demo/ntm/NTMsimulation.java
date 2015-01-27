@@ -144,18 +144,7 @@ public class NTMsimulation
 
         // for testing we open a file and write some results:
         // TODO testing
-        // Initiate trips from OD to first Area (Origin)
 
-        Map<String, Map<String, TripInfoTimeDynamic>> trips;
-
-        if (model.COMPRESS_AREAS)
-        {
-            trips = model.getCompressedTripDemand().getTripInfo();
-        }
-        else
-        {
-            trips = model.getTripDemand().getTripInfo();
-        }
         if (model.DEBUG && steps == 1)
         {
             File file = new File("D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1/NTMoutputTest.txt");
@@ -253,7 +242,7 @@ public class NTMsimulation
                     // (neighbours).
                     // The structure (or Class in Java) named TripInfoDynamic is stored in a HashMap (lookup array) that
                     // contains this information for all destinations separately.
-                    Map<String, TripInfoTimeDynamic> tripsFrom = trips.get(origin.getId());
+                    Map<String, TripInfoTimeDynamic> tripsFrom = model.tripDemandToUse.get(origin.getId());
                     // loop through all destinations to get total demand and supply per origin and add the new trips
                     for (TripInfoByDestination tripInfoByDestination : origin.getCellBehaviour().getTripInfoByNodeMap()
                             .values())
