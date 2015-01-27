@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -98,6 +99,9 @@ public class NTMModel implements OTSModelInterface
 
     /** the compressed demand of trips by Origin and Destination. */
     private TripDemand<TripInfoTimeDynamic> compressedTripDemand;
+
+    /** the demand of trips by Origin and Destination for simulation. */
+    Map<String, Map<String, TripInfoTimeDynamic>> tripDemandToUse;
 
     /** The simulation settings. */
     private NTMSettings settingsNTM;
@@ -203,6 +207,7 @@ public class NTMModel implements OTSModelInterface
             Map<String, Area> areasToUse;
             Map<String, Node> centroidsToUse;
             Map<String, Link> shpConnectorsToUse;
+
             if (COMPRESS_AREAS)
             {
                 // to compress the areas into bigger units
@@ -231,163 +236,49 @@ public class NTMModel implements OTSModelInterface
                 shpConnectorsToUse = this.getShpBigConnectors();
                 areasToUse = this.getBigAreas();
                 centroidsToUse = this.getBigCentroids();
+                this.tripDemandToUse = this.getCompressedTripDemand().getTripInfo();
             }
             else
             {
                 shpConnectorsToUse = this.getShpConnectors();
                 areasToUse = this.getAreas();
                 centroidsToUse = this.getCentroids();
+                this.tripDemandToUse = this.getTripDemand().getTripInfo();
             }
 
-            // create a key between the larger areas and the original smaller areas
-            // this enables the creation of compressed zones
-
+            // set the lower values for flow links:
             DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(30, SpeedUnit.KM_PER_HOUR);
             DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(300, FrequencyUnit.PER_HOUR);
             this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
             // merge link segments between junctions on flow links:
             Link.findSequentialLinks(this.flowLinks, this.nodes);
-            //Link.findSequentialLinks(this.shpLinks, this.nodes);
+            // Link.findSequentialLinks(this.shpLinks, this.nodes);
 
-            // save the selected and created areas to a shape file: at this position the connector areas are saved
+            // save the selected and newly created areas to a shape file: at this position the connector areas are saved
             // also!!!
             // WriteToShp.createShape(this.areas);
 
             // compute the roadLength within the areas
             determineRoadLengthInAreas(this.shpLinks, areasToUse);
 
-            HashMap<String, ArrayList<java.lang.Double>> parametersNTM =
-                    CsvFileReader.readParametersNTM(path + "/parametersNTM.txt", ";", ",");
-            for (Area area : areasToUse.values())
-            {
-                ParametersNTM paramNTM = null;
-                ArrayList<java.lang.Double> param = parametersNTM.get(area.getCentroidNr());
-                if (param != null)
-                {
-                    double capacity = param.get(param.size() - 1);
-                    param.remove(param.size() - 1);
-                    paramNTM = new ParametersNTM(param, capacity, area.getRoadLength());
-                }
-                else
-                {
-                    paramNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
-                }
-                area.setParametersNTM(paramNTM);
-            }
-
-            HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap =
-                    new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
-            // borderCapacityAreasMap = CsvFileReader.readCapResNTM(path + "/capRestraintsAreas.txt", ";", ",");
-
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, areasToUse, centroidsToUse, shpConnectorsToUse);
 
-            // !!!!!!!!!!!!!!!!!!
-            // temporary: make a file with NTM parameters per area
-            BufferedWriter parametersNTMOut = null;
-            String textOut;
-            File fileParametersNTM =
-                    new File("D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1/output/parametersNTM.txt");
-            parametersNTMOut = NTMsimulation.createWriter(fileParametersNTM);
-            for (Node node : this.getAreaGraph().vertexSet())
-            {
-                if (node.getBehaviourType() == TrafficBehaviourType.NTM)
-                {
-                    BoundedNode bNode = (BoundedNode) node;
-                    CellBehaviourNTM nodeBehaviour = (CellBehaviourNTM) bNode.getCellBehaviour();
-                    textOut = bNode.getArea().getCentroidNr();
-                    textOut += ", ";
-                    textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(0));
-                    textOut += ", ";
-                    textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(1));
-                    textOut += ", ";
-                    textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(2));
-                    textOut += ", ";
-                    textOut +=
-                            String.format("%.1f", (nodeBehaviour.getMaxCapacity().getInUnit(FrequencyUnit.PER_HOUR))
-                                    / nodeBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER));
-                    parametersNTMOut.write(textOut + " \n");
-                }
-            }
-            parametersNTMOut.close();
-            // temporary: end
-            // !!!!!!!!!!!!!!!!!!
-
-            BufferedWriter capResFileWriter = null;
-            File filecapRestraintsAreas =
-                    new File(
-                            "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1/output/capRestraintsAreas.txt");
-            capResFileWriter = NTMsimulation.createWriter(filecapRestraintsAreas);
-            boolean header = true;
-            double capacity = 1000;
-            for (Node origin : this.getAreaGraph().vertexSet())
-            {
-                if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
-                {
-                    String textOutCapRes = origin.getId();
-                    String textHeader = "Capacity";
-                    for (Node destination : this.getAreaGraph().vertexSet())
-                    {
-                        if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
-                        {
-                            if (header)
-                            {
-                                textHeader += ", ";
-                                textHeader += destination.getId();
-                            }
-                            textOutCapRes += ", ";
-                            textOutCapRes += String.format("%.1f", capacity);
-                        }
-                    }
-                    if (header)
-                    {
-                        capResFileWriter.write(textHeader + " \n");
-                        header = false;
-                    }
-                    capResFileWriter.write(textOutCapRes + " \n");
-                }
-            }
-            capResFileWriter.close();
-            // temporary: end
-            // !!!!!!!!!!!!!!!!!!
-
-            // set the border capacity
-            for (Node origin : this.getAreaGraph().vertexSet())
-            {
-                if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
-                {
-                    HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity =
-                            new HashMap<BoundedNode, Abs<FrequencyUnit>>();
-                    BoundedNode node = (BoundedNode) origin;
-                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
-                    Set<LinkEdge<Link>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
-                    for (LinkEdge<Link> link : outGoing)
-                    {
-                        Node neighbourNode = link.getLink().getEndNode();
-                        BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
-                        if (!borderCapacityAreasMap.isEmpty())
-                        {
-                            borderCapacity.put(graphEndNode,
-                                    borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()));
-                        }
-                        else
-                        {
-                            Abs<FrequencyUnit> cap = new Abs<FrequencyUnit>(99999.0, FrequencyUnit.PER_HOUR);
-                            borderCapacity.put(graphEndNode, cap);
-                        }
-                    }
-                    cellBehaviour.setBorderCapacity(borderCapacity);
-                }
-            }
+            String file = path + "/parametersNTM.txt";
+            readOrSetParametersNTM(areasToUse, file);
+            
+            file = path + "/capRestraintsAreas.txt";
+            readOrSetCapacityRestraints(this, areasToUse, file);
+                    
             // shortest paths creation
             Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes());
+
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
             {
                 createAnimation();
             }
-
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "ntmFlowTimestep", null);
             // this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
@@ -428,6 +319,87 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
+     * @param areasToUse
+     * @param path
+     * @param file
+     * @throws ParseException 
+     * @throws IOException 
+     */
+    public void readOrSetParametersNTM(Map<String, Area> areasToUse, String file) throws IOException, ParseException
+    {
+        HashMap<String, ArrayList<java.lang.Double>> parametersNTM =
+                CsvFileReader.readParametersNTM(file, ";", ",");
+        if (parametersNTM.isEmpty())
+        {
+            CsvFileWriter.writeParametersNTM(this, file);
+            parametersNTM = CsvFileReader.readParametersNTM(file, ";", ",");
+        }
+    
+        for (Area area : areasToUse.values())
+        {
+            ParametersNTM paramNTM = null;
+            ArrayList<java.lang.Double> param = parametersNTM.get(area.getCentroidNr());
+            if (param != null)
+            {
+                double capacity = param.get(param.size() - 1);
+                param.remove(param.size() - 1);
+                paramNTM = new ParametersNTM(param, capacity, area.getRoadLength());
+            }
+            else
+            {
+                paramNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
+            }
+            area.setParametersNTM(paramNTM);
+        }
+    }
+    
+    /**
+     * @param model
+     * @param areasToUse
+     * @param file
+     * @throws IOException
+     * @throws ParseException
+     */
+    public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file) throws IOException, ParseException
+    {
+        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
+        if (borderCapacityAreasMap.isEmpty())
+        {
+            CsvFileWriter.writeCapresNTM(this, file);
+            borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
+        }
+
+        // set the border capacity
+        for (Node origin : model.getAreaGraph().vertexSet())
+        {
+            if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+            {
+                HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity =
+                        new HashMap<BoundedNode, Abs<FrequencyUnit>>();
+                BoundedNode node = (BoundedNode) origin;
+                CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
+                Set<LinkEdge<Link>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
+                for (LinkEdge<Link> link : outGoing)
+                {
+                    Node neighbourNode = link.getLink().getEndNode();
+                    BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
+                    if (!borderCapacityAreasMap.isEmpty())
+                    {
+                        borderCapacity.put(graphEndNode,
+                                borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()));
+                    }
+                    else
+                    {
+                        Abs<FrequencyUnit> cap = new Abs<FrequencyUnit>(99999.0, FrequencyUnit.PER_HOUR);
+                        borderCapacity.put(graphEndNode, cap);
+                    }
+                }
+                cellBehaviour.setBorderCapacity(borderCapacity);
+            }
+        }
+    }
+    
+    /**
      * @param areas
      * @param shpConnectors2
      * @param compressedAreas2
@@ -455,15 +427,15 @@ public class NTMModel implements OTSModelInterface
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), startNode, link.getEndNode(),
-                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
-                                link.getHierarchy());
+                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(),
+                                link.getLinkData(), link.getHierarchy());
             }
             else if (endNode != null)
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), endNode,
-                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
-                                link.getHierarchy());
+                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(),
+                                link.getLinkData(), link.getHierarchy());
             }
             else
             {
@@ -520,7 +492,6 @@ public class NTMModel implements OTSModelInterface
         }
 
     }
-
 
     /**
      * @throws IOException
