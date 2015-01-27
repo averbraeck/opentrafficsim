@@ -27,7 +27,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -301,7 +301,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     public final void addData(final AbstractLaneBasedGTU<?> car) throws NetworkException, RemoteException
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
-        // XXX we take the first (and only) lane on which the vehicle is registered.
+        // XXX we take the first (and only -- not true!!!) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
         final DoubleScalar.Rel<LengthUnit> startPosition = car.position(lane, car.getFront(), startTime);
         // Lookup this Car in the list of trajectories

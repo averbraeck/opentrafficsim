@@ -2,7 +2,7 @@ package org.opentrafficsim.graphs;
 
 import java.rmi.RemoteException;
 
-import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**

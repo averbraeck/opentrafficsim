@@ -3,8 +3,8 @@ package org.opentrafficsim.car.lanechanging;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.gtu.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;

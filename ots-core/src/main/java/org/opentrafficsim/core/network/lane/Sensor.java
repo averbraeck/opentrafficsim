@@ -3,8 +3,8 @@ package org.opentrafficsim.core.network.lane;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 

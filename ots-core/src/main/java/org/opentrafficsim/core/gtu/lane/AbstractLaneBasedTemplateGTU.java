@@ -1,10 +1,14 @@
-package org.opentrafficsim.core.gtu;
+package org.opentrafficsim.core.gtu.lane;
 
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -31,12 +35,14 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
      * @param gtuFollowingModel the following model, including a reference to the simulator.
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes.
      * @param initialSpeed the initial speed of the car on the lane.
-     * @throws RemoteException in case the simulation time cannot be read.
+     * @throws RemoteException when the simulator cannot be reached.
+     * @throws NetworkException when the GTU cannot be placed on the given lane.
+     * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> gtuType,
         final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NetworkException, SimRuntimeException
     {
         super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, gtuType.getSimulator()
             .getSimulatorTime().get());

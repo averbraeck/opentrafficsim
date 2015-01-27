@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu;
+package org.opentrafficsim.core.gtu.lane;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -13,6 +13,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.opentrafficsim.core.gtu.AbstractGTU;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -78,11 +81,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @param initialSpeed the initial speed of the car on the lane.
      * @param currentTime to initialize the evaluation. getSimulator() does not work yet, because the super constructors have
      *            not finished yet.
-     * @throws RemoteException 
+     * @throws RemoteException when the simulator cannot be reached.
+     * @throws NetworkException when the GTU cannot be placed on the given lane.
+     * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Abs<TimeUnit> currentTime) throws RemoteException
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Abs<TimeUnit> currentTime)
+        throws RemoteException, NetworkException, SimRuntimeException
     {
         super(id, gtuType);
         this.gtuFollowingModel = gtuFollowingModel;
@@ -92,21 +98,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // register the GTUs on the lane
         for (Lane lane : initialLongitudinalPositions.keySet())
         {
-            try
-            {
-                lane.addGTU(this, initialLongitudinalPositions.get(lane));
-            }
-            catch (NetworkException exception)
-            {
-                // This should never happen...
-                exception.printStackTrace();
-            }
+            lane.addGTU(this, initialLongitudinalPositions.get(lane));
         }
 
         // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
         this.speed = new DoubleScalar.Abs<SpeedUnit>(initialSpeed);
         this.lateralVelocity = new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
         this.nextEvaluationTime = new DoubleScalar.Abs<TimeUnit>(currentTime);
+
+        // TODO getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SI), this, this, "move", null);
     }
 
     /** {@inheritDoc} */
@@ -787,7 +787,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             exception.printStackTrace();
         }
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
-        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s/s", getId(),
+        return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s^2", getId(),
             this.lastEvaluationTime.getSI(), getNextEvaluationTime().getSI(), pos, this.getLongitudinalVelocity(when)
                 .getSI(), this.getAcceleration(when).getSI());
     }

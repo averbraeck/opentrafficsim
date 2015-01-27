@@ -1,9 +1,11 @@
-package org.opentrafficsim.core.gtu;
+package org.opentrafficsim.core.gtu.lane;
 
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;

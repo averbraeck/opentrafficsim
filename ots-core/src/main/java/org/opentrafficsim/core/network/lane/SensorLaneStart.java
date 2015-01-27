@@ -2,8 +2,8 @@ package org.opentrafficsim.core.network.lane;
 
 import java.rmi.RemoteException;
 
-import org.opentrafficsim.core.gtu.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -31,7 +31,7 @@ public class SensorLaneStart extends AbstractSensor
      */
     public SensorLaneStart(final Lane lane)
     {
-        super(lane, new DoubleScalar.Abs<LengthUnit>(0.0, LengthUnit.METER), RelativePosition.FRONT);
+        super(lane, new DoubleScalar.Abs<LengthUnit>(Math.ulp(0.0), LengthUnit.METER), RelativePosition.FRONT);
     }
 
     /**

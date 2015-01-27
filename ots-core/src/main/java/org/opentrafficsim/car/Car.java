@@ -10,15 +10,16 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.AbstractLaneBasedIndividualGTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedIndividualGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -50,15 +51,18 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
      * @param width the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
      * @param simulator the simulator
-     * @throws RemoteException in case the simulation time cannot be read
-     * @throws NamingException if an error occurs when adding the animation handler
+     * @throws NamingException if an error occurs when adding the animation handler.
+     * @throws RemoteException when the simulator cannot be reached.
+     * @throws NetworkException when the GTU cannot be placed on the given lane.
+     * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Car(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, RemoteException, NetworkException,
+        SimRuntimeException
     {
         // HACK FIXME (negative length trick)
         super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, length.getSI() < 0
@@ -95,12 +99,9 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
     {
         try
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> rearPositions = positions(getRear());
-            Lane rearLane = rearPositions.keySet().iterator().next();
             Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
             Lane frontLane = frontPositions.keySet().iterator().next();
-            return String.format("Car %s rear:%s[%s] front:%s[%s]", getId(), rearLane, rearPositions.get(rearLane),
-                frontLane, frontPositions.get(frontLane));
+            return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
         catch (RemoteException | NetworkException exception)
         {

@@ -114,12 +114,14 @@ public class CarTest
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
      * @return Car; the new Car
-     * @throws RemoteException on network error
-     * @throws NamingException on network error
+     * @throws NamingException on network error when making the animation
+     * @throws RemoteException when the simulator cannot be reached.
+     * @throws NetworkException when the GTU cannot be placed on the given lane.
+     * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     public static Car<Integer> makeReferenceCar(final int nr, final Lane lane,
         final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-        final OTSDEVSSimulator simulator) throws RemoteException, NamingException
+        final OTSDEVSSimulator simulator) throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
