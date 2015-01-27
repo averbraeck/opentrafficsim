@@ -59,7 +59,7 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
 public class Link extends AbstractLink<String, Node>
 {
     /** SPEEDAB class java.lang.Double 120.0. */
-    private DoubleScalar.Abs<SpeedUnit> speed;
+    private DoubleScalar.Abs<SpeedUnit> freeSpeed;
 
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Rel<TimeUnit> time;
@@ -88,7 +88,7 @@ public class Link extends AbstractLink<String, Node>
      * @param length
      * @param startNode
      * @param endNode
-     * @param speed
+     * @param freeSpeed
      * @param time
      * @param capacity
      * @param behaviourType
@@ -97,17 +97,17 @@ public class Link extends AbstractLink<String, Node>
      */
 
     public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length,
-            final Node startNode, final Node endNode, DoubleScalar.Abs<SpeedUnit> speed,
+            final Node startNode, final Node endNode, DoubleScalar.Abs<SpeedUnit> freeSpeed,
             DoubleScalar.Rel<TimeUnit> time, final DoubleScalar.Abs<FrequencyUnit> capacity,
             final TrafficBehaviourType behaviourType, LinkData linkData, int hierarchy)
     {
 
         super(nr, startNode, endNode, length, capacity, hierarchy);
         setGeometry(geometry);
-        this.speed = speed;
+        this.freeSpeed = freeSpeed;
         this.time = time;
         this.behaviourType = behaviourType;
-        this.numberOfLanes = estimateLanes(capacity, speed);
+        this.numberOfLanes = estimateLanes(capacity, freeSpeed);
         this.linkData = linkData;
         this.setGeometry(geometry);
         if (geometry != null)
@@ -236,7 +236,7 @@ public class Link extends AbstractLink<String, Node>
         super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link
                 .getHierarchy());
         setGeometry(link.getGeometry());
-        this.speed = link.speed;
+        this.freeSpeed = link.freeSpeed;
         this.numberOfLanes = link.getNumberOfLanes();
         if (this.getGeometry() != null)
         {
@@ -411,7 +411,7 @@ public class Link extends AbstractLink<String, Node>
                         Link down = downStreamLinks.get(0);
                         if (upLinks.get(down).size() == 1)
                         {
-                            if (link.getSpeed().equals(down.getSpeed())
+                            if (link.getFreeSpeed().equals(down.getFreeSpeed())
                                     && link.getCapacity().equals(down.getCapacity())
                                     && link.getBehaviourType().equals(down.getBehaviourType()))
                             {
@@ -526,7 +526,7 @@ public class Link extends AbstractLink<String, Node>
                 new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
 
         mergedLink =
-                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getSpeed(), up.getTime(),
+                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getFreeSpeed(), up.getTime(),
                         up.getCapacity(), up.getBehaviourType(), up.getLinkData(), up.getHierarchy());
 
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
@@ -604,9 +604,9 @@ public class Link extends AbstractLink<String, Node>
     /**
      * @return speed
      */
-    public DoubleScalar.Abs<SpeedUnit> getSpeed()
+    public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
     {
-        return this.speed;
+        return this.freeSpeed;
     }
 
 

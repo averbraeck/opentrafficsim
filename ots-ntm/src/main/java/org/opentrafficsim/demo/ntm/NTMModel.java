@@ -121,7 +121,7 @@ public class NTMModel implements OTSModelInterface
     public boolean DEBUG = true;
 
     /** use the bigger areas (true) or the detailed areas (false). */
-    public boolean COMPRESS_AREAS = true;
+    public boolean COMPRESS_AREAS = false;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -146,15 +146,17 @@ public class NTMModel implements OTSModelInterface
         {
             // boolean DEBUG = true;
             // set the time step value at ten seconds;
+            DoubleScalar.Rel<TimeUnit> reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
                     new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(7200, TimeUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 7, 0, 0);
+            int numberOfRoutes = 5;
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
-                            timeStepCellTransmissionModel);
+                            timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes);
 
             // Read the shape files with the function:
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
@@ -164,7 +166,7 @@ public class NTMModel implements OTSModelInterface
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed file with centroids (number starts with "C") and normal nodes
             // String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
-            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug2";
+            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
             this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
 
             // the Map areas contains a reference to the centroids!
@@ -240,13 +242,13 @@ public class NTMModel implements OTSModelInterface
             // create a key between the larger areas and the original smaller areas
             // this enables the creation of compressed zones
 
-            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(999, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(30, SpeedUnit.KM_PER_HOUR);
             DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(300, FrequencyUnit.PER_HOUR);
             this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
-            // merge link segments between junctions:
-            // Link.findSequentialLinks(this.flowLinks, this.nodes);
-            // Link.findSequentialLinks(this.shpLinks, this.nodes);
+            // merge link segments between junctions on flow links:
+            Link.findSequentialLinks(this.flowLinks, this.nodes);
+            //Link.findSequentialLinks(this.shpLinks, this.nodes);
 
             // save the selected and created areas to a shape file: at this position the connector areas are saved
             // also!!!
@@ -379,8 +381,7 @@ public class NTMModel implements OTSModelInterface
                 }
             }
             // shortest paths creation
-            initiateSimulationNTM(this);
-
+            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes());
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
             {
@@ -454,14 +455,14 @@ public class NTMModel implements OTSModelInterface
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), startNode, link.getEndNode(),
-                                link.getSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
+                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
                                 link.getHierarchy());
             }
             else if (endNode != null)
             {
                 newConnector =
                         new Link(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), endNode,
-                                link.getSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
+                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData(),
                                 link.getHierarchy());
             }
             else
@@ -495,7 +496,7 @@ public class NTMModel implements OTSModelInterface
                                 new DoubleScalar.Rel<LengthUnit>(length, LengthUnit.METER);
                         area.addRoadLength(laneLength);
                         // in SI (m*m/s)
-                        java.lang.Double speedLaneLength = new java.lang.Double(link.getSpeed().getSI() * length);
+                        java.lang.Double speedLaneLength = new java.lang.Double(link.getFreeSpeed().getSI() * length);
                         if (speedTotalByArea.get(area) != null)
                         {
                             speedLaneLength += speedTotalByArea.get(area);
@@ -520,107 +521,6 @@ public class NTMModel implements OTSModelInterface
 
     }
 
-    /**
-     * Generate demand at fixed intervals based on traffic demand (implemented by re-scheduling this method).
-     */
-    protected final void initiateSimulationNTM(NTMModel model)
-    {
-        // At time zero, there are no cars in the network
-        // we start the simulation by injecting traffic into the areas, based on the traffic demand input
-        // The trips are put in the "stock" of the area, but keep a reference to the destination and to the first Area
-        // they encounter (neighbour) on their shortest path towards that destination.
-
-        // Initiate the simulation by creating the paths
-        // These paths are used to determine the first area (neighbour) on the path to destination!!!
-        boolean floyd = true;
-        @SuppressWarnings("unchecked")
-        Collection<GraphPath<BoundedNode, LinkEdge<Link>>> sp1 = null;
-
-        long initial = System.currentTimeMillis();
-        BoundedNode nodeTest = null;
-
-        if (floyd)
-        {
-            model.setDebugLinkList(new LinkedHashMap<String, Link>());
-            sp1 = new FloydWarshallShortestPaths(model.areaGraph).getShortestPaths();
-            for (GraphPath<BoundedNode, LinkEdge<Link>> path : sp1)
-            {
-                BoundedNode origin = path.getStartVertex();
-                BoundedNode destination = path.getEndVertex();
-                System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
-                // only generate to "real" destinations
-                if (destination.getBehaviourType() == TrafficBehaviourType.NTM
-                        || destination.getBehaviourType() == TrafficBehaviourType.CORDON)
-                {
-
-                    // TODO select OD pairs with trips only. to generate the relevant paths
-                    Map<String, Map<String, TripInfoTimeDynamic>> trips;
-                    if (model.COMPRESS_AREAS)
-                    {
-                        trips = model.getCompressedTripDemand().getTripInfo();
-                    }
-                    else
-                    {
-                        trips = model.getTripDemand().getTripInfo();
-                    }
-
-                    if (trips.get(origin.getId()) != null)
-                    {
-                        if (trips.get(origin.getId()).get(destination.getId()) != null)
-                        {
-                            double trip = trips.get(origin.getId()).get(destination.getId()).getNumberOfTrips();
-                            // generate the paths between origins and destinations only
-                            if (trip > 0.0)
-                            {
-                                for (LinkEdge<Link> edge : path.getEdgeList())
-                                {
-                                    Link link = edge.getLink();
-                                    model.getDebugLinkList().put(edge.getLink().getId(), link);
-                                }
-                            }
-                        }
-                    }
-
-                    // determine the start and endnode of the first edge that starts from the origin
-                    // the endNode of this edge is the "Neighbour" area
-                    BoundedNode startNode = (BoundedNode) path.getEdgeList().get(0).getLink().getStartNode();
-                    // BoundedNode startNode = new BoundedNode(node.getPoint(), node.getId(), null,
-                    // node.getBehaviourType());
-                    BoundedNode endNode = (BoundedNode) path.getEdgeList().get(0).getLink().getEndNode();
-                    // BoundedNode endNode = new BoundedNode(node.getPoint(), node.getId(), null,
-                    // node.getBehaviourType());
-
-                    // the order of endNode and startNode of the edge seems to be not consistent!!!!!!
-                    if (origin.equals(endNode))
-                    {
-                        endNode = startNode;
-                    }
-                    // for all node - destination pairs add information on their first neighbour on the shortest path
-                    BoundedNode graphEndNode = (BoundedNode) model.getNodeAreaGraphMap().get(endNode.getId());
-                    HashMap<BoundedNode, java.lang.Double> neighbours = new HashMap<BoundedNode, java.lang.Double>();
-                    java.lang.Double share = new java.lang.Double(1.0);
-                    neighbours.put(graphEndNode, 100.0);
-                    TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours, destination, 0, 0);
-                    origin.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
-
-                    if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
-                    {
-                        // for the flow links we create the trip info by Node also for the flow cells
-                        LinkCellTransmission ctmLink =
-                                (LinkCellTransmission) this.getAreaGraph().getEdge(origin, graphEndNode).getLink();
-                        // Loop through the cells and do transmission
-                        for (FlowCell cell : ctmLink.getCells())
-                        {
-                            tripInfoByNode = new TripInfoByDestination(neighbours, destination, 0, 0);
-                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
-                        }
-                    }
-                }
-            }
-        }
-        long now = System.currentTimeMillis() - initial;
-        System.out.println("Floyd: time duration in millis = " + now);
-    }
 
     /**
      * @throws IOException
@@ -655,11 +555,11 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
-            boolean showFlowLinks = false;
+            boolean showLinks = false;
+            boolean showFlowLinks = true;
             boolean showConnectors = false;
             boolean showNodes = true;
-            boolean showGraphEdges = false;
+            boolean showGraphEdges = true;
             boolean showAreaNode = true;
             boolean showArea = false;
 
@@ -707,7 +607,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
                 {
-                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 5.5f, Color.BLACK);
+                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 10f, Color.BLACK);
                 }
             }
             if (showAreaNode)
@@ -982,7 +882,7 @@ public class NTMModel implements OTSModelInterface
         for (Link shpLink : shpLinks.values())
         {
 
-            if (shpLink.getSpeed().doubleValue() >= maxSpeed.doubleValue()
+            if (shpLink.getFreeSpeed().doubleValue() >= maxSpeed.doubleValue()
                     && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 Link flowLink = new Link(shpLink);
@@ -1000,7 +900,7 @@ public class NTMModel implements OTSModelInterface
         for (Link flowLink : flowLinks.values())
         {
 
-            if (flowLink.getSpeed().doubleValue() >= maxSpeed.doubleValue()
+            if (flowLink.getFreeSpeed().doubleValue() >= maxSpeed.doubleValue()
                     && flowLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 shpLinks.remove(flowLink.getId());

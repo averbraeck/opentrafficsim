@@ -183,6 +183,15 @@ public class NTMsimulation
             }
         }
 
+        if (model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) * steps
+                % model.getSettingsNTM().getReRouteTimeInterval().getInUnit(TimeUnit.SECOND) == 0)
+        {
+            System.out.println("reroute");
+            // shortest paths creation
+            Routes.createRoutes(model, model.getSettingsNTM().getNumberOfRoutes());
+            
+        }
+
         if (steps == 1)
         {
             for (Node node : model.getAreaGraph().vertexSet())
@@ -484,7 +493,9 @@ public class NTMsimulation
                                     else if (neighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
                                     {
                                         Set<BoundedNode> nextNeighbours =
-                                                tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                                                neighbour.getCellBehaviour().getTripInfoByNodeMap()
+                                                        .get(tripInfoByDestination.getDestination())
+                                                        .getNeighbourAndRouteShare().keySet();
                                         for (BoundedNode nextNeighbour : nextNeighbours)
                                         {
                                             // when entering a flow link, loop through all succeeding flow links until
@@ -612,7 +623,9 @@ public class NTMsimulation
                                         FlowCell lastCell = ctmLink.getCells().get(ctmLink.getCells().size() - 1);
 
                                         Set<BoundedNode> nextNeighbours =
-                                                tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                                                neighbour.getCellBehaviour().getTripInfoByNodeMap()
+                                                        .get(tripInfoByDestination.getDestination())
+                                                        .getNeighbourAndRouteShare().keySet();
                                         for (BoundedNode nextNeighbour : nextNeighbours)
                                         {
                                             double addDemandToDestination =
@@ -942,7 +955,8 @@ public class NTMsimulation
     public static HashMap<LinkCellTransmission, FlowCell> simulateFlowLink(
             SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> areaGraph, LinkCellTransmission ctmLink,
             BoundedNode origin, BoundedNode destination, BoundedNode neighbour, BoundedNode nextNeighbour,
-            double demandToNeighbour, TripInfoByDestination tripInfoByDestination, FlowCell lastCellFromPreviousLink, double share)
+            double demandToNeighbour, TripInfoByDestination tripInfoByDestination, FlowCell lastCellFromPreviousLink,
+            double share)
     {
         HashMap<LinkCellTransmission, FlowCell> ctmLinkLastCellMap = new HashMap<LinkCellTransmission, FlowCell>();
         // Retrieve the cell transmission link
@@ -963,7 +977,7 @@ public class NTMsimulation
                 // next statement: if we are regarding downstream flow links
                 if (lastCellFromPreviousLink == null)
                 {
-                    share = neighbourTripInfoByDestination.getNeighbourAndRouteShare().get(neighbour);
+                    share = neighbourTripInfoByDestination.getNeighbourAndRouteShare().get(nextNeighbour);
                     // * tripInfoByDestination.getNeighbourAndRouteShare().get(
                     // nextNeighbour);
                     demandToNextNeighbour = demandToNeighbour * share;
@@ -1061,8 +1075,7 @@ public class NTMsimulation
                 demandToNextNeighbour =
                         cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination).getDemandToDestination();
                 TripInfoByDestination nextNeighbourTripInfoByDestination =
-                        nextNeighbour.getCellBehaviour().getTripInfoByNodeMap()
-                                .get(tripInfoByDestination.getDestination());
+                        nextNeighbour.getCellBehaviour().getTripInfoByNodeMap().get(destination);
                 // BoundedNode nextNextNeighbour =
                 // (BoundedNode)
                 // nextNeighbourTripInfoByDestination.getNeighbour();
@@ -1121,7 +1134,7 @@ public class NTMsimulation
                             lastCellFromPreviousLink = cell;
                             // recursive loop for downstream Cell Transmission links!!
                             simulateFlowLink(areaGraph, ctmLink, origin, destination, neighbour, nextNeighbour, 0.0,
-                                    tripInfoByDestination, lastCellFromPreviousLink, share);
+                                    null, lastCellFromPreviousLink, share);
                             ctmLinkLastCellMap.put(ctmLink, lastCellFromPreviousLink);
                         }
                     }
