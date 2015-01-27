@@ -27,30 +27,36 @@ public class NTMSettings
      */
     private Abs<TimeUnit> startTimeSinceMidnight;
 
-    /** */
+    /** relative time length of simulation */
     private Rel<TimeUnit> durationOfSimulation;
 
-    /** */
+    /** name and description of the project */
     private String descriptionProject;
 
-    /** */
+    /** time step interval NTM */
     private DoubleScalar.Rel<TimeUnit> timeStepDurationNTM;
 
-    /** */
+    /** cell transmission might have different time step interval?? */
     private DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel;
 
-    /** */
+    /** time of a certain date */
     private DoubleScalar.Abs<TimeUnit> absoluteStartTime;
+
+    /** generate new routes after a certain time interval */
+    private DoubleScalar.Rel<TimeUnit> reRouteTimeInterval;
+    
+    /** number of routes for generation*/
+    private int numberOfRoutes;
 
     /**
      * @param startTime
      * @param durationOfSimulation
      * @param descriptionProject
-     * @param timeStepDurationNTM 
-     * @param timeStepDurationCTM 
+     * @param timeStepDurationNTM
+     * @param timeStepDurationCTM
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
-            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM)
+            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval, int numberOfRoutes)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -63,7 +69,9 @@ public class NTMSettings
         this.durationOfSimulation = durationOfSimulation;
         this.setDescriptionProject(descriptionProject);
         this.timeStepDurationNTM = timeStepDurationNTM;
-        this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);        
+        this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);
+        this.reRouteTimeInterval = reRouteTimeInterval;
+        this.numberOfRoutes = numberOfRoutes;
     }
 
     /**
@@ -77,7 +85,7 @@ public class NTMSettings
         this.timeStepDurationNTM = timeStepDurationNTM;
         this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);
     }
-    
+
     /**
      * @param startTime
      * @param durationOfSimulation
@@ -88,9 +96,7 @@ public class NTMSettings
     {
         this.timeStepDurationNTM = timeStepDurationNTM;
     }
-    
-    
-    
+
     /**
      * @return startTimeSinceMidnight
      */
@@ -139,7 +145,6 @@ public class NTMSettings
         this.timeStepDurationNTM = timeStepDuration;
     }
 
-
     /**
      * @return startTime
      */
@@ -167,7 +172,8 @@ public class NTMSettings
     /**
      * @param timeStepDurationCellTransmissionModel set timeStepDurationCellTransmissionModel.
      */
-    public void setTimeStepDurationCellTransmissionModel(DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel)
+    public void setTimeStepDurationCellTransmissionModel(
+            DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel)
     {
         this.timeStepDurationCellTransmissionModel = timeStepDurationCellTransmissionModel;
     }
@@ -186,6 +192,38 @@ public class NTMSettings
     public void setDescriptionProject(String descriptionProject)
     {
         this.descriptionProject = descriptionProject;
+    }
+
+    /**
+     * @return reRouteTimeInterval.
+     */
+    public DoubleScalar.Rel<TimeUnit> getReRouteTimeInterval()
+    {
+        return reRouteTimeInterval;
+    }
+
+    /**
+     * @param reRouteTimeInterval set reRouteTimeInterval.
+     */
+    public void setReRouteTimeInterval(DoubleScalar.Rel<TimeUnit> reRouteTimeInterval)
+    {
+        this.reRouteTimeInterval = reRouteTimeInterval;
+    }
+
+    /**
+     * @return numberOfRoutes.
+     */
+    public int getNumberOfRoutes()
+    {
+        return numberOfRoutes;
+    }
+
+    /**
+     * @param numberOfRoutes set numberOfRoutes.
+     */
+    public void setNumberOfRoutes(int numberOfRoutes)
+    {
+        this.numberOfRoutes = numberOfRoutes;
     }
 
 }

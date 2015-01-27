@@ -89,7 +89,7 @@ public class BuildGraph
             {
                 LinkEdge<Link> linkEdge = new LinkEdge<>(shpLink);
                 model.getLinkGraph().addEdge(nodeA, nodeB, linkEdge);
-                double speed = shpLink.getSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                double speed = shpLink.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
                 double length = shpLink.getLength().getInUnit(LengthUnit.KILOMETER);
                 double travelTime = speed * length;
                 model.getLinkGraph().setEdgeWeight(linkEdge, travelTime);
@@ -333,10 +333,10 @@ public class BuildGraph
             if (sp.getPath() != null)
             {
                 time = new DoubleScalar.Rel<TimeUnit>(sp.getPath().getWeight(), TimeUnit.HOUR);
-                // DoubleScalar.Abs<SpeedUnit> speed =
-                // new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                DoubleScalar.Abs<SpeedUnit> speed =
+                new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                 int hierarchy = le.getLink().getHierarchy();
-                Link newLink = Link.createLink(cAVertex, cBVertex, null, null, time, trafficBehaviourType, hierarchy);
+                Link newLink = Link.createLink(cAVertex, cBVertex, null, speed, time, trafficBehaviourType, hierarchy);
                 if (le.getLink().getCapacity() != null)
                 {
                     newLink.setCorridorCapacity(le.getLink().getCapacity());
@@ -383,8 +383,12 @@ public class BuildGraph
                         }
                         else
                         {
-                            System.out.println("no time computed for this link/edge????");
-
+                            java.lang.Double timeDouble =
+                                    linkEdge.getLink().getLength().getInUnit(LengthUnit.KILOMETER)
+                                            / linkEdge.getLink().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                            DoubleScalar.Rel<TimeUnit> time = new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.HOUR);
+                            linkEdge.getLink().setTime(time);
+                            graph.setEdgeWeight(linkEdge, linkEdge.getLink().getTime().getInUnit(TimeUnit.HOUR));
                         }
                     }
                     else
@@ -730,7 +734,8 @@ public class BuildGraph
         // cB = areaNodeCentroidMap.get(areaEnd);
         for (LinkEdge<Link> urbanLink : linkMap.values())
         {
-            if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD)
+            if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD
+                    || urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.NTM)
             {
                 if (urbanLink.getLink().getEndNode().getId().equals(flowNodeStart.getId()))
                 {
@@ -866,6 +871,17 @@ public class BuildGraph
                         new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
         return area;
     }
+
+    /*
+     * // Create new Areas where they are lacking
+     *//**
+     * @param centroid
+     * @return the additional areas
+     */
+    /*
+     * public SimpleDirectedWeightedGraph copySimpleDirectedWeightedGraph(final SimpleDirectedWeightedGraph graph) {
+     * SimpleDirectedWeightedGraph copyOfGraph; graph. return copyOfGraph; }
+     */
 
     /**
      * For every area, find the touching areas

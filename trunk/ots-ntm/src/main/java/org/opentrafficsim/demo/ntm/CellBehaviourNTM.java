@@ -6,7 +6,9 @@ import java.util.HashMap;
 
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.LinearDensityUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
@@ -31,22 +33,22 @@ public class CellBehaviourNTM extends CellBehaviour
     private static final long serialVersionUID = 20140903L;
 
     /** currentSpeed: average current speed of Cars in this CELL. */
+    private DoubleScalar.Abs<SpeedUnit> freeSpeed;
+    
+    /** currentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+
+    /** currentSpeed: average current speed of Cars in this CELL. */
+    private DoubleScalar.Abs<SpeedUnit> currentTravelTime;
 
     /** */
     private Abs<FrequencyUnit> maxCapacity;
-
-    /** */
-    private double speedSupply;
 
     /** */
     private HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity;
 
     /** */
     private HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand;
-
-    /** */
-    private double speedDemand;
 
     /**
      * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
@@ -74,6 +76,33 @@ public class CellBehaviourNTM extends CellBehaviour
         // gedeeld door gemiddelde triplengte in een gebied
         // (lengte zone?)
 
+    }
+
+    /**
+     * @param accumulatedCars
+     * @return actualSpeed.
+     */
+    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars)
+    {
+        Abs<FrequencyUnit> actualCapacity = retrieveSupply(accumulatedCars, this.maxCapacity, this.getParametersNTM());
+        double densityDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        Abs<LinearDensityUnit> density =
+                new DoubleScalar.Abs<LinearDensityUnit>(densityDouble, LinearDensityUnit.PER_KILOMETER);
+        double speedDouble =
+                actualCapacity.getInUnit(FrequencyUnit.PER_HOUR) / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+        return this.setCurrentSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
+    }
+
+    /**
+     * @param accumulatedCars
+     * @return actualSpeed.
+     */
+    public DoubleScalar.Abs<TimeUnit> retrieveCurrentTravelTime()
+    {
+
+        double timeDouble =  this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER) /
+                retrieveCurrentSpeed(this.getAccumulatedCars()).getInUnit(SpeedUnit.KM_PER_HOUR);
+        return this.setCurrentTravelTime(new DoubleScalar.Abs(timeDouble, TimeUnit.HOUR));
     }
 
     /**
@@ -159,14 +188,6 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @return averageSpeed
-     */
-    public final DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
-    {
-        return this.currentSpeed;
-    }
-
-    /**
      * @return maxCapacity
      */
     public final Abs<FrequencyUnit> getMaxCapacity()
@@ -183,53 +204,27 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
+     * @return averageSpeed
+     */
+    public final DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    {
+        return this.currentSpeed;
+    }
+
+    /**
      * @param currentSpeed set currentSpeed.
+     * @return 
      */
-    public final void setCurrentSpeed(final DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    public Abs<SpeedUnit> setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
     {
-        this.currentSpeed = currentSpeed;
+        return this.currentSpeed = currentSpeed;
     }
-
-    /**
-     * @param speedSupply set speedSupply.
-     */
-    public final void setSpeedSupply(final double speedSupply)
-    {
-        this.speedSupply = speedSupply;
-    }
-
-    // this.speedSupply = this.productionSupply / accumulatedCars;
-    /**
-     * @return speedSupply
-     */
-    public final double getSpeedSupply()
-    {
-        return this.speedSupply;
-    }
-
-    // this.speedDemand = this.productionDemand / accumulatedCars;
-    /**
-     * @return speedDemand
-     */
-    public final double getSpeedDemand()
-    {
-        return this.speedDemand;
-    }
-
-    /**
-     * @param speedDemand set speedDemand
-     */
-    public final void setSpeedDemand(final double speedDemand)
-    {
-        this.speedDemand = speedDemand;
-    }
-
     /**
      * @return borderCapacity.
      */
     public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderCapacity()
     {
-        return borderCapacity;
+        return this.borderCapacity;
     }
 
     /**
@@ -245,7 +240,7 @@ public class CellBehaviourNTM extends CellBehaviour
      */
     public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderDemand()
     {
-        return borderDemand;
+        return this.borderDemand;
     }
 
     /**
@@ -274,18 +269,40 @@ public class CellBehaviourNTM extends CellBehaviour
         newDemand.put(node, total);
         this.setBorderDemand(newDemand);
     }
-    /*    *//**
-     * not used
-     * @param accumulatedCars number of cars in Cell
+
+    /**
+     * @return currentTravelTime.
      */
-    /*
-     * public final void computeProductionElse(final double accumulatedCars) { double carProduction =
-     * retrieveCarProduction(accumulatedCars); double production = Math.min(this.maxCapacity, carProduction); // supply
-     * double lowerBoundProduction = Math.max(0.05 * this.maxCapacity, production); double maxDemand =
-     * this.parametersNTM.getFreeSpeed().getValueSI() * accumulatedCars; // ask Victor double demand =
-     * Math.min(maxDemand, this.maxCapacity); // / demand this.productionElse = Math.min(lowerBoundProduction, demand);
-     * // / else this.speedElse = this.productionElse / accumulatedCars; // if (accumulationCars > 0) { //
-     * this.currentSpeed = new DoubleScalarAbs<SpeedUnit>(carProduction / accumulatedCars, SpeedUnit.KM_PER_HOUR); // }
-     * }
+    public DoubleScalar.Abs<SpeedUnit> getCurrentTravelTime()
+    {
+        return currentTravelTime;
+    }
+
+    /**
+     * @param currentTravelTime set currentTravelTime.
+     * @return 
      */
+    public Abs<TimeUnit> setCurrentTravelTime(DoubleScalar.Abs<SpeedUnit> currentTravelTime)
+    {
+        this.currentTravelTime = currentTravelTime;
+        return null;
+    }
+
+    /**
+     * @return freeSpeed.
+     */
+    public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
+    {
+        this.freeSpeed = this.area.getAverageSpeed();
+        return this.freeSpeed;
+    }
+
+    /**
+     * @param freeSpeed set freeSpeed.
+     */
+    public void setFreeSpeed(DoubleScalar.Abs<SpeedUnit> freeSpeed)
+    {
+        this.freeSpeed = freeSpeed;
+    }
+
 }

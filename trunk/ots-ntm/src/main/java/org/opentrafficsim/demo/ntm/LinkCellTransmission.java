@@ -35,6 +35,9 @@ public class LinkCellTransmission extends Link
     /** */
     private ArrayList<FlowCell> cells;
 
+    /** SPEEDAB class java.lang.Double 120.0. */
+    private Rel<TimeUnit> actualTime;
+
     /**
      * @param geometry
      * @param nr
@@ -42,15 +45,18 @@ public class LinkCellTransmission extends Link
      * @param startNode
      * @param endNode
      * @param speed
+     * @param time 
      * @param capacity
      * @param behaviourType
      * @param linkData
      * @param cells
+     * @param hierarchy 
      */
 
     public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length,
-            Node startNode, Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time, DoubleScalar.Abs<FrequencyUnit> capacity,
-            TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells, int hierarchy)
+            Node startNode, Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
+            DoubleScalar.Abs<FrequencyUnit> capacity, TrafficBehaviourType behaviourType, LinkData linkData,
+            ArrayList<FlowCell> cells, int hierarchy)
     {
         super(geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData, hierarchy);
         this.cells = cells;
@@ -63,7 +69,7 @@ public class LinkCellTransmission extends Link
     public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
     {
         super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), link
-                .getSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link
+                .getFreeSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link
                 .getHierarchy());
         this.cells = cells;
     }
@@ -77,7 +83,7 @@ public class LinkCellTransmission extends Link
     public LinkCellTransmission(final Link link, BoundedNode startNode, BoundedNode endNode,
             final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getSpeed(), link.getTime(),
+        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getFreeSpeed(), link.getTime(),
                 link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
         this.cells = cells;
     }
@@ -103,19 +109,19 @@ public class LinkCellTransmission extends Link
      * @param timeStepDurationCellTransmission
      * @return
      */
-    public final static ArrayList<FlowCell> createCells(final Link link, Rel<TimeUnit> timeStepDurationCellTransmission)
+    public static final ArrayList<FlowCell> createCells(final Link link, Rel<TimeUnit> timeStepDurationCellTransmission)
     {
         ArrayList<FlowCell> flowCells = new ArrayList<FlowCell>();
         // the length of the cell depends on the speed and simulation time step
-        DoubleScalar.Abs<SpeedUnit> speed = link.getSpeed();
+        DoubleScalar.Abs<SpeedUnit> speed = link.getFreeSpeed();
         Rel<LengthUnit> cellLength =
                 new DoubleScalar.Rel<LengthUnit>(speed.getInUnit(SpeedUnit.KM_PER_HOUR)
                         * timeStepDurationCellTransmission.getInUnit(TimeUnit.HOUR), LengthUnit.KILOMETER);
         // find out how many Cells fit into this Link
-        double numberOfCells = Math.rint(link.getLength().getSI() / cellLength.getSI());
-        DoubleScalar.Abs<FrequencyUnit> capPerLane =
-                new DoubleScalar.Abs<FrequencyUnit>(link.getCapacity().getSI() * 3600 / link.getNumberOfLanes(),
-                        FrequencyUnit.PER_HOUR);
+        double numberOfCells = Math.max(Math.rint(link.getLength().getSI() / cellLength.getSI()), 1);
+//        DoubleScalar.Abs<FrequencyUnit> capPerLane =
+//                new DoubleScalar.Abs<FrequencyUnit>(link.getCapacity().getSI() * 3600 / link.getNumberOfLanes(),
+//                        FrequencyUnit.PER_HOUR);
         // compute the amount of cells
         for (int i = 0; i < numberOfCells; i++)
         {
@@ -126,4 +132,20 @@ public class LinkCellTransmission extends Link
         }
         return flowCells;
     }
+
+    /**
+     * @param accumulatedCars 
+     * @return actualTime.
+     */
+    public Rel<TimeUnit> retrieveActualTime()
+    {
+        Double timeDouble = new Double(0.0);
+        for (FlowCell cell : this.cells)
+        {
+            timeDouble += cell.retrieveCurrentTravelTime().getInUnit(TimeUnit.HOUR);
+        }
+        this.actualTime = new Rel<TimeUnit>(timeDouble, TimeUnit.HOUR);
+        return this.actualTime;
+    }
+
 }
