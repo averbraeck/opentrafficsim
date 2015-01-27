@@ -167,8 +167,8 @@ public class FundamentalDiagrams implements WrappableSimulation
         final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
-        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
-        URL page = ContourPlotsModel.class.getResource(helpSource);
+        String helpSource = "/" + FundamentalDiagramPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
+        URL page = FundamentalDiagramPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
             HTMLPanel htmlPanel;
@@ -393,8 +393,10 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     /**
      * Set up the block.
      * @throws RemoteException on communications failure
+     * @throws SimRuntimeException 
+     * @throws NetworkException 
      */
-    protected final void createBlock() throws RemoteException
+    protected final void createBlock() throws RemoteException, NetworkException, SimRuntimeException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -442,7 +444,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             this.cars.add(0, car);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }
@@ -511,12 +513,14 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          * @throws NamingException on ???
          * @throws RemoteException on communication failure
+         * @throws SimRuntimeException 
+         * @throws NetworkException 
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
             final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
             final DoubleScalar.Abs<TimeUnit> initialTime,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,

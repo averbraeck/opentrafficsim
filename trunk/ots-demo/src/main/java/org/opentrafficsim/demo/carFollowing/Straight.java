@@ -53,8 +53,8 @@ import org.opentrafficsim.simulationengine.BooleanProperty;
 import org.opentrafficsim.simulationengine.CompoundProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.IDMPropertySet;
-import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
@@ -65,8 +65,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * Simplest contour plots demonstration.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 12 nov. 2014 <br>
@@ -86,15 +85,14 @@ public class Straight implements WrappableSimulation
         outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
         outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties
-                .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
+        this.properties.add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
     }
 
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException when simulation cannot be created with given parameters
      */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
@@ -106,32 +104,32 @@ public class Straight implements WrappableSimulation
                 try
                 {
                     Straight straight = new Straight();
-                    ArrayList<AbstractProperty<?>> properties = straight.getProperties();
+                    ArrayList<AbstractProperty<?>> localProperties = straight.getProperties();
                     try
                     {
-                        properties.add(new ProbabilityDistributionProperty("Traffic composition",
-                                "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
-                                new Double[]{0.8, 0.2}, false, 10));
+                        localProperties.add(new ProbabilityDistributionProperty("Traffic composition",
+                            "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"},
+                            new Double[] {0.8, 0.2}, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
-                    properties.add(new SelectionProperty("Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account "
-                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                    + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    properties.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
-                            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
-                            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
-                            LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
-                    properties.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
-                            0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
-                            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
-                            LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
-                    new SimulatorFrame("Contour Plots animation", straight.buildSimulator(properties).getPanel());
+                    localProperties.add(new SelectionProperty("Car following model",
+                        "<html>The car following model determines "
+                            + "the acceleration that a vehicle will make taking into account "
+                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                            + "curvature of the road) capabilities of the vehicle and personality "
+                            + "of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
+                        0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
+                    new SimulatorFrame("Contour Plots animation", straight.buildSimulator(localProperties).getPanel());
                 }
                 catch (RemoteException | SimRuntimeException exception)
                 {
@@ -143,23 +141,24 @@ public class Straight implements WrappableSimulation
 
     /**
      * Create the simulation.
+     * @param userModifiedProperties the properties for the simulation.
      * @return SimpleSimulator; the simulation
      * @throws RemoteException on communications failure
-     * @throws SimRuntimeException on ???
+     * @throws SimRuntimeException when simulation cannot be created with given parameters
      */
-    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
-            throws SimRuntimeException, RemoteException
+    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
+        throws SimRuntimeException, RemoteException
     {
-        ContourPlotsModel model = new ContourPlotsModel(userModifiedProperties);
+        StraightModel model = new StraightModel(userModifiedProperties);
         SimpleSimulator result =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
+            new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
+                new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
         new ControlPanel(result);
 
         // Make the info tab
-        String helpSource = "/" + ContourPlotsModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
-        URL page = ContourPlotsModel.class.getResource(helpSource);
+        String helpSource = "/" + StraightModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
+        URL page = StraightModel.class.getResource(helpSource);
         if (page != null)
         {
             try
@@ -213,8 +212,8 @@ public class Straight implements WrappableSimulation
             if (graphName.contains("Trajectories"))
             {
                 TrajectoryPlot tp =
-                        new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND),
-                                model.getMinimumDistance(), model.getMaximumDistance());
+                    new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model
+                        .getMinimumDistance(), model.getMaximumDistance());
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -241,8 +240,8 @@ public class Straight implements WrappableSimulation
                 else if (graphName.contains("Acceleration"))
                 {
                     cp =
-                            new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(),
-                                    model.getMaximumDistance());
+                        new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model
+                            .getMaximumDistance());
                     cp.setTitle("Acceleration Contour Graph");
                 }
                 else
@@ -261,26 +260,26 @@ public class Straight implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public String shortName()
+    public final String shortName()
     {
         return "Straight lane";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String description()
+    public final String description()
     {
         return "<html><h1>Simulation of a straight one-lane road with opening bridge</H1>"
-                + "Simulation of a single lane road of 5 km length. Vehicles are generated at a constant rate of "
-                + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at "
-                + "time 420s. This blockade simulates a bridge opening.<br/>"
-                + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
-                + "Selected trajectory and contour plots are generated during the simulation.</html>";
+            + "Simulation of a single lane road of 5 km length. Vehicles are generated at a constant rate of "
+            + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at "
+            + "time 420s. This blockade simulates a bridge opening.<br/>"
+            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
+            + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getProperties()
+    public final ArrayList<AbstractProperty<?>> getProperties()
     {
         return new ArrayList<AbstractProperty<?>>(this.properties);
     }
@@ -288,10 +287,10 @@ public class Straight implements WrappableSimulation
 }
 
 /**
- * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
- * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
- * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
+ * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s a
+ * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+ <a
+ * href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
+ * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
  * Output is a set of block charts:
  * <ul>
  * <li>Traffic density</li>
@@ -299,17 +298,15 @@ public class Straight implements WrappableSimulation
  * <li>Flow</li>
  * <li>Acceleration</li>
  * </ul>
- * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical
- * axis.
+ * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical axis.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class ContourPlotsModel implements OTSModelInterface
+class StraightModel implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -324,19 +321,19 @@ class ContourPlotsModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus for cars. */
-    protected GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModel carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    protected GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModel carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
-    double carProbability;
+    private double carProbability;
 
     /** cars in the model. */
-    ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
+    private ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
 
     /** The blocking car. */
-    protected Car<Integer> block = null;
+    private Car<Integer> block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -345,24 +342,24 @@ class ContourPlotsModel implements OTSModelInterface
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane that contains the simulated Cars. */
-    Lane lane;
+    private Lane lane;
 
     /** the speed limit. */
-    DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
     /** the contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
-    /** User settable properties */
-    ArrayList<AbstractProperty<?>> properties = null;
+    /** User settable properties. */
+    private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The random number generator used to decide what kind of GTU to generate. */
-    Random randomGenerator = new Random(12345);
+    private Random randomGenerator = new Random(12345);
 
     /**
-     * @param properties
+     * @param properties the user settable properties
      */
-    public ContourPlotsModel(ArrayList<AbstractProperty<?>> properties)
+    public StraightModel(final ArrayList<AbstractProperty<?>> properties)
     {
         this.properties = properties;
     }
@@ -370,8 +367,8 @@ class ContourPlotsModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+        throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
@@ -396,7 +393,7 @@ class ContourPlotsModel implements OTSModelInterface
                 throw new Error("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", this.properties, false, 0).iterator();
+                new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -460,8 +457,8 @@ class ContourPlotsModel implements OTSModelInterface
                         }
                         /*
                          * System.out.println("Created " + carFollowingModelName + " for " + p.getShortName());
-                         * System.out.println("a: " + a); System.out.println("b: " + b); System.out.println("s0: " +
-                         * s0); System.out.println("tSafe: " + tSafe);
+                         * System.out.println("a: " + a); System.out.println("b: " + b); System.out.println("s0: " + s0);
+                         * System.out.println("tSafe: " + tSafe);
                          */
                     }
                 }
@@ -469,19 +466,19 @@ class ContourPlotsModel implements OTSModelInterface
             // 1500 [veh / hour] == 2.4s headway
             this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "generateCar", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
+                null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this,
-                    "createBlock", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
+                null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this,
-                    "removeBlock", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
+                null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
                 this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                        "drawGraphs", null);
+                    "drawGraphs", null);
             }
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
@@ -527,11 +524,11 @@ class ContourPlotsModel implements OTSModelInterface
         try
         {
             this.block =
-                    new IDMCar(999999, null, this.simulator, this.carFollowingModelCars,
-                            new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), this.simulator.getSimulatorTime()
-                                    .get(), initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                new IDMCar(999999, null, this.simulator, this.carFollowingModelCars, new DoubleScalar.Rel<LengthUnit>(4,
+                    LengthUnit.METER), this.simulator.getSimulatorTime().get(), initialPositions,
+                    new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
         }
-        catch (NamingException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }
@@ -547,7 +544,6 @@ class ContourPlotsModel implements OTSModelInterface
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @throws NamingException on ???
      */
     protected final void generateCar()
     {
@@ -559,15 +555,15 @@ class ContourPlotsModel implements OTSModelInterface
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
             IDMCar car =
-                    new IDMCar(++this.carsCreated, null, this.simulator, generateTruck ? this.carFollowingModelTrucks
-                            : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(),
-                            initialPositions, initialSpeed);
+                new IDMCar(++this.carsCreated, null, this.simulator, generateTruck ? this.carFollowingModelTrucks
+                    : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(), initialPositions,
+                    initialSpeed);
             this.cars.add(0, car);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
         }
@@ -576,7 +572,7 @@ class ContourPlotsModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+        throws RemoteException
     {
         return this.simulator;
     }
@@ -619,21 +615,25 @@ class ContourPlotsModel implements OTSModelInterface
          * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
          * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
          * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
-         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
-         *            positions of the new IDMCar
+         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane positions
+         *            of the new IDMCar
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException on ???
-         * @throws RemoteException on communication failure
+         * @throws NamingException when the animation cannot be created.
+         * @throws RemoteException when the simulator cannot be reached.
+         * @throws NetworkException when the GTU cannot be placed on the given lane.
+         * @throws SimRuntimeException when the move method cannot be scheduled.
          */
-        public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-                final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
-                final DoubleScalar.Abs<TimeUnit> initialTime,
-                final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-                final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException
+        @SuppressWarnings("checkstyle:parameternumber")
+        public IDMCar(final int id, final GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
+            final GTUFollowingModel carFollowingModel, final DoubleScalar.Rel<LengthUnit> vehicleLength,
+            final DoubleScalar.Abs<TimeUnit> initialTime,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException, NetworkException,
+            SimRuntimeException
         {
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                        SpeedUnit.KM_PER_HOUR), simulator);
+                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                    SpeedUnit.KM_PER_HOUR), simulator);
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
@@ -653,33 +653,33 @@ class ContourPlotsModel implements OTSModelInterface
         protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
             // System.out.println("move " + getId());
-            if (this == ContourPlotsModel.this.block)
+            if (this == StraightModel.this.block)
             {
                 return;
             }
-            if (position(ContourPlotsModel.this.lane, getFront()).getSI() > getMaximumDistance().getSI())
+            if (position(StraightModel.this.lane, getFront()).getSI() > getMaximumDistance().getSI())
             {
-                ContourPlotsModel.this.cars.remove(this);
+                StraightModel.this.cars.remove(this);
                 return;
             }
             Collection<Car<Integer>> leaders = new ArrayList<Car<Integer>>();
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
-            int carIndex = ContourPlotsModel.this.cars.indexOf(this);
-            if (carIndex < ContourPlotsModel.this.cars.size() - 1)
+            int carIndex = StraightModel.this.cars.indexOf(this);
+            if (carIndex < StraightModel.this.cars.size() - 1)
             {
-                leaders.add(ContourPlotsModel.this.cars.get(carIndex + 1));
+                leaders.add(StraightModel.this.cars.get(carIndex + 1));
             }
             GTUFollowingModelResult cfmr =
-                    getGTUFollowingModel().computeAcceleration(this, leaders, ContourPlotsModel.this.speedLimit);
-            if (null != ContourPlotsModel.this.block)
+                getGTUFollowingModel().computeAcceleration(this, leaders, StraightModel.this.speedLimit);
+            if (null != StraightModel.this.block)
             {
                 leaders.clear();
-                leaders.add(ContourPlotsModel.this.block);
+                leaders.add(StraightModel.this.block);
                 GTUFollowingModelResult blockCFMR =
-                        getGTUFollowingModel().computeAcceleration(this, leaders, ContourPlotsModel.this.speedLimit);
+                    getGTUFollowingModel().computeAcceleration(this, leaders, StraightModel.this.speedLimit);
                 if (blockCFMR.getAcceleration().getSI() < cfmr.getAcceleration().getSI()
-                        && blockCFMR.getAcceleration().getSI() >= -5)
+                    && blockCFMR.getAcceleration().getSI() >= -5)
                 {
                     cfmr = blockCFMR;
                 }
@@ -688,8 +688,7 @@ class ContourPlotsModel implements OTSModelInterface
             // Add the movement of this Car to the contour plots
             addToContourPlots(this);
             // Schedule the next evaluation of this car
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
-                    null);
+            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move", null);
         }
     }
 }

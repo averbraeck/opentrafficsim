@@ -457,7 +457,7 @@ public class newGUI
 
             cp =
                 new DensityContourPlot("DensityPlot " + model.carFollowingModelCars.getLongName(), model
-                    .getMinimumDistance(), model.lane.getLength());
+                    .getMinimumDistance(), model.lane1.getLength());
             cp.setTitle("Density Contour Graph");
 
             model.getPlots().add(cp);
@@ -465,28 +465,28 @@ public class newGUI
 
             cp =
                 new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                    model.lane.getLength());
+                    model.lane1.getLength());
             cp.setTitle("Speed Contour Graph");
             model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp =
                 new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                    model.lane.getLength());
+                    model.lane1.getLength());
             cp.setTitle("FLow Contour Graph");
             model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             cp =
                 new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName(), model
-                    .getMinimumDistance(), model.lane.getLength());
+                    .getMinimumDistance(), model.lane1.getLength());
             cp.setTitle("Acceleration Contour Graph");
             model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
             TrajectoryPlot trajectoryPlot =
                 new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName(),
-                    new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane.getLength());
+                    new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane1.getLength());
             trajectoryPlot.setTitle("Trajectories");
             this.statPanel.add(trajectoryPlot.getContentPane());
             model.getTrajectoryPlots().add(trajectoryPlot);
@@ -557,7 +557,7 @@ public class newGUI
         }
         else if (network.equals("Direct Lane Chosen"))
         {
-            ContourPlotsModel model = new ContourPlotsModel(new ArrayList<AbstractProperty<?>>());
+            StraightModel model = new StraightModel(new ArrayList<AbstractProperty<?>>());
             SimpleSimulator simSimulator =
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                     new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
@@ -653,7 +653,7 @@ public class newGUI
 
         cp =
             new DensityContourPlot("DensityPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                model.lane.getLength());
+                model.lane1.getLength());
         cp.setTitle("Density Contour Graph");
         // cp.setExtendedState(MAXIMIZED_BOTH);
         model.getPlots().add(cp);
@@ -661,28 +661,28 @@ public class newGUI
 
         cp =
             new SpeedContourPlot("SpeedPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                model.lane.getLength());
+                model.lane1.getLength());
         cp.setTitle("Speed Contour Graph");
         model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 0);
 
         cp =
             new FlowContourPlot("FlowPlot " + model.carFollowingModelCars.getLongName(), model.getMinimumDistance(),
-                model.lane.getLength());
+                model.lane1.getLength());
         cp.setTitle("FLow Contour Graph");
         model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 0, 1);
 
         cp =
             new AccelerationContourPlot("AccelerationPlot " + model.carFollowingModelCars.getLongName(), model
-                .getMinimumDistance(), model.lane.getLength());
+                .getMinimumDistance(), model.lane1.getLength());
         cp.setTitle("Acceleration Contour Graph");
         model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
 
         TrajectoryPlot trajectoryPlot =
             new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName(),
-                new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane.getLength());
+                new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane1.getLength());
         trajectoryPlot.setTitle("Trajectories");
         charts.setCell(trajectoryPlot.getContentPane(), 2, 0);
         model.getTrajectoryPlots().add(trajectoryPlot);
@@ -757,7 +757,7 @@ public class newGUI
         this.separateFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    private void createDirectLaneFrame(ContourPlotsModel model)
+    private void createDirectLaneFrame(StraightModel model)
     {
         if (this.separateFrame == null)
         {
