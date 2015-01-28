@@ -208,8 +208,8 @@ public class IDMPlusTest
             // TODO: re-write and USE that simulator to do run the car.
             // The way things work today, the referenceCar is driving backwards!
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
-            System.out.println("follower: " + referenceCar);
-            System.out.println("      leader: " + leaderCar + "   cfmr: " + cfmr);
+            //System.out.println("follower: " + referenceCar);
+            //System.out.println("      leader: " + leaderCar + "   cfmr: " + cfmr);
             referenceCar.setState(cfmr);
             // DoubleScalar.Abs<TimeUnit> thisEvaluationTime = referenceCar.getNextEvaluationTime();
             // DoubleScalar.Abs<SpeedUnit> currentSpeed = referenceCar.getLongitudinalVelocity(thisEvaluationTime);

@@ -165,7 +165,7 @@ public class LaneBasedGTUTest
                 double expectedHeadway =
                         laneRank != truckLaneRank || step - truckPosition.getSI() < 0 ? Double.MAX_VALUE : step
                                 - carLength.getSI() - truckPosition.getSI();
-                System.out.println("pos " + step + " laneRank " + laneRank + " expected headway " + expectedHeadway);
+               //System.out.println("pos " + step + " laneRank " + laneRank + " expected headway " + expectedHeadway);
                 assertEquals("Headway should return " + expectedHeadway, expectedHeadway,
                         truck.headway(forwardMaxDistance).getSI(), 0.1);
                 double expectedReverseHeadway =
