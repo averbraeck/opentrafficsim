@@ -116,7 +116,7 @@ public class Route implements Serializable
         }
         try
         {
-            result =  this.nodes.remove(i);
+            result = this.nodes.remove(i);
         }
         catch (RuntimeException e)
         {
@@ -236,11 +236,11 @@ public class Route implements Serializable
         Node<?, ?> en = link.getEndNode();
         if (this.nodes.contains(sn) && this.nodes.contains(en))
         {
-            return (this.nodes.indexOf(en) - this.nodes.indexOf(sn) == 1);
+            return this.nodes.indexOf(en) - this.nodes.indexOf(sn) == 1;
         }
         return false;
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

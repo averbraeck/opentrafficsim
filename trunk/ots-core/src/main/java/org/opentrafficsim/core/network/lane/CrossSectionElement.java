@@ -181,7 +181,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     private Geometry offsetGeometry(final Geometry referenceLine, final double offset) throws NetworkException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
-        //printCoordinates("reference", referenceCoordinates);
+        // printCoordinates("reference", referenceCoordinates);
         double bufferOffset = Math.abs(offset);
         if (0 == bufferOffset)
         {
@@ -190,7 +190,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         }
         Coordinate[] bufferCoordinates =
                 referenceLine.buffer(bufferOffset, this.quadrantSegments, BufferParameters.CAP_FLAT).getCoordinates();
-        //printCoordinates("buffer           ", bufferCoordinates);
+        // printCoordinates("buffer           ", bufferCoordinates);
         boolean ringDetected = bufferCoordinates[0].distance(bufferCoordinates[bufferCoordinates.length - 1]) > 0;
         if (!ringDetected)
         {
@@ -570,7 +570,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param fractionalPosition double; fractional longitudinal position on this Lane
      * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralCenterPosition(double fractionalPosition)
+    public final DoubleScalar.Rel<LengthUnit> getLateralCenterPosition(final double fractionalPosition)
     {
         return DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition)
                 .immutable();
@@ -581,7 +581,8 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position on this Lane
      * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
      */
-    public final DoubleScalar<LengthUnit> getLateralCenterPosition(DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final DoubleScalar<LengthUnit> getLateralCenterPosition(
+            final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         return getLateralCenterPosition(longitudinalPosition.getSI() / getLength().getSI());
     }

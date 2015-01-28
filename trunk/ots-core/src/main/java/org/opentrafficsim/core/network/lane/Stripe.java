@@ -9,6 +9,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * Longitudinal road stripes.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -23,11 +24,11 @@ public class Stripe extends RoadMarkerAlong
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
      * direction from the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink Cross Section Link to which the element belongs
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section
-     *            Link.
+     *            Link
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
-     * @throws NetworkException
+     * @throws NetworkException on network topology problems
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
             final DoubleScalar.Rel<LengthUnit> width) throws NetworkException
@@ -39,13 +40,13 @@ public class Stripe extends RoadMarkerAlong
      * Helper constructor that immediately provides permeability for a number of GTU classes.<br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
      * direction from the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink Cross Section Link to which the element belongs
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section
-     *            Link.
-     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
-     * @param gtuTypes the GTU types for which the permeability is defined.
-     * @param permeable one of the enums of Stripe.Permeable to define the permeability.
-     * @throws NetworkException
+     *            Link
+     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition
+     * @param gtuTypes the GTU types for which the permeability is defined
+     * @param permeable one of the enums of Stripe.Permeable to define the permeability
+     * @throws NetworkException on network topology problems
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
             final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType<?>> gtuTypes, final Permeable permeable)
@@ -62,12 +63,12 @@ public class Stripe extends RoadMarkerAlong
      * Helper constructor that immediately provides permeability for all GTU classes.<br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
      * direction from the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink Cross Section Link to which the element belongs
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section
-     *            Link.
-     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
-     * @param permeable one of the enums of Stripe.Permeable to define the permeability.
-     * @throws NetworkException
+     *            Link
+     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition
+     * @param permeable one of the enums of Stripe.Permeable to define the permeability
+     * @throws NetworkException on network topology problems
      */
     public Stripe(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
             final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable) throws NetworkException
@@ -93,7 +94,8 @@ public class Stripe extends RoadMarkerAlong
     }
 
     /** the types of permeability of a stripe. */
-    public enum Permeable {
+    public enum Permeable 
+    {
         /** Permeable in the positive lateral direction compared to the design line direction. */
         LEFT,
         /** Permeable in the negative lateral direction compared to the design line direction. */
