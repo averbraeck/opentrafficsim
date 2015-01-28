@@ -181,7 +181,7 @@ public class LaneChangeModelTest
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
                     AccelerationUnit.METER_PER_SECOND_2));
-        System.out.println(laneChangeModelResult.toString());
+        //System.out.println(laneChangeModelResult.toString());
         assertEquals("Vehicle want to change to the right lane", LateralDirectionality.RIGHT, laneChangeModelResult
             .getLaneChange());
         DoubleScalar.Rel<LengthUnit> rear = car.position(lanes[0], car.getRear());

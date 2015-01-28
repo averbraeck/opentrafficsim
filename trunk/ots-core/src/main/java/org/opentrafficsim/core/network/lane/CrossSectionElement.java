@@ -181,7 +181,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     private Geometry offsetGeometry(final Geometry referenceLine, final double offset) throws NetworkException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
-        printCoordinates("reference", referenceCoordinates);
+        //printCoordinates("reference", referenceCoordinates);
         double bufferOffset = Math.abs(offset);
         if (0 == bufferOffset)
         {
@@ -190,7 +190,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         }
         Coordinate[] bufferCoordinates =
                 referenceLine.buffer(bufferOffset, this.quadrantSegments, BufferParameters.CAP_FLAT).getCoordinates();
-        printCoordinates("buffer           ", bufferCoordinates);
+        //printCoordinates("buffer           ", bufferCoordinates);
         boolean ringDetected = bufferCoordinates[0].distance(bufferCoordinates[bufferCoordinates.length - 1]) > 0;
         if (!ringDetected)
         {
