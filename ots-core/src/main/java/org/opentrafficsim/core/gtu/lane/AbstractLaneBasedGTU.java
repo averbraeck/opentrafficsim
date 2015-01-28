@@ -339,8 +339,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 for (Lane nextLane : nextLanes)
                 {
                     // Only follow links on the Route if there is a Route
-                    if (this.getRoute() == null
-                            || (this.getRoute() != null && this.getRoute().containsLink(lane.getParentLink())))
+                    if (this.getRoute() == null || this.getRoute() != null
+                            && this.getRoute().containsLink(lane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                         GTUDistanceSI closest =
@@ -564,8 +564,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 for (Lane nextLane : nextLanes)
                 {
                     // Only follow links on the Route if there is a Route
-                    if (this.getRoute() == null
-                            || (this.getRoute() != null && this.getRoute().containsLink(lane.getParentLink())))
+                    if (this.getRoute() == null || this.getRoute() != null
+                            && this.getRoute().containsLink(lane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                         double headwaySuccessor =
