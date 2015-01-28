@@ -176,10 +176,10 @@ public class LaneBasedGTUTest
                 Set<LaneBasedGTU<?>> leftParallel =
                         truck.parallel(LateralDirectionality.LEFT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedLeftSize =
-                        laneRank != truckLaneRank - 1 || step < truckPosition.getSI() - truckLength.getSI()
+                        laneRank != truckLaneRank - 1 || step <= truckPosition.getSI() - truckLength.getSI()
                                 || step - carLength.getSI() > truckPosition.getSI() ? 0 : 1;
                 assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize,
-                        leftParallel.size());
+                        leftParallel.size()); // This one caught a complex bug
                 Set<LaneBasedGTU<?>> rightParallel =
                         truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedRightSize =
@@ -214,9 +214,9 @@ public class LaneBasedGTUTest
         for (CrossSectionLink<?, ?> link : links)
         {
             double linkLength = link.getLength().getSI();
-            double linkEnd = cumulativeLength + linkLength;
             double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength;
             double rearPositionInLink = frontPositionInLink - gtuLength.getSI();
+            // double linkEnd = cumulativeLength + linkLength;
             // System.out.println("cumulativeLength: " + cumulativeLength + ", linkEnd: " + linkEnd + ", frontpos: "
             // + frontPositionInLink + ", rearpos: " + rearPositionInLink);
             if (rearPositionInLink < linkLength && frontPositionInLink >= 0)
