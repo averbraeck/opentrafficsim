@@ -157,10 +157,12 @@ public class NTMModel implements OTSModelInterface
             Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(7200, TimeUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 7, 0, 0);
-            int numberOfRoutes = 5;
+            int numberOfRoutes = 1;
+            // String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
+            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
-                            timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes);
+                            timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes, path);
 
             // Read the shape files with the function:
             // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
@@ -169,16 +171,16 @@ public class NTMModel implements OTSModelInterface
             // false: return nodes
             // if allCentroids: true: we are reading a file with only centroids
             // false: mixed file with centroids (number starts with "C") and normal nodes
-            // String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
-            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
-            this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
-
+            // this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
+            this.centroids = ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_centroids.shp", "NODENR", true, true);
             // the Map areas contains a reference to the centroids!
-            this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
+            // this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
+            this.areas = ShapeFileReader.readAreas(this.getSettingsNTM().getPath() + "/qgistest_areas.shp", this.centroids);
             // save the selected and created areas to a shape file
             // WriteToShp.createShape(this.areas);
 
-            this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
+            // this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
+            this.nodes = ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_nodes.shp", "NODENR", false, false);
 
             // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
             // this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
@@ -186,7 +188,11 @@ public class NTMModel implements OTSModelInterface
 
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
-            ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+            // ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+            // this.nodes, this.centroids);
+            ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_links.shp", this.shpLinks, this.shpConnectors, this.nodes,
+                    this.centroids);
+            ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_feederlinks.shp", this.shpLinks, this.shpConnectors,
                     this.nodes, this.centroids);
 
             // read the time profile curves: these will be attached to the demands afterwards
@@ -211,7 +217,7 @@ public class NTMModel implements OTSModelInterface
             if (COMPRESS_AREAS)
             {
                 // to compress the areas into bigger units
-                File file = new File(path + "/selectedAreas_newest_merged2.shp");
+                File file = new File(this.getSettingsNTM().getPath() + "/selectedAreas_newest_merged2.shp");
                 this.compressedAreas = ShapeStore.openGISFile(file);
                 this.bigAreas = new HashMap<String, Area>();
                 for (ShapeObject shape : this.compressedAreas.getGeoObjects())
@@ -247,7 +253,7 @@ public class NTMModel implements OTSModelInterface
             }
 
             // set the lower values for flow links:
-            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(30, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
             DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(300, FrequencyUnit.PER_HOUR);
             this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
@@ -265,12 +271,12 @@ public class NTMModel implements OTSModelInterface
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, areasToUse, centroidsToUse, shpConnectorsToUse);
 
-            String file = path + "/parametersNTM.txt";
+            String file = this.getSettingsNTM().getPath() + "/parametersNTM.txt";
             readOrSetParametersNTM(areasToUse, file);
-            
-            file = path + "/capRestraintsAreas.txt";
+
+            file = this.getSettingsNTM().getPath() + "/capRestraintsAreas.txt";
             readOrSetCapacityRestraints(this, areasToUse, file);
-                    
+
             // shortest paths creation
             Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes());
 
@@ -322,19 +328,18 @@ public class NTMModel implements OTSModelInterface
      * @param areasToUse
      * @param path
      * @param file
-     * @throws ParseException 
-     * @throws IOException 
+     * @throws ParseException
+     * @throws IOException
      */
     public void readOrSetParametersNTM(Map<String, Area> areasToUse, String file) throws IOException, ParseException
     {
-        HashMap<String, ArrayList<java.lang.Double>> parametersNTM =
-                CsvFileReader.readParametersNTM(file, ";", ",");
+        HashMap<String, ArrayList<java.lang.Double>> parametersNTM = CsvFileReader.readParametersNTM(file, ";", ",");
         if (parametersNTM.isEmpty())
         {
             CsvFileWriter.writeParametersNTM(this, file);
             parametersNTM = CsvFileReader.readParametersNTM(file, ";", ",");
         }
-    
+
         for (Area area : areasToUse.values())
         {
             ParametersNTM paramNTM = null;
@@ -352,7 +357,7 @@ public class NTMModel implements OTSModelInterface
             area.setParametersNTM(paramNTM);
         }
     }
-    
+
     /**
      * @param model
      * @param areasToUse
@@ -360,9 +365,11 @@ public class NTMModel implements OTSModelInterface
      * @throws IOException
      * @throws ParseException
      */
-    public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file) throws IOException, ParseException
+    public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file)
+            throws IOException, ParseException
     {
-        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
+        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap =
+                CsvFileReader.readCapResNTM(file, ";", ",");
         if (borderCapacityAreasMap.isEmpty())
         {
             CsvFileWriter.writeCapresNTM(this, file);
@@ -398,7 +405,7 @@ public class NTMModel implements OTSModelInterface
             }
         }
     }
-    
+
     /**
      * @param areas
      * @param shpConnectors2
@@ -458,23 +465,25 @@ public class NTMModel implements OTSModelInterface
         {
             for (Area area : areas.values())
             {
-                if (area.getGeometry().contains(link.getGeometry().getLineString()))
+                if (area.getGeometry().intersects(link.getGeometry().getLineString()))
                 {
-                    if (area != null)
+                    double covers = 0.5;
+                    if (area.getGeometry().contains(link.getGeometry().getLineString()))
                     {
-                        // TODO check units!!!!!!!!!!!!!!!
-                        double length = link.getLength().getSI() * link.getNumberOfLanes();
-                        DoubleScalar.Rel<LengthUnit> laneLength =
-                                new DoubleScalar.Rel<LengthUnit>(length, LengthUnit.METER);
-                        area.addRoadLength(laneLength);
-                        // in SI (m*m/s)
-                        java.lang.Double speedLaneLength = new java.lang.Double(link.getFreeSpeed().getSI() * length);
-                        if (speedTotalByArea.get(area) != null)
-                        {
-                            speedLaneLength += speedTotalByArea.get(area);
-                        }
-                        speedTotalByArea.put(area, speedLaneLength);
+                        covers = 1;
                     }
+                    double length = covers * link.getLength().getInUnit(LengthUnit.KILOMETER) * link.getNumberOfLanes();
+                    DoubleScalar.Rel<LengthUnit> laneLength =
+                            new DoubleScalar.Rel<LengthUnit>(length, LengthUnit.KILOMETER);
+                    area.addRoadLength(laneLength);
+                    // in SI (m*m/s)
+                    java.lang.Double speedLaneLength =
+                            new java.lang.Double(link.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * length);
+                    if (speedTotalByArea.get(area) != null)
+                    {
+                        speedLaneLength += speedTotalByArea.get(area);
+                    }
+                    speedTotalByArea.put(area, speedLaneLength);
                 }
             }
         }
@@ -482,8 +491,8 @@ public class NTMModel implements OTSModelInterface
         {
             if (speedTotalByArea.get(area) != null && area.getRoadLength() != null)
             {
-                double averageSpeed = speedTotalByArea.get(area) / area.getRoadLength().getSI();
-                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.METER_PER_SECOND));
+                double averageSpeed = speedTotalByArea.get(area) / area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
             }
             else
             {
@@ -526,9 +535,9 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = false;
+            boolean showLinks = true;
             boolean showFlowLinks = true;
-            boolean showConnectors = false;
+            boolean showConnectors = true;
             boolean showNodes = true;
             boolean showGraphEdges = true;
             boolean showAreaNode = true;

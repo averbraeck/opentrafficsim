@@ -255,8 +255,19 @@ public class BuildGraph
                             {
                                 throw new RuntimeException("cAVertex == null || cBVertex == null");
                             }
-                            Abs<SpeedUnit> speedA = aA.getParametersNTM().getFreeSpeed();
-                            Abs<SpeedUnit> speedB = aB.getParametersNTM().getFreeSpeed();
+                            
+                            Abs<SpeedUnit> speedA;
+                            Abs<SpeedUnit> speedB;
+                            if (aA.getParametersNTM() != null)
+                            {
+                                speedA = aA.getParametersNTM().getFreeSpeed();
+                                speedB = aB.getParametersNTM().getFreeSpeed();
+                            }
+                            else
+                            {
+                                speedA = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                                speedB = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);;                               
+                            }
                             addGraphConnector(model, cAVertex, cBVertex, speedA, speedB, le, TrafficBehaviourType.NTM);
 
                         }

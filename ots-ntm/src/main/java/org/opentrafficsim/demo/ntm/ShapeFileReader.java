@@ -256,9 +256,20 @@ public class ShapeFileReader
                 }
                 if (addThisNode)
                 {
-                    double x = (double) feature.getAttribute("X");
-                    double y = (double) feature.getAttribute("Y");
-                    // initially, set the behaviour default to TrafficBehaviourType.ROAD
+                    double x;
+                    double y;
+                    if (feature.getAttribute("X") != null)
+                    {
+                        x = (double) feature.getAttribute("X");
+                        y = (double) feature.getAttribute("Y");
+                    }
+                    else
+                    {
+                        x = point.getCoordinate().x;
+                        y = point.getCoordinate().y;
+                    }
+                        
+                        // initially, set the behaviour default to TrafficBehaviourType.ROAD
                     Node node = new Node(nr, point, type);
                     nodes.put(nr, node);
                 }
@@ -360,7 +371,7 @@ public class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.METER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));

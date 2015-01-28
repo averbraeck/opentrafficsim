@@ -33,7 +33,6 @@ public class BoundedNode extends Node
     /** */
     private CellBehaviour cellBehaviour;
 
-
     /**
      * /**
      * @param centroid the center of the area for the simplified graph.
@@ -42,8 +41,7 @@ public class BoundedNode extends Node
      * @param behaviourType describes behaviour of the node depending on its type
      * @param parametersNTM
      */
-    public BoundedNode(final Point centroid, final String nr, final Area area,
-            final TrafficBehaviourType behaviourType)
+    public BoundedNode(final Point centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
     {
         super(nr, centroid, behaviourType);
         if (behaviourType == TrafficBehaviourType.ROAD)
@@ -64,9 +62,11 @@ public class BoundedNode extends Node
             {
                 parametersNTM = new ParametersNTM(averageSpeed, roadLength);
             }
-            if (parametersNTM.getCapacity()== null)
+            if (parametersNTM.getCapacity() == null)
             {
-                double capacity = parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * parametersNTM.getAccCritical().get(0);
+                double capacity =
+                        parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
+                                * parametersNTM.getAccCritical().get(0);
                 parametersNTM.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR));
                 System.out.println("stop");
             }
@@ -77,9 +77,10 @@ public class BoundedNode extends Node
         else if (behaviourType == TrafficBehaviourType.FLOW)
         {
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
-            //TODO parameters should depend on area characteristics
-//            DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
-//            ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
+            // TODO parameters should depend on area characteristics
+            // DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000,
+            // FrequencyUnit.PER_HOUR);
+            // ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
             ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram();
             this.setCellBehaviour(new CellBehaviourFlow(area, parametersCTM));
             this.setArea(area);
@@ -95,8 +96,6 @@ public class BoundedNode extends Node
             this.setArea(area);
         }
     }
-
-   
 
     /**
      * @return area.

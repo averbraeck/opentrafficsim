@@ -325,7 +325,7 @@ public class CsvFileReader
             // then, read all other lines: first column contains the name of the origin
             // this can be either a link or a centroid (starts with "C")
             int indexRow = 0;
-            while ((line = bufferedReader.readLine()) != null)
+            while ((line = bufferedReader.readLine()) != null && !line.isEmpty())
             {
                 Map<String, TripInfoTimeDynamic> tripDemandRow = new HashMap<String, TripInfoTimeDynamic>();
                 String[] tripData = line.split(csvSplitBy);
@@ -577,56 +577,59 @@ public class CsvFileReader
             url = ShapeFileReader.class.getResource(csvFileName);
         }
 
-        String path = url.getPath();
         HashMap<String, ArrayList<Double>> parametersNTM = new HashMap<String, ArrayList<Double>>();
 
-        try
+        if (url != null)
         {
-            bufferedReader = new BufferedReader(new FileReader(path));
-            // read all lines: first column contains the name of the origin
-            // this can be either a link or a centroid (starts with "C")
-            while ((line = bufferedReader.readLine()) != null)
+            try
             {
-                String centroidName;
-                ArrayList<Double> parameters = new ArrayList<Double>();
-                String[] completeLine = line.split(csvSplitBy);
-                for (String lineSegment : completeLine)
+                String path = url.getPath();
+                bufferedReader = new BufferedReader(new FileReader(path));
+                // read all lines: first column contains the name of the origin
+                // this can be either a link or a centroid (starts with "C")
+                while ((line = bufferedReader.readLine()) != null)
                 {
-                    lineSegment = lineSegment.trim();
-                    String[] dataItem = lineSegment.split(csvSplitInternalBy);
-                    if (dataItem.length > 0)
+                    String centroidName;
+                    ArrayList<Double> parameters = new ArrayList<Double>();
+                    String[] completeLine = line.split(csvSplitBy);
+                    for (String lineSegment : completeLine)
                     {
-                        centroidName = dataItem[0];
-                        parameters.add(Double.parseDouble(dataItem[1]));
-                        parameters.add(Double.parseDouble(dataItem[2]));
-                        parameters.add(Double.parseDouble(dataItem[3]));
-                        parameters.add(Double.parseDouble(dataItem[4]));
-                        parametersNTM.put(centroidName, parameters);
+                        lineSegment = lineSegment.trim();
+                        String[] dataItem = lineSegment.split(csvSplitInternalBy);
+                        if (dataItem.length > 0)
+                        {
+                            centroidName = dataItem[0];
+                            parameters.add(Double.parseDouble(dataItem[1]));
+                            parameters.add(Double.parseDouble(dataItem[2]));
+                            parameters.add(Double.parseDouble(dataItem[3]));
+                            parameters.add(Double.parseDouble(dataItem[4]));
+                            parametersNTM.put(centroidName, parameters);
+                        }
                     }
+    
                 }
-
+                // test if the fractions are read correctly
             }
-            // test if the fractions are read correctly
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            if (bufferedReader != null)
+            catch (FileNotFoundException e)
             {
-                try
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (bufferedReader != null)
                 {
-                    bufferedReader.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
+                    try
+                    {
+                        bufferedReader.close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -648,74 +651,77 @@ public class CsvFileReader
             url = ShapeFileReader.class.getResource(csvFileName);
         }
         HashMap<String, HashMap<String, Abs<FrequencyUnit>>> capResMap = new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
-        String path = url.getPath();
         // double OD = capResMap.get("O").get("D");
-        try
+        if (url != null)
         {
-            bufferedReader = new BufferedReader(new FileReader(path));
-            boolean header = true;
-            // read all lines: first column contains the name of the origin
-            // this can be either a link or a centroid (starts with "C")
-            HashMap<Integer, String> name = new HashMap<Integer, String>();
-            while ((line = bufferedReader.readLine()) != null)
+            try
             {
-                String centroidName = null;
-                HashMap<String, Abs<FrequencyUnit>> capRes = new HashMap<String, Abs<FrequencyUnit>>();
-                String[] completeLine = line.split(csvSplitBy);
-                for (String lineSegment : completeLine)
+                String path = url.getPath();
+                bufferedReader = new BufferedReader(new FileReader(path));
+                boolean header = true;
+                // read all lines: first column contains the name of the origin
+                // this can be either a link or a centroid (starts with "C")
+                HashMap<Integer, String> name = new HashMap<Integer, String>();
+                while ((line = bufferedReader.readLine()) != null)
                 {
-                    lineSegment = lineSegment.trim();
-                    String[] dataItem = lineSegment.split(csvSplitInternalBy);
-                    if (dataItem.length > 0)
+                    String centroidName = null;
+                    HashMap<String, Abs<FrequencyUnit>> capRes = new HashMap<String, Abs<FrequencyUnit>>();
+                    String[] completeLine = line.split(csvSplitBy);
+                    for (String lineSegment : completeLine)
                     {
-                        if (header)
+                        lineSegment = lineSegment.trim();
+                        String[] dataItem = lineSegment.split(csvSplitInternalBy);
+                        if (dataItem.length > 0)
                         {
-                            for (int i = 1; i < dataItem.length; i++)
+                            if (header)
                             {
-                                name.put(i, dataItem[i].trim());
+                                for (int i = 1; i < dataItem.length; i++)
+                                {
+                                    name.put(i, dataItem[i].trim());
+                                }
                             }
-                        }
-                        else
-                        {
-                            centroidName = dataItem[0];
-                            for (int i = 1; i < dataItem.length; i++)
+                            else
                             {
-                                Abs<FrequencyUnit> capacity = new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
-                                capRes.put(name.get(i), capacity);
+                                centroidName = dataItem[0];
+                                for (int i = 1; i < dataItem.length; i++)
+                                {
+                                    Abs<FrequencyUnit> capacity = new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
+                                    capRes.put(name.get(i), capacity);
+                                }
                             }
                         }
                     }
+                    if (header)
+                    {
+                        header = false;                    
+                    }
+                    else
+                    {
+                        capResMap.put(centroidName, capRes);
+                    }
                 }
-                if (header)
-                {
-                    header = false;                    
-                }
-                else
-                {
-                    capResMap.put(centroidName, capRes);
-                }
+                // test if the fractions are read correctly
             }
-            // test if the fractions are read correctly
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            if (bufferedReader != null)
+            catch (FileNotFoundException e)
             {
-                try
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (bufferedReader != null)
                 {
-                    bufferedReader.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
+                    try
+                    {
+                        bufferedReader.close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
