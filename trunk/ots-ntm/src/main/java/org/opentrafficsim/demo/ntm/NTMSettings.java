@@ -47,6 +47,9 @@ public class NTMSettings
     
     /** number of routes for generation*/
     private int numberOfRoutes;
+    
+    /** */
+    private String path;
 
     /**
      * @param startTime
@@ -56,7 +59,7 @@ public class NTMSettings
      * @param timeStepDurationCTM
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
-            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval, int numberOfRoutes)
+            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval, int numberOfRoutes, String path)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -72,6 +75,7 @@ public class NTMSettings
         this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);
         this.reRouteTimeInterval = reRouteTimeInterval;
         this.numberOfRoutes = numberOfRoutes;
+        this.path = path;
     }
 
     /**
@@ -224,6 +228,22 @@ public class NTMSettings
     public void setNumberOfRoutes(int numberOfRoutes)
     {
         this.numberOfRoutes = numberOfRoutes;
+    }
+
+    /**
+     * @return path.
+     */
+    public String getPath()
+    {
+        return path;
+    }
+
+    /**
+     * @param path set path.
+     */
+    public void setPath(String path)
+    {
+        this.path = path;
     }
 
 }
