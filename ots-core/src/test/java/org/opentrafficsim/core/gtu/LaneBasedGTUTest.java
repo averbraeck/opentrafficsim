@@ -11,17 +11,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.naming.NamingException;
+import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
 import org.opentrafficsim.car.Car;
+import org.opentrafficsim.car.lanechanging.LaneChangeModel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -31,6 +37,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -54,16 +61,32 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 public class LaneBasedGTUTest
 {
+
     /**
-     * Test the LaneBaseGTU class.
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws RemoteException
-     * @throws SimRuntimeException
+     * Test if a Truck covering a specified range of lanes can <i>see</i> a Car covering a specified range of lanes. <br>
+     * The network is a linear array of Nodes connected by 5-Lane Links. In the middle, the Nodes are very closely
+     * spaced. A truck is positioned over those center Nodes ensuring it covers several of the short Lanes in
+     * succession.
+     * @param truckFromLane int; lowest rank of lane range of the truck
+     * @param truckUpToLane int; highest rank of lane range of the truck
+     * @param carLanesCovered int; number of lanes that the car covers
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ??? (should never happen; the simulator is not really used)
+     * @throws NetworkException on network topology problem (should never happen)
+     * @throws NamingException on errors registering the animation of objects (should never happen)
      */
-    @Test
-    public void laneBasedGTUTest() throws RemoteException, NamingException, NetworkException, SimRuntimeException
+    private void leaderFollowerParallel(int truckFromLane, int truckUpToLane, int carLanesCovered)
+            throws RemoteException, SimRuntimeException, NetworkException, NamingException
     {
+        // Perform a few sanity checks
+        if (carLanesCovered < 1)
+        {
+            fail("carLanesCovered must be >= 1 (got " + carLanesCovered + ")");
+        }
+        if (truckUpToLane < truckFromLane)
+        {
+            fail("truckUpToLane must be >= truckFromLane");
+        }
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
@@ -76,7 +99,7 @@ public class LaneBasedGTUTest
         laneType.addPermeability(truckType);
         // Create a series of Nodes (some closely bunched together)
         ArrayList<Node> nodes = new ArrayList<Node>();
-        int[] linkBoundaries = {0, 50, 100, 101, 102, 103, 104, 105, 150, 200};
+        int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
             nodes.add(new Node("Node at " + xPos, new Coordinate(xPos, 20, 0)));
@@ -97,9 +120,8 @@ public class LaneBasedGTUTest
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
         DoubleScalar.Rel<LengthUnit> truckPosition = new DoubleScalar.Rel<LengthUnit>(106, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> truckLength = new DoubleScalar.Rel<LengthUnit>(15, LengthUnit.METER);
-        int truckLaneRank = 3;
         Map<Lane, DoubleScalar.Rel<LengthUnit>> truckPositions =
-                buildPositionsMap(truckPosition, truckLength, links, truckLaneRank, truckLaneRank);
+                buildPositionsMap(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         DoubleScalar.Abs<SpeedUnit> truckSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
         Car<String> truck =
@@ -146,53 +168,179 @@ public class LaneBasedGTUTest
         DoubleScalar.Rel<LengthUnit> carLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> carWidth = new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> carSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
-        for (int laneRank = 0; laneRank < laneCount; laneRank++)
+        int maxStep = linkBoundaries[linkBoundaries.length - 1];
+        for (int laneRank = 0; laneRank < laneCount + 1 - carLanesCovered; laneRank++)
         {
-            int maxStep = linkBoundaries[linkBoundaries.length - 1];
             for (int step = 0; step < maxStep; step += 5)
             {
-                if (laneRank == truckLaneRank && step >= truckPosition.getSI() - truckLength.getSI()
+                if (laneRank >= truckFromLane && laneRank <= truckUpToLane
+                        && step >= truckPosition.getSI() - truckLength.getSI()
                         && step - carLength.getSI() <= truckPosition.getSI())
                 {
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
                 DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(step, LengthUnit.METER);
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
-                        buildPositionsMap(carPosition, carLength, links, laneRank, laneRank);
+                        buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 Car<String> car =
                         new Car<String>("Car", carType, null, carPositions, carSpeed, carLength, carWidth, null,
                                 (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                double actualHeadway = truck.headway(forwardMaxDistance).getSI();
                 double expectedHeadway =
-                        laneRank != truckLaneRank || step - truckPosition.getSI() < 0 ? Double.MAX_VALUE : step
+                        laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
+                                || step - carLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE : step
                                 - carLength.getSI() - truckPosition.getSI();
-               //System.out.println("pos " + step + " laneRank " + laneRank + " expected headway " + expectedHeadway);
-                assertEquals("Headway should return " + expectedHeadway, expectedHeadway,
-                        truck.headway(forwardMaxDistance).getSI(), 0.1);
+                // System.out.println("carLanesCovered " + laneRank + ".." + (laneRank + carLanesCovered - 1)
+                // + " truckLanesCovered " + truckFromLane + ".." + truckUpToLane + " car pos " + step
+                // + " laneRank " + laneRank + " expected headway " + expectedHeadway);
+                assertEquals("Forward headway should return " + expectedHeadway, expectedHeadway, actualHeadway, 0.1);
+                LaneBasedGTU<?> leader = truck.headwayGTU(forwardMaxDistance);
+                if (expectedHeadway == Double.MAX_VALUE)
+                {
+                    assertEquals("Leader should be null", null, leader);
+                }
+                else
+                {
+                    assertEquals("Leader should be the car", car, leader);
+                }
+                double actualReverseHeadway = truck.headway(reverseMaxDistance).getSI();
                 double expectedReverseHeadway =
-                        laneRank != truckLaneRank || step >= truckPosition.getSI() - truckLength.getSI()
-                                ? Double.MAX_VALUE : truckPosition.getSI() - truckLength.getSI() - step;
-                assertEquals("Reverse headway should return " + expectedReverseHeadway, expectedReverseHeadway, truck
-                        .headway(reverseMaxDistance).getSI(), 0.1);
+                        laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
+                                || step >= truckPosition.getSI() - truckLength.getSI() ? Double.MAX_VALUE
+                                : truckPosition.getSI() - truckLength.getSI() - step;
+                assertEquals("Reverse headway should return " + expectedReverseHeadway, expectedReverseHeadway,
+                        actualReverseHeadway, 0.1);
+                LaneBasedGTU<?> follower = truck.headwayGTU(reverseMaxDistance);
+                if (expectedReverseHeadway == Double.MAX_VALUE)
+                {
+                    assertEquals("Follower should be null", null, follower);
+                }
+                else
+                {
+                    assertEquals("Follower should be the car", car, follower);
+                }
                 Set<LaneBasedGTU<?>> leftParallel =
                         truck.parallel(LateralDirectionality.LEFT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedLeftSize =
-                        laneRank != truckLaneRank - 1 || step <= truckPosition.getSI() - truckLength.getSI()
+                        laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
+                                || step <= truckPosition.getSI() - truckLength.getSI()
                                 || step - carLength.getSI() > truckPosition.getSI() ? 0 : 1;
                 assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize,
                         leftParallel.size()); // This one caught a complex bug
+                if (leftParallel.size() > 0)
+                {
+                    assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
+                }
                 Set<LaneBasedGTU<?>> rightParallel =
                         truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedRightSize =
-                        laneRank != truckLaneRank + 1 || step < truckPosition.getSI() - truckLength.getSI()
+                        laneRank <= truckFromLane || laneRank > truckUpToLane + 1
+                                || step < truckPosition.getSI() - truckLength.getSI()
                                 || step - carLength.getSI() > truckPosition.getSI() ? 0 : 1;
                 assertEquals("Right parallel set size should be " + expectedRightSize, expectedRightSize,
                         rightParallel.size());
+                if (rightParallel.size() > 0)
+                {
+                    assertTrue("Parallel GTU should be the car", rightParallel.contains(car));
+                }
                 for (Lane lane : carPositions.keySet())
                 {
                     lane.removeGTU(car);
                 }
             }
         }
+    }
+
+    /**
+     * Test the leader, follower and parallel methods.
+     * @throws NetworkException
+     * @throws NamingException
+     * @throws RemoteException
+     * @throws SimRuntimeException
+     */
+    @Test
+    public void leaderFollowerAndParallelTest() throws RemoteException, NamingException, NetworkException,
+            SimRuntimeException
+    {
+        leaderFollowerParallel(2, 2, 1);
+        leaderFollowerParallel(2, 3, 1);
+        leaderFollowerParallel(2, 2, 2);
+        leaderFollowerParallel(2, 3, 2);
+    }
+
+    /**
+     * Test the deltaTimeForDistance and timeAtDistance methods.
+     * @throws RemoteException
+     * @throws SimRuntimeException
+     * @throws NamingException
+     * @throws NetworkException
+     */
+    @Test
+    public void timeAtDistanceTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException
+    {
+        // Create a car with constant acceleration
+        OTSModelInterface model = new Model();
+        SimpleSimulator simulator =
+                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
+        // Run the simulator clock to some non-zero value
+        simulator.getSimulator().scheduleEvent(
+                new SimEvent<OTSSimTimeDouble>(
+                        new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(60, TimeUnit.SECOND)),
+                        SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null));
+        while (simulator.getSimulator().getSimulatorTime().get().getSI() < 60)
+        {
+            simulator.getSimulator().step();
+        }
+        GTUType<String> carType = new GTUType<String>("car");
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        laneType.addPermeability(carType);
+        Node fromNode = new Node("Node A", new Coordinate(0, 0, 0));
+        Node toNode = new Node("Node B", new Coordinate(1000, 0, 0));
+        String linkName = "AB";
+        Lane lane =
+                LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType,
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator())[0];
+        DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        carPositions.put(lane, carPosition);
+        DoubleScalar.Abs<SpeedUnit> carSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.METER_PER_SECOND);
+        for (int a = 1; a >= -1; a--)
+        {
+            DoubleScalar.Abs<AccelerationUnit> acceleration =
+                    new DoubleScalar.Abs<AccelerationUnit>(a, AccelerationUnit.METER_PER_SECOND_2);
+            Car<String> car =
+                    new Car<String>("Car", carType, null, carPositions, carSpeed, new DoubleScalar.Rel<LengthUnit>(4,
+                            LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), null,
+                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
+            // System.out.println("acceleration is " + acceleration);
+            GTUFollowingModel.GTUFollowingModelResult gfmr =
+                    new GTUFollowingModel.GTUFollowingModelResult(acceleration, new DoubleScalar.Abs<TimeUnit>(70,
+                            TimeUnit.SECOND));
+            car.setState(gfmr);
+            // Check the results
+            for (int timeStep = 1; timeStep < 100; timeStep++)
+            {
+                double time = 0.1 * timeStep;
+                double distanceAtTime = carSpeed.getSI() * time + 0.5 * acceleration.getSI() * time * time;
+                // System.out.println(String.format("time %.1fs, distance %.3fm", time, distanceAtTime));
+                assertEquals("It should take " + time + " seconds to cover distance " + distanceAtTime, time, car
+                        .deltaTimeForDistance(new DoubleScalar.Rel<LengthUnit>(distanceAtTime, LengthUnit.METER))
+                        .getSI(), 0.0001);
+                assertEquals("Car should reach distance " + distanceAtTime + " at " + (time + 60), time + 60, car
+                        .timeAtDistance(new DoubleScalar.Rel<LengthUnit>(distanceAtTime, LengthUnit.METER)).getSI(),
+                        0.0001);
+            }
+        }
+    }
+
+    /**
+     * Executed as scheduled event.
+     */
+    public final void autoPauseSimulator()
+    {
+        // do nothing
     }
 
     /**
@@ -271,6 +419,7 @@ class Model implements OTSModelInterface
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
+        // Dummy
     }
 
     /** {@inheritDoc} */

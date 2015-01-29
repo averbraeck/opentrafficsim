@@ -215,7 +215,7 @@ public class Lane extends CrossSectionElement
     {
         DoubleScalar.Rel<LengthUnit> mStart = gtu.position(this, gtu.getFront());
         DoubleScalar.Rel<LengthUnit> mEnd = gtu.position(this, gtu.getFront(), gtu.getNextEvaluationTime());
-        // System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
+        //System.out.println("mstart: " + mStart + ", mEnd: " + mEnd);
         List<Sensor> triggerSensors = getSensors(mStart, mEnd);
         for (Sensor sensor : triggerSensors)
         {
