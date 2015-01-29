@@ -46,6 +46,7 @@ public class SensorLaneStart extends AbstractSensor
         gtu.addLane(getLane());
         try
         {
+            // FIXME PK thinks that this trigger should put the vehicle at a negative position on the Lane
             getLane().addGTU(gtu, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER));
         }
         catch (NetworkException exception)

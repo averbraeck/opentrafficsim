@@ -27,6 +27,8 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -196,14 +198,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             this.longitudinalPositions.put(lane, position(lane, getFront(), this.nextEvaluationTime));
         }
-
+        // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
-
+        // Update lastEvaluationTime and then set the new nextEvaluationTime
         this.lastEvaluationTime = this.nextEvaluationTime;
         this.nextEvaluationTime = cfmr.getValidUntil();
         this.acceleration = cfmr.getAcceleration();
 
-        // for now: schedule all sensor triggers that are going to happen in the next timestep.
+        // Schedule all sensor triggers that are going to happen until the next evaluation time.
         for (Lane lane : this.longitudinalPositions.keySet())
         {
             lane.scheduleTriggers(this);
@@ -735,6 +737,80 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         return gtuSet;
     }
 
+    /** {@inheritDoc} */
+    public final DoubleScalar.Abs<TimeUnit> timeAtDistance(DoubleScalar.Rel<LengthUnit> distance)
+    {
+        Double result = solveTimeForDistance(distance);
+        if (null == result)
+        {
+            return null;
+        }
+        return new DoubleScalar.Abs<TimeUnit>(this.lastEvaluationTime.getSI() + result, TimeUnit.SECOND);
+    }
+
+    /** {@inheritDoc} */
+    public final DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(DoubleScalar.Rel<LengthUnit> distance)
+    {
+        Double result = solveTimeForDistance(distance);
+        if (null == result)
+        {
+            return null;
+        }
+        return new DoubleScalar.Rel<TimeUnit>(result, TimeUnit.SECOND);
+    }
+
+    /**
+     * Determine show long it will take for this GTU to cover the specified distance (both time and distance since the
+     * last evaluation time).
+     * @param distance double; the distance
+     * @return Double; the relative time, or null when this GTU stops before covering the specified distance
+     */
+    private Double solveTimeForDistance(DoubleScalar.Rel<LengthUnit> distance)
+    {
+        /*
+         * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If
+         * that is changed, this method will have to be re-written.
+         */
+        double c = -distance.getSI();
+        double a = this.acceleration.getSI() / 2;
+        double b = this.speed.getSI();
+        if (0 == a)
+        {
+            if (b > 0)
+            {
+                return -c / b;
+            }
+            return null;
+        }
+        // Solve a * t^2 + b * t + c = 0
+        double discriminant = b * b - 4 * a * c;
+        if (discriminant < 0)
+        {
+            return null;
+        }
+        // The solutions are (-b +/- sqrt(discriminant)) / 2 / a
+        double solution1 = (-b - Math.sqrt(discriminant)) / 2 / a;
+        double solution2 = (-b + Math.sqrt(discriminant)) / 2 / a;
+        if (solution1 < 0 && solution2 < 0)
+        {
+            return null;
+        }
+        if (solution1 < 0)
+        {
+            return solution2;
+        }
+        if (solution2 < 0)
+        {
+            return solution1;
+        }
+        // Both are >= 0; return the smallest one
+        if (solution1 < solution2)
+        {
+            return solution1;
+        }
+        return solution2;
+    }
+
     /**
      * Retrieve the GTUFollowingModel of this GTU.
      * @return GTUFollowingModel
@@ -850,6 +926,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             return this.distanceSI;
         }
-
     }
+
 }

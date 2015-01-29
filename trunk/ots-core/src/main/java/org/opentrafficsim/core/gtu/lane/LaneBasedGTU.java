@@ -340,4 +340,23 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      */
     Set<LaneBasedGTU<?>> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
             throws RemoteException, NetworkException;
+
+    /**
+     * Determine the time when this GTU will have covered the specified distance from the position of the last
+     * evaluation time.
+     * @param distance DoubleScalar.Rel&lt;LengthUnit&gt;; the distance
+     * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the time, or null if this GTU stops before covering the specified
+     *         distance
+     */
+    DoubleScalar.Abs<TimeUnit> timeAtDistance(DoubleScalar.Rel<LengthUnit> distance);
+
+    /**
+     * Determine the time since last evaltuation when this GTU has covered the specified distance from the position of
+     * the last evaluation time.
+     * @param distance DoubleScalar.Rel&lt;LengthUnit&gt;; the distance
+     * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the time difference from last evaluation or null if this GTU stops
+     *         before covering the specified distance
+     */
+    DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(DoubleScalar.Rel<LengthUnit> distance);
+
 }
