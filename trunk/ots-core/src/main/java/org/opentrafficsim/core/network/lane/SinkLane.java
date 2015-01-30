@@ -27,6 +27,7 @@ public class SinkLane extends Lane
 {
 
     /**
+     * Construct a SinkLane.
      * @param parentLink Cross Section Link to which the element belongs.
      * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
@@ -46,7 +47,7 @@ public class SinkLane extends Lane
     }
 
     /**
-     * sensor that dewletes the GTU.
+     * sensor that deletes the GTU.
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
      * All rights reserved. <br>
