@@ -219,6 +219,110 @@ public class LaneBasedGTUTest
                 {
                     assertEquals("Follower should be the car", car, follower);
                 }
+                for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
+                {
+                    Lane l = null;
+                    double cumulativeDistance = 0;
+                    for (CrossSectionLink<?, ?> csl : links)
+                    {
+                        cumulativeDistance += csl.getLength().getSI();
+                        if (cumulativeDistance >= truckPosition.getSI())
+                        {
+                            l = getNthLane(csl, laneIndex);
+                            break;
+                        }
+                    }
+                    try
+                    {
+                        actualHeadway = truck.headway(l, forwardMaxDistance).getSI();
+                        if (laneIndex < truckFromLane || (laneIndex > truckUpToLane))
+                        {
+                            fail("headway should have thrown a NetworkException");
+                        }
+                        expectedHeadway =
+                                laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
+                                        || step - carLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE
+                                        : step - carLength.getSI() - truckPosition.getSI();
+                        assertEquals("Headway on lane " + laneIndex + " should be " + expectedHeadway, expectedHeadway,
+                                actualHeadway, 0.001);
+                    }
+                    catch (NetworkException ne)
+                    {
+                        if (laneIndex >= truckFromLane && laneIndex <= truckUpToLane)
+                        {
+                            fail("headway should not have thrown a NetworkException");
+                        }
+                    }
+                    try
+                    {
+                        leader = truck.headwayGTU(l, forwardMaxDistance);
+                        if (laneIndex < truckFromLane || (laneIndex > truckUpToLane))
+                        {
+                            fail("headway should have thrown a NetworkException");
+                        }
+                        if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
+                                && step - carLength.getSI() - truckPosition.getSI() > 0)
+                        {
+                            assertEquals("Leader should be the car", car, leader);
+                        }
+                        else
+                        {
+                            assertEquals("Leader should be null", null, leader);
+                        }
+                    }
+                    catch (NetworkException ne)
+                    {
+                        if (laneIndex >= truckFromLane && laneIndex <= truckUpToLane)
+                        {
+                            fail("headwayGTU should not have thrown a NetworkException");
+                        }
+                    }
+                    try
+                    {
+                        actualReverseHeadway = truck.headway(l, reverseMaxDistance).getSI();
+                        if (laneIndex < truckFromLane || (laneIndex > truckUpToLane))
+                        {
+                            fail("headway should have thrown a NetworkException");
+                        }
+                        expectedReverseHeadway =
+                                laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
+                                        || step >= truckPosition.getSI() - truckLength.getSI() ? Double.MAX_VALUE
+                                        : truckPosition.getSI() - truckLength.getSI() - step;
+                        assertEquals("Headway on lane " + laneIndex + " should be " + expectedReverseHeadway,
+                                expectedReverseHeadway, actualReverseHeadway, 0.001);
+                    }
+                    catch (NetworkException ne)
+                    {
+                        if (laneIndex >= truckFromLane && laneIndex <= truckUpToLane)
+                        {
+                            fail("headway should not have thrown a NetworkException");
+                        }
+                    }
+                    try
+                    {
+                        follower = truck.headwayGTU(l, reverseMaxDistance);
+                        if (laneIndex < truckFromLane || (laneIndex > truckUpToLane))
+                        {
+                            fail("headway should have thrown a NetworkException");
+                        }
+                        if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
+                                && step < truckPosition.getSI() - truckLength.getSI())
+                        {
+                            assertEquals("Follower should be the car", car, follower);
+                        }
+                        else
+                        {
+                            assertEquals("Follower should be null", null, follower);
+                        }
+                    }
+                    catch (NetworkException ne)
+                    {
+                        if (laneIndex >= truckFromLane && laneIndex <= truckUpToLane)
+                        {
+                            fail("headwayGTU should not have thrown a NetworkException");
+                        }
+                    }
+                }
                 Set<LaneBasedGTU<?>> leftParallel =
                         truck.parallel(LateralDirectionality.LEFT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedLeftSize =
