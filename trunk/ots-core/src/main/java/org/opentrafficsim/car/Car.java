@@ -79,22 +79,24 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
 
     /** {@inheritDoc} */
     @Override
-    public final RelativePosition getFront()
+    @SuppressWarnings("checkstyle:designforextension")
+    public RelativePosition getFront()
     {
-        // We take the front position of the Car to be the reference point.
+        // We take the rear position of the Car to be the reference point. So the front is the length
+        // of the Car away from the reference point in the positive (driving) X-direction.
         DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
-        return new RelativePosition(zero, zero, zero, RelativePosition.FRONT);
+        DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(getLength().getSI(), LengthUnit.METER);
+        return new RelativePosition(dx, zero, zero, RelativePosition.FRONT);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final RelativePosition getRear()
+    @SuppressWarnings("checkstyle:designforextension")
+    public RelativePosition getRear()
     {
-        // We take the front position of the Car to be the reference point. So the rear is the length
-        // of the Car away from the reference point in the negative (non-driving) X-direction.
+        // We take the rear position of the Car to be the reference point. 
         DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(-getLength().getSI(), LengthUnit.METER);
-        return new RelativePosition(dx, zero, zero, RelativePosition.REAR);
+        return new RelativePosition(zero, zero, zero, RelativePosition.REAR);
     }
 
     /** {@inheritDoc} */
