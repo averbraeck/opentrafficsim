@@ -59,7 +59,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * lastEvaluationTime. Because the front of the GTU is not on all the lanes the GTU is registered on, the
      * longitudinal positions can be more than the length of the lane, or less than zero.
      */
-    private final Map<Lane, DoubleScalar.Rel<LengthUnit>> longitudinalPositions;
+    protected final Map<Lane, DoubleScalar.Rel<LengthUnit>> longitudinalPositions;
 
     /** Speed at lastEvaluationTime. */
     private DoubleScalar.Abs<SpeedUnit> speed;
@@ -192,6 +192,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException,
             SimRuntimeException
     {
+        // 
         for (Lane lane : this.longitudinalPositions.keySet())
         {
             this.longitudinalPositions.put(lane, position(lane, getFront(), this.nextEvaluationTime));
@@ -203,6 +204,22 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         this.nextEvaluationTime = cfmr.getValidUntil();
         this.acceleration = cfmr.getAcceleration();
 
+        // Do our reference points enter new lane(s) during the next time step? If so, register!
+        double t = this.nextEvaluationTime.getSI() - this.lastEvaluationTime.getSI();
+        double distanceToDriveSI = this.speed.getSI() * t + 0.5 * this.acceleration.getSI() * t * t;
+        Set<Lane> endingLanes = new HashSet<Lane>();
+        for (Lane lane : this.longitudinalPositions.keySet())
+        {
+            if (this.longitudinalPositions.get(lane).getSI() + distanceToDriveSI > lane.getLength().getSI())
+            {
+                endingLanes.add(lane);
+            }
+        }
+        for (Lane lane : endingLanes)
+        {
+            // extendRecursiveSI(lane, );
+        }
+        
         // Schedule all sensor triggers that are going to happen until the next evaluation time.
         for (Lane lane : this.longitudinalPositions.keySet())
         {
@@ -210,6 +227,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
     }
 
+    // private void extendRecursiveSI(final Lane lane)
+    
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition)
