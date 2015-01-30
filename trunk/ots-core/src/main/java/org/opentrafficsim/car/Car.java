@@ -36,6 +36,9 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
 {
     /** */
     private static final long serialVersionUID = 20141025L;
+    
+    /** animation. */
+    private Renderable2D animation;
 
     /**
      * @param id ID; the id of the GTU, could be String or Integer
@@ -98,7 +101,7 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
             {
                 Constructor<? extends Renderable2D> constructor =
                     animationClass.getConstructor(AbstractLaneBasedIndividualGTU.class, OTSDEVSSimulatorInterface.class);
-                constructor.newInstance(this, simulator);
+                this.animation = constructor.newInstance(this, simulator);
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
                 | IllegalArgumentException | InvocationTargetException exception)
@@ -140,7 +143,10 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
             removeLane(lane);
             lane.removeGTU(this);
         }
-        
+        if (this.animation != null)
+        {
+            this.animation.destroy();
+        }
     }
 
     /** {@inheritDoc} */
