@@ -10,17 +10,30 @@ package org.opentrafficsim.importexport.osm.output;
  * @version 19.12.2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public enum GTUTypes {
+public enum GTUTypes 
+{
+    /** */
     CAR,
+    /** */
     BIKE,
+    /** */
     PEDESTRIAN,
+    /** */
     SCOOTER,
+    /** */
     TRAM,
+    /** */
     TRAIN,
+    /** */
     METRO,
+    /** */
     BOAT,
+    /** */
     PLANE,
+    /** */
     HORSE,
+    /** */
     SNOWMOBILE,
+    /** */
     SKI;
 }

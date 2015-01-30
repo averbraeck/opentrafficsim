@@ -63,15 +63,15 @@ public class NewSink implements Sink
             while (tagint.hasNext())
             {
                 Tag nodetag = tagint.next();
-                if (true/* this.wantedTags.contains(nodetag) || this.wantedTags.isEmpty() */)
-                {
+                //if (true/* this.wantedTags.contains(nodetag) || this.wantedTags.isEmpty() */)
+                //{
                     if (this.filterKeys.contains(nodetag.getKey()) || this.filterKeys.isEmpty())
                     {
                         org.opentrafficsim.importexport.osm.Tag tag =
                                 new org.opentrafficsim.importexport.osm.Tag(nodetag.getKey(), nodetag.getValue());
                         node1.addTag(tag);
                     }
-                }
+                //}
             }
             this.net.addNode(node1);
         }
@@ -179,12 +179,9 @@ public class NewSink implements Sink
                 org.opentrafficsim.importexport.osm.Way w = this.net.getWay(wid);
                 for (Long nid : w.getNodes())
                 {
-                    if (this.net.getNodes().keySet().contains(nid))
+                    if (this.net.getNodes().keySet().contains(nid) && !usednodes.containsKey(nid))
                     {
-                        if (!usednodes.containsKey(nid))
-                        {
-                            usednodes.put(nid, this.net.getNode(nid));
-                        }
+                        usednodes.put(nid, this.net.getNode(nid));
                     }
                 }
             }
@@ -200,12 +197,9 @@ public class NewSink implements Sink
                 org.opentrafficsim.importexport.osm.Relation r = this.net.getRelation(rid);
                 for (Long nid : r.getNodes())
                 {
-                    if (this.net.getNodes().keySet().contains(nid))
+                    if (this.net.getNodes().keySet().contains(nid) && !usednodes.containsKey(nid))
                     {
-                        if (!usednodes.containsKey(nid))
-                        {
-                            usednodes.put(nid, this.net.getNode(nid));
-                        }
+                        usednodes.put(nid, this.net.getNode(nid));
                     }
                 }
             }

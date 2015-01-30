@@ -362,7 +362,7 @@ public class Network
                     }
                     redundancy = true;
                     Link lnew =
-                            new Link(l1.getStart(), l2.getEnd(), l1.getTags(), (l1.getLength() + l2.getLength()),
+                            new Link(l1.getStart(), l2.getEnd(), l1.getTags(), l1.getLength() + l2.getLength(),
                                     l1.getLanes(), l1.getForwardLanes());
                     if (!l1.getSplineList().isEmpty())
                     {

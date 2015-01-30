@@ -157,7 +157,7 @@ public final class Convert
             if (t.getKey().equals("width"))
             {
                 width =
-                        new DoubleScalar.Rel<LengthUnit>((Double.parseDouble(t.getValue()) / osmlink.getLanes()),
+                        new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(t.getValue()) / osmlink.getLanes(),
                                 LengthUnit.METER);
                 widthOverride = true;
             }
@@ -183,7 +183,7 @@ public final class Convert
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
-                        new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit()), LengthUnit.METER);
+                        new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit(), LengthUnit.METER);
                 Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
             }
@@ -193,7 +193,7 @@ public final class Convert
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
-                        new DoubleScalar.Rel<LengthUnit>(((i) * width.getInUnit() * (-1)), LengthUnit.METER);
+                        new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit() * (-1), LengthUnit.METER);
                 Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
                 lanes.add(result);
             }
@@ -204,7 +204,7 @@ public final class Convert
             DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
             /** temporary */
             DoubleScalar.Rel<LengthUnit> latPos =
-                    new DoubleScalar.Rel<LengthUnit>((osmlink.getLanes() * width.getInUnit()), LengthUnit.METER);
+                    new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
             Lane result =
                     new Lane(otslink, latPos, latPos,
                             new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
