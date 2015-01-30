@@ -73,7 +73,7 @@ public class CrossSectionLink<IDL, IDN> extends LinkGeotools<IDL, IDN>
     }
 
     /**
-     * Add a cross section element at the end of the list.<br>
+     * Add a cross section element at specified index in the list.<br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param index the location to insert the element.
      * @param cse the cross section element to add.
