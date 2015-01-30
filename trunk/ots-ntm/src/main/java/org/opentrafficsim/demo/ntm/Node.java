@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
@@ -26,7 +27,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Node extends AbstractNode<String, Point>
+public class Node extends AbstractNode<String, Point> implements Comparable<Node>
 {
     /**
      * <p>
@@ -159,5 +160,13 @@ public class Node extends AbstractNode<String, Point>
             return false;
         return true;
     }
+
+    /** {@inheritDoc} */
+    public int compareTo(Node o)
+    {
+        return  this.getId().compareTo(o.getId());
+    }
+
+
 
 }

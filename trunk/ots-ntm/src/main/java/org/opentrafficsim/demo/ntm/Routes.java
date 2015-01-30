@@ -70,7 +70,7 @@ public class Routes
                     {
                         HashMap<BoundedNode, java.lang.Double> neighbours =
                                 new HashMap<BoundedNode, java.lang.Double>();
-                        TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours, destination, 0, 0);
+                        TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours, destination);
                         origin.getCellBehaviour().getTripInfoByNodeMap().put(destination, tripInfoByNode);
                     }
                     // for all node - destination pairs add information on their first neighbour on the shortest path
@@ -100,7 +100,7 @@ public class Routes
                                 HashMap<BoundedNode, java.lang.Double> neighbours =
                                         new HashMap<BoundedNode, java.lang.Double>();
                                 TripInfoByDestination tripInfoByNode =
-                                        new TripInfoByDestination(neighbours, destination, 0, 0);
+                                        new TripInfoByDestination(neighbours, destination);
                                 cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
                             }
                             // for all node - destination pairs add information on their first neighbour on the shortest

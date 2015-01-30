@@ -30,7 +30,7 @@ public class CsvFileWriter
         BufferedWriter parametersNTMOut = null;
         String textOut;
         File fileParametersNTM = new File(pathAndFile);
-        parametersNTMOut = NTMsimulation.createWriter(fileParametersNTM);
+        parametersNTMOut = WriteOutput.createWriter(fileParametersNTM);
         for (Node node : model.getAreaGraph().vertexSet())
         {
             if (node.getBehaviourType() == TrafficBehaviourType.NTM)
@@ -60,7 +60,7 @@ public class CsvFileWriter
     {
         BufferedWriter capResFileWriter = null;
         File filecapRestraintsAreas = new File(pathAndFile);
-        capResFileWriter = NTMsimulation.createWriter(filecapRestraintsAreas);
+        capResFileWriter = WriteOutput.createWriter(filecapRestraintsAreas);
         boolean header = true;
         double capacity = 1000;
         for (Node origin : model.getAreaGraph().vertexSet())

@@ -28,6 +28,15 @@ public class TripInfoByDestination
 
     /** demand to neighbour. */
     private double demandToDestination;
+    
+    /** demand to neighbour. */
+    private double departedTrips;
+    
+    /** demand to neighbour. */
+    private double arrivedTrips;
+    
+    /** */
+    private double fluxToNeighbour;
 
     /**
      * @param neighbour
@@ -35,13 +44,27 @@ public class TripInfoByDestination
      * @param accumulatedCarsToDestination
      * @param flowToNeighbour
      */
-    public TripInfoByDestination(HashMap<BoundedNode, Double> neighbour, Node destination, double accumulatedCarsToDestination, double demandToNeighbour)
+    public TripInfoByDestination(HashMap<BoundedNode, Double> neighbour, Node destination, double accumulatedCarsToDestination, double demandToNeighbour, double fluxToNeighbour)
     {
         super();
         this.neighboursAndRouteShare = neighbour;
         this.destination = destination;
         this.accumulatedCarsToDestination = accumulatedCarsToDestination;
         this.demandToDestination = demandToNeighbour;
+        this.fluxToNeighbour = fluxToNeighbour;
+    }
+
+    /**
+     * @param neighbour
+     * @param destination
+     * @param accumulatedCarsToDestination
+     * @param flowToNeighbour
+     */
+    public TripInfoByDestination(HashMap<BoundedNode, Double> neighbour, Node destination)
+    {
+        super();
+        this.neighboursAndRouteShare = neighbour;
+        this.destination = destination;
     }
 
     /**
@@ -125,5 +148,75 @@ public class TripInfoByDestination
         this.demandToDestination = demandToDestination;
     }
 
+    /**
+     * @return fluxToNeighbour.
+     */
+    public double getFluxToNeighbour()
+    {
+        return fluxToNeighbour;
+    }
+
+    /**
+     * @param fluxToNeighbour set fluxToNeighbour.
+     */
+    public void setFluxToNeighbour(double fluxToNeighbour)
+    {
+        this.fluxToNeighbour = fluxToNeighbour;
+    }
+
+    /**
+     * @param fluxToNeighbour set fluxToNeighbour.
+     */
+    public void addFluxToNeighbour(double fluxToNeighbour)
+    {
+        this.fluxToNeighbour += fluxToNeighbour;
+    }
+
+    /**
+     * @return departedTrips.
+     */
+    public double getDepartedTrips()
+    {
+        return departedTrips;
+    }
+
+    /**
+     * @param departedTrips set departedTrips.
+     */
+    public void setDepartedTrips(double departedTrips)
+    {
+        this.departedTrips = departedTrips;
+    }
+    /**
+     * @param addDepartedTrips 
+     */
+    public void addDepartedTrips(double addDepartedTrips)
+    {
+        this.departedTrips += addDepartedTrips;
+    }
+
+    /**
+     * @return arrivedTrips.
+     */
+    public double getArrivedTrips()
+    {
+        return arrivedTrips;
+    }
+
+    /**
+     * @param arrivedTrips set arrivedTrips.
+     */
+    public void setArrivedTrips(double arrivedTrips)
+    {
+        this.arrivedTrips = arrivedTrips;
+    }
+
+    /**
+     * @param addArrivedTrips 
+     */
+    public void addArrivedTrips(double addArrivedTrips)
+    {
+        this.arrivedTrips += addArrivedTrips;
+    }
 
 }

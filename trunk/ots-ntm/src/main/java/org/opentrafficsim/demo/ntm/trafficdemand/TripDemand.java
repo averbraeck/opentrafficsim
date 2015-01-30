@@ -2,10 +2,14 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
 
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Area;
+import org.opentrafficsim.demo.ntm.BoundedNode;
 import org.opentrafficsim.demo.ntm.Node;
 
 /**
@@ -93,7 +97,7 @@ public class TripDemand<TripInformation>
                 // get all destinations
                 if (tripDemandRow != null)
                 {
-                for (Map.Entry<String, TripInfoTimeDynamic> entry : tripDemandRow.entrySet())
+                    for (Map.Entry<String, TripInfoTimeDynamic> entry : tripDemandRow.entrySet())
                     {
                         String idSmall = entry.getKey();
                         // mapSmallAreaToBigArea.get(node);
@@ -101,12 +105,12 @@ public class TripDemand<TripInformation>
                         TripInfoTimeDynamic tripInfo = tripDemandRow.get(idSmall);
                         if (destination != null)
                         {
-    
+
                             if (mapSmallAreaToBigArea.get(destination) == null)
                             {
                                 System.out.println("null mapping");
                             }
-    
+
                             else if (mapSmallAreaToBigArea.get(destination).getId() != null)
                             {
                                 // System.out.println("node " + destination.getId() + "bigNode ID "
@@ -124,7 +128,7 @@ public class TripDemand<TripInformation>
                             else
                             {
                                 System.out.println("node bigNode not found?");
-    
+
                             }
                         }
                         else
@@ -132,7 +136,7 @@ public class TripDemand<TripInformation>
                             notFound++;
                             System.out.println("destination not found? " + notFound);
                         }
-    
+
                     }
                 }
                 if (mapSmallAreaToBigArea.get(node).getId() != null)
@@ -160,6 +164,57 @@ public class TripDemand<TripInformation>
         Map<String, Map<String, TripInformation>> demand = this.getTripInfo();
         Map<String, TripInformation> mapDestinations = demand.get(origin);
         return mapDestinations;
+    }
+
+    /**
+     * @param thisDemand 
+     * @param currentTime 
+     * @param timeStepDurationNTM 
+     * @param origin
+     * @param destination
+     * @return mapDestinations a hashmap with destination as key and tripInfo as values
+     */
+    public static final double getTotalNumberOfTripsFromOrigin(TripDemand<TripInfoTimeDynamic> thisDemand,
+            String originID, DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+    {
+        Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
+        Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
+        double rowTotal = 0.0;
+        for ( Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
+        {
+            double trips = getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand,
+                    originID, tripInfo.getKey(), currentTime, timeStepDurationNTM);
+                    rowTotal += trips;
+        }
+        return rowTotal;
+    }
+
+    public static final double getTotalNumberOfTripsFromOriginToDestinationByTimeStep(TripDemand<TripInfoTimeDynamic> thisDemand,
+            String originID, String destination, DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+    {
+        Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
+        Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
+        double cellTotal = 0.0;
+        TripInfoTimeDynamic tripInfo = mapDestinations.get(destination);
+        NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> curve =
+                tripInfo.getDepartureTimeProfile().getDepartureTimeCurve();
+        Object ceilingKey = curve.floorKey(currentTime);
+        if (ceilingKey == null)
+        {
+            System.out.println("TripDemand 186: Strange not within TimeSpan " + ceilingKey);
+        }
+        FractionOfTripDemandByTimeSegment segment = curve.get(ceilingKey);
+        double share = 0;
+        if (segment.getDuration().getSI() > 0)
+        {
+            share = segment.getShareOfDemand() * timeStepDurationNTM.getSI() / segment.getDuration().getSI();
+        }
+        else
+        {
+            System.out.println("segment should not be zero");
+        }
+        cellTotal = tripInfo.getNumberOfTrips() * share;
+        return cellTotal;
     }
 
     /**

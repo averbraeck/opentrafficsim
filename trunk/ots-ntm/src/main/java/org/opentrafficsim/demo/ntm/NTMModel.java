@@ -101,7 +101,7 @@ public class NTMModel implements OTSModelInterface
     private TripDemand<TripInfoTimeDynamic> compressedTripDemand;
 
     /** the demand of trips by Origin and Destination for simulation. */
-    Map<String, Map<String, TripInfoTimeDynamic>> tripDemandToUse;
+    TripDemand<TripInfoTimeDynamic> tripDemandToUse;
 
     /** The simulation settings. */
     private NTMSettings settingsNTM;
@@ -123,6 +123,9 @@ public class NTMModel implements OTSModelInterface
 
     /** debugging. */
     public boolean DEBUG = true;
+
+    /** debugging. */
+    public boolean WRITEDATA= true;
 
     /** use the bigger areas (true) or the detailed areas (false). */
     public boolean COMPRESS_AREAS = false;
@@ -242,14 +245,14 @@ public class NTMModel implements OTSModelInterface
                 shpConnectorsToUse = this.getShpBigConnectors();
                 areasToUse = this.getBigAreas();
                 centroidsToUse = this.getBigCentroids();
-                this.tripDemandToUse = this.getCompressedTripDemand().getTripInfo();
+                this.tripDemandToUse = this.getCompressedTripDemand();
             }
             else
             {
                 shpConnectorsToUse = this.getShpConnectors();
                 areasToUse = this.getAreas();
                 centroidsToUse = this.getCentroids();
-                this.tripDemandToUse = this.getTripDemand().getTripInfo();
+                this.tripDemandToUse = this.getTripDemand();
             }
 
             // set the lower values for flow links:
