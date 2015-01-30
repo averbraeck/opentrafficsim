@@ -44,7 +44,10 @@ public class CellBehaviour
     private double demandToEnter;
 
     /** */
-    private double flow;
+    private double arrivals;
+
+    /** */
+    private double departures;
 
     /**
      * @return supply.
@@ -81,17 +84,25 @@ public class CellBehaviour
     /**
      * @return flow.
      */
-    public final double getFlow()
+    public final double getArrivals()
     {
-        return this.flow;
+        return this.arrivals;
     }
 
     /**
-     * @param flow set flow.
+     * @param arrivals set flow.
      */
-    public final void setFlow(final double flow)
+    public final void setArrivals(final double arrivals)
     {
-        this.flow = flow;
+        this.arrivals = arrivals;
+    }
+
+    /**
+     * @param arrivals set flow.
+     */
+    public final void addArrivals(final double arrivals)
+    {
+        this.arrivals += arrivals;
     }
 
     /**
@@ -156,6 +167,30 @@ public class CellBehaviour
     public final void setTripInfoByNodeMap(final HashMap<Node, TripInfoByDestination> tripInfoByNodeMap)
     {
         this.tripInfoByNodeMap = tripInfoByNodeMap;
+    }
+
+    /**
+     * @return departures.
+     */
+    public double getDepartures()
+    {
+        return departures;
+    }
+
+    /**
+     * @param departures set departures.
+     */
+    public void setDepartures(double departures)
+    {
+        this.departures = departures;
+    }
+
+    /**
+     * @param departures set departures.
+     */
+    public void addDepartures(double departures)
+    {
+        this.departures += departures;
     }
 
 }

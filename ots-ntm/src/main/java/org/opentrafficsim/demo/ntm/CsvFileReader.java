@@ -88,8 +88,8 @@ public class CsvFileReader
 
         String path = url.getPath();
         TripDemand<TripInfoTimeDynamic> tripDemand = new TripDemand<TripInfoTimeDynamic>();
-        Map<String, Map<String, TripInfoTimeDynamic>> demand = new HashMap<String, Map<String, TripInfoTimeDynamic>>();
-        Map<String, Node> centroidsAndCordonConnectors = new HashMap<String, Node>();
+        Map<String, Map<String, TripInfoTimeDynamic>> demand = new HashMap<>();
+        Map<String, Node> centroidsAndCordonConnectors = new HashMap<>();
         try
         {
 
@@ -330,7 +330,7 @@ public class CsvFileReader
                 Map<String, TripInfoTimeDynamic> tripDemandRow = new HashMap<String, TripInfoTimeDynamic>();
                 String[] tripData = line.split(csvSplitBy);
                 boolean firstElement = true;
-                String origin = null;
+                Node origin = null;
                 String originLinknr = null;
                 int indexColumn = 0;
                 for (String numberOfTrips : tripData)
@@ -340,7 +340,7 @@ public class CsvFileReader
                     {
                         // System.out.println("I " + indexRow + "  name: "
                         // + centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId());
-                        origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow)).getId();
+                        origin = centroidsAndCordonConnectors.get(orderedZones.get(indexRow));
                         originLinknr = numberOfTrips;
                         firstElement = false;
                     }
@@ -366,11 +366,12 @@ public class CsvFileReader
                             }
                             else
                             {
-                                String destination =
-                                        centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)).getId();
+                                Node destination =
+                                        centroidsAndCordonConnectors.get(orderedZones.get(indexColumn));
                                 /*
                                  * if (destination.equals("2430")) { System.out.println("Strange: 2430"); }
-                                 */tripDemandRow.put(destination, tripInfo);
+                                 */
+                                tripDemandRow.put(destination.getId(), tripInfo);
                             }
                         }
                         indexColumn++;
@@ -379,10 +380,10 @@ public class CsvFileReader
                 }
                 if (demand.get(origin) != null)
                 {
-                    System.out.println("duplicate origin!!" + originLinknr + " knoop " + origin);
+                    System.out.println("duplicate origin!!" + originLinknr + " knoop " + origin.getId());
                     // throw new Error("duplicate origin");
                 }
-                demand.put(origin, tripDemandRow);
+                demand.put(origin.getId(), tripDemandRow);
                 indexRow++;
 
             }
