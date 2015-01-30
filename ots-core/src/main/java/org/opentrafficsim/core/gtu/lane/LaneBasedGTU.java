@@ -266,7 +266,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * <b>Note 4:</b> <code>headway</code> searches for maxDistance in front of the car when maxDistance is positive,
      * and behind the car when headway is negative.<br>
      * <b>Note 5:</b> When we cannot find the other GTU,
-     * <code>new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)</code> is returned.<br>
+     * <code>new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)</code> is returned.
      * @param otherGTU the GTU to which the headway must be returned
      * @param maxDistance the maximum distance to look for
      * @param when the future time for which to calculate the headway
@@ -281,8 +281,9 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     /**
      * Determine by what distance the front of this GTU is behind the front an other GTU. Only positive values are
      * returned. This method only looks in the given lane, and not further than the given maxDistance. When no vehicle
-     * is found within the given maxDistance, maxDistance is returned. The search will extend into successive lanes if
-     * the maxDistance is larger than the length of the lane.<br>
+     * is found within the given maxDistance,
+     * <code>new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)</code> is returned. The search will
+     * extend into successive lanes if the maxDistance is larger than the length of the lane.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param lane the lane to look for another GTU.
      * @param maxDistance the maximum distance to look for
