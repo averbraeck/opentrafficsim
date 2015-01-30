@@ -27,8 +27,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -738,7 +736,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /** {@inheritDoc} */
-    public final DoubleScalar.Abs<TimeUnit> timeAtDistance(DoubleScalar.Rel<LengthUnit> distance)
+    public final DoubleScalar.Abs<TimeUnit> timeAtDistance(final DoubleScalar.Rel<LengthUnit> distance)
     {
         Double result = solveTimeForDistance(distance);
         if (null == result)
@@ -749,7 +747,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /** {@inheritDoc} */
-    public final DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(DoubleScalar.Rel<LengthUnit> distance)
+    public final DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(final DoubleScalar.Rel<LengthUnit> distance)
     {
         Double result = solveTimeForDistance(distance);
         if (null == result)
@@ -765,7 +763,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @param distance double; the distance
      * @return Double; the relative time, or null when this GTU stops before covering the specified distance
      */
-    private Double solveTimeForDistance(DoubleScalar.Rel<LengthUnit> distance)
+    private Double solveTimeForDistance(final DoubleScalar.Rel<LengthUnit> distance)
     {
         /*
          * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If
