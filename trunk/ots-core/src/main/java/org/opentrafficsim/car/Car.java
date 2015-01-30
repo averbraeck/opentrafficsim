@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -36,7 +37,7 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
 {
     /** */
     private static final long serialVersionUID = 20141025L;
-    
+
     /** animation. */
     private Renderable2D animation;
 
@@ -99,9 +100,9 @@ public class Car<ID> extends AbstractLaneBasedIndividualGTU<ID>
         {
             try
             {
-                Constructor<? extends Renderable2D> constructor =
-                    animationClass.getConstructor(AbstractLaneBasedIndividualGTU.class, OTSDEVSSimulatorInterface.class);
-                this.animation = constructor.newInstance(this, simulator);
+                Constructor<?> constructor =
+                    ClassUtil.resolveConstructor(animationClass, new Object[] {this, simulator});
+                this.animation = (Renderable2D) constructor.newInstance(this, simulator);
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
                 | IllegalArgumentException | InvocationTargetException exception)
