@@ -46,7 +46,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<ots-version>${project.version}</ots-version>
-		<dsol-version>3.0.0</dsol-version>
+		<dsol-version>3.00.01</dsol-version>
 		<junit.version>4.11</junit.version>
 		<java3d.version>1.5.1</java3d.version>
 		<parallelcolt.version>0.10.1</parallelcolt.version>
@@ -76,9 +76,9 @@
 		<maven.taglist.version>2.4</maven.taglist.version>
 		<maven.pmd.version>3.2</maven.pmd.version>
 		<maven.changes.version>2.10</maven.changes.version>
-		<wagon.maven.version>1.0-beta-5</wagon.maven.version>
-		<wagon.ssh.version>2.6</wagon.ssh.version>
-		<wagon.ftp.version>1.0-beta-6</wagon.ftp.version>
+		<wagon.maven.version>2.8</wagon.maven.version>
+		<wagon.ssh.version>2.8</wagon.ssh.version>
+		<wagon.ftp.version>2.8</wagon.ftp.version>
 	</properties>
 
 
