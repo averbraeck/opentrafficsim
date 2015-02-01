@@ -130,7 +130,7 @@ public final class FollowAcceleration
                     throw new Error("Cannot happen -- Cannot find leaderLane");
                 }
                 Lane followerLane = null;
-                for (Lane lane : follower.positions(RelativePosition.REFERENCE).keySet())
+                for (Lane lane : follower.positions(RelativePosition.REFERENCE_POSITION).keySet())
                 {
                     if (lane.getParentLink() == commonLink)
                     {

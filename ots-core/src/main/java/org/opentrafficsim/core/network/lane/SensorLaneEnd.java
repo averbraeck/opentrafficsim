@@ -44,4 +44,13 @@ public class SensorLaneEnd extends AbstractSensor
         getLane().removeGTU(gtu);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "SensorLaneEnd [getLane()=" + this.getLane() + ", getLongitudinalPosition()="
+            + this.getLongitudinalPosition() + ", getPositionType()=" + this.getPositionType() + "]";
+    }
+
 }

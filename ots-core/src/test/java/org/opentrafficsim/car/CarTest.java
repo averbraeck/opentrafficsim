@@ -18,6 +18,7 @@ import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -70,7 +71,7 @@ public class CarTest
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
-        Car<Integer> referenceCar = makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator);
+        LaneBasedIndividualCar<Integer> referenceCar = makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator);
 
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
@@ -119,7 +120,7 @@ public class CarTest
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      */
-    public static Car<Integer> makeReferenceCar(final int nr, final Lane lane,
+    public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final Lane lane,
         final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
         final OTSDEVSSimulator simulator) throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
@@ -134,7 +135,7 @@ public class CarTest
                 new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
                 new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND),
                 1d);
-        return new Car<Integer>(nr, carType, cfm, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
+        return new LaneBasedIndividualCar<Integer>(nr, carType, cfm, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
             simulator);
     }
 
