@@ -12,6 +12,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -21,6 +22,7 @@ import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 
 /**
  * <p>
@@ -67,7 +69,43 @@ public class Lane extends CrossSectionElement
      * called.
      */
     private Set<Lane> prevLanes = null;
+    
+    // TODO write interface for samplers
+    /** List of graphs that want to sample GTUs on this Lane. */
+    private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
 
+    /**
+     * Register a LaneBasedGTUSampler on this Lane.
+     * @param sampler LaneBasedGTUSampler; the sampler to register
+     */
+    public void addSampler(final LaneBasedGTUSampler sampler)
+    {
+        this.samplers.add(sampler);
+    }
+    
+    /**
+     * Unregister a LaneBasedGTUSampler from this Lane.
+     * @param sampler LaneBasedGTUSampler; the sampler to unregister
+     */
+    public void removeSampler(final LaneBasedGTUSampler sampler)
+    {
+        this.samplers.remove(sampler);
+    }
+    
+    /**
+     * Add the movement of a GTU to all graphs that sample this Lane.
+     * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the GTU to sample
+     * @throws NetworkException on network inconsistency
+     * @throws RemoteException on communications failure
+     */
+    public void sample(final AbstractLaneBasedGTU<?> gtu) throws RemoteException, NetworkException
+    {
+        for (LaneBasedGTUSampler sampler : this.samplers)
+        {
+            sampler.addData(gtu);
+        }
+    }
+    
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new

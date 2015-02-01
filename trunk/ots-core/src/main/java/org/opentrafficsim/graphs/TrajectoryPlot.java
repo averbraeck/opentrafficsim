@@ -32,17 +32,21 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart,
+        LaneBasedGTUSampler
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -58,27 +62,33 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         return this.sampleInterval;
     }
 
-    /** Minimum position on this TrajectoryPlot. */
-    private final DoubleScalar.Rel<LengthUnit> minimumPosition;
+    /** The series of Lanes that provide the data for this TrajectoryPlot. */
+    private final ArrayList<Lane> path;
+
+    /** The cumulative lengths of the elements of path. */
+    private final DoubleVector.Rel.Dense<LengthUnit> cumulativeLengths;
 
     /**
-     * @return minimumPosition
+     * Retrieve the cumulative length of the sampled path at the end of a path element.
+     * @param index int; the index of the path element; if -1, the total length of the path is returned
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
      */
-    public final DoubleScalar.Rel<LengthUnit> getMinimumPosition()
+    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(int index)
     {
-        return this.minimumPosition;
+        if (-1 == index)
+        {
+            index = this.cumulativeLengths.size() - 1;
+        }
+        try
+        {
+            return this.cumulativeLengths.get(index);
+        }
+        catch (ValueException exception)
+        {
+            exception.printStackTrace();
+        }
+        return null; // NOTREACHED
     }
-
-    /**
-     * @return maximumPosition
-     */
-    public final DoubleScalar.Rel<LengthUnit> getMaximumPosition()
-    {
-        return this.maximumPosition;
-    }
-
-    /** Maximum position on this TrajectoryPlot. */
-    private final DoubleScalar.Rel<LengthUnit> maximumPosition;
 
     /** Maximum of the time axis. */
     private DoubleScalar.Abs<TimeUnit> maximumTime = new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND);
@@ -112,16 +122,32 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * Create a new TrajectoryPlot.
      * @param caption String; the text to show above the TrajectoryPlot
      * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot
-     * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum position sampled by this TrajectoryPlot
-     * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum position sampled by this TrajectoryPlot
+     * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval,
-        final DoubleScalar.Rel<LengthUnit> minimumPosition, final DoubleScalar.Rel<LengthUnit> maximumPosition)
+    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, ArrayList<Lane> path)
     {
         this.trajectories = new ArrayList<Trajectory>();
         this.sampleInterval = sampleInterval;
-        this.minimumPosition = minimumPosition;
-        this.maximumPosition = maximumPosition;
+        this.path = new ArrayList<Lane>(path); // make a copy
+        double[] endLengths = new double[path.size()];
+        double cumulativeLength = 0;
+        DoubleVector.Rel.Dense<LengthUnit> lengths = null;
+        for (int i = 0; i < path.size(); i++)
+        {
+            Lane lane = path.get(i);
+            lane.addSampler(this);
+            cumulativeLength += lane.getLength().getSI();
+            endLengths[i] = cumulativeLength;
+        }
+        try
+        {
+            lengths = new DoubleVector.Rel.Dense<LengthUnit>(endLengths, LengthUnit.SI);
+        }
+        catch (ValueException exception)
+        {
+            exception.printStackTrace();
+        }
+        this.cumulativeLengths = lengths;
         this.caption = caption;
         createChart(this);
         this.reGraph(); // fixes the domain axis
@@ -138,7 +164,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         container.add(statusLabel, BorderLayout.SOUTH);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         final JFreeChart result =
-            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
+                        false);
         FixCaption.fixCaption(result);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
@@ -150,8 +177,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         result.getXYPlot().setDomainAxis(xAxis);
         result.getXYPlot().setRangeAxis(yAxis);
-        configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(this.maximumPosition, this.minimumPosition)
-            .getSI());
+        DoubleScalar.Rel<LengthUnit> minimumPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI);
+        DoubleScalar.Rel<LengthUnit> maximumPosition = getCumulativeLength(-1);
+        configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition).getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
@@ -301,15 +329,43 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     public final void addData(final AbstractLaneBasedGTU<?> car) throws NetworkException, RemoteException
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
-        // XXX we take the first (and only -- not true!!!) lane on which the vehicle is registered.
-        Lane lane = car.positions(car.getFront()).keySet().iterator().next();
-        final DoubleScalar.Rel<LengthUnit> startPosition = car.position(lane, car.getFront(), startTime);
+        // Convert the position of the car to a position on path.
+        // Find a (the first) lane that car is on that is in our path.
+        Lane lane = null;
+        double lengthOffset = 0;
+        for (Lane l : car.positions(car.getFront()).keySet())
+        {
+            int index = this.path.indexOf(l);
+            if (index >= 0)
+            {
+                lane = l;
+                if (index > 0)
+                {
+                    try
+                    {
+                        lengthOffset = this.cumulativeLengths.getSI(index - 1);
+                    }
+                    catch (ValueException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+                break;
+            }
+        }
+        if (null == lane)
+        {
+            throw new Error("Car is not on any lane in the path");
+        }
+        final DoubleScalar.Rel<LengthUnit> startPosition =
+                DoubleScalar.plus(new DoubleScalar.Rel<LengthUnit>(lengthOffset, LengthUnit.SI),
+                        car.position(lane, car.getFront(), startTime)).immutable();
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
         for (Trajectory t : this.trajectories)
         {
             if (t.getCurrentEndTime().getSI() == startTime.getSI()
-                && t.getCurrentEndPosition().getSI() == startPosition.getSI())
+                    && t.getCurrentEndPosition().getSI() == startPosition.getSI())
             {
                 if (null != carTrajectory)
                 {
@@ -323,13 +379,14 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             carTrajectory = new Trajectory();
             this.trajectories.add(carTrajectory);
         }
-        carTrajectory.addSegment(car);
+        carTrajectory.addSegment(car, lane, lengthOffset);
     }
 
     /**
      * Store trajectory data.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -337,20 +394,20 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-     * disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
-     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
-     * promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
+     * following disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
+     * or promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
-     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
-     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
-     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
-     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
-     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
-     * software, even if advised of the possibility of such damage.
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied
+     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
+     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
+     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
+     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
+     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
+     * in any way out of the use of this software, even if advised of the possibility of such damage.
      * @version Jul 24, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -387,26 +444,23 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
          * @param car AbstractLaneBasedGTU&lt;>&gt;; the GTU whose currently committed trajectory segment must be added
+         * @param lane Lane; the Lane that the positionOffset is valid for
+         * @param positionOffset double; offset needed to convert the position in the current Lane to a position on the
+         *            trajectory
          * @throws NetworkException when car is not on lane anymore
          * @throws RemoteException when communication fails
          */
-        public final void addSegment(final AbstractLaneBasedGTU<?> car) throws NetworkException, RemoteException
+        public final void addSegment(final AbstractLaneBasedGTU<?> car, Lane lane, double positionOffset)
+                throws NetworkException, RemoteException
         {
-            // XXX we take the first (and only) lane on which the vehicle is registered.
-            Lane lane = car.positions(car.getFront()).keySet().iterator().next();
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
-                    new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                DoubleScalar.Rel<LengthUnit> position = car.position(lane, car.getFront(), sampleTime);
-                if (position.getSI() < getMinimumPosition().getSI())
-                {
-                    continue;
-                    // FIXME: we could create storage for a fractional sample at the start of the trajectory
-                }
-                if (position.getSI() > getMaximumPosition().getSI())
+                        new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                double position = car.position(lane, car.getFront(), sampleTime).getSI() + positionOffset;
+                if (position > getCumulativeLength(-1).getSI())
                 {
                     continue;
                     // FIXME: we could add storage for a fractional sample at the end of the trajectory
@@ -420,7 +474,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                     this.positions.add(null); // insert nulls as place holders for unsampled data (because vehicle was
                                               // temporarily out of range?)
                 }
-                this.positions.add(position.getSI());
+                this.positions.add(position);
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition = car.position(lane, car.getFront(), this.currentEndTime);

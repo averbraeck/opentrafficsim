@@ -195,7 +195,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // 
         for (Lane lane : this.longitudinalPositions.keySet())
         {
-            this.longitudinalPositions.put(lane, position(lane, getFront(), this.nextEvaluationTime));
+            this.longitudinalPositions.put(lane, position(lane, getRear(), this.nextEvaluationTime));
         }
         // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
@@ -224,6 +224,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         for (Lane lane : this.longitudinalPositions.keySet())
         {
             lane.scheduleTriggers(this);
+        }
+        // Execute all samplers
+        for (Lane lane : this.longitudinalPositions.keySet())
+        {
+            lane.sample(this);
         }
     }
 

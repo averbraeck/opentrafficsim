@@ -49,7 +49,6 @@ public class Route implements Serializable
     public Route(final List<Node<?, ?>> nodes)
     {
         // FIXME PK: Either make a defensive copy, or document that this constructor does not make a defensive copy
-        // FIXME PK: Should probably enforce that argument is List that supports insert and delete at any location
         this.nodes = nodes;
     }
 
@@ -227,6 +226,7 @@ public class Route implements Serializable
     }
 
     /**
+     * FIXME: this fails if this route contains a Node more than once.
      * @param link the link to check in the route.
      * @return whether the link is part of the route or not.
      */
@@ -239,6 +239,17 @@ public class Route implements Serializable
             return this.nodes.indexOf(en) - this.nodes.indexOf(sn) == 1;
         }
         return false;
+    }
+
+    /**
+     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. FIXME: this
+     * fails if this route contains a Node more than once.
+     * @param node Node&lt;?, ?&gt;; the Node to find
+     * @return int;
+     */
+    public final int indexOf(final Node<?, ?> node)
+    {
+        return this.nodes.indexOf(node);
     }
 
     /** {@inheritDoc} */
