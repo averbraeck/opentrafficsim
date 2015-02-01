@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -18,7 +19,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -202,9 +203,10 @@ public class CircularLane implements WrappableSimulation
             LaneBasedGTUSampler graph;
             if (graphName.contains("Trajectories"))
             {
+                List<Lane> path = new ArrayList<Lane>();
+                path.add(model.lane1);
                 TrajectoryPlot tp =
-                    new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model
-                        .getMinimumDistance(), model.lane1.getLength());
+                    new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -303,9 +305,6 @@ class LaneSimulationModel implements OTSModelInterface
 
     /** The probability that the next generated GTU is a passenger car. */
     double carProbability;
-
-    /** cars in the model. */
-    ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -473,13 +472,6 @@ class LaneSimulationModel implements OTSModelInterface
             }
             this.lane2 = LaneFactory.makeMultiLane("Lane2", halfway, start, coordsHalf2, 1, laneType, this.simulator)[0];
 
-            CrossSectionLink link1 = this.lane1.getParentLink();
-            CrossSectionLink link2 = this.lane2.getParentLink();
-            this.lane1.getParentLink().getStartNode().addLinkIn(link2);
-            this.lane1.getParentLink().getEndNode().addLinkOut(link2);
-            this.lane2.getParentLink().getStartNode().addLinkIn(link1);
-            this.lane2.getParentLink().getEndNode().addLinkOut(link1);
-
             // Put the (not very evenly spaced) cars on track1
             double trackLength = this.lane1.getLength().getSI();
             double variability = (headway - 20) * headwayVariability;
@@ -522,7 +514,7 @@ class LaneSimulationModel implements OTSModelInterface
      * @throws NetworkException when car not in lane
      * @throws RemoteException on communications failure
      */
-    protected final void addToPlots(final Car<?> car) throws NetworkException, RemoteException
+    protected final void addToPlots(final LaneBasedIndividualCar<?> car) throws NetworkException, RemoteException
     {
         for (LaneBasedGTUSampler contourPlot : this.contourPlots)
         {
@@ -581,7 +573,6 @@ class LaneSimulationModel implements OTSModelInterface
             IDMCar car =
                 new IDMCar(++this.carsCreated, null, this.simulator, gtuFollowingModel, vehicleLength, this.simulator
                     .getSimulatorTime().get(), initialPositions, initialSpeed);
-            this.cars.add(car);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {
@@ -621,7 +612,7 @@ class LaneSimulationModel implements OTSModelInterface
     }
 
     /** Inner class IDMCar. */
-    protected class IDMCar extends Car<Integer>
+    protected class IDMCar extends LaneBasedIndividualCar<Integer>
     {
         /** */
         private static final long serialVersionUID = 20141030L;
@@ -650,76 +641,6 @@ class LaneSimulationModel implements OTSModelInterface
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                     SpeedUnit.KM_PER_HOUR), simulator);
-            try
-            {
-                if (id >= 0)
-                {
-                    simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
-                }
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        /**
-         * Determine the movement of this car.
-         * @throws RemoteException RemoteException
-         * @throws NamingException on ???
-         * @throws NetworkException on network inconsistency
-         * @throws SimRuntimeException on ???
-         */
-        protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
-        {
-            // System.out.println("move " + getId());
-            if (this.getId() < 0)
-            {
-                return;
-            }
-            Collection<Car<Integer>> leaders = new ArrayList<Car<Integer>>();
-            // FIXME there should be a much easier way to obtain the leader; we should not have to maintain our own
-            // list
-            int carIndex = LaneSimulationModel.this.cars.indexOf(this);
-            if (carIndex < LaneSimulationModel.this.cars.size() - 1)
-            {
-                leaders.add(LaneSimulationModel.this.cars.get(carIndex + 1));
-            }
-            else
-            {
-                leaders.add(LaneSimulationModel.this.cars.get(0));
-            }
-
-            /*
-             * NOT NEEDED ANYMORE -- THE SENSORS SHOULD TAKE CARE OF THIS... // Horrible hack; wrap the position back to zero
-             * when vehicle exceeds length of the circuit if (position(LaneSimulationModel.this.lane, getFront()).getSI() >
-             * LaneSimulationModel.this.lane.getLength() .getSI()) { Map<Lane, DoubleScalar.Rel<LengthUnit>> map =
-             * this.positions(getFront()); for (Lane l : map.keySet()) { map.put(l, new
-             * DoubleScalar.Rel<LengthUnit>(map.get(l).getSI() % LaneSimulationModel.this.lane.getLength().getSI(),
-             * LengthUnit.METER)); } } // Even more horrible hack; create a fake leader for the vehicle closest to the wrap
-             * around point Car<Integer> leader = leaders.iterator().next(); // Figure out the headway if
-             * (leader.position(LaneSimulationModel.this.lane, leader.getRear()).getSI() < this.position(
-             * LaneSimulationModel.this.lane, this.getFront()).getSI()) { Map<Lane, DoubleScalar.Rel<LengthUnit>>
-             * initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>(); initialPositions.put(
-             * LaneSimulationModel.this.lane, new DoubleScalar.Rel<LengthUnit>(leader.position(LaneSimulationModel.this.lane,
-             * leader.getFront(), getNextEvaluationTime()).getSI() + LaneSimulationModel.this.lane.getLength().getSI(),
-             * LengthUnit.METER)); try { // HACK FIXME (negative length trick) IDMCar fakeLeader = new IDMCar(-99999, null,
-             * this.getSimulator(), this.getGTUFollowingModel(), new DoubleScalar.Rel<LengthUnit>(-leader.getLength().getSI(),
-             * LengthUnit.METER), this.getSimulator().getSimulatorTime().get(), initialPositions,
-             * leader.getLongitudinalVelocity()); leaders.add(fakeLeader); } catch (RemoteException exception) {
-             * exception.printStackTrace(); } }
-             */
-
-            GTUFollowingModelResult cfmr =
-                this.getGTUFollowingModel().computeAcceleration(this, leaders, LaneSimulationModel.this.speedLimit);
-            setState(cfmr);
-            // Add the movement of this Car to the contour plots
-            // XXX Plots go wrong because same car reappears.
-            // XXX therefore foolowing statement not included:
-            // XXX addToPlots(this);
-            // Schedule the next evaluation of this car
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move", null);
         }
     }
-
 }

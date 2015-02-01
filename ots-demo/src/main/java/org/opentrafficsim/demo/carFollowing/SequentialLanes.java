@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -20,17 +20,14 @@ import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
-import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Route;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Link;
 import org.opentrafficsim.core.network.factory.Node;
@@ -340,7 +337,7 @@ class SequentialModel implements OTSModelInterface
     private ArrayList<AbstractProperty<?>> properties = null;
     
     /** The sequence of Lanes that all vehicles will follow. */
-    private ArrayList<Lane> path = new ArrayList<Lane>();
+    private List<Lane> path = new ArrayList<Lane>();
 
     /**
      * @param properties the user settable properties
@@ -353,7 +350,7 @@ class SequentialModel implements OTSModelInterface
     /**
      * @return a newly created path (which all GTUs in this simulation will follow).
      */
-    public ArrayList<Lane> getPath()
+    public List<Lane> getPath()
     {
         return new ArrayList<Lane>(this.path);
     }
@@ -381,7 +378,6 @@ class SequentialModel implements OTSModelInterface
             try
             {
                 Lane[] lanes = LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.simulator);
-                ;
                 if (i == this.nodes.size() - 1)
                 {
                     Link link = (Link) lanes[0].getParentLink();
@@ -459,7 +455,7 @@ class SequentialModel implements OTSModelInterface
      * @throws RemoteException on communications failure
      * @throws NetworkException on network-related inconsistency
      */
-    protected final void addToContourPlots(final Car<?> car) throws RemoteException, NetworkException
+    protected final void addToContourPlots(final LaneBasedIndividualCar<?> car) throws RemoteException, NetworkException
     {
         for (LaneBasedGTUSampler plot : this.plots)
         {
@@ -502,7 +498,7 @@ class SequentialModel implements OTSModelInterface
     }
 
     /** Inner class IDMCar. */
-    protected class IDMCar extends Car<Integer>
+    protected class IDMCar extends LaneBasedIndividualCar<Integer>
     {
         /** */
         private static final long serialVersionUID = 20141030L;
@@ -535,40 +531,6 @@ class SequentialModel implements OTSModelInterface
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                             SpeedUnit.KM_PER_HOUR), simulator);
             this.setRoute(getRoute());
-            try
-            {
-                simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        /**
-         * @throws RemoteException RemoteException
-         * @throws NamingException on ???
-         * @throws NetworkException on network inconsistency
-         * @throws SimRuntimeException on ??
-         */
-        protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
-        {
-            // System.out.println("move " + getId());
-            Collection<LaneBasedGTU<?>> leaders = new ArrayList<LaneBasedGTU<?>>();
-            DoubleScalar.Rel<LengthUnit> leaderRange = new DoubleScalar.Rel<LengthUnit>(500, LengthUnit.METER);
-            LaneBasedGTU<?> leader = headwayGTU(leaderRange);
-            if (null != leader)
-            {
-                leaders.add(leader);
-            }
-            GTUFollowingModelResult cfmr =
-                    getGTUFollowingModel().computeAcceleration(this, leaders, SequentialModel.this.speedLimit);
-            setState(cfmr);
-            // Add the movement of this Car to the contour plots
-            //addToContourPlots(this);
-            // Schedule the next evaluation of this car
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
-                    null);
         }
     }
 }

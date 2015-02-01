@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -34,6 +35,7 @@ import javax.swing.border.TitledBorder;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 
+
 //import org.jzy3d.chart.Chart;
 //import org.jzy3d.chart.factories.AWTChartComponentFactory;
 //import org.jzy3d.colors.Color;
@@ -41,6 +43,7 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 //import org.jzy3d.plot3d.primitives.Scatter;
 //import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
@@ -484,9 +487,11 @@ public class newGUI
             model.getPlots().add(cp);
             this.statPanel.add(cp.getContentPane());
 
+            List<Lane> path = new ArrayList<Lane>();
+            path.add(model.lane1);
             TrajectoryPlot trajectoryPlot =
                 new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName(),
-                    new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane1.getLength());
+                    new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
             trajectoryPlot.setTitle("Trajectories");
             this.statPanel.add(trajectoryPlot.getContentPane());
             model.getTrajectoryPlots().add(trajectoryPlot);
@@ -540,10 +545,11 @@ public class newGUI
                 model.getPlots().get(laneIndex).add(cp);
                 this.statPanel.add(cp.getContentPane());
 
+                List<Lane> path = new ArrayList<Lane>();
+                path.add(model.lanes[laneIndex]);
                 TrajectoryPlot trajectoryPlot =
                     new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName() + laneName,
-                        new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(),
-                        model.lanes[laneIndex].getLength());
+                        new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
                 trajectoryPlot.setTitle("Trajectories");
                 this.statPanel.add(trajectoryPlot.getContentPane());
                 model.getPlots().get(laneIndex).add(trajectoryPlot);
@@ -680,9 +686,11 @@ public class newGUI
         model.getPlots().add(cp);
         charts.setCell(cp.getContentPane(), 1, 1);
 
+        List<Lane> path = new ArrayList<Lane>();
+        path.add(model.lane1);
         TrajectoryPlot trajectoryPlot =
             new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName(),
-                new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lane1.getLength());
+                new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
         trajectoryPlot.setTitle("Trajectories");
         charts.setCell(trajectoryPlot.getContentPane(), 2, 0);
         model.getTrajectoryPlots().add(trajectoryPlot);
@@ -744,10 +752,11 @@ public class newGUI
             model.getPlots().get(laneIndex).add(cp);
             charts.setCell(cp.getContentPane(), 2 * laneIndex + 1, 1);
 
+            List<Lane> path = new ArrayList<Lane>();
+            path.add(model.lanes[laneIndex]);
             TrajectoryPlot trajectoryPlot =
                 new TrajectoryPlot("TrajectoryPlot " + model.carFollowingModelCars.getLongName() + laneName,
-                    new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model.getMinimumDistance(), model.lanes[laneIndex]
-                        .getLength());
+                    new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
             trajectoryPlot.setTitle("Trajectories");
             charts.setCell(trajectoryPlot.getContentPane(), 1 + laneIndex, 2);
             model.getPlots().get(laneIndex).add(trajectoryPlot);
