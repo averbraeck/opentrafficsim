@@ -21,7 +21,7 @@ import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -248,10 +248,10 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     double carProbability;
 
     /** cars in the model. */
-    ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
+    ArrayList<LaneBasedIndividualCar<Integer>> cars = new ArrayList<LaneBasedIndividualCar<Integer>>();
 
     /** The blocking car. */
-    Car<Integer> block = null;
+    LaneBasedIndividualCar<Integer> block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -495,7 +495,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     }
 
     /** Inner class IDMCar. */
-    protected class IDMCar extends Car<Integer>
+    protected class IDMCar extends LaneBasedIndividualCar<Integer>
     {
         /** */
         private static final long serialVersionUID = 20141031L;
@@ -553,7 +553,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
                 FundamentalDiagramPlotsModel.this.cars.remove(this);
                 return;
             }
-            Collection<Car<Integer>> leaders = new ArrayList<Car<Integer>>();
+            Collection<LaneBasedIndividualCar<Integer>> leaders = new ArrayList<LaneBasedIndividualCar<Integer>>();
             // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
             // list
             int carIndex = FundamentalDiagramPlotsModel.this.cars.indexOf(this);

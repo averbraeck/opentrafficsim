@@ -31,16 +31,16 @@ import org.jfree.data.DomainOrder;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.lanechanging.Altruistic;
-import org.opentrafficsim.car.lanechanging.Egoistic;
-import org.opentrafficsim.car.lanechanging.LaneChangeModel;
-import org.opentrafficsim.car.lanechanging.LaneChangeModel.LaneChangeModelResult;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel.LaneChangeModelResult;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Node;
@@ -235,8 +235,8 @@ public class LaneChangeGraph extends JFrame
                 new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND),
                 1d);
 
-        Car<String> referenceCar =
-            new Car<String>("ReferenceCar", gtuType, this.carFollowingModel, initialLongitudinalPositions, referenceSpeed,
+        LaneBasedIndividualCar<String> referenceCar =
+            new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, this.carFollowingModel, initialLongitudinalPositions, referenceSpeed,
                 new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                 new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
                     SpeedUnit.KM_PER_HOUR), fakeSimulator);
@@ -302,7 +302,7 @@ public class LaneChangeGraph extends JFrame
      * @throws SimRuntimeException 
      * @throws NetworkException 
      */
-    private LaneChangeModelResult computeLaneChange(Car<String> referenceCar,
+    private LaneChangeModelResult computeLaneChange(LaneBasedIndividualCar<String> referenceCar,
         Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs, DoubleScalar.Abs<SpeedUnit> speedLimit,
         LaneChangeModel laneChangeModel, DoubleScalar.Rel<LengthUnit> otherCarPosition, Lane otherCarLane,
         Rel<SpeedUnit> deltaV, boolean mergeRight) throws RemoteException, NamingException, NetworkException, SimRuntimeException
@@ -310,8 +310,8 @@ public class LaneChangeGraph extends JFrame
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
             new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(otherCarLane, otherCarPosition);
-        Car<String> otherCar =
-            new Car<String>("otherCar", referenceCar.getGTUType(), this.carFollowingModel, initialLongitudinalPositions,
+        LaneBasedIndividualCar<String> otherCar =
+            new LaneBasedIndividualCar<String>("otherCar", referenceCar.getGTUType(), this.carFollowingModel, initialLongitudinalPositions,
                 DoubleScalar.plus(referenceCar.getLongitudinalVelocity(), deltaV).immutable(),
                 new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                 new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -18,11 +19,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.lanechanging.AbstractLaneChangeModel;
-import org.opentrafficsim.car.lanechanging.Altruistic;
-import org.opentrafficsim.car.lanechanging.Egoistic;
-import org.opentrafficsim.car.lanechanging.LaneChangeModel;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -31,6 +28,10 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
@@ -221,9 +222,10 @@ public class CircularRoad implements WrappableSimulation
 
             if (graphName.contains("Trajectories"))
             {
+                List<Lane> path = new ArrayList<Lane>();
+                path.add(model.lanes[lane]);
                 TrajectoryPlot tp =
-                    new TrajectoryPlot(graphName, new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model
-                        .getMinimumDistance(), model.lanes[lane].getLength());
+                    new TrajectoryPlot(graphName, new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -326,7 +328,7 @@ class RoadSimulationModel implements OTSModelInterface
     protected AbstractLaneChangeModel laneChangeModel;
 
     /** Cars in each lane. */
-    ArrayList<ArrayList<Car<Integer>>> cars;
+    ArrayList<ArrayList<LaneBasedIndividualCar<Integer>>> cars;
 
     /** Minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -360,10 +362,10 @@ class RoadSimulationModel implements OTSModelInterface
         throws SimRuntimeException, RemoteException
     {
         final int laneCount = 2;
-        this.cars = new ArrayList<ArrayList<Car<Integer>>>(laneCount);
+        this.cars = new ArrayList<ArrayList<LaneBasedIndividualCar<Integer>>>(laneCount);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
-            this.cars.add(new ArrayList<Car<Integer>>());
+            this.cars.add(new ArrayList<LaneBasedIndividualCar<Integer>>());
             this.plots.add(new ArrayList<LaneBasedGTUSampler>());
         }
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
@@ -541,7 +543,7 @@ class RoadSimulationModel implements OTSModelInterface
      * @throws NetworkException when car not in lane
      * @throws RemoteException on communications failure
      */
-    protected final void addToPlots(final Car<?> car, int lane) throws NetworkException, RemoteException
+    protected final void addToPlots(final LaneBasedIndividualCar<?> car, int lane) throws NetworkException, RemoteException
     {
         for (LaneBasedGTUSampler plot : this.plots.get(lane))
         {
@@ -629,7 +631,7 @@ class RoadSimulationModel implements OTSModelInterface
     /**
      * Inner class IDMCar.
      */
-    protected class IDMCar extends Car<Integer>
+    protected class IDMCar extends LaneBasedIndividualCar<Integer>
     {
         /** */
         private static final long serialVersionUID = 20141030L;
@@ -728,7 +730,7 @@ class RoadSimulationModel implements OTSModelInterface
                 RoadSimulationModel.this.cars.get(laneIndex).remove(this);
                 // Figure out where to insert it in the target lane
                 laneIndex += lcmr.getLaneChange().equals(LateralDirectionality.LEFT) ? -1 : +1;
-                ArrayList<Car<Integer>> carsInLane = RoadSimulationModel.this.cars.get(laneIndex);
+                ArrayList<LaneBasedIndividualCar<Integer>> carsInLane = RoadSimulationModel.this.cars.get(laneIndex);
                 lane = RoadSimulationModel.this.lanes[laneIndex];
                 int pivot = pivot(relativePosition, carsInLane);
                 // Insert vehicle
@@ -772,7 +774,7 @@ class RoadSimulationModel implements OTSModelInterface
         for (int laneIndex = 0; laneIndex < RoadSimulationModel.this.cars.size(); laneIndex++)
         {
             Lane lane = RoadSimulationModel.this.lanes[laneIndex];
-            ArrayList<Car<Integer>> carsInLane = RoadSimulationModel.this.cars.get(laneIndex);
+            ArrayList<LaneBasedIndividualCar<Integer>> carsInLane = RoadSimulationModel.this.cars.get(laneIndex);
             int vehicleIndex = carsInLane.size() - 1;
             if (vehicleIndex < 0)
             {
@@ -780,7 +782,7 @@ class RoadSimulationModel implements OTSModelInterface
             }
             while (true)
             {
-                Car<Integer> car = carsInLane.get(vehicleIndex);
+                LaneBasedIndividualCar<Integer> car = carsInLane.get(vehicleIndex);
                 LaneLocation ll = null;
                 try
                 {
@@ -828,7 +830,7 @@ class RoadSimulationModel implements OTSModelInterface
      * @param carsInLane ArrayList&lt;AnimatedCar&gt;; the cars in the lane
      * @return int
      */
-    public int pivot(double relativePosition, ArrayList<Car<Integer>> carsInLane)
+    public int pivot(double relativePosition, ArrayList<LaneBasedIndividualCar<Integer>> carsInLane)
     {
         if (carsInLane.size() == 0)
         {
@@ -842,7 +844,7 @@ class RoadSimulationModel implements OTSModelInterface
             int result;
             for (result = 0; result < carsInLane.size(); result++)
             {
-                Car<Integer> pivotCar = carsInLane.get(result);
+                LaneBasedIndividualCar<Integer> pivotCar = carsInLane.get(result);
                 double pivotRelativePosition = pivotCar.position(lane, pivotCar.getFront(), when).getSI() / laneLength;
                 if (pivotRelativePosition > relativePosition)
                 {
@@ -882,7 +884,7 @@ class RoadSimulationModel implements OTSModelInterface
         {
             final double laneLength = lane.getLength().getSI();
             // Add a wrapped copy of the last car at the beginning
-            Car<Integer> prototype = (Car<Integer>) result.get(result.size() - 1);
+            LaneBasedIndividualCar<Integer> prototype = (LaneBasedIndividualCar<Integer>) result.get(result.size() - 1);
             Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             DoubleScalar.Abs<TimeUnit> when = RoadSimulationModel.this.simulator.getSimulatorTime().get();
             double position = prototype.position(lane, prototype.getFront(), when).getSI();
@@ -898,7 +900,7 @@ class RoadSimulationModel implements OTSModelInterface
                         LengthUnit.METER), when, initialPositions, prototype.getLongitudinalVelocity());
             result.add(0, fakeFollower);
             // Add a wrapped copy of the first (now second) car at the end
-            prototype = (Car<Integer>) result.get(1);
+            prototype = (LaneBasedIndividualCar<Integer>) result.get(1);
             position = prototype.position(lane, prototype.getFront(), when).getSI();
             if (position < laneLength)
             {
@@ -924,7 +926,7 @@ class RoadSimulationModel implements OTSModelInterface
      * Sanity checks.
      * @param list ArrayList&lt;AnimatedCar&gt;; the array of cars to check
      */
-    public void checkOrdering(ArrayList<Car<Integer>> list)
+    public void checkOrdering(ArrayList<LaneBasedIndividualCar<Integer>> list)
     {
         if (list.size() == 0)
         {
@@ -932,13 +934,13 @@ class RoadSimulationModel implements OTSModelInterface
         }
         try
         {
-            Car<Integer> first = list.get(0);
+            LaneBasedIndividualCar<Integer> first = list.get(0);
             Lane lane = first.positions(first.getFront()).keySet().iterator().next();
             DoubleScalar.Abs<TimeUnit> when = first.getSimulator().getSimulatorTime().get();
             double position = first.position(lane, first.getFront(), when).getSI();
             for (int rank = 1; rank < list.size(); rank++)
             {
-                Car<Integer> other = list.get(rank);
+                LaneBasedIndividualCar<Integer> other = list.get(rank);
                 Lane otherLane = other.positions(other.getFront()).keySet().iterator().next();
                 if (lane != otherLane)
                 {
@@ -968,10 +970,10 @@ class RoadSimulationModel implements OTSModelInterface
      */
     public void printList(int laneIndex)
     {
-        ArrayList<Car<Integer>> list = this.cars.get(laneIndex);
+        ArrayList<LaneBasedIndividualCar<Integer>> list = this.cars.get(laneIndex);
         for (int rank = 0; rank < list.size(); rank++)
         {
-            Car<Integer> car = list.get(rank);
+            LaneBasedIndividualCar<Integer> car = list.get(rank);
             try
             {
                 double relativePosition =

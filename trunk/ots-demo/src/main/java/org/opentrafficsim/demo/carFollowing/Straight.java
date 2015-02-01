@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -22,20 +22,22 @@ import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.lane.SinkLane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -211,9 +213,10 @@ public class Straight implements WrappableSimulation
             LaneBasedGTUSampler graph;
             if (graphName.contains("Trajectories"))
             {
+                List<Lane> path = new ArrayList<Lane>();
+                path.add(model.getLane());
                 TrajectoryPlot tp =
-                    new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model
-                        .getMinimumDistance(), model.getMaximumDistance());
+                    new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -330,10 +333,10 @@ class StraightModel implements OTSModelInterface
     private double carProbability;
 
     /** cars in the model. */
-    private ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
+    // private ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
 
     /** The blocking car. */
-    private Car<Integer> block = null;
+    private LaneBasedIndividualCar<Integer> block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -373,10 +376,14 @@ class StraightModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
         Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
+        Node end = new Node("End", new Coordinate(getMaximumDistance().getSI() + 50.0, 0, 0));
         try
         {
             LaneType<String> laneType = new LaneType<String>("CarLane");
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
+            CrossSectionLink<String, String> endLink = LaneFactory.makeLink("endLink", to, end, null);
+            new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
+                LongitudinalDirectionality.FORWARD);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
             AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");
@@ -493,7 +500,7 @@ class StraightModel implements OTSModelInterface
      * @throws RemoteException on communications failure
      * @throws NetworkException on network-related inconsistency
      */
-    protected final void addToContourPlots(final Car<?> car) throws RemoteException, NetworkException
+    protected final void addToContourPlots(final LaneBasedIndividualCar<?> car) throws RemoteException, NetworkException
     {
         for (LaneBasedGTUSampler plot : this.plots)
         {
@@ -526,7 +533,8 @@ class StraightModel implements OTSModelInterface
             this.block =
                 new IDMCar(999999, null, this.simulator, this.carFollowingModelCars, new DoubleScalar.Rel<LengthUnit>(4,
                     LengthUnit.METER), this.simulator.getSimulatorTime().get(), initialPositions,
-                    new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                    new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(0.01,
+                            SpeedUnit.KM_PER_HOUR));
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
@@ -539,6 +547,7 @@ class StraightModel implements OTSModelInterface
      */
     protected final void removeBlock()
     {
+        this.block.destroy();
         this.block = null;
     }
 
@@ -559,8 +568,9 @@ class StraightModel implements OTSModelInterface
             IDMCar car =
                 new IDMCar(++this.carsCreated, null, this.simulator, generateTruck ? this.carFollowingModelTrucks
                     : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(), initialPositions,
-                    initialSpeed);
-            this.cars.add(0, car);
+                    initialSpeed, new DoubleScalar.Abs<SpeedUnit>(200,
+                            SpeedUnit.KM_PER_HOUR));
+            // this.cars.add(0, car);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
@@ -601,8 +611,16 @@ class StraightModel implements OTSModelInterface
         return this.maximumDistance;
     }
 
+    /**
+     * @return lane.
+     */
+    public Lane getLane()
+    {
+        return this.lane;
+    }
+
     /** Inner class IDMCar. */
-    protected class IDMCar extends Car<Integer>
+    protected class IDMCar extends LaneBasedIndividualCar<Integer>
     {
         /** */
         private static final long serialVersionUID = 20141030L;
@@ -628,67 +646,12 @@ class StraightModel implements OTSModelInterface
             final GTUFollowingModel carFollowingModel, final DoubleScalar.Rel<LengthUnit> vehicleLength,
             final DoubleScalar.Abs<TimeUnit> initialTime,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Abs<SpeedUnit> maximumSpeed)
+            throws RemoteException, NamingException, NetworkException, SimRuntimeException
         {
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
-                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                    SpeedUnit.KM_PER_HOUR), simulator);
-            try
-            {
-                simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
+                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), maximumSpeed, simulator);
         }
 
-        /**
-         * @throws RemoteException RemoteException
-         * @throws NamingException on ???
-         * @throws NetworkException on network inconsistency
-         * @throws SimRuntimeException on ??
-         */
-        protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
-        {
-            // System.out.println("move " + getId());
-            if (this == StraightModel.this.block)
-            {
-                return;
-            }
-            if (position(StraightModel.this.lane, getFront()).getSI() > getMaximumDistance().getSI())
-            {
-                StraightModel.this.cars.remove(this);
-                return;
-            }
-            Collection<Car<Integer>> leaders = new ArrayList<Car<Integer>>();
-            // FIXME: there should be a much easier way to obtain the leader; we should not have to maintain our own
-            // list
-            int carIndex = StraightModel.this.cars.indexOf(this);
-            if (carIndex < StraightModel.this.cars.size() - 1)
-            {
-                leaders.add(StraightModel.this.cars.get(carIndex + 1));
-            }
-            GTUFollowingModelResult cfmr =
-                getGTUFollowingModel().computeAcceleration(this, leaders, StraightModel.this.speedLimit);
-            if (null != StraightModel.this.block)
-            {
-                leaders.clear();
-                leaders.add(StraightModel.this.block);
-                GTUFollowingModelResult blockCFMR =
-                    getGTUFollowingModel().computeAcceleration(this, leaders, StraightModel.this.speedLimit);
-                if (blockCFMR.getAcceleration().getSI() < cfmr.getAcceleration().getSI()
-                    && blockCFMR.getAcceleration().getSI() >= -5)
-                {
-                    cfmr = blockCFMR;
-                }
-            }
-            setState(cfmr);
-            // Add the movement of this Car to the contour plots
-            addToContourPlots(this);
-            // Schedule the next evaluation of this car
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move", null);
-        }
     }
 }
