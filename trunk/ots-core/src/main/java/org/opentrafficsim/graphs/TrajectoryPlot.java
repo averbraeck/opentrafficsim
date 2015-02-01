@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -124,7 +125,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot
      * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, ArrayList<Lane> path)
+    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, final List<Lane> path)
     {
         this.trajectories = new ArrayList<Trajectory>();
         this.sampleInterval = sampleInterval;

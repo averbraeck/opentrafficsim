@@ -13,13 +13,15 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.junit.Test;
-import org.opentrafficsim.car.Car;
-import org.opentrafficsim.car.lanechanging.LaneChangeModel.LaneChangeModelResult;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel.LaneChangeModelResult;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -163,8 +165,8 @@ public class LaneChangeModelTest
             new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(lanes[0], new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER));
         OTSDEVSSimulatorInterface fakeSimulator = new FakeSimulator();
-        Car<String> car =
-            new Car<String>("ReferenceCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+        LaneBasedIndividualCar<String> car =
+            new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                 new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), initialLongitudinalPositions,
@@ -186,7 +188,7 @@ public class LaneChangeModelTest
             .getLaneChange());
         DoubleScalar.Rel<LengthUnit> rear = car.position(lanes[0], car.getRear());
         DoubleScalar.Rel<LengthUnit> front = car.position(lanes[0], car.getFront());
-        DoubleScalar.Rel<LengthUnit> reference = car.position(lanes[0], RelativePosition.REFERENCE);
+        DoubleScalar.Rel<LengthUnit> reference = car.position(lanes[0], RelativePosition.REFERENCE_POSITION);
         //System.out.println("rear:      " + rear);
         //System.out.println("front:     " + front);
         //System.out.println("reference: " + reference);
@@ -198,8 +200,8 @@ public class LaneChangeModelTest
             Map<Lane, DoubleScalar.Rel<LengthUnit>> otherLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             otherLongitudinalPositions.put(lanes[1], new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
-            Car<String> collisionCar =
-                new Car<String>("LaneChangeBlockingCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+            LaneBasedIndividualCar<String> collisionCar =
+                new LaneBasedIndividualCar<String>("LaneChangeBlockingCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                     new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), otherLongitudinalPositions,
@@ -223,8 +225,8 @@ public class LaneChangeModelTest
             Map<Lane, DoubleScalar.Rel<LengthUnit>> otherLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             otherLongitudinalPositions.put(lanes[1], new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
-            Car<String> otherCar =
-                new Car<String>("OtherCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+            LaneBasedIndividualCar<String> otherCar =
+                new LaneBasedIndividualCar<String>("OtherCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                     new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), otherLongitudinalPositions,

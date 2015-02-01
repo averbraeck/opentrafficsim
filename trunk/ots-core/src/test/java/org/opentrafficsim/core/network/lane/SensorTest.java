@@ -16,7 +16,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
-import org.opentrafficsim.car.Car;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -119,8 +119,8 @@ public class SensorTest
         // ID of the Car
         String carID = "theCar";
         // Now we can make a GTU
-        Car<String> car =
-                new Car<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
+        LaneBasedIndividualCar<String> car =
+                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
                         maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         GTUFollowingModelResult gtuFollowingModelResult =
                 new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.5,

@@ -21,8 +21,8 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.car.Car;
 import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.NetworkException;
@@ -310,7 +310,7 @@ public class ContourPlotTest
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         new ContourPlotTest().simulateUntil(initialTime, simulator);
         // Create a car running 50 km.h
-        Car<Integer> car = CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed, simulator);
+        LaneBasedIndividualCar<Integer> car = CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed, simulator);
         // Make the car run at constant speed for one minute
         car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 60,

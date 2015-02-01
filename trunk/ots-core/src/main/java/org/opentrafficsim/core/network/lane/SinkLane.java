@@ -43,6 +43,7 @@ public class SinkLane extends Lane
     {
         super(parentLink, lateralOffsetAtStart, lateralOffsetAtStart, beginWidth, beginWidth, laneType, directionality,
             new DoubleScalar.Abs<FrequencyUnit>(1, FrequencyUnit.SI));
+        getSensors().clear(); // no standard sensors...
         addSensor(new SinkSensor(this));
     }
 
