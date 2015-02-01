@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModel
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Route;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Link;
 import org.opentrafficsim.core.network.factory.Node;
@@ -218,7 +219,7 @@ public class SequentialLanes implements WrappableSimulation
             {
                 TrajectoryPlot tp =
                         new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND),
-                                model.getMinimumDistance(), model.getMaximumDistance());
+                                model.getPath());
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -307,6 +308,9 @@ class SequentialModel implements OTSModelInterface
 
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
+    
+    /** The nodes of our network in the order that all GTUs will visit them. */
+    private ArrayList<Node> nodes = new ArrayList<Node>();
 
     /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
@@ -334,6 +338,9 @@ class SequentialModel implements OTSModelInterface
 
     /** User settable properties. */
     private ArrayList<AbstractProperty<?>> properties = null;
+    
+    /** The sequence of Lanes that all vehicles will follow. */
+    private ArrayList<Lane> path = new ArrayList<Lane>();
 
     /**
      * @param properties the user settable properties
@@ -343,31 +350,39 @@ class SequentialModel implements OTSModelInterface
         this.properties = properties;
     }
 
+    /**
+     * @return a newly created path (which all GTUs in this simulation will follow).
+     */
+    public ArrayList<Lane> getPath()
+    {
+        return new ArrayList<Lane>(this.path);
+    }
+
     /** {@inheritDoc} */
     @Override
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        this.nodes = new ArrayList<Node>();
         int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new Node("Node at " + xPos, new Coordinate(xPos, -10, 0)));
+            this.nodes.add(new Node("Node at " + xPos, new Coordinate(xPos, -10, 0)));
         }
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // Now we can build a series of Links with one Lane on them
         ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
-        for (int i = 1; i < nodes.size(); i++)
+        for (int i = 1; i < this.nodes.size(); i++)
         {
-            Node fromNode = nodes.get(i - 1);
-            Node toNode = nodes.get(i);
+            Node fromNode = this.nodes.get(i - 1);
+            Node toNode = this.nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             try
             {
                 Lane[] lanes = LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.simulator);
                 ;
-                if (i < nodes.size() - 1)
+                if (i == this.nodes.size() - 1)
                 {
                     Link link = (Link) lanes[0].getParentLink();
                     int index = link.getCrossSectionElementList().indexOf(lanes[0]);
@@ -377,6 +392,10 @@ class SequentialModel implements OTSModelInterface
                                     lanes[0].getDirectionality());
                     link.getCrossSectionElementList().remove(index);
                     link.getCrossSectionElementList().add(index, lanes[0]); // FIXME - this is horrible
+                }
+                else
+                {
+                    this.path.add(lanes[0]);
                 }
                 links.add(lanes[0].getParentLink());
                 if (1 == i)
@@ -515,6 +534,7 @@ class SequentialModel implements OTSModelInterface
             super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                             SpeedUnit.KM_PER_HOUR), simulator);
+            this.setRoute(getRoute());
             try
             {
                 simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "move", null);
@@ -545,7 +565,7 @@ class SequentialModel implements OTSModelInterface
                     getGTUFollowingModel().computeAcceleration(this, leaders, SequentialModel.this.speedLimit);
             setState(cfmr);
             // Add the movement of this Car to the contour plots
-            addToContourPlots(this);
+            //addToContourPlots(this);
             // Schedule the next evaluation of this car
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this, this, "move",
                     null);
