@@ -40,13 +40,16 @@ public class RelativePosition implements Serializable
     /** Standard relative position type CENTER. */
     public static final TYPE CENTER = new TYPE("CENTER");
 
+    /** Standard relative position type REFERENCE. */
+    public static final TYPE REFERENCE = new TYPE("REFERENCE");
+
     /** Standard relative position type DRIVER. */
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
     /** the reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE = new RelativePosition(new DoubleScalar.Rel<LengthUnit>(0.0d,
+    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new DoubleScalar.Rel<LengthUnit>(0.0d,
         LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d,
-        LengthUnit.METER), RelativePosition.CENTER);
+        LengthUnit.METER), RelativePosition.REFERENCE);
 
     /**
      * @param dx positive x is in the normal direction of movement.
@@ -247,7 +250,6 @@ public class RelativePosition implements Serializable
                 return false;
             return true;
         }
-        
-        
+
     }
 }

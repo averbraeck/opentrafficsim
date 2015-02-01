@@ -68,4 +68,11 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
         this.route = route;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final RelativePosition getReference()
+    {
+        return RelativePosition.REFERENCE_POSITION;
+    }
+
 }

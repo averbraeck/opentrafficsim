@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
@@ -40,11 +41,17 @@ public interface GTU<ID> extends LocatableInterface, Serializable
     /** @return the simulator of the GTU. */
     OTSDEVSSimulatorInterface getSimulator();
 
+    /** @return the reference position of the GTU, by definition (0, 0, 0). */
+    RelativePosition getReference();
+
     /** @return the front position of the GTU, relative to its reference point. */
     RelativePosition getFront();
 
     /** @return the rear position of the GTU, relative to its reference point. */
     RelativePosition getRear();
+    
+    /** @return the positions for this GTU. */
+    Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
     
     /** destroy the vehicle from the simulation and animation. */
     void destroy();
