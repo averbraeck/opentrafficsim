@@ -227,24 +227,23 @@ public class Straight implements WrappableSimulation
                 ContourPlot cp;
                 if (graphName.contains("Density"))
                 {
-                    cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
+                    cp = new DensityContourPlot("DensityPlot", model.getPath());
                     cp.setTitle("Density Contour Graph");
                 }
                 else if (graphName.contains("Speed"))
                 {
-                    cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
+                    cp = new SpeedContourPlot("SpeedPlot",model.getPath());
                     cp.setTitle("Speed Contour Graph");
                 }
                 else if (graphName.contains("Flow"))
                 {
-                    cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
+                    cp = new FlowContourPlot("FlowPlot",model.getPath());
                     cp.setTitle("Flow Contour Graph");
                 }
                 else if (graphName.contains("Acceleration"))
                 {
                     cp =
-                        new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(), model
-                            .getMaximumDistance());
+                        new AccelerationContourPlot("AccelerationPlot",model.getPath());
                     cp.setTitle("Acceleration Contour Graph");
                 }
                 else
@@ -367,6 +366,17 @@ class StraightModel implements OTSModelInterface
         this.properties = properties;
     }
 
+    /** The sequence of Lanes that all vehicles will follow. */
+    private List<Lane> path = new ArrayList<Lane>();
+
+    /**
+     * @return List&lt;Lane*gt;; the set of lanes for the specified index
+     */
+    public List<Lane> getPath()
+    {
+        return new ArrayList<Lane>(this.path);
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
@@ -381,6 +391,7 @@ class StraightModel implements OTSModelInterface
         {
             LaneType<String> laneType = new LaneType<String>("CarLane");
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
+            this.path.add(this.lane);
             CrossSectionLink<String, String> endLink = LaneFactory.makeLink("endLink", to, end, null);
             new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
                 LongitudinalDirectionality.FORWARD);
@@ -491,20 +502,6 @@ class StraightModel implements OTSModelInterface
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
         {
             exception.printStackTrace();
-        }
-    }
-
-    /**
-     * Add one movement step of one Car to all contour plots.
-     * @param car Car
-     * @throws RemoteException on communications failure
-     * @throws NetworkException on network-related inconsistency
-     */
-    protected final void addToContourPlots(final LaneBasedIndividualCar<?> car) throws RemoteException, NetworkException
-    {
-        for (LaneBasedGTUSampler plot : this.plots)
-        {
-            plot.addData(car);
         }
     }
 
