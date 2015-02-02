@@ -268,8 +268,8 @@ public class ShapeFileReader
                         x = point.getCoordinate().x;
                         y = point.getCoordinate().y;
                     }
-                        
-                        // initially, set the behaviour default to TrafficBehaviourType.ROAD
+
+                    // initially, set the behaviour default to TrafficBehaviourType.ROAD
                     Node node = new Node(nr, point, type);
                     nodes.put(nr, node);
                 }
@@ -323,7 +323,7 @@ public class ShapeFileReader
      * @throws IOException on error
      */
     public static void readLinks(final String shapeFileName, Map<String, Link> links, Map<String, Link> connectors,
-            Map<String, Node> nodes, Map<String, Node> centroids) throws IOException
+            Map<String, Node> nodes, Map<String, Node> centroids, String lengthUnit) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -371,7 +371,15 @@ public class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.METER);
+                DoubleScalar.Rel<LengthUnit> length = null ;
+                if (lengthUnit.equals("kilometer"))
+                {
+                    length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                }
+                else if (lengthUnit.equals("meter"))
+                {
+                    length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.METER);
+                }
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -403,14 +411,14 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity, TrafficBehaviourType.ROAD,
-                                        linkData, hierarchy);
+                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity,
+                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, nodeB, nodeA, speed, null, capacity, TrafficBehaviourType.ROAD,
-                                        linkData, hierarchy);
+                                new Link(null, nrBA, length, nodeB, nodeA, speed, null, capacity,
+                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
@@ -463,8 +471,8 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, centroidA, nodeB, speed, null, capacity, TrafficBehaviourType.NTM,
-                                        linkData, hierarchy);
+                                new Link(null, nr, length, centroidA, nodeB, speed, null, capacity,
+                                        TrafficBehaviourType.NTM, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
@@ -494,8 +502,8 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, centroidB, speed, null, capacity, TrafficBehaviourType.NTM,
-                                        linkData, hierarchy);
+                                new Link(null, nr, length, nodeA, centroidB, speed, null, capacity,
+                                        TrafficBehaviourType.NTM, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
@@ -524,8 +532,8 @@ public class ShapeFileReader
                     {
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         Link link =
-                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity, TrafficBehaviourType.ROAD,
-                                        linkData, hierarchy);
+                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity,
+                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         links.put(nr, link);

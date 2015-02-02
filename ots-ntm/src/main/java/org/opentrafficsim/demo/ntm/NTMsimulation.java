@@ -207,8 +207,8 @@ public class NTMsimulation
                         int crit = celBehaviourNTM.getParametersNTM().getAccCritical().size();
                         double critDensityPerHour = celBehaviourNTM.getParametersNTM().getAccCritical().get(crit - 1);
                         double roadLength = origin.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
-                        double share =
-                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
+                        // double share =
+                        // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
                         Double maxAccumulationThisArea = roadLength * critDensityPerHour;
                         maximumNumberOfTripsToAdd =
                                 maxAccumulationThisArea - origin.getCellBehaviour().getAccumulatedCars();
@@ -217,7 +217,10 @@ public class NTMsimulation
                             TripDemand.getTotalNumberOfTripsFromOrigin(model.tripDemandToUse, origin.getId(),
                                     currentTime, model.getSettingsNTM().getTimeStepDurationNTM());
                     Double shareToAdd = Math.min(1, maximumNumberOfTripsToAdd / totalTrips);
-
+                    if (shareToAdd < 1)
+                    {
+                        System.out.println("full");
+                    }
                     Map<String, TripInfoTimeDynamic> tripsFrom =
                             model.tripDemandToUse.getTripInfo().get(origin.getId());
                     // loop through all destinations to get total demand and supply per origin and add the new trips
@@ -236,7 +239,7 @@ public class NTMsimulation
                                     // these new Trips are added to the TRIPS that are already on their way (passing an
                                     // NTM area): the AccumulatedCars specified by their specific destination
 
-                                    // TODO if maxAccumulation, put TRIPS in a reservoir 
+                                    // TODO if maxAccumulation, put TRIPS in a reservoir
 
                                     double startingTrips =
                                             shareToAdd
@@ -247,6 +250,7 @@ public class NTMsimulation
                                                                             .getSettingsNTM().getTimeStepDurationNTM());
                                     // **** RELEVANT
                                     tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
+                                    tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips); 
                                     tripInfoByDestination.addDepartedTrips(startingTrips);
 
                                     // increases the total number of accumulated cars in the area, that is
@@ -800,7 +804,7 @@ public class NTMsimulation
         if (model.WRITEDATA)
         {
             // WriteOutput.writeOutputDataFlowLinks(model, steps, MAXSTEPS);
-            WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);
+            //WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);
         }
     }
 

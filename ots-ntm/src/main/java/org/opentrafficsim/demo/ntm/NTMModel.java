@@ -125,7 +125,7 @@ public class NTMModel implements OTSModelInterface
     public boolean DEBUG = true;
 
     /** debugging. */
-    public boolean WRITEDATA= true;
+    public boolean WRITEDATA = true;
 
     /** use the bigger areas (true) or the detailed areas (false). */
     public boolean COMPRESS_AREAS = false;
@@ -160,47 +160,83 @@ public class NTMModel implements OTSModelInterface
             Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(7200, TimeUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 7, 0, 0);
+            String path = "";
+            this.shpLinks = new HashMap<>();
+            this.shpConnectors = new HashMap<>();
+            String fileDemand = "";
+            String fileCompressedDemand = "";
             int numberOfRoutes = 1;
-            // String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug1";
-            String path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
+            // determine the files to read
+            int debugFiles = 0;
+
+            if (debugFiles == 0)
+            {
+                /** use the bigger areas (true) or the detailed areas (false). */
+                this.COMPRESS_AREAS = true;
+                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
+                // Read the shape files with the function:
+                // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
+                // boolean
+                // returnCentroid, boolean allCentroids)
+                // if returnCentroid: true: return centroids;
+                // false: return nodes
+                // if allCentroids: true: we are reading a file with only centroids
+                // false: mixed file with centroids (number starts with "C") and normal nodes
+                this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
+                this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
+                this.areas = ShapeFileReader.readAreas(path +"/selectedAreasGT1.shp", this.centroids);
+                ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+                        this.nodes, this.centroids, "kilometer");
+                fileDemand = "/cordonmatrix_pa_os.txt";
+                fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
+                        + "/profiles.txt", ";", "\\s+"));
+                numberOfRoutes = 1;
+
+            }
+
+            else if (debugFiles == 3)
+            {
+                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
+                this.centroids =
+                        ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_centroids.shp",
+                                "NODENR", true, true);
+                this.areas =
+                        ShapeFileReader.readAreas(this.getSettingsNTM().getPath() + "/qgistest_areas.shp",
+                                this.centroids);
+                this.nodes =
+                        ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_nodes.shp", "NODENR",
+                                false, false);
+                ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_links.shp", this.shpLinks,
+                        this.shpConnectors, this.nodes, this.centroids, "meter");
+                ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_feederlinks.shp", this.shpLinks,
+                        this.shpConnectors, this.nodes, this.centroids, "meter");
+                // read the time profile curves: these will be attached to the demands afterwards
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
+                        + "/profiles_only_firstHour.txt", ";", "\\s+"));
+                numberOfRoutes = 1;
+
+            }
+
+            else if (debugFiles == 1)
+            {
+                this.centroids = ShapeFileReader.ReadNodes("/centroids.shp", "CENTROIDNR", true, false);
+                this.areas = ShapeFileReader.readAreas("/areas.shp", this.centroids);
+                this.nodes = ShapeFileReader.ReadNodes("/nodes.shp", "NODENR", false, false);
+                ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
+                        this.nodes, this.centroids, "kilometer");
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
+                        + "/profiles_only_firstHour.txt", ";", "\\s+"));
+                numberOfRoutes = 1;
+
+            }
+
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
                             timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes, path);
-
-            // Read the shape files with the function:
-            // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType, boolean
-            // returnCentroid, boolean allCentroids)
-            // if returnCentroid: true: return centroids;
-            // false: return nodes
-            // if allCentroids: true: we are reading a file with only centroids
-            // false: mixed file with centroids (number starts with "C") and normal nodes
-            // this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
-            this.centroids = ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_centroids.shp", "NODENR", true, true);
             // the Map areas contains a reference to the centroids!
-            // this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
-            this.areas = ShapeFileReader.readAreas(this.getSettingsNTM().getPath() + "/qgistest_areas.shp", this.centroids);
             // save the selected and created areas to a shape file
             // WriteToShp.createShape(this.areas);
-
-            // this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
-            this.nodes = ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_nodes.shp", "NODENR", false, false);
-
-            // this.centroids = ShapeFileReader.ReadNodes("/gis/centroids.shp", "CENTROIDNR", true, true);
-            // this.areas = ShapeFileReader.ReadAreas("/gis/areas.shp", this.centroids);
-            // this.shpNodes = ShapeFileReader.ReadNodes("/gis/nodes.shp", "NODENR", false, false);
-
-            this.shpLinks = new HashMap<>();
-            this.shpConnectors = new HashMap<>();
-            // ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
-            // this.nodes, this.centroids);
-            ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_links.shp", this.shpLinks, this.shpConnectors, this.nodes,
-                    this.centroids);
-            ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_feederlinks.shp", this.shpLinks, this.shpConnectors,
-                    this.nodes, this.centroids);
-
-            // read the time profile curves: these will be attached to the demands afterwards
-            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(
-                    path + "/profiles_only_firstHour.txt", ";", "\\s+"));
 
             // read TrafficDemand from /src/main/resources
             // including information on the time period this demand covers!
@@ -209,7 +245,7 @@ public class NTMModel implements OTSModelInterface
             // - move links from normal to connectors
             // - add time settings from the demand matrix
             // - create demand between centoids and areas
-            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(path + "/cordonmatrix_pa_os.txt", ";", "\\s+|-",
+            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(path + fileDemand, ";", "\\s+|-",
                     this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
                     this.getDepartureTimeProfiles(), this.areas));
 
@@ -217,10 +253,10 @@ public class NTMModel implements OTSModelInterface
             Map<String, Node> centroidsToUse;
             Map<String, Link> shpConnectorsToUse;
 
-            if (COMPRESS_AREAS)
+            if (this.COMPRESS_AREAS)
             {
                 // to compress the areas into bigger units
-                File file = new File(this.getSettingsNTM().getPath() + "/selectedAreas_newest_merged2.shp");
+                File file = new File(this.getSettingsNTM().getPath() + fileCompressedDemand);
                 this.compressedAreas = ShapeStore.openGISFile(file);
                 this.bigAreas = new HashMap<String, Area>();
                 for (ShapeObject shape : this.compressedAreas.getGeoObjects())
@@ -786,7 +822,7 @@ public class NTMModel implements OTSModelInterface
      */
     public Map<String, Link> getShpBigConnectors()
     {
-        return shpBigConnectors;
+        return this.shpBigConnectors;
     }
 
     /**
@@ -810,7 +846,7 @@ public class NTMModel implements OTSModelInterface
      */
     public Map<String, Area> getBigAreas()
     {
-        return bigAreas;
+        return this.bigAreas;
     }
 
     /**
@@ -898,7 +934,7 @@ public class NTMModel implements OTSModelInterface
      */
     public ShapeStore getCompressedAreas()
     {
-        return compressedAreas;
+        return this.compressedAreas;
     }
 
     /**
@@ -914,7 +950,7 @@ public class NTMModel implements OTSModelInterface
      */
     public Map<String, Node> getBigCentroids()
     {
-        return bigCentroids;
+        return this.bigCentroids;
     }
 
     /**
@@ -930,7 +966,7 @@ public class NTMModel implements OTSModelInterface
      */
     public TripDemand<TripInfoTimeDynamic> getCompressedTripDemand()
     {
-        return compressedTripDemand;
+        return this.compressedTripDemand;
     }
 
     /**
@@ -946,7 +982,7 @@ public class NTMModel implements OTSModelInterface
      */
     public Map<String, Link> getDebugLinkList()
     {
-        return debugLinkList;
+        return this.debugLinkList;
     }
 
     /**
@@ -962,7 +998,7 @@ public class NTMModel implements OTSModelInterface
      */
     public Map<String, Node> getNodeAreaGraphMap()
     {
-        return nodeAreaGraphMap;
+        return this.nodeAreaGraphMap;
     }
 
     /**

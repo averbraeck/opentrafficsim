@@ -116,22 +116,21 @@ public class DepartureTimeProfile
             }
 
         }
-        for (FractionOfTripDemandByTimeSegment curve  : segmentsOut.values())
+/*        for (FractionOfTripDemandByTimeSegment curve  : segmentsOut.values())
         {
             System.out.println("Curve " + curve.getShareOfDemand() + "tijd " + curve.getTimeSinceMidnight() );
         }
         System.out.println("Curve end");
-
+*/
 
         for (FractionOfTripDemandByTimeSegment segment : segmentsOut.values())
         {
+/*            for (FractionOfTripDemandByTimeSegment curve  : segmentsOut.values())
             {
-                for (FractionOfTripDemandByTimeSegment curve  : segmentsOut.values())
-                {
-                    System.out.println("Curve " + curve.getShareOfDemand() + "tijd " + curve.getTimeSinceMidnight() );
-                }
-                System.out.println("Curve end");
-            } 
+                System.out.println("Curve " + curve.getShareOfDemand() + "tijd " + curve.getTimeSinceMidnight() );
+            }
+            System.out.println("Curve end");*/
+            
             // Normalise the share as a fraction of the sum of all shares (a value between 0.0 and 1.0)
             segment.setShareOfDemand(segment.getShareOfDemand() / totalShare);
         }
