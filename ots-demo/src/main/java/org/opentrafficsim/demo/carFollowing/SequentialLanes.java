@@ -227,29 +227,28 @@ public class SequentialLanes implements WrappableSimulation
                 ContourPlot cp;
                 if (graphName.contains("Density"))
                 {
-                    cp = new DensityContourPlot("DensityPlot", model.getMinimumDistance(), model.getMaximumDistance());
+                    cp = new DensityContourPlot("DensityPlot", model.getPath());
                     cp.setTitle("Density Contour Graph");
                 }
                 else if (graphName.contains("Speed"))
                 {
-                    cp = new SpeedContourPlot("SpeedPlot", model.getMinimumDistance(), model.getMaximumDistance());
+                    cp = new SpeedContourPlot("SpeedPlot", model.getPath());
                     cp.setTitle("Speed Contour Graph");
                 }
                 else if (graphName.contains("Flow"))
                 {
-                    cp = new FlowContourPlot("FlowPlot", model.getMinimumDistance(), model.getMaximumDistance());
+                    cp = new FlowContourPlot("FlowPlot", model.getPath());
                     cp.setTitle("Flow Contour Graph");
                 }
                 else if (graphName.contains("Acceleration"))
                 {
-                    cp =
-                            new AccelerationContourPlot("AccelerationPlot", model.getMinimumDistance(),
-                                    model.getMaximumDistance());
+                    cp = new AccelerationContourPlot("AccelerationPlot", model.getPath());
                     cp.setTitle("Acceleration Contour Graph");
                 }
                 else
                 {
-                    throw new Error("Unhandled type of contourplot: " + graphName);
+                    continue;
+                    // throw new Error("Unhandled type of contourplot: " + graphName);
                 }
                 graph = cp;
                 container = cp.getContentPane();
@@ -305,7 +304,7 @@ class SequentialModel implements OTSModelInterface
 
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
-    
+
     /** The nodes of our network in the order that all GTUs will visit them. */
     private ArrayList<Node> nodes = new ArrayList<Node>();
 
@@ -335,7 +334,7 @@ class SequentialModel implements OTSModelInterface
 
     /** User settable properties. */
     private ArrayList<AbstractProperty<?>> properties = null;
-    
+
     /** The sequence of Lanes that all vehicles will follow. */
     private List<Lane> path = new ArrayList<Lane>();
 
@@ -447,20 +446,6 @@ class SequentialModel implements OTSModelInterface
     public final DoubleScalar.Rel<LengthUnit> getMaximumDistance()
     {
         return this.maximumDistance;
-    }
-
-    /**
-     * Add one movement step of one Car to all contour plots.
-     * @param car Car
-     * @throws RemoteException on communications failure
-     * @throws NetworkException on network-related inconsistency
-     */
-    protected final void addToContourPlots(final LaneBasedIndividualCar<?> car) throws RemoteException, NetworkException
-    {
-        for (LaneBasedGTUSampler plot : this.plots)
-        {
-            plot.addData(car);
-        }
     }
 
     /**
