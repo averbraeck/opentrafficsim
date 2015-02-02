@@ -50,7 +50,7 @@ public class Routes
             {
                 BoundedNode origin = path.getStartVertex();
                 BoundedNode destination = path.getEndVertex();
-                System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
+//                System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
                 // only generate to "real" destinations
                 if (destination.getBehaviourType() == TrafficBehaviourType.NTM
                         || destination.getBehaviourType() == TrafficBehaviourType.CORDON)
@@ -116,7 +116,7 @@ public class Routes
                                     .getNeighbourAndRouteShare().put(graphEndNode, share + addShare);
                         }
                     }
-                    System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
+//                    System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());
 
                     // TODO select OD pairs with trips only. to generate the relevant paths
                     Map<String, Map<String, TripInfoTimeDynamic>> trips;

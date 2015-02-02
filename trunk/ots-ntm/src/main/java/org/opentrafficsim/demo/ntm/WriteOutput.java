@@ -59,67 +59,6 @@ public class WriteOutput
     /** */
     static String[] cellID = new String[999];
 
-    // AREAS
-    /** */
-    static BufferedWriter dataParametersNFDOut = null;
-
-    /** */
-    static BufferedWriter dataAccumulationNTMOut = null;
-
-    /** */
-    static BufferedWriter dataDemandNTMOut = null;
-
-    /** */
-    static BufferedWriter dataSupplyNTMOut = null;
-
-    /** */
-    static BufferedWriter dataDeparturesNTMOut = null;
-
-    /** */
-    static BufferedWriter dataArrivalsNTMOut = null;
-
-    /** */
-    static BufferedWriter dataFluxToNeighbourNTMOut = null;
-
-    /** */
-    static BufferedWriter dataODDeparturesNTMOut = null;
-
-    /** */
-    static BufferedWriter dataODArrivalsNTMOut = null;
-
-    /** */
-    static Double[][] accumulationNTM = new Double[999][999];
-
-    /** */
-    static Double[][] demandNTM = new Double[999][999];
-
-    /** */
-    static Double[][] supplyNTM = new Double[999][999];
-
-    /** */
-    static Double[][] departuresNTM = new Double[999][999];
-
-    /** */
-    static Double[][] arrivalsNTM = new Double[999][999];
-
-    /** */
-    static Double[][][] fluxToNeighbourNTM = new Double[9][9][999];
-
-    /** */
-    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();
-
-    /** */
-    static HashMap<Node, HashMap<Node, Double[]>> ODArrivalsNTMMap = new HashMap<>();
-
-    /** */
-    static HashMap<Node, HashMap<Node, Double[]>> ODDparturesNTMMap = new HashMap<>();
-
-    /** */
-    static Double[][] parametersNFD = new Double[999][3];
-
-    /** */
-    static Double[][] capSpeedRoadLengthNTM = new Double[999][3];
-
     /** */
     static int numberOfCells = 0;
 
@@ -135,7 +74,7 @@ public class WriteOutput
     /** */
     static HashMap<Integer, Node> indexNode = new HashMap<>();
 
-    // Writing output data
+    // Writing output data CELLS
     /**
      * @param model
      * @param steps
@@ -239,6 +178,67 @@ public class WriteOutput
         }
     }
 
+    // AREAS
+    /** */
+    static BufferedWriter dataParametersNFDOut = null;
+
+    /** */
+    static BufferedWriter dataAccumulationNTMOut = null;
+
+    /** */
+    static BufferedWriter dataDemandNTMOut = null;
+
+    /** */
+    static BufferedWriter dataSupplyNTMOut = null;
+
+    /** */
+    static BufferedWriter dataDeparturesNTMOut = null;
+
+    /** */
+    static BufferedWriter dataArrivalsNTMOut = null;
+
+    /** */
+    static BufferedWriter dataFluxToNeighbourNTMOut = null;
+
+    /** */
+    static BufferedWriter dataODDeparturesNTMOut = null;
+
+    /** */
+    static BufferedWriter dataODArrivalsNTMOut = null;
+
+    /** */
+    static Double[][] accumulationNTM = new Double[999][999];
+
+    /** */
+    static Double[][] demandNTM = new Double[999][999];
+
+    /** */
+    static Double[][] supplyNTM = new Double[999][999];
+
+    /** */
+    static Double[][] departuresNTM = new Double[999][999];
+
+    /** */
+    static Double[][] arrivalsNTM = new Double[999][999];
+
+    /** */
+    static Double[][][] fluxToNeighbourNTM = new Double[9][9][999];
+
+    /** */
+    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();
+
+    /** */
+    static HashMap<Node, HashMap<Node, Double[]>> ODArrivalsNTMMap = new HashMap<>();
+
+    /** */
+    static HashMap<Node, HashMap<Node, Double[]>> ODDeparturesNTMMap = new HashMap<>();
+
+    /** */
+    static Double[][] parametersNFD = new Double[999][6];
+
+    /** */
+    static Double[][] capSpeedRoadLengthNTM = new Double[999][3];
+
     // Writing output data
     /**
      * @param model
@@ -252,77 +252,98 @@ public class WriteOutput
         // for testing we open a file and write some results:
         // TODO testing
 
-        String fileName = "NTMFluxToNeighbour";
+        String fileName = "NTMfluxToNeighbour";
         String description = "fluxes";
+        String DATATYPE = "fluxes";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataFluxToNeighbourNTMOut = createWriter(file);
         }
-        writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap,
-                indexNode);
+        writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap, indexNode,
+                DATATYPE);
 
-        fileName = "NTMoutputArrivals";
+        fileName = "NTMdeparturesByOD";
+        description = "departures by OD";
+        DATATYPE = "departuresOD";
+        if (steps == 1)
+        {
+            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            dataODDeparturesNTMOut = createWriter(file);
+        }
+        writeHashMap(model, steps, MAXSTEPS, description, dataODDeparturesNTMOut, ODDeparturesNTMMap, indexNode,
+                DATATYPE);
+
+        fileName = "NTMarrivalsByOD";
+        description = "arrived by OD";
+        DATATYPE = "arrivalsOD";
+        if (steps == 1)
+        {
+            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            dataODArrivalsNTMOut = createWriter(file);
+        }
+        writeHashMap(model, steps, MAXSTEPS, description, dataODArrivalsNTMOut, ODArrivalsNTMMap, indexNode, DATATYPE);
+
+        fileName = "NTMarrivals";
         description = "Arrived trips";
-        String DATATYPE = "arrivals";
+        DATATYPE = "arrivals";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataArrivalsNTMOut = createWriter(file);
-        }        
+        }
         writeArray(model, steps, MAXSTEPS, description, dataArrivalsNTMOut, arrivalsNTM, DATATYPE);
 
-        fileName = "NTMoutputDepartures";
+        fileName = "NTMdepartures";
         description = "departed trips";
         DATATYPE = "departures";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataDeparturesNTMOut = createWriter(file);
-        } 
+        }
         writeArray(model, steps, MAXSTEPS, description, dataDeparturesNTMOut, departuresNTM, DATATYPE);
 
-        fileName = "NTMoutputAccumulation";
+        fileName = "NTMaccumulation";
         description = "Accumulation trips";
         DATATYPE = "accumulation";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataAccumulationNTMOut = createWriter(file);
-        } 
+        }
         writeArray(model, steps, MAXSTEPS, description, dataAccumulationNTMOut, accumulationNTM, DATATYPE);
 
-        fileName = "NTMoutputdemand";
+        fileName = "NTMdemand";
         description = "Demand trips";
-        DATATYPE = "arrivals";
+        DATATYPE = "demand";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataDemandNTMOut = createWriter(file);
-        } 
+        }
         writeArray(model, steps, MAXSTEPS, description, dataDemandNTMOut, demandNTM, DATATYPE);
-        
-        fileName = "NTMoutputSupply";
+
+        fileName = "NTMsupply";
         description = "Supply trips";
         DATATYPE = "supply";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataSupplyNTMOut = createWriter(file);
-        } 
+        }
         writeArray(model, steps, MAXSTEPS, description, dataSupplyNTMOut, supplyNTM, DATATYPE);
-        
-        fileName = "NTMoutputParametersNFD";
+
+        fileName = "NTMparametersNFD";
         description = "Parameters NFD";
         DATATYPE = "parametersNFD";
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
             dataParametersNFDOut = createWriter(file);
-        } 
+        }
         writeArray(model, steps, MAXSTEPS, description, dataParametersNFDOut, parametersNFD, DATATYPE);
-    }        
-
+    }
 
     /**
      * @param model
@@ -332,9 +353,8 @@ public class WriteOutput
      * @param nodeDoublemap
      * @param intNodeMap
      */
-    static void writeHashMap(NTMModel model, int steps, int MAXSTEPS, String description,
-            BufferedWriter data, HashMap<Node, HashMap<Node, Double[]>> nodeNodeDoublemap,
-            HashMap<Integer, Node> intNodeMap)
+    static void writeHashMap(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
+            HashMap<Node, HashMap<Node, Double[]>> nodeNodeDoublemap, HashMap<Integer, Node> intNodeMap, String DATATYPE)
     {
 
         if (steps < MAXSTEPS)
@@ -345,17 +365,30 @@ public class WriteOutput
             for (Node nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
-                CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
+                CellBehaviourNTM cellBehaviour =  (CellBehaviourNTM) node.getCellBehaviour();
 
                 for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
                 {
                     Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
                     for (BoundedNode neighbour : neighbours)
                     {
-                        double trips =
-                                tripInfoByDestination.getFluxToNeighbour()
-                                        * tripInfoByDestination.getNeighbourAndRouteShare().get(neighbour)
-                                        * tripInfoByDestination.getFluxToNeighbour();
+                        double trips = 0;
+                        if (DATATYPE == "fluxes")
+                        {
+                            trips =
+                                    tripInfoByDestination.getNeighbourAndRouteShare().get(neighbour)
+                                            * tripInfoByDestination.getFluxToNeighbour();
+                        }
+                        else if (DATATYPE == "arrivalsOD")
+                        {
+                            trips = tripInfoByDestination.getArrivedTrips();
+                        }
+                        else if (DATATYPE == "departuresOD")
+                        {
+                            trips = tripInfoByDestination.getDepartedTrips();
+
+                        }
+
                         if (trips > 0.0)
                         {
                             if (nodeNodeDoublemap.get(node) == null)
@@ -379,7 +412,14 @@ public class WriteOutput
                                 else
                                 {
                                     Double[] fluxes = nodeNodeDoublemap.get(node).get(neighbour);
-                                    fluxes[steps - 1] = trips;
+                                    if ((DATATYPE == "fluxes"))
+                                    {
+                                        fluxes[steps - 1] = trips;
+                                    }
+                                    else
+                                    {
+                                        fluxes[steps - 1] = trips;
+                                    }
                                 }
                             }
                         }
@@ -431,8 +471,17 @@ public class WriteOutput
         }
     }
 
-    static void writeArray(NTMModel model, int steps, int MAXSTEPS, String description,
-            BufferedWriter data, Double[][] dataArray, String DATATYPE)
+    /**
+     * @param model
+     * @param steps
+     * @param MAXSTEPS
+     * @param description
+     * @param data
+     * @param dataArray
+     * @param DATATYPE
+     */
+    static void writeArray(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
+            Double[][] dataArray, String DATATYPE)
     {
 
         if (steps < MAXSTEPS)
@@ -459,7 +508,7 @@ public class WriteOutput
                 }
                 else if (DATATYPE == "accumulation")
                 {
-                    dataArray[nodeIndex.get(node)][steps - 1]  = cellBehaviour.getAccumulatedCars();
+                    dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
                 }
                 else if (DATATYPE == "demand")
                 {
@@ -473,13 +522,15 @@ public class WriteOutput
                 {
                     if (steps == 1)
                     {
-                        capSpeedRoadLengthNTM[i][0] =
+                        dataArray[i][0] =
                                 cellBehaviour.getParametersNTM().getCapacity().getInUnit(FrequencyUnit.PER_HOUR);
-                        capSpeedRoadLengthNTM[i][1] =
+                        dataArray[i][1] =
                                 cellBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER);
-                        capSpeedRoadLengthNTM[i][2] =
+                        dataArray[i][2] =
                                 cellBehaviour.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                        // cellBehaviour.getParametersNTM().getAccCritical().;
+                        dataArray[i][3] = cellBehaviour.getParametersNTM().getAccCritical().get(0);
+                        dataArray[i][4] = cellBehaviour.getParametersNTM().getAccCritical().get(1);
+                        dataArray[i][5] = cellBehaviour.getParametersNTM().getAccCritical().get(2);
                     }
                 }
                 i++;
@@ -496,6 +547,13 @@ public class WriteOutput
                 {
                     String textOut;
                     // Link transmission
+                    data.write("Step:  " + ", ");
+                    for (int j = 0; j < steps; j++)
+                    {
+                        data.write(j + ", ");
+                    }
+                    data.write(" \n");
+
                     for (int i = 0; i < numberOfCells; i++)
                     {
                         data.write(description + " " + indexNode.get(i).getId() + ", ");
@@ -514,6 +572,42 @@ public class WriteOutput
                 }
             }
         }
+        else if (DATATYPE == "parametersNFD")
+        {
+            if (steps == 1)
+            {
+                try
+                {
+                    String textOut;
+                    // Link transmission
+                    data.write("Indicators:     " + ", ");
+                    data.write("Capacity (/h)   " + ", ");
+                    data.write("RoadLength (km) " + ", ");
+                    data.write("FreeSpeed (km/h)" + ", ");
+                    data.write("AccCrit maxCap  " + ", ");
+                    data.write("AccCrit critical" + ", ");
+                    data.write("AccCrit gridlock" + ", ");
+                    data.write(" \n");
+
+                    for (int i = 0; i < numberOfCells; i++)
+                    {
+                        data.write(description + " " + indexNode.get(i).getId() + ", ");
+                        for (int j = 0; j < 6; j++)
+                        {
+                            textOut = String.format("%.5f", dataArray[i][j]);
+                            data.write(textOut + ", ");
+                        }
+                        data.write(" \n");
+                    }
+                    data.close();
+                }
+                catch (IOException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+
     }
 
     static BufferedWriter createWriter(File file)

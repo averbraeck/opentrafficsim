@@ -255,7 +255,7 @@ public class BuildGraph
                             {
                                 throw new RuntimeException("cAVertex == null || cBVertex == null");
                             }
-                            
+
                             Abs<SpeedUnit> speedA;
                             Abs<SpeedUnit> speedB;
                             if (aA.getParametersNTM() != null)
@@ -266,7 +266,8 @@ public class BuildGraph
                             else
                             {
                                 speedA = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                                speedB = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);;                               
+                                speedB = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                                ;
                             }
                             addGraphConnector(model, cAVertex, cBVertex, speedA, speedB, le, TrafficBehaviourType.NTM);
 
@@ -281,10 +282,10 @@ public class BuildGraph
                     }
                 }
             }
-            else
-            {
-                System.out.println("test: cA == cB??");
-            }
+            // else
+            // {
+            // System.out.println("test: cA == cB??");
+            // }
         }
 
         // add the flowLinks and their A and B nodes as special types of areaNodes and edges
@@ -353,9 +354,9 @@ public class BuildGraph
                 double yB = cBVertex.getPoint().getCoordinate().y;
                 // TODO check distance by coordinates!!!!
                 double distance = 1.3 * Math.sqrt(Math.pow(xB - xA, 2) + Math.pow(yB - yA, 2));
-                double timeDouble = 0.5 * distance / speedA.getSI() + 0.5 * distance / speedA.getSI();
+                double timeDouble = 0.5 * distance / speedA.getSI() + 0.5 * distance / speedB.getSI();
                 time = new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.SECOND);
-                
+
                 DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                 int hierarchy = le.getLink().getHierarchy();
                 Link newLink = Link.createLink(cAVertex, cBVertex, null, speed, time, trafficBehaviourType, hierarchy);
@@ -650,23 +651,31 @@ public class BuildGraph
                             List<LinkEdge<Link>> spList = sp.getPathEdgeList();
                             if (spList != null)
                             {
+                                double cumulativeTime = 0;
+                                double cumulativeLength = 0;
                                 for (LinkEdge<Link> le : spList)
                                 {
-                                    int hierarchy = le.getLink().getHierarchy();
+                                    double speed = le.getLink().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    double length = le.getLink().getLength().getInUnit(LengthUnit.KILOMETER);
+                                    cumulativeTime += length/speed;
+                                    cumulativeLength += length;
                                     Area enteredArea = findArea(le.getLink().getEndNode().getPoint(), areas);
                                     if (enteredArea != null && enteredArea != isolatedArea
                                             && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         Node centroidEntered = areaNodeCentroidMap.get(enteredArea);
-                                        addGraphConnector(model, nodeIsolated, centroidEntered, null, null, le,
+                                        Abs<SpeedUnit> speedA = new Abs<SpeedUnit>(cumulativeLength/cumulativeTime, SpeedUnit.KM_PER_HOUR);
+                                        addGraphConnector(model, nodeIsolated, centroidEntered, speedA, speedA, le,
                                                 nodeIsolated.getBehaviourType());
                                         break;
                                     }
                                     else if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                                     {
                                         Node bN = nodeGraphMap.get(le.getLink().getStartNode().getId());
-                                        addGraphConnector(model, nodeIsolated, bN, null, null, le, nodeIsolated.getBehaviourType());
+                                        Abs<SpeedUnit> speedA = new Abs<SpeedUnit>(cumulativeLength/cumulativeTime, SpeedUnit.KM_PER_HOUR);
+                                        addGraphConnector(model, nodeIsolated, bN, speedA, speedA, le,
+                                                nodeIsolated.getBehaviourType());
 
                                         break;
                                     }

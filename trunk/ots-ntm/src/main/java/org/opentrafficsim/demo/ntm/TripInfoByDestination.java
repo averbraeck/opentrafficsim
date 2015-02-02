@@ -26,6 +26,9 @@ public class TripInfoByDestination
     /** trips on their journey within an area. */
     private double accumulatedCarsToDestination;
 
+    /** trips on their journey within an area. */
+    private double accumulatedCarsToDestinationAdded;
+
     /** demand to neighbour. */
     private double demandToDestination;
     
@@ -217,6 +220,22 @@ public class TripInfoByDestination
     public void addArrivedTrips(double addArrivedTrips)
     {
         this.arrivedTrips += addArrivedTrips;
+    }
+
+    /**
+     * @return accumulatedCarsToDestinationAdded.
+     */
+    public double getAccumulatedCarsToDestinationAdded()
+    {
+        return accumulatedCarsToDestinationAdded;
+    }
+
+    /**
+     * @param accumulatedCarsToDestinationAdded set accumulatedCarsToDestinationAdded.
+     */
+    public void setAccumulatedCarsToDestinationAdded(double accumulatedCarsToDestinationAdded)
+    {
+        this.accumulatedCarsToDestinationAdded = accumulatedCarsToDestinationAdded;
     }
 
 }
