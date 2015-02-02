@@ -661,7 +661,7 @@ public class Lane extends CrossSectionElement
     {
         for (LaneBasedGTUSampler sampler : this.samplers)
         {
-            sampler.addData(gtu);
+            sampler.addData(gtu, this);
         }
     }
 

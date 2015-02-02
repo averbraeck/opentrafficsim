@@ -1,7 +1,9 @@
 package org.opentrafficsim.graphs;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
@@ -25,16 +27,12 @@ public class SpeedContourPlot extends ContourPlot
     /**
      * Create a new SpeedContourPlot.
      * @param caption String; text to show above the SpeedContourPlot
-     * @param minimumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; minimum distance along the Distance (Y) axis
-     * @param maximumDistance DoubleScalar.Rel&lt;LengthUnit&gt;; maximum distance along the Distance (Y) axis
+     * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public SpeedContourPlot(final String caption, final DoubleScalar.Rel<LengthUnit> minimumDistance,
-        final DoubleScalar.Rel<LengthUnit> maximumDistance)
+    public SpeedContourPlot(final String caption, final List<Lane> path)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), new Axis(minimumDistance,
-            maximumDistance, STANDARDDISTANCEGRANULARITIES,
-            STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm"), 0d, 40d, 150d,
+            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 0d, 40d, 150d,
             "speed %.1f km/h", "%.1f km/h", 20d);
     }
 

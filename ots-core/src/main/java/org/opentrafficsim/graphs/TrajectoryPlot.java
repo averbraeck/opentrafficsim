@@ -1,6 +1,7 @@
 package org.opentrafficsim.graphs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
@@ -38,6 +39,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
+ * Trajectory plot.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -167,6 +169,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         final JFreeChart result =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
                         false);
+        // Overrule the default background paint because some of the lines are invisible on top of this default.
+        result.getPlot().setBackgroundPaint(new Color(0.9f, 0.9f, 0.9f));
         FixCaption.fixCaption(result);
         NumberAxis xAxis = new NumberAxis("\u2192 " + "time [s]");
         xAxis.setLowerMargin(0.0);
@@ -327,58 +331,64 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private ArrayList<Trajectory> trajectories;
 
     /** {@inheritDoc} */
-    public final void addData(final AbstractLaneBasedGTU<?> car) throws NetworkException, RemoteException
+    public final void addData(final AbstractLaneBasedGTU<?> car, Lane lane) throws NetworkException, RemoteException
     {
         final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
+        // System.out.println("addData car: " + car + ", lastEval: " + startTime);
         // Convert the position of the car to a position on path.
         // Find a (the first) lane that car is on that is in our path.
-        Lane lane = null;
         double lengthOffset = 0;
-        for (Lane l : car.positions(car.getFront()).keySet())
+        int index = this.path.indexOf(lane);
+        if (index >= 0)
         {
-            int index = this.path.indexOf(l);
-            if (index >= 0)
+            if (index > 0)
             {
-                lane = l;
-                if (index > 0)
+                try
                 {
-                    try
-                    {
-                        lengthOffset = this.cumulativeLengths.getSI(index - 1);
-                    }
-                    catch (ValueException exception)
-                    {
-                        exception.printStackTrace();
-                    }
+                    lengthOffset = this.cumulativeLengths.getSI(index - 1);
                 }
-                break;
+                catch (ValueException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
         }
-        if (null == lane)
+        else
         {
             throw new Error("Car is not on any lane in the path");
         }
         final DoubleScalar.Rel<LengthUnit> startPosition =
                 DoubleScalar.plus(new DoubleScalar.Rel<LengthUnit>(lengthOffset, LengthUnit.SI),
-                        car.position(lane, car.getFront(), startTime)).immutable();
+                        car.position(lane, car.getReference(), startTime)).immutable();
         // Lookup this Car in the list of trajectories
         Trajectory carTrajectory = null;
+        final double maximumDistanceError = 0.001;
+        // FIXME: linear search is expensive
         for (Trajectory t : this.trajectories)
         {
-            if (t.getCurrentEndTime().getSI() == startTime.getSI()
-                    && t.getCurrentEndPosition().getSI() == startPosition.getSI())
+            if (t.getId() == car.getId())
             {
-                if (null != carTrajectory)
+                if (t.getCurrentEndTime().getSI() == startTime.getSI()
+                        && Math.abs(t.getCurrentEndPosition().getSI() - startPosition.getSI()) < maximumDistanceError)
                 {
-                    System.err.println("Whoops; we've got another match");
+                    if (null != carTrajectory)
+                    {
+                        System.err.println("Whoops; we've got another match");
+                    }
+                    carTrajectory = t;
+                    // System.out.println("Extending existing trajectory");
                 }
-                carTrajectory = t;
+                else
+                {
+                    return; // Data was added when processing a preceding Lane
+                }
             }
         }
         if (null == carTrajectory)
         {
-            carTrajectory = new Trajectory();
+            carTrajectory = new Trajectory(car.getId());
             this.trajectories.add(carTrajectory);
+            // System.out.println("Creating new trajectory");
         }
         carTrajectory.addSegment(car, lane, lengthOffset);
     }
@@ -418,6 +428,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         private DoubleScalar.Abs<TimeUnit> currentEndTime;
 
         /**
+         * Retrieve the current end time of this Trajectory.
          * @return currentEndTime
          */
         public final DoubleScalar.Abs<TimeUnit> getCurrentEndTime()
@@ -429,6 +440,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         private DoubleScalar.Rel<LengthUnit> currentEndPosition;
 
         /**
+         * Retrieve the current end position of this Trajectory.
          * @return currentEndPosition
          */
         public final DoubleScalar.Rel<LengthUnit> getCurrentEndPosition()
@@ -436,11 +448,32 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             return this.currentEndPosition;
         }
 
+        /** ID of the GTU */
+        private final Object id;
+
+        /**
+         * Retrieve the id of this Trajectory.
+         * @return Object; the id of this Trajectory
+         */
+        public final Object getId()
+        {
+            return this.id;
+        }
+
         /** Storage for the position of the car. */
         private ArrayList<Double> positions = new ArrayList<Double>();
 
         /** Time sample of first sample in positions (successive entries will each be one sampleTime later). */
         private int firstSample;
+
+        /**
+         * Construct a Trajectory.
+         * @param id Object; Id of the new Trajectory
+         */
+        public Trajectory(Object id)
+        {
+            this.id = id;
+        }
 
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
@@ -460,7 +493,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
                         new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                double position = car.position(lane, car.getFront(), sampleTime).getSI() + positionOffset;
+                double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
                 if (position > getCumulativeLength(-1).getSI())
                 {
                     continue;
@@ -478,7 +511,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 this.positions.add(position);
             }
             this.currentEndTime = car.getNextEvaluationTime();
-            this.currentEndPosition = car.position(lane, car.getFront(), this.currentEndTime);
+            this.currentEndPosition =
+                    new DoubleScalar.Rel<LengthUnit>(car.position(lane, car.getReference(), this.currentEndTime)
+                            .getSI() + positionOffset, LengthUnit.METER);
             if (car.getNextEvaluationTime().getSI() > getMaximumTime().getSI())
             {
                 setMaximumTime(car.getNextEvaluationTime());
