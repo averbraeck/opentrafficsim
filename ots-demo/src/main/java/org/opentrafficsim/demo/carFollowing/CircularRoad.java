@@ -595,10 +595,9 @@ class RoadSimulationModel implements OTSModelInterface
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
                     new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            IDMCar car =
-                    new IDMCar(++this.carsCreated, gtuType, this.simulator, generateTruck
-                            ? this.carFollowingModelTrucks : this.carFollowingModelCars, vehicleLength, this.simulator
-                            .getSimulatorTime().get(), initialPositions, initialSpeed);
+            new IDMCar(++this.carsCreated, gtuType, this.simulator, generateTruck ? this.carFollowingModelTrucks
+                    : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(),
+                    initialPositions, initialSpeed);
         }
         catch (RemoteException exception)
         {
