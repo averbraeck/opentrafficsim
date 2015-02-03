@@ -111,6 +111,7 @@ public class LaneChangeGraph extends JFrame
      * @throws NamingException
      * @throws RemoteException
      * @throws NetworkException
+     * @throws SimRuntimeException 
      */
     public static void main(String[] args) throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
