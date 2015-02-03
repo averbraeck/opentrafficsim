@@ -402,7 +402,7 @@ class TrajectoriesModel implements OTSModelInterface
         this.block =
             new IDMCar(999999, null, this.simulator, this.carFollowingModelCars, new DoubleScalar.Rel<LengthUnit>(4,
                 LengthUnit.METER), this.simulator.getSimulatorTime().get(), initialPositions,
-                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(0.01,
+                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(0.0,
                     SpeedUnit.KM_PER_HOUR));
     }
 
