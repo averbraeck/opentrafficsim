@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -129,7 +130,6 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      */
     public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, final List<Lane> path)
     {
-        this.trajectories = new ArrayList<Trajectory>();
         this.sampleInterval = sampleInterval;
         this.path = new ArrayList<Lane>(path); // make a copy
         double[] endLengths = new double[path.size()];
@@ -286,7 +286,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         {
             if (dcl instanceof XYPlot)
             {
-                configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
+                // configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
             }
         }
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
@@ -328,12 +328,15 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     }
 
     /** All stored trajectories. */
-    private ArrayList<Trajectory> trajectories;
+    private HashMap<String, Trajectory> trajectories = new HashMap<String, Trajectory>();
+
+    /** Quick access to the Nth trajectory. */
+    private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
     /** {@inheritDoc} */
     public final void addData(final AbstractLaneBasedGTU<?> car, Lane lane) throws NetworkException, RemoteException
     {
-        final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
+        // final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
         // Convert the position of the car to a position on path.
         // Find a (the first) lane that car is on that is in our path.
@@ -357,37 +360,18 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         {
             throw new Error("Car is not on any lane in the path");
         }
-        final DoubleScalar.Rel<LengthUnit> startPosition =
-                DoubleScalar.plus(new DoubleScalar.Rel<LengthUnit>(lengthOffset, LengthUnit.SI),
-                        car.position(lane, car.getReference(), startTime)).immutable();
-        // Lookup this Car in the list of trajectories
-        Trajectory carTrajectory = null;
-        final double maximumDistanceError = 0.001;
-        // FIXME: linear search is expensive
-        for (Trajectory t : this.trajectories)
-        {
-            if (t.getId() == car.getId())
-            {
-                if (t.getCurrentEndTime().getSI() == startTime.getSI()
-                        && Math.abs(t.getCurrentEndPosition().getSI() - startPosition.getSI()) < maximumDistanceError)
-                {
-                    if (null != carTrajectory)
-                    {
-                        System.err.println("Whoops; we've got another match");
-                    }
-                    carTrajectory = t;
-                    // System.out.println("Extending existing trajectory");
-                }
-                else
-                {
-                    return; // Data was added when processing a preceding Lane
-                }
-            }
-        }
+        // System.out.println("lane index is " + index + " car is " + car);
+        // final DoubleScalar.Rel<LengthUnit> startPosition =
+        // DoubleScalar.plus(new DoubleScalar.Rel<LengthUnit>(lengthOffset, LengthUnit.SI),
+        // car.position(lane, car.getReference(), startTime)).immutable();
+        String key = car.getId().toString();
+        Trajectory carTrajectory = this.trajectories.get(key);
         if (null == carTrajectory)
         {
-            carTrajectory = new Trajectory(car.getId());
-            this.trajectories.add(carTrajectory);
+            // Create a new Trajectory for this GTU
+            carTrajectory = new Trajectory(key);
+            this.trajectoryIndices.add(carTrajectory);
+            this.trajectories.put(key, carTrajectory);
             // System.out.println("Creating new trajectory");
         }
         carTrajectory.addSegment(car, lane, lengthOffset);
@@ -493,20 +477,35 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
                         new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
-                if (position > getCumulativeLength(-1).getSI())
+                Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
+                if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
                 {
-                    continue;
-                    // FIXME: we could add storage for a fractional sample at the end of the trajectory
+                    if (0 != positionOffset)
+                    {
+                        // System.out.println("Already added " + car);
+                        break;
+                    }
+                    // System.out.println("inserting null for " + car);
+                    position = null; // Wrapping on circular path?
                 }
                 if (this.positions.size() == 0)
                 {
                     this.firstSample = sample;
                 }
-                while (sample - startSample > this.positions.size())
+                if (sample - this.firstSample > this.positions.size())
                 {
-                    this.positions.add(null); // insert nulls as place holders for unsampled data (because vehicle was
-                                              // temporarily out of range?)
+                    System.out.println("Inserting " + (sample - this.positions.size()) + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
+                }
+                while (sample - this.firstSample > this.positions.size())
+                {
+                    // System.out.println("Inserting nulls");
+                    this.positions.add(null); // insert nulls as place holders for unsampled data (usually because
+                                              // vehicle was temporarily in a parallel Lane)
+                }
+                if (null != position && this.positions.size() > sample - this.firstSample)
+                {
+                    // System.out.println("Skipping sample " + car);
+                    continue;
                 }
                 this.positions.add(position);
             }
@@ -544,6 +543,11 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          */
         public double getDistance(final int item)
         {
+            Double distance = this.positions.get(item);
+            if (null == distance)
+            {
+                return Double.NaN;
+            }
             return this.positions.get(item);
         }
     }
@@ -613,7 +617,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     @Override
     public final int getItemCount(final int series)
     {
-        return this.trajectories.get(series).size();
+        return this.trajectoryIndices.get(series).size();
     }
 
     /** {@inheritDoc} */
@@ -632,7 +636,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     @Override
     public final double getXValue(final int series, final int item)
     {
-        return this.trajectories.get(series).getTime(item);
+        return this.trajectoryIndices.get(series).getTime(item);
     }
 
     /** {@inheritDoc} */
@@ -651,7 +655,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     @Override
     public final double getYValue(final int series, final int item)
     {
-        return this.trajectories.get(series).getDistance(item);
+        return this.trajectoryIndices.get(series).getDistance(item);
     }
 
     /** {@inheritDoc} */
