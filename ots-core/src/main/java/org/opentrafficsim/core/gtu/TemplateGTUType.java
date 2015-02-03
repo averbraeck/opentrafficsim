@@ -4,6 +4,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -20,32 +21,33 @@ public class TemplateGTUType<ID> extends GTUType<ID>
     /** */
     private static final long serialVersionUID = 20141230L;
 
-    /** the length of the GTU (parallel with driving direction). */
-    private final DoubleScalar.Rel<LengthUnit> length;
+    /** distribution of the length of the GTU. */
+    private final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist;
 
-    /** the width of the GTU (perpendicular to driving direction). */
-    private final DoubleScalar.Rel<LengthUnit> width;
+    /** distribution of the width of the GTU. */
+    private final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist;
 
-    /** the maximum speed of the GTU (in the driving direction). */
-    private final DoubleScalar.Abs<SpeedUnit> maximumVelocity;
+    /** distribution of the maximum speed of the GTU. */
+    private final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist;
 
     /** the simulator. */
     private final OTSDEVSSimulatorInterface simulator;
 
     /**
      * @param id The id of the GTUType to make it identifiable.
-     * @param length the length of the GTU type (parallel with driving direction).
-     * @param width the width of the GTU type (perpendicular to driving direction).
-     * @param maximumVelocity the maximum speed of the GTU type (in the driving direction).
+     * @param lengthDist the length of the GTU type (parallel with driving direction).
+     * @param widthDist the width of the GTU type (perpendicular to driving direction).
+     * @param maximumSpeedDist the maximum speed of the GTU type (in the driving direction).
      * @param simulator the simulator.
      */
-    public TemplateGTUType(final ID id, final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Rel<LengthUnit> width,
-        final DoubleScalar.Abs<SpeedUnit> maximumVelocity, final OTSDEVSSimulatorInterface simulator)
+    public TemplateGTUType(final ID id, final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
+        final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
+        final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
     {
         super(id);
-        this.length = length;
-        this.width = width;
-        this.maximumVelocity = maximumVelocity;
+        this.lengthDist = lengthDist;
+        this.widthDist = widthDist;
+        this.maximumSpeedDist = maximumSpeedDist;
         this.simulator = simulator;
     }
 
@@ -63,7 +65,7 @@ public class TemplateGTUType<ID> extends GTUType<ID>
      */
     public final DoubleScalar.Rel<LengthUnit> getLength()
     {
-        return this.length;
+        return this.lengthDist.draw();
     }
 
     /**
@@ -71,7 +73,7 @@ public class TemplateGTUType<ID> extends GTUType<ID>
      */
     public final DoubleScalar.Rel<LengthUnit> getWidth()
     {
-        return this.width;
+        return this.widthDist.draw();
     }
 
     /**
@@ -79,7 +81,7 @@ public class TemplateGTUType<ID> extends GTUType<ID>
      */
     public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
     {
-        return this.maximumVelocity;
+        return this.maximumSpeedDist.draw();
     }
 
     /**
