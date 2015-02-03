@@ -26,7 +26,6 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -576,8 +575,16 @@ class SequentialModel implements OTSModelInterface
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
                     new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            new IDMCar(++this.carsCreated, null, this.simulator, this.carFollowingModel, vehicleLength, this.simulator
-                    .getSimulatorTime().get(), initialPositions, initialSpeed);
+            GTUFollowingModel gtuFollowingModel =
+                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+            if (null == gtuFollowingModel)
+            {
+                throw new Error("gtuFollowingModel is null");
+            }
+            new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
+                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, initialPositions, initialSpeed,
+                    vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.simulator);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
@@ -586,40 +593,4 @@ class SequentialModel implements OTSModelInterface
         }
     }
 
-    /** Inner class IDMCar. */
-    protected class IDMCar extends LaneBasedIndividualCar<Integer>
-    {
-        /** */
-        private static final long serialVersionUID = 20141030L;
-
-        /**
-         * Create a new IDMCar.
-         * @param id integer; the id of the new IDMCar
-         * @param gtuType GTUType&lt;String&gt;; the type of the GTU
-         * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
-         * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
-         * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
-         * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
-         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
-         *            positions of the new IDMCar
-         * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException when the animation cannot be created.
-         * @throws RemoteException when the simulator cannot be reached.
-         * @throws NetworkException when the GTU cannot be placed on the given lane.
-         * @throws SimRuntimeException when the move method cannot be scheduled.
-         */
-        @SuppressWarnings("checkstyle:parameternumber")
-        public IDMCar(final int id, final GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-                final GTUFollowingModel carFollowingModel, final DoubleScalar.Rel<LengthUnit> vehicleLength,
-                final DoubleScalar.Abs<TimeUnit> initialTime,
-                final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-                final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException,
-                NetworkException, SimRuntimeException
-        {
-            super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), simulator);
-            this.setRoute(getRoute());
-        }
-    }
 }

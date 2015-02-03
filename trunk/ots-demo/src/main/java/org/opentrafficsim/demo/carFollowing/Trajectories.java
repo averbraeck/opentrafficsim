@@ -373,8 +373,8 @@ class TrajectoriesModel implements OTSModelInterface
             // Create a block at t = 5 minutes
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
                 null);
-            // Remove the block at t = 8 minutes, 20 seconds
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(500, TimeUnit.SECOND), this, this, "removeBlock",
+            // Remove the block at t = 7 minutes
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
                 null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
@@ -399,11 +399,10 @@ class TrajectoriesModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
-        this.block =
-            new IDMCar(999999, null, this.simulator, this.carFollowingModelCars, new DoubleScalar.Rel<LengthUnit>(4,
-                LengthUnit.METER), this.simulator.getSimulatorTime().get(), initialPositions,
-                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Abs<SpeedUnit>(0.0,
-                    SpeedUnit.KM_PER_HOUR));
+        this.block = new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars, initialPositions, 
+                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+                new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), this.simulator);
     }
 
     /**
@@ -429,10 +428,16 @@ class TrajectoriesModel implements OTSModelInterface
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
                 new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            IDMCar car =
-                new IDMCar(++this.carsCreated, null, this.simulator, generateTruck ? this.carFollowingModelTrucks
-                    : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(), initialPositions,
-                    initialSpeed, new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR));
+            GTUFollowingModel gtuFollowingModel =
+                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+            if (null == gtuFollowingModel)
+            {
+                throw new Error("gtuFollowingModel is null");
+            }
+            new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
+                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, initialPositions, initialSpeed,
+                    vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.simulator);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
@@ -448,38 +453,6 @@ class TrajectoriesModel implements OTSModelInterface
         throws RemoteException
     {
         return this.simulator;
-    }
-
-    /** Inner class IDMCar. */
-    protected class IDMCar extends LaneBasedIndividualCar<Integer>
-    {
-        /** */
-        private static final long serialVersionUID = 20141030L;
-
-        /**
-         * Create a new IDMCar.
-         * @param id integer; the id of the new IDMCar
-         * @param gtuType GTUType&lt;String&gt;; the type of the GTU
-         * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
-         * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
-         * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
-         * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
-         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane positions
-         *            of the new IDMCar
-         * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException on ???
-         * @throws RemoteException on communication failure
-         */
-        public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-            final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
-            final DoubleScalar.Abs<TimeUnit> initialTime,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Abs<SpeedUnit> maximumSpeed)
-            throws RemoteException, NamingException, SimRuntimeException, NetworkException
-        {
-            super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
-                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), maximumSpeed, simulator);
-        }
     }
 
     /**
