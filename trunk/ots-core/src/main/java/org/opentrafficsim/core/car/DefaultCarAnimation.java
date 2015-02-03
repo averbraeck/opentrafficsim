@@ -38,8 +38,8 @@ class DefaultCarAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator) throws NamingException,
-            RemoteException
+    public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = COLORTABLE[++nextIndex % COLORTABLE.length];

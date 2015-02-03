@@ -294,8 +294,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on not being able to reschedule the move() method.
      */
-    // TODO make final
-    protected void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
+    protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
         // only carry out move() if we still have lane(s) to drive on.
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.

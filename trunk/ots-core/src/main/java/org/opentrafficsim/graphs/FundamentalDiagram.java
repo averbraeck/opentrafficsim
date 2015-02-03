@@ -274,7 +274,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param car Car; the car that passes FIXME replace Car by GTU
      * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
      */
-    public final void addData(final int lane, final LaneBasedIndividualCar<?> car, final DoubleScalar.Abs<TimeUnit> detectionTime)
+    public final void addData(final int lane, final LaneBasedIndividualCar<?> car,
+            final DoubleScalar.Abs<TimeUnit> detectionTime)
     {
         ArrayList<Sample> laneData = this.sampleSets.get(lane);
         // Figure out the time bin
