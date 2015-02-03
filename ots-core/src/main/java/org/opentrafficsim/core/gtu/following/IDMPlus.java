@@ -172,6 +172,10 @@ public class IDMPlus implements GTUFollowingModel
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
         DoubleScalar.Abs<SpeedUnit> followerCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
         double leftComponent = 1 - Math.pow(followerCurrentSpeed.getSI() / vDes(follower, speedLimit).getSI(), 4);
+        if (Double.isNaN(leftComponent))
+        {
+            leftComponent = 0;
+        }
         // if (leftComponent < 0)
         // {
         // System.out.println("leftComponent is " + leftComponent);

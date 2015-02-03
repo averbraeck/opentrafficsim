@@ -174,6 +174,10 @@ public class IDM implements GTUFollowingModel
             new DoubleScalar.Abs<AccelerationUnit>(this.a.getSI()
                 * (1 - Math.pow(followerCurrentSpeed.getSI() / vDes(follower, speedLimit).getSI(), 4)),
                 AccelerationUnit.METER_PER_SECOND_2);
+        if (Double.isNaN(aFree.getSI()))
+        {
+            aFree = new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI);
+        }
         MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
             new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
                 AccelerationUnit.METER_PER_SECOND_2);
