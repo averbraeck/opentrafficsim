@@ -583,26 +583,21 @@ class RoadSimulationModel implements OTSModelInterface
      * @throws NamingException on ???
      * @throws SimRuntimeException
      * @throws NetworkException
+     * @throws RemoteException
      */
     protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition, Lane lane, GTUType<String> gtuType)
-            throws NamingException, NetworkException, SimRuntimeException
+            throws NamingException, NetworkException, SimRuntimeException, RemoteException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
-        try
-        {
-            DoubleScalar.Rel<LengthUnit> vehicleLength =
-                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            new IDMCar(++this.carsCreated, gtuType, this.simulator, generateTruck ? this.carFollowingModelTrucks
-                    : this.carFollowingModelCars, vehicleLength, this.simulator.getSimulatorTime().get(),
-                    initialPositions, initialSpeed);
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
+        DoubleScalar.Rel<LengthUnit> vehicleLength =
+                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+        new LaneBasedIndividualCar<>(++this.carsCreated, gtuType, generateTruck ? this.carFollowingModelTrucks
+                : this.carFollowingModelCars, initialPositions, initialSpeed, vehicleLength,
+                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                        SpeedUnit.KM_PER_HOUR), this.simulator);
     }
 
     /** {@inheritDoc} */
@@ -626,44 +621,6 @@ class RoadSimulationModel implements OTSModelInterface
     public final DoubleScalar.Rel<LengthUnit> getMinimumDistance()
     {
         return this.minimumDistance;
-    }
-
-    /**
-     * Inner class IDMCar.
-     */
-    protected class IDMCar extends LaneBasedIndividualCar<Integer>
-    {
-        /** */
-        private static final long serialVersionUID = 20141030L;
-
-        /**
-         * Create a new IDMCar.
-         * @param id integer; the id of the new IDMCar
-         * @param gtuType GTUType&lt;String&gt;; the type of the GTU
-         * @param simulator OTSDEVSSimulator; the simulator that runs the new IDMCar
-         * @param carFollowingModel CarFollowingModel; the car following model of the new IDMCar
-         * @param vehicleLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the new IDMCar
-         * @param initialTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time of first evaluation of the new IDMCar
-         * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial lane
-         *            positions of the new IDMCar
-         * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
-         * @throws NamingException on ???
-         * @throws RemoteException on communication failure
-         * @throws SimRuntimeException
-         * @throws NetworkException
-         */
-        public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
-                final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,
-                final DoubleScalar.Abs<TimeUnit> initialTime,
-                final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-                final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NamingException,
-                NetworkException, SimRuntimeException
-        {
-            super(id, gtuType, carFollowingModel, initialLongitudinalPositions, initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), simulator);
-            // System.out.println("Created IDMCar " + id);
-        }
     }
 
     /**
