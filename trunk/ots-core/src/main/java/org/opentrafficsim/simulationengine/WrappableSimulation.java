@@ -3,6 +3,8 @@ package org.opentrafficsim.simulationengine;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.network.NetworkException;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
@@ -23,9 +25,10 @@ public interface WrappableSimulation
      * @return SimpleSimulator; the new simulation.
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
+     * @throws NetworkException on Network inconsistency
      */
     SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> properties) throws SimRuntimeException,
-            RemoteException;
+            RemoteException, NetworkException;
 
     /**
      * Return a very short description of the simulation.

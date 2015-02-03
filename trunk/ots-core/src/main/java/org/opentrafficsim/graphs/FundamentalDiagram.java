@@ -3,6 +3,7 @@ package org.opentrafficsim.graphs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -29,7 +30,11 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.car.LaneBasedIndividualCar;
+import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.AbstractSensor;
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.LinearDensityUnit;
@@ -76,8 +81,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         return this.aggregationTime;
     }
 
-    /** Storage for the Samples; one for each lane covered by the detector. */
-    private ArrayList<ArrayList<Sample>> sampleSets;
+    /** Storage for the Samples. */
+    private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
     private Axis densityAxis = new Axis(new DoubleScalar.Abs<LinearDensityUnit>(0, LinearDensityUnit.PER_KILOMETER),
@@ -151,29 +156,20 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Graph a Fundamental Diagram.
      * @param caption String; the caption shown above the graphing area.
-     * @param numberOfLanes Integer; the number of lanes covered by the detector that generates the data for this
-     *            Fundamental diagram
      * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data
      *            for this Fundamental diagram
-     * @param position DoubleScalarAbs&lt;LengthUnit&gt;; position of the detector (FIXME: should be a LOT more general)
+     * @param lane Lane; the Lane on which the traffic will be sampled
+     * @param position DoubleScalarAbs&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
+     * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final int numberOfLanes,
-            final DoubleScalar.Rel<TimeUnit> aggregationTime, final DoubleScalar.Abs<LengthUnit> position)
+    public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, Lane lane,
+            final DoubleScalar.Abs<LengthUnit> position) throws NetworkException
     {
-        if (numberOfLanes <= 0)
-        {
-            throw new Error("Number of lanes must be > 0 (got " + numberOfLanes + ")");
-        }
         if (aggregationTime.getSI() <= 0)
         {
             throw new Error("Aggregation time must be > 0 (got " + aggregationTime + ")");
         }
         this.aggregationTime = aggregationTime;
-        this.sampleSets = new ArrayList<ArrayList<Sample>>(numberOfLanes);
-        for (int i = 0; i < numberOfLanes; i++)
-        {
-            this.sampleSets.add(new ArrayList<Sample>());
-        }
         this.caption = caption;
         this.position = new DoubleScalar.Abs<LengthUnit>(position);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
@@ -225,6 +221,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
+        new FundamentalDiagramSensor(lane, position);
     }
 
     /**
@@ -270,23 +267,27 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Add the effect of one passing car to this Fundamental Diagram.
-     * @param lane Integer; the lane on which the car passes
-     * @param car Car; the car that passes FIXME replace Car by GTU
-     * @param detectionTime DoubleScalarAbs&lt;TimeUnit&gt;; the time at which the GTU passes the detector
+     * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the GTU that passes the detection point
      */
-    public final void addData(final int lane, final LaneBasedIndividualCar<?> car,
-            final DoubleScalar.Abs<TimeUnit> detectionTime)
+    public final void addData(final LaneBasedGTU<?> gtu)
     {
-        ArrayList<Sample> laneData = this.sampleSets.get(lane);
-        // Figure out the time bin
-        final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
-        // Extend storage if needed
-        while (timeBin >= laneData.size())
+        try
         {
-            laneData.add(new Sample());
+            DoubleScalar.Abs<TimeUnit> detectionTime = gtu.getSimulator().getSimulatorTime().get();
+            // Figure out the time bin
+            final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
+            // Extend storage if needed
+            while (timeBin >= this.samples.size())
+            {
+                this.samples.add(new Sample());
+            }
+            Sample sample = this.samples.get(timeBin);
+            sample.addData(gtu.getLongitudinalVelocity(detectionTime));
         }
-        Sample sample = laneData.get(timeBin);
-        sample.addData(car.getLongitudinalVelocity(detectionTime));
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -332,7 +333,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public final int getSeriesCount()
     {
-        return this.sampleSets.size();
+        return 1;
     }
 
     /** {@inheritDoc} */
@@ -393,30 +394,24 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public final int getItemCount(final int series)
     {
-        return this.sampleSets.get(series).size();
+        return this.samples.size();
     }
 
     /**
      * Retrieve a value from the recorded samples.
-     * @param lane Integer; the lane
      * @param item Integer; the rank number of the sample
      * @param axis Axis; the axis that determines which quantity to retrieve
      * @return Double; the requested value, or Double.NaN if the sample does not (yet) exist
      */
-    private Double getSample(final int lane, final int item, final Axis axis)
+    private Double getSample(final int item, final Axis axis)
     {
-        if (lane < 0 || lane >= this.sampleSets.size() || item < 0)
+        if (item >= this.samples.size())
         {
             return Double.NaN;
         }
-        ArrayList<Sample> laneDetections = this.sampleSets.get(lane);
-        if (item >= laneDetections.size())
-        {
-            return Double.NaN;
-        }
-        double result = laneDetections.get(item).getValue(axis);
+        double result = this.samples.get(item).getValue(axis);
         /*-
-        System.out.println(String.format("getSample(lane=%d, item=%d, axis=%s) returns %f", lane, item, axis.name,
+        System.out.println(String.format("getSample(item=%d, axis=%s) returns %f", item, axis.name,
                 result));
          */
         return result;
@@ -433,7 +428,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public final double getXValue(final int series, final int item)
     {
-        return getSample(series, item, this.xAxis);
+        return getSample(item, this.xAxis);
     }
 
     /** {@inheritDoc} */
@@ -447,7 +442,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public final double getYValue(final int series, final int item)
     {
-        return getSample(series, item, this.yAxis);
+        return getSample(item, this.yAxis);
     }
 
     /**
@@ -584,6 +579,49 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         {
             throw new Error("Unknown ActionEvent");
         }
+    }
+
+    /**
+     * Internal Sensor class.
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version 3 feb. 2015 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    class FundamentalDiagramSensor extends AbstractSensor
+    {
+        /** */
+        private static final long serialVersionUID = 20150203L;
+
+        /**
+         * Construct a FundamentalDiagramSensor.
+         * @param lane Lane; the Lane on which the new FundamentalDiagramSensor is to be added
+         * @param longitudinalPosition DoubleScalar.Abs&lt;LengthUnit&gt;; longitudinal position on the Lane of the new
+         *            FundamentalDiagramSensor
+         * @throws NetworkException on network inconsistency
+         */
+        public FundamentalDiagramSensor(Lane lane, DoubleScalar.Abs<LengthUnit> longitudinalPosition)
+                throws NetworkException
+        {
+            super(lane, longitudinalPosition, RelativePosition.REAR);
+            lane.addSensor(this);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void trigger(LaneBasedGTU<?> gtu) throws RemoteException
+        {
+            addData(gtu);
+        }
+
+        public final String toString()
+        {
+            return "FundamentalDiagramSensor at " + getLongitudinalPosition();
+        }
+
     }
 
 }

@@ -32,7 +32,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 25, 2014 <br>
@@ -50,231 +51,198 @@ public class FundamentalDiagramPlotTest
     @SuppressWarnings("static-method")
     @Test
     public final void fundamentalDiagramTest() throws RemoteException, NetworkException, SimRuntimeException,
-        NamingException
+            NamingException
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
         FundamentalDiagram fd;
-        for (int numberOfLanes = -2; numberOfLanes <= 0; numberOfLanes++)
-        {
-            try
-            {
-                fd = new FundamentalDiagram("Fundamental Diagram", -1, aggregationTime, position);
-                fail("Bad number of lanes should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-        }
+        fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, XXXXX, position);
+        assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
+        assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
         try
         {
-            fd =
-                new FundamentalDiagram("Fundamental Diagram", 1, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND),
-                    position);
-            fail("Bad number of lanes should have thrown an Error");
+            fd.getXValue(-1, 0);
+            fail("Bad series should have thrown an Error");
         }
         catch (Error e)
         {
             // Ignore
         }
-        for (int numberOfLanes = 1; numberOfLanes <= 3; numberOfLanes++)
+        try
         {
-            fd = new FundamentalDiagram("Fundamental Diagram", numberOfLanes, aggregationTime, position);
-            assertEquals("SeriesCount should match numberOfLanes", numberOfLanes, fd.getSeriesCount());
-            assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
-            try
-            {
-                fd.getXValue(-1, 0);
-                fail("Bad series should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-            try
-            {
-                fd.getXValue(numberOfLanes, 0);
-                fail("Bad series should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-            double value = fd.getXValue(0, 0);
-            assertTrue("No data should result in NaN", Double.isNaN(value));
-            value = fd.getX(0, 0).doubleValue();
-            assertTrue("No data should result in NaN", Double.isNaN(value));
-            value = fd.getYValue(0, 0);
-            assertTrue("No data should result in NaN", Double.isNaN(value));
-            value = fd.getY(0, 0).doubleValue();
-            assertTrue("No data should result in NaN", Double.isNaN(value));
-            ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
-            ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
-            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-            DoubleScalar.Abs<TimeUnit> time = new DoubleScalar.Abs<TimeUnit>(123, TimeUnit.SECOND);
-            DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
-            DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-            DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
-            Lane lane = CarTest.makeLane();
-            DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(23, LengthUnit.METER);
-            initialLongitudinalPositions.put(lane, initialPosition);
-            OTSDEVSSimulator simulator = CarTest.makeSimulator();
-            int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
-            for (int laneNumber = 0; laneNumber < numberOfLanes; laneNumber++)
-            {
-                LaneBasedIndividualCar<Integer> car =
-                    new LaneBasedIndividualCar<Integer>(1 + laneNumber, null, null, initialLongitudinalPositions, speed, length, width,
+            fd.getXValue(1, 0);
+            fail("Bad series should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        double value = fd.getXValue(0, 0);
+        assertTrue("No data should result in NaN", Double.isNaN(value));
+        value = fd.getX(0, 0).doubleValue();
+        assertTrue("No data should result in NaN", Double.isNaN(value));
+        value = fd.getYValue(0, 0);
+        assertTrue("No data should result in NaN", Double.isNaN(value));
+        value = fd.getY(0, 0).doubleValue();
+        assertTrue("No data should result in NaN", Double.isNaN(value));
+        ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
+        ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
+        DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<TimeUnit> time = new DoubleScalar.Abs<TimeUnit>(123, TimeUnit.SECOND);
+        DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
+        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Lane lane = CarTest.makeLane();
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(23, LengthUnit.METER);
+        initialLongitudinalPositions.put(lane, initialPosition);
+        OTSDEVSSimulator simulator = CarTest.makeSimulator();
+        int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
+        LaneBasedIndividualCar<Integer> car =
+                new LaneBasedIndividualCar<Integer>(1, null, null, initialLongitudinalPositions, speed, length, width,
                         maxSpeed, simulator);
-                fd.addData(laneNumber, car, time);
-                for (int readBackLane = 0; readBackLane < numberOfLanes; readBackLane++)
-                {
-                    for (int sample = 0; sample < 10; sample++)
-                    {
-                        boolean shouldHaveData = readBackLane <= laneNumber && sample == bucket;
-                        value = fd.getXValue(readBackLane, sample);
-                        if (shouldHaveData)
-                        {
-                            double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
-                            assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
-                        }
-                        else
-                        {
-                            assertTrue("Data should be NaN", Double.isNaN(value));
-                        }
-                        value = fd.getX(readBackLane, sample).doubleValue();
-                        if (shouldHaveData)
-                        {
-                            double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
-                            assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
-                        }
-                        else
-                        {
-                            assertTrue("Data should be NaN", Double.isNaN(value));
-                        }
-                        shouldHaveData = readBackLane <= laneNumber && sample <= bucket;
-                        value = fd.getYValue(readBackLane, sample);
-                        if (shouldHaveData)
-                        {
-                            double expectedFlow =
-                                readBackLane <= laneNumber && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
-                            assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
-                        }
-                        else
-                        {
-                            assertTrue("Data should be NaN", Double.isNaN(value));
-                        }
-                        value = fd.getY(readBackLane, sample).doubleValue();
-                        if (shouldHaveData)
-                        {
-                            double expectedFlow =
-                                readBackLane <= laneNumber && sample == bucket ? 3600 / aggregationTime.getSI() : 0;
-                            assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
-                        }
-                        else
-                        {
-                            assertTrue("Data should be NaN", Double.isNaN(value));
-                        }
-                        fd.actionPerformed(setXToSpeed);
-                        value = fd.getYValue(readBackLane, sample);
-                        if (shouldHaveData)
-                        {
-                            double expectedSpeed = readBackLane <= laneNumber && sample == bucket ? speed.getInUnit() : 0;
-                            assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
-                        }
-                        else
-                        {
-                            assertTrue("Data should be NaN", Double.isNaN(value));
-                        }
-                        value = fd.getY(readBackLane, sample).doubleValue();
-                        if (shouldHaveData)
-                        {
-                            double expectedSpeed = readBackLane <= laneNumber && sample == bucket ? speed.getInUnit() : 0;
-                            assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
-                        }
-                        else
-                        {
-                            assertTrue("Data should be NaN", Double.isNaN(value));
-                        }
-                        fd.actionPerformed(resetAxis);
-                    }
-                }
+        fd.addData(car, time);
+        for (int sample = 0; sample < 10; sample++)
+        {
+            boolean shouldHaveData = sample == bucket;
+            value = fd.getXValue(0, sample);
+            if (shouldHaveData)
+            {
+                double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
+                assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
             }
-            // Check that harmonic mean speed is computed
-            speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-            LaneBasedIndividualCar<Integer> car =
-                new LaneBasedIndividualCar<Integer>(1234, null, null, initialLongitudinalPositions, speed, length, width, maxSpeed, simulator);
-            fd.addData(0, car, time);
+            else
+            {
+                assertTrue("Data should be NaN", Double.isNaN(value));
+            }
+            value = fd.getX(0, sample).doubleValue();
+            if (shouldHaveData)
+            {
+                double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
+                assertEquals("Density should be " + expectedDensity, expectedDensity, value, 0.00001);
+            }
+            else
+            {
+                assertTrue("Data should be NaN", Double.isNaN(value));
+            }
+            shouldHaveData = sample <= bucket;
+            value = fd.getYValue(0, sample);
+            if (shouldHaveData)
+            {
+                double expectedFlow = sample == bucket ? 3600 / aggregationTime.getSI() : 0;
+                assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
+            }
+            else
+            {
+                assertTrue("Data should be NaN", Double.isNaN(value));
+            }
+            value = fd.getY(0, sample).doubleValue();
+            if (shouldHaveData)
+            {
+                double expectedFlow = sample == bucket ? 3600 / aggregationTime.getSI() : 0;
+                assertEquals("Flow should be " + expectedFlow, expectedFlow, value, 0.00001);
+            }
+            else
+            {
+                assertTrue("Data should be NaN", Double.isNaN(value));
+            }
             fd.actionPerformed(setXToSpeed);
-            value = fd.getYValue(0, bucket);
-            double expected = 2d / (1d / 100 + 1d / 10);
-            // System.out.println("harmonic speed is " + value + ", expected is " + expected);
-            assertEquals("Harmonic mean of 10 and 100 is " + expected, expected, value, 0.0001);
-            // Test the actionPerformed method with various malformed ActionEvents.
-            try
+            value = fd.getYValue(0, sample);
+            if (shouldHaveData)
             {
-                fd.actionPerformed(new ActionEvent(fd, 0, "bla"));
-                fail("Bad ActionEvent should have thrown an Error");
+                double expectedSpeed = sample == bucket ? speed.getInUnit() : 0;
+                assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
             }
-            catch (Error e)
+            else
             {
-                // Ignore
+                assertTrue("Data should be NaN", Double.isNaN(value));
             }
-            try
+            value = fd.getY(0, sample).doubleValue();
+            if (shouldHaveData)
             {
-                fd.actionPerformed(new ActionEvent(fd, 0, "Speed/bla"));
-                fail("Bad ActionEvent should have thrown an Error");
+                double expectedSpeed = sample == bucket ? speed.getInUnit() : 0;
+                assertEquals("Speed should be " + expectedSpeed, expectedSpeed, value, 0.00001);
             }
-            catch (Error e)
+            else
             {
-                // Ignore
+                assertTrue("Data should be NaN", Double.isNaN(value));
             }
-            try
-            {
-                fd.actionPerformed(new ActionEvent(fd, 0, "Flow/bla"));
-                fail("Bad ActionEvent should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-            try
-            {
-                fd.actionPerformed(new ActionEvent(fd, 0, "Density/bla"));
-                fail("Bad ActionEvent should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-            try
-            {
-                fd.actionPerformed(new ActionEvent(fd, 0, "bla/Speed"));
-                fail("Bad ActionEvent should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-            try
-            {
-                fd.actionPerformed(new ActionEvent(fd, 0, "bla/Flow"));
-                fail("Bad ActionEvent should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
-            try
-            {
-                fd.actionPerformed(new ActionEvent(fd, 0, "bla/Density"));
-                fail("Bad ActionEvent should have thrown an Error");
-            }
-            catch (Error e)
-            {
-                // Ignore
-            }
+            fd.actionPerformed(resetAxis);
+        }
+        // Check that harmonic mean speed is computed
+        speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+        car =
+                new LaneBasedIndividualCar<Integer>(1234, null, null, initialLongitudinalPositions, speed, length,
+                        width, maxSpeed, simulator);
+        fd.addData(car, time);
+        fd.actionPerformed(setXToSpeed);
+        value = fd.getYValue(0, bucket);
+        double expected = 2d / (1d / 100 + 1d / 10);
+        // System.out.println("harmonic speed is " + value + ", expected is " + expected);
+        assertEquals("Harmonic mean of 10 and 100 is " + expected, expected, value, 0.0001);
+        // Test the actionPerformed method with various malformed ActionEvents.
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "bla"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "Speed/bla"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "Flow/bla"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "Density/bla"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "bla/Speed"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "bla/Flow"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
+        }
+        try
+        {
+            fd.actionPerformed(new ActionEvent(fd, 0, "bla/Density"));
+            fail("Bad ActionEvent should have thrown an Error");
+        }
+        catch (Error e)
+        {
+            // Ignore
         }
     }
 
@@ -287,7 +255,7 @@ public class FundamentalDiagramPlotTest
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
-        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", 1, aggregationTime, position);
+        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, XXXXX, position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
