@@ -307,8 +307,11 @@ class LaneSimulationModel implements OTSModelInterface
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
-    /** The Lanes that contains the simulated Cars. */
-    Lane lane1, lane2;
+    /** The left Lane that contains simulated Cars. */
+    Lane lane1;
+    
+    /** The right Lane that contains simulated Cars. */
+    Lane lane2;
 
     /** the speed limit. */
     DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -566,9 +569,8 @@ class LaneSimulationModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            IDMCar car =
-                    new IDMCar(++this.carsCreated, null, this.simulator, gtuFollowingModel, vehicleLength,
-                            this.simulator.getSimulatorTime().get(), initialPositions, initialSpeed);
+            new IDMCar(++this.carsCreated, null, this.simulator, gtuFollowingModel, vehicleLength, this.simulator
+                    .getSimulatorTime().get(), initialPositions, initialSpeed);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {
@@ -626,6 +628,8 @@ class LaneSimulationModel implements OTSModelInterface
          * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the new IDMCar
          * @throws NamingException on ???
          * @throws RemoteException on Communications failure
+         * @throws SimRuntimeException on ???
+         * @throws NetworkException on network inconsistency
          */
         public IDMCar(final int id, GTUType<String> gtuType, final OTSDEVSSimulatorInterface simulator,
                 final GTUFollowingModel carFollowingModel, DoubleScalar.Rel<LengthUnit> vehicleLength,

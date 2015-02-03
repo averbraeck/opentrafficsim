@@ -547,8 +547,8 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             {
                 return;
             }
-            Lane lane = positions(getFront()).keySet().iterator().next();
-            if (position(lane, getFront()).getSI() > getMaximumDistance().getSI())
+            Lane theLane = positions(getFront()).keySet().iterator().next();
+            if (position(theLane, getFront()).getSI() > getMaximumDistance().getSI())
             {
                 FundamentalDiagramPlotsModel.this.cars.remove(this);
                 return;
