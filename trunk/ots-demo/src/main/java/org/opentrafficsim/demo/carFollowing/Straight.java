@@ -350,9 +350,6 @@ class StraightModel implements OTSModelInterface
     /** The Lane that contains the simulated Cars. */
     private Lane lane;
 
-    /** the speed limit. */
-    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-
     /** the contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 

@@ -329,9 +329,6 @@ class SequentialModel implements OTSModelInterface
     /** number of cars created. */
     private int carsCreated = 0;
 
-    /** the car following model, e.g. IDM Plus. */
-    private GTUFollowingModel carFollowingModel;
-
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
@@ -514,9 +511,6 @@ class SequentialModel implements OTSModelInterface
         {
             System.out.println("Caught exception " + e);
         }
-        
-        this.carFollowingModel = new IDMPlus();
-
     }
 
     /** {@inheritDoc} */
