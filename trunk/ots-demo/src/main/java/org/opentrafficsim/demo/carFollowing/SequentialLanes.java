@@ -8,8 +8,10 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
@@ -26,7 +28,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Link;
@@ -308,6 +312,18 @@ class SequentialModel implements OTSModelInterface
     /** The nodes of our network in the order that all GTUs will visit them. */
     private ArrayList<Node> nodes = new ArrayList<Node>();
 
+    /** the car following model, e.g. IDM Plus for cars. */
+    protected GTUFollowingModel carFollowingModelCars;
+
+    /** the car following model, e.g. IDM Plus for trucks. */
+    protected GTUFollowingModel carFollowingModelTrucks;
+
+    /** The probability that the next generated GTU is a passenger car. */
+    double carProbability;
+
+    /** The lane change model. */
+    protected AbstractLaneChangeModel laneChangeModel;
+
     /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
 
@@ -323,14 +339,14 @@ class SequentialModel implements OTSModelInterface
     /** The Lane where newly created Cars initially placed on. */
     private Lane initialLane;
 
-    /** the speed limit. */
-    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-
     /** maximum distance. */
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(2001, LengthUnit.METER);
 
     /** the contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
+
+    /** The random number generator used to decide what kind of GTU to generate. */
+    Random randomGenerator = new Random(12345);
 
     /** User settable properties. */
     private ArrayList<AbstractProperty<?>> properties = null;
@@ -403,7 +419,6 @@ class SequentialModel implements OTSModelInterface
                 exception.printStackTrace();
             }
         }
-        this.carFollowingModel = new IDMPlus();
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
         // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
@@ -415,6 +430,94 @@ class SequentialModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
                     "drawGraphs", null);
         }
+        try
+        {
+            String carFollowingModelName = null;
+            CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
+            AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");
+            if (null == cfmp)
+            {
+                throw new Error("Cannot find \"Car following model\" property");
+            }
+            if (cfmp instanceof SelectionProperty)
+            {
+                carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+            }
+            else
+            {
+                throw new Error("\"Car following model\" property has wrong type");
+            }
+            Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
+                    new CompoundProperty("", "", this.properties, false, 0).iterator();
+            while (iterator.hasNext())
+            {
+                AbstractProperty<?> ap = iterator.next();
+                if (ap instanceof SelectionProperty)
+                {
+                    SelectionProperty sp = (SelectionProperty) ap;
+                    if ("Car following model".equals(sp.getShortName()))
+                    {
+                        carFollowingModelName = sp.getValue();
+                    }
+                }
+                else if (ap instanceof ProbabilityDistributionProperty)
+                {
+                    ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
+                    if (ap.getShortName().equals("Traffic composition"))
+                    {
+                        this.carProbability = pdp.getValue()[0];
+                    }
+                }
+                else if (ap instanceof CompoundProperty)
+                {
+                    CompoundProperty cp = (CompoundProperty) ap;
+                    if (ap.getShortName().equals("Output"))
+                    {
+                        continue; // Output settings are handled elsewhere
+                    }
+                    if (ap.getShortName().contains("IDM"))
+                    {
+                        // System.out.println("Car following model name appears to be " + ap.getShortName());
+                        DoubleScalar.Abs<AccelerationUnit> a = IDMPropertySet.getA(cp);
+                        DoubleScalar.Abs<AccelerationUnit> b = IDMPropertySet.getB(cp);
+                        DoubleScalar.Rel<LengthUnit> s0 = IDMPropertySet.getS0(cp);
+                        DoubleScalar.Rel<TimeUnit> tSafe = IDMPropertySet.getTSafe(cp);
+                        GTUFollowingModel gtuFollowingModel = null;
+                        if (carFollowingModelName.equals("IDM"))
+                        {
+                            gtuFollowingModel = new IDM(a, b, s0, tSafe, 1.0);
+                        }
+                        else if (carFollowingModelName.equals("IDM+"))
+                        {
+                            gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+                        }
+                        else
+                        {
+                            throw new Error("Unknown gtu following model: " + carFollowingModelName);
+                        }
+                        if (ap.getShortName().contains(" Car "))
+                        {
+                            this.carFollowingModelCars = gtuFollowingModel;
+                        }
+                        else if (ap.getShortName().contains(" Truck "))
+                        {
+                            this.carFollowingModelTrucks = gtuFollowingModel;
+                        }
+                        else
+                        {
+                            throw new Error("Cannot determine gtu type for " + ap.getShortName());
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught exception " + e);
+        }
+        
+        this.carFollowingModel = new IDMPlus();
+
     }
 
     /** {@inheritDoc} */
@@ -464,16 +567,17 @@ class SequentialModel implements OTSModelInterface
      */
     protected final void generateCar()
     {
+        boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.initialLane, initialPosition);
         try
         {
-            DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
-            IDMCar car =
-                    new IDMCar(++this.carsCreated, null, this.simulator, this.carFollowingModel, vehicleLength,
-                            this.simulator.getSimulatorTime().get(), initialPositions, initialSpeed);
+            DoubleScalar.Rel<LengthUnit> vehicleLength =
+                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            new IDMCar(++this.carsCreated, null, this.simulator, this.carFollowingModel, vehicleLength, this.simulator
+                    .getSimulatorTime().get(), initialPositions, initialSpeed);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
