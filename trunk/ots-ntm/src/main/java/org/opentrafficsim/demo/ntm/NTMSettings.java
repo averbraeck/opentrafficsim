@@ -44,10 +44,17 @@ public class NTMSettings
 
     /** generate new routes after a certain time interval */
     private DoubleScalar.Rel<TimeUnit> reRouteTimeInterval;
-    
-    /** number of routes for generation*/
+
+    /** number of routes for generation */
     private int numberOfRoutes;
-    
+
+    // shortest paths creation
+
+    /** */
+    private double weightNewRoutes = 0.4;
+
+    /** */
+    private boolean reRoute = false;
     /** */
     private String path;
 
@@ -57,9 +64,14 @@ public class NTMSettings
      * @param descriptionProject
      * @param timeStepDurationNTM
      * @param timeStepDurationCTM
+     * @param reRouteTimeInterval 
+     * @param numberOfRoutes 
+     * @param weight_newRoutes 
+     * @param path 
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
-            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval, int numberOfRoutes, String path)
+            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
+            int numberOfRoutes, double weightNewRoutes, boolean reRoute, String path)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -75,14 +87,15 @@ public class NTMSettings
         this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);
         this.reRouteTimeInterval = reRouteTimeInterval;
         this.numberOfRoutes = numberOfRoutes;
+        this.weightNewRoutes = weightNewRoutes;
+        this.reRoute = reRoute;
         this.path = path;
     }
 
     /**
-     * @param startTime
-     * @param durationOfSimulation
-     * @param descriptionProject
-     * @param timeStepDuration
+     * @param timeStepDurationNTM 
+     * @param timeStepDurationCTM 
+
      */
     public NTMSettings(Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM)
     {
@@ -91,10 +104,8 @@ public class NTMSettings
     }
 
     /**
-     * @param startTime
-     * @param durationOfSimulation
-     * @param descriptionProject
-     * @param timeStepDuration
+     * @param timeStepDurationNTM 
+
      */
     public NTMSettings(Rel<TimeUnit> timeStepDurationNTM)
     {
@@ -170,7 +181,7 @@ public class NTMSettings
      */
     public DoubleScalar.Rel<TimeUnit> getTimeStepDurationCellTransmissionModel()
     {
-        return timeStepDurationCellTransmissionModel;
+        return this.timeStepDurationCellTransmissionModel;
     }
 
     /**
@@ -203,7 +214,7 @@ public class NTMSettings
      */
     public DoubleScalar.Rel<TimeUnit> getReRouteTimeInterval()
     {
-        return reRouteTimeInterval;
+        return this.reRouteTimeInterval;
     }
 
     /**
@@ -219,7 +230,7 @@ public class NTMSettings
      */
     public int getNumberOfRoutes()
     {
-        return numberOfRoutes;
+        return this.numberOfRoutes;
     }
 
     /**
@@ -235,7 +246,7 @@ public class NTMSettings
      */
     public String getPath()
     {
-        return path;
+        return this.path;
     }
 
     /**
@@ -244,6 +255,38 @@ public class NTMSettings
     public void setPath(String path)
     {
         this.path = path;
+    }
+
+    /**
+     * @return weight_newRoutes.
+     */
+    public double getWeightNewRoutes()
+    {
+        return this.weightNewRoutes;
+    }
+
+    /**
+     * @param weight_newRoutes set weight_newRoutes.
+     */
+    public void setWeightNewRoutes(double weightNewRoutes)
+    {
+        this.weightNewRoutes = weightNewRoutes;
+    }
+
+    /**
+     * @return reRoute.
+     */
+    public boolean isReRoute()
+    {
+        return this.reRoute;
+    }
+
+    /**
+     * @param reRoute set reRoute.
+     */
+    public void setReRoute(boolean reRoute)
+    {
+        this.reRoute = reRoute;
     }
 
 }

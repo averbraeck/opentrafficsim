@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -130,6 +134,9 @@ public class NTMModel implements OTSModelInterface
     /** use the bigger areas (true) or the detailed areas (false). */
     public boolean COMPRESS_AREAS = false;
 
+    /** */
+    private String output = "";
+
     /**
      * Constructor to make the graphs with the right type.
      */
@@ -165,9 +172,15 @@ public class NTMModel implements OTSModelInterface
             this.shpConnectors = new HashMap<>();
             String fileDemand = "";
             String fileCompressedDemand = "";
+            String fileNameCapacityRestraint = "";
             int numberOfRoutes = 1;
+            double weightNewRoutes = 0.6;
+            boolean reRoute = false;
             // determine the files to read
+            // The Hague
             int debugFiles = 0;
+            // Debug3
+            debugFiles = 3;
 
             if (debugFiles == 0)
             {
@@ -184,13 +197,18 @@ public class NTMModel implements OTSModelInterface
                 // false: mixed file with centroids (number starts with "C") and normal nodes
                 this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
                 this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
-                this.areas = ShapeFileReader.readAreas(path +"/selectedAreasGT1.shp", this.centroids);
+                this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
                 fileDemand = "/cordonmatrix_pa_os.txt";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
-                        + "/profiles.txt", ";", "\\s+"));
+                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
+                if (this.COMPRESS_AREAS)
+                {
+                    fileNameCapacityRestraint = path + "/capRestraintsBigAreas.txt";
+                }
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";",
+                        "\\s+"));
                 numberOfRoutes = 1;
 
             }
@@ -198,24 +216,22 @@ public class NTMModel implements OTSModelInterface
             else if (debugFiles == 3)
             {
                 path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
-                this.centroids =
-                        ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_centroids.shp",
-                                "NODENR", true, true);
-                this.areas =
-                        ShapeFileReader.readAreas(this.getSettingsNTM().getPath() + "/qgistest_areas.shp",
-                                this.centroids);
-                this.nodes =
-                        ShapeFileReader.ReadNodes(this.getSettingsNTM().getPath() + "/qgistest_nodes.shp", "NODENR",
-                                false, false);
-                ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_links.shp", this.shpLinks,
-                        this.shpConnectors, this.nodes, this.centroids, "meter");
-                ShapeFileReader.readLinks(this.getSettingsNTM().getPath() + "/qgistest_feederlinks.shp", this.shpLinks,
-                        this.shpConnectors, this.nodes, this.centroids, "meter");
+                this.centroids = ShapeFileReader.ReadNodes(path + "/qgistest_centroids.shp", "NODENR", true, true);
+                this.areas = ShapeFileReader.readAreas(path + "/qgistest_areas.shp", this.centroids);
+                this.nodes = ShapeFileReader.ReadNodes(path + "/qgistest_nodes.shp", "NODENR", false, false);
+                ShapeFileReader.readLinks(path + "/qgistest_links.shp", this.shpLinks, this.shpConnectors, this.nodes,
+                        this.centroids, "meter");
+                ShapeFileReader.readLinks(path + "/qgistest_feederlinks.shp", this.shpLinks, this.shpConnectors,
+                        this.nodes, this.centroids, "meter");
+                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
+                fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
                         + "/profiles_only_firstHour.txt", ";", "\\s+"));
                 numberOfRoutes = 1;
-
+                reRoute = true;
+                int variant = 3;
+                this.output = "/output" + variant;
             }
 
             else if (debugFiles == 1)
@@ -225,15 +241,45 @@ public class NTMModel implements OTSModelInterface
                 this.nodes = ShapeFileReader.ReadNodes("/nodes.shp", "NODENR", false, false);
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
+                fileNameCapacityRestraint = this.getSettingsNTM().getPath() + "/capRestraintsAreas.txt";
+
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
                         + "/profiles_only_firstHour.txt", ";", "\\s+"));
                 numberOfRoutes = 1;
 
             }
+            // copy input files to the output map
+            File dir = new File(path + this.getOutput());
+            if (!dir.exists())
+            {
+                boolean result = false;
+
+                try
+                {
+                    dir.mkdir();
+                    result = true;
+                }
+                catch (SecurityException se)
+                {
+                    // handle it
+                }
+                if (result)
+                {
+                    System.out.println("DIR created");
+                }
+            }
+            Path from = Paths.get(path + "/profiles_only_firstHour.txt");
+            Path to = Paths.get(path + this.getOutput() + "/profiles_only_firstHour.txt");
+            Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
+            from = Paths.get(path + fileDemand);
+            to = Paths.get(path + this.getOutput() + fileDemand);
+            Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
 
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
-                            timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes, path);
+                            timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes, weightNewRoutes,
+                            reRoute, path);
+
             // the Map areas contains a reference to the centroids!
             // save the selected and created areas to a shape file
             // WriteToShp.createShape(this.areas);
@@ -310,14 +356,12 @@ public class NTMModel implements OTSModelInterface
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, areasToUse, centroidsToUse, shpConnectorsToUse);
 
-            String file = this.getSettingsNTM().getPath() + "/parametersNTM.txt";
-            readOrSetParametersNTM(areasToUse, file);
+            String fileNameParametersNTM = this.getSettingsNTM().getPath() + "/parametersNTM.txt";
+            readOrSetParametersNTM(areasToUse, fileNameParametersNTM);
 
-            file = this.getSettingsNTM().getPath() + "/capRestraintsAreas.txt";
-            readOrSetCapacityRestraints(this, areasToUse, file);
+            readOrSetCapacityRestraints(this, areasToUse, fileNameCapacityRestraint);
 
-            // shortest paths creation
-            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes());
+            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), weightNewRoutes, true);
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
@@ -1007,6 +1051,22 @@ public class NTMModel implements OTSModelInterface
     public void setNodeAreaGraphMap(Map<String, Node> nodeAreaGraphMap)
     {
         this.nodeAreaGraphMap = nodeAreaGraphMap;
+    }
+
+    /**
+     * @return output.
+     */
+    public String getOutput()
+    {
+        return output;
+    }
+
+    /**
+     * @param output set output.
+     */
+    public void setOutput(String output)
+    {
+        this.output = output;
     }
 
     /*

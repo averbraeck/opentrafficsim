@@ -252,94 +252,95 @@ public class WriteOutput
         // for testing we open a file and write some results:
         // TODO testing
 
-        String fileName = "NTMfluxToNeighbour";
+        String fileName = "/NTMfluxToNeighbour";
         String description = "fluxes";
         String DATATYPE = "fluxes";
+
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataFluxToNeighbourNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap, indexNode,
                 DATATYPE);
 
-        fileName = "NTMdeparturesByOD";
+        fileName = "/NTMdeparturesByOD";
         description = "departures by OD";
         DATATYPE = "departuresOD";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataODDeparturesNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataODDeparturesNTMOut, ODDeparturesNTMMap, indexNode,
                 DATATYPE);
 
-        fileName = "NTMarrivalsByOD";
+        fileName = "/NTMarrivalsByOD";
         description = "arrived by OD";
         DATATYPE = "arrivalsOD";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataODArrivalsNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataODArrivalsNTMOut, ODArrivalsNTMMap, indexNode, DATATYPE);
 
-        fileName = "NTMarrivals";
+        fileName = "/NTMarrivals";
         description = "Arrived trips";
         DATATYPE = "arrivals";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput()+ fileName + ".txt");
             dataArrivalsNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataArrivalsNTMOut, arrivalsNTM, DATATYPE);
 
-        fileName = "NTMdepartures";
+        fileName = "/NTMdepartures";
         description = "departed trips";
         DATATYPE = "departures";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataDeparturesNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataDeparturesNTMOut, departuresNTM, DATATYPE);
 
-        fileName = "NTMaccumulation";
+        fileName = "/NTMaccumulation";
         description = "Accumulation trips";
         DATATYPE = "accumulation";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataAccumulationNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataAccumulationNTMOut, accumulationNTM, DATATYPE);
 
-        fileName = "NTMdemand";
+        fileName = "/NTMdemand";
         description = "Demand trips";
         DATATYPE = "demand";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataDemandNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataDemandNTMOut, demandNTM, DATATYPE);
 
-        fileName = "NTMsupply";
+        fileName = "/NTMsupply";
         description = "Supply trips";
         DATATYPE = "supply";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataSupplyNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataSupplyNTMOut, supplyNTM, DATATYPE);
 
-        fileName = "NTMparametersNFD";
+        fileName = "/NTMparametersNFD";
         description = "Parameters NFD";
         DATATYPE = "parametersNFD";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + "/output/" + fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataParametersNFDOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataParametersNFDOut, parametersNFD, DATATYPE);

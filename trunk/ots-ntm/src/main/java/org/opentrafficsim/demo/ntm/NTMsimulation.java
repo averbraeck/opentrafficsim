@@ -105,15 +105,31 @@ public class NTMsimulation
         // . - accumulated cars in this area/node/cell, heading on the way to a certain destination
         // . - flow in this time-step to neighbour from this area to destination
 
-        if (model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) * steps
-                % model.getSettingsNTM().getReRouteTimeInterval().getInUnit(TimeUnit.SECOND) == 0)
+        if (model.getSettingsNTM().isReRoute())
         {
-            System.out.println("reroute");
-            // shortest paths creation
-            // Routes.createRoutes(model, model.getSettingsNTM().getNumberOfRoutes());
-
+            if (model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) * steps
+                    % model.getSettingsNTM().getReRouteTimeInterval().getInUnit(TimeUnit.SECOND) == 0)
+            {
+                System.out.println("reroute");
+                // new K-shortest paths creation
+                Routes.createRoutes(model, model.getSettingsNTM().getNumberOfRoutes(), model.getSettingsNTM()
+                        .getWeightNewRoutes(), false);
+            }
         }
 
+        if (steps == 28)
+        {
+            for (Node node : model.getAreaGraph().vertexSet())
+            {
+                if (node.getId().equals("C5"))
+                {
+                    BoundedNode bNode = (BoundedNode) node;
+                    CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) bNode.getCellBehaviour();
+                    Abs<FrequencyUnit> cap = new DoubleScalar.Abs<FrequencyUnit>(100.0, FrequencyUnit.PER_HOUR);
+                    cellBehaviourNTM.setMaxCapacity(cap);
+                }
+            }
+        }
         if (steps == 1)
         {
             for (Node node : model.getAreaGraph().vertexSet())
@@ -250,7 +266,7 @@ public class NTMsimulation
                                                                             .getSettingsNTM().getTimeStepDurationNTM());
                                     // **** RELEVANT
                                     tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
-                                    tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips); 
+                                    tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips);
                                     tripInfoByDestination.addDepartedTrips(startingTrips);
 
                                     // increases the total number of accumulated cars in the area, that is
@@ -804,7 +820,7 @@ public class NTMsimulation
         if (model.WRITEDATA)
         {
             // WriteOutput.writeOutputDataFlowLinks(model, steps, MAXSTEPS);
-            //WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);
+            WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);
         }
     }
 

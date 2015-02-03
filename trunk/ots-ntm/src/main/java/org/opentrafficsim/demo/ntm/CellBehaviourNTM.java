@@ -73,6 +73,7 @@ public class CellBehaviourNTM extends CellBehaviour
                 parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
                         * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         this.maxCapacity = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
+        this.area = area;
         // gedeeld door gemiddelde triplengte in een gebied
         // (lengte zone?)
 
@@ -88,8 +89,16 @@ public class CellBehaviourNTM extends CellBehaviour
         double densityDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         Abs<LinearDensityUnit> density =
                 new DoubleScalar.Abs<LinearDensityUnit>(densityDouble, LinearDensityUnit.PER_KILOMETER);
-        double speedDouble =
+        double speedDouble;
+        if (densityDouble > this.getParametersNTM().getAccCritical().get(0))
+        {
+             speedDouble =
                 actualCapacity.getInUnit(FrequencyUnit.PER_HOUR) / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+        }
+        else
+        {
+            speedDouble = this.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+        }            
         return this.setCurrentSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
     }
 
