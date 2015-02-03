@@ -77,15 +77,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @param index int; the index of the path element; if -1, the total length of the path is returned
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
      */
-    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(int index)
+    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(final int index)
     {
-        if (-1 == index)
-        {
-            index = this.cumulativeLengths.size() - 1;
-        }
+        int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
         try
         {
-            return this.cumulativeLengths.get(index);
+            return this.cumulativeLengths.get(useIndex);
         }
         catch (ValueException exception)
         {
@@ -286,7 +283,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         {
             if (dcl instanceof XYPlot)
             {
-                // configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
+                configureAxis(((XYPlot) dcl).getDomainAxis(), this.maximumTime.getSI());
             }
         }
         notifyListeners(new DatasetChangeEvent(this, null)); // This guess work actually works!
@@ -334,7 +331,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
     /** {@inheritDoc} */
-    public final void addData(final AbstractLaneBasedGTU<?> car, Lane lane) throws NetworkException, RemoteException
+    public final void addData(final AbstractLaneBasedGTU<?> car, final Lane lane) throws NetworkException,
+            RemoteException
     {
         // final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
@@ -432,7 +430,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             return this.currentEndPosition;
         }
 
-        /** ID of the GTU */
+        /** ID of the GTU. */
         private final Object id;
 
         /**
@@ -454,7 +452,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * Construct a Trajectory.
          * @param id Object; Id of the new Trajectory
          */
-        public Trajectory(Object id)
+        public Trajectory(final Object id)
         {
             this.id = id;
         }
@@ -468,7 +466,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * @throws NetworkException when car is not on lane anymore
          * @throws RemoteException when communication fails
          */
-        public final void addSegment(final AbstractLaneBasedGTU<?> car, Lane lane, double positionOffset)
+        public final void addSegment(final AbstractLaneBasedGTU<?> car, final Lane lane, final double positionOffset)
                 throws NetworkException, RemoteException
         {
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
@@ -495,9 +493,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 /*-
                 if (sample - this.firstSample > this.positions.size())
                 {
-                    System.out.println("Inserting " + (sample - this.positions.size()) + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
+                    System.out.println("Inserting " + (sample - this.positions.size()) 
+                            + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
                 }
-                */
+                 */
                 while (sample - this.firstSample > this.positions.size())
                 {
                     // System.out.println("Inserting nulls");
