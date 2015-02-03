@@ -483,16 +483,6 @@ class TrajectoriesModel implements OTSModelInterface
     }
 
     /**
-     * @param idmCar IDMCar
-     * @throws NetworkException when car not in lane
-     * @throws RemoteException when communication fails
-     */
-    final void addToTrajectoryPlot(final IDMCar idmCar) throws NetworkException, RemoteException
-    {
-        this.trajectoryPlot.addData(idmCar);
-    }
-
-    /**
      * Notify the contour plots that the underlying data has changed.
      */
     protected final void drawGraph()
