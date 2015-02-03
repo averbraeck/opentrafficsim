@@ -99,6 +99,7 @@ public class SuperDemo
         mainPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         final ArrayList<WrappableSimulation> demonstrations = new ArrayList<WrappableSimulation>();
         demonstrations.add(new Straight());
+        demonstrations.add(new SequentialLanes());
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
         // final JPanel left = new LabeledPanel("Simulation Settings");
