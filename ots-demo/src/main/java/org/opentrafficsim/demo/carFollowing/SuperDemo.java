@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.locale.DefaultLocale;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -184,7 +185,7 @@ public class SuperDemo
                     mainPanel.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel(),
                             BorderLayout.CENTER);
                 }
-                catch (RemoteException | SimRuntimeException exception)
+                catch (RemoteException | SimRuntimeException | NetworkException exception)
                 {
                     exception.printStackTrace();
                 }
