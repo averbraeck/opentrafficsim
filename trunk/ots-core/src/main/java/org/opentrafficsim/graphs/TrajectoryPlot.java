@@ -492,10 +492,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 {
                     this.firstSample = sample;
                 }
+                /*-
                 if (sample - this.firstSample > this.positions.size())
                 {
                     System.out.println("Inserting " + (sample - this.positions.size()) + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
                 }
+                */
                 while (sample - this.firstSample > this.positions.size())
                 {
                     // System.out.println("Inserting nulls");
