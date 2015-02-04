@@ -258,10 +258,12 @@ public class BuildGraph
 
                             Abs<SpeedUnit> speedA;
                             Abs<SpeedUnit> speedB;
-                            if (aA.getParametersNTM() != null)
+                            CellBehaviourNTM cellBehaviourNTMA = (CellBehaviourNTM) cA.getCellBehaviour();
+                            CellBehaviourNTM cellBehaviourNTMB = (CellBehaviourNTM) cA.getCellBehaviour();
+                            if (cellBehaviourNTMA.getParametersNTM() != null)
                             {
-                                speedA = aA.getParametersNTM().getFreeSpeed();
-                                speedB = aB.getParametersNTM().getFreeSpeed();
+                                speedA = cellBehaviourNTMA.getParametersNTM().getFreeSpeed();
+                                speedB = cellBehaviourNTMB.getParametersNTM().getFreeSpeed();
                             }
                             else
                             {

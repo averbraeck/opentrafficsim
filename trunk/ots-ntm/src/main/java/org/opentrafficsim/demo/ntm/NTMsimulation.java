@@ -15,6 +15,7 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -126,7 +127,7 @@ public class NTMsimulation
                     BoundedNode bNode = (BoundedNode) node;
                     CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) bNode.getCellBehaviour();
                     Abs<FrequencyUnit> cap = new DoubleScalar.Abs<FrequencyUnit>(100.0, FrequencyUnit.PER_HOUR);
-                    cellBehaviourNTM.setMaxCapacity(cap);
+                    cellBehaviourNTM.setMaxCapacityNTMArea(cap);
                 }
             }
         }
@@ -141,8 +142,11 @@ public class NTMsimulation
                     CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
                     double tripByTimeStep =
                             model.getSettingsNTM().getTimeStepDurationNTM().getSI()
-                                    * cellBehaviourNTM.getMaxCapacity().getSI();
+                                    * cellBehaviourNTM.getMaxCapacityNTMArea().getSI();
                     cellBehaviourNTM.setSupply(tripByTimeStep);
+                    // initial speed (no accumulation yet)
+                    cellBehaviourNTM.setCurrentSpeed(cellBehaviourNTM.getParametersNTM().getFreeSpeed());
+
                 }
                 else if (origin.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
@@ -304,7 +308,7 @@ public class NTMsimulation
                             // **** RELEVANT: set DEMAND
                             Abs<FrequencyUnit> tripByHour =
                                     cellBehaviourNTM.retrieveDemand(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacity(), cellBehaviourNTM.getParametersNTM());
+                                            cellBehaviourNTM.getMaxCapacityNTMArea(), cellBehaviourNTM.getParametersNTM());
                             double tripByTimeStep =
                                     model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
                             cellBehaviourNTM.setDemand(tripByTimeStep);
@@ -315,10 +319,12 @@ public class NTMsimulation
                             // **** RELEVANT: set SUPPLY
                             tripByHour =
                                     cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacity(), cellBehaviourNTM.getParametersNTM());
+                                            cellBehaviourNTM.getMaxCapacityNTMArea(), cellBehaviourNTM.getParametersNTM());
                             tripByTimeStep =
                                     model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
                             cellBehaviourNTM.setSupply(tripByTimeStep);
+                            cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars())
+                                            .getInUnit(SpeedUnit.KM_PER_HOUR);
                         }
 
                         // the border, or CORDON areas, act as sink/source for traffic
@@ -349,7 +355,7 @@ public class NTMsimulation
                             CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
                             Abs<FrequencyUnit> tripByHour =
                                     cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacity(), cellBehaviourNTM.getParametersNTM());
+                                            cellBehaviourNTM.getMaxCapacityNTMArea(), cellBehaviourNTM.getParametersNTM());
                             double tripByTimeStep =
                                     model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
                             cellBehaviourNTM.setSupply(tripByTimeStep);

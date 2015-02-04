@@ -46,7 +46,7 @@ public class CsvFileWriter
                 textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(2));
                 textOut += ", ";
                 textOut +=
-                        String.format("%.1f", (nodeBehaviour.getMaxCapacity().getInUnit(FrequencyUnit.PER_HOUR))
+                        String.format("%.1f", (nodeBehaviour.getMaxCapacityNTMArea().getInUnit(FrequencyUnit.PER_HOUR))
                                 / nodeBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER));
                 parametersNTMOut.write(textOut + " \n");
             }

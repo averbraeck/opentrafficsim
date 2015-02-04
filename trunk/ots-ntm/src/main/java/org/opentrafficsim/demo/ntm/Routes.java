@@ -49,6 +49,7 @@ public class Routes
             // create stochastic link edge weights
             for (LinkEdge le : model.getAreaGraph().edgeSet())
             {
+                double rateCongestedVersusFreeSpeed = 1.0;
                 if (!initiateSimulation)
                 {
                     BoundedNode startNode =
@@ -67,19 +68,18 @@ public class Routes
                             double freeSpeedStart =
                                     cellBehaviourStart.getParametersNTM().getFreeSpeed()
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
-                            double speedRate = currentSpeedStart / freeSpeedStart;
+                            rateCongestedVersusFreeSpeed = currentSpeedStart / freeSpeedStart;
                             CellBehaviourNTM cellBehaviourEnd = (CellBehaviourNTM) endNode.getCellBehaviour();
                             double currentSpeedEnd =
                                     cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars())
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedEnd =
                                     cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                            speedRate = currentSpeedEnd / freeSpeedEnd;
+                            rateCongestedVersusFreeSpeed = currentSpeedEnd / freeSpeedEnd;
                         }
-
                     }
                 }
-                double weight = model.getAreaGraph().getEdgeWeight(le) * Gaussian();
+                double weight = rateCongestedVersusFreeSpeed * model.getAreaGraph().getEdgeWeight(le) * Gaussian();
                 model.getAreaGraph().setEdgeWeight(le, weight);
             }
 

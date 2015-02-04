@@ -34,15 +34,15 @@ public class CellBehaviourNTM extends CellBehaviour
 
     /** currentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> freeSpeed;
-    
+
     /** currentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
 
     /** currentSpeed: average current speed of Cars in this CELL. */
-    private DoubleScalar.Abs<SpeedUnit> currentTravelTime;
+    private Rel<TimeUnit> currentTravelTime;
 
     /** */
-    private Abs<FrequencyUnit> maxCapacity;
+    private Abs<FrequencyUnit> maxCapacityNTMArea;
 
     /** */
     private HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity;
@@ -70,9 +70,9 @@ public class CellBehaviourNTM extends CellBehaviour
         // parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
         // * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         double maxCap =
-                parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
+                parametersNTM.getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR)
                         * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-        this.maxCapacity = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
+        this.maxCapacityNTMArea = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
         this.area = area;
         // gedeeld door gemiddelde triplengte in een gebied
         // (lengte zone?)
@@ -85,20 +85,20 @@ public class CellBehaviourNTM extends CellBehaviour
      */
     public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars)
     {
-        Abs<FrequencyUnit> actualCapacity = retrieveSupply(accumulatedCars, this.maxCapacity, this.getParametersNTM());
-        double densityDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-        Abs<LinearDensityUnit> density =
-                new DoubleScalar.Abs<LinearDensityUnit>(densityDouble, LinearDensityUnit.PER_KILOMETER);
+        double densityPerUnitDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        Abs<LinearDensityUnit> densityPerUnit =
+                new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
         double speedDouble;
-        if (densityDouble > this.getParametersNTM().getAccCritical().get(0))
+        if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(0))
         {
-             speedDouble =
-                actualCapacity.getInUnit(FrequencyUnit.PER_HOUR) / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+            speedDouble =
+                    this.getParametersNTM().getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR)
+                            / densityPerUnit.getInUnit(LinearDensityUnit.PER_KILOMETER);
         }
         else
         {
             speedDouble = this.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-        }            
+        }
         return this.setCurrentSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
     }
 
@@ -106,12 +106,13 @@ public class CellBehaviourNTM extends CellBehaviour
      * @param accumulatedCars
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<TimeUnit> retrieveCurrentTravelTime()
+    public DoubleScalar.Rel<TimeUnit> retrieveCurrentTravelTime()
     {
 
-        double timeDouble =  this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER) /
-                retrieveCurrentSpeed(this.getAccumulatedCars()).getInUnit(SpeedUnit.KM_PER_HOUR);
-        return this.setCurrentTravelTime(new DoubleScalar.Abs(timeDouble, TimeUnit.HOUR));
+        double timeDouble =
+                this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER)
+                        / retrieveCurrentSpeed(this.getAccumulatedCars()).getInUnit(SpeedUnit.KM_PER_HOUR);
+        return this.setCurrentTravelTime(new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.HOUR));
     }
 
     /**
@@ -125,16 +126,17 @@ public class CellBehaviourNTM extends CellBehaviour
     public Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars, final Abs<FrequencyUnit> maximumCapacity,
             final ParametersNTM param)
     {
-        Abs<FrequencyUnit> carProduction = maximumCapacity;
-        if (accumulatedCars > param.getAccCritical().get(1))
+        Abs<FrequencyUnit> supply = maximumCapacity;
+        double densityDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        if (densityDouble > this.getParametersNTM().getAccCritical().get(1))
         {
-            carProduction = retrieveDemand(accumulatedCars, maximumCapacity, param);
+            supply = retrieveDemand(accumulatedCars, maximumCapacity, param);
         }
         else
         {
-            carProduction = maximumCapacity;
+            supply = maximumCapacity;
         }
-        return carProduction;
+        return supply;
     }
 
     /**
@@ -199,17 +201,17 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @return maxCapacity
      */
-    public final Abs<FrequencyUnit> getMaxCapacity()
+    public final Abs<FrequencyUnit> getMaxCapacityNTMArea()
     {
-        return this.maxCapacity;
+        return this.maxCapacityNTMArea;
     }
 
     /**
      * @param maxCapacity set maxCapacity.
      */
-    public final void setMaxCapacity(final Abs<FrequencyUnit> maxCapacity)
+    public final void setMaxCapacityNTMArea(final Abs<FrequencyUnit> maxCapacityNTMArea)
     {
-        this.maxCapacity = maxCapacity;
+        this.maxCapacityNTMArea = maxCapacityNTMArea;
     }
 
     /**
@@ -222,12 +224,13 @@ public class CellBehaviourNTM extends CellBehaviour
 
     /**
      * @param currentSpeed set currentSpeed.
-     * @return 
+     * @return
      */
     public Abs<SpeedUnit> setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
     {
         return this.currentSpeed = currentSpeed;
     }
+
     /**
      * @return borderCapacity.
      */
@@ -282,18 +285,18 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @return currentTravelTime.
      */
-    public DoubleScalar.Abs<SpeedUnit> getCurrentTravelTime()
+    public Rel<TimeUnit> getCurrentTravelTime()
     {
         return currentTravelTime;
     }
 
     /**
-     * @param currentTravelTime set currentTravelTime.
-     * @return 
+     * @param time set currentTravelTime.
+     * @return
      */
-    public Abs<TimeUnit> setCurrentTravelTime(DoubleScalar.Abs<SpeedUnit> currentTravelTime)
+    public Rel<TimeUnit> setCurrentTravelTime(Rel<TimeUnit> time)
     {
-        this.currentTravelTime = currentTravelTime;
+        this.currentTravelTime = time;
         return null;
     }
 

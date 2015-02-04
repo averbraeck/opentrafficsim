@@ -115,7 +115,7 @@ public class WriteOutput
                             lanesPerCell[i] = (double) cell.getNumberOfLanes();
                             cellID[i] = String.valueOf(linkNumber);
                             parametersFD[i][0] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getCapacity()
+                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getCapacityPerUnit()
                                             .doubleValue() * 3600;
                             parametersFD[i][1] =
                                     cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
@@ -186,6 +186,9 @@ public class WriteOutput
     static BufferedWriter dataAccumulationNTMOut = null;
 
     /** */
+    static BufferedWriter dataCongestedSpeedNTMOut = null;
+
+    /** */
     static BufferedWriter dataDemandNTMOut = null;
 
     /** */
@@ -208,6 +211,9 @@ public class WriteOutput
 
     /** */
     static Double[][] accumulationNTM = new Double[999][999];
+
+    /** */
+    static Double[][] congestedSpeedNTM = new Double[999][999];
 
     /** */
     static Double[][] demandNTM = new Double[999][999];
@@ -290,7 +296,7 @@ public class WriteOutput
         DATATYPE = "arrivals";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput()+ fileName + ".txt");
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataArrivalsNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataArrivalsNTMOut, arrivalsNTM, DATATYPE);
@@ -314,6 +320,16 @@ public class WriteOutput
             dataAccumulationNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataAccumulationNTMOut, accumulationNTM, DATATYPE);
+
+        fileName = "/NTMspeed";
+        description = "Congested speed";
+        DATATYPE = "congestedSpeed";
+        if (steps == 1)
+        {
+            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            dataCongestedSpeedNTMOut = createWriter(file);
+        }
+        writeArray(model, steps, MAXSTEPS, description, dataCongestedSpeedNTMOut, congestedSpeedNTM, DATATYPE);
 
         fileName = "/NTMdemand";
         description = "Demand trips";
@@ -366,7 +382,7 @@ public class WriteOutput
             for (Node nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
-                CellBehaviourNTM cellBehaviour =  (CellBehaviourNTM) node.getCellBehaviour();
+                CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
 
                 for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
                 {
@@ -511,6 +527,15 @@ public class WriteOutput
                 {
                     dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
                 }
+                else if (DATATYPE == "congestedSpeed")
+                {
+                    if (steps == 1)
+                    {
+                        // freeSpeed??
+                    }
+                    dataArray[nodeIndex.get(node)][steps - 1] =
+                            cellBehaviour.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                }
                 else if (DATATYPE == "demand")
                 {
                     dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getDemand();
@@ -524,7 +549,7 @@ public class WriteOutput
                     if (steps == 1)
                     {
                         dataArray[i][0] =
-                                cellBehaviour.getParametersNTM().getCapacity().getInUnit(FrequencyUnit.PER_HOUR);
+                                cellBehaviour.getParametersNTM().getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR);
                         dataArray[i][1] =
                                 cellBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER);
                         dataArray[i][2] =
