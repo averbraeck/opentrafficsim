@@ -83,16 +83,20 @@ public class CellBehaviourNTM extends CellBehaviour
      * @param accumulatedCars
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars)
+    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars,
+            final Abs<FrequencyUnit> maximumCapacityArea)
     {
-        double densityPerUnitDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        double densityPerUnitDouble =
+                this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         Abs<LinearDensityUnit> densityPerUnit =
                 new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
         double speedDouble;
         if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(0))
         {
+            Abs<FrequencyUnit> capacityPerUnit =
+                    retrieveDemand(accumulatedCars, maximumCapacityArea, this.getParametersNTM());
             speedDouble =
-                    this.getParametersNTM().getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR)
+                    capacityPerUnit.getInUnit(FrequencyUnit.PER_HOUR)
                             / densityPerUnit.getInUnit(LinearDensityUnit.PER_KILOMETER);
         }
         else
@@ -111,30 +115,32 @@ public class CellBehaviourNTM extends CellBehaviour
 
         double timeDouble =
                 this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER)
-                        / retrieveCurrentSpeed(this.getAccumulatedCars()).getInUnit(SpeedUnit.KM_PER_HOUR);
+                        / retrieveCurrentSpeed(this.getAccumulatedCars(),
+                                this.maxCapacityNTMArea).getInUnit(SpeedUnit.KM_PER_HOUR);
         return this.setCurrentTravelTime(new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.HOUR));
     }
 
     /**
      * {@inheritDoc}
      * @param accumulatedCars
-     * @param maximumCapacity
+     * @param maximumCapacityArea
      * @param param
      * @return
      */
     // @Override
-    public Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars, final Abs<FrequencyUnit> maximumCapacity,
-            final ParametersNTM param)
+    public Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars,
+            final Abs<FrequencyUnit> maximumCapacityArea, final ParametersNTM param)
     {
-        Abs<FrequencyUnit> supply = maximumCapacity;
-        double densityDouble = this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-        if (densityDouble > this.getParametersNTM().getAccCritical().get(1))
+        Abs<FrequencyUnit> supply = maximumCapacityArea;
+        double densityPerUnitDouble =
+                this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+        if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(1))
         {
-            supply = retrieveDemand(accumulatedCars, maximumCapacity, param);
+            supply = retrieveDemand(accumulatedCars, maximumCapacityArea, param);
         }
         else
         {
-            supply = maximumCapacity;
+            supply = maximumCapacityArea;
         }
         return supply;
     }
@@ -142,28 +148,32 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
-     * @param maximumCapacity based on area information
+     * @param maximumCapacityArea based on area information
      * @param param
      * @return carProduction
      */
     public final Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
-            final Abs<FrequencyUnit> maximumCapacity, final ParametersNTM param)
+            final Abs<FrequencyUnit> maximumCapacityArea, final ParametersNTM param)
     {
+        double densityPerUnitDouble =
+                this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(0), maximumCapacity.getInUnit());
+        p.setLocation(param.getAccCritical().get(0), maximumCapacityArea.getInUnit());
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(1), maximumCapacity.getInUnit());
+        p.setLocation(param.getAccCritical().get(1), maximumCapacityArea.getInUnit());
         xyPairs.add(p);
         p = new Point2D.Double();
         p.setLocation(param.getAccCritical().get(2), 0);
         xyPairs.add(p);
-        Abs<FrequencyUnit> carProduction = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
-        return carProduction;
+        double carProduction =
+                FundamentalDiagram.PieceWiseLinear(xyPairs, densityPerUnitDouble).getInUnit(FrequencyUnit.PER_HOUR);
+        return new DoubleScalar.Abs<FrequencyUnit>(carProduction
+                * this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER), FrequencyUnit.PER_HOUR);
     }
 
     /**
@@ -271,15 +281,14 @@ public class CellBehaviourNTM extends CellBehaviour
     {
         double cap = demand.getInUnit(FrequencyUnit.PER_HOUR);
         Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+
         if (this.getBorderDemand().get(node) == null)
         {
             Abs<FrequencyUnit> zeroCap = new Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
             this.getBorderDemand().put(node, zeroCap);
         }
         Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap).immutable();
-        HashMap<BoundedNode, Abs<FrequencyUnit>> newDemand = new HashMap<BoundedNode, Abs<FrequencyUnit>>();
-        newDemand.put(node, total);
-        this.setBorderDemand(newDemand);
+        this.getBorderDemand().put(node, total);
     }
 
     /**

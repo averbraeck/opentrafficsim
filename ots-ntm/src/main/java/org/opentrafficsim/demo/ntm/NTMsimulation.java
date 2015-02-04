@@ -44,7 +44,7 @@ public class NTMsimulation
     static int steps = 0;
 
     /** for reporting */
-    static int MAXSTEPS = 150;
+    static int MAXSTEPS = 720;
 
     /** */
     static HashMap<Node, HashMap<Node, Double[]>> fluxAreaToNeighbours = new HashMap<>();
@@ -118,7 +118,7 @@ public class NTMsimulation
             }
         }
 
-        if (steps == 28)
+        if (steps == 20)
         {
             for (Node node : model.getAreaGraph().vertexSet())
             {
@@ -126,11 +126,15 @@ public class NTMsimulation
                 {
                     BoundedNode bNode = (BoundedNode) node;
                     CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) bNode.getCellBehaviour();
-                    Abs<FrequencyUnit> cap = new DoubleScalar.Abs<FrequencyUnit>(100.0, FrequencyUnit.PER_HOUR);
-                    cellBehaviourNTM.setMaxCapacityNTMArea(cap);
+                    Abs<FrequencyUnit> cap = new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
+                    // cellBehaviourNTM.setMaxCapacityNTMArea(cap);
+                    BoundedNode capToNode = (BoundedNode) model.getNodeAreaGraphMap().get("C8");
+                    cellBehaviourNTM.getBorderCapacity().put(capToNode, cap);
                 }
             }
         }
+
+        // initial settings
         if (steps == 1)
         {
             for (Node node : model.getAreaGraph().vertexSet())
@@ -150,50 +154,8 @@ public class NTMsimulation
                 }
                 else if (origin.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    // Always infinite!
+                    // Supply of Cordon nodes/areas always infinite!
                     origin.getCellBehaviour().setSupply(java.lang.Double.POSITIVE_INFINITY);
-                }
-            }
-        }
-
-        // FIRST: Loop through all nodes and reset the relevant variables such as DemandToEnter (for nodes with more
-        // than one entrance) to zero
-        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
-        {
-            {
-                // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
-                // matrix
-                if (link.getLink().getBehaviourType() == TrafficBehaviourType.NTM
-                        || link.getLink().getBehaviourType() == TrafficBehaviourType.CORDON)
-                {
-                    BoundedNode node = (BoundedNode) link.getLink().getStartNode();
-                    BoundedNode nodeGraph = (BoundedNode) model.getNodeAreaGraphMap().get(node.getId());
-                    nodeGraph.getCellBehaviour().setDemandToEnter(0);
-                    nodeGraph.getCellBehaviour().setArrivals(0);
-                    nodeGraph.getCellBehaviour().setDepartures(0);
-                    // set all fluxes from node to neighbour by destination to zero
-                    for (TripInfoByDestination tripInfoByDestination : nodeGraph.getCellBehaviour()
-                            .getTripInfoByNodeMap().values())
-                    {
-                        tripInfoByDestination.setFluxToNeighbour(0);
-                        tripInfoByDestination.setDepartedTrips(0);
-                        tripInfoByDestination.setArrivedTrips(0);
-                    }
-                }
-                else if (link.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
-                {
-                    LinkCellTransmission ctmLink = (LinkCellTransmission) link.getLink();
-                    // set the demand of trips that want to enter the first cell to zero
-                    // **** RELEVANT
-                    ctmLink.getCells().get(0).getCellBehaviourFlow().setDemandToEnter(0);
-                    for (FlowCell cell : ctmLink.getCells())
-                    {
-                        for (TripInfoByDestination tripInfoByDestination : cell.getCellBehaviourFlow()
-                                .getTripInfoByNodeMap().values())
-                        {
-                            tripInfoByDestination.setFluxToNeighbour(0);
-                        }
-                    }
                 }
             }
         }
@@ -209,80 +171,6 @@ public class NTMsimulation
                 if (origin.getBehaviourType() == TrafficBehaviourType.NTM
                         || origin.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    // the variable CellBehaviour(NTM) defines the traffic process within an area (the area is
-                    // represented by the "BoundedNode"). This can be NTM behaviour, Cell transmission or other.
-
-                    // during the simulation traffic enters and leaves the NTM areas. The number of "accumulated cars"
-                    // represents the net balance of cars within the Nodes/areas. The new demand will be added!
-                    // The variable TripsFrom contains information on trips from an origin/node to ALL other
-                    // destinations.
-                    // This origin can be the real origin or an intermediate area on the path to destination
-                    // (neighbours).
-                    // The structure (or Class in Java) named TripInfoDynamic is stored in a HashMap (lookup array) that
-                    // contains this information for all destinations separately.
-                    Double maximumNumberOfTripsToAdd = Double.POSITIVE_INFINITY;
-                    if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
-                    {
-                        CellBehaviourNTM celBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
-                        int crit = celBehaviourNTM.getParametersNTM().getAccCritical().size();
-                        double critDensityPerHour = celBehaviourNTM.getParametersNTM().getAccCritical().get(crit - 1);
-                        double roadLength = origin.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
-                        // double share =
-                        // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
-                        Double maxAccumulationThisArea = roadLength * critDensityPerHour;
-                        maximumNumberOfTripsToAdd =
-                                maxAccumulationThisArea - origin.getCellBehaviour().getAccumulatedCars();
-                    }
-                    Double totalTrips =
-                            TripDemand.getTotalNumberOfTripsFromOrigin(model.tripDemandToUse, origin.getId(),
-                                    currentTime, model.getSettingsNTM().getTimeStepDurationNTM());
-                    Double shareToAdd = Math.min(1, maximumNumberOfTripsToAdd / totalTrips);
-                    if (shareToAdd < 1)
-                    {
-                        System.out.println("full");
-                    }
-                    Map<String, TripInfoTimeDynamic> tripsFrom =
-                            model.tripDemandToUse.getTripInfo().get(origin.getId());
-                    // loop through all destinations to get total demand and supply per origin and add the new trips
-                    for (TripInfoByDestination tripInfoByDestination : origin.getCellBehaviour().getTripInfoByNodeMap()
-                            .values())
-                    // only select the final destinations: where Trips are heading to
-                    {
-                        BoundedNode destinationNode = (BoundedNode) tripInfoByDestination.getDestination();
-                        if (tripsFrom != null)
-                        {
-                            if (tripsFrom.get(destinationNode.getId()) != null)
-                            {
-                                if (tripsFrom.get(destinationNode.getId()).getNumberOfTrips() > 0)
-                                {
-                                    // get the share of Trips of this time slice (NTM simulation step of 10 seconds)
-                                    // these new Trips are added to the TRIPS that are already on their way (passing an
-                                    // NTM area): the AccumulatedCars specified by their specific destination
-
-                                    // TODO if maxAccumulation, put TRIPS in a reservoir
-
-                                    double startingTrips =
-                                            shareToAdd
-                                                    * TripDemand
-                                                            .getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
-                                                                    model.tripDemandToUse, origin.getId(),
-                                                                    destinationNode.getId(), currentTime, model
-                                                                            .getSettingsNTM().getTimeStepDurationNTM());
-                                    // **** RELEVANT
-                                    tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
-                                    tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips);
-                                    tripInfoByDestination.addDepartedTrips(startingTrips);
-
-                                    // increases the total number of accumulated cars in the area, that is
-                                    // used for NTM computations
-                                    // **** RELEVANT
-                                    origin.getCellBehaviour().addAccumulatedCars(startingTrips);
-                                    origin.getCellBehaviour().addDepartures(startingTrips);
-                                }
-                            }
-                        }
-                    }
-
                     // only production, if there are accumulated cars!!
                     if (origin.getCellBehaviour().getAccumulatedCars() > 0.0)
                     {
@@ -308,7 +196,8 @@ public class NTMsimulation
                             // **** RELEVANT: set DEMAND
                             Abs<FrequencyUnit> tripByHour =
                                     cellBehaviourNTM.retrieveDemand(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacityNTMArea(), cellBehaviourNTM.getParametersNTM());
+                                            cellBehaviourNTM.getMaxCapacityNTMArea(),
+                                            cellBehaviourNTM.getParametersNTM());
                             double tripByTimeStep =
                                     model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
                             cellBehaviourNTM.setDemand(tripByTimeStep);
@@ -319,12 +208,13 @@ public class NTMsimulation
                             // **** RELEVANT: set SUPPLY
                             tripByHour =
                                     cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacityNTMArea(), cellBehaviourNTM.getParametersNTM());
+                                            cellBehaviourNTM.getMaxCapacityNTMArea(),
+                                            cellBehaviourNTM.getParametersNTM());
                             tripByTimeStep =
                                     model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
                             cellBehaviourNTM.setSupply(tripByTimeStep);
-                            cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars())
-                                            .getInUnit(SpeedUnit.KM_PER_HOUR);
+                            cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
+                                    cellBehaviourNTM.getMaxCapacityNTMArea());
                         }
 
                         // the border, or CORDON areas, act as sink/source for traffic
@@ -355,7 +245,8 @@ public class NTMsimulation
                             CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
                             Abs<FrequencyUnit> tripByHour =
                                     cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacityNTMArea(), cellBehaviourNTM.getParametersNTM());
+                                            cellBehaviourNTM.getMaxCapacityNTMArea(),
+                                            cellBehaviourNTM.getParametersNTM());
                             double tripByTimeStep =
                                     model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
                             cellBehaviourNTM.setSupply(tripByTimeStep);
@@ -683,7 +574,7 @@ public class NTMsimulation
             BoundedNode origin = (BoundedNode) node;
             try
             {
-                if (origin.getCellBehaviour().getAccumulatedCars() < 0.0)
+                if (origin.getCellBehaviour().getAccumulatedCars() < 0)
                 {
                     System.out.println("Negative accumulation: step " + steps);
                 }
@@ -823,11 +714,174 @@ public class NTMsimulation
                 e.printStackTrace();
             }
         }
+
+        // FIRST: Loop through all nodes and reset the relevant variables such as DemandToEnter (for nodes with more
+        // than one entrance) to zero
+        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
+        {
+            {
+                // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
+                // matrix
+                if (link.getLink().getBehaviourType() == TrafficBehaviourType.NTM
+                        || link.getLink().getBehaviourType() == TrafficBehaviourType.CORDON)
+                {
+                    BoundedNode node = (BoundedNode) link.getLink().getStartNode();
+                    BoundedNode nodeGraph = (BoundedNode) model.getNodeAreaGraphMap().get(node.getId());
+                    nodeGraph.getCellBehaviour().setDepartures(0);
+                    // set all fluxes from node to neighbour by destination to zero
+                    for (TripInfoByDestination tripInfoByDestination : nodeGraph.getCellBehaviour()
+                            .getTripInfoByNodeMap().values())
+                    {
+                        tripInfoByDestination.setDepartedTrips(0);
+                    }
+                }
+
+            }
+        }
+
+        // new Demand
+        // the variable CellBehaviour(NTM) defines the traffic process within an area (the area is
+        // represented by the "BoundedNode"). This can be NTM behaviour, Cell transmission or other.
+
+        // during the simulation traffic enters and leaves the NTM areas. The number of "accumulated cars"
+        // represents the net balance of cars within the Nodes/areas. The new demand will be added!
+        // The variable TripsFrom contains information on trips from an origin/node to ALL other
+        // destinations.
+        // This origin can be the real origin or an intermediate area on the path to destination
+        // (neighbours).
+        // The structure (or Class in Java) named TripInfoDynamic is stored in a HashMap (lookup array) that
+        // contains this information for all destinations separately.
+
+        for (Node node : model.getAreaGraph().vertexSet())
+        {
+            BoundedNode origin = (BoundedNode) node;
+            try
+            {
+                // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
+                // matrix
+                if (origin.getBehaviourType() == TrafficBehaviourType.NTM
+                        || origin.getBehaviourType() == TrafficBehaviourType.CORDON)
+                {
+
+                    Double maximumNumberOfTripsToAdd = Double.POSITIVE_INFINITY;
+                    if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+                    {
+                        CellBehaviourNTM celBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
+                        int crit = celBehaviourNTM.getParametersNTM().getAccCritical().size();
+                        double critDensityPerHour = celBehaviourNTM.getParametersNTM().getAccCritical().get(crit - 1);
+                        double roadLength = origin.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                        // double share =
+                        // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
+                        Double maxAccumulationThisArea = roadLength * critDensityPerHour;
+                        maximumNumberOfTripsToAdd =
+                                maxAccumulationThisArea - origin.getCellBehaviour().getAccumulatedCars();
+                    }
+                    Double totalTrips =
+                            TripDemand.getTotalNumberOfTripsFromOrigin(model.tripDemandToUse, origin.getId(),
+                                    currentTime, model.getSettingsNTM().getTimeStepDurationNTM());
+                    Double shareToAdd = Math.min(1, maximumNumberOfTripsToAdd / totalTrips);
+                    if (shareToAdd < 1.0)
+                    {
+                        System.out.println("full");
+                    }
+                    Map<String, TripInfoTimeDynamic> tripsFrom =
+                            model.tripDemandToUse.getTripInfo().get(origin.getId());
+                    // loop through all destinations to get total demand and supply per origin and add the new trips
+                    for (TripInfoByDestination tripInfoByDestination : origin.getCellBehaviour().getTripInfoByNodeMap()
+                            .values())
+                    // only select the final destinations: where Trips are heading to
+                    {
+                        BoundedNode destinationNode = (BoundedNode) tripInfoByDestination.getDestination();
+                        if (tripsFrom != null)
+                        {
+                            if (tripsFrom.get(destinationNode.getId()) != null)
+                            {
+                                if (tripsFrom.get(destinationNode.getId()).getNumberOfTrips() > 0)
+                                {
+                                    // get the share of Trips of this time slice (NTM simulation step of 10 seconds)
+                                    // these new Trips are added to the TRIPS that are already on their way (passing an
+                                    // NTM area): the AccumulatedCars specified by their specific destination
+
+                                    // TODO if maxAccumulation, put TRIPS in a reservoir
+
+                                    double startingTrips =
+                                            shareToAdd
+                                                    * TripDemand
+                                                            .getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
+                                                                    model.tripDemandToUse, origin.getId(),
+                                                                    destinationNode.getId(), currentTime, model
+                                                                            .getSettingsNTM().getTimeStepDurationNTM());
+                                    // **** RELEVANT
+                                    tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
+                                    tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips);
+                                    tripInfoByDestination.addDepartedTrips(startingTrips);
+
+                                    // increases the total number of accumulated cars in the area, that is
+                                    // used for NTM computations
+                                    // **** RELEVANT
+                                    origin.getCellBehaviour().addAccumulatedCars(startingTrips);
+                                    origin.getCellBehaviour().addDepartures(startingTrips);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            // in the next steps, the dynamics of demand and supply create a certain flow between areas
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+
         if (model.WRITEDATA)
         {
             // WriteOutput.writeOutputDataFlowLinks(model, steps, MAXSTEPS);
             WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);
         }
+
+        // FIRST: Loop through all nodes and reset the relevant variables such as DemandToEnter (for nodes with more
+        // than one entrance) to zero
+        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
+        {
+            {
+                // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
+                // matrix
+                if (link.getLink().getBehaviourType() == TrafficBehaviourType.NTM
+                        || link.getLink().getBehaviourType() == TrafficBehaviourType.CORDON)
+                {
+                    BoundedNode node = (BoundedNode) link.getLink().getStartNode();
+                    BoundedNode nodeGraph = (BoundedNode) model.getNodeAreaGraphMap().get(node.getId());
+                    nodeGraph.getCellBehaviour().setDemandToEnter(0);
+                    nodeGraph.getCellBehaviour().setArrivals(0);
+                    // set all fluxes from node to neighbour by destination to zero
+                    for (TripInfoByDestination tripInfoByDestination : nodeGraph.getCellBehaviour()
+                            .getTripInfoByNodeMap().values())
+                    {
+                        tripInfoByDestination.setFluxToNeighbour(0);
+                        tripInfoByDestination.setArrivedTrips(0);
+                    }
+                }
+                else if (link.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
+                {
+                    LinkCellTransmission ctmLink = (LinkCellTransmission) link.getLink();
+                    // set the demand of trips that want to enter the first cell to zero
+                    // **** RELEVANT
+                    ctmLink.getCells().get(0).getCellBehaviourFlow().setDemandToEnter(0);
+                    for (FlowCell cell : ctmLink.getCells())
+                    {
+                        for (TripInfoByDestination tripInfoByDestination : cell.getCellBehaviourFlow()
+                                .getTripInfoByNodeMap().values())
+                        {
+                            tripInfoByDestination.setFluxToNeighbour(0);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     /**

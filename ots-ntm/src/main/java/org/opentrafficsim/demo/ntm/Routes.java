@@ -63,15 +63,19 @@ public class Routes
                         if (cellBehaviourStart.getAccumulatedCars() > 0)
                         {
                             double currentSpeedStart =
-                                    cellBehaviourStart.retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars())
+                                    cellBehaviourStart.retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars(), cellBehaviourStart.getMaxCapacityNTMArea())
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedStart =
                                     cellBehaviourStart.getParametersNTM().getFreeSpeed()
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
                             rateCongestedVersusFreeSpeed = currentSpeedStart / freeSpeedStart;
+                            if (rateCongestedVersusFreeSpeed < 1 && !startNode.getId().equals("C1"))
+                            {
+                                System.out.println("speed decrease");
+                            }
                             CellBehaviourNTM cellBehaviourEnd = (CellBehaviourNTM) endNode.getCellBehaviour();
                             double currentSpeedEnd =
-                                    cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars())
+                                    cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(), cellBehaviourStart.getMaxCapacityNTMArea())
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedEnd =
                                     cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);

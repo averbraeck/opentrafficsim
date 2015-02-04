@@ -261,7 +261,6 @@ public class WriteOutput
         String fileName = "/NTMfluxToNeighbour";
         String description = "fluxes";
         String DATATYPE = "fluxes";
-
         if (steps == 1)
         {
             File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
@@ -429,14 +428,7 @@ public class WriteOutput
                                 else
                                 {
                                     Double[] fluxes = nodeNodeDoublemap.get(node).get(neighbour);
-                                    if ((DATATYPE == "fluxes"))
-                                    {
-                                        fluxes[steps - 1] = trips;
-                                    }
-                                    else
-                                    {
-                                        fluxes[steps - 1] = trips;
-                                    }
+                                    fluxes[steps - 1] = trips;
                                 }
                             }
                         }
