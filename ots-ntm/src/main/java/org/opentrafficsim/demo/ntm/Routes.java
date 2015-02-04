@@ -10,6 +10,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 
@@ -63,23 +64,20 @@ public class Routes
                         if (cellBehaviourStart.getAccumulatedCars() > 0)
                         {
                             double currentSpeedStart =
-                                    cellBehaviourStart.retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars(), cellBehaviourStart.getMaxCapacityNTMArea())
-                                            .getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    cellBehaviourStart.retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars(),
+                                            cellBehaviourStart.getArea().getRoadLength()).getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedStart =
                                     cellBehaviourStart.getParametersNTM().getFreeSpeed()
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
-                            rateCongestedVersusFreeSpeed = currentSpeedStart / freeSpeedStart;
-                            if (rateCongestedVersusFreeSpeed < 1 && !startNode.getId().equals("C1"))
-                            {
-                                System.out.println("speed decrease");
-                            }
+                            rateCongestedVersusFreeSpeed = 0.5 * freeSpeedStart /currentSpeedStart;
                             CellBehaviourNTM cellBehaviourEnd = (CellBehaviourNTM) endNode.getCellBehaviour();
                             double currentSpeedEnd =
-                                    cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(), cellBehaviourStart.getMaxCapacityNTMArea())
+                                    cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(),
+                                            cellBehaviourStart.getArea().getRoadLength())
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedEnd =
                                     cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                            rateCongestedVersusFreeSpeed = currentSpeedEnd / freeSpeedEnd;
+                            rateCongestedVersusFreeSpeed += 0.5 * freeSpeedEnd / currentSpeedEnd;
                         }
                     }
                 }

@@ -174,7 +174,7 @@ public class NTMModel implements OTSModelInterface
             String fileCompressedDemand = "";
             String fileNameCapacityRestraint = "";
             int numberOfRoutes = 1;
-            double weightNewRoutes = 0.6;
+            double weightNewRoutes = 1.0;
             boolean reRoute = false;
             // determine the files to read
             // The Hague
@@ -229,8 +229,9 @@ public class NTMModel implements OTSModelInterface
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
                         + "/profiles.txt", ";", "\\s+"));
-                numberOfRoutes = 4;
+                numberOfRoutes = 1;
                 reRoute = true;
+                reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 int variant = 5;
                 this.output = "/output" + variant;
             }

@@ -194,27 +194,38 @@ public class NTMsimulation
                             // TODO implement roadLength and length simulation step !!!!!!!!!!!!!!!!!!!!!!!!
 
                             // **** RELEVANT: set DEMAND
-                            Abs<FrequencyUnit> tripByHour =
-                                    cellBehaviourNTM.retrieveDemand(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacityNTMArea(),
-                                            cellBehaviourNTM.getParametersNTM());
+                            double tripByHour =
+                                    cellBehaviourNTM.retrieveDemandPerLengthUnit(
+                                            origin.getCellBehaviour().getAccumulatedCars(),
+                                            cellBehaviourNTM.getArea().getRoadLength(),
+                                            cellBehaviourNTM.getParametersNTM()).getInUnit(FrequencyUnit.PER_HOUR);
+
+                            tripByHour =
+                                    tripByHour
+                                            * cellBehaviourNTM.getArea().getRoadLength()
+                                                    .getInUnit(LengthUnit.KILOMETER);
                             double tripByTimeStep =
-                                    model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
+                                    model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR)
+                                            * tripByHour;
                             cellBehaviourNTM.setDemand(tripByTimeStep);
                             // compute the total supply (maximum) from neighbours to this Area (again based on the
                             // accumulation and NFD/area characteristics)
                             // TODO implement roadLength and length simulation step !!!!!!!!!!!!!!!!!!!!!!!!
 
                             // **** RELEVANT: set SUPPLY
-                            tripByHour =
-                                    cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacityNTMArea(),
-                                            cellBehaviourNTM.getParametersNTM());
+                            double tripByHourSupply =
+                                    cellBehaviourNTM.retrieveSupplyPerLengthUnit(
+                                            origin.getCellBehaviour().getAccumulatedCars(),
+                                            cellBehaviourNTM.getArea().getRoadLength(),
+                                            cellBehaviourNTM.getParametersNTM()).getInUnit(FrequencyUnit.PER_HOUR)
+                                            * cellBehaviourNTM.getArea().getRoadLength()
+                                                    .getInUnit(LengthUnit.KILOMETER);
                             tripByTimeStep =
-                                    model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
+                                    model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR)
+                                            * tripByHourSupply;
                             cellBehaviourNTM.setSupply(tripByTimeStep);
                             cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
-                                    cellBehaviourNTM.getMaxCapacityNTMArea());
+                                    cellBehaviourNTM.getArea().getRoadLength());
                         }
 
                         // the border, or CORDON areas, act as sink/source for traffic
@@ -243,12 +254,16 @@ public class NTMsimulation
                         {
                             // CellBehaviourNTM extends CellBehaviour (additional or different behaviour)
                             CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
-                            Abs<FrequencyUnit> tripByHour =
-                                    cellBehaviourNTM.retrieveSupply(origin.getCellBehaviour().getAccumulatedCars(),
-                                            cellBehaviourNTM.getMaxCapacityNTMArea(),
-                                            cellBehaviourNTM.getParametersNTM());
+                            double tripByHour =
+                                    cellBehaviourNTM.retrieveSupplyPerLengthUnit(
+                                            origin.getCellBehaviour().getAccumulatedCars(),
+                                            cellBehaviourNTM.getArea().getRoadLength(),
+                                            cellBehaviourNTM.getParametersNTM()).getInUnit(FrequencyUnit.PER_HOUR)
+                                            * cellBehaviourNTM.getArea().getRoadLength()
+                                                    .getInUnit(LengthUnit.KILOMETER);
                             double tripByTimeStep =
-                                    model.getSettingsNTM().getTimeStepDurationNTM().getSI() * tripByHour.getSI();
+                                    model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR)
+                                            * tripByHour;
                             cellBehaviourNTM.setSupply(tripByTimeStep);
                         }
                     }
@@ -701,9 +716,7 @@ public class NTMsimulation
                                                     null, 0);
                                         }
                                     }
-
                                 }
-
                             }
                         }
                     }

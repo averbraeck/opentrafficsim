@@ -74,9 +74,6 @@ public class CellBehaviourNTM extends CellBehaviour
                         * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         this.maxCapacityNTMArea = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
         this.area = area;
-        // gedeeld door gemiddelde triplengte in een gebied
-        // (lengte zone?)
-
     }
 
     /**
@@ -84,17 +81,17 @@ public class CellBehaviourNTM extends CellBehaviour
      * @return actualSpeed.
      */
     public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars,
-            final Abs<FrequencyUnit> maximumCapacityArea)
+            final Rel<LengthUnit>roadLength)
     {
         double densityPerUnitDouble =
-                this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-        Abs<LinearDensityUnit> densityPerUnit =
-                new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
+                this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
         double speedDouble;
         if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(0))
         {
+            Abs<LinearDensityUnit> densityPerUnit =
+                    new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
             Abs<FrequencyUnit> capacityPerUnit =
-                    retrieveDemand(accumulatedCars, maximumCapacityArea, this.getParametersNTM());
+                    retrieveSupplyPerLengthUnit(accumulatedCars, roadLength, this.getParametersNTM());
             speedDouble =
                     capacityPerUnit.getInUnit(FrequencyUnit.PER_HOUR)
                             / densityPerUnit.getInUnit(LinearDensityUnit.PER_KILOMETER);
@@ -106,41 +103,24 @@ public class CellBehaviourNTM extends CellBehaviour
         return this.setCurrentSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
     }
 
-    /**
-     * @param accumulatedCars
-     * @return actualSpeed.
-     */
-    public DoubleScalar.Rel<TimeUnit> retrieveCurrentTravelTime()
-    {
-
-        double timeDouble =
-                this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER)
-                        / retrieveCurrentSpeed(this.getAccumulatedCars(),
-                                this.maxCapacityNTMArea).getInUnit(SpeedUnit.KM_PER_HOUR);
-        return this.setCurrentTravelTime(new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.HOUR));
-    }
 
     /**
      * {@inheritDoc}
      * @param accumulatedCars
-     * @param maximumCapacityArea
-     * @param param
+     * @param roadLength 
+     * @param parametersNTM
      * @return
      */
     // @Override
-    public Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars,
-            final Abs<FrequencyUnit> maximumCapacityArea, final ParametersNTM param)
+    public Abs<FrequencyUnit> retrieveSupplyPerLengthUnit(final Double accumulatedCars,
+            final Rel<LengthUnit>roadLength, final ParametersNTM parametersNTM)
     {
-        Abs<FrequencyUnit> supply = maximumCapacityArea;
+        Abs<FrequencyUnit> supply = parametersNTM.getCapacityPerUnit();
         double densityPerUnitDouble =
-                this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
         if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(1))
         {
-            supply = retrieveDemand(accumulatedCars, maximumCapacityArea, param);
-        }
-        else
-        {
-            supply = maximumCapacityArea;
+            supply = retrieveDemandPerLengthUnit(accumulatedCars, roadLength, parametersNTM);
         }
         return supply;
     }
@@ -149,31 +129,31 @@ public class CellBehaviourNTM extends CellBehaviour
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
      * @param maximumCapacityArea based on area information
-     * @param param
+     * @param parametersNTM
      * @return carProduction
      */
-    public final Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
-            final Abs<FrequencyUnit> maximumCapacityArea, final ParametersNTM param)
+    public final Abs<FrequencyUnit> retrieveDemandPerLengthUnit(final double accumulatedCars, final Rel<LengthUnit>roadLength, final ParametersNTM parametersNTM)
     {
         double densityPerUnitDouble =
-                this.getAccumulatedCars() / this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(0), maximumCapacityArea.getInUnit());
+        p.setLocation(parametersNTM.getAccCritical().get(0),
+                parametersNTM.getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR));
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(1), maximumCapacityArea.getInUnit());
+        p.setLocation(parametersNTM.getAccCritical().get(1),
+                parametersNTM.getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR));
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(param.getAccCritical().get(2), 0);
+        p.setLocation(parametersNTM.getAccCritical().get(2), 0);
         xyPairs.add(p);
         double carProduction =
                 FundamentalDiagram.PieceWiseLinear(xyPairs, densityPerUnitDouble).getInUnit(FrequencyUnit.PER_HOUR);
-        return new DoubleScalar.Abs<FrequencyUnit>(carProduction
-                * this.area.getRoadLength().getInUnit(LengthUnit.KILOMETER), FrequencyUnit.PER_HOUR);
+        return new DoubleScalar.Abs<FrequencyUnit>(carProduction, FrequencyUnit.PER_HOUR);
     }
 
     /**
