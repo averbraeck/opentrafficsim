@@ -126,10 +126,10 @@ public class NTMModel implements OTSModelInterface
     private LinkedHashMap<String, Link> debugLinkList;
 
     /** debugging. */
-    public boolean DEBUG = true;
+    public boolean DEBUG = false;
 
     /** debugging. */
-    public boolean WRITEDATA = true;
+    public boolean WRITEDATA = false;
 
     /** use the bigger areas (true) or the detailed areas (false). */
     public boolean COMPRESS_AREAS = false;
@@ -215,6 +215,7 @@ public class NTMModel implements OTSModelInterface
 
             else if (debugFiles == 3)
             {
+                this.WRITEDATA = true;
                 path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
                 this.centroids = ShapeFileReader.ReadNodes(path + "/qgistest_centroids.shp", "NODENR", true, true);
                 this.areas = ShapeFileReader.readAreas(path + "/qgistest_areas.shp", this.centroids);
@@ -357,7 +358,7 @@ public class NTMModel implements OTSModelInterface
             BuildGraph.buildGraph(this, areasToUse, centroidsToUse, shpConnectorsToUse);
 
             String fileNameParametersNTM = this.getSettingsNTM().getPath() + "/parametersNTM.txt";
-            readOrSetParametersNTM(areasToUse, fileNameParametersNTM);
+            readOrSetParametersNTM(this, centroidsToUse, fileNameParametersNTM);
 
             readOrSetCapacityRestraints(this, areasToUse, fileNameCapacityRestraint);
 
@@ -408,36 +409,58 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param areasToUse
-     * @param path
+     * @param model
+     * @param centroidsToUse
      * @param file
      * @throws ParseException
      * @throws IOException
      */
-    public void readOrSetParametersNTM(Map<String, Area> areasToUse, String file) throws IOException, ParseException
+    public void readOrSetParametersNTM(NTMModel model, Map<String, Node> centroidsToUse, String file)
+            throws IOException, ParseException
     {
-        HashMap<String, ArrayList<java.lang.Double>> parametersNTM = CsvFileReader.readParametersNTM(file, ";", ",");
-        if (parametersNTM.isEmpty())
+        HashMap<String, ArrayList<java.lang.Double>> parametersNTMByCentroid =
+                CsvFileReader.readParametersNTM(file, ";", ",");
+        if (parametersNTMByCentroid.isEmpty())
         {
             CsvFileWriter.writeParametersNTM(this, file);
-            parametersNTM = CsvFileReader.readParametersNTM(file, ";", ",");
+            parametersNTMByCentroid = CsvFileReader.readParametersNTM(file, ";", ",");
         }
 
-        for (Area area : areasToUse.values())
+        for (Node node : centroidsToUse.values())
         {
-            ParametersNTM paramNTM = null;
-            ArrayList<java.lang.Double> param = parametersNTM.get(area.getCentroidNr());
-            if (param != null)
+            ParametersNTM parametersNTM = null;
+            ArrayList<java.lang.Double> parameters = parametersNTMByCentroid.get(node.getId());
+            if (node.getBehaviourType() == TrafficBehaviourType.NTM)
             {
-                double capacity = param.get(param.size() - 1);
-                param.remove(param.size() - 1);
-                paramNTM = new ParametersNTM(param, capacity, area.getRoadLength());
+                BoundedNode boundedNode = (BoundedNode) model.nodeAreaGraphMap.get(node.getId());
+                CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) boundedNode.getCellBehaviour();
+                if (parameters != null)
+                {
+                    double capacity = 0.0;
+                    if (parameters.get(parameters.size() - 1) > 0)
+                    {
+                        capacity = parameters.get(parameters.size() - 1);
+                    }
+                    else
+                    {
+                        capacity =
+                                cellBehaviourNTM.getParametersNTM().getCapacityPerUnit()
+                                        .getInUnit(FrequencyUnit.PER_HOUR);
+                    }
+                    parameters.remove(parameters.size() - 1);
+                    parametersNTM =
+                            new ParametersNTM(parameters, capacity, model.getAreas().get(node.getId()).getRoadLength());
+                }
+                else
+                {
+                    parametersNTM =
+                            new ParametersNTM(model.getAreas().get(node.getId()).getAverageSpeed(), model.getAreas()
+                                    .get(node.getId()).getRoadLength());
+                }
+
+                cellBehaviourNTM.setParametersNTM(parametersNTM);
             }
-            else
-            {
-                paramNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
-            }
-            area.setParametersNTM(paramNTM);
+
         }
     }
 

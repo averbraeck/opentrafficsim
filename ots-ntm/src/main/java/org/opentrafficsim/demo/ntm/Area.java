@@ -55,7 +55,6 @@ import com.vividsolutions.jts.geom.Point;
 public class Area extends GeoObject implements LocatableInterface 
 {
 
-
     /**
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -92,9 +91,6 @@ public class Area extends GeoObject implements LocatableInterface
 
     /** */
     private DoubleScalar.Abs<SpeedUnit> averageSpeed;
-
-    /** from file or directly computed*/
-    private ParametersNTM parametersNTM;
     
     /** */
     private DoubleScalar.Rel<LengthUnit> roadLength;
@@ -342,21 +338,6 @@ public class Area extends GeoObject implements LocatableInterface
         this.averageSpeed = averageSpeed;
     }
 
-    /**
-     * @return parametersNTM.
-     */
-    public ParametersNTM getParametersNTM()
-    {
-        return this.parametersNTM;
-    }
-
-    /**
-     * @param parametersNTM set parametersNTM.
-     */
-    public void setParametersNTM(ParametersNTM parametersNTM)
-    {
-        this.parametersNTM = parametersNTM;
-    }
 
 
 

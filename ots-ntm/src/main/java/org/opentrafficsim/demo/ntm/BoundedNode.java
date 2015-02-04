@@ -44,36 +44,23 @@ public class BoundedNode extends Node
     public BoundedNode(final Point centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
     {
         super(nr, centroid, behaviourType);
+        this.area = area;
+        
         if (behaviourType == TrafficBehaviourType.ROAD)
         {
             this.setCellBehaviour(new CellBehaviour());
-            this.setArea(area);
         }
         else if (behaviourType == TrafficBehaviourType.NTM)
         {
-            DoubleScalar.Abs<SpeedUnit> averageSpeed = area.getAverageSpeed();
-            DoubleScalar.Rel<LengthUnit> roadLength = area.getRoadLength();
             ParametersNTM parametersNTM = null;
-            if (area.getParametersNTM() != null)
+            parametersNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
+            if (parametersNTM.getCapacityPerUnit() == null)
             {
-                parametersNTM = area.getParametersNTM();
-            }
-            else
-            {
-                parametersNTM = new ParametersNTM(averageSpeed, roadLength);
-            }
-            if (parametersNTM.getCapacity() == null)
-            {
-                double capacity =
-                        parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
-                                * parametersNTM.getAccCritical().get(0);
-                parametersNTM.setCapacity(new DoubleScalar.Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR));
-                System.out.println("stop");
+
             }
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
-            this.setArea(area);
-
         }
+        
         else if (behaviourType == TrafficBehaviourType.FLOW)
         {
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
@@ -83,18 +70,18 @@ public class BoundedNode extends Node
             // ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
             ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram();
             this.setCellBehaviour(new CellBehaviourFlow(area, parametersCTM));
-            this.setArea(area);
         }
+        
         else if (behaviourType == TrafficBehaviourType.CORDON)
         {
             this.setCellBehaviour(new CellBehaviourCordon());
-            this.setArea(area);
         }
+        
         else
         {
-            this.setCellBehaviour(new CellBehaviour());
-            this.setArea(area);
+            this.setCellBehaviour(new CellBehaviour());            
         }
+        
     }
 
     /**

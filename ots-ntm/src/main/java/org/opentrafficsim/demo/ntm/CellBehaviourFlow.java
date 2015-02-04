@@ -92,7 +92,7 @@ public class CellBehaviourFlow extends CellBehaviour
         }
         else
         {
-            carProduction = param.getCapacity();
+            carProduction = param.getCapacityPerUnit();
         }
         return carProduction;
     }
@@ -115,7 +115,7 @@ public class CellBehaviourFlow extends CellBehaviour
         xyPairs.add(p);
         p = new Point2D.Double();
         // the point of maximum capacity
-        p.setLocation(param.getAccCritical().get(0), param.getCapacity().getInUnit(FrequencyUnit.PER_HOUR));
+        p.setLocation(param.getAccCritical().get(0), param.getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR));
         xyPairs.add(p);
         p = new Point2D.Double();
         // the final breakdown

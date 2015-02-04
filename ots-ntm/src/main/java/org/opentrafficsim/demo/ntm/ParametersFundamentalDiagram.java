@@ -35,7 +35,7 @@ public class ParametersFundamentalDiagram
     private DoubleScalar.Abs<SpeedUnit> freeSpeed;
 
     /** */
-    private DoubleScalar.Abs<FrequencyUnit> capacity;
+    private DoubleScalar.Abs<FrequencyUnit> capacityPerUnit;
 
     /**
      * @param accCritical
@@ -61,7 +61,7 @@ public class ParametersFundamentalDiagram
                  * cellLength.getInUnit(LengthUnit.KILOMETER));
         this.accCritical.add(150.0 * numberOfLanes * cellLength.getInUnit(LengthUnit.KILOMETER));
         this.freeSpeed = freeSpeed;
-        this.capacity = capacity;
+        this.capacityPerUnit = capacity;
     }
 
     /**
@@ -89,7 +89,7 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @param accCritical1 set accCritical1.
+     * @param accCritical 
      */
     public void setAccCritical(ArrayList<Double> accCritical)
     {
@@ -99,17 +99,17 @@ public class ParametersFundamentalDiagram
     /**
      * @return capacity.
      */
-    public DoubleScalar.Abs<FrequencyUnit> getCapacity()
+    public DoubleScalar.Abs<FrequencyUnit> getCapacityPerUnit()
     {
-        return capacity;
+        return this.capacityPerUnit;
     }
 
     /**
      * @param capacity set capacity.
      */
-    public void setCapacity(DoubleScalar.Abs<FrequencyUnit> capacity)
+    public void setCapacityPerUnit(DoubleScalar.Abs<FrequencyUnit> capacityPerUnit)
     {
-        this.capacity = capacity;
+        this.capacityPerUnit = capacityPerUnit;
     }
 
 }
