@@ -228,10 +228,10 @@ public class NTMModel implements OTSModelInterface
                 fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
-                        + "/profiles_only_firstHour.txt", ";", "\\s+"));
-                numberOfRoutes = 1;
+                        + "/profiles.txt", ";", "\\s+"));
+                numberOfRoutes = 4;
                 reRoute = true;
-                int variant = 3;
+                int variant = 5;
                 this.output = "/output" + variant;
             }
 
@@ -269,8 +269,8 @@ public class NTMModel implements OTSModelInterface
                     System.out.println("DIR created");
                 }
             }
-            Path from = Paths.get(path + "/profiles_only_firstHour.txt");
-            Path to = Paths.get(path + this.getOutput() + "/profiles_only_firstHour.txt");
+            Path from = Paths.get(path + "/profiles.txt");
+            Path to = Paths.get(path + this.getOutput() + "/profiles.txt");
             Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
             from = Paths.get(path + fileDemand);
             to = Paths.get(path + this.getOutput() + fileDemand);
