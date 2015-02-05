@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Node;
@@ -98,7 +100,10 @@ public class AbstractLaneBasedGTUTest
         DoubleScalar.Rel<LengthUnit> positionB = new DoubleScalar.Rel<LengthUnit>(90, LengthUnit.METER);
         initialLongitudinalPositions.put(lanesGroupB[1], positionB);
         // A Car needs a CarFollowingModel
-        GTUFollowingModel cfm = new IDMPlus();
+        DoubleScalar.Abs<AccelerationUnit> acceleration =
+                new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
+        DoubleScalar.Abs<TimeUnit> validUntil = new DoubleScalar.Abs<TimeUnit>(10, TimeUnit.SECOND);
+        GTUFollowingModel cfm = new FakeCarFollowingModel(acceleration, validUntil);
         // A Car needs a type
         GTUType<String> gtuType = new GTUType<String>("Car");
         // A Car needs an initial speed
@@ -113,16 +118,16 @@ public class AbstractLaneBasedGTUTest
         String carID = "theCar";
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
-                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-                        maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed,
+                        carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", cfm, car.getGTUFollowingModel());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
         assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(),
-                car.position(lanesGroupA[1], car.getFront()).getSI(), 0.0001);
+                car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(),
-                car.position(lanesGroupB[1], car.getFront()).getSI(), 0.0001);
+                car.position(lanesGroupB[1], car.getReference()).getSI(), 0.0001);
         assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
         assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getLongitudinalVelocity()
                 .getSI(), 0.00001);
@@ -162,7 +167,7 @@ public class AbstractLaneBasedGTUTest
                             // FIXME There should be a better way to check equality of RelativePosition
                             if (relativePosition.getDx().getSI() != 0)
                             {
-                                expectedPosition = DoubleScalar.minus(expectedPosition, carLength).immutable();
+                                expectedPosition = DoubleScalar.plus(expectedPosition, carLength).immutable();
                             }
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
@@ -182,30 +187,43 @@ public class AbstractLaneBasedGTUTest
             }
         }
         // Assign a movement to the car (10 seconds of acceleration of 2 m/s/s)
-        DoubleScalar.Abs<AccelerationUnit> acceleration =
-                new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
-        DoubleScalar.Abs<TimeUnit> validUntil = new DoubleScalar.Abs<TimeUnit>(10, TimeUnit.SECOND);
-        car.setState(new GTUFollowingModelResult(acceleration, validUntil));
+        // scheduled event that moves the car at t=0
         assertEquals("lastEvaluation time is 0", 0, car.getLastEvaluationTime().getSI(), 0.00001);
+        assertEquals("nextEvaluation time is 0", 0, car.getNextEvaluationTime().getSI(), 0.00001);
         // Increase the simulator clock in small steps and verify the both positions on all lanes at each step
         double step = 0.01d;
         for (int i = 0;; i++)
         {
-            DoubleScalar.Abs<TimeUnit> stopTime = new DoubleScalar.Abs<TimeUnit>(i * step, TimeUnit.SECOND);
-            if (stopTime.getSI() > validUntil.getSI())
+            DoubleScalar.Abs<TimeUnit> stepTime = new DoubleScalar.Abs<TimeUnit>(i * step, TimeUnit.SECOND);
+            if (stepTime.getSI() > validUntil.getSI())
             {
                 break;
             }
-            if (stopTime.getSI() > 0.5)
+            if (stepTime.getSI() > 0.5)
             {
                 step = 0.1; // Reduce testing time by increasing the step size
             }
             // System.out.println("Simulating until " + stopTime.getSI());
-            simulateUntil((OTSDEVSSimulatorInterface) simulator.getSimulator(), stopTime);
-            // System.out.println("Clock is now " + simulator.getSimulator().getSimulatorTime().get().getSI());
-            assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI() + stopTime.getSI()
-                    * acceleration.getSI(), car.getLongitudinalVelocity().getSI(), 0.00001);
-            assertEquals("acceleration is 0", acceleration.getSI(), car.getAcceleration().getSI(), 0.00001);
+            simulateUntil((OTSDEVSSimulatorInterface) simulator.getSimulator(), stepTime);
+            if (stepTime.getSI() > 0)
+            {
+                assertEquals("nextEvaluation time is " + validUntil, validUntil.getSI(), car.getNextEvaluationTime()
+                        .getSI(), 0.0001);
+                assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(),
+                        0.00001);
+            }
+            // FIXME this is where the simulator calls the gtuFollowingModel of the car again, resulting in a
+            // lastEvaluation time that is almost 10 seconds in the future.
+            // This might be fixed by giving the car a dummy gtuFollowingModel...
+            DoubleScalar.Abs<SpeedUnit> longitudinalVelocity = car.getLongitudinalVelocity();
+            double expectedLongitudinalVelocity =
+                    3.6 * (initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI());
+            //System.out.println("Clock is now " + simulator.getSimulator().getSimulatorTime().get()
+            //        + " car velocity is " + car.getLongitudinalVelocity() + " expected velocity is "
+            //        + String.format("%9.3fkm/h", expectedLongitudinalVelocity));
+            assertEquals("longitudinal velocity is " + initialSpeed + stepTime.getSI() * acceleration.getSI(),
+                    initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI(), longitudinalVelocity.getSI(),
+                    0.00001);
             assertEquals("lateral velocity is 0", 0, car.getLateralVelocity().getSI(), 0.00001);
             for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
@@ -246,18 +264,18 @@ public class AbstractLaneBasedGTUTest
                                 expectedPosition =
                                         DoubleScalar.plus(
                                                 expectedPosition,
-                                                new DoubleScalar.Rel<LengthUnit>(stopTime.getSI()
+                                                new DoubleScalar.Rel<LengthUnit>(stepTime.getSI()
                                                         * initialSpeed.getSI(), LengthUnit.SI)).immutable();
                                 expectedPosition =
                                         DoubleScalar.plus(
                                                 expectedPosition,
                                                 new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI()
-                                                        * stopTime.getSI() * stopTime.getSI(), LengthUnit.SI))
+                                                        * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI))
                                                 .immutable();
                                 // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
-                                    expectedPosition = DoubleScalar.minus(expectedPosition, carLength).immutable();
+                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength).immutable();
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
@@ -288,18 +306,18 @@ public class AbstractLaneBasedGTUTest
                                 expectedPosition =
                                         DoubleScalar.plus(
                                                 expectedPosition,
-                                                new DoubleScalar.Rel<LengthUnit>(stopTime.getSI()
+                                                new DoubleScalar.Rel<LengthUnit>(stepTime.getSI()
                                                         * initialSpeed.getSI(), LengthUnit.SI)).immutable();
                                 expectedPosition =
                                         DoubleScalar.plus(
                                                 expectedPosition,
                                                 new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI()
-                                                        * stopTime.getSI() * stopTime.getSI(), LengthUnit.SI))
+                                                        * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI))
                                                 .immutable();
                                 // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
-                                    expectedPosition = DoubleScalar.minus(expectedPosition, carLength).immutable();
+                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength).immutable();
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
@@ -343,8 +361,8 @@ public class AbstractLaneBasedGTUTest
             pos = positions.get(lanesGroupC[0]);
             assertTrue("Car should be in lane 0 of lane group C", null != pos);
             // The next one fails - maybe I don't understand something - PK
-            //assertEquals("fractional position should be 0", 0,
-            //        car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+            // assertEquals("fractional position should be 0", 0,
+            // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
             assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                     car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
@@ -360,8 +378,8 @@ public class AbstractLaneBasedGTUTest
             pos = positions.get(lanesGroupC[0]);
             assertTrue("Car should be in lane 0 of lane group C", null != pos);
             // The next one fails - maybe I don't understand something - PK
-            //assertEquals("fractional position should be 0", 0,
-            //        car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+            // assertEquals("fractional position should be 0", 0,
+            // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
             assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                     car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
@@ -467,6 +485,92 @@ class DummyModel implements OTSModelInterface
             throw new Error("getSimulator called, but simulator field is null");
         }
         return this.simulator;
+    }
+
+}
+
+/**
+ * Fake GTUFollowingModel.
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version 5 feb. 2015 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
+class FakeCarFollowingModel implements GTUFollowingModel
+{
+    /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
+    private DoubleScalar.Abs<AccelerationUnit> acceleration;
+
+    /** Valid until time that will be returned in GTUFollowingModelResult by computeAcceleration. */
+    private DoubleScalar.Abs<TimeUnit> validUntil;
+
+    /**
+     * Create a new FakeCarFollowingModel.
+     * @param acceleration DoubleScalar.Abs&ltAccelerationUnit&gt;; the acceleration that will be returned by the
+     *            computeAcceleration methods
+     * @param validUntil DoubleScalar.Abs&lt;TimeUnit&gt;; the valid until time that will be returned by the
+     *            computeAcceleration methods
+     */
+    public FakeCarFollowingModel(DoubleScalar.Abs<AccelerationUnit> acceleration, DoubleScalar.Abs<TimeUnit> validUntil)
+    {
+        this.acceleration = acceleration;
+        this.validUntil = validUntil;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower,
+            Collection<? extends LaneBasedGTU<?>> leaders, Abs<SpeedUnit> speedLimit) throws RemoteException,
+            NetworkException
+    {
+        return new GTUFollowingModelResult(this.acceleration, this.validUntil);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, LaneBasedGTU<?> leader,
+            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+    {
+        return new GTUFollowingModelResult(this.acceleration, this.validUntil);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, Abs<SpeedUnit> leaderSpeed,
+            Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
+    {
+        return new GTUFollowingModelResult(this.acceleration, this.validUntil);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
+    {
+        return new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DoubleScalar.Rel<TimeUnit> getStepSize()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getName()
+    {
+        return "Fake";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLongName()
+    {
+        return "Fake GTU following model";
     }
 
 }

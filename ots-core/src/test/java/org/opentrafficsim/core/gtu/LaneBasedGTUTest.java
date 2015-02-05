@@ -118,15 +118,15 @@ public class LaneBasedGTUTest
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
-        DoubleScalar.Rel<LengthUnit> truckPosition = new DoubleScalar.Rel<LengthUnit>(106, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> truckPosition = new DoubleScalar.Rel<LengthUnit>(99.5, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> truckLength = new DoubleScalar.Rel<LengthUnit>(15, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> truckPositions =
                 buildPositionsMap(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         DoubleScalar.Abs<SpeedUnit> truckSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
         LaneBasedIndividualCar<String> truck =
-                new LaneBasedIndividualCar<String>("Truck", truckType, null, truckPositions, truckSpeed, truckLength, truckWidth, null,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                new LaneBasedIndividualCar<String>("Truck", truckType, null, truckPositions, truckSpeed, truckLength,
+                        truckWidth, null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -183,16 +183,16 @@ public class LaneBasedGTUTest
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
                         buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar<String> car =
-                        new LaneBasedIndividualCar<String>("Car", carType, null, carPositions, carSpeed, carLength, carWidth, null,
-                                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        new LaneBasedIndividualCar<String>("Car", carType, null, carPositions, carSpeed, carLength,
+                                carWidth, null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 double actualHeadway = truck.headway(forwardMaxDistance).getSI();
                 double expectedHeadway =
                         laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
-                                || step - carLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE : step
-                                - carLength.getSI() - truckPosition.getSI();
-                // System.out.println("carLanesCovered " + laneRank + ".." + (laneRank + carLanesCovered - 1)
-                // + " truckLanesCovered " + truckFromLane + ".." + truckUpToLane + " car pos " + step
-                // + " laneRank " + laneRank + " expected headway " + expectedHeadway);
+                                || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE : step
+                                - truckLength.getSI() - truckPosition.getSI();
+                System.out.println("carLanesCovered " + laneRank + ".." + (laneRank + carLanesCovered - 1)
+                        + " truckLanesCovered " + truckFromLane + ".." + truckUpToLane + " car pos " + step
+                        + " laneRank " + laneRank + " expected headway " + expectedHeadway);
                 assertEquals("Forward headway should return " + expectedHeadway, expectedHeadway, actualHeadway, 0.1);
                 LaneBasedGTU<?> leader = truck.headwayGTU(forwardMaxDistance);
                 if (expectedHeadway == Double.MAX_VALUE)
@@ -206,8 +206,8 @@ public class LaneBasedGTUTest
                 double actualReverseHeadway = truck.headway(reverseMaxDistance).getSI();
                 double expectedReverseHeadway =
                         laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
-                                || step >= truckPosition.getSI() - truckLength.getSI() ? Double.MAX_VALUE
-                                : truckPosition.getSI() - truckLength.getSI() - step;
+                                || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition
+                                .getSI() - carLength.getSI() - step;
                 assertEquals("Reverse headway should return " + expectedReverseHeadway, expectedReverseHeadway,
                         actualReverseHeadway, 0.1);
                 LaneBasedGTU<?> follower = truck.headwayGTU(reverseMaxDistance);
@@ -241,8 +241,8 @@ public class LaneBasedGTUTest
                         }
                         expectedHeadway =
                                 laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
-                                        || step - carLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE
-                                        : step - carLength.getSI() - truckPosition.getSI();
+                                        || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE
+                                        : step - truckLength.getSI() - truckPosition.getSI();
                         assertEquals("Headway on lane " + laneIndex + " should be " + expectedHeadway, expectedHeadway,
                                 actualHeadway, 0.001);
                     }
@@ -261,7 +261,7 @@ public class LaneBasedGTUTest
                             fail("headway should have thrown a NetworkException");
                         }
                         if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
-                                && step - carLength.getSI() - truckPosition.getSI() > 0)
+                                && step - truckLength.getSI() - truckPosition.getSI() > 0)
                         {
                             assertEquals("Leader should be the car", car, leader);
                         }
@@ -286,8 +286,8 @@ public class LaneBasedGTUTest
                         }
                         expectedReverseHeadway =
                                 laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
-                                        || step >= truckPosition.getSI() - truckLength.getSI() ? Double.MAX_VALUE
-                                        : truckPosition.getSI() - truckLength.getSI() - step;
+                                        || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE
+                                        : truckPosition.getSI() - carLength.getSI() - step;
                         assertEquals("Headway on lane " + laneIndex + " should be " + expectedReverseHeadway,
                                 expectedReverseHeadway, actualReverseHeadway, 0.001);
                     }
@@ -306,7 +306,7 @@ public class LaneBasedGTUTest
                             fail("headway should have thrown a NetworkException");
                         }
                         if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
-                                && step < truckPosition.getSI() - truckLength.getSI())
+                                && step + carLength.getSI() < truckPosition.getSI())
                         {
                             assertEquals("Follower should be the car", car, follower);
                         }
@@ -327,8 +327,8 @@ public class LaneBasedGTUTest
                         truck.parallel(LateralDirectionality.LEFT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedLeftSize =
                         laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
-                                || step <= truckPosition.getSI() - truckLength.getSI()
-                                || step - carLength.getSI() > truckPosition.getSI() ? 0 : 1;
+                                || step + carLength.getSI() <= truckPosition.getSI()
+                                || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize,
                         leftParallel.size()); // This one caught a complex bug
                 if (leftParallel.size() > 0)
@@ -338,9 +338,9 @@ public class LaneBasedGTUTest
                 Set<LaneBasedGTU<?>> rightParallel =
                         truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulator().getSimulatorTime().get());
                 int expectedRightSize =
-                        laneRank <= truckFromLane || laneRank > truckUpToLane + 1
-                                || step < truckPosition.getSI() - truckLength.getSI()
-                                || step - carLength.getSI() > truckPosition.getSI() ? 0 : 1;
+                        laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
+                                || step + carLength.getSI() < truckPosition.getSI() 
+                                || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 assertEquals("Right parallel set size should be " + expectedRightSize, expectedRightSize,
                         rightParallel.size());
                 if (rightParallel.size() > 0)
@@ -415,9 +415,9 @@ public class LaneBasedGTUTest
             DoubleScalar.Abs<AccelerationUnit> acceleration =
                     new DoubleScalar.Abs<AccelerationUnit>(a, AccelerationUnit.METER_PER_SECOND_2);
             LaneBasedIndividualCar<String> car =
-                    new LaneBasedIndividualCar<String>("Car", carType, null, carPositions, carSpeed, new DoubleScalar.Rel<LengthUnit>(4,
-                            LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), null,
-                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                    new LaneBasedIndividualCar<String>("Car", carType, null, carPositions, carSpeed,
+                            new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                                    1.8, LengthUnit.METER), null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
             // System.out.println("acceleration is " + acceleration);
             GTUFollowingModel.GTUFollowingModelResult gfmr =
                     new GTUFollowingModel.GTUFollowingModelResult(acceleration, new DoubleScalar.Abs<TimeUnit>(70,
@@ -466,7 +466,7 @@ public class LaneBasedGTUTest
         for (CrossSectionLink<?, ?> link : links)
         {
             double linkLength = link.getLength().getSI();
-            double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength;
+            double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength + gtuLength.getSI();
             double rearPositionInLink = frontPositionInLink - gtuLength.getSI();
             // double linkEnd = cumulativeLength + linkLength;
             // System.out.println("cumulativeLength: " + cumulativeLength + ", linkEnd: " + linkEnd + ", frontpos: "
@@ -481,7 +481,7 @@ public class LaneBasedGTUTest
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
                     }
-                    result.put(lane, new DoubleScalar.Rel<LengthUnit>(frontPositionInLink, LengthUnit.METER));
+                    result.put(lane, new DoubleScalar.Rel<LengthUnit>(rearPositionInLink, LengthUnit.METER));
                 }
             }
             cumulativeLength += linkLength;
