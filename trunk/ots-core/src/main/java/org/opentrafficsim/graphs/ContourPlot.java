@@ -110,13 +110,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(int index)
     {
-        if (-1 == index)
-        {
-            index = this.cumulativeLengths.size() - 1;
-        }
+        int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
         try
         {
-            return this.cumulativeLengths.get(index);
+            return this.cumulativeLengths.get(useIndex);
         }
         catch (ValueException exception)
         {
@@ -563,7 +560,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** {@inheritDoc} */
     @Override
-    public final void addData(final AbstractLaneBasedGTU<?> car, Lane lane) throws RemoteException, NetworkException
+    public final void addData(final AbstractLaneBasedGTU<?> car, final Lane lane) throws RemoteException,
+            NetworkException
     {
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
         // Convert the position of the car to a position on path.

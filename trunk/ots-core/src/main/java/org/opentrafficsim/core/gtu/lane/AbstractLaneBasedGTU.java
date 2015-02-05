@@ -253,14 +253,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
             // TODO speed this up by using SI units, caching, etc.
             if (lane.fractionSI(frontPosSI) <= 1.0
-                    && (lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0))
+                    && lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0)
             {
                 for (Lane nextLane : lane.nextLanes())
                 {
                     // Only follow links on the Route if there is a Route, and we haven't added this lane already
                     if (!this.lanes.contains(nextLane)
-                            && (this.getRoute() == null || (this.getRoute() != null && this.getRoute().containsLink(
-                                    nextLane.getParentLink()))))
+                            && (this.getRoute() == null || this.getRoute() != null && this.getRoute().containsLink(
+                                    nextLane.getParentLink())))
                     {
                         this.lanes.add(nextLane);
                         if (!this.fractionalLinkPositions.containsKey(nextLane.getParentLink()))
