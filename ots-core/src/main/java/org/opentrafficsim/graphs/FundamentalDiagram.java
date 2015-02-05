@@ -162,7 +162,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param position DoubleScalarAbs&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
      * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, Lane lane,
+    public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, final Lane lane,
             final DoubleScalar.Abs<LengthUnit> position) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
@@ -603,7 +603,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          *            FundamentalDiagramSensor
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(Lane lane, DoubleScalar.Abs<LengthUnit> longitudinalPosition)
+        public FundamentalDiagramSensor(final Lane lane, final DoubleScalar.Abs<LengthUnit> longitudinalPosition)
                 throws NetworkException
         {
             super(lane, longitudinalPosition, RelativePosition.REAR);
@@ -612,11 +612,12 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(LaneBasedGTU<?> gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
         {
             addData(gtu);
         }
 
+        /** {@inheritDoc} */
         public final String toString()
         {
             return "FundamentalDiagramSensor at " + getLongitudinalPosition();
