@@ -65,16 +65,17 @@ public class Routes
                         {
                             double currentSpeedStart =
                                     cellBehaviourStart.retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars(),
-                                            cellBehaviourStart.getArea().getRoadLength()).getInUnit(SpeedUnit.KM_PER_HOUR);
+                                            cellBehaviourStart.getArea().getRoadLength()).getInUnit(
+                                            SpeedUnit.KM_PER_HOUR);
                             double freeSpeedStart =
                                     cellBehaviourStart.getParametersNTM().getFreeSpeed()
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
-                            rateCongestedVersusFreeSpeed = 0.5 * freeSpeedStart /currentSpeedStart;
+                            rateCongestedVersusFreeSpeed = 0.5 * freeSpeedStart / currentSpeedStart;
                             CellBehaviourNTM cellBehaviourEnd = (CellBehaviourNTM) endNode.getCellBehaviour();
                             double currentSpeedEnd =
                                     cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(),
-                                            cellBehaviourStart.getArea().getRoadLength())
-                                            .getInUnit(SpeedUnit.KM_PER_HOUR);
+                                            cellBehaviourStart.getArea().getRoadLength()).getInUnit(
+                                            SpeedUnit.KM_PER_HOUR);
                             double freeSpeedEnd =
                                     cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
                             rateCongestedVersusFreeSpeed += 0.5 * freeSpeedEnd / currentSpeedEnd;
@@ -163,6 +164,8 @@ public class Routes
                                         new TripInfoByDestination(neighbours, destination);
                                 cell.getCellBehaviourFlow().getTripInfoByNodeMap().put(destination, tripInfoByNode);
                             }
+                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
+                                    .getNeighbourAndRouteShare().put(graphEndNode, 1.0);
                             // for all node - destination pairs add information on their first neighbour on the shortest
                             // path
                             // if (cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
@@ -175,8 +178,7 @@ public class Routes
                             // cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
                             // .getNeighbourAndRouteShare().put(graphEndNode, share + weight_new * addShare);
                             // no route choice within a link!!
-                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
-                                    .getNeighbourAndRouteShare().put(graphEndNode, 1.0);
+
                         }
                     }
                     // System.out.println("Floyd: origin" + origin.getId() + "  dest " + destination.getId());

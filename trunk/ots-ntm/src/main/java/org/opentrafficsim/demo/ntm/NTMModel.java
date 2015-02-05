@@ -181,6 +181,11 @@ public class NTMModel implements OTSModelInterface
             int debugFiles = 0;
             // Debug3
             debugFiles = 3;
+            // boundaries for flow links (all links with values above are selected)
+            // settings below are unrealistic
+            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
+            DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(99, FrequencyUnit.PER_HOUR);
+
 
             if (debugFiles == 0)
             {
@@ -229,10 +234,14 @@ public class NTMModel implements OTSModelInterface
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
                         + "/profiles.txt", ";", "\\s+"));
-                numberOfRoutes = 1;
-                reRoute = true;
+                numberOfRoutes = 2;
+                reRoute = false;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
-                int variant = 5;
+                //Select all links as flow links!!
+                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
+              
+                int variant = 6;
                 this.output = "/output" + variant;
             }
 
@@ -340,12 +349,10 @@ public class NTMModel implements OTSModelInterface
             }
 
             // set the lower values for flow links:
-            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
-            DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(300, FrequencyUnit.PER_HOUR);
             this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
 
             // merge link segments between junctions on flow links:
-            Link.findSequentialLinks(this.flowLinks, this.nodes);
+            // Link.findSequentialLinks(this.flowLinks, this.nodes);
             // Link.findSequentialLinks(this.shpLinks, this.nodes);
 
             // save the selected and newly created areas to a shape file: at this position the connector areas are saved
@@ -604,6 +611,9 @@ public class NTMModel implements OTSModelInterface
             else
             {
                 System.out.println("FlowLink Area");
+                area.setRoadLength(new Rel<LengthUnit>(java.lang.Double.POSITIVE_INFINITY, LengthUnit.KILOMETER));
+                double averageSpeed = 100;
+                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
             }
         }
 
