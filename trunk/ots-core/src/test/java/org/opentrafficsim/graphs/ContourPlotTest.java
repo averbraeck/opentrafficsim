@@ -358,7 +358,7 @@ public class ContourPlotTest
             double z = cp.getZValue(0, item);
             if (Double.isNaN(expectedZValue))
             {
-                assertTrue("Z value should be NaN", Double.isNaN(z));
+                assertTrue("Z value should be NaN (got " + z + ")", Double.isNaN(z));
             }
             else
             {

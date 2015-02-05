@@ -385,7 +385,7 @@ public class Lane extends CrossSectionElement
             }
             else if (relativePosition.equals(RelativePosition.REAR))
             {
-                if (gtu.position(this, gtu.getRear(), when).getSI() > position.getSI())
+                if (gtu.position(this, gtu.getRear(), when).getSI() >= position.getSI())// PK was >; not >=
                 {
                     return gtu;
                 }

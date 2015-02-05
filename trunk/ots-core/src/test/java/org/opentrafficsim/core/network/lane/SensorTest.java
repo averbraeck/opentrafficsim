@@ -120,30 +120,34 @@ public class SensorTest
         String carID = "theCar";
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
-                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-                        maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed,
+                        carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        // Construction of the car scheduled a car move event at t=0
         GTUFollowingModelResult gtuFollowingModelResult =
                 new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.5,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND));
         car.setState(gtuFollowingModelResult);
+        // setState will have scheduled another car move event at t=100
+        // If we run the simulator, the car move method should throw an Error (but we don't test that here)
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();
         SimEventInterface<OTSSimTimeDouble> triggerEvent = null;
         int index = 0;
         for (SimEventInterface<OTSSimTimeDouble> event : eventList)
         {
             //System.out.println("Scheduled Event " + event);
-            if (1 == index)
+            if (2 == index)
             {
                 triggerEvent = event;
             }
             index++;
         }
-        assertEquals("There should be three scheduled events (warmup, trigger, terminate)", 3, eventList.size());
+        assertEquals("There should be three scheduled events (warmup, car.move, trigger, car.move, terminate)", 5,
+                eventList.size());
         // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
-        //System.out.println("trigger event is " + triggerEvent);
+        // System.out.println("trigger event is " + triggerEvent);
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
                 .getSI(), 0.0001);
-        //TODO setup a test that verifies trigger of a SensorLaneStart; this is not (yet) possible
+        // TODO setup a test that verifies trigger of a SensorLaneStart; this is not (yet) possible
     }
 }
 

@@ -40,7 +40,8 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 22, 2014 <br>
@@ -60,17 +61,17 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
 
     /**
-     * Fractional longitudinal positions of the reference point of the GTU on one or more links at the lastEvaluationTime.
-     * Because the reference point of the GTU might not be on all the links the GTU is registered on, the fractional
-     * longitudinal positions can be more than one, or less than zero.
+     * Fractional longitudinal positions of the reference point of the GTU on one or more links at the
+     * lastEvaluationTime. Because the reference point of the GTU might not be on all the links the GTU is registered
+     * on, the fractional longitudinal positions can be more than one, or less than zero.
      */
     private final Map<Link<?, ?>, Double> fractionalLinkPositions = new HashMap<>();
 
     /**
-     * The lanes the GTU is registered on. Each lane has to have its link registered in the fractionalLinkPositions as well to
-     * keep consistency. Each link from the fractionalLinkPositions can have one or more Lanes on which the vehicle is
-     * registered. This is a list to improve reproducibility: The 'oldest' lanes on which the vehicle is registered are at the
-     * front of the list, the later ones more to the back.
+     * The lanes the GTU is registered on. Each lane has to have its link registered in the fractionalLinkPositions as
+     * well to keep consistency. Each link from the fractionalLinkPositions can have one or more Lanes on which the
+     * vehicle is registered. This is a list to improve reproducibility: The 'oldest' lanes on which the vehicle is
+     * registered are at the front of the list, the later ones more to the back.
      */
     private final List<Lane> lanes = new ArrayList<>();
 
@@ -82,7 +83,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** acceleration (negative values indicate deceleration) at the lastEvaluationTime. */
     private DoubleScalar.Abs<AccelerationUnit> acceleration = new DoubleScalar.Abs<AccelerationUnit>(0,
-        AccelerationUnit.METER_PER_SECOND_2);
+            AccelerationUnit.METER_PER_SECOND_2);
 
     /** CarFollowingModel used by this Car. */
     private final GTUFollowingModel gtuFollowingModel;
@@ -99,9 +100,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
-        NetworkException, SimRuntimeException
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
+            throws RemoteException, NetworkException, SimRuntimeException
     {
         super(id, gtuType);
         this.gtuFollowingModel = gtuFollowingModel;
@@ -111,7 +112,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         for (Lane lane : initialLongitudinalPositions.keySet())
         {
             this.lanes.add(lane);
-            this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(initialLongitudinalPositions.get(lane)));
+            this.fractionalLinkPositions.put(lane.getParentLink(),
+                    lane.fraction(initialLongitudinalPositions.get(lane)));
             lane.addGTU(this, initialLongitudinalPositions.get(lane));
         }
 
@@ -186,7 +188,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final void addLane(final Lane lane, final DoubleScalar.Rel<LengthUnit> position)
     {
-        // if the GTU is already registered on a lane of the same link, do not change its fractional position, as this might
+        // if the GTU is already registered on a lane of the same link, do not change its fractional position, as this
+        // might
         // lead to a "jump".
         if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
         {
@@ -223,7 +226,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws SimRuntimeException when sensor trigger(s) cannot be scheduled on the simulator.
      */
     public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException,
-        SimRuntimeException
+            SimRuntimeException
     {
         // GTUs move based on their fractional position to stay aligned when registered in parallel lanes.
         // The "oldest" lane of parallel lanes takes preference when updating the fractional position.
@@ -231,8 +234,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         for (int i = this.lanes.size() - 1; i >= 0; i--)
         {
             Lane lane = this.lanes.get(i);
-            this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference(),
-                this.nextEvaluationTime)));
+            this.fractionalLinkPositions.put(lane.getParentLink(),
+                    lane.fraction(position(lane, getReference(), this.nextEvaluationTime)));
         }
         // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
@@ -250,14 +253,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
             // TODO speed this up by using SI units, caching, etc.
             if (lane.fractionSI(frontPosSI) <= 1.0
-                && (lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0))
+                    && (lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0))
             {
                 for (Lane nextLane : lane.nextLanes())
                 {
                     // Only follow links on the Route if there is a Route, and we haven't added this lane already
                     if (!this.lanes.contains(nextLane)
-                        && (this.getRoute() == null || (this.getRoute() != null && this.getRoute().containsLink(
-                            nextLane.getParentLink()))))
+                            && (this.getRoute() == null || (this.getRoute() != null && this.getRoute().containsLink(
+                                    nextLane.getParentLink()))))
                     {
                         this.lanes.add(nextLane);
                         if (!this.fractionalLinkPositions.containsKey(nextLane.getParentLink()))
@@ -280,7 +283,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // Schedule all sensor triggers that are going to happen until the next evaluation time.
         for (Lane lane : this.lanes)
         {
-            double dt = this.nextEvaluationTime.getSI() - this.getLastEvaluationTime().getSI(); 
+            double dt = this.nextEvaluationTime.getSI() - this.getLastEvaluationTime().getSI();
             double moveSI = this.speed.getSI() * dt + 0.5 * getAcceleration().getSI() * dt * dt;
             lane.scheduleTriggers(this, lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink())), moveSI);
         }
@@ -296,19 +299,24 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
+        // Sanity check
+        if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
+        {
+            throw new Error("move called at wrong time: expected time " + getNextEvaluationTime()
+                    + " simulator time is : " + getSimulator().getSimulatorTime().get());
+        }
         // only carry out move() if we still have lane(s) to drive on.
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
         if (this.lanes.isEmpty())
         {
             return;
         }
-
         Collection<LaneBasedGTU<?>> leaders = new ArrayList<>();
         leaders.add(this.headwayGTU(new DoubleScalar.Rel<LengthUnit>(100.0, LengthUnit.METER))); // TODO 100?
         // TODO calculate lowest speed limit
         GTUFollowingModelResult cfmr =
-            getGTUFollowingModel().computeAcceleration(this, leaders,
-                new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR));
+                getGTUFollowingModel().computeAcceleration(this, leaders,
+                        new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR));
         setState(cfmr);
         // addToContourPlots(this); TODO via pub/sub
     }
@@ -316,7 +324,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition)
-        throws NetworkException, RemoteException
+            throws NetworkException, RemoteException
     {
         return positions(relativePosition, getSimulator().getSimulatorTime().get());
     }
@@ -324,7 +332,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
-        final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = new HashMap<>();
         for (Lane lane : this.lanes)
@@ -337,7 +345,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition)
-        throws NetworkException, RemoteException
+            throws NetworkException, RemoteException
     {
         return position(lane, relativePosition, getSimulator().getSimulatorTime().get());
     }
@@ -345,27 +353,37 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition,
-        final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
+        if (null == lane)
+        {
+            throw new NetworkException("lane is null");
+        }
+        if (!this.lanes.contains(lane))
+        {
+            throw new NetworkException("GTU is not on lane " + lane.toString());
+        }
         DoubleScalar.Rel<LengthUnit> longitudinalPosition =
-            lane.position(this.fractionalLinkPositions.get(lane.getParentLink()));
+                lane.position(this.fractionalLinkPositions.get(lane.getParentLink()));
         if (longitudinalPosition == null)
         {
             throw new NetworkException("GetPosition: GTU " + toString() + " not in lane " + lane);
         }
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
-            DoubleScalar.plus(
-                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT)).immutable(),
-                    Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable(),
-                relativePosition.getDx()).immutable();
+                DoubleScalar.plus(
+                        DoubleScalar.plus(
+                                DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT))
+                                        .immutable(),
+                                Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable(),
+                        relativePosition.getDx()).immutable();
         return loc;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws NetworkException,
-        RemoteException
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition)
+            throws NetworkException, RemoteException
     {
         return fractionalPositions(relativePosition, getSimulator().getSimulatorTime().get());
     }
@@ -373,7 +391,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition,
-        final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         Map<Lane, Double> positions = new HashMap<>();
         for (Lane lane : this.lanes)
@@ -386,7 +404,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition,
-        final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
         return position(lane, relativePosition, when).getSI() / lane.getLength().getSI();
     }
@@ -394,7 +412,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition)
-        throws NetworkException, RemoteException
+            throws NetworkException, RemoteException
     {
         return position(lane, relativePosition).getSI() / lane.getLength().getSI();
     }
@@ -402,25 +420,27 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /**
      * Calculate the minimum headway, possibly on subsequent lanes, in forward direction.
      * @param lane the lane where we are looking right now
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the GTU
-     *            when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the
+     *            GTU when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
      * @param cumDistanceSI the distance we have already covered searching on previous lanes
      * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls
      * @param when the current or future time for which to calculate the headway
-     * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
-     *         no other GTU could not be found within maxDistanceSI meters
+     * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE
+     *         meters when no other GTU could not be found within maxDistanceSI meters
      * @throws RemoteException when the simulation time cannot be retrieved
      * @throws NetworkException when there is a problem with the geometry of the network
      */
     private GTUDistanceSI headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI,
-        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
-        throws RemoteException, NetworkException
+            final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
+            throws RemoteException, NetworkException
     {
         LaneBasedGTU<?> otherGTU =
-            lane.getGtuAfter(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
+                lane.getGtuAfter(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER),
+                        RelativePosition.REAR, when);
         if (otherGTU != null)
         {
-            double distanceM = cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
+            double distanceM =
+                    cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new GTUDistanceSI(otherGTU, distanceM);
@@ -440,13 +460,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     // Only follow links on the Route if there is a Route
                     if (this.getRoute() == null || this.getRoute() != null
-                        && this.getRoute().containsLink(lane.getParentLink()))
+                            && this.getRoute().containsLink(lane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                         GTUDistanceSI closest =
-                            headwayRecursiveForwardSI(nextLane, 0.0, traveledDistanceSI, maxDistanceSI, when);
+                                headwayRecursiveForwardSI(nextLane, 0.0, traveledDistanceSI, maxDistanceSI, when);
                         if (closest.getDistanceSI() < maxDistanceSI
-                            && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                                && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
                         {
                             foundMaxGTUDistanceSI = closest;
                         }
@@ -461,31 +481,33 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
-     * Calculate the minimum headway, possibly on subsequent lanes, in backward direction (so between our back, and the other
-     * GTU's front). Note: this method returns a POSITIVE number.
+     * Calculate the minimum headway, possibly on subsequent lanes, in backward direction (so between our back, and the
+     * other GTU's front). Note: this method returns a POSITIVE number.
      * @param lane the lane where we are looking right now
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the rear of
-     *            the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength() for each
-     *            subsequent lane.
-     * @param cumDistanceSI the distance we have already covered searching on previous lanes. Note: This is a POSITIVE number.
-     * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls. Note: this is a
-     *            POSITIVE number.
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the
+     *            rear of the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength()
+     *            for each subsequent lane.
+     * @param cumDistanceSI the distance we have already covered searching on previous lanes. Note: This is a POSITIVE
+     *            number.
+     * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls. Note: this
+     *            is a POSITIVE number.
      * @param when the current or future time for which to calculate the headway
-     * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
-     *         no other GTU could not be found within maxDistanceSI meters
+     * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE
+     *         meters when no other GTU could not be found within maxDistanceSI meters
      * @throws RemoteException when the simulation time cannot be retrieved
      * @throws NetworkException when there is a problem with the geometry of the network
      */
     private GTUDistanceSI headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI,
-        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
-        throws RemoteException, NetworkException
+            final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
+            throws RemoteException, NetworkException
     {
         LaneBasedGTU<?> otherGTU =
-            lane.getGtuBefore(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.FRONT,
-                when);
+                lane.getGtuBefore(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER),
+                        RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
-            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            double distanceM =
+                    cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new GTUDistanceSI(otherGTU, distanceM);
@@ -506,10 +528,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     // What is behind us is INDEPENDENT of the followed route!
                     double traveledDistanceSI = cumDistanceSI + lanePositionSI;
                     GTUDistanceSI closest =
-                        headwayRecursiveBackwardSI(prevLane, prevLane.getLength().getSI(), traveledDistanceSI,
-                            maxDistanceSI, when);
+                            headwayRecursiveBackwardSI(prevLane, prevLane.getLength().getSI(), traveledDistanceSI,
+                                    maxDistanceSI, when);
                     if (closest.getDistanceSI() < maxDistanceSI
-                        && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                            && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
                     {
                         foundMaxGTUDistanceSI = closest;
                     }
@@ -524,8 +546,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /**
      * @param maxDistanceSI the maximum distance to look for in SI units
-     * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
-     *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
+     * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU
+     *         with a distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI
+     *         meters
      * @throws RemoteException when the simulation time cannot be retrieved
      * @throws NetworkException when there is a problem with the geometry of the network
      */
@@ -540,10 +563,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             for (Lane lane : positions(getFront()).keySet())
             {
                 GTUDistanceSI closest =
-                    headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(), when).getSI(), 0.0, maxDistanceSI,
-                        when);
+                        headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(), when).getSI(), 0.0,
+                                maxDistanceSI, when);
                 if (closest.getDistanceSI() < maxDistanceSI
-                    && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                        && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
                 {
                     foundMaxGTUDistanceSI = closest;
                 }
@@ -555,10 +578,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             for (Lane lane : positions(getRear()).keySet())
             {
                 GTUDistanceSI closest =
-                    headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(), when).getSI(), 0.0, -maxDistanceSI,
-                        when);
+                        headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(), when).getSI(), 0.0,
+                                -maxDistanceSI, when);
                 if (closest.getDistanceSI() < -maxDistanceSI
-                    && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
+                        && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
                 {
                     foundMaxGTUDistanceSI = closest;
                 }
@@ -570,7 +593,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final DoubleScalar.Rel<LengthUnit> maxDistance)
-        throws RemoteException, NetworkException
+            throws RemoteException, NetworkException
     {
         return new DoubleScalar.Rel<LengthUnit>(headwayGTUSI(maxDistance.getSI()).getDistanceSI(), LengthUnit.METER);
     }
@@ -578,45 +601,45 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final Lane lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
-        throws RemoteException, NetworkException
+            throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
         if (maxDistance.getSI() > 0.0)
         {
-            return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveForwardSI(lane,
-                this.position(lane, this.getFront(), when).getSI(), 0.0, maxDistance.getSI(), when).getDistanceSI(),
-                LengthUnit.METER);
+            return new DoubleScalar.Rel<LengthUnit>(
+                    headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(), when).getSI(), 0.0,
+                            maxDistance.getSI(), when).getDistanceSI(), LengthUnit.METER);
         }
         else
         {
-            return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveBackwardSI(lane,
-                this.position(lane, this.getRear(), when).getSI(), 0.0, -maxDistance.getSI(), when).getDistanceSI(),
-                LengthUnit.METER);
+            return new DoubleScalar.Rel<LengthUnit>(
+                    headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(), when).getSI(), 0.0,
+                            -maxDistance.getSI(), when).getDistanceSI(), LengthUnit.METER);
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public final LaneBasedGTU<?> headwayGTU(final Lane lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
-        throws RemoteException, NetworkException
+            throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
         if (maxDistance.getSI() > 0.0)
         {
             return headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(), when).getSI(), 0.0,
-                maxDistance.getSI(), when).getOtherGTU();
+                    maxDistance.getSI(), when).getOtherGTU();
         }
         else
         {
             return headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(), when).getSI(), 0.0,
-                -maxDistance.getSI(), when).getOtherGTU();
+                    -maxDistance.getSI(), when).getOtherGTU();
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public final LaneBasedGTU<?> headwayGTU(final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException,
-        NetworkException
+            NetworkException
     {
         return headwayGTUSI(maxDistance.getSI()).getOtherGTU();
     }
@@ -624,24 +647,26 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /**
      * Calculate the headway to a GTU, possibly on subsequent lanes, in forward direction.
      * @param lane the lane where we are looking right now
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the (front
-     *            of the) GTU when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the
+     *            (front of the) GTU when we measure in the lane where the original GTU is positioned, and 0.0 for each
+     *            subsequent lane
      * @param otherGTU the GTU to which the headway must be returned
      * @param cumDistanceSI the distance we have already covered searching on previous lanes
      * @param maxDistanceSI the maximum distance to look for; stays the same in subsequent calls
      * @param when the future time for which to calculate the headway
-     * @return the headway in SI units when we have found the GTU, or Double.MAX_VALUE when the otherGTU could not be found
-     *         within maxDistanceSI
+     * @return the headway in SI units when we have found the GTU, or Double.MAX_VALUE when the otherGTU could not be
+     *         found within maxDistanceSI
      * @throws RemoteException when the simulation time cannot be retrieved
      * @throws NetworkException when there is a problem with the geometry of the network
      */
-    private double headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI, final LaneBasedGTU<?> otherGTU,
-        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
-        throws RemoteException, NetworkException
+    private double headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI,
+            final LaneBasedGTU<?> otherGTU, final double cumDistanceSI, final double maxDistanceSI,
+            final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
         if (lane.getGtuList().contains(otherGTU))
         {
-            double distanceM = cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
+            double distanceM =
+                    cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return distanceM;
@@ -660,11 +685,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     // Only follow links on the Route if there is a Route
                     if (this.getRoute() == null || this.getRoute() != null
-                        && this.getRoute().containsLink(lane.getParentLink()))
+                            && this.getRoute().containsLink(lane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                         double headwaySuccessor =
-                            headwayRecursiveForwardSI(nextLane, 0.0, otherGTU, traveledDistanceSI, maxDistanceSI, when);
+                                headwayRecursiveForwardSI(nextLane, 0.0, otherGTU, traveledDistanceSI, maxDistanceSI,
+                                        when);
                         if (headwaySuccessor < maxDistanceSI)
                         {
                             return headwaySuccessor;
@@ -681,25 +707,26 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /**
      * Calculate the headway to a GTU, possibly on subsequent lanes, in backward direction.
      * @param lane the lane where we are looking right now
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the (back
-     *            of) the GTU when we measure in the lane where the original GTU is positioned, and the length of the lane for
-     *            each subsequent lane
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the
+     *            (back of) the GTU when we measure in the lane where the original GTU is positioned, and the length of
+     *            the lane for each subsequent lane
      * @param otherGTU the GTU to which the headway must be returned
      * @param cumDistanceSI the distance we have already covered searching on previous lanes, as a POSITIVE number
      * @param maxDistanceSI the maximum distance to look for; stays the same in subsequent calls, as a POSITIVE number
      * @param when the future time for which to calculate the headway
-     * @return the headway in SI units when we have found the GTU, or Double.MAX_VALUE when the otherGTU could not be found
-     *         within maxDistanceSI
+     * @return the headway in SI units when we have found the GTU, or Double.MAX_VALUE when the otherGTU could not be
+     *         found within maxDistanceSI
      * @throws RemoteException when the simulation time cannot be retrieved
      * @throws NetworkException when there is a problem with the geometry of the network
      */
-    private double headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI, final LaneBasedGTU<?> otherGTU,
-        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
-        throws RemoteException, NetworkException
+    private double headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI,
+            final LaneBasedGTU<?> otherGTU, final double cumDistanceSI, final double maxDistanceSI,
+            final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
         if (lane.getGtuList().contains(otherGTU))
         {
-            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            double distanceM =
+                    cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return distanceM;
@@ -719,8 +746,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     // Routes are NOT IMPORTANT when we look backward.
                     double traveledDistanceSI = cumDistanceSI + lanePositionSI;
                     double headwayPredecessor =
-                        headwayRecursiveForwardSI(prevLane, prevLane.getLength().getSI(), otherGTU, traveledDistanceSI,
-                            maxDistanceSI, when);
+                            headwayRecursiveForwardSI(prevLane, prevLane.getLength().getSI(), otherGTU,
+                                    traveledDistanceSI, maxDistanceSI, when);
                     if (headwayPredecessor < maxDistanceSI)
                     {
                         return headwayPredecessor;
@@ -736,7 +763,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU,
-        final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
+            final DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
     {
         return headway(otherGTU, maxDistance, getSimulator().getSimulatorTime().get());
     }
@@ -744,8 +771,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> headway(final LaneBasedGTU<?> otherGTU,
-        final DoubleScalar.Rel<LengthUnit> maxDistance, final DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
-        NetworkException
+            final DoubleScalar.Rel<LengthUnit> maxDistance, final DoubleScalar.Abs<TimeUnit> when)
+            throws RemoteException, NetworkException
     {
         if (otherGTU == null)
         {
@@ -758,8 +785,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             for (Lane lane : positions(getFront()).keySet())
             {
                 // call an internal recursive method
-                return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveForwardSI(lane, this.position(lane, this.getFront(),
-                    when).getSI(), otherGTU, 0.0, maxDistance.getSI(), when), LengthUnit.METER);
+                return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveForwardSI(lane,
+                        this.position(lane, this.getFront(), when).getSI(), otherGTU, 0.0, maxDistance.getSI(), when),
+                        LengthUnit.METER);
             }
             // other GTU not found within maxDistance
             return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
@@ -769,8 +797,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             for (Lane lane : positions(getRear()).keySet())
             {
                 // call an internal recursive method
-                return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveBackwardSI(lane, this.position(lane, this.getRear(),
-                    when).getSI(), otherGTU, 0.0, maxDistance.getSI(), when), LengthUnit.METER);
+                return new DoubleScalar.Rel<LengthUnit>(headwayRecursiveBackwardSI(lane,
+                        this.position(lane, this.getRear(), when).getSI(), otherGTU, 0.0, maxDistance.getSI(), when),
+                        LengthUnit.METER);
             }
             // other GTU not found within maxDistance
             return new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
@@ -780,7 +809,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Set<LaneBasedGTU<?>> parallel(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
-        throws RemoteException, NetworkException
+            throws RemoteException, NetworkException
     {
         Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
         for (Lane l : this.lanes)
@@ -811,7 +840,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Set<LaneBasedGTU<?>> parallel(final LateralDirectionality lateralDirection,
-        final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
         Set<Lane> adjacentLanes = new HashSet<Lane>();
         for (Lane lane : this.lanes)
@@ -862,16 +891,16 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
-     * Determine show long it will take for this GTU to cover the specified distance (both time and distance since the last
-     * evaluation time).
+     * Determine show long it will take for this GTU to cover the specified distance (both time and distance since the
+     * last evaluation time).
      * @param distance double; the distance
      * @return Double; the relative time, or null when this GTU stops before covering the specified distance
      */
     private Double solveTimeForDistance(final DoubleScalar.Rel<LengthUnit> distance)
     {
         /*
-         * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If that is
-         * changed, this method will have to be re-written.
+         * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If
+         * that is changed, this method will have to be re-written.
          */
         double c = -distance.getSI();
         double a = this.acceleration.getSI() / 2;
@@ -930,18 +959,20 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             Lane lane = this.lanes.get(0);
             // TODO solve problem when point is still on previous lane.
-            double fraction = (position(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
+            double fraction =
+                    (position(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
             LineString line = lane.getCenterLine();
             LengthIndexedLine lil = new LengthIndexedLine(line);
             Coordinate c = lil.extractPoint(fraction * line.getLength());
             // HACK (FIXME)
             c.z = 0d;
             Coordinate ca =
-                fraction <= 0.01 ? lil.extractPoint(0.0) : lil.extractPoint((fraction - 0.01) * line.getLength());
+                    fraction <= 0.01 ? lil.extractPoint(0.0) : lil.extractPoint((fraction - 0.01) * line.getLength());
             Coordinate cb =
-                fraction >= 0.99 ? lil.extractPoint(1.0) : lil.extractPoint((fraction + 0.01) * line.getLength());
+                    fraction >= 0.99 ? lil.extractPoint(1.0) : lil.extractPoint((fraction + 0.01) * line.getLength());
             double angle = Math.atan2(cb.y - ca.y, cb.x - ca.x);
-            return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0, angle);
+            return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0,
+                    angle);
         }
         catch (Exception ne)
         {
@@ -979,8 +1010,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s^2", getId(),
-            this.lastEvaluationTime.getSI(), getNextEvaluationTime().getSI(), pos, this.getLongitudinalVelocity(when)
-                .getSI(), this.getAcceleration(when).getSI());
+                this.lastEvaluationTime.getSI(), getNextEvaluationTime().getSI(), pos,
+                this.getLongitudinalVelocity(when).getSI(), this.getAcceleration(when).getSI());
     }
 
     /**

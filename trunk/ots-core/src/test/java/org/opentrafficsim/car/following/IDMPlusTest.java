@@ -71,8 +71,8 @@ public class IDMPlusTest
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         LaneBasedIndividualCar<Integer> referenceCar =
-                new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, initialLongitudinalPositions, initialSpeed, length,
-                        width, maxSpeed, simulator);
+                new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, initialLongitudinalPositions,
+                        initialSpeed, length, width, maxSpeed, simulator);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         Collection<LaneBasedIndividualCar<Integer>> leaders = new ArrayList<LaneBasedIndividualCar<Integer>>();
         GTUFollowingModelResult cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
@@ -82,12 +82,13 @@ public class IDMPlusTest
         // Check that the follower remains stationary
         DoubleScalar.Rel<LengthUnit> leaderPosition =
                 new DoubleScalar.Rel<LengthUnit>(2 + referenceCar.getLength().getSI()
-                        + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
+                        + referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(),
+                        LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
         LaneBasedIndividualCar<Integer> leaderCar =
-                new LaneBasedIndividualCar<Integer>(23456, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed,
-                        simulator);
+                new LaneBasedIndividualCar<Integer>(23456, carType, null, leaderPositions, initialSpeed, length, width,
+                        maxSpeed, simulator);
         leaders.add(leaderCar);
         cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
@@ -99,8 +100,8 @@ public class IDMPlusTest
         leaderPositions.put(lane, leaderPosition);
         // Exercise the if statement that ignores leaders that are further ahead
         LaneBasedIndividualCar<Integer> leaderCar2 =
-                new LaneBasedIndividualCar<Integer>(34567, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed,
-                        simulator);
+                new LaneBasedIndividualCar<Integer>(34567, carType, null, leaderPositions, initialSpeed, length, width,
+                        maxSpeed, simulator);
         leaders.add(leaderCar2); // Put the 2nd leader in first place
         leaders.add(leaderCar);
         cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
@@ -117,8 +118,8 @@ public class IDMPlusTest
         leaderPositions = new HashMap<>();
         leaderPositions.put(lane, leaderPosition);
         leaderCar =
-                new LaneBasedIndividualCar<Integer>(23456, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed,
-                        simulator);
+                new LaneBasedIndividualCar<Integer>(23456, carType, null, leaderPositions, initialSpeed, length, width,
+                        maxSpeed, simulator);
         leaders.add(leaderCar);
         cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
         assertEquals("Acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
@@ -134,8 +135,8 @@ public class IDMPlusTest
             leaderPositions = new HashMap<>();
             leaderPositions.put(lane, leaderPosition);
             leaderCar =
-                    new LaneBasedIndividualCar<Integer>(0, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed,
-                            simulator);
+                    new LaneBasedIndividualCar<Integer>(0, carType, null, leaderPositions, initialSpeed, length, width,
+                            maxSpeed, simulator);
             leaders.add(leaderCar);
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
             double acceleration = cfmr.getAcceleration().getSI();
@@ -160,13 +161,14 @@ public class IDMPlusTest
             Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<>();
             initialPositions.put(lane, initialPosition);
             referenceCar =
-                    new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, initialPositions, initialSpeed, length, width,
-                            maxSpeed, simulator);
+                    new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, initialPositions,
+                            initialSpeed, length, width, maxSpeed, simulator);
             leaders.clear();
             DoubleScalar.Abs<SpeedUnit> leaderSpeed =
                     new DoubleScalar.Abs<SpeedUnit>(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
             leaderCar =
-                    new LaneBasedIndividualCar<Integer>(0, carType, null, leaderPositions, leaderSpeed, length, width, maxSpeed, simulator);
+                    new LaneBasedIndividualCar<Integer>(0, carType, null, leaderPositions, leaderSpeed, length, width,
+                            maxSpeed, simulator);
             leaders.add(leaderCar);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar   : " + leaderCar);
@@ -185,8 +187,8 @@ public class IDMPlusTest
         initialPositions.put(lane, initialPosition);
         initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND);
         referenceCar =
-                new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, initialPositions, initialSpeed, length, width,
-                        maxSpeed, simulator);
+                new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, initialPositions, initialSpeed,
+                        length, width, maxSpeed, simulator);
         leaders.clear();
         leaderPosition =
                 new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
@@ -194,7 +196,8 @@ public class IDMPlusTest
         leaderPositions.clear();
         leaderPositions.put(lane, leaderPosition);
         leaderCar =
-                new LaneBasedIndividualCar<Integer>(0, carType, null, leaderPositions, initialSpeed, length, width, maxSpeed, simulator);
+                new LaneBasedIndividualCar<Integer>(0, carType, null, leaderPositions, initialSpeed, length, width,
+                        maxSpeed, simulator);
         leaders.add(leaderCar);
         // System.out.println("Setup    referenceCar: " + referenceCar);
         for (int timeStep = 0; timeStep < 200; timeStep++)
@@ -203,13 +206,13 @@ public class IDMPlusTest
             // This crashes at timeStep 62.
             if (timeStep > 0)
             {
-                break;  // TODO fix the problem as described below...
+                break; // TODO fix the problem as described below...
             }
             // TODO: re-write and USE that simulator to do run the car.
             // The way things work today, the referenceCar is driving backwards!
             cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
-            //System.out.println("follower: " + referenceCar);
-            //System.out.println("      leader: " + leaderCar + "   cfmr: " + cfmr);
+            // System.out.println("follower: " + referenceCar);
+            // System.out.println("      leader: " + leaderCar + "   cfmr: " + cfmr);
             referenceCar.setState(cfmr);
             // DoubleScalar.Abs<TimeUnit> thisEvaluationTime = referenceCar.getNextEvaluationTime();
             // DoubleScalar.Abs<SpeedUnit> currentSpeed = referenceCar.getLongitudinalVelocity(thisEvaluationTime);
