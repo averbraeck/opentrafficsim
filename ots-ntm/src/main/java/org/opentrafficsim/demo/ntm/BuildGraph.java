@@ -131,6 +131,10 @@ public class BuildGraph
             if (node != null)
             {
                 // put centroid back in links
+                if (node.getArea().getRoadLength().doubleValue() == Double.POSITIVE_INFINITY)
+                {
+                    node.setBehaviourType(TrafficBehaviourType.CORDON);
+                }
                 areaNodeCentroidMap.put(area, node);
                 model.getNodeAreaGraphMap().put(node.getId(), node);
                 model.getAreaGraph().addVertex(node);

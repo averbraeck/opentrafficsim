@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -51,10 +52,7 @@ public class WriteOutput
     static Double[][] parametersFD = new Double[999][3];
 
     /** */
-    static Double[] laneLength = new Double[999];
-
-    /** */
-    static Double[] lanesPerCell = new Double[999];
+    static Double[][] laneData = new Double[999][999];
 
     /** */
     static String[] cellID = new String[999];
@@ -84,20 +82,197 @@ public class WriteOutput
     {
         // for testing we open a file and write some results:
         // TODO testing
-
+        String fileName = "/Celldata";
+        String description = "CellData";
+        String DATATYPE = "cellData";
         if (steps == 1)
         {
-            File fileLaneLength = new File(model.getSettingsNTM().getPath() + "/output/NTMoutputCellLength.txt");
+            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
             dataLaneLengthOut = createWriter(fileLaneLength);
-            File fileAccumulation = new File(model.getSettingsNTM().getPath() + "/output/NTMoutputAccumulation.txt");
-            dataAccumulationCellOut = createWriter(fileAccumulation);
-            File fileLanesPerCell = new File(model.getSettingsNTM().getPath() + "/output/NTMoutputLanesPerCell.txt");
-            dataLanesPerCellOut = createWriter(fileLanesPerCell);
-            File fileParametersFD = new File(model.getSettingsNTM().getPath() + "/output/NTMoutputParametersFD.txt");
-            dataParametersFDOut = createWriter(fileParametersFD);
         }
+        writeCellInfo(model, steps, MAXSTEPS, description, dataLaneLengthOut, laneData, DATATYPE);
+        
+        fileName = "/ParametersFD";
+        description = "ParametersFD";
+        DATATYPE = "parametersFD";
+        if (steps == 1)
+        {
+            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            dataParametersFDOut = createWriter(fileLaneLength);
+        }
+        writeCellInfo(model, steps, MAXSTEPS, description, dataParametersFDOut, parametersFD, DATATYPE);
 
+        fileName = "/AccumulationCells";
+        description = "AccumulationCells";
+        DATATYPE = "accumulationCells";
+        if (steps == 1)
+        {
+            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            dataAccumulationCellOut = createWriter(fileLaneLength);
+        }
+        writeCellInfo(model, steps, MAXSTEPS, description, dataAccumulationCellOut, accumulationCells, DATATYPE);
+        
+    }
+
+    /**
+     * @param model
+     * @param steps
+     * @param MAXSTEPS
+     */
+    public static void writeCellInfo(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
+            Double[][] dataArray, String DATATYPE)
+    {
         if (steps < MAXSTEPS)
+        {
+            int i = 0;
+            int linkNumber = 0;
+    
+            for (LinkEdge le : model.getAreaGraph().edgeSet())
+            {
+                Link link = (Link) le.getLink();
+                if (link.getBehaviourType() == TrafficBehaviourType.FLOW)
+                {
+                    LinkCellTransmission ctmLink = (LinkCellTransmission) link;
+                    for (FlowCell cell : ctmLink.getCells())
+                    {
+                        if (steps == 1)
+                        {
+                            linkIndex.put(link, i);
+                            indexLink.put(i, link);
+                            cellID[i] = String.valueOf(linkNumber);
+                            
+                            if (DATATYPE == "cellData")
+                            {
+                                dataArray[i][0] = cell.getCellLength().getSI();
+                                dataArray[i][1] = (double) cell.getNumberOfLanes();
+                            }
+                            
+                            if (DATATYPE == "parametersFD")
+                            {
+                                dataArray[i][0] =
+                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getCapacityPerUnit()
+                                            .doubleValue() * 3600;
+                                dataArray[i][1] =
+                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
+                                            .get(0);
+                                dataArray[i][2] =
+                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
+                                            .get(1);
+                            }
+                        }
+                        if (DATATYPE == "accumulationCells")
+                        {
+                            accumulationCells[i][steps - 1] = cell.getCellBehaviourFlow().getAccumulatedCars();
+                        }
+                        i++;
+                    }
+                    linkNumber++;
+                }
+    
+            }
+            numberOfCells = i;
+        }
+    
+        // Write data to file
+        if (DATATYPE == "accumulationCells")
+        {
+            if (steps == MAXSTEPS - 1)
+            {
+                try
+                {
+                    String textOut;
+                    // Link transmission
+                    data.write("Step:  " + ", ");
+                    for (int j = 0; j < steps; j++)
+                    {
+                        data.write(j + ", ");
+                    }
+                    data.write(" \n");
+
+                    for (int i = 0; i < numberOfCells; i++)
+                    {
+                        data.write(description + " " + indexLink.get(i).getId() + ", ");
+                        for (int j = 0; j < steps; j++)
+                        {
+                            textOut = String.format("%.5f", dataArray[i][j]);
+                            data.write(textOut + ", ");
+                        }
+                        data.write(" \n");
+                    }
+                    data.close();
+                }
+                catch (IOException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+        else if (DATATYPE == "parametersFD")
+        {
+            if (steps == 1)
+            {
+                try
+                {
+                    String textOut;
+                    // Link transmission
+                    data.write("Indicators:   " + ", ");
+                    data.write("Max. capacity" + ", ");
+                    data.write("Crit AccMax" + ", ");
+                    data.write("Crit AccJam" + ", ");
+                    data.write(" \n");
+
+                    for (int i = 0; i < numberOfCells; i++)
+                    {
+                        data.write(description + " " + indexLink.get(i).getId() + ", ");
+                        for (int j = 0; j < 3; j++)
+                        {
+                            textOut = String.format("%.5f", dataArray[i][j]);
+                            data.write(textOut + ", ");
+                        }
+                        data.write(" \n");
+                    }
+                    data.close();
+                }
+                catch (IOException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+        else if (DATATYPE == "cellData")
+        {
+            if (steps == 1)
+            {
+                try
+                {
+                    String textOut;
+                    // Link transmission
+                    data.write("Indicators:   " + ", ");
+                    data.write("Number of Lanes" + ", ");
+                    data.write("Cell Length" + ", ");
+                    data.write(" \n");
+
+                    for (int i = 0; i < numberOfCells; i++)
+                    {
+                        data.write(description + " " + indexLink.get(i).getId() + ", ");
+                        for (int j = 0; j < 2; j++)
+                        {
+                            textOut = String.format("%.5f", dataArray[i][j]);
+                            data.write(textOut + ", ");
+                        }
+                        data.write(" \n");
+                    }
+                    data.close();
+                }
+                catch (IOException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }        
+    }
+
+/*        if (steps < MAXSTEPS)
         {
             int i = 0;
             int linkNumber = 0;
@@ -177,7 +352,11 @@ public class WriteOutput
             }
         }
     }
-
+*/
+  
+    
+    
+    
     // AREAS
     /** */
     static BufferedWriter dataParametersNFDOut = null;
