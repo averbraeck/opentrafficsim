@@ -190,9 +190,10 @@ public class LaneBasedGTUTest
                         laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                                 || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE : step
                                 - truckLength.getSI() - truckPosition.getSI();
-                System.out.println("carLanesCovered " + laneRank + ".." + (laneRank + carLanesCovered - 1)
-                        + " truckLanesCovered " + truckFromLane + ".." + truckUpToLane + " car pos " + step
-                        + " laneRank " + laneRank + " expected headway " + expectedHeadway);
+                //System.out.println("carLanesCovered " + laneRank + ".." + (laneRank + carLanesCovered - 1)
+                //        + " truckLanesCovered " + truckFromLane + ".." + truckUpToLane + " car pos " + step
+                //        + " laneRank " + laneRank + " expected headway " + expectedHeadway);
+                // The next assert found a subtle bug (">" in stead of ">=")
                 assertEquals("Forward headway should return " + expectedHeadway, expectedHeadway, actualHeadway, 0.1);
                 LaneBasedGTU<?> leader = truck.headwayGTU(forwardMaxDistance);
                 if (expectedHeadway == Double.MAX_VALUE)
