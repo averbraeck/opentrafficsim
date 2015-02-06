@@ -1,37 +1,17 @@
 package org.opentrafficsim.graphs;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JLabel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 

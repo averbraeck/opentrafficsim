@@ -21,8 +21,9 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -33,6 +34,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -85,27 +87,33 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private DoubleScalar.Abs<AccelerationUnit> acceleration = new DoubleScalar.Abs<AccelerationUnit>(0,
             AccelerationUnit.METER_PER_SECOND_2);
 
-    /** CarFollowingModel used by this Car. */
+    /** CarFollowingModel used by this GTU. */
     private final GTUFollowingModel gtuFollowingModel;
 
+    /** LaneChangeModel used by this GTU. */
+    private final LaneChangeModel laneChangeModel;
+
     /**
-     * @param id the id of the GTU, could be String or Integer.
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
+     * Construct a Lane Based GTU.
+     * @param id the id of the GTU, could be String or Integer
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel the following model, including a reference to the simulator.
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes.
-     * @param initialSpeed the initial speed of the car on the lane.
-     * @param simulator to initialize the move method and to get the current time.
-     * @throws RemoteException when the simulator cannot be reached.
-     * @throws NetworkException when the GTU cannot be placed on the given lane.
-     * @throws SimRuntimeException when the move method cannot be scheduled.
+     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
+     * @param laneChangeModel LaneChangeModel; the lane change model
+     * @param initialSpeed the initial speed of the car on the lane
+     * @param simulator to initialize the move method and to get the current time
+     * @throws RemoteException when the simulator cannot be reached
+     * @throws NetworkException when the GTU cannot be placed on the given lane
+     * @throws SimRuntimeException when the move method cannot be scheduled
      */
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
-            throws RemoteException, NetworkException, SimRuntimeException
+            final LaneChangeModel laneChangeModel, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException
     {
         super(id, gtuType);
         this.gtuFollowingModel = gtuFollowingModel;
+        this.laneChangeModel = laneChangeModel;
         this.lateralVelocity = new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);
 
         // register the GTU on the lanes
@@ -220,12 +228,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /**
      * Set the new state.
-     * @param cfmr GTUFollowingModelResult; the new state of this GTU
+     * @param cfmr AccelerationStep; the new state of this GTU
      * @throws RemoteException when simulator time could not be retrieved or sensor trigger scheduling fails.
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws SimRuntimeException when sensor trigger(s) cannot be scheduled on the simulator.
      */
-    public final void setState(final GTUFollowingModelResult cfmr) throws RemoteException, NetworkException,
+    private final void setState(final AccelerationStep cfmr) throws RemoteException, NetworkException,
             SimRuntimeException
     {
         // GTUs move based on their fractional position to stay aligned when registered in parallel lanes.
@@ -259,8 +267,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     // Only follow links on the Route if there is a Route, and we haven't added this lane already
                     if (!this.lanes.contains(nextLane)
-                            && (this.getRoute() == null || this.getRoute() != null && this.getRoute().containsLink(
-                                    nextLane.getParentLink())))
+                            && (this.getRoute() == null || this.getRoute() != null
+                                    && this.getRoute().containsLink(nextLane.getParentLink())))
                     {
                         this.lanes.add(nextLane);
                         if (!this.fractionalLinkPositions.containsKey(nextLane.getParentLink()))
@@ -311,14 +319,117 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             return;
         }
+        DoubleScalar.Rel<LengthUnit> maximumForwardHeadway = new DoubleScalar.Rel<LengthUnit>(500.0, LengthUnit.METER);
+        // TODO 500?
+        DoubleScalar.Rel<LengthUnit> maximumReverseHeadway = new DoubleScalar.Rel<LengthUnit>(200.0, LengthUnit.METER);
+        // TODO 200?
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR);
+        // TODO should be the local speed limit
+        if (null != this.laneChangeModel)
+        {
+            Collection<LaneBasedGTU<?>> sameLaneTraffic = new ArrayList<LaneBasedGTU<?>>();
+            LaneBasedGTU<?> leader = headwayGTU(maximumForwardHeadway);
+            if (null != leader)
+            {
+                sameLaneTraffic.add(leader);
+            }
+            LaneBasedGTU<?> follower = headwayGTU(maximumReverseHeadway);
+            if (null != follower)
+            {
+                sameLaneTraffic.add(follower);
+            }
+            DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
+            Collection<LaneBasedGTU<?>> leftLaneTraffic =
+                    collectNeighborLaneTraffic(LateralDirectionality.LEFT, now, maximumForwardHeadway,
+                            maximumReverseHeadway);
+            Collection<LaneBasedGTU<?>> rightLaneTraffic =
+                    collectNeighborLaneTraffic(LateralDirectionality.RIGHT, now, maximumForwardHeadway,
+                            maximumReverseHeadway);
+            LaneChangeModel.LaneChangeModelResult lcmr =
+                    this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
+                            leftLaneTraffic, speedLimit, new DoubleScalar.Rel<AccelerationUnit>(0.3,
+                                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
+                                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
+                                    AccelerationUnit.METER_PER_SECOND_2));
+            if (lcmr.getLaneChange() != null)
+            {
+                // TODO: make lane changes gradual (not instantaneous; like now)
+                Collection<Lane> oldLaneSet = new ArrayList<Lane>(this.lanes);
+                Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());
+                // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each one
+                Map<Lane, Double> oldFractionalPositions = new HashMap<Lane, Double>();
+                for (Lane l : this.lanes)
+                {
+                    oldFractionalPositions.put(l, fractionalPosition(l, getReference()));
+                    l.removeGTU(this);
+                    // TODO: remove the triggers on Lane l
+                }
+                this.lanes.clear();
+                // Add this GTU to the lanes in newLaneSet
+                // This could be rewritten to be more efficient.
+                for (Lane newLane : newLaneSet)
+                {
+                    Double fractionalPosition = null;
+                    // find ONE lane in oldLaneSet that has l as neighbor
+                    for (Lane oldLane : oldLaneSet)
+                    {
+                        if (oldLane.accessibleAdjacentLanes(lcmr.getLaneChange(), getGTUType()).contains(newLane))
+                        {
+                            fractionalPosition = fractionalPosition(oldLane, getReference());
+                            break;
+                        }
+                    }
+                    if (null == fractionalPosition)
+                    {
+                        throw new Error("Program error: Cannot find an oldLane that has newLane " + newLane + " as "
+                                + lcmr.getLaneChange() + " neighbor");
+                    }
+                    newLane.addGTU(this, fractionalPosition);
+                    addLane(newLane);
+                }
+            }
+            // Move this GTU forward
+            setState(lcmr.getGfmr());
+            return;
+        }
         Collection<LaneBasedGTU<?>> leaders = new ArrayList<>();
-        leaders.add(this.headwayGTU(new DoubleScalar.Rel<LengthUnit>(100.0, LengthUnit.METER))); // TODO 100?
+        leaders.add(headwayGTU(maximumForwardHeadway));
         // TODO calculate lowest speed limit
-        GTUFollowingModelResult cfmr =
-                getGTUFollowingModel().computeAcceleration(this, leaders,
-                        new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR));
+        AccelerationStep cfmr = getGTUFollowingModel().computeAcceleration(this, leaders, speedLimit);
         setState(cfmr);
         // addToContourPlots(this); TODO via pub/sub
+    }
+
+    /**
+     * Collect relevant traffic in adjacent lanes.
+     * @param directionality LateralDirectionality; either <cite>LateralDirectionality.LEFT</cite>, or
+     *            <cite>LateralDirectionality.RIGHT</cite>
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the (current) time
+     * @param maximumForwardHeadway DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum forward search distance
+     * @param maximumReverseHeadway DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum reverse search distance
+     * @return Collection&lt;LaneBasedGTU&lt;?&gt;&gt;;
+     * @throws RemoteException on communications failure
+     * @throws NetworkException on network inconsistency
+     */
+    private Collection<LaneBasedGTU<?>> collectNeighborLaneTraffic(LateralDirectionality directionality,
+            DoubleScalar.Abs<TimeUnit> when, Rel<LengthUnit> maximumForwardHeadway,
+            Rel<LengthUnit> maximumReverseHeadway) throws RemoteException, NetworkException
+    {
+        Collection<LaneBasedGTU<?>> result = parallel(directionality, when);
+        for (Lane adjacentLane : adjacentLanes(LateralDirectionality.LEFT))
+        {
+            LaneBasedGTU<?> leader = headwayGTU(adjacentLane, maximumForwardHeadway);
+            if (null != leader && !result.contains(leader))
+            {
+                result.add(leader);
+            }
+            LaneBasedGTU<?> follower = headwayGTU(adjacentLane, maximumReverseHeadway);
+            if (null != follower && !result.contains(follower))
+            {
+                result.add(follower);
+            }
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -837,16 +948,33 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         return gtuSet;
     }
 
+    /**
+     * Build a set of Lanes that is adjacent to the lanes that this GTU is in, in the specified lateral direction.
+     * @param lateralDirection LateralDirectionality; the lateral direction.
+     * @return Set&lt;Lane&gt;
+     */
+    private Set<Lane> adjacentLanes(final LateralDirectionality lateralDirection)
+    {
+        Set<Lane> result = new HashSet<Lane>();
+        for (Lane lane : this.lanes)
+        {
+            result.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
+        }
+        return result;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final Set<LaneBasedGTU<?>> parallel(final LateralDirectionality lateralDirection,
             final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
-        Set<Lane> adjacentLanes = new HashSet<Lane>();
+        Set<Lane> adjacentLanes = adjacentLanes(lateralDirection);
+        /*-                       new HashSet<Lane>();
         for (Lane lane : this.lanes)
         {
             adjacentLanes.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
         }
+         */
         Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
         for (Lane adjacentLane : adjacentLanes)
         {

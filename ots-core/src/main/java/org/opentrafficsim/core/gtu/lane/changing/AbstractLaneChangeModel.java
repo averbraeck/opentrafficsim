@@ -7,6 +7,7 @@ import java.util.Map;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.FollowAcceleration;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -34,10 +35,10 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
      * {@inheritDoc}
      */
     @Override
-    public final LaneChangeModelResult computeLaneChangeAndAcceleration(final AbstractLaneBasedGTU<?> gtu,
-            final Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs,
-            final Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
+    public final LaneChangeModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<LaneBasedGTU<?>> sameLaneGTUs,
+            final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs,
             final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
             final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,

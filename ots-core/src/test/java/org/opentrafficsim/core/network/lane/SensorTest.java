@@ -21,8 +21,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
@@ -123,9 +123,9 @@ public class SensorTest
                 new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed,
                         carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Construction of the car scheduled a car move event at t=0
-        GTUFollowingModelResult gtuFollowingModelResult =
-                new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.5,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND));
+        AccelerationStep gtuFollowingModelResult =
+                new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND));
         car.setState(gtuFollowingModelResult);
         // setState will have scheduled another car move event at t=100
         // If we run the simulator, the car move method should throw an Error (but we don't test that here)
@@ -134,7 +134,7 @@ public class SensorTest
         int index = 0;
         for (SimEventInterface<OTSSimTimeDouble> event : eventList)
         {
-            //System.out.println("Scheduled Event " + event);
+            // System.out.println("Scheduled Event " + event);
             if (2 == index)
             {
                 triggerEvent = event;

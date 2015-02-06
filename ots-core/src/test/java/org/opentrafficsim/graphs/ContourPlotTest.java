@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.opentrafficsim.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.factory.Node;
@@ -331,7 +331,7 @@ public class ContourPlotTest
         LaneBasedIndividualCar<Integer> car =
                 CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed, simulator);
         // Make the car run at constant speed for one minute
-        car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
+        car.setState(new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 60,
                 TimeUnit.SECOND)));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
@@ -376,7 +376,7 @@ public class ContourPlotTest
             }
         }
         // Make the car run at constant speed for another minute
-        car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
+        car.setState(new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
                 .getSI() + 60, TimeUnit.SECOND)));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
@@ -461,7 +461,7 @@ public class ContourPlotTest
             }
         }
         // Make the car run at constant speed for five more minutes
-        car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0,
+        car.setState(new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
                 .getSI() + 300, TimeUnit.SECOND)));
         cp.addData(car, lane);

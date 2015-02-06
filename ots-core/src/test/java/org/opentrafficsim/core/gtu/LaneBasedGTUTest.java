@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -26,9 +24,8 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
@@ -420,8 +417,8 @@ public class LaneBasedGTUTest
                             new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
                                     1.8, LengthUnit.METER), null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
             // System.out.println("acceleration is " + acceleration);
-            GTUFollowingModel.GTUFollowingModelResult gfmr =
-                    new GTUFollowingModel.GTUFollowingModelResult(acceleration, new DoubleScalar.Abs<TimeUnit>(70,
+            AccelerationStep gfmr =
+                    new AccelerationStep(acceleration, new DoubleScalar.Abs<TimeUnit>(70,
                             TimeUnit.SECOND));
             car.setState(gfmr);
             // Check the results
