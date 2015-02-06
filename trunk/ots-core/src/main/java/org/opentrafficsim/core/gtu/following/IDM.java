@@ -105,7 +105,7 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
         final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
         throws RemoteException, NetworkException
     {
@@ -135,7 +135,7 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
@@ -160,7 +160,7 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
         final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
@@ -220,7 +220,7 @@ public class IDM implements GTUFollowingModel
         // System.out.println("newAcceleration is " + newAcceleration);
         MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = thisEvaluationTime.mutable();
         nextEvaluationTime.incrementBy(this.stepSize);
-        return new GTUFollowingModelResult(newAcceleration, nextEvaluationTime.immutable());
+        return new AccelerationStep(newAcceleration, nextEvaluationTime.immutable());
 
     }
 

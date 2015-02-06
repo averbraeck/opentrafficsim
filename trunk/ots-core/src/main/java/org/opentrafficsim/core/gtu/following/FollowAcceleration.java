@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -51,8 +51,8 @@ public final class FollowAcceleration
 
     /**
      * Compute the acceleration (or deceleration) for a GTU following another GTU.
-     * @param follower AbstractLaneBaseGTU; the GTU that is following
-     * @param leader AbstractLaneBaseGTU; the GTU that is leading
+     * @param follower LaneBaseGTU; the GTU that is following
+     * @param leader LaneBaseGTU; the GTU that is leading
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current time
      * @param gtuFollowingModel GTUFollowingModel; the GTU following model that is used to compute the result
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
@@ -61,8 +61,8 @@ public final class FollowAcceleration
      * @throws RemoteException on communication failure
      * @throws NetworkException if follower and leader do not have a common CrossSectionLink
      */
-    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final AbstractLaneBasedGTU<?> follower,
-        final AbstractLaneBasedGTU<?> leader, final DoubleScalar.Abs<TimeUnit> when,
+    public static DoubleScalar.Abs<AccelerationUnit> acceleration(final LaneBasedGTU<?> follower,
+        final LaneBasedGTU<?> leader, final DoubleScalar.Abs<TimeUnit> when,
         final GTUFollowingModel gtuFollowingModel, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
         NetworkException
     {
@@ -173,23 +173,23 @@ public final class FollowAcceleration
      * @throws NetworkException when the network is inconsistent
      */
     @SuppressWarnings("unchecked")
-    public static DoubleVector.Abs.Dense<AccelerationUnit> acceleration(final AbstractLaneBasedGTU<?> referenceGTU,
-        final Collection<AbstractLaneBasedGTU<?>> otherCars, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public static DoubleVector.Abs.Dense<AccelerationUnit> acceleration(final LaneBasedGTU<?> referenceGTU,
+        final Collection<LaneBasedGTU<?>> otherCars, final DoubleScalar.Abs<SpeedUnit> speedLimit)
         throws RemoteException, NetworkException
     {
         final DoubleScalar.Abs<AccelerationUnit> maximumDeceleration =
             referenceGTU.getGTUFollowingModel().maximumSafeDeceleration();
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
-        AbstractLaneBasedGTU<?> leader = null;
+        LaneBasedGTU<?> leader = null;
         DoubleScalar.Rel<LengthUnit> leaderHeadway = null;
-        AbstractLaneBasedGTU<?> follower = null;
+        LaneBasedGTU<?> follower = null;
         DoubleScalar.Rel<LengthUnit> followerHeadway = null;
         Lane referenceLane = referenceGTU.positions(referenceGTU.getFront()).keySet().iterator().next();
         DoubleScalar.Rel<LengthUnit> referenceCarPosition =
             referenceGTU.position(referenceLane, referenceGTU.getFront(), when);
         if (otherCars.size() > 0)
         {
-            AbstractLaneBasedGTU<?> otherCar = otherCars.iterator().next();
+            LaneBasedGTU<?> otherCar = otherCars.iterator().next();
             Lane otherLane = otherCar.positions(otherCar.getFront()).keySet().iterator().next();
             if (otherLane != referenceLane)
             {
@@ -200,7 +200,7 @@ public final class FollowAcceleration
             }
         }
         // Find the nearest leader and the nearest follower.
-        for (AbstractLaneBasedGTU<?> c : otherCars)
+        for (LaneBasedGTU<?> c : otherCars)
         {
             if (c == referenceGTU)
             {

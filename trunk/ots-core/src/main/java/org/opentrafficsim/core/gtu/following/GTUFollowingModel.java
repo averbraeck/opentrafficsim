@@ -31,11 +31,11 @@ public interface GTUFollowingModel
      * @param follower the GTU for which acceleration is computed
      * @param leaders Set&lt;LaneBasedGTU&gt;; the set of leaders to take into consideration
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @return GTUFollowingModelResult; the result of application of the gtu following model
+     * @return AccelerationStep; the result of application of the gtu following model
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
             final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException, NetworkException;
 
@@ -46,11 +46,11 @@ public interface GTUFollowingModel
      * @param follower the GTU for which acceleration is computed
      * @param leader LaneBasedGTU&lt;?&gt;; the leader to take into consideration (may be null)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @return GTUFollowingModelResult; the result of application of the GTU following model
+     * @return AccelerationStep; the result of application of the GTU following model
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
+    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
             final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
@@ -61,10 +61,10 @@ public interface GTUFollowingModel
      * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the leader
      * @param headway DoubleScalar.Rel&lt;LengthUnit&gt;; the headway of the leader
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @return GTUFollowingModelResult; the result of application of the GTU following model
+     * @return AccelerationStep; the result of application of the GTU following model
      * @throws RemoteException in case of simulator reachability problems
      */
-    GTUFollowingModelResult computeAcceleration(final LaneBasedGTU<?> follower,
+    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
             final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
             Abs<SpeedUnit> speedLimit) throws RemoteException;
 
@@ -94,58 +94,4 @@ public interface GTUFollowingModel
      */
     String getLongName();
 
-    /**
-     * The result of a GTUFollowingModel evaluation shall be stored in an instance of this class.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version Jul 9, 2014 <br>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    class GTUFollowingModelResult
-    {
-        /** Acceleration that will be maintained during the current time slot. */
-        private final DoubleScalar.Abs<AccelerationUnit> acceleration;
-
-        /** Time when the current time slot ends. */
-        private final DoubleScalar.Abs<TimeUnit> validUntil;
-
-        /**
-         * Create a new GTUFollowingModelResult.
-         * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
-         * @param validUntil DoubleScalarAbs&lt;TimeUnit&gt;; time when this result expires
-         */
-        public GTUFollowingModelResult(final DoubleScalar.Abs<AccelerationUnit> acceleration,
-                final DoubleScalar.Abs<TimeUnit> validUntil)
-        {
-            this.acceleration = acceleration;
-            this.validUntil = validUntil;
-        }
-
-        /**
-         * @return acceleration.
-         */
-        public DoubleScalar.Abs<AccelerationUnit> getAcceleration()
-        {
-            return this.acceleration;
-        }
-
-        /**
-         * @return validUntil.
-         */
-        public DoubleScalar.Abs<TimeUnit> getValidUntil()
-        {
-            return this.validUntil;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String toString()
-        {
-            return String.format("a=%s, valid until %s", this.acceleration, this.validUntil);
-        }
-    }
 }

@@ -18,7 +18,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
-import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel.LaneChangeModelResult;
@@ -173,10 +173,10 @@ public class LaneChangeModelTest
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4,
                     LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                 new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), fakeSimulator);
-        Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
+        Collection<LaneBasedGTU<?>> sameLaneGTUs = new HashSet<LaneBasedGTU<?>>();
         sameLaneGTUs.add(car);
-        Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
-        Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
+        Collection<LaneBasedGTU<?>> preferredLaneGTUs = new HashSet<LaneBasedGTU<?>>();
+        Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs = new HashSet<LaneBasedGTU<?>>();
         LaneChangeModelResult laneChangeModelResult =
             new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs, nonPreferredLaneGTUs,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<AccelerationUnit>(0.3,

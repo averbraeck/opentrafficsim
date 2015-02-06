@@ -3,8 +3,8 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
-import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -32,11 +32,11 @@ public interface LaneChangeModel
      * FIXME the parameters of this method will change. Hopefully will become straightforward to figure out the nearby
      * vehicles in the current and the adjacent lanes.
      * @param gtu GTU; the GTU for which the acceleration and lane change is computed
-     * @param sameLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null and
+     * @param sameLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null and
      *            may include gtu)
-     * @param preferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where GTUs should
+     * @param rightLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where GTUs should
      *            drive in the absence of other traffic (must be null if there is no such lane)
-     * @param nonPreferredLaneGTUs Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
+     * @param leftLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
      *            GTUs should merge to overtake other traffic (must be null if there is no such lane)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @param preferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
@@ -48,10 +48,10 @@ public interface LaneChangeModel
      * @return LaneChangeModelResult; the result of the lane change and GTU following model
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
-    LaneChangeModelResult computeLaneChangeAndAcceleration(final AbstractLaneBasedGTU<?> gtu,
-            final Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs,
-            final Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs,
+    LaneChangeModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<LaneBasedGTU<?>> sameLaneTraffic,
+            final Collection<LaneBasedGTU<?>> rightLaneTraffic,
+            final Collection<LaneBasedGTU<?>> leftLaneTraffic,
             final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
             Rel<AccelerationUnit> laneChangeThreshold,
@@ -72,7 +72,7 @@ public interface LaneChangeModel
     class LaneChangeModelResult
     {
         /** The resulting acceleration and duration of validity. */
-        private final GTUFollowingModelResult gfmr;
+        private final AccelerationStep gfmr;
 
         /**
          * Lane change. This has one of the following values:
@@ -112,7 +112,7 @@ public interface LaneChangeModel
          *            </tr>
          *            </table>
          */
-        public LaneChangeModelResult(final GTUFollowingModelResult gfmr, final LateralDirectionality laneChange)
+        public LaneChangeModelResult(final AccelerationStep gfmr, final LateralDirectionality laneChange)
         {
             this.gfmr = gfmr;
             this.laneChange = laneChange;
@@ -121,7 +121,7 @@ public interface LaneChangeModel
         /**
          * @return the GTUModelFollowingResult.
          */
-        public final GTUFollowingModelResult getGfmr()
+        public final AccelerationStep getGfmr()
         {
             return this.gfmr;
         }
