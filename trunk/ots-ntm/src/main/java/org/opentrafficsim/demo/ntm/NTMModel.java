@@ -234,14 +234,15 @@ public class NTMModel implements OTSModelInterface
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
                         + "/profiles.txt", ";", "\\s+"));
-                numberOfRoutes = 2;
-                reRoute = false;
+                numberOfRoutes = 6;
+                weightNewRoutes = 0.6;
+                reRoute = true;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 //Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
+                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(100000, SpeedUnit.KM_PER_HOUR);
+                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(100000, FrequencyUnit.PER_HOUR);
               
-                int variant = 6;
+                int variant = 7;
                 this.output = "/output" + variant;
             }
 
@@ -370,7 +371,7 @@ public class NTMModel implements OTSModelInterface
 
             readOrSetCapacityRestraints(this, areasToUse, fileNameCapacityRestraint);
 
-            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), weightNewRoutes, true);
+            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), weightNewRoutes, true, 1, 9999);
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)

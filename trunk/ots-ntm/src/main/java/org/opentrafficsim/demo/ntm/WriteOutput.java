@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -67,6 +68,12 @@ public class WriteOutput
     static HashMap<Integer, Link> indexLink = new HashMap<Integer, Link>();
 
     /** */
+    static HashMap<Integer, Node> indexStartNode = new HashMap<Integer, Node>();
+
+    /** */
+    static HashMap<Integer, Node> indexEndNode = new HashMap<Integer, Node>();
+
+    /** */
     static HashMap<Node, Integer> nodeIndex = new HashMap<>();
 
     /** */
@@ -91,7 +98,7 @@ public class WriteOutput
             dataLaneLengthOut = createWriter(fileLaneLength);
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataLaneLengthOut, laneData, DATATYPE);
-        
+
         fileName = "/ParametersFD";
         description = "ParametersFD";
         DATATYPE = "parametersFD";
@@ -111,7 +118,7 @@ public class WriteOutput
             dataAccumulationCellOut = createWriter(fileLaneLength);
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataAccumulationCellOut, accumulationCells, DATATYPE);
-        
+
     }
 
     /**
@@ -126,7 +133,7 @@ public class WriteOutput
         {
             int i = 0;
             int linkNumber = 0;
-    
+
             for (LinkEdge le : model.getAreaGraph().edgeSet())
             {
                 Link link = (Link) le.getLink();
@@ -139,25 +146,27 @@ public class WriteOutput
                         {
                             linkIndex.put(link, i);
                             indexLink.put(i, link);
+                            indexStartNode.put(i, link.getStartNode());
+                            indexEndNode.put(i, link.getEndNode());
                             cellID[i] = String.valueOf(linkNumber);
-                            
+
                             if (DATATYPE == "cellData")
                             {
                                 dataArray[i][0] = cell.getCellLength().getSI();
                                 dataArray[i][1] = (double) cell.getNumberOfLanes();
                             }
-                            
+
                             if (DATATYPE == "parametersFD")
                             {
                                 dataArray[i][0] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getCapacityPerUnit()
-                                            .doubleValue() * 3600;
+                                        cell.getCellBehaviourFlow().getParametersFundamentalDiagram()
+                                                .getCapacityPerUnit().doubleValue() * 3600;
                                 dataArray[i][1] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
-                                            .get(0);
+                                        cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
+                                                .get(0);
                                 dataArray[i][2] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
-                                            .get(1);
+                                        cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
+                                                .get(1);
                             }
                         }
                         if (DATATYPE == "accumulationCells")
@@ -168,11 +177,11 @@ public class WriteOutput
                     }
                     linkNumber++;
                 }
-    
+
             }
             numberOfCells = i;
         }
-    
+
         // Write data to file
         if (DATATYPE == "accumulationCells")
         {
@@ -191,7 +200,8 @@ public class WriteOutput
 
                     for (int i = 0; i < numberOfCells; i++)
                     {
-                        data.write(description + " " + indexLink.get(i).getId() + ", ");
+                        data.write(description + " " + indexStartNode.get(i).getId() + "-"
+                                + indexEndNode.get(i).getId() + ", ");
                         for (int j = 0; j < steps; j++)
                         {
                             textOut = String.format("%.5f", dataArray[i][j]);
@@ -269,94 +279,9 @@ public class WriteOutput
                     exception.printStackTrace();
                 }
             }
-        }        
-    }
-
-/*        if (steps < MAXSTEPS)
-        {
-            int i = 0;
-            int linkNumber = 0;
-
-            for (Link link : model.getDebugLinkList().values())
-            {
-                if (link.getBehaviourType() == TrafficBehaviourType.FLOW)
-                {
-                    LinkCellTransmission ctmLink = (LinkCellTransmission) link;
-                    for (FlowCell cell : ctmLink.getCells())
-                    {
-                        if (steps == 1)
-                        {
-                            laneLength[i] = cell.getCellLength().getSI();
-                            lanesPerCell[i] = (double) cell.getNumberOfLanes();
-                            cellID[i] = String.valueOf(linkNumber);
-                            parametersFD[i][0] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getCapacityPerUnit()
-                                            .doubleValue() * 3600;
-                            parametersFD[i][1] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
-                                            .get(0);
-                            parametersFD[i][2] =
-                                    cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
-                                            .get(1);
-                        }
-                        accumulationCells[i][steps - 1] = cell.getCellBehaviourFlow().getAccumulatedCars();
-                        i++;
-                    }
-                    linkNumber++;
-                }
-
-            }
-            numberOfCells = i;
-        }
-
-        if (steps == MAXSTEPS - 1)
-        {
-            try
-            {
-                String textOut;
-                // Link transmission
-
-                for (int i = 0; i < numberOfCells; i++)
-                {
-                    textOut = String.format("%.1f", laneLength[i]);
-                    dataLaneLengthOut.write(textOut + " \n");
-
-                    textOut = String.format("%.1f", lanesPerCell[i]);
-                    dataLanesPerCellOut.write(textOut + " \n");
-
-                    textOut = String.format("%.1f", parametersFD[i][0]);
-                    dataParametersFDOut.write(textOut + ", ");
-                    textOut = String.format("%.1f", parametersFD[i][1]);
-                    dataParametersFDOut.write(textOut + ", ");
-                    textOut = String.format("%.1f", parametersFD[i][2]);
-                    dataParametersFDOut.write(textOut + " \n");
-
-                    dataAccumulationCellOut.write("Cell " + i + ", ");
-                    for (int j = 0; j < steps; j++)
-                    {
-                        textOut = String.format("%.5f", accumulationCells[i][j]);
-                        dataAccumulationCellOut.write(textOut + ", ");
-                    }
-                    dataAccumulationCellOut.write(" \n");
-
-                }
-                dataLaneLengthOut.close();
-                dataLanesPerCellOut.close();
-                dataLaneLengthOut.close();
-                dataParametersFDOut.close();
-                dataAccumulationCellOut.close();
-            }
-            catch (IOException exception)
-            {
-                exception.printStackTrace();
-            }
         }
     }
-*/
-  
-    
-    
-    
+
     // AREAS
     /** */
     static BufferedWriter dataParametersNFDOut = null;
@@ -398,6 +323,9 @@ public class WriteOutput
     static Double[][] demandNTM = new Double[999][999];
 
     /** */
+    static Double[][] routesNTM = new Double[999][999];
+
+    /** */
     static Double[][] supplyNTM = new Double[999][999];
 
     /** */
@@ -423,6 +351,8 @@ public class WriteOutput
 
     /** */
     static Double[][] capSpeedRoadLengthNTM = new Double[999][3];
+
+    static boolean startRoute = true;
 
     // Writing output data
     /**
@@ -540,6 +470,82 @@ public class WriteOutput
         writeArray(model, steps, MAXSTEPS, description, dataParametersNFDOut, parametersNFD, DATATYPE);
     }
 
+    // Writing output data
+    /**
+     * @param model
+     * @param steps
+     * @param pathIterator
+     * @param startNode
+     * @param neighbour
+     * @param destination
+     * @param routeI
+     * @param MAXSTEPS
+     * @throws IOException
+     */
+    public static void writeOutputRoutesNTM(NTMModel model, int steps, int pathIterator, Node startNode,
+            Node neighbour, Node destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare)
+            throws IOException
+    {
+        // for testing we open a file and write some results:
+        // TODO testing
+        String description = "routesNTM";
+        ArrayList<Node> path = new ArrayList<>();
+        path.add(startNode);
+        path.add(neighbour);
+        path.add(destination);
+        writeRoutes(model, steps, pathIterator, MAXSTEPS, data, description, path, oldShare, addShare);
+
+    }
+
+    /**
+     * @param model
+     * @param steps
+     * @param MAXSTEPS
+     * @param description
+     * @param data
+     * @param dataArray
+     * @param DATATYPE
+     * @throws IOException
+     */
+    static void writeRoutes(NTMModel model, int steps, int pathIterator, int MAXSTEPS, BufferedWriter data,
+            String description, ArrayList<Node> dataArray, double oldShare, double addShare) throws IOException
+    {
+        if (description == "routesNTM")
+        {
+
+            if (steps <= MAXSTEPS - 1 && dataArray.get(2).getId().equals("C9")
+                    && !dataArray.get(0).getId().startsWith("C"))
+            {
+                if (startRoute)
+                {
+                    data.write("SimulationStep  " + ", ");
+                    data.write("RouteIter       " + ", ");
+                    data.write("Origin          " + ", ");
+                    data.write("Neighbour       " + ", ");
+                    data.write("destination     " + ", ");
+                    data.write("oldShare        " + ", ");
+                    data.write("added Weight     " + ", ");
+
+                    data.write(" \n");
+                    startRoute = false;
+                }
+
+                data.write(description + " " + steps + ", ");
+                data.write(pathIterator + ", ");
+                for (int j = 0; j < 3; j++)
+                {
+                    data.write(dataArray.get(j).getId() + ", ");
+                }
+                data.write(oldShare + ", ");
+                data.write(addShare + ", ");
+
+                data.write(" \n");
+
+            }
+        }
+
+    }
+
     /**
      * @param model
      * @param steps
@@ -560,43 +566,40 @@ public class WriteOutput
             for (Node nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
-                CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
-
-                for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
+                if (node.getBehaviourType() == TrafficBehaviourType.NTM ||
+                        node.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
-                    for (BoundedNode neighbour : neighbours)
+                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
+
+                    for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
                     {
-                        double trips = 0;
-                        if (DATATYPE == "fluxes")
+                        Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                        for (BoundedNode neighbour : neighbours)
                         {
-                            trips =
-                                    tripInfoByDestination.getNeighbourAndRouteShare().get(neighbour)
-                                            * tripInfoByDestination.getFluxToNeighbour();
-                        }
-                        else if (DATATYPE == "arrivalsOD")
-                        {
-                            trips = tripInfoByDestination.getArrivedTrips();
-                        }
-                        else if (DATATYPE == "departuresOD")
-                        {
-                            trips = tripInfoByDestination.getDepartedTrips();
-
-                        }
-
-                        if (trips > 0.0)
-                        {
-                            if (nodeNodeDoublemap.get(node) == null)
+                            double trips = 0;
+                            if (DATATYPE == "fluxes")
                             {
-                                HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
-                                Double[] fluxes = new Double[999];
-                                fluxes[steps - 1] = trips;
-                                fluxMap.put(neighbour, fluxes);
-                                nodeNodeDoublemap.put(node, fluxMap);
+                                trips =
+                                        tripInfoByDestination.getNeighbourAndRouteShare().get(neighbour)
+                                                * tripInfoByDestination.getFluxToNeighbour();
+                                if (trips > 0.0)
+                                {
+                                    System.out.println("test");
+                                }
                             }
-                            else
+                            else if (DATATYPE == "arrivalsOD")
                             {
-                                if (nodeNodeDoublemap.get(node).get(neighbour) == null)
+                                trips = tripInfoByDestination.getArrivedTrips();
+                            }
+                            else if (DATATYPE == "departuresOD")
+                            {
+                                trips = tripInfoByDestination.getDepartedTrips();
+
+                            }
+
+                            if (trips > 0.0)
+                            {
+                                if (nodeNodeDoublemap.get(node) == null)
                                 {
                                     HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
                                     Double[] fluxes = new Double[999];
@@ -606,15 +609,26 @@ public class WriteOutput
                                 }
                                 else
                                 {
-                                    Double[] fluxes = nodeNodeDoublemap.get(node).get(neighbour);
-                                    fluxes[steps - 1] = trips;
+                                    if (nodeNodeDoublemap.get(node).get(neighbour) == null)
+                                    {
+                                        HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
+                                        Double[] fluxes = new Double[999];
+                                        fluxes[steps - 1] = trips;
+                                        fluxMap.put(neighbour, fluxes);
+                                        nodeNodeDoublemap.put(node, fluxMap);
+                                    }
+                                    else
+                                    {
+                                        Double[] fluxes = nodeNodeDoublemap.get(node).get(neighbour);
+                                        fluxes[steps - 1] = trips;
+                                    }
                                 }
                             }
                         }
                     }
+                    i++;
+                    numberOfCells = i;
                 }
-                i++;
-                numberOfCells = i;
             }
         }
         String textOut;
@@ -674,63 +688,85 @@ public class WriteOutput
 
         if (steps < MAXSTEPS)
         {
+
             int i = 0;
             TreeSet<Node> graphVertices = new TreeSet<Node>(model.getAreaGraph().vertexSet());
 
             for (Node nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
-                CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
-                if (steps == 1)
+                if (node.getBehaviourType() == TrafficBehaviourType.NTM  ||
+                        node.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    nodeIndex.put(node, i);
-                    indexNode.put(i, node);
-                }
-                if (DATATYPE == "arrivals")
-                {
-                    dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getArrivals();
-                }
-                else if (DATATYPE == "departures")
-                {
-                    dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getDepartures();
-                }
-                else if (DATATYPE == "accumulation")
-                {
-                    dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
-                }
-                else if (DATATYPE == "congestedSpeed")
-                {
+                    CellBehaviour cellBehaviour = node.getCellBehaviour();
                     if (steps == 1)
                     {
-                        // freeSpeed??
+                        nodeIndex.put(node, i);
+                        indexNode.put(i, node);
                     }
-                    dataArray[nodeIndex.get(node)][steps - 1] =
-                            cellBehaviour.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                }
-                else if (DATATYPE == "demand")
-                {
-                    dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getDemand();
-                }
-                else if (DATATYPE == "supply")
-                {
-                    dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getSupply();
-                }
-                else if (DATATYPE == "parametersNFD")
-                {
-                    if (steps == 1)
+                    if (DATATYPE == "arrivals")
                     {
-                        dataArray[i][0] =
-                                cellBehaviour.getParametersNTM().getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR);
-                        dataArray[i][1] =
-                                cellBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER);
-                        dataArray[i][2] =
-                                cellBehaviour.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                        dataArray[i][3] = cellBehaviour.getParametersNTM().getAccCritical().get(0);
-                        dataArray[i][4] = cellBehaviour.getParametersNTM().getAccCritical().get(1);
-                        dataArray[i][5] = cellBehaviour.getParametersNTM().getAccCritical().get(2);
+                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getArrivals();
                     }
+                    else if (DATATYPE == "departures")
+                    {
+                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getDepartures();
+                    }
+                    else if (DATATYPE == "accumulation")
+                    {
+                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
+                    }
+                    else if (DATATYPE == "routes")
+                    {
+                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
+                    }
+                    
+                    else if (DATATYPE == "congestedSpeed")
+                    {
+                        CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
+
+                        if (steps == 1)
+                        {
+                            dataArray[nodeIndex.get(node)][steps - 1] =
+                                    cellBehaviourNTM.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                        }
+                        else
+                        {
+                            if (cellBehaviourNTM.getCurrentSpeed() != null)
+                            {
+                                dataArray[nodeIndex.get(node)][steps - 1] =
+                                        cellBehaviourNTM.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                            }
+                        }
+                    }
+                    else if (DATATYPE == "demand")
+                    {
+                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getDemand();
+                    }
+                    else if (DATATYPE == "supply")
+                    {
+                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getSupply();
+                    }
+                    else if (DATATYPE == "parametersNFD")
+                    {
+                        CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
+
+                        if (steps == 1)
+                        {
+                            dataArray[i][0] =
+                                    cellBehaviourNTM.getParametersNTM().getCapacityPerUnit()
+                                            .getInUnit(FrequencyUnit.PER_HOUR);
+                            dataArray[i][1] =
+                                    cellBehaviourNTM.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                            dataArray[i][2] =
+                                    cellBehaviourNTM.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                            dataArray[i][3] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(0);
+                            dataArray[i][4] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(1);
+                            dataArray[i][5] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(2);
+                        }
+                    }
+                    i++;
                 }
-                i++;
             }
             numberOfCells = i;
         }

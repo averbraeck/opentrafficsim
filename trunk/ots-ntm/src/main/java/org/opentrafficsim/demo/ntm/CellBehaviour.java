@@ -105,6 +105,7 @@ public class CellBehaviour
         this.arrivals += arrivals;
     }
 
+
     /**
      * @return accumulatedCars.
      */
@@ -112,7 +113,6 @@ public class CellBehaviour
     {
         return this.accumulatedCars;
     }
-
     /**
      * @param accumulatedCars set accumulatedCars.
      */

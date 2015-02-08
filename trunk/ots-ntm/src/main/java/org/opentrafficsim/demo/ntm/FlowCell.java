@@ -78,16 +78,16 @@ public class FlowCell implements LocatableInterface
 
     /**
      * Retrieves car production from network fundamental diagram.
-     * @param accumulatedCars number of cars in Cell
+     * @param accumulatedCarsPerLengthUnit number of cars in Cell
      * @param maximumCapacity based on area information
      * @param param parameters FD
      * @return carProduction
      */
-    public final Abs<FrequencyUnit> retrieveActualCapacity(final double accumulatedCars,
+    public final Abs<FrequencyUnit> retrieveActualCapacityPerLengthUnit(final double accumulatedCarsPerLengthUnit,
             final Abs<FrequencyUnit> maximumCapacity, final ParametersFundamentalDiagram param)
     {
         Abs<FrequencyUnit> actualCapacity;
-        if (accumulatedCars > param.getAccCritical().get(0))
+        if (accumulatedCarsPerLengthUnit > param.getAccCritical().get(0))
         {
             ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
             Point2D p = new Point2D.Double();
@@ -99,7 +99,7 @@ public class FlowCell implements LocatableInterface
             p = new Point2D.Double();
             p.setLocation(param.getAccCritical().get(1), 0);
             xyPairs.add(p);
-            actualCapacity = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCars);
+            actualCapacity = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCarsPerLengthUnit);
         }
         else
         {
@@ -109,22 +109,35 @@ public class FlowCell implements LocatableInterface
     }
 
     /**
-     * @param accumulatedCars
+     * @param accumulatedCarsPerLengthUnit
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars)
+    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
     {
+        double speedDouble;
         Abs<FrequencyUnit> actualCapacity =
-                retrieveActualCapacity(accumulatedCars, this.maxCapacity,
+                retrieveActualCapacityPerLengthUnit(accumulatedCarsPerLengthUnit, this.maxCapacity,
                         this.cellBehaviour.getParametersFundamentalDiagram());
         this.cellBehaviour.getParametersFundamentalDiagram();
         double densityDouble =
-                this.cellLength.getInUnit(LengthUnit.KILOMETER) * this.cellBehaviour.getAccumulatedCars()
-                        / this.numberOfLanes;
+                this.cellLength.getInUnit(LengthUnit.KILOMETER) * this.cellBehaviour.getAccumulatedCars();
+        // / this.numberOfLanes;
         Abs<LinearDensityUnit> density =
                 new DoubleScalar.Abs<LinearDensityUnit>(densityDouble, LinearDensityUnit.PER_KILOMETER);
-        double speedDouble =
-                actualCapacity.getInUnit(FrequencyUnit.PER_HOUR) / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+        if (density.getInUnit(LinearDensityUnit.PER_KILOMETER) > this.cellBehaviour.getParametersFundamentalDiagram()
+                .getAccCritical().get(0))
+        {
+            speedDouble =
+                    actualCapacity.getInUnit(FrequencyUnit.PER_HOUR)
+                            / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+        }
+        else
+        {
+            speedDouble =
+                    this.cellBehaviour.getParametersFundamentalDiagram().getCapacityPerUnit()
+                            .getInUnit(FrequencyUnit.PER_HOUR)
+                            / this.cellBehaviour.getParametersFundamentalDiagram().getAccCritical().get(0);
+        }
         return this.setActualSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
     }
 
@@ -134,11 +147,11 @@ public class FlowCell implements LocatableInterface
      */
     public DoubleScalar.Abs<TimeUnit> retrieveCurrentTravelTime()
     {
-
+        double densityPerLengthUnit =
+                this.getCellBehaviourFlow().getAccumulatedCars() / this.cellLength.getInUnit(LengthUnit.KILOMETER);
         double timeDouble =
                 this.cellLength.getInUnit(LengthUnit.KILOMETER)
-                        / retrieveCurrentSpeed(this.getCellBehaviourFlow().getAccumulatedCars()).getInUnit(
-                                SpeedUnit.KM_PER_HOUR);
+                        / retrieveCurrentSpeed(densityPerLengthUnit).getInUnit(SpeedUnit.KM_PER_HOUR);
         return this.setCurrentTravelTime(new DoubleScalar.Abs(timeDouble, TimeUnit.HOUR));
     }
 
