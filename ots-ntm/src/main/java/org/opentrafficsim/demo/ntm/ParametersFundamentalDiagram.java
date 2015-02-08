@@ -57,9 +57,10 @@ public class ParametersFundamentalDiagram
     {
         super();
         this.accCritical = new ArrayList<Double>();
-        this.accCritical.add((capacity.getInUnit(FrequencyUnit.PER_HOUR) / freeSpeed.getInUnit(SpeedUnit.KM_PER_HOUR))
-                 * cellLength.getInUnit(LengthUnit.KILOMETER));
-        this.accCritical.add(150.0 * numberOfLanes * cellLength.getInUnit(LengthUnit.KILOMETER));
+        this.accCritical.add((capacity.getInUnit(FrequencyUnit.PER_HOUR) / freeSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)));
+                 //* cellLength.getInUnit(LengthUnit.KILOMETER));
+        this.accCritical.add(150.0 * numberOfLanes);
+        // * cellLength.getInUnit(LengthUnit.KILOMETER));
         this.freeSpeed = freeSpeed;
         this.capacityPerUnit = capacity;
     }
@@ -89,7 +90,7 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @param accCritical 
+     * @param accCritical
      */
     public void setAccCritical(ArrayList<Double> accCritical)
     {
