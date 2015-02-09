@@ -24,6 +24,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneMovementStep;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -345,7 +346,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             Collection<LaneBasedGTU<?>> rightLaneTraffic =
                     collectNeighborLaneTraffic(LateralDirectionality.RIGHT, now, maximumForwardHeadway,
                             maximumReverseHeadway);
-            LaneChangeModel.LaneChangeModelResult lcmr =
+            LaneMovementStep lcmr =
                     this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
                             leftLaneTraffic, speedLimit, new DoubleScalar.Rel<AccelerationUnit>(0.3,
                                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
@@ -397,7 +398,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // TODO calculate lowest speed limit
         AccelerationStep cfmr = getGTUFollowingModel().computeAcceleration(this, leaders, speedLimit);
         setState(cfmr);
-        // addToContourPlots(this); TODO via pub/sub
     }
 
     /**
