@@ -19,12 +19,20 @@ import javax.xml.parsers.SAXParserFactory;
 
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.lane.Shoulder;
 import org.opentrafficsim.core.network.point2d.NodePoint2D;
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -113,6 +121,9 @@ public class XmlNetworkLaneParser
     /** the Point class of the Node. */
     private final Class<?> nodePointClass;
 
+    /** the class of the Link. */
+    private final Class<?> linkClass;
+
     /** the ID class of the Link. */
     private final Class<?> linkIdClass;
 
@@ -126,14 +137,22 @@ public class XmlNetworkLaneParser
     private static final Map<String, LengthUnit> LENGTH_UNITS = new HashMap<>();
 
     /** the nodes for further reference. */
-    @SuppressWarnings("rawtypes")
-    private Map<String, Node> nodes = new HashMap<>();
+    @SuppressWarnings({"rawtypes", "visibilitymodifier"})
+    protected Map<String, Node> nodes = new HashMap<>();
+
+    /** the links for further reference. */
+    @SuppressWarnings({"rawtypes", "visibilitymodifier"})
+    protected Map<String, Link> links = new HashMap<>();
+
+    /** TODO incorporate into grammar. */
+    private final LaneType<String> laneType = new LaneType<String>("CarLane");
 
     static
     {
         SPEED_UNITS.put("km/h", SpeedUnit.KM_PER_HOUR);
         SPEED_UNITS.put("mi/h", SpeedUnit.MILE_PER_HOUR);
         SPEED_UNITS.put("m/s", SpeedUnit.METER_PER_SECOND);
+        SPEED_UNITS.put("ft/s", SpeedUnit.FOOT_PER_SECOND);
 
         LENGTH_UNITS.put("mm", LengthUnit.MILLIMETER);
         LENGTH_UNITS.put("cm", LengthUnit.CENTIMETER);
@@ -152,15 +171,17 @@ public class XmlNetworkLaneParser
      * @param nodeClass the class of the Node.
      * @param nodeIdClass the ID class of the Node.
      * @param nodePointClass the Point class of the Node.
+     * @param linkClass the class of the Link.
      * @param linkIdClass the ID class of the Link.
      */
     public XmlNetworkLaneParser(final Class<?> networkIdClass, final Class<?> nodeClass, final Class<?> nodeIdClass,
-        final Class<?> nodePointClass, final Class<?> linkIdClass)
+        final Class<?> nodePointClass, final Class<?> linkClass, final Class<?> linkIdClass)
     {
         this.networkIdClass = networkIdClass;
         this.nodeClass = nodeClass;
         this.nodeIdClass = nodeIdClass;
         this.nodePointClass = nodePointClass;
+        this.linkClass = linkClass;
         this.linkIdClass = linkIdClass;
     }
 
@@ -193,13 +214,16 @@ public class XmlNetworkLaneParser
     class SAXHandler extends DefaultHandler
     {
         /** local storage. */
-        private String content = null;
+        // private String content = null;
 
         /** depth list. */
         private Deque<String> stack = new ArrayDeque<String>();
 
         /** global values from the GLOBAL tag. */
-        private GlobalTag global;
+        private GlobalTag globalTag;
+
+        /** link values from the LINK tag. */
+        private LinkTag linkTag;
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
@@ -215,14 +239,14 @@ public class XmlNetworkLaneParser
                             switch (qName)
                             {
                                 case "GLOBAL":
-                                    this.global = new GlobalTag();
+                                    this.globalTag = new GlobalTag();
                                     if (attributes.getValue("SPEED") != null)
                                     {
-                                        this.global.setSpeed(parseSpeedAbs(attributes.getValue("SPEED")));
+                                        this.globalTag.speed = parseSpeedAbs(attributes.getValue("SPEED"));
                                     }
                                     if (attributes.getValue("WIDTH") != null)
                                     {
-                                        this.global.setWidth(parseLengthRel(attributes.getValue("WIDTH")));
+                                        this.globalTag.width = parseLengthRel(attributes.getValue("WIDTH"));
                                     }
                                     break;
 
@@ -260,8 +284,55 @@ public class XmlNetworkLaneParser
                                     break;
 
                                 case "LINK":
-                                    System.out.println("LINK");
+                                    this.linkTag = new LinkTag();
+                                    if (attributes.getValue("NAME") != null)
+                                    {
+                                        this.linkTag.name = attributes.getValue("NAME");
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("NODE: missing attribute NAME");
+                                    }
+                                    if (attributes.getValue("ELEMENTS") != null)
+                                    {
+                                        this.linkTag.elements = attributes.getValue("ELEMENTS");
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("NODE: missing attribute ELEMENTS");
+                                    }
+                                    if (attributes.getValue("FROM") != null)
+                                    {
+                                        String fromNodeStr = attributes.getValue("FROM");
+                                        @SuppressWarnings("rawtypes")
+                                        Node fromNode = XmlNetworkLaneParser.this.nodes.get(fromNodeStr);
+                                        this.linkTag.nodeFrom = fromNode;
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("NODE: missing attribute FROM");
+                                    }
+                                    if (attributes.getValue("TO") != null)
+                                    {
+                                        String toNodeStr = attributes.getValue("TO");
+                                        @SuppressWarnings("rawtypes")
+                                        Node toNode = XmlNetworkLaneParser.this.nodes.get(toNodeStr);
+                                        this.linkTag.nodeTo = toNode;
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("NODE: missing attribute FROM");
+                                    }
+                                    if (attributes.getValue("SPEED") != null)
+                                    {
+                                        this.linkTag.speed = parseSpeedAbs(attributes.getValue("SPEED"));
+                                    }
+                                    if (attributes.getValue("WIDTH") != null)
+                                    {
+                                        this.linkTag.width = parseLengthRel(attributes.getValue("WIDTH"));
+                                    }
                                     break;
+
                                 default:
                                     throw new SAXException("NETWORK: Received start tag " + qName + ", but stack contains: "
                                         + this.stack);
@@ -272,14 +343,56 @@ public class XmlNetworkLaneParser
                             switch (qName)
                             {
                                 case "STRAIGHT":
-                                    System.out.println("STRAIGHT");
+                                    this.linkTag.straightTag = new StraightTag();
+                                    if (attributes.getValue("LENGTH") != null)
+                                    {
+                                        this.linkTag.straightTag.length = parseLengthRel(attributes.getValue("LENGTH"));
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("STRAIGHT: missing attribute LENGTH");
+                                    }
                                     break;
+
                                 case "ARC":
-                                    System.out.println("ARC");
+                                    this.linkTag.arcTag = new ArcTag();
+                                    if (attributes.getValue("RADIUS") != null)
+                                    {
+                                        this.linkTag.arcTag.radius = parseLengthRel(attributes.getValue("RADIUS"));
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("ARC: missing attribute RADIUS");
+                                    }
+                                    if (attributes.getValue("ANGLE") != null)
+                                    {
+                                        this.linkTag.arcTag.angle = Double.parseDouble(attributes.getValue("ANGLE"));
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("ARC: missing attribute ANGLE");
+                                    }
                                     break;
+
                                 case "LANE":
-                                    System.out.println("LANE");
-                                    // emp.id = attributes.getValue("id");
+                                    LaneTag laneTag = new LaneTag();
+                                    if (attributes.getValue("NAME") != null)
+                                    {
+                                        laneTag.name = attributes.getValue("NAME");
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("LANE: missing attribute NAME");
+                                    }
+                                    if (attributes.getValue("SPEED") != null)
+                                    {
+                                        laneTag.speed = parseSpeedAbs(attributes.getValue("SPEED"));
+                                    }
+                                    if (attributes.getValue("WIDTH") != null)
+                                    {
+                                        laneTag.width = parseLengthRel(attributes.getValue("WIDTH"));
+                                    }
+                                    this.linkTag.laneTags.put(laneTag.name, laneTag);
                                     break;
                                 default:
                                     throw new SAXException("LINK: Received start tag " + qName + ", but stack contains: "
@@ -294,9 +407,9 @@ public class XmlNetworkLaneParser
                 }
                 this.stack.addLast(qName);
             }
-            catch (NetworkException ne)
+            catch (Exception e)
             {
-                throw new SAXException(ne);
+                throw new SAXException(e);
             }
         }
 
@@ -321,7 +434,10 @@ public class XmlNetworkLaneParser
                             case "NODE":
                                 break;
                             case "LINK":
-                                System.out.println("/LINK");
+                                @SuppressWarnings("rawtypes")
+                                CrossSectionLink link = makeLink(this.linkTag);
+                                parseElements(linkTag.elements, link, linkTag, globalTag);
+                                XmlNetworkLaneParser.this.links.put(link.getId().toString(), link);
                                 break;
                             default:
                                 throw new SAXException("NETWORK: Received end tag " + qName + ", but stack contains: "
@@ -333,13 +449,10 @@ public class XmlNetworkLaneParser
                         switch (qName)
                         {
                             case "STRAIGHT":
-                                System.out.println("/STRAIGHT");
                                 break;
                             case "ARC":
-                                System.out.println("/ARC");
                                 break;
                             case "LANE":
-                                System.out.println("/LANE");
                                 break;
                             default:
                                 throw new SAXException("LINK: Received end tag " + qName + ", but stack contains: "
@@ -351,258 +464,7 @@ public class XmlNetworkLaneParser
                         throw new SAXException("Received end tag " + qName + ", but stack contains: " + this.stack);
                 }
             }
-
-            // // empList.add(emp);
-            // break;
-            // // For all other end tags the employee has to be updated.
-            // case "firstName":
-            // // emp.firstName = content;
-            // break;
         }
-
-        @Override
-        public void characters(final char[] ch, final int start, final int length) throws SAXException
-        {
-            this.content = String.copyValueOf(ch, start, length).trim();
-        }
-    }
-
-    /** GLOBAL element. */
-    protected class GlobalTag
-    {
-        /** default speed. */
-        private DoubleScalar.Abs<SpeedUnit> speed = null;
-
-        /** default lane width. */
-        private DoubleScalar.Rel<LengthUnit> width = null;
-
-        /**
-         * @return speed.
-         */
-        public final DoubleScalar.Abs<SpeedUnit> getSpeed()
-        {
-            return this.speed;
-        }
-
-        /**
-         * @param speed set speed.
-         */
-        public final void setSpeed(final DoubleScalar.Abs<SpeedUnit> speed)
-        {
-            this.speed = speed;
-        }
-
-        /**
-         * @return width.
-         */
-        public final DoubleScalar.Rel<LengthUnit> getWidth()
-        {
-            return this.width;
-        }
-
-        /**
-         * @param width set width.
-         */
-        public final void setWidth(final DoubleScalar.Rel<LengthUnit> width)
-        {
-            this.width = width;
-        }
-    }
-
-    /**
-     * @param original the original string
-     * @return the cleaned string for further parsing.
-     */
-    protected final String clean(final String original)
-    {
-        // clear storage.
-        this.nodes.clear();
-
-        // take out the comments and the special characters we are not interested in
-        boolean keep = true;
-        boolean inString = false;
-        String ns = "";
-        for (int i = 0; i < original.length(); i++)
-        {
-            char c = original.charAt(i);
-            if (c == '"')
-            {
-                inString = !inString;
-            }
-            if (c == '#')
-            {
-                keep = false;
-            }
-            else if (c == '\r' || c == '\n')
-            {
-                keep = true;
-            }
-            if (keep)
-            {
-                if (!inString && c != ',' && c != ';' & c != '\t' && c != '\r' && c != '\n')
-                {
-                    ns += c;
-                }
-                else
-                {
-                    ns += ' ';
-                }
-            }
-        }
-        return ns;
-    }
-
-    /**
-     * @param nodeArgs the lane arguments to parse.
-     * @return the constructed node.
-     * @throws NetworkException in case of parsing problems.
-     */
-    @SuppressWarnings("rawtypes")
-    private Node parseNode(final String nodeArgs) throws NetworkException
-    {
-        StringBuilder ns = new StringBuilder(nodeArgs);
-        String nodeName = null;
-        Point3d coordinate = null;
-
-        while (ns.length() > 0)
-        {
-            String token = eatToken(ns, new ArrayList<String>()); // XXX
-            switch (token)
-            {
-                case "NAME": // lane type
-                case "N":
-                    nodeName = eatValue(ns);
-                    nodeName.replace('"', ' ');
-                    break;
-
-                case "COORDINATE": // new node
-                case "C":
-                    double x = eatDoubleValue(ns);
-                    double y = eatDoubleValue(ns);
-                    coordinate = new Point3d(x, y, 0);
-                    break;
-
-                default:
-                    throw new NetworkException("Parsing network. NODE: unknown token: " + token);
-            }
-        }
-        if (coordinate == null)
-        {
-            throw new NetworkException("Parsing network. NODE " + nodeName + ", no known coordinate");
-        }
-        if (nodeName == null)
-        {
-            throw new NetworkException("Parsing network. NODE has no name");
-        }
-        Node node = makeNode(this.nodeClass, makeId(this.nodeIdClass, nodeName), makePoint(this.nodePointClass, coordinate));
-        this.nodes.put(node.getId().toString(), node);
-        return node;
-    }
-
-    /**
-     * @param laneArgs the lane arguments to parse.
-     * @throws NetworkException in case of parsing problems.
-     */
-    @SuppressWarnings("rawtypes")
-    private void parseLink(final String laneArgs) throws NetworkException
-    {
-        StringBuilder ls = new StringBuilder(laneArgs);
-
-        String linkName = null;
-        Node fromNode = null;
-        Node toNode = null;
-        String type = null;
-        DoubleScalar.Rel<LengthUnit> length = null;
-        DoubleScalar.Abs<SpeedUnit> speed = null;
-        DoubleScalar.Rel<LengthUnit> radius = null;
-        double angle = Double.NaN;
-        Map<String, CrossSectionElement> lanes = null;
-
-        while (ls.length() > 0)
-        {
-            String token = eatToken(ls, new ArrayList<String>()); // LINK_TOKENS);
-            switch (token)
-            {
-                case "TYPE": // lane type
-                case "T":
-                    type = eatValue(ls);
-                    break;
-
-                case "NAME": // new node
-                case "N":
-                    linkName = eatValue(ls);
-                    break;
-
-                case "FROMNODE": // from node
-                case "FROM":
-                case "F":
-                    String fromNodeName = eatValue(ls);
-                    fromNodeName.replace('"', ' ');
-                    fromNode = this.nodes.get(fromNodeName);
-                    break;
-
-                case "TONODE": // to node
-                case "TO":
-                    String toNodeName = eatValue(ls);
-                    toNodeName.replace('"', ' ');
-                    toNode = this.nodes.get(toNodeName);
-                    break;
-
-                case "ELEMENTS": // lanes
-                case "E":
-                    lanes = parseLanes(ls);
-                    break;
-
-                case "LENGTH":
-                case "L":
-                    // length = eatLengthRel(ls, token);
-                    break;
-
-                case "SPEED":
-                case "S":
-                    // speed = eatSpeedAbs(ls, token);
-                    // TODO speed element of a specific lane
-                    break;
-
-                case "RADIUS":
-                case "R":
-                    // radius = eatLengthRel(ls, token);
-                    break;
-
-                case "ANGLE":
-                case "A":
-                    angle = eatDoubleValue(ls);
-                    break;
-
-                case "WIDTH":
-                case "W":
-                    // TODO width element
-                    // TODO width element of a specific lane
-                    break;
-
-                default:
-                    throw new NetworkException("Parsing network. LINK: unknown token: " + token);
-            }
-        }
-
-        if (linkName == null)
-        {
-            throw new NetworkException("Parsing network. LINK has no name");
-        }
-        if (fromNode == null || toNode == null || type == null || lanes == null)
-        {
-            throw new NetworkException("Parsing network. LINK " + linkName + " has missing elements");
-        }
-        if (type.equals("S") && length == null)
-        {
-            throw new NetworkException("Parsing network. LINK " + linkName + " (S) has missing length");
-        }
-        if (type.equals("C") && (radius == null || angle == Double.NaN))
-        {
-            throw new NetworkException("Parsing network. LINK " + linkName + " (C) has missing radius or angle");
-        }
-
-        // TODO create lanes and link
     }
 
     /**
@@ -710,62 +572,161 @@ public class XmlNetworkLaneParser
     }
 
     /**
-     * @param ns the string to parse
-     * @param tokens the tokens to scan for
-     * @return the token.
-     * @throws NetworkException when token not correct
+     * FIXME LinkGeotools should extend CrossSectionLink and not the other way around.
+     * @param linkTag the link information from XML.
+     * @return a constructed link
+     * @throws SAXException when point cannot be instantiated
      */
-    @SuppressWarnings("checkstyle:finalparameters")
-    private String eatToken(StringBuilder ns, final List<String> tokens) throws NetworkException
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected final CrossSectionLink makeLink(final LinkTag linkTag) throws SAXException
     {
-        ns.replace(0, ns.length() - 1, ns.toString().trim());
-        int eq = ns.indexOf("=");
-        String token = ns.substring(0, eq - 1).trim();
-        ns.delete(0, eq + 1);
-        if (!tokens.contains(token))
-        {
-            throw new NetworkException("Parsing network. Got token:" + token + ", expected one of:" + tokens);
-        }
-        return token;
-    }
-
-    /**
-     * @param args the string to parse
-     * @return the next value.
-     * @throws NetworkException when parsing fails
-     */
-    @SuppressWarnings("checkstyle:finalparameters")
-    protected final String eatValue(StringBuilder args) throws NetworkException
-    {
-        args.replace(0, args.length() - 1, args.toString().trim());
-        if (args.length() == 0)
-        {
-            throw new NetworkException("Parsing network. Expected value, but none found");
-        }
-        int space = args.indexOf(" ");
-        String value = args.substring(0, space - 1).trim();
-        args.delete(0, space + 1);
-        return value;
-    }
-
-    /**
-     * @param args the string to parse
-     * @return the next value.
-     * @throws NetworkException when parsing fails
-     */
-    @SuppressWarnings("checkstyle:finalparameters")
-    protected final double eatDoubleValue(StringBuilder args) throws NetworkException
-    {
-        String s = eatValue(args);
         try
         {
-            double value = Double.parseDouble(s);
-            return value;
+            if (LinkGeotools.class.isAssignableFrom(this.linkClass))
+            {
+                Object id = makeId(this.linkIdClass, linkTag.name);
+                DoubleScalar.Rel<LengthUnit> length = null;
+                if (linkTag.straightTag != null)
+                {
+                    length = linkTag.straightTag.length;
+                }
+                else if (linkTag.arcTag != null)
+                {
+                    length =
+                        new DoubleScalar.Rel<LengthUnit>(linkTag.arcTag.radius.mutable().multiply(
+                            Math.toRadians(Math.abs(linkTag.arcTag.angle))).getInUnit(), linkTag.arcTag.radius.getUnit());
+                }
+                CrossSectionLink link =
+                    new CrossSectionLink(id, (NodeGeotools) linkTag.nodeFrom, (NodeGeotools) linkTag.nodeTo, length);
+                return link;
+            }
+            else
+            {
+                throw new SAXException("Parsing network. Link class " + this.linkClass.getName() + ": cannot instantiate.");
+            }
         }
-        catch (NumberFormatException nfe)
+        catch (NetworkException ne)
         {
-            throw new NetworkException("Parsing network: cannot instantiate number: " + s, nfe);
+            throw new SAXException("Error building Link", ne);
         }
+    }
+
+    /**
+     * @param elements the string such as "X1|V2:V1|D|A1:A2|:A3|X2"
+     * @param linkTag the link with possible information about speed and width.
+     * @param globalTag the global tag with possible information about speed and width.
+     * @return a list of cross-section elements
+     * @throws SAXException for unknown lane type or other inconsistencies.
+     */
+    private List<CrossSectionElement> parseElements(final String elements, final CrossSectionLink csl,
+        final LinkTag linkTag, final GlobalTag globalTag) throws SAXException
+    {
+        List<CrossSectionElement> cseList = new ArrayList<>();
+        String[] names = elements.split("(\\|)|(\\:)|(\\|\\:)|(\\:\\|)|(\\|\\|)");
+        List<Double> widthsSI = new ArrayList<>();
+        int designIndex = -1;
+        int i = -1;
+        for (String name : names)
+        {
+            i++;
+            if (name.equals("D")) // TODO design line in the middle of a lane
+            {
+                widthsSI.add(0.0);
+                designIndex = i;
+            }
+            else
+            {
+                if (linkTag.laneTags.keySet().contains(name) && (linkTag.laneTags.get(name).width != null))
+                {
+                    widthsSI.add(linkTag.laneTags.get(name).width.getSI());
+                }
+                else if (linkTag.width != null)
+                {
+                    widthsSI.add(linkTag.width.getSI());
+                }
+                else if (globalTag.width != null)
+                {
+                    widthsSI.add(globalTag.width.getSI());
+                }
+                else
+                {
+                    throw new SAXException("width not set for lane type in " + elements + ": " + name.charAt(0));
+                }
+            }
+        }
+
+        // TODO tapered and design line offset changes.
+        double[] offsetSI = new double[widthsSI.size()];
+        double cumSI = 0.0;
+        for (int j = designIndex; j >= 0; j--)
+        {
+            offsetSI[j] = cumSI;
+            cumSI = cumSI - widthsSI.get(j) / 2.0 - ((j > 0) ? widthsSI.get(j - 1) / 2.0 : 0.0);
+        }
+        cumSI = 0.0;
+        for (int j = designIndex; j < widthsSI.size(); j++)
+        {
+            offsetSI[j] = cumSI;
+            cumSI = cumSI + widthsSI.get(j) / 2.0 + ((j < widthsSI.size() - 1) ? widthsSI.get(j + 1) / 2.0 : 0.0);
+        }
+
+        i = -1;
+        for (String name : names)
+        {
+            i++;
+            LongitudinalDirectionality ld = null;
+            if (name.startsWith("A")) // lane going in the design direction
+            {
+                ld = LongitudinalDirectionality.FORWARD;
+            }
+            else if (name.startsWith("V")) // lane going in the opposite direction
+            {
+                ld = LongitudinalDirectionality.BACKWARD;
+            }
+            else if (name.startsWith("B")) // lane going in both directions
+            {
+                ld = LongitudinalDirectionality.BOTH;
+            }
+            else if (name.startsWith("X")) // forbidden lane (e.g., grass)
+            {
+                ld = LongitudinalDirectionality.NONE;
+            }
+            else if (name.equals("D")) // design line
+            {
+                ld = LongitudinalDirectionality.NONE;
+            }
+            else
+            {
+                throw new SAXException("unknown lane type in " + elements + ": " + name.charAt(0));
+            }
+
+            try
+            {
+                if (ld.equals(LongitudinalDirectionality.NONE))
+                {
+                    Shoulder shoulder =
+                        new Shoulder(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                            new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
+                            new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI));
+                    cseList.add(shoulder);
+                }
+                else
+                {
+                    Lane lane =
+                        new Lane(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                            new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(
+                                widthsSI.get(i), LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i),
+                                LengthUnit.SI), this.laneType, ld, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
+                                FrequencyUnit.PER_HOUR));
+                    cseList.add(lane);
+                }
+            }
+            catch (NetworkException ne)
+            {
+                throw new SAXException(ne);
+            }
+        }
+        return cseList;
     }
 
     /**
@@ -896,69 +857,86 @@ public class XmlNetworkLaneParser
         }
     }
 
-    /**
-     * @param ns the string to parse
-     * @param token the token for debugging purposes.
-     * @return the arguments after a token.
-     * @throws NetworkException when brackets not correct
-     */
-    @SuppressWarnings("checkstyle:finalparameters")
-    private String eatArgs(StringBuilder ns, final String token) throws NetworkException
-    {
-        ns.replace(0, ns.length() - 1, ns.toString().trim());
-        char bs;
-        char be;
-        if (ns.charAt(0) == '(')
-        {
-            bs = '(';
-            be = ')';
-        }
-        else if (ns.charAt(0) == '{')
-        {
-            bs = '{';
-            be = '}';
-        }
-        else if (ns.charAt(0) == '[')
-        {
-            bs = '[';
-            be = ']';
-        }
-        else
-        {
-            throw new NetworkException("Parsing network. After token:" + token + ", expected (, { or [ but got :"
-                + ns.charAt(0));
-        }
-        int index = 0;
-        int nrBracket = 0;
-        for (int i = 0; i < ns.length() && index == 0; i++)
-        {
-            if (ns.charAt(i) == bs)
-            {
-                nrBracket++;
-            }
-            else if (ns.charAt(i) == be)
-            {
-                nrBracket--;
-            }
-            if (nrBracket == 0)
-            {
-                index = i;
-            }
-        }
+    /*************************************************************************************************/
+    /****************************** TAG CLASSES TO KEEP THE XML INFORMATION **************************/
+    /*************************************************************************************************/
 
-        String args = ns.substring(0, index - 1).trim();
-        ns.replace(0, ns.length() - 1, ns.toString().trim());
-        return args;
+    /** GLOBAL element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class GlobalTag
+    {
+        /** default speed. */
+        protected DoubleScalar.Abs<SpeedUnit> speed = null;
+
+        /** default lane width. */
+        protected DoubleScalar.Rel<LengthUnit> width = null;
     }
 
-    /**
-     * @param elements the lane element string to parse, e.g "|V1:V2|D|A2:A1|"
-     * @return map of cross section elements
-     */
-    private Map<String, CrossSectionElement> parseLanes(final StringBuilder elements)
+    /** LINK element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class LinkTag
     {
-        // TODO parse lane elements in the link
-        return null;
+        /** name. */
+        protected String name;
+
+        /** default speed. */
+        protected DoubleScalar.Abs<SpeedUnit> speed = null;
+
+        /** default lane width on this link. */
+        protected DoubleScalar.Rel<LengthUnit> width = null;
+
+        /** from node. */
+        @SuppressWarnings("rawtypes")
+        protected Node nodeFrom = null;
+
+        /** to node. */
+        @SuppressWarnings("rawtypes")
+        protected Node nodeTo = null;
+
+        /** elements. */
+        protected String elements = null;
+
+        /** lane info. */
+        protected Map<String, LaneTag> laneTags = new HashMap<>();
+
+        /** straight. */
+        protected StraightTag straightTag = null;
+
+        /** arc. */
+        protected ArcTag arcTag = null;
+    }
+
+    /** LANE element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class LaneTag
+    {
+        /** name. */
+        protected String name;
+
+        /** lane speed. */
+        protected DoubleScalar.Abs<SpeedUnit> speed = null;
+
+        /** lane width. */
+        protected DoubleScalar.Rel<LengthUnit> width = null;
+    }
+
+    /** ARC element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class ArcTag
+    {
+        /** lane speed. */
+        protected double angle = Double.NaN;
+
+        /** radius. */
+        protected DoubleScalar.Rel<LengthUnit> radius = null;
+    }
+
+    /** STRAIGHT element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class StraightTag
+    {
+        /** length. */
+        protected DoubleScalar.Rel<LengthUnit> length = null;
     }
 
     /**
@@ -974,7 +952,8 @@ public class XmlNetworkLaneParser
     {
         URL url = URLResource.getResource("/ots-infra-example.xml");
         XmlNetworkLaneParser nlp =
-            new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class, String.class);
+            new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class, LinkGeotools.class,
+                String.class);
         Network n = nlp.build(url.openStream());
     }
 }
