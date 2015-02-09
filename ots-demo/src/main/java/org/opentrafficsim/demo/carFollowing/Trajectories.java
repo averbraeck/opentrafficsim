@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
@@ -283,9 +282,9 @@ class TrajectoriesModel implements OTSModelInterface
         throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        Node from = new Node("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
-        Node to = new Node("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
-        Node end = new Node("End", new Coordinate(getMaximumDistance().getSI() + 50.0, 0, 0));
+        NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
+        NodeGeotools.STR to = new NodeGeotools.STR("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
+        NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(getMaximumDistance().getSI() + 50.0, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         try
         {

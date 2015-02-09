@@ -1,9 +1,10 @@
 package org.opentrafficsim.core.network.point2d;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.geom.Point2D;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 
 /**

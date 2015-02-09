@@ -227,7 +227,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         private DoubleScalar.Abs<SpeedUnit> initialSpeed = null;;
 
         /** CarFollowingModel used by this Car. */
-        private GTUFollowingModel gtuFollowingModel = null;;
+        private GTUFollowingModel gtuFollowingModel = null;
 
         /** the maximum length of the GTU (parallel with driving direction). */
         private DoubleScalar.Rel<LengthUnit> length = null;

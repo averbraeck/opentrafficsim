@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NETWORK xmlns="http://www.example.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/ots-infra ots-infra.xsd ">
+
+	<GLOBAL WIDTH="4m" SPEED="80km/h" />
+
+	<NODE NAME="N1" COORDINATE="(0,0)" />
+	<NODE NAME="N2" />
+
+	<LINK NAME="A4_12" FROM="N1" TO="N2" ELEMENTS="X1|V2:V1|D|A1:A2|X2">
+		<STRAIGHT LENGTH="50m" SPEED="80km/h" WIDTH="4m" />
+		<LANE NAME="X1" WIDTH="1m" />
+		<LANE NAME="X2" WIDTH="1m" />
+	</LINK>
+
+	<NODE NAME="N3b2" />
+
+	<LINK NAME="A4_13" FROM="N2" TO="N3 b2" ELEMENTS="X1|V2:V1|D|A1:A2|X2">
+		<ARC RADIUS="100m" ANGLE="90" />
+		<LANE NAME="X1" WIDTH="1m" />
+		<LANE NAME="X2" WIDTH="1m" />
+	</LINK>
+
+	<NODE NAME="N4" />
+
+	<LINK NAME="A4_14" FROM="N3b2" TO="N4" ELEMENTS="X1|V2:V1|D|A1:A2|:A3|X2">
+		<STRAIGHT LENGTH="50m" SPEED="80km/h" WIDTH="4m" />
+		<LANE NAME="X1" WIDTH="1m" />
+		<LANE NAME="X2" WIDTH="1m" />
+		<LANE NAME="A3" SPEED="60km/h" />
+	</LINK>
+
+	<NODE NAME="N5" />
+	<NODE NAME="ENTRY5" />
+
+	<LINK NAME="A4_15" FROM="N4" TO="N5" ELEMENTS="X1|V2:V1|D|A1:A2|X2">
+		<STRAIGHT LENGTH="100m" SPEED="80km/h" WIDTH="4m" />
+		<LANE NAME="X1" WIDTH="1m" />
+		<LANE NAME="X2" WIDTH="1m" />
+	</LINK>
+
+	<LINK NAME="LE1" FROM="ENTRY5" TO="N3b2(A3)" ELEMENTS="|A|">
+		<ARC RADIUS="100m" ANGLE="-45" SPEED="60km/h" />
+	</LINK>
+
+	<NODE NAME="ENTRY6" />
+	<LINK NAME="LE2" FROM="ENTRY6" TO="ENTRY5" ELEMENTS="|A|">
+		<ARC RADIUS="100m" ANGLE="45" SPEED="60km/h" />
+	</LINK>
+
+</NETWORK>

@@ -1,6 +1,9 @@
 package org.opentrafficsim.core.value.vfloat.scalar;
 
+import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.streams.Java2Random;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 import org.opentrafficsim.core.unit.Unit;
 import org.opentrafficsim.core.value.Absolute;
@@ -22,6 +25,9 @@ public abstract class DistContinuousFloatScalar<U extends Unit<U>>
     /** the unit. */
     private final U unit;
 
+    /** the dummy stream for the constant values. Is never really used. */
+    private static final StreamInterface DUMMY_STREAM = new Java2Random();
+
     /**
      * @param distribution the wrapped distribution function.
      * @param unit the unit.
@@ -30,6 +36,17 @@ public abstract class DistContinuousFloatScalar<U extends Unit<U>>
     {
         super();
         this.distribution = distribution;
+        this.unit = unit;
+    }
+
+    /**
+     * @param value the constant value.
+     * @param unit the unit.
+     */
+    protected DistContinuousFloatScalar(final float value, final U unit)
+    {
+        super();
+        this.distribution = new DistConstant(DUMMY_STREAM, value);
         this.unit = unit;
     }
 

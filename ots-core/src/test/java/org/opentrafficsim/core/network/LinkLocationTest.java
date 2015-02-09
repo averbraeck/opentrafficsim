@@ -3,8 +3,8 @@ package org.opentrafficsim.core.network;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opentrafficsim.core.network.factory.Link;
-import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -29,10 +29,10 @@ public class LinkLocationTest
     public void linkLocationTest()
     {
         // Preparations
-        Node nodeFrom = new Node("From", new Coordinate(0, 0, 0));
-        Node nodeTo = new Node("To", new Coordinate(1000, 0, 0));
+        NodeGeotools.STR nodeFrom = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
+        NodeGeotools.STR nodeTo = new NodeGeotools.STR("To", new Coordinate(1000, 0, 0));
         DoubleScalar.Rel<LengthUnit> linkLength = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
-        Link link = new Link("Link", nodeFrom, nodeTo, linkLength);
+        CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, linkLength);
         // Now we can make a LinkLocation.
         DoubleScalar.Rel<LengthUnit> referenceLocationDistance =
                 new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);

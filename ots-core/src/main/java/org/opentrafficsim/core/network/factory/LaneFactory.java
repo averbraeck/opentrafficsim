@@ -11,7 +11,10 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneAnimation;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -46,7 +49,7 @@ public final class LaneFactory
      * @param intermediateCoordinates Coordinate[]; array of intermediate coordinates (may be null)
      * @return Link; the newly constructed Link
      */
-    public static Link makeLink(final String name, final Node from, final Node to,
+    public static CrossSectionLink makeLink(final String name, final NodeGeotools.STR from, final NodeGeotools.STR to,
             final Coordinate[] intermediateCoordinates)
     {
         int coordinateCount = 2 + (null == intermediateCoordinates ? 0 : intermediateCoordinates.length);
@@ -62,8 +65,8 @@ public final class LaneFactory
         }
         GeometryFactory factory = new GeometryFactory();
         LineString lineString = factory.createLineString(coordinates);
-        Link link =
-                new Link(name, from, to, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(), LengthUnit.METER));
+        CrossSectionLink link =
+                new CrossSectionLink(name, from, to, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(), LengthUnit.METER));
         try
         {
             new LinearGeometry(link, lineString, null);
@@ -88,7 +91,7 @@ public final class LaneFactory
      * @throws RemoteException on communications failure
      * @throws NetworkException 
      */
-    private static Lane makeLane(final Link link, final LaneType<String> laneType,
+    private static Lane makeLane(final CrossSectionLink link, final LaneType<String> laneType,
             final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width,
             final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException
     {
@@ -114,12 +117,12 @@ public final class LaneFactory
      * @throws RemoteException on communications failure
      * @throws NetworkException 
      */
-    public static Lane makeLane(final String name, final Node from, final Node to,
+    public static Lane makeLane(final String name, final NodeGeotools.STR from, final NodeGeotools.STR to,
             final Coordinate[] intermediateCoordinates, final LaneType<String> laneType,
             final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
-        final Link link = makeLink(name, from, to, intermediateCoordinates);
+        final CrossSectionLink link = makeLink(name, from, to, intermediateCoordinates);
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         return makeLane(link, laneType, latPos, width, simulator);
     }
@@ -140,12 +143,12 @@ public final class LaneFactory
      * @throws RemoteException on communications failure
      * @throws NetworkException on topological problems
      */
-    public static Lane[] makeMultiLane(final String name, final Node from, final Node to,
+    public static Lane[] makeMultiLane(final String name, final NodeGeotools.STR from, final NodeGeotools.STR to,
             final Coordinate[] intermediateCoordinates, final int laneCount, final LaneType<String> laneType,
             final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
-        final Link link = makeLink(name, from, to, intermediateCoordinates);
+        final CrossSectionLink link = makeLink(name, from, to, intermediateCoordinates);
         Lane[] result = new Lane[laneCount];
         width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)

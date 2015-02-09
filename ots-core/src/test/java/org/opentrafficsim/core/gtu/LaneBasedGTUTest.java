@@ -29,7 +29,7 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -95,19 +95,19 @@ public class LaneBasedGTUTest
         laneType.addPermeability(carType);
         laneType.addPermeability(truckType);
         // Create a series of Nodes (some closely bunched together)
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        ArrayList<NodeGeotools.STR> nodes = new ArrayList<NodeGeotools.STR>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new Node("Node at " + xPos, new Coordinate(xPos, 20, 0)));
+            nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, 20, 0)));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
         final int laneCount = 5;
         for (int i = 1; i < nodes.size(); i++)
         {
-            Node fromNode = nodes.get(i - 1);
-            Node toNode = nodes.get(i);
+            NodeGeotools.STR fromNode = nodes.get(i - 1);
+            NodeGeotools.STR toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes =
                     LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType,
@@ -398,8 +398,8 @@ public class LaneBasedGTUTest
         GTUType<String> carType = new GTUType<String>("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(carType);
-        Node fromNode = new Node("Node A", new Coordinate(0, 0, 0));
-        Node toNode = new Node("Node B", new Coordinate(1000, 0, 0));
+        NodeGeotools.STR fromNode = new NodeGeotools.STR("Node A", new Coordinate(0, 0, 0));
+        NodeGeotools.STR toNode = new NodeGeotools.STR("Node B", new Coordinate(1000, 0, 0));
         String linkName = "AB";
         Lane lane =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType,

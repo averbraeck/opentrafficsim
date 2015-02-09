@@ -14,7 +14,6 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.factory.Link;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -38,7 +37,7 @@ public class GeometryLinkAnimation extends Renderable2D
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communications failure
      */
-    public GeometryLinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
+    public GeometryLinkAnimation(final LinkGeotools source, final OTSSimulatorInterface simulator, final float width)
         throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -52,10 +51,10 @@ public class GeometryLinkAnimation extends Renderable2D
         graphics.setColor(Color.RED);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        DirectedPoint p = ((Link) getSource()).getLocation();
+        DirectedPoint p = ((LinkGeotools) getSource()).getLocation();
         boolean start = false;
         Path2D.Double path = new Path2D.Double();
-        for (Coordinate c : ((Link) getSource()).getGeometry().getLineString().getCoordinates())
+        for (Coordinate c : ((LinkGeotools) getSource()).getGeometry().getLineString().getCoordinates())
         {
             if (!start)
             {

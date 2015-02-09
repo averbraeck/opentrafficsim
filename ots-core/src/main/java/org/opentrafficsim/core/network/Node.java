@@ -2,6 +2,8 @@ package org.opentrafficsim.core.network;
 
 import java.util.Set;
 
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
  * <p>
@@ -15,7 +17,7 @@ import java.util.Set;
  * @param <ID> the ID type of the Node.
  * @param <P> the point type, e.g., com.vividsolutions.jts.geom.Point, DirectedPoint.
  */
-public interface Node<ID, P>
+public interface Node<ID, P> extends LocatableInterface
 {
     /** @return node id. */
     ID getId();

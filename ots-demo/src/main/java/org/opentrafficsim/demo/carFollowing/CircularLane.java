@@ -27,7 +27,6 @@ import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -463,8 +462,8 @@ class LaneSimulationModel implements OTSModelInterface
                 }
             }
 
-            Node start = new Node("Start", new Coordinate(radius, 0, 0));
-            Node halfway = new Node("Halfway", new Coordinate(-radius, 0, 0));
+            NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));
+            NodeGeotools.STR halfway = new NodeGeotools.STR("Halfway", new Coordinate(-radius, 0, 0));
             LaneType<String> laneType = new LaneType<String>("CarLane");
 
             Coordinate[] coordsHalf1 = new Coordinate[127];

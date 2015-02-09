@@ -3,9 +3,9 @@ package org.opentrafficsim.simulationengine;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.network.NetworkException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.

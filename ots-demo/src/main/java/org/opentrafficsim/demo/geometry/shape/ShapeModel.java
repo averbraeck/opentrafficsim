@@ -10,8 +10,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.network.factory.Link;
-import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -33,7 +31,7 @@ public class ShapeModel implements OTSModelInterface
     private OTSDEVSSimulatorInterface simulator;
 
     /** nodes from shape file. */
-    private Map<String, Node> nodes;
+    private Map<String, NodeGeotools.STR> nodes;
 
     /** links from shape file. */
     private Map<String, Link> shpLinks;

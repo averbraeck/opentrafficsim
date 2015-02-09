@@ -7,9 +7,9 @@ import java.util.Objects;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.Link;
-import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -43,15 +43,15 @@ public final class Convert
      * @param link OSM Link to be converted
      * @return OTS Link
      */
-    public static Link convertLink(final org.opentrafficsim.importexport.osm.Link link)
+    public static CrossSectionLink convertLink(final org.opentrafficsim.importexport.osm.Link link)
     {
-        Node start = convertNode(link.getStart());
-        Node end = convertNode(link.getEnd());
-        Link l2;
+        NodeGeotools.STR start = convertNode(link.getStart());
+        NodeGeotools.STR end = convertNode(link.getEnd());
+        CrossSectionLink l2;
         if (link.getSplineList().isEmpty())
         {
             l2 =
-                    new Link(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(link.getLength(),
+                    new CrossSectionLink(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(link.getLength(),
                             LengthUnit.METER));
         }
         else
@@ -78,7 +78,7 @@ public final class Convert
             GeometryFactory factory = new GeometryFactory();
             LineString lineString = factory.createLineString(coordinates);
             l2 =
-                    new Link(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                    new CrossSectionLink(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
                             LengthUnit.METER));
             try
             {
@@ -95,12 +95,12 @@ public final class Convert
     /**
      * This method converts an OSM node to an OTS node.
      * @param node OSM Node to be converted
-     * @return OTS Link
+     * @return OTS Node
      */
-    public static Node convertNode(final org.opentrafficsim.importexport.osm.Node node)
+    public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.Node node)
     {
         Coordinate coord = new Coordinate(node.getLongitude(), node.getLatitude());
-        Node n2 = new Node(Objects.toString(node.getID()), coord);
+        NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
         return n2;
     }
 
@@ -114,7 +114,7 @@ public final class Convert
      */
     public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink) throws NetworkException
     {
-        Link otslink = convertLink(osmlink);
+        CrossSectionLink otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
         LaneType<String> lt = null;
         boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */

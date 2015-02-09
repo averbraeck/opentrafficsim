@@ -22,14 +22,12 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.LaneAnimation;
-import org.opentrafficsim.core.network.factory.Link;
-import org.opentrafficsim.core.network.factory.Node;
-import org.opentrafficsim.core.network.factory.ShoulderAnimation;
 import org.opentrafficsim.core.network.geotools.GeometryLinkAnimation;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneAnimation;
 import org.opentrafficsim.core.network.lane.Shoulder;
+import org.opentrafficsim.core.network.lane.ShoulderAnimation;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -67,7 +65,7 @@ public final class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, Node> ReadNodes(final String shapeFileName, final String numberType,
+    public static Map<String, NodeGeotools.STR> ReadNodes(final String shapeFileName, final String numberType,
             final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
@@ -90,7 +88,7 @@ public final class ShapeFileReader
         }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, Node> nodes = new HashMap<>();
+        Map<String, NodeGeotools.STR> nodes = new HashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();
@@ -123,7 +121,7 @@ public final class ShapeFileReader
                 }
                 if (addThisNode)
                 {
-                    Node node = new Node(nr, coordinate);
+                    NodeGeotools.STR node = new NodeGeotools.STR(nr, coordinate);
                     nodes.put(nr, node);
                 }
             }
@@ -165,7 +163,7 @@ public final class ShapeFileReader
      * @throws IOException on error
      */
     public static void readLinks(final String shapeFileName, final Map<String, Link> links,
-            final Map<String, Node> nodes, final OTSSimulatorInterface simulator) throws IOException
+            final Map<String, NodeGeotools.STR> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -230,8 +228,8 @@ public final class ShapeFileReader
                         new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
-                Node nodeA = nodes.get(lNodeA);
-                Node nodeB = nodes.get(lNodeB);
+                NodeGeotools.STR nodeA = nodes.get(lNodeA);
+                NodeGeotools.STR nodeB = nodes.get(lNodeB);
 
                 if (nodeA != null && nodeB != null)
                 {

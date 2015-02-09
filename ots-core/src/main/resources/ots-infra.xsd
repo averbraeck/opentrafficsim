@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.example.org/ots-infra" xmlns="http://www.example.org/ots-infra"
+	elementFormDefault="qualified">
+
+	<xsd:group name="NODELINK">
+		<xsd:choice>
+			<xsd:element name="NODE" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+					<xsd:attribute name="COORDINATE" type="xsd:string"></xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="LINK" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:choice>
+							<xsd:element name="STRAIGHT">
+								<xsd:complexType>
+									<xsd:attribute name="LENGTH" type="xsd:string"
+										use="required"></xsd:attribute>
+									<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
+									<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="ARC">
+								<xsd:complexType>
+									<xsd:attribute name="RADIUS" type="xsd:string"
+										use="required"></xsd:attribute>
+									<xsd:attribute name="ANGLE" type="xsd:double"
+										use="required"></xsd:attribute>
+									<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
+									<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+
+						<xsd:element name="LANE" minOccurs="1" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+								<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
+								<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+								
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+
+					<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+					<xsd:attribute name="FROM" type="xsd:string" use="required"></xsd:attribute>
+					<xsd:attribute name="TO" type="xsd:string" use="required"></xsd:attribute>
+					<xsd:attribute name="ELEMENTS" type="xsd:string" use="required"></xsd:attribute>
+					<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
+					<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:group>
+
+	<xsd:element name="NETWORK">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="GLOBAL" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
+						<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:element name="GTU" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:group ref="NODELINK" minOccurs="1" maxOccurs="unbounded" />
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
