@@ -92,12 +92,12 @@ public class DataIO
         }
         else
         {
-            String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
+            String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
             String fileArea = FileDialog.showFileDialog(true, "shp", "Shapefile with Areas", startMap);
             // File file = new File(fileName);
             String fileRoads = FileDialog.showFileDialog(true, "shp", "Shapefile with Roads", startMap);
             String filePathData =
-                    "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3/";
+                    "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
             String fileNameStarts = "I_";
             boolean fileNameDay = false;
             addGeo(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay, dataTNO);
@@ -231,14 +231,14 @@ public class DataIO
      * @param centroidOutputFile
      * @param outputFile
      * @param countMap
-     * @param objectsToDetect
-     * @param searchLocations
+     * @param roads
+     * @param areas
      * @param fieldNameToDetect
      * @param fieldNameSearchAreas
      * @throws IOException
      */
     public static void detectLocationOfObjectGeo(String outputShapeFile, String centroidOutputFile, String outputFile,
-            Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
+            Map<String, ArrayList<Double>> countMap, ShapeStore roads, ShapeStore areas,
             String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
         File fileNew = new File(outputFile);
@@ -260,14 +260,14 @@ public class DataIO
             }
 
             out = new BufferedWriter(new FileWriter(fileNew));
-            for (ShapeObject point : searchLocations.getGeoObjects())
+            for (ShapeObject point : areas.getGeoObjects())
             {
                 com.vividsolutions.jts.geom.Point centroid = point.getGeometry().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
                 Geometry newArea = point.getGeometry().buffer(0.0);
-                String text = "C" + point.getValues().get(0) + " ,";
+                String text = "Area" + point.getValues().get(0) + " ,";
                 coords = point.getGeometry().getCoordinates();
                 Coordinate[] coords2 = newArea.getCoordinates();
                 for (Coordinate coord : coords)
@@ -279,14 +279,14 @@ public class DataIO
                 out.write(text);
 
             }
-            for (ShapeObject point : objectsToDetect.getGeoObjects())
+            for (ShapeObject point : roads.getGeoObjects())
             {
                 com.vividsolutions.jts.geom.Point centroid = point.getGeometry().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
                 Geometry newArea = point.getGeometry().buffer(0.0);
-                String text = "C" + point.getValues().get(0) + " ,";
+                String text = "Road " + point.getValues().get(2) + " ,";
                 coords = point.getGeometry().getCoordinates();
                 Coordinate[] coords2 = newArea.getCoordinates();
                 for (Coordinate coord : coords)

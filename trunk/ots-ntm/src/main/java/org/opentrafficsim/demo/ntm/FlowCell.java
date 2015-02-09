@@ -69,7 +69,7 @@ public class FlowCell implements LocatableInterface
         this.maxCapacity = maxCapacity;
         this.numberOfLanes = numberOfLanes;
         ParametersFundamentalDiagram parametersFD =
-                new ParametersFundamentalDiagram(speed, maxCapacity, numberOfLanes, cellLength);
+                new ParametersFundamentalDiagram(speed, maxCapacity, numberOfLanes);
         if (behaviourType == TrafficBehaviourType.FLOW)
         {
             this.cellBehaviour = new CellBehaviourFlow(null, parametersFD);
@@ -83,10 +83,11 @@ public class FlowCell implements LocatableInterface
      * @param param parameters FD
      * @return carProduction
      */
-    public final Abs<FrequencyUnit> retrieveActualCapacityPerLengthUnit(final double accumulatedCarsPerLengthUnit,
-            final Abs<FrequencyUnit> maximumCapacity, final ParametersFundamentalDiagram param)
+    public final Abs<FrequencyUnit> retrieveCurrentInflowCapacity(
+            final double accumulatedCarsPerLengthUnit, final Abs<FrequencyUnit> maximumCapacity,
+            final ParametersFundamentalDiagram param)
     {
-        Abs<FrequencyUnit> actualCapacity;
+        Abs<FrequencyUnit> currentInflowCapacity;
         if (accumulatedCarsPerLengthUnit > param.getAccCritical().get(0))
         {
             ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
@@ -99,13 +100,13 @@ public class FlowCell implements LocatableInterface
             p = new Point2D.Double();
             p.setLocation(param.getAccCritical().get(1), 0);
             xyPairs.add(p);
-            actualCapacity = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCarsPerLengthUnit);
+            currentInflowCapacity = FundamentalDiagram.PieceWiseLinear(xyPairs, accumulatedCarsPerLengthUnit);
         }
         else
         {
-            actualCapacity = maximumCapacity;
+            currentInflowCapacity = maximumCapacity;
         }
-        return actualCapacity;
+        return currentInflowCapacity;
     }
 
     /**
@@ -115,26 +116,25 @@ public class FlowCell implements LocatableInterface
     public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
     {
         double speedDouble;
-        Abs<FrequencyUnit> actualCapacity =
-                retrieveActualCapacityPerLengthUnit(accumulatedCarsPerLengthUnit, this.maxCapacity,
+        Abs<FrequencyUnit> currentInflowCapacity =
+                retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity,
                         this.cellBehaviour.getParametersFundamentalDiagram());
-        this.cellBehaviour.getParametersFundamentalDiagram();
-        double densityDouble =
-                this.cellLength.getInUnit(LengthUnit.KILOMETER) * this.cellBehaviour.getAccumulatedCars();
-        // / this.numberOfLanes;
         Abs<LinearDensityUnit> density =
-                new DoubleScalar.Abs<LinearDensityUnit>(densityDouble, LinearDensityUnit.PER_KILOMETER);
+                new DoubleScalar.Abs<LinearDensityUnit>(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
         if (density.getInUnit(LinearDensityUnit.PER_KILOMETER) > this.cellBehaviour.getParametersFundamentalDiagram()
                 .getAccCritical().get(0))
         {
             speedDouble =
-                    actualCapacity.getInUnit(FrequencyUnit.PER_HOUR)
+                    currentInflowCapacity.getInUnit(FrequencyUnit.PER_HOUR)
                             / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+            //speedDouble =
+            //        Math.max(speedDouble, this.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
+            //                .getInUnit(SpeedUnit.KM_PER_HOUR));
         }
         else
         {
             speedDouble =
-                    this.cellBehaviour.getParametersFundamentalDiagram().getCapacityPerUnit()
+                    this.cellBehaviour.getParametersFundamentalDiagram().getCapacity()
                             .getInUnit(FrequencyUnit.PER_HOUR)
                             / this.cellBehaviour.getParametersFundamentalDiagram().getAccCritical().get(0);
         }
@@ -152,6 +152,8 @@ public class FlowCell implements LocatableInterface
         double timeDouble =
                 this.cellLength.getInUnit(LengthUnit.KILOMETER)
                         / retrieveCurrentSpeed(densityPerLengthUnit).getInUnit(SpeedUnit.KM_PER_HOUR);
+        double UPPERBOUND_TRAVELTIME_HOUR = 99;
+        timeDouble = Math.min(UPPERBOUND_TRAVELTIME_HOUR, timeDouble);
         return this.setCurrentTravelTime(new DoubleScalar.Abs(timeDouble, TimeUnit.HOUR));
     }
 
@@ -236,18 +238,18 @@ public class FlowCell implements LocatableInterface
     /**
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> getActualSpeed()
+    public DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
     {
         return currentSpeed;
     }
 
     /**
-     * @param actualSpeed set actualSpeed.
+     * @param currentSpeed set actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> setActualSpeed(DoubleScalar.Abs<SpeedUnit> actualSpeed)
+    public DoubleScalar.Abs<SpeedUnit> setActualSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
     {
-        this.currentSpeed = actualSpeed;
-        return actualSpeed;
+        this.currentSpeed = currentSpeed;
+        return currentSpeed;
     }
 
     /**

@@ -180,11 +180,14 @@ public class TripDemand<TripInformation>
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
         double rowTotal = 0.0;
-        for ( Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
+        if (mapDestinations != null)
         {
-            double trips = getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand,
-                    originID, tripInfo.getKey(), currentTime, timeStepDurationNTM);
-                    rowTotal += trips;
+            for ( Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
+            {
+                double trips = getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand,
+                        originID, tripInfo.getKey(), currentTime, timeStepDurationNTM);
+                        rowTotal += trips;
+            }
         }
         return rowTotal;
     }

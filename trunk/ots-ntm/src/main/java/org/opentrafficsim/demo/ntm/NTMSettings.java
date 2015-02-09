@@ -51,7 +51,10 @@ public class NTMSettings
     // shortest paths creation
 
     /** */
-    private double weightNewRoutes = 0.4;
+    private double weightNewRoutes;
+
+    /** */
+    private double varianceRoutes;
 
     /** */
     private boolean reRoute = false;
@@ -71,7 +74,7 @@ public class NTMSettings
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
             Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
-            int numberOfRoutes, double weightNewRoutes, boolean reRoute, String path)
+            int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -88,6 +91,7 @@ public class NTMSettings
         this.reRouteTimeInterval = reRouteTimeInterval;
         this.numberOfRoutes = numberOfRoutes;
         this.weightNewRoutes = weightNewRoutes;
+        this.varianceRoutes = varianceRoutes;
         this.reRoute = reRoute;
         this.path = path;
     }
@@ -287,6 +291,22 @@ public class NTMSettings
     public void setReRoute(boolean reRoute)
     {
         this.reRoute = reRoute;
+    }
+
+    /**
+     * @return varianceRoutes.
+     */
+    public double getVarianceRoutes()
+    {
+        return varianceRoutes;
+    }
+
+    /**
+     * @param varianceRoutes set varianceRoutes.
+     */
+    public void setVarianceRoutes(double varianceRoutes)
+    {
+        this.varianceRoutes = varianceRoutes;
     }
 
 }

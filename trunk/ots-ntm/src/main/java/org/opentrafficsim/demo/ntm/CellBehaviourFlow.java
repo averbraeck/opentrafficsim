@@ -57,22 +57,6 @@ public class CellBehaviourFlow extends CellBehaviour
         // parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }
 
-    /**
-     * @param parametersFD contains a set of params
-     * @param area that contains this behaviour
-     * @param maxCapacityPerLane
-     * @param maxSpeed
-     */
-    public CellBehaviourFlow(final Area area, ParametersFundamentalDiagram parametersFD,
-            final DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane, final DoubleScalar.Abs<SpeedUnit> maxSpeed)
-    {
-        if (parametersFD == null)
-        {
-            parametersFD = new ParametersFundamentalDiagram();
-        }
-        this.setParametersFundamentalDiagram(parametersFD);
-        // parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-    }
 
     /**
      * {@inheritDoc}
@@ -85,16 +69,16 @@ public class CellBehaviourFlow extends CellBehaviour
     public DoubleScalar.Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars,
             final ParametersFundamentalDiagram param)
     {
-        DoubleScalar.Abs<FrequencyUnit> carProduction;
+        DoubleScalar.Abs<FrequencyUnit> supply;
         if (accumulatedCars > param.getAccCritical().get(0))
         {
-            carProduction = retrieveDemand(accumulatedCars, param);
+            supply = retrieveFD(accumulatedCars, param);
         }
         else
         {
-            carProduction = param.getCapacityPerUnit();
+            supply = param.getCapacity();
         }
-        return carProduction;
+        return supply;
     }
 
     /**
@@ -108,6 +92,29 @@ public class CellBehaviourFlow extends CellBehaviour
     public final DoubleScalar.Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
             final ParametersFundamentalDiagram param)
     {
+        DoubleScalar.Abs<FrequencyUnit> demand;
+        if (accumulatedCars <= param.getAccCritical().get(0))
+        {
+            demand = retrieveFD(accumulatedCars, param);
+        }
+        else
+        {
+            demand = param.getCapacity();
+        }
+        return demand;
+    }
+
+    /**
+     * Retrieves car production from network fundamental diagram.
+     * @param accumulatedCars number of cars in Cell
+     * @param maximumCapacity based on area information
+     * @param param kkk
+     * @param numberOfLanes
+     * @return carProduction
+     */
+    public final DoubleScalar.Abs<FrequencyUnit> retrieveFD(final double accumulatedCars,
+            final ParametersFundamentalDiagram param)
+    {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();
         // starting point
@@ -115,7 +122,7 @@ public class CellBehaviourFlow extends CellBehaviour
         xyPairs.add(p);
         p = new Point2D.Double();
         // the point of maximum capacity
-        p.setLocation(param.getAccCritical().get(0), param.getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR));
+        p.setLocation(param.getAccCritical().get(0), param.getCapacity().getInUnit(FrequencyUnit.PER_HOUR));
         xyPairs.add(p);
         p = new Point2D.Double();
         // the final breakdown
