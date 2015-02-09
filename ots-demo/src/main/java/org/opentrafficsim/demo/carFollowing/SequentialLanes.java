@@ -30,8 +30,10 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
+import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -390,7 +392,7 @@ class SequentialModel implements OTSModelInterface
                 Lane[] lanes = LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
-                    Link link = (Link) lanes[0].getParentLink();
+                    CrossSectionLink link = (CrossSectionLink) lanes[0].getParentLink();
                     int index = link.getCrossSectionElementList().indexOf(lanes[0]);
                     lanes[0] =
                             new SinkLane(link, lanes[0].getLateralCenterPosition(0),

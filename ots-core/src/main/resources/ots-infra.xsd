@@ -3,6 +3,18 @@
 	targetNamespace="http://www.example.org/ots-infra" xmlns="http://www.example.org/ots-infra"
 	elementFormDefault="qualified">
 
+	<xsd:simpleType name="SPEEDTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LENGTHTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
 	<xsd:group name="NODELINK">
 		<xsd:choice>
 			<xsd:element name="NODE" minOccurs="1" maxOccurs="unbounded">
@@ -18,30 +30,25 @@
 						<xsd:choice>
 							<xsd:element name="STRAIGHT">
 								<xsd:complexType>
-									<xsd:attribute name="LENGTH" type="xsd:string"
+									<xsd:attribute name="LENGTH" type="LENGTHTYPE"
 										use="required"></xsd:attribute>
-									<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
-									<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 							<xsd:element name="ARC">
 								<xsd:complexType>
-									<xsd:attribute name="RADIUS" type="xsd:string"
+									<xsd:attribute name="RADIUS" type="LENGTHTYPE"
 										use="required"></xsd:attribute>
 									<xsd:attribute name="ANGLE" type="xsd:double"
 										use="required"></xsd:attribute>
-									<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
-									<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:choice>
 
-						<xsd:element name="LANE" minOccurs="1" maxOccurs="unbounded">
+						<xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
 							<xsd:complexType>
 								<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
-								<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
-								<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
-								
+								<xsd:attribute name="SPEED" type="SPEEDTYPE"></xsd:attribute>
+								<xsd:attribute name="WIDTH" type="LENGTHTYPE"></xsd:attribute>
 							</xsd:complexType>
 						</xsd:element>
 					</xsd:sequence>
@@ -50,8 +57,8 @@
 					<xsd:attribute name="FROM" type="xsd:string" use="required"></xsd:attribute>
 					<xsd:attribute name="TO" type="xsd:string" use="required"></xsd:attribute>
 					<xsd:attribute name="ELEMENTS" type="xsd:string" use="required"></xsd:attribute>
-					<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
-					<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+					<xsd:attribute name="SPEED" type="SPEEDTYPE"></xsd:attribute>
+					<xsd:attribute name="WIDTH" type="LENGTHTYPE"></xsd:attribute>
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:choice>
@@ -62,8 +69,8 @@
 			<xsd:sequence>
 				<xsd:element name="GLOBAL" minOccurs="0" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="SPEED" type="xsd:string"></xsd:attribute>
-						<xsd:attribute name="WIDTH" type="xsd:string"></xsd:attribute>
+						<xsd:attribute name="SPEED" type="SPEEDTYPE"></xsd:attribute>
+						<xsd:attribute name="WIDTH" type="LENGTHTYPE"></xsd:attribute>
 					</xsd:complexType>
 				</xsd:element>
 
