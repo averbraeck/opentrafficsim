@@ -26,7 +26,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -62,8 +62,8 @@ public class SensorTest
     {
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        Node nodeAFrom = new Node("AFrom", new Coordinate(0, 0, 0));
-        Node nodeATo = new Node("ATo", new Coordinate(1000, 0, 0));
+        NodeGeotools.STR nodeAFrom = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
+        NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();

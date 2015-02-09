@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network.factory;
+package org.opentrafficsim.core.network;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -28,7 +28,7 @@ public class NodeAnimation extends Renderable2D
      * @throws NamingException on ???
      * @throws RemoteException on communications failure
      */
-    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(final Node<?, ?> node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(node, simulator);
     }

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.FollowAcceleration;
-import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;

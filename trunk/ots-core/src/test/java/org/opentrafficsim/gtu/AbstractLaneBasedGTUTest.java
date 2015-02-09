@@ -25,12 +25,10 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel.GTUFollowingModelResult;
-import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -73,8 +71,8 @@ public class AbstractLaneBasedGTUTest
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        Node nodeAFrom = new Node("AFrom", new Coordinate(0, 0, 0));
-        Node nodeATo = new Node("ATo", new Coordinate(1000, 0, 0));
+        NodeGeotools.STR nodeAFrom = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
+        NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
@@ -87,8 +85,8 @@ public class AbstractLaneBasedGTUTest
                 LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // A GTU can exist on several lanes at once; create another lane group to test that
-        Node nodeBFrom = new Node("BFrom", new Coordinate(10, 0, 0));
-        Node nodeBTo = new Node("BTo", new Coordinate(1000, 100, 0));
+        NodeGeotools.STR nodeBFrom = new NodeGeotools.STR("BFrom", new Coordinate(10, 0, 0));
+        NodeGeotools.STR nodeBTo = new NodeGeotools.STR("BTo", new Coordinate(1000, 100, 0));
         Lane[] lanesGroupB =
                 LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
@@ -340,8 +338,8 @@ public class AbstractLaneBasedGTUTest
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        Node nodeCFrom = new Node("CFrom", new Coordinate(10, 100, 0));
-        Node nodeCTo = new Node("CTo", new Coordinate(1000, 0, 0));
+        NodeGeotools.STR nodeCFrom = new NodeGeotools.STR("CFrom", new Coordinate(10, 100, 0));
+        NodeGeotools.STR nodeCTo = new NodeGeotools.STR("CTo", new Coordinate(1000, 0, 0));
         Lane[] lanesGroupC =
                 LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());

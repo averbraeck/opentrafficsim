@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -498,8 +497,8 @@ class RoadSimulationModel implements OTSModelInterface
             GTUType<String> gtuType = new GTUType<String>("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addPermeability(gtuType);
-            Node start = new Node("Start", new Coordinate(radius, 0, 0));
-            Node halfway = new Node("Halfway", new Coordinate(-radius, 0, 0));
+            NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));
+            NodeGeotools.STR halfway = new NodeGeotools.STR("Halfway", new Coordinate(-radius, 0, 0));
 
             Coordinate[] coordsHalf1 = new Coordinate[127];
             for (int i = 0; i < coordsHalf1.length; i++)

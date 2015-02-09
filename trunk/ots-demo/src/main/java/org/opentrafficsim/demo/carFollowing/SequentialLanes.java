@@ -32,8 +32,7 @@ import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Link;
-import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
@@ -309,7 +308,7 @@ class SequentialModel implements OTSModelInterface
     private OTSDEVSSimulatorInterface simulator;
 
     /** The nodes of our network in the order that all GTUs will visit them. */
-    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<NodeGeotools.STR> nodes = new ArrayList<NodeGeotools.STR>();
 
     /** the car following model, e.g. IDM Plus for cars. */
     protected GTUFollowingModel carFollowingModelCars;
@@ -372,19 +371,19 @@ class SequentialModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        this.nodes = new ArrayList<Node>();
+        this.nodes = new ArrayList<NodeGeotools.STR>();
         int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
         for (int xPos : linkBoundaries)
         {
-            this.nodes.add(new Node("Node at " + xPos, new Coordinate(xPos, -10, 0)));
+            this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, -10, 0)));
         }
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // Now we can build a series of Links with one Lane on them
         ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
         for (int i = 1; i < this.nodes.size(); i++)
         {
-            Node fromNode = this.nodes.get(i - 1);
-            Node toNode = this.nodes.get(i);
+            NodeGeotools.STR fromNode = this.nodes.get(i - 1);
+            NodeGeotools.STR toNode = this.nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             try
             {

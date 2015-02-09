@@ -13,15 +13,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.LaneAnimation;
-import org.opentrafficsim.core.network.factory.Link;
-import org.opentrafficsim.core.network.factory.Node;
-import org.opentrafficsim.core.network.factory.ShoulderAnimation;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneAnimation;
 import org.opentrafficsim.core.network.lane.Shoulder;
+import org.opentrafficsim.core.network.lane.ShoulderAnimation;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -61,48 +62,48 @@ public class TestModel implements OTSModelInterface
         GeometryFactory factory = new GeometryFactory();
         CoordinateReferenceSystem crs = DefaultEngineeringCRS.CARTESIAN_2D;
 
-        Node n0 = new Node("N0", new Coordinate(-25.0, 0.0));
-        Node n1 = new Node("N1", new Coordinate(0.0, 0.0));
-        Link l01 = new Link("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
+        NodeGeotools.STR n0 = new NodeGeotools.STR("N0", new Coordinate(-25.0, 0.0));
+        NodeGeotools.STR n1 = new NodeGeotools.STR("N1", new Coordinate(0.0, 0.0));
+        CrossSectionLink l01 = new CrossSectionLink("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls01 =
                 factory.createLineString(new Coordinate[]{new Coordinate(-25.0, 0.0), new Coordinate(0.0, 0.0)});
 
-        Node n2 = new Node("N2", new Coordinate(25.0, 20.0));
-        Link l12 =
-                new Link("L12", n1, n2,
+        NodeGeotools.STR n2 = new NodeGeotools.STR("N2", new Coordinate(25.0, 20.0));
+        CrossSectionLink l12 =
+                new CrossSectionLink("L12", n1, n2,
                         new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls12 =
                 factory.createLineString(new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(25.0, 20.0)});
 
-        Node n3 = new Node("N3", new Coordinate(50.0, 0.0));
-        Link l23 =
-                new Link("L23", n2, n3,
+        NodeGeotools.STR n3 = new NodeGeotools.STR("N3", new Coordinate(50.0, 0.0));
+        CrossSectionLink l23 =
+                new CrossSectionLink("L23", n2, n3,
                         new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls23 =
                 factory.createLineString(new Coordinate[]{new Coordinate(25.0, 20.0), new Coordinate(50.0, 0.0)});
 
-        Node n4 = new Node("N4", new Coordinate(75.0, -20.0));
-        Link l34 =
-                new Link("L34", n3, n4,
+        NodeGeotools.STR n4 = new NodeGeotools.STR("N4", new Coordinate(75.0, -20.0));
+        CrossSectionLink l34 =
+                new CrossSectionLink("L34", n3, n4,
                         new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls34 =
                 factory.createLineString(new Coordinate[]{new Coordinate(50.0, 0.0), new Coordinate(75.0, -20.0)});
 
-        Node n5 = new Node("N5", new Coordinate(100.0, 0.0));
-        Link l45 =
-                new Link("L45", n4, n5,
+        NodeGeotools.STR n5 = new NodeGeotools.STR("N5", new Coordinate(100.0, 0.0));
+        CrossSectionLink l45 =
+                new CrossSectionLink("L45", n4, n5,
                         new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls45 =
                 factory.createLineString(new Coordinate[]{new Coordinate(75.0, -20.0), new Coordinate(100.0, 0.0)});
 
-        Node n6 = new Node("N6", new Coordinate(125.0, 0.0));
-        Link l56 = new Link("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
+        NodeGeotools.STR n6 = new NodeGeotools.STR("N6", new Coordinate(125.0, 0.0));
+        CrossSectionLink l56 = new CrossSectionLink("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls56 =
                 factory.createLineString(new Coordinate[]{new Coordinate(100.0, 0.0), new Coordinate(125.0, 0.0)});
 
-        Node n7 = new Node("N7", new Coordinate(300.0, 0.0));
-        Link l67 =
-                new Link("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20),
+        NodeGeotools.STR n7 = new NodeGeotools.STR("N7", new Coordinate(300.0, 0.0));
+        CrossSectionLink l67 =
+                new CrossSectionLink("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20),
                         LengthUnit.METER));
         LineString ls67 =
                 factory.createLineString(new Coordinate[]{new Coordinate(125.0, 0.0), new Coordinate(150.0, 0.0),
@@ -173,7 +174,7 @@ public class TestModel implements OTSModelInterface
      * @param link link.
      * @throws NetworkException
      */
-    private void add2x2Lanes(final Link link) throws NetworkException
+    private void add2x2Lanes(final CrossSectionLink link) throws NetworkException
     {
         // four lanes, grass underneath, lines between lane1-2 and lane 2-3, barrier between lane 2-3
         // lane is 3.5 meters wide. gap between 3-4 is one meter. outside 0.5 meters on both sides

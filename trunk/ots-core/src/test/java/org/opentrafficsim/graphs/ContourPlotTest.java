@@ -29,7 +29,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -64,7 +64,7 @@ public class ContourPlotTest
     {
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
-                LaneFactory.makeMultiLane("AtoB", new Node("A", new Coordinate(1234, 0, 0)), new Node("B",
+                LaneFactory.makeMultiLane("AtoB", new NodeGeotools.STR("A", new Coordinate(1234, 0, 0)), new NodeGeotools.STR("B",
                         new Coordinate(12345, 0, 0)), null, 1, new LaneType<String>("lane type"), null);
         result.add(lanes[0]);
         return result;

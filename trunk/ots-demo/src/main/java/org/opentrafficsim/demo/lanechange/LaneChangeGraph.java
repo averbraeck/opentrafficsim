@@ -43,7 +43,6 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel.LaneChangeModelResult;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.factory.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -217,8 +216,8 @@ public class LaneChangeGraph extends JFrame
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
         Lane lanes[] =
-            LaneFactory.makeMultiLane("Road with two lanes", new Node("From", new Coordinate(lowerBound.getSI(), 0, 0)),
-                new Node("To", new Coordinate(upperBound.getSI(), 0, 0)), null, 2, laneType, null);
+            LaneFactory.makeMultiLane("Road with two lanes", new NodeGeotools.STR("From", new Coordinate(lowerBound.getSI(), 0, 0)),
+                new NodeGeotools.STR("To", new Coordinate(upperBound.getSI(), 0, 0)), null, 2, laneType, null);
         // Create the reference vehicle
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
             new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
