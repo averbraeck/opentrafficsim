@@ -34,11 +34,9 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
      * {@inheritDoc}
      */
     @Override
-    public final LaneChangeModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<LaneBasedGTU<?>> sameLaneGTUs,
-            final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
-            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit,
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<LaneBasedGTU<?>> sameLaneGTUs, final Collection<LaneBasedGTU<?>> preferredLaneGTUs,
+            final Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
             final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
@@ -55,7 +53,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane = lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
+            Lane nonPreferredLane =
+                    lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
             Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             DoubleScalar.Abs<AccelerationUnit> straightA =
                     DoubleScalar.plus(
@@ -73,7 +72,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 if (null == nonPreferredA)
                 {
                     // No lane change possible; this is definitely the easy case
-                    return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
+                    return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
                             speedLimit), null);
                 }
                 else
@@ -82,14 +81,14 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).getSI() > straightA.getSI())
                     {
                         // Merge to the nonPreferred lane; i.e. start an overtaking procedure
-                        return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu,
+                        return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu,
                                 nonPreferredLaneGTUs, speedLimit), nonPreferred);
                     }
                     else
                     {
                         // Stay in the current lane
-                        return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu,
-                                sameLaneGTUs, speedLimit), null);
+                        return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
+                                speedLimit), null);
                     }
                 }
             }
@@ -100,13 +99,13 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).getSI() > straightA.getSI())
                 {
                     // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
-                    return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu,
-                            preferredLaneGTUs, speedLimit), preferred);
+                    return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
+                            speedLimit), preferred);
                 }
                 else
                 {
                     // Stay in current lane
-                    return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
+                    return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
                             speedLimit), null);
                 }
             }
@@ -120,7 +119,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
             {
                 // Stay in current lane
-                return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
+                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs,
                         speedLimit), null);
 
             }
@@ -128,11 +127,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     && preferredAttractiveness.getSI() > nonPreferredAttractiveness.getSI())
             {
                 // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
-                return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
+                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
                         speedLimit), preferred);
             }
             // Merge to the adjacent nonPreferred lane; i.e. start an overtaking procedure
-            return new LaneChangeModelResult(gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
+            return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
                     speedLimit), nonPreferred);
         }
         catch (NetworkException exception)

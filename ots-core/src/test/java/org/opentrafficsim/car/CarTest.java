@@ -23,8 +23,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
@@ -47,7 +47,8 @@ import com.vividsolutions.jts.geom.LineString;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jul 11, 2014 <br>
@@ -71,15 +72,20 @@ public class CarTest
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
-        LaneBasedIndividualCar<Integer> referenceCar = makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator);
-
+        GTUFollowingModel gtuFollowingModel =
+                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
+        LaneBasedIndividualCar<Integer> referenceCar =
+                makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
-            .position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getLongitudinalVelocity(
-            initialTime).getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(initialTime)
-            .getSI(), 0.0001);
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
+                referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar
+                .getLongitudinalVelocity(initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0,
+                referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
+        assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel,
+                referenceCar.getGTUFollowingModel());
     }
 
     /**
@@ -94,14 +100,16 @@ public class CarTest
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
         Context context = new InitialContext();
-        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp = new Experiment<>(context);
+        Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
+                new Experiment<>(context);
         Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
-            new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
-                new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND));
+                new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
         Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep =
-            new Replication<>(context, exp);
+                new Replication<>(context, exp);
         simulator.initialize(rep, ReplicationMode.TERMINATING);
         return simulator;
     }
@@ -114,6 +122,7 @@ public class CarTest
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
+     * @param gtuFollowingModel GTUFollowingModel; the GTU following model
      * @return Car; the new Car
      * @throws NamingException on network error when making the animation
      * @throws RemoteException when the simulator cannot be reached.
@@ -121,8 +130,9 @@ public class CarTest
      * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final Lane lane,
-        final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-        final OTSDEVSSimulator simulator) throws RemoteException, NamingException, NetworkException, SimRuntimeException
+            final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+            final OTSDEVSSimulator simulator, GTUFollowingModel gtuFollowingModel) throws RemoteException,
+            NamingException, NetworkException, SimRuntimeException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
@@ -130,13 +140,8 @@ public class CarTest
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        GTUFollowingModel cfm =
-            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND),
-                1d);
-        return new LaneBasedIndividualCar<Integer>(nr, carType, cfm, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
-            simulator);
+        return new LaneBasedIndividualCar<Integer>(nr, carType, gtuFollowingModel, initialLongitudinalPositions,
+                initialSpeed, length, width, maxSpeed, simulator);
     }
 
     /**
@@ -148,9 +153,9 @@ public class CarTest
         NodeGeotools.STR n1 = new NodeGeotools.STR("n1", new Coordinate(0, 0));
         NodeGeotools.STR n2 = new NodeGeotools.STR("n2", new Coordinate(10000.0, 0.0));
         CrossSectionLink<String, String> link12 =
-            new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Rel<LengthUnit>(10000.0, LengthUnit.METER));
+                new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Rel<LengthUnit>(10000.0, LengthUnit.METER));
         GeometryFactory factory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[] {new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
+        Coordinate[] coordinates = new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
         LineString line = factory.createLineString(coordinates);
         new LinearGeometry(link12, line, null);
         LaneType<String> carLaneType = new LaneType<String>("CarLane");
@@ -172,8 +177,8 @@ public class CarTest
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-            final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+                final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+                throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;
         }

@@ -3,9 +3,7 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -45,10 +43,10 @@ public interface LaneChangeModel
      *            changes that have very little benefit
      * @param nonPreferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane into which GTUs should merge to overtake other traffic
-     * @return LaneChangeModelResult; the result of the lane change and GTU following model
+     * @return LaneMovementStep; the result of the lane change and GTU following model
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
-    LaneChangeModelResult computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
             final Collection<LaneBasedGTU<?>> sameLaneTraffic,
             final Collection<LaneBasedGTU<?>> rightLaneTraffic,
             final Collection<LaneBasedGTU<?>> leftLaneTraffic,
@@ -56,105 +54,5 @@ public interface LaneChangeModel
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
             Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
-
-    /**
-     * The result of a LaneChangeModel evaluation shall be stored in an instance of this class. <br />
-     * Currently lane changes are instantaneous. To make lane changes take realistic time an additional field will be
-     * needed that records the lateral position and speed.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version 3 nov. 2014 <br>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    class LaneChangeModelResult
-    {
-        /** The resulting acceleration and duration of validity. */
-        private final AccelerationStep gfmr;
-
-        /**
-         * Lane change. This has one of the following values:
-         * <table>
-         * <tr>
-         * <td>null:</td>
-         * <td>Stay in the current lane</td>
-         * </tr>
-         * <tr>
-         * <td>LateralDirectionality.LEFT:</td>
-         * <td>Move to the Left adjacent lane</td>
-         * </tr>
-         * <tr>
-         * <td>LateralDirectionality.RIGHT:</td>
-         * <td>Move to the Right adjacent lane</td>
-         * </tr>
-         * </table>
-         */
-        private final LateralDirectionality laneChange;
-
-        /**
-         * Construct a new LaneChangeModelResult.
-         * @param gfmr GTUFollowingModelResult; the acceleration and duration of validity of this result.
-         * @param laneChange LateralDirectionality; this has one of the values:
-         *            <table>
-         *            <tr>
-         *            <td>null:</td>
-         *            <td>Stay in the current lane</td>
-         *            </tr>
-         *            <tr>
-         *            <td>LateralDirectionality.LEFT:</td>
-         *            <td>Move to the Left adjacent lane</td>
-         *            </tr>
-         *            <tr>
-         *            <td>LateralDirectionality.RIGHT:</td>
-         *            <td>Move to the Right adjacent lane</td>
-         *            </tr>
-         *            </table>
-         */
-        public LaneChangeModelResult(final AccelerationStep gfmr, final LateralDirectionality laneChange)
-        {
-            this.gfmr = gfmr;
-            this.laneChange = laneChange;
-        }
-
-        /**
-         * @return the GTUModelFollowingResult.
-         */
-        public final AccelerationStep getGfmr()
-        {
-            return this.gfmr;
-        }
-
-        /**
-         * @return laneChange. This has one of the values:
-         *         <table>
-         *         <tr>
-         *         <td>null:</td>
-         *         <td>Stay in the current lane</td>
-         *         </tr>
-         *         <tr>
-         *         <td>LateralDirectionality.LEFT:</td>
-         *         <td>Move to the Left adjacent lane</td>
-         *         </tr>
-         *         <tr>
-         *         <td>LateralDirectionality.RIGHT:</td>
-         *         <td>Move to the Right adjacent lane</td>
-         *         </tr>
-         *         </table>
-         */
-        public final LateralDirectionality getLaneChange()
-        {
-            return this.laneChange;
-        }
-
-        /** {@inheritDoc} */
-        public final String toString()
-        {
-            return this.gfmr.toString() + ", "
-                    + (null == this.laneChange ? "no lane change" : this.laneChange.toString());
-        }
-
-    }
 
 }
