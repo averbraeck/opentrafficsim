@@ -54,7 +54,7 @@ public class BoundedNode extends Node
         {
             ParametersNTM parametersNTM = null;
             parametersNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
-            if (parametersNTM.getCapacityPerUnit() == null)
+            if (parametersNTM.getCapacity() == null)
             {
 
             }

@@ -114,7 +114,7 @@ public class NTMsimulation
                 System.out.println("reroute");
                 // new K-shortest paths creation
                 Routes.createRoutes(model, model.getSettingsNTM().getNumberOfRoutes(), model.getSettingsNTM()
-                        .getWeightNewRoutes(), false, steps, MAXSTEPS);
+                        .getWeightNewRoutes(), model.getSettingsNTM().getVarianceRoutes(), false, steps, MAXSTEPS);
             }
         }
 
@@ -871,7 +871,16 @@ public class NTMsimulation
                         CellBehaviourNTM celBehaviourNTM = (CellBehaviourNTM) origin.getCellBehaviour();
                         int crit = celBehaviourNTM.getParametersNTM().getAccCritical().size();
                         double critDensityPerHour = celBehaviourNTM.getParametersNTM().getAccCritical().get(crit - 1);
-                        double roadLength = origin.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                        double roadLength = 0.0;
+                        if (origin.getArea() != null)
+                        {
+                            roadLength = origin.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                        }
+                        else
+                        {
+                            System.out.println("no area connected to: " + origin.getId());
+                        }
+                            
                         // double share =
                         // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
                         Double maxAccumulationThisArea = roadLength * critDensityPerHour;

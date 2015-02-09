@@ -260,21 +260,30 @@ public class BuildGraph
                                 throw new RuntimeException("cAVertex == null || cBVertex == null");
                             }
 
-                            Abs<SpeedUnit> speedA;
-                            Abs<SpeedUnit> speedB;
-                            CellBehaviourNTM cellBehaviourNTMA = (CellBehaviourNTM) cA.getCellBehaviour();
-                            CellBehaviourNTM cellBehaviourNTMB = (CellBehaviourNTM) cA.getCellBehaviour();
-                            if (cellBehaviourNTMA.getParametersNTM() != null)
+                            Abs<SpeedUnit> speedA = null;
+                            Abs<SpeedUnit> speedB = null;
+                            
+                            //TODO: checken 
+                            if (cA.getBehaviourType() == TrafficBehaviourType.NTM)
                             {
+                                CellBehaviourNTM cellBehaviourNTMA = (CellBehaviourNTM) cA.getCellBehaviour();
                                 speedA = cellBehaviourNTMA.getParametersNTM().getFreeSpeed();
+                            }
+                            else if (cA.getBehaviourType() == TrafficBehaviourType.CORDON)
+                            {
+                                speedA = new Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                            }
+                            if (cB.getBehaviourType() == TrafficBehaviourType.NTM)
+                            {
+                                CellBehaviourNTM cellBehaviourNTMB = (CellBehaviourNTM) cB.getCellBehaviour();
                                 speedB = cellBehaviourNTMB.getParametersNTM().getFreeSpeed();
                             }
-                            else
+                            else if (cB.getBehaviourType() == TrafficBehaviourType.CORDON)
                             {
-                                speedA = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                                speedB = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                                speedB = new Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                             }
-                            addGraphConnector(model, cAVertex, cBVertex, speedA, speedB, le, TrafficBehaviourType.NTM);
+                            addGraphConnector(model, cAVertex, cBVertex, speedA, speedB, le,
+                                        TrafficBehaviourType.NTM);
 
                         }
                         // TODO is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in

@@ -38,19 +38,20 @@ public class Routes
      * @param model
      * @param numberOfRoutes
      * @param weight_newRoutes
+     * @param VARIANCE
      * @param initiateSimulation
      * @param steps
      * @param MAXSTEPS
      * @throws IOException
      */
-    public static void createRoutes(NTMModel model, int numberOfRoutes, double weight_newRoutes,
-            boolean initiateSimulation, int steps, int MAXSTEPS) throws IOException
+    public static void createRoutes(NTMModel model, int numberOfRoutes, double weight_newRoutes, double VARIANCE,
+            final boolean initiateSimulation, int steps, int MAXSTEPS) throws IOException
     {
         // every route receives a fixed share
         java.lang.Double addShare = (double) (1.0 / numberOfRoutes);
         /** */
         BufferedWriter dataRoutesNTMOut = null;
-        String fileName = "/NTMroutes";
+        String fileName = "/ALLroutes";
         File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + steps + ".txt");
         dataRoutesNTMOut = WriteOutput.createWriter(file);
         for (int i = 0; i < numberOfRoutes; i++)
@@ -94,20 +95,23 @@ public class Routes
                             && endNode.getBehaviourType() == TrafficBehaviourType.FLOW)
                     {
                         // the endNode of this edge is the "Neighbour" area
-                        LinkCellTransmission ctmLink =
-                                (LinkCellTransmission) model.getAreaGraph().getEdge(startNode, endNode).getLink();
+                        LinkCellTransmission ctmLink = (LinkCellTransmission) le.getLink();
                         double freeTime = ctmLink.getTime().getInUnit(TimeUnit.SECOND);
                         double currrentTime = ctmLink.retrieveActualTime().getInUnit(TimeUnit.SECOND);
                         rateCongestedVersusFreeSpeed = currrentTime / freeTime;
+
+                        if (rateCongestedVersusFreeSpeed > 10000)
                         {
                             System.out.println("Start: " + startNode.getId() + " End node: " + endNode.getId()
                                     + " currentTime: " + currrentTime + " freeTime: " + currrentTime);
+                            double testCurrrentTime = ctmLink.retrieveActualTime().getInUnit(TimeUnit.SECOND);
                         }
 
                     }
 
                 }
-                double weight = rateCongestedVersusFreeSpeed * model.getAreaGraph().getEdgeWeight(le) * Gaussian();
+                double weight =
+                        rateCongestedVersusFreeSpeed * model.getAreaGraph().getEdgeWeight(le) * Gaussian(VARIANCE);
                 model.getAreaGraph().setEdgeWeight(le, weight);
             }
 
@@ -192,6 +196,11 @@ public class Routes
 
                     WriteOutput.writeOutputRoutesNTM(model, steps, i, origin, neighbour, destination, MAXSTEPS,
                             dataRoutesNTMOut, share, weightNew * addShare);
+                    if (i == numberOfRoutes - 1)
+                    {
+
+                    }
+
                     // only for initialisation of routes over the flow Links;
                     if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                     {
@@ -235,10 +244,9 @@ public class Routes
     /**
      * @return
      */
-    public static double Gaussian()
+    public static double Gaussian(double VARIANCE)
     {
         double MEAN = 100.0f;
-        double VARIANCE = 5.0f;
         Random fRandom = new Random();
         double number = MEAN + fRandom.nextGaussian() * VARIANCE;
         return number / 100;

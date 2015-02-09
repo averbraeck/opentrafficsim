@@ -58,7 +58,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         this.setAccCritical(accCritical);
         this.setCapacityPerUnit(new DoubleScalar.Abs<FrequencyUnit>( capacityPerLaneLength, FrequencyUnit.PER_HOUR));
         double freeSpeed =
-                this.getCapacityPerUnit().getInUnit(FrequencyUnit.PER_HOUR)
+                this.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
                         / this.getAccCritical().get(0);
         this.setFreeSpeed(new DoubleScalar.Abs<SpeedUnit>(freeSpeed, SpeedUnit.KM_PER_HOUR));
         this.roadLength = roadLength;

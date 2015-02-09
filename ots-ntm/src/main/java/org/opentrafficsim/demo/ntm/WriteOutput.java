@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,6 +17,8 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
+import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 
 /**
  * <p>
@@ -33,6 +36,9 @@ import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 public class WriteOutput
 {
 
+    // INPUTDATA
+    /** */
+
     // /CELLS
     /** */
     static BufferedWriter dataLaneLengthOut = null;
@@ -41,13 +47,19 @@ public class WriteOutput
     static BufferedWriter dataLanesPerCellOut = null;
 
     /** */
-    static BufferedWriter dataAccumulationCellOut = null;
+    static BufferedWriter dataAccumulationCellsOut = null;
+
+    /** */
+    static BufferedWriter dataSpeedCellsOut = null;
 
     /** */
     static BufferedWriter dataParametersFDOut = null;
 
     /** */
     static Double[][] accumulationCells = new Double[999][999];
+
+    /** */
+    static Double[][] speedCells = new Double[999][999];
 
     /** */
     static Double[][] parametersFD = new Double[999][3];
@@ -79,6 +91,73 @@ public class WriteOutput
     /** */
     static HashMap<Integer, Node> indexNode = new HashMap<>();
 
+    public static void writeInputData(NTMModel model) throws IOException
+    {
+        BufferedWriter data = null;
+
+        String fileName = "/ALLTripsBigArea";
+        String description = "TripsBigArea";
+        File fileTripsBigArea = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+        data = createWriter(fileTripsBigArea);
+
+        data.write("Matrix Big Areas " + ", ");
+        for (Node from : model.getBigCentroids().values())
+        {
+            data.write(from.getId() + ", ");
+        }
+        data.write(" \n");
+
+        for (Node from : model.getBigCentroids().values())
+        {
+            data.write(from.getId() + ", ");
+            for (Node to : model.getBigCentroids().values())
+            {
+                if (model.tripDemandToUse.getTripDemandOriginToDestination(from.getId(), to.getId()) != null)
+                {
+                    data.write(model.tripDemandToUse.getTripDemandOriginToDestination(from.getId(), to.getId())
+                            .getNumberOfTrips() + ", ");
+                }
+                else
+                {
+                    data.write("NaN " + ", ");
+                }
+            }
+            data.write(" \n");
+        }
+        data.close();
+
+        fileName = "/ALLTrips";
+        description = "Trips";
+        File fileTrips = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+        data = createWriter(fileTrips);
+        data.write("Matrix " + ", ");
+        for (Node from : model.getCentroids().values())
+        {
+            data.write(from.getId() + ", ");
+        }
+        data.write(" \n");
+
+        for (Node from : model.getCentroids().values())
+        {
+            data.write(from.getId() + ", ");
+            for (Node to : model.getCentroids().values())
+            {
+                if (model.getTripDemand().getTripDemandOriginToDestination(from.getId(), to.getId()) != null)
+                {
+                    TripInfo ti = (TripInfo) model.getTripDemand().getTripDemandOriginToDestination(from.getId(), to.getId());
+                    data.write(ti.getNumberOfTrips() + ", ");
+                }
+                else
+                {
+                    data.write("NaN " + ", ");
+                }
+            }
+            data.write(" \n");
+        }
+        data.close();
+
+    }
+
     // Writing output data CELLS
     /**
      * @param model
@@ -89,7 +168,7 @@ public class WriteOutput
     {
         // for testing we open a file and write some results:
         // TODO testing
-        String fileName = "/Celldata";
+        String fileName = "/CTMCelldata";
         String description = "CellData";
         String DATATYPE = "cellData";
         if (steps == 1)
@@ -99,7 +178,7 @@ public class WriteOutput
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataLaneLengthOut, laneData, DATATYPE);
 
-        fileName = "/ParametersFD";
+        fileName = "/CTMParametersFD";
         description = "ParametersFD";
         DATATYPE = "parametersFD";
         if (steps == 1)
@@ -109,16 +188,25 @@ public class WriteOutput
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataParametersFDOut, parametersFD, DATATYPE);
 
-        fileName = "/AccumulationCells";
+        fileName = "/CTMAccumulationCells";
         description = "AccumulationCells";
         DATATYPE = "accumulationCells";
         if (steps == 1)
         {
             File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
-            dataAccumulationCellOut = createWriter(fileLaneLength);
+            dataAccumulationCellsOut = createWriter(fileLaneLength);
         }
-        writeCellInfo(model, steps, MAXSTEPS, description, dataAccumulationCellOut, accumulationCells, DATATYPE);
+        writeCellInfo(model, steps, MAXSTEPS, description, dataAccumulationCellsOut, accumulationCells, DATATYPE);
 
+        fileName = "/CTMSpeedCells";
+        description = "SpeedCells";
+        DATATYPE = "speedCells";
+        if (steps == 1)
+        {
+            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            dataSpeedCellsOut = createWriter(fileLaneLength);
+        }
+        writeCellInfo(model, steps, MAXSTEPS, description, dataSpeedCellsOut, speedCells, DATATYPE);
     }
 
     /**
@@ -159,8 +247,8 @@ public class WriteOutput
                             if (DATATYPE == "parametersFD")
                             {
                                 dataArray[i][0] =
-                                        cell.getCellBehaviourFlow().getParametersFundamentalDiagram()
-                                                .getCapacityPerUnit().doubleValue() * 3600;
+                                        cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getCapacity()
+                                                .doubleValue() * 3600;
                                 dataArray[i][1] =
                                         cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getAccCritical()
                                                 .get(0);
@@ -173,6 +261,23 @@ public class WriteOutput
                         {
                             accumulationCells[i][steps - 1] = cell.getCellBehaviourFlow().getAccumulatedCars();
                         }
+                        if (DATATYPE == "speedCells")
+                        {
+                            if (steps > 1)
+                            {
+                                speedCells[i][steps - 1] =
+                                        cell.retrieveCurrentSpeed(
+                                                cell.getCellBehaviourFlow().getAccumulatedCars()
+                                                        / cell.getCellLength().getInUnit(LengthUnit.KILOMETER))
+                                                .getInUnit(SpeedUnit.KM_PER_HOUR);
+                            }
+                            else
+                            {
+                                speedCells[i][steps - 1] =
+                                        cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
+                                                .getInUnit(SpeedUnit.KM_PER_HOUR);
+                            }
+                        }
                         i++;
                     }
                     linkNumber++;
@@ -183,7 +288,7 @@ public class WriteOutput
         }
 
         // Write data to file
-        if (DATATYPE == "accumulationCells")
+        if (DATATYPE == "accumulationCells" || DATATYPE == "speedCells")
         {
             if (steps == MAXSTEPS - 1)
             {
@@ -197,16 +302,23 @@ public class WriteOutput
                         data.write(j + ", ");
                     }
                     data.write(" \n");
-
+                    char character = 'a';
                     for (int i = 0; i < numberOfCells; i++)
                     {
+                        if (i > 0
+                                && (indexStartNode.get(i) != indexStartNode.get(i - 1) || indexEndNode.get(i) != indexEndNode
+                                        .get(i - 1)))
+                        {
+                            character = 'a';
+                        }
                         data.write(description + " " + indexStartNode.get(i).getId() + "-"
-                                + indexEndNode.get(i).getId() + ", ");
+                                + indexEndNode.get(i).getId() + character + ", ");
                         for (int j = 0; j < steps; j++)
                         {
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
+                        character++;
                         data.write(" \n");
                     }
                     data.close();
@@ -399,7 +511,7 @@ public class WriteOutput
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataODArrivalsNTMOut, ODArrivalsNTMMap, indexNode, DATATYPE);
 
-        fileName = "/NTMarrivals";
+        fileName = "/ALLarrivals";
         description = "Arrived trips";
         DATATYPE = "arrivals";
         if (steps == 1)
@@ -409,7 +521,7 @@ public class WriteOutput
         }
         writeArray(model, steps, MAXSTEPS, description, dataArrivalsNTMOut, arrivalsNTM, DATATYPE);
 
-        fileName = "/NTMdepartures";
+        fileName = "/ALLdepartures";
         description = "departed trips";
         DATATYPE = "departures";
         if (steps == 1)
@@ -439,7 +551,7 @@ public class WriteOutput
         }
         writeArray(model, steps, MAXSTEPS, description, dataCongestedSpeedNTMOut, congestedSpeedNTM, DATATYPE);
 
-        fileName = "/NTMdemand";
+        fileName = "/ALLdemand";
         description = "Demand trips";
         DATATYPE = "demand";
         if (steps == 1)
@@ -449,7 +561,7 @@ public class WriteOutput
         }
         writeArray(model, steps, MAXSTEPS, description, dataDemandNTMOut, demandNTM, DATATYPE);
 
-        fileName = "/NTMsupply";
+        fileName = "/ALLsupply";
         description = "Supply trips";
         DATATYPE = "supply";
         if (steps == 1)
@@ -566,10 +678,10 @@ public class WriteOutput
             for (Node nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
-                if (node.getBehaviourType() == TrafficBehaviourType.NTM ||
-                        node.getBehaviourType() == TrafficBehaviourType.CORDON)
+                if (node.getBehaviourType() == TrafficBehaviourType.NTM
+                        || node.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
+                    CellBehaviour cellBehaviour =  node.getCellBehaviour();
 
                     for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
                     {
@@ -695,8 +807,8 @@ public class WriteOutput
             for (Node nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
-                if (node.getBehaviourType() == TrafficBehaviourType.NTM  ||
-                        node.getBehaviourType() == TrafficBehaviourType.CORDON)
+                if (node.getBehaviourType() == TrafficBehaviourType.NTM
+                        || node.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
                     CellBehaviour cellBehaviour = node.getCellBehaviour();
                     if (steps == 1)
@@ -720,22 +832,25 @@ public class WriteOutput
                     {
                         dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
                     }
-                    
+
                     else if (DATATYPE == "congestedSpeed")
                     {
-                        CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
-
-                        if (steps == 1)
+                        if (node.getBehaviourType() == TrafficBehaviourType.NTM)
                         {
-                            dataArray[nodeIndex.get(node)][steps - 1] =
-                                    cellBehaviourNTM.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                        }
-                        else
-                        {
-                            if (cellBehaviourNTM.getCurrentSpeed() != null)
+                            CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
+    
+                            if (steps == 1)
                             {
                                 dataArray[nodeIndex.get(node)][steps - 1] =
-                                        cellBehaviourNTM.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                        cellBehaviourNTM.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                            }
+                            else
+                            {
+                                if (cellBehaviourNTM.getCurrentSpeed() != null)
+                                {
+                                    dataArray[nodeIndex.get(node)][steps - 1] =
+                                            cellBehaviourNTM.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                }
                             }
                         }
                     }
@@ -749,20 +864,22 @@ public class WriteOutput
                     }
                     else if (DATATYPE == "parametersNFD")
                     {
-                        CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
-
-                        if (steps == 1)
+                        if (node.getBehaviourType() == TrafficBehaviourType.NTM)
                         {
-                            dataArray[i][0] =
-                                    cellBehaviourNTM.getParametersNTM().getCapacityPerUnit()
-                                            .getInUnit(FrequencyUnit.PER_HOUR);
-                            dataArray[i][1] =
-                                    cellBehaviourNTM.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER);
-                            dataArray[i][2] =
-                                    cellBehaviourNTM.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                            dataArray[i][3] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(0);
-                            dataArray[i][4] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(1);
-                            dataArray[i][5] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(2);
+                            CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
+    
+                            if (steps == 1)
+                            {
+                                dataArray[i][0] =
+                                        cellBehaviourNTM.getParametersNTM().getCapacity().getInUnit(FrequencyUnit.PER_HOUR);
+                                dataArray[i][1] =
+                                        cellBehaviourNTM.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER);
+                                dataArray[i][2] =
+                                        cellBehaviourNTM.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                dataArray[i][3] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(0);
+                                dataArray[i][4] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(1);
+                                dataArray[i][5] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(2);
+                            }
                         }
                     }
                     i++;
