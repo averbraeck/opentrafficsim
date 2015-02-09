@@ -63,10 +63,11 @@ public interface GTUFollowingModel
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws RemoteException in case of simulator reachability problems
+     * @throws NetworkException on network inconsistency
      */
     AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
             final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            Abs<SpeedUnit> speedLimit) throws RemoteException;
+            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be
