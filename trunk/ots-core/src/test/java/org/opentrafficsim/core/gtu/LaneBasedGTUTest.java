@@ -413,7 +413,7 @@ public class LaneBasedGTUTest
             DoubleScalar.Abs<AccelerationUnit> acceleration =
                     new DoubleScalar.Abs<AccelerationUnit>(a, AccelerationUnit.METER_PER_SECOND_2);
             LaneBasedIndividualCar<String> car =
-                    new LaneBasedIndividualCar<String>("Car", carType, null, carPositions, carSpeed,
+                    new LaneBasedIndividualCar<String>("Car", carType, null XXXX, carPositions, carSpeed,
                             new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
                                     1.8, LengthUnit.METER), null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
             // System.out.println("acceleration is " + acceleration);

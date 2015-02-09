@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
@@ -26,7 +27,10 @@ import org.junit.Test;
 import org.opentrafficsim.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.gtu.following.AccelerationStep;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
+import org.opentrafficsim.core.gtu.following.SequentialFixedAccelerationModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -38,6 +42,8 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -198,9 +204,7 @@ public class ContourPlotTest
                                 ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
-                expectedYBins =
-                        (int) Math.ceil(lane.getLength().getSI()
-                                / distanceGranularity);
+                expectedYBins = (int) Math.ceil(lane.getLength().getSI() / distanceGranularity);
                 yBins = cp.yAxisBins();
                 assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
                 bins = cp.getItemCount(0);
@@ -322,25 +326,28 @@ public class ContourPlotTest
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
-        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND);
+        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(20, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        OTSDEVSSimulator simulator = CarTest.makeSimulator();
-        new ContourPlotTest().simulateUntil(initialTime, simulator);
+        ContourPlotModel model = new ContourPlotModel();
+        SimpleSimulator simulator =
+                new SimpleSimulator(new OTSSimTimeDouble(initialTime), new DoubleScalar.Rel<TimeUnit>(0,
+                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
         // Create a car running 50 km.h
-        LaneBasedIndividualCar<Integer> car =
-                CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed, simulator);
+        SequentialFixedAccelerationModel gtuFollowingModel = new SequentialFixedAccelerationModel();
         // Make the car run at constant speed for one minute
-        car.setState(new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(initialTime.getSI() + 60,
-                TimeUnit.SECOND)));
-        // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
-        // + car.getPosition(car.getLastEvaluationTime()));
-        // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
-        // + car.getPosition(car.getNextEvaluationTime()));
-        cp.addData(car, lane);
-        // This car does not enter the area sampled in the first minute; check that the data in the ContourPlot does not
-        // change
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
+        // Make the car run at constant speed for another minute
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
+        // Make the car run at constant speed for five more minutes
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
+        LaneBasedIndividualCar<Integer> car =
+                CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed,
+                        (OTSDEVSSimulator) simulator.getSimulator(), gtuFollowingModel);
+        // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -375,15 +382,10 @@ public class ContourPlotTest
                         0.0000);
             }
         }
-        // Make the car run at constant speed for another minute
-        car.setState(new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
-                .getSI() + 60, TimeUnit.SECOND)));
+        simulator.runUpTo(gtuFollowingModel.timeAfterCompletionOfStep(0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
-        // System.out.println("Car at end time " + car.getNextEvaluationTime() + " is at "
-        // + car.getPosition(car.getNextEvaluationTime()));
-        cp.addData(car, lane);
+        System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -401,9 +403,8 @@ public class ContourPlotTest
             double z = cp.getZValue(0, item);
             // figure out if the car has traveled through this cell
             // if (x >= 180)
-            // System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
-            // expectedZValue, car.getLastEvaluationTime().getValueSI(), car.getNextEvaluationTime()
-            // .getValueSI()));
+            System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
+                    expectedZValue, car.getLastEvaluationTime().getSI(), car.getNextEvaluationTime().getSI()));
             boolean hit = false;
             if (x + useTimeGranularity >= car.getLastEvaluationTime().getSI()
                     && x <= car.getNextEvaluationTime().getSI())
@@ -460,10 +461,6 @@ public class ContourPlotTest
                 }
             }
         }
-        // Make the car run at constant speed for five more minutes
-        car.setState(new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<TimeUnit>(car.getNextEvaluationTime()
-                .getSI() + 300, TimeUnit.SECOND)));
         cp.addData(car, lane);
         // Check that the time range has expanded
         xBins = cp.xAxisBins();
@@ -621,6 +618,37 @@ public class ContourPlotTest
         System.out.println("Running ...");
         cpt.densityContourTest();
         System.out.println("Finished");
+    }
+
+}
+
+/**
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version 9 feb. 2015 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
+class ContourPlotModel implements OTSModelInterface
+{
+
+    /** */
+    private static final long serialVersionUID = 20150209L;
+
+    /** {@inheritDoc} */
+    @Override
+    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            throws SimRuntimeException, RemoteException
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    {
+        return null;
     }
 
 }
