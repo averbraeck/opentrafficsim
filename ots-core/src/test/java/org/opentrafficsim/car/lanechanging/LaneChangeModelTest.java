@@ -21,7 +21,7 @@ import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
-import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel.LaneChangeModelResult;
+import org.opentrafficsim.core.gtu.lane.changing.LaneMovementStep;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -177,7 +177,7 @@ public class LaneChangeModelTest
         sameLaneGTUs.add(car);
         Collection<LaneBasedGTU<?>> preferredLaneGTUs = new HashSet<LaneBasedGTU<?>>();
         Collection<LaneBasedGTU<?>> nonPreferredLaneGTUs = new HashSet<LaneBasedGTU<?>>();
-        LaneChangeModelResult laneChangeModelResult =
+        LaneMovementStep laneChangeModelResult =
             new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs, nonPreferredLaneGTUs,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<AccelerationUnit>(0.3,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,

@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +23,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
@@ -100,8 +100,8 @@ public class AbstractLaneBasedGTUTest
         // A Car needs a CarFollowingModel
         DoubleScalar.Abs<AccelerationUnit> acceleration =
                 new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
-        DoubleScalar.Abs<TimeUnit> validUntil = new DoubleScalar.Abs<TimeUnit>(10, TimeUnit.SECOND);
-        GTUFollowingModel cfm = new FakeCarFollowingModel(acceleration, validUntil);
+        DoubleScalar.Rel<TimeUnit> validFor = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
+        GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a type
         GTUType<String> gtuType = new GTUType<String>("Car");
         // A Car needs an initial speed
@@ -116,11 +116,11 @@ public class AbstractLaneBasedGTUTest
         String carID = "theCar";
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
-                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed,
+                new LaneBasedIndividualCar<String>(carID, gtuType, gfm, initialLongitudinalPositions, initialSpeed,
                         carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
-        assertEquals("GTU following model should be identical to the provided one", cfm, car.getGTUFollowingModel());
+        assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
         assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(),
                 car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);
@@ -193,7 +193,7 @@ public class AbstractLaneBasedGTUTest
         for (int i = 0;; i++)
         {
             DoubleScalar.Abs<TimeUnit> stepTime = new DoubleScalar.Abs<TimeUnit>(i * step, TimeUnit.SECOND);
-            if (stepTime.getSI() > validUntil.getSI())
+            if (stepTime.getSI() > validFor.getSI())
             {
                 break;
             }
@@ -205,7 +205,7 @@ public class AbstractLaneBasedGTUTest
             simulateUntil((OTSDEVSSimulatorInterface) simulator.getSimulator(), stepTime);
             if (stepTime.getSI() > 0)
             {
-                assertEquals("nextEvaluation time is " + validUntil, validUntil.getSI(), car.getNextEvaluationTime()
+                assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime()
                         .getSI(), 0.0001);
                 assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(),
                         0.00001);
@@ -487,88 +487,3 @@ class DummyModel implements OTSModelInterface
 
 }
 
-/**
- * Fake GTUFollowingModel.
- * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
- * <p>
- * @version 5 feb. 2015 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- */
-class FakeCarFollowingModel implements GTUFollowingModel
-{
-    /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
-    private DoubleScalar.Abs<AccelerationUnit> acceleration;
-
-    /** Valid until time that will be returned in GTUFollowingModelResult by computeAcceleration. */
-    private DoubleScalar.Abs<TimeUnit> validUntil;
-
-    /**
-     * Create a new FakeCarFollowingModel.
-     * @param acceleration DoubleScalar.Abs&ltAccelerationUnit&gt;; the acceleration that will be returned by the
-     *            computeAcceleration methods
-     * @param validUntil DoubleScalar.Abs&lt;TimeUnit&gt;; the valid until time that will be returned by the
-     *            computeAcceleration methods
-     */
-    public FakeCarFollowingModel(DoubleScalar.Abs<AccelerationUnit> acceleration, DoubleScalar.Abs<TimeUnit> validUntil)
-    {
-        this.acceleration = acceleration;
-        this.validUntil = validUntil;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower,
-            Collection<? extends LaneBasedGTU<?>> leaders, Abs<SpeedUnit> speedLimit) throws RemoteException,
-            NetworkException
-    {
-        return new GTUFollowingModelResult(this.acceleration, this.validUntil);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, LaneBasedGTU<?> leader,
-            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
-    {
-        return new GTUFollowingModelResult(this.acceleration, this.validUntil);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUFollowingModelResult computeAcceleration(LaneBasedGTU<?> follower, Abs<SpeedUnit> leaderSpeed,
-            Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
-    {
-        return new GTUFollowingModelResult(this.acceleration, this.validUntil);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
-    {
-        return new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DoubleScalar.Rel<TimeUnit> getStepSize()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getName()
-    {
-        return "Fake";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getLongName()
-    {
-        return "Fake GTU following model";
-    }
-
-}
