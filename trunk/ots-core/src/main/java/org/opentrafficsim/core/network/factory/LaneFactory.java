@@ -66,7 +66,8 @@ public final class LaneFactory
         GeometryFactory factory = new GeometryFactory();
         LineString lineString = factory.createLineString(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(name, from, to, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(), LengthUnit.METER));
+                new CrossSectionLink(name, from, to, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
+                        LengthUnit.METER));
         try
         {
             new LinearGeometry(link, lineString, null);
@@ -89,7 +90,7 @@ public final class LaneFactory
      * @return Lane
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     private static Lane makeLane(final CrossSectionLink link, final LaneType<String> laneType,
             final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width,
@@ -115,7 +116,7 @@ public final class LaneFactory
      * @return Lane; the new Lane
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     public static Lane makeLane(final String name, final NodeGeotools.STR from, final NodeGeotools.STR to,
             final Coordinate[] intermediateCoordinates, final LaneType<String> laneType,

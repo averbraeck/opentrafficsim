@@ -13,7 +13,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -31,7 +30,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 public class SequentialFixedAccelerationModel implements GTUFollowingModel
 {
     /** The list of result values of this SequentialFixedAccelerationModel. */
-    List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
+    private final List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
 
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
@@ -54,7 +53,7 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
      * @param step FixedAccelerationModel; the step to add
      * @return SequentialFixedAccelerationModel; this modified SequentialFixedAccelerationModel
      */
-    public final SequentialFixedAccelerationModel addStep(FixedAccelerationModel step)
+    public final SequentialFixedAccelerationModel addStep(final FixedAccelerationModel step)
     {
         this.steps.add(step);
         return this;
@@ -84,7 +83,7 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
      * @param index int; the step
      * @return DoubleScalar.Abs&lt;TimeUnit&gt;
      */
-    public final DoubleScalar.Abs<TimeUnit> timeAfterCompletionOfStep(int index)
+    public final DoubleScalar.Abs<TimeUnit> timeAfterCompletionOfStep(final int index)
     {
         MutableDoubleScalar.Abs<TimeUnit> sum = new MutableDoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         for (int i = 0; i <= index; i++)
@@ -95,7 +94,7 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
     }
 
     /** Maximum error of the simulator clock. */
-    private static final double maximumTimeError = 0.001; // 1 millisecond
+    private static final double MAXIMUMTIMEERROR = 0.001; // 1 millisecond
 
     /**
      * Find the AccelerationStep that starts at the current simulator time.
@@ -110,11 +109,11 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
         double remainingTime = when.getSI();
         for (FixedAccelerationModel step : this.steps)
         {
-            if (remainingTime < -maximumTimeError)
+            if (remainingTime < -MAXIMUMTIMEERROR)
             {
                 throw new Error("FixedSequentialAcceleration does not have a result for " + when);
             }
-            if (remainingTime < maximumTimeError)
+            if (remainingTime < MAXIMUMTIMEERROR)
             {
                 return new AccelerationStep(step.getAcceleration(), DoubleScalar.plus(when, step.getDuration())
                         .immutable());
@@ -134,7 +133,7 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, LaneBasedGTU<?> leader,
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
             final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return getAccelerationStep(follower.getSimulator().getSimulatorTime().get());
@@ -142,9 +141,9 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, Abs<SpeedUnit> leaderSpeed,
-            final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return getAccelerationStep(follower.getSimulator().getSimulatorTime().get());
     }
