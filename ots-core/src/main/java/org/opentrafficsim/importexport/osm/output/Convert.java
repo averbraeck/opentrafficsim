@@ -1,9 +1,15 @@
 package org.opentrafficsim.importexport.osm.output;
 
+import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.naming.NamingException;
+
+import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -11,6 +17,7 @@ import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneAnimation;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -111,12 +118,15 @@ public final class Convert
      * @param osmlink Link; the OSM link to make lanes for
      * @return Lanes
      * @throws NetworkException 
+     * @throws NamingException 
+     * @throws RemoteException 
      */
-    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink) throws NetworkException
+    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink, final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException
     {
         CrossSectionLink otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
         LaneType<String> lt = null;
+        Lane result = null;
         boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */
 
         List<Coordinate> iC = new ArrayList<Coordinate>();
@@ -171,7 +181,7 @@ public final class Convert
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
-                Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
             }
         }
@@ -184,7 +194,7 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit(), LengthUnit.METER);
-                Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 lanes.add(result);
             }
             for (int i = 0; i < (osmlink.getLanes() - osmlink.getForwardLanes()); i++) /** Create backward lanes */
@@ -194,7 +204,7 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit() * (-1), LengthUnit.METER);
-                Lane result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
+                result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
                 lanes.add(result);
             }
         }
@@ -205,11 +215,15 @@ public final class Convert
             /** temporary */
             DoubleScalar.Rel<LengthUnit> latPos =
                     new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
-            Lane result =
+            result =
                     new Lane(otslink, latPos, latPos,
                             new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
                             lt, LongitudinalDirectionality.FORWARD, f2000);
             lanes.add(result);
+        }
+        if (simulator instanceof OTSAnimatorInterface)
+        {
+            new LaneAnimation(result, simulator, Color.LIGHT_GRAY);
         }
         return lanes;
     }
