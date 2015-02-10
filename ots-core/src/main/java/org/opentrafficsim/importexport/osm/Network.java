@@ -45,6 +45,19 @@ public class Network
         this.relations = new HashMap<Long, Relation>();
         this.links = new ArrayList<Link>();
     }
+    
+    /**
+     * Construct a new Network out of another Network.
+     * @param net 
+     */
+    public Network(final Network net)
+    {
+        this.setName(net.getName());
+        this.nodes = new HashMap<Long, Node>(net.getNodes());
+        this.ways = new HashMap<Long, Way>(net.getWays());
+        this.relations = new HashMap<Long, Relation>(net.getRelations());
+        this.links = new ArrayList<Link>(net.getLinks());
+    }
 
     /**
      * Retrieve a list of Nodes that form a Way from this Network.
