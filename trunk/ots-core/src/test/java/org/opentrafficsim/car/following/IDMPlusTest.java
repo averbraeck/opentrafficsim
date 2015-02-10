@@ -14,7 +14,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.junit.Test;
-import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.gtu.GTUType;

@@ -1,4 +1,4 @@
-package org.opentrafficsim.car;
+package org.opentrafficsim.core.car;
 
 import static org.junit.Assert.assertEquals;
 
