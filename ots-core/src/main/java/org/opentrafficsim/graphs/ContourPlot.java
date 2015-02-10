@@ -583,7 +583,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         else
         {
-            throw new Error("Car is not on any lane in the path");
+            throw new Error("Cannot happen: Lane is not in the path");
         }
         final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
         if (car.position(lane, car.getReference(), fromTime).getSI() < 0 && lengthOffset > 0)
