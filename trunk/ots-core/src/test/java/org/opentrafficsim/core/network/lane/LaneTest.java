@@ -13,7 +13,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
