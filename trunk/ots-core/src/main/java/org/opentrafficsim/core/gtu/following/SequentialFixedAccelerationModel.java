@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -13,7 +14,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -31,7 +31,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 public class SequentialFixedAccelerationModel implements GTUFollowingModel
 {
     /** The list of result values of this SequentialFixedAccelerationModel. */
-    ArrayList<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
+    List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
 
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
