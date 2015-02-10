@@ -110,22 +110,28 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class XmlNetworkLaneParser
 {
     /** the ID class of the Network. */
-    private final Class<?> networkIdClass;
+    @SuppressWarnings("visibilitymodifier")
+    protected final Class<?> networkIdClass;
 
     /** the class of the Node. */
-    private final Class<?> nodeClass;
+    @SuppressWarnings("visibilitymodifier")
+    protected final Class<?> nodeClass;
 
     /** the ID class of the Node. */
-    private final Class<?> nodeIdClass;
+    @SuppressWarnings("visibilitymodifier")
+    protected final Class<?> nodeIdClass;
 
     /** the Point class of the Node. */
-    private final Class<?> nodePointClass;
+    @SuppressWarnings("visibilitymodifier")
+    protected final Class<?> nodePointClass;
 
     /** the class of the Link. */
-    private final Class<?> linkClass;
+    @SuppressWarnings("visibilitymodifier")
+    protected final Class<?> linkClass;
 
     /** the ID class of the Link. */
-    private final Class<?> linkIdClass;
+    @SuppressWarnings("visibilitymodifier")
+    protected final Class<?> linkIdClass;
 
     /** the generated network. */
     private Network<?, ?> network;
@@ -136,9 +142,13 @@ public class XmlNetworkLaneParser
     /** the length units. */
     private static final Map<String, LengthUnit> LENGTH_UNITS = new HashMap<>();
 
-    /** the nodes for further reference. */
+    /** the processed nodes for further reference. */
     @SuppressWarnings({"rawtypes", "visibilitymodifier"})
     protected Map<String, Node> nodes = new HashMap<>();
+
+    /** the UNprocessed nodes for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, NodeTag> nodeTags = new HashMap<>();
 
     /** the links for further reference. */
     @SuppressWarnings({"rawtypes", "visibilitymodifier"})
@@ -225,6 +235,9 @@ public class XmlNetworkLaneParser
         /** link values from the LINK tag. */
         private LinkTag linkTag;
 
+        /** link values from the NODE tag. */
+        private NodeTag nodeTag;
+
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
             throws SAXException
@@ -251,11 +264,10 @@ public class XmlNetworkLaneParser
                                     break;
 
                                 case "NODE":
-                                    String nodeName = null;
-                                    Point3d coordinate = null;
+                                    this.nodeTag = new NodeTag();
                                     if (attributes.getValue("NAME") != null)
                                     {
-                                        nodeName = attributes.getValue("NAME");
+                                        this.nodeTag.name = attributes.getValue("NAME");
                                     }
                                     else
                                     {
@@ -269,18 +281,9 @@ public class XmlNetworkLaneParser
                                         String[] cc = c.split(",");
                                         double x = Double.parseDouble(cc[0]);
                                         double y = Double.parseDouble(cc[1]);
-                                        coordinate = new Point3d(x, y, 0);
+                                        double z = cc.length > 2 ? Double.parseDouble(cc[1]) : 0.0;
+                                        this.nodeTag.coordinate = new Point3d(x, y, z);
                                     }
-                                    else
-                                    {
-                                        coordinate = new Point3d(Double.NaN, Double.NaN, Double.NaN);
-                                    }
-                                    @SuppressWarnings("rawtypes")
-                                    Node node =
-                                        makeNode(XmlNetworkLaneParser.this.nodeClass, makeId(
-                                            XmlNetworkLaneParser.this.nodeIdClass, nodeName), makePoint(
-                                            XmlNetworkLaneParser.this.nodePointClass, coordinate));
-                                    XmlNetworkLaneParser.this.nodes.put(node.getId().toString(), node);
                                     break;
 
                                 case "LINK":
@@ -422,47 +425,71 @@ public class XmlNetworkLaneParser
             }
             this.stack.removeLast();
 
-            if (!qName.equals("NETWORK"))
+            try
             {
-                switch (this.stack.getLast())
+                if (!qName.equals("NETWORK"))
                 {
-                    case "NETWORK":
-                        switch (qName)
-                        {
-                            case "GLOBAL":
-                                break;
-                            case "NODE":
-                                break;
-                            case "LINK":
-                                @SuppressWarnings("rawtypes")
-                                CrossSectionLink link = makeLink(this.linkTag);
-                                parseElements(linkTag.elements, link, linkTag, globalTag);
-                                XmlNetworkLaneParser.this.links.put(link.getId().toString(), link);
-                                break;
-                            default:
-                                throw new SAXException("NETWORK: Received end tag " + qName + ", but stack contains: "
-                                    + this.stack);
-                        }
-                        break;
+                    switch (this.stack.getLast())
+                    {
+                        case "NETWORK":
+                            switch (qName)
+                            {
+                                case "GLOBAL":
+                                    break;
 
-                    case "LINK":
-                        switch (qName)
-                        {
-                            case "STRAIGHT":
-                                break;
-                            case "ARC":
-                                break;
-                            case "LANE":
-                                break;
-                            default:
-                                throw new SAXException("LINK: Received end tag " + qName + ", but stack contains: "
-                                    + this.stack);
-                        }
-                        break;
+                                case "NODE":
+                                    if (this.nodeTag.coordinate != null)
+                                    {
+                                        @SuppressWarnings("rawtypes")
+                                        Node node =
+                                            makeNode(XmlNetworkLaneParser.this.nodeClass, makeId(
+                                                XmlNetworkLaneParser.this.nodeIdClass, this.nodeTag.name), makePoint(
+                                                XmlNetworkLaneParser.this.nodePointClass, this.nodeTag.coordinate));
+                                        XmlNetworkLaneParser.this.nodes.put(node.getId().toString(), node);
+                                    }
+                                    else
+                                    {
+                                        // store in temporary map until we know the coordinate.
+                                        XmlNetworkLaneParser.this.nodeTags.put(this.nodeTag.name, this.nodeTag);
+                                    }
+                                    break;
 
-                    default:
-                        throw new SAXException("Received end tag " + qName + ", but stack contains: " + this.stack);
+                                case "LINK":
+                                    calculateNodeCoordinates(this.linkTag);
+                                    @SuppressWarnings("rawtypes")
+                                    CrossSectionLink link = makeLink(this.linkTag);
+                                    parseElements(this.linkTag.elements, link, this.linkTag, this.globalTag);
+                                    XmlNetworkLaneParser.this.links.put(link.getId().toString(), link);
+                                    break;
+                                default:
+                                    throw new SAXException("NETWORK: Received end tag " + qName + ", but stack contains: "
+                                        + this.stack);
+                            }
+                            break;
+
+                        case "LINK":
+                            switch (qName)
+                            {
+                                case "STRAIGHT":
+                                    break;
+                                case "ARC":
+                                    break;
+                                case "LANE":
+                                    break;
+                                default:
+                                    throw new SAXException("LINK: Received end tag " + qName + ", but stack contains: "
+                                        + this.stack);
+                            }
+                            break;
+
+                        default:
+                            throw new SAXException("Received end tag " + qName + ", but stack contains: " + this.stack);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                throw new SAXException(e);
             }
         }
     }
@@ -572,6 +599,16 @@ public class XmlNetworkLaneParser
     }
 
     /**
+     * One of the nodes probably has a coordinate and the other not. Calculate the other coordinate and force it onto the Node.
+     * @param linkTag the parsed information from the XML file.
+     */
+    protected final void calculateNodeCoordinates(final LinkTag linkTag)
+    {
+        // calculate dx, dy and dz for the straight or the arc.
+        
+    }
+
+    /**
      * FIXME LinkGeotools should extend CrossSectionLink and not the other way around.
      * @param linkTag the link information from XML.
      * @return a constructed link
@@ -613,12 +650,14 @@ public class XmlNetworkLaneParser
 
     /**
      * @param elements the string such as "X1|V2:V1|D|A1:A2|:A3|X2"
+     * @param csl the cross-section link to which the cross-section elements belong.
      * @param linkTag the link with possible information about speed and width.
      * @param globalTag the global tag with possible information about speed and width.
      * @return a list of cross-section elements
      * @throws SAXException for unknown lane type or other inconsistencies.
      */
-    private List<CrossSectionElement> parseElements(final String elements, final CrossSectionLink csl,
+    @SuppressWarnings({"visibilitymodifier", "rawtypes"})
+    protected final List<CrossSectionElement> parseElements(final String elements, final CrossSectionLink csl,
         final LinkTag linkTag, final GlobalTag globalTag) throws SAXException
     {
         List<CrossSectionElement> cseList = new ArrayList<>();
@@ -937,6 +976,17 @@ public class XmlNetworkLaneParser
     {
         /** length. */
         protected DoubleScalar.Rel<LengthUnit> length = null;
+    }
+
+    /** NODE element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class NodeTag
+    {
+        /** name. */
+        String name = null;
+
+        /** coordinate (null at first, can be calculated later when connected to a link. */
+        Point3d coordinate = null;
     }
 
     /**
