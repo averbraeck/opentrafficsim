@@ -296,8 +296,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             double moveSI = this.speed.getSI() * dt + 0.5 * getAcceleration().getSI() * dt * dt;
             lane.scheduleTriggers(this, lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink())), moveSI);
         }
-
         getSimulator().scheduleEventAbs(cfmr.getValidUntil(), this, this, "move", null);
+        //System.out.println("setState: " + cfmr + " " + this + " next evaluation is " + cfmr.getValidUntil());
     }
 
     /**
