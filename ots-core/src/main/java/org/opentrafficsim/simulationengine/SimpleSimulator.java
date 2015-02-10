@@ -116,15 +116,15 @@ public class SimpleSimulator
     /**
      * Run the simulation up to the specified time.
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time.
-     * @throws SimRuntimeException
+     * @throws SimRuntimeException when the specified time lies in the past
      */
-    public final void runUpTo(DoubleScalar.Abs<TimeUnit> when) throws SimRuntimeException
+    public final void runUpTo(final DoubleScalar.Abs<TimeUnit> when) throws SimRuntimeException
     {
         this.stopAtEvent =
                 new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(when.getSI(),
                         TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
         this.simulator.scheduleEvent(this.stopAtEvent);
-        while(this.simulator.getSimulatorTime().get().getSI() < when.getSI())
+        while (this.simulator.getSimulatorTime().get().getSI() < when.getSI())
         {
             this.simulator.step();
         }
@@ -134,7 +134,7 @@ public class SimpleSimulator
      * Pause the simulator.
      */
     @SuppressWarnings("unused")
-    private final void autoPauseSimulator()
+    private void autoPauseSimulator()
     {
         if (this.simulator.isRunning())
         {

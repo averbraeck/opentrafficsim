@@ -16,7 +16,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jan 1, 2015 <br>
@@ -56,13 +57,15 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
      * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
-        final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException
+    public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType,
+            final GTUFollowingModel gtuFollowingModel,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
+            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException
     {
-        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, null /* LaneChangeModel */, initialSpeed, simulator);
+        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, null /* LaneChangeModel */, initialSpeed,
+                simulator);
         this.length = length;
         this.width = width;
         this.maximumVelocity = maximumVelocity;

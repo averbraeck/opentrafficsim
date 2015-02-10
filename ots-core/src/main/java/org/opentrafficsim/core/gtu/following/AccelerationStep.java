@@ -40,7 +40,7 @@ public class AccelerationStep
     /**
      * @return acceleration.
      */
-    public DoubleScalar.Abs<AccelerationUnit> getAcceleration()
+    public final DoubleScalar.Abs<AccelerationUnit> getAcceleration()
     {
         return this.acceleration;
     }
@@ -48,7 +48,7 @@ public class AccelerationStep
     /**
      * @return validUntil.
      */
-    public DoubleScalar.Abs<TimeUnit> getValidUntil()
+    public final DoubleScalar.Abs<TimeUnit> getValidUntil()
     {
         return this.validUntil;
     }
@@ -56,7 +56,7 @@ public class AccelerationStep
     /**
      * {@inheritDoc}
      */
-    public String toString()
+    public final String toString()
     {
         return String.format("a=%s, valid until %s", this.acceleration, this.validUntil);
     }

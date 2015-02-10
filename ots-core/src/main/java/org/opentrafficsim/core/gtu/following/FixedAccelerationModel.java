@@ -11,7 +11,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
@@ -43,12 +42,13 @@ public class FixedAccelerationModel implements GTUFollowingModel
      *            computeAcceleration methods
      * @param duration DoubleScalar.Abs&lt;TimeUnit&gt;; the duration that the acceleration will be maintained
      */
-    public FixedAccelerationModel(DoubleScalar.Abs<AccelerationUnit> acceleration, DoubleScalar.Rel<TimeUnit> duration)
+    public FixedAccelerationModel(final DoubleScalar.Abs<AccelerationUnit> acceleration,
+            final DoubleScalar.Rel<TimeUnit> duration)
     {
         this.acceleration = acceleration;
         this.duration = duration;
     }
-    
+
     /**
      * Retrieve the duration of this FixedAccelerationModel.
      * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of this FixedAccelerationModel
@@ -57,7 +57,7 @@ public class FixedAccelerationModel implements GTUFollowingModel
     {
         return this.duration;
     }
-    
+
     /**
      * Retrieve the acceleration of this FixedAccelerationModel.
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration of this FixedAccelerationModel
@@ -66,7 +66,7 @@ public class FixedAccelerationModel implements GTUFollowingModel
     {
         return this.acceleration;
     }
-    
+
     /**
      * Construct the AccelerationStep that is returned by the public computeAcceleration methods.
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the simulation time
@@ -79,53 +79,54 @@ public class FixedAccelerationModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep computeAcceleration(LaneBasedGTU<?> follower,
-            Collection<? extends LaneBasedGTU<?>> leaders, Abs<SpeedUnit> speedLimit) throws RemoteException,
-            NetworkException
+    public AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
+            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException, NetworkException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep computeAcceleration(LaneBasedGTU<?> follower, LaneBasedGTU<?> leader,
-            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep computeAcceleration(LaneBasedGTU<?> follower, Abs<SpeedUnit> leaderSpeed,
-            Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
     {
         return new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<TimeUnit> getStepSize()
+    public final DoubleScalar.Rel<TimeUnit> getStepSize()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getName()
+    public final String getName()
     {
         return "Fixed";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getLongName()
+    public final String getLongName()
     {
         return "Fixed GTU following model";
     }

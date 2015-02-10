@@ -16,7 +16,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jan 1, 2015 <br>
@@ -40,11 +41,13 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
      * @throws SimRuntimeException when the move method cannot be scheduled.
      */
     public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> gtuType,
-        final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NetworkException, SimRuntimeException
+            final GTUFollowingModel gtuFollowingModel,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NetworkException,
+            SimRuntimeException
     {
-        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, null /* LaneChangeModel */, initialSpeed, gtuType.getSimulator());
+        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, null /* LaneChangeModel */, initialSpeed,
+                gtuType.getSimulator());
     }
 
     /** {@inheritDoc} */

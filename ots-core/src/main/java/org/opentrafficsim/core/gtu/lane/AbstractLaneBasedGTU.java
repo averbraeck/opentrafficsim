@@ -234,7 +234,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws SimRuntimeException when sensor trigger(s) cannot be scheduled on the simulator.
      */
-    private final void setState(final AccelerationStep cfmr) throws RemoteException, NetworkException,
+    private void setState(final AccelerationStep cfmr) throws RemoteException, NetworkException,
             SimRuntimeException
     {
         // GTUs move based on their fractional position to stay aligned when registered in parallel lanes.
@@ -411,9 +411,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      */
-    private Collection<LaneBasedGTU<?>> collectNeighborLaneTraffic(LateralDirectionality directionality,
-            DoubleScalar.Abs<TimeUnit> when, Rel<LengthUnit> maximumForwardHeadway,
-            Rel<LengthUnit> maximumReverseHeadway) throws RemoteException, NetworkException
+    private Collection<LaneBasedGTU<?>> collectNeighborLaneTraffic(final LateralDirectionality directionality,
+            final DoubleScalar.Abs<TimeUnit> when, final DoubleScalar.Rel<LengthUnit> maximumForwardHeadway,
+            final DoubleScalar.Rel<LengthUnit> maximumReverseHeadway) throws RemoteException, NetworkException
     {
         Collection<LaneBasedGTU<?>> result = parallel(directionality, when);
         for (Lane adjacentLane : adjacentLanes(LateralDirectionality.LEFT))
