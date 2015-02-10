@@ -22,6 +22,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.AccelerationStep;
+import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.network.NetworkException;
@@ -104,8 +105,6 @@ public class SensorTest
 
         DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
         initialLongitudinalPositions.put(lanes[1], positionA);
-        // A Car needs a CarFollowingModel
-        GTUFollowingModel cfm = new IDMPlus();
         // A Car needs a type
         GTUType<String> gtuType = new GTUType<String>("Car");
         // A Car needs an initial speed
@@ -118,31 +117,28 @@ public class SensorTest
         DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
-        // Now we can make a GTU
-        LaneBasedIndividualCar<String> car =
-                new LaneBasedIndividualCar<String>(carID, gtuType, cfm, initialLongitudinalPositions, initialSpeed,
-                        carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        // Create an acceleration profile for the car
+        FixedAccelerationModel fas =
+                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND));
+        // Now we can make a GTU (and we don't even have to hold a pointer to it)
+        new LaneBasedIndividualCar<String>(carID, gtuType, fas, initialLongitudinalPositions, initialSpeed, carLength,
+                carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         // Construction of the car scheduled a car move event at t=0
-        AccelerationStep gtuFollowingModelResult =
-                new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND));
-        car.setState(gtuFollowingModelResult);
-        // setState will have scheduled another car move event at t=100
-        // If we run the simulator, the car move method should throw an Error (but we don't test that here)
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();
         SimEventInterface<OTSSimTimeDouble> triggerEvent = null;
         int index = 0;
         for (SimEventInterface<OTSSimTimeDouble> event : eventList)
         {
             // System.out.println("Scheduled Event " + event);
-            if (2 == index)
+            if (0 == index)
             {
                 triggerEvent = event;
             }
             index++;
         }
-        assertEquals("There should be three scheduled events (warmup, car.move, trigger, car.move, terminate)", 5,
-                eventList.size());
+        assertEquals("There should be three scheduled events (trigger, car.move, terminate)", 3, eventList.size());
         // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
         // System.out.println("trigger event is " + triggerEvent);
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
