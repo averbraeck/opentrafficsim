@@ -8,6 +8,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -43,29 +44,31 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
     private final OTSDEVSSimulatorInterface simulator;
 
     /**
-     * @param id the id of the GTU, could be String or Integer.
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
-     * @param gtuFollowingModel the following model, including a reference to the simulator.
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes.
-     * @param initialSpeed the initial speed of the car on the lane.
-     * @param length the maximum length of the GTU (parallel with driving direction).
-     * @param width the maximum width of the GTU (perpendicular to driving direction).
-     * @param maximumVelocity the maximum speed of the GTU (in the driving direction).
-     * @param simulator the simulator.
-     * @throws RemoteException when the simulator cannot be reached.
-     * @throws NetworkException when the GTU cannot be placed on the given lane.
-     * @throws SimRuntimeException when the move method cannot be scheduled.
+     * Construct a new AbstractLaneBasedIndividualGTU.
+     * @param id the id of the GTU, could be String or Integer
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuFollowingModel the following model, including a reference to the simulator
+     * @param laneChangeModel LaneChangeModel; the lane change model
+     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
+     * @param initialSpeed the initial speed of the car on the lane
+     * @param length the maximum length of the GTU (parallel with driving direction)
+     * @param width the maximum width of the GTU (perpendicular to driving direction)
+     * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
+     * @param simulator the simulator
+     * @throws RemoteException when the simulator cannot be reached
+     * @throws NetworkException when the GTU cannot be placed on the given lane
+     * @throws SimRuntimeException when the move method cannot be scheduled
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType,
             final GTUFollowingModel gtuFollowingModel,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
-            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException
+            LaneChangeModel laneChangeModel,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Rel<LengthUnit> width,
+            final DoubleScalar.Abs<SpeedUnit> maximumVelocity, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
+            NetworkException, SimRuntimeException
     {
-        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, null /* LaneChangeModel */, initialSpeed,
-                simulator);
+        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, simulator);
         this.length = length;
         this.width = width;
         this.maximumVelocity = maximumVelocity;

@@ -46,7 +46,7 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
             final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NetworkException,
             SimRuntimeException
     {
-        super(id, gtuType, gtuFollowingModel, initialLongitudinalPositions, null /* LaneChangeModel */, initialSpeed,
+        super(id, gtuType, gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions, initialSpeed,
                 gtuType.getSimulator());
     }
 

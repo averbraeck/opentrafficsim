@@ -108,13 +108,10 @@ public abstract class AbstractGTUGenerator<ID>
 
     /**
      * Generate a GTU.
-     * @throws SimRuntimeException when simulation scheduling fails
-     * @throws RemoteException when remote simulator cannot be reached
-     * @throws NetworkException when getId() method not found or when generation failed.
-     * @throws NamingException when animation of the GTU could not be attached to the Context.
+     * @throws Exception 
      */
     @SuppressWarnings("unchecked")
-    protected final void generate() throws RemoteException, SimRuntimeException, NetworkException, NamingException
+    protected final void generate() throws Exception
     {
         // get the return type of the getID() method of the GTU class
         Class<?> getidtype = String.class;

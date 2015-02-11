@@ -117,8 +117,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in
-     * which the vehicle is registered. <br>
-     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
+     * which the vehicle is registered.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given
@@ -140,8 +139,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
             RemoteException;
 
     /**
-     * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane. <br>
-     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
+     * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane.
      * @param lane the position on this lane will be returned.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
@@ -166,8 +164,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in
      * which the vehicle is registered, as fractions of the length of the lane. This is important when we want to see if
-     * two vehicles are next to each other and we compare an 'inner' and 'outer' curve.<br>
-     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
+     * two vehicles are next to each other and we compare an 'inner' and 'outer' curve.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given
@@ -180,8 +177,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a
      * fraction of the length of the lane. This is important when we want to see if two vehicles are next to each other
-     * and we compare an 'inner' and 'outer' curve.<br>
-     * s(t) = s0 + v0 * (t - t0) + 0.5 . a . (t - t0)^2
+     * and we compare an 'inner' and 'outer' curve.
      * @param lane the position on this lane will be returned.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
@@ -202,6 +198,18 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws RemoteException when simulator time cannot be retrieved.
      */
     double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException, RemoteException;
+
+    /**
+     * Return the longitudinal position that this GTU would have if it were to change to another Lane with a/the current
+     * CrossSectionLink.
+     * @param projectionLane Lane; the lane onto which the position of this GTU must be projected
+     * @param relativePosition RelativePosition; the point on this GTU that must be projected
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the time for which to project the position of this GTU
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the position of this GTU in the projectionLane
+     * @throws NetworkException when projectionLane it not in any of the CrossSectionLink that the GTU is on
+     */
+    DoubleScalar.Rel<LengthUnit> projectedPosition(Lane projectionLane, RelativePosition relativePosition,
+            DoubleScalar.Abs<TimeUnit> when) throws NetworkException;
 
     /**
      * Determine by what distance the front of this GTU is behind the rear an other GTU, or the rear of this GTU is
