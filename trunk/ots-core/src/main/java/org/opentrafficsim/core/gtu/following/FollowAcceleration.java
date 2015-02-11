@@ -70,6 +70,7 @@ public final class FollowAcceleration
         {
             // find a lane where follower and leader are jointly
             // OOOPS DONT DO IT THIS WAY: Set<Lane> lanes = leader.getLongitudinalPositions().keySet();
+            // Create a NEW Set (so we don't modify the HashSet of the leader).
             Set<Lane> lanes = new HashSet<Lane>(leader.positions(leader.getFront()).keySet());
             lanes.retainAll(follower.positions(follower.getFront()).keySet());
             // TODO expand to lanes for next links as well, to a certain distance (which is...?)
