@@ -187,11 +187,11 @@ public class CsvFileReader
                         {
                             // link 516821 is gekoppeld aan zone C203, maar in de matrix als cordonzone benoemd:
                             // TODO corrigeren
-                            System.out.println("Strange: connector already defined???");
+                            System.out.println("Connector already defined: probably a zoneconnector cut by the cordon");
                             cordonConnector = connectors.get(name);
                             createArea = true;
                         }
-                        if (cordonConnector == null)
+                        else
                         {
                             System.out.println("Strange: no connector found ??????????!!!!");
                         }
