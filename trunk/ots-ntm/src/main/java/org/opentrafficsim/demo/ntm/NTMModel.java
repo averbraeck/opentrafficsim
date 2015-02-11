@@ -180,8 +180,8 @@ public class NTMModel implements OTSModelInterface
             double varianceRoutes = 5.0f;
             boolean reRoute = false;
             // determine the files to read
-            int debugFiles = 3; // The Hague
-            // int debugFiles = 4; // debug 4: fork
+            int debugFiles = 0; // The Hague
+            //int debugFiles = 4; // debug 4: fork
 
             // boundaries for flow links (all links with values above are selected)
             // settings below are unrealistic
@@ -207,7 +207,7 @@ public class NTMModel implements OTSModelInterface
                 this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
-                fileDemand = "/cordonmatrix_pa_os.txt";
+                fileDemand = "/cordonmatrix_pa_os-A12.txt";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileNameParametersNTM = path + "/parametersNTM.txt";
@@ -275,6 +275,8 @@ public class NTMModel implements OTSModelInterface
                         this.nodes, this.centroids, "meter");
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
+                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
+                fileNameParametersNTM = path + "/parametersNTM.txt";
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";",
                         "\\s+"));
@@ -415,10 +417,10 @@ public class NTMModel implements OTSModelInterface
 
             readOrSetCapacityRestraints(this, areasToUse, fileNameCapacityRestraint);
 
-            // WriteOutput.writeInputData(this);
+            WriteOutput.writeInputData(this);
             
             Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), weightNewRoutes, varianceRoutes, true,
-                    1, 9999);
+                    1, 999999);
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
@@ -663,7 +665,7 @@ public class NTMModel implements OTSModelInterface
             }
             else
             {
-                System.out.println("FlowLink Area");
+                System.out.println("FlowLink Area: nodeNumber " + area.getCentroidNr());
                 area.setRoadLength(new Rel<LengthUnit>(java.lang.Double.POSITIVE_INFINITY, LengthUnit.KILOMETER));
                 double averageSpeed = 100;
                 area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
@@ -705,10 +707,10 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
-            boolean showFlowLinks = true;
-            boolean showConnectors = true;
-            boolean showNodes = true;
+            boolean showLinks = false;
+            boolean showFlowLinks = false;
+            boolean showConnectors = false;
+            boolean showNodes = false;
             boolean showGraphEdges = true;
             boolean showAreaNode = true;
             boolean showArea = false;
@@ -739,7 +741,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (Link flowLink : this.flowLinks.values())
                 {
-                    new ShpLinkAnimation(flowLink, this.simulator, 2.0F, Color.RED);
+                    new ShpLinkAnimation(flowLink, this.simulator, 10.0F, Color.RED);
                 }
             }
             if (showNodes)
@@ -757,7 +759,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
                 {
-                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 10f, Color.BLACK);
+                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 2f, Color.BLACK);
                 }
             }
             if (showAreaNode)

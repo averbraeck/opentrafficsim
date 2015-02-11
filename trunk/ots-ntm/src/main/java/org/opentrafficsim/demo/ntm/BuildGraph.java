@@ -188,8 +188,14 @@ public class BuildGraph
         {
             Area aA;
             Area aB;
+            
+            if (le.getLink().getStartNode().getId().equals("65800") && le.getLink().getEndNode().getId().equals("78816"))
+            {
+                System.out.println("no");
+            }
             aA = findArea(le.getLink().getStartNode().getPoint(), areasToUse.values());
             aB = findArea(le.getLink().getEndNode().getPoint(), areasToUse.values());
+
             // When this is a flow link, inspect if they connect to urban roads
             // if so, create a GraphEdge that connects flow roads with urban roads / areas (in/out going)
             if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
@@ -211,7 +217,7 @@ public class BuildGraph
                 cB = (BoundedNode) areaNodeCentroidMap.get(aB);
                 // first, test if these links connect two different areas (not within one area)
 
-                if (cA != cB)
+                if (cA.getId() != cB.getId())
                 {
                     if (model.getAreaGraph().containsEdge(cA, cB))
                     {
@@ -282,6 +288,7 @@ public class BuildGraph
                             {
                                 speedB = new Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                             }
+
                             addGraphConnector(model, cAVertex, cBVertex, speedA, speedB, le,
                                         TrafficBehaviourType.NTM);
 
@@ -381,14 +388,15 @@ public class BuildGraph
                 }
                 else
                 {
-                    System.out.println("no capacity computed for this link/edge: node " + cAVertex + " , " + cAVertex);
+                    System.out.println("no capacity computed for this link/edge: node " + cAVertex + " , " + cBVertex);
                 }
                 LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
+
                 addLinkEdge(cAVertex, cBVertex, newLinkEdge, trafficBehaviourType, model.getAreaGraph());
             }
             else
             {
-                System.out.println("no time computed for this link/edge: node " + cAVertex + ", " + cAVertex);
+                System.out.println("No path between these nodes, while trying to connect areas" + cAVertex + ", " + cBVertex);
             }
         }
     }
@@ -404,7 +412,6 @@ public class BuildGraph
     private static void addLinkEdge(Node flowNodeA, Node flowNodeB, LinkEdge<Link> linkEdge, TrafficBehaviourType type,
             SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph)
     {
-        // TODO is the distance between two points in Amersfoort Rijksdriehoeksmeting Nieuw in m or in km?
 
         if (!graph.containsEdge(flowNodeA, flowNodeB))
         {
@@ -445,10 +452,10 @@ public class BuildGraph
             }
 
         }
-        else
+/*        else
         {
-            System.out.println("Already exists??? Strange");
-        }
+            System.out.println("Already found");
+        }*/
         // TODO average length? straight distance? straight distance + 20%?
     }
 
@@ -575,9 +582,13 @@ public class BuildGraph
             {
                 // 1 meter distance
                 // if (area1.getGeometry().isWithinDistance(area2.getGeometry(), 1.0d))
-                if (geom1.touches(geom2) || geom1.intersects(geom2))
+                if (geom1.touches(geom2) || geom1.intersects(geom2) )
                 {
                     touch = true;
+                }
+                else if (geom1.isWithinDistance(geom2, 50.0d))
+                {
+                    touch = true;                    
                 }
             }
         }
@@ -783,7 +794,7 @@ public class BuildGraph
                     }
                     else
                     {
-                        System.out.println("BuildGraph linne 593: aA == Null................");
+                        System.out.println("BuildGraph line 785: this Node is outside any area: " + urbanLink.getLink().getStartNode().getId());
                     }
 
                 }
@@ -810,7 +821,7 @@ public class BuildGraph
                     }
                     else
                     {
-                        System.out.println("BuildGraph line 614 aB == Null................");
+                        System.out.println("BuildGraph line 812 this Node is outside any area: " + urbanLink.getLink().getEndNode().getId());
                     }
 
                 }

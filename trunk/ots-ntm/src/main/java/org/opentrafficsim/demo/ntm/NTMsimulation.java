@@ -133,7 +133,7 @@ public class NTMsimulation
                 }
             }
         }
-
+        int found = 1;
         // initial settings
         if (steps == 1)
         {
@@ -356,11 +356,18 @@ public class NTMsimulation
                                                 {
                                                     if (cellBehaviour.getBorderDemand().get(neighbour).getSI() > 0)
                                                     {
-                                                        ratioCapacityVersusDemand =
-                                                                cellBehaviour.getBorderCapacity().get(neighbour)
-                                                                        .getSI()
-                                                                        / cellBehaviour.getBorderDemand()
-                                                                                .get(neighbour).getSI();
+                                                        if (cellBehaviour.getBorderCapacity().get(neighbour) != null)
+                                                        {
+                                                            ratioCapacityVersusDemand =
+                                                                    cellBehaviour.getBorderCapacity().get(neighbour)
+                                                                            .getSI()
+                                                                            / cellBehaviour.getBorderDemand()
+                                                                                    .get(neighbour).getSI();
+                                                        }
+                                                        else
+                                                        {
+                                                            ratioCapacityVersusDemand = 1;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -543,7 +550,10 @@ public class NTMsimulation
                                                 if (lastCell.getCellBehaviourFlow().getTripInfoByNodeMap()
                                                         .get(tripInfoByDestination.getDestination()) == null)
                                                 {
-                                                    System.out.println("Stop");
+                                                    if (model.DEBUG)
+                                                    {
+                                                        System.out.println("Stop");
+                                                    }
                                                 }
                                                 double addDemandToDestination =
                                                         lastCell.getCellBehaviourFlow().getTripInfoByNodeMap()
@@ -560,11 +570,6 @@ public class NTMsimulation
                                                             .get(0)
                                                             .getCellBehaviourFlow()
                                                             .addDemandToEnter(shareOfNeighbour * addDemandToDestination);
-                                                    if (ctmLink.getCells().get(0).getCellBehaviourFlow()
-                                                            .getDemandToEnter() > 10.0)
-                                                    {
-                                                        System.out.println("Stop");
-                                                    }
 
                                                 }
                                                 else if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
@@ -586,8 +591,11 @@ public class NTMsimulation
                                 else if (neighbour.getBehaviourType() != TrafficBehaviourType.NTM
                                         && neighbour.getBehaviourType() != TrafficBehaviourType.CORDON)
                                 {
-                                    System.out
+                                    if (model.DEBUG)
+                                    {
+                                        System.out
                                             .println("CTMsimulation line 560: FLOW node has neighbour of type NTM or Cordon");
+                                    }
                                 }
                             }
                             else
@@ -675,12 +683,16 @@ public class NTMsimulation
                                             // set the final flow to the neighbour
 
                                             // **** RELEVANT
-                                            if (neighbour != destination)
+                                            if (!neighbour.getId().equals(destination.getId()))
                                             {
                                                 if (neighbour.getCellBehaviour().getTripInfoByNodeMap()
                                                         .get(destination) == null)
                                                 {
-                                                    System.out.println("null");
+                                                    if (model.DEBUG)
+                                                    {
+                                                        System.out.println(found + " Step " + steps + ": Neighbour: " + neighbour.getId()
+                                                                + " has no destination " + destination.getId());
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -709,7 +721,10 @@ public class NTMsimulation
                                         }
                                         else
                                         {
-                                            System.out.println("NTMSimulation line 475: no neighbour");
+                                            if (model.DEBUG)
+                                            {
+                                                System.out.println("NTMSimulation line 475: no neighbour");
+                                            }
                                         }
 
                                     }
@@ -769,7 +784,10 @@ public class NTMsimulation
                                                     if (cell.getCellBehaviourFlow().getTripInfoByNodeMap()
                                                             .get(destination) == null)
                                                     {
-                                                        System.out.println("NTM-Flow-NTM");
+                                                        if (model.DEBUG)
+                                                        {
+                                                            System.out.println("NTM-Flow-NTM");
+                                                        }
                                                     }
                                                     cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
                                                             .addAccumulatedCarsToDestination(flowToDestination);
@@ -788,7 +806,10 @@ public class NTMsimulation
 
                                             else
                                             {
-                                                System.out.println("NTM-Flow-NTM");
+                                                if (model.DEBUG)
+                                                {
+                                                    System.out.println("NTM-Flow-NTM");
+                                                }
                                             }
                                         }
                                     }
@@ -878,9 +899,12 @@ public class NTMsimulation
                         }
                         else
                         {
-                            System.out.println("no area connected to: " + origin.getId());
+                            if (model.DEBUG)
+                            {
+                                System.out.println("no area connected to: " + origin.getId());
+                            }
                         }
-                            
+
                         // double share =
                         // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
                         Double maxAccumulationThisArea = roadLength * critDensityPerHour;
