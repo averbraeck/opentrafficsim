@@ -291,7 +291,8 @@ public class CsvFileReader
                         {
                             // after determining the new cordon centroid, a new area is created around this feeding
                             // link. This becomes a feeder type of area
-                            Geometry buffer = cordonConnector.getGeometry().getLineString().buffer(10);
+//                            Geometry buffer = cordonConnector.getStartNode().getPoint().buffer(40);
+                            Geometry buffer = cordonPoint.getPoint().buffer(40);
                             Point centroid = cordonPoint.getPoint();
                             String nr = cordonPoint.getId();
                             String newName = cordonConnector.getLinkData().getName();

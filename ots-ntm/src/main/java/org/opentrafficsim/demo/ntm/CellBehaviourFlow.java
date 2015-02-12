@@ -104,6 +104,7 @@ public class CellBehaviourFlow extends CellBehaviour
         return demand;
     }
 
+
     /**
      * Retrieves car production from network fundamental diagram.
      * @param accumulatedCars number of cars in Cell
@@ -162,5 +163,7 @@ public class CellBehaviourFlow extends CellBehaviour
     {
         this.parametersFundamentalDiagram = parametersFundamentalDiagram;
     }
+
+
 
 }

@@ -170,6 +170,7 @@ public class NTMModel implements OTSModelInterface
             String path = "";
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
+            String fileProfiles = "";
             String fileDemand = "";
             String fileCompressedDemand = "";
             String fileNameCapacityRestraint = "";
@@ -180,8 +181,8 @@ public class NTMModel implements OTSModelInterface
             double varianceRoutes = 5.0f;
             boolean reRoute = false;
             // determine the files to read
-            int debugFiles = 0; // The Hague
-            //int debugFiles = 4; // debug 4: fork
+            int debugFiles = 4; // The Hague
+            // int debugFiles = 4; // debug 4: fork
 
             // boundaries for flow links (all links with values above are selected)
             // settings below are unrealistic
@@ -209,6 +210,7 @@ public class NTMModel implements OTSModelInterface
                         this.nodes, this.centroids, "kilometer");
                 fileDemand = "/cordonmatrix_pa_os-A12.txt";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
+                fileProfiles = "profiles.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileNameParametersNTM = path + "/parametersNTM.txt";
                 if (this.COMPRESS_AREAS)
@@ -217,7 +219,7 @@ public class NTMModel implements OTSModelInterface
                     fileNameParametersNTM = path + "/parametersNTMBigAreas.txt";
 
                 }
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";",
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
                 numberOfRoutes = 1;
                 weightNewRoutes = 0.6;
@@ -245,10 +247,11 @@ public class NTMModel implements OTSModelInterface
                         this.nodes, this.centroids, "meter");
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
+                fileProfiles = "profiles.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileNameParametersNTM = path + "/parametersNTM.txt";
                 // read the time profile curves: these will be attached to the demands afterwards
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";",
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
                 numberOfRoutes = 6;
                 weightNewRoutes = 0.6;
@@ -275,15 +278,16 @@ public class NTMModel implements OTSModelInterface
                         this.nodes, this.centroids, "meter");
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
+                fileProfiles = "profiles.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileNameParametersNTM = path + "/parametersNTM.txt";
                 // read the time profile curves: these will be attached to the demands afterwards
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/profiles.txt", ";",
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
-                numberOfRoutes = 6;
+                numberOfRoutes = 1;
                 weightNewRoutes = 0.6;
-                varianceRoutes = 5.0f;
-                reRoute = true;
+                varianceRoutes = 0.0f;
+                reRoute = false;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 // Select all links as flow links!!
                 maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
@@ -301,38 +305,11 @@ public class NTMModel implements OTSModelInterface
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
                 fileNameCapacityRestraint = this.getSettingsNTM().getPath() + "/capRestraintsAreas.txt";
-
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path
-                        + "/profiles_only_firstHour.txt", ";", "\\s+"));
+                fileProfiles = "profiles_only_firstHour.txt";
+                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + fileProfiles, ";", "\\s+"));
                 numberOfRoutes = 1;
 
             }
-            // copy input files to the output map
-            File dir = new File(path + this.getOutput());
-            if (!dir.exists())
-            {
-                boolean result = false;
-
-                try
-                {
-                    dir.mkdir();
-                    result = true;
-                }
-                catch (SecurityException se)
-                {
-                    // handle it
-                }
-                if (result)
-                {
-                    System.out.println("DIR created");
-                }
-            }
-            Path from = Paths.get(path + "/profiles.txt");
-            Path to = Paths.get(path + this.getOutput() + "/profiles.txt");
-            Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
-            from = Paths.get(path + fileDemand);
-            to = Paths.get(path + this.getOutput() + fileDemand);
-            Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
 
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
@@ -418,7 +395,7 @@ public class NTMModel implements OTSModelInterface
             readOrSetCapacityRestraints(this, areasToUse, fileNameCapacityRestraint);
 
             WriteOutput.writeInputData(this);
-            
+
             Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), weightNewRoutes, varianceRoutes, true,
                     1, 999999);
 
@@ -427,6 +404,9 @@ public class NTMModel implements OTSModelInterface
             {
                 createAnimation();
             }
+
+            copyInputFiles(path, fileDemand, fileProfiles);
+
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "ntmFlowTimestep", null);
             // this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
@@ -508,7 +488,8 @@ public class NTMModel implements OTSModelInterface
                         }
                         else
                         {
-                            capacity = cellBehaviourNTM.getParametersNTM().getCapacity().getInUnit(FrequencyUnit.PER_HOUR);
+                            capacity =
+                                    cellBehaviourNTM.getParametersNTM().getCapacity().getInUnit(FrequencyUnit.PER_HOUR);
                         }
                         parameters.remove(parameters.size() - 1);
                         parametersNTM =
@@ -785,26 +766,26 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = false;
-            boolean showFlowLinks = false;
-            boolean showConnectors = false;
-            boolean showNodes = false;
-            boolean showEdges = false;
-            boolean showAreaNode = false;
+            boolean showLinks = true;
+            boolean showFlowLinks = true;
+            boolean showConnectors = true;
+            boolean showNodes = true;
+            boolean showEdges = true;
+            boolean showAreaNode = true;
             boolean showArea = true;
 
             if (showArea)
             {
                 for (Area area : this.areas.values())
                 {
-                    new AreaAnimation(area, this.simulator, 5f);
+                    new AreaAnimation(area, this.simulator, 4f);
                 }
             }
             if (showLinks)
             {
                 for (Link shpLink : this.shpLinks.values())
                 {
-                    new ShpLinkAnimation(shpLink, this.simulator, 2.0F, Color.GRAY);
+                    new ShpLinkAnimation(shpLink, this.simulator, 6.0F, Color.GRAY);
                 }
             }
             if (showConnectors)
@@ -837,7 +818,7 @@ public class NTMModel implements OTSModelInterface
             {
                 for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
                 {
-                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 5.5f, Color.BLACK);
+                    new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 3f, Color.BLACK);
                 }
             }
             if (showAreaNode)
@@ -1060,6 +1041,36 @@ public class NTMModel implements OTSModelInterface
         }
 
         return flowLinks;
+    }
+
+    public void copyInputFiles(String path, String fileDemand, String fileProfiles) throws IOException
+    {
+        // copy input files to the output map
+        File dir = new File(path + this.getOutput());
+        if (!dir.exists())
+        {
+            boolean result = false;
+
+            try
+            {
+                dir.mkdir();
+                result = true;
+            }
+            catch (SecurityException se)
+            {
+                // handle it
+            }
+            if (result)
+            {
+                System.out.println("DIR created");
+            }
+        }
+        Path from = Paths.get(path + "/" + fileProfiles);
+        Path to = Paths.get(path + this.getOutput() + "/" + fileProfiles);
+        Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
+        from = Paths.get(path + fileDemand);
+        to = Paths.get(path + this.getOutput() + fileDemand);
+        Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**

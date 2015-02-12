@@ -92,12 +92,12 @@ public class DataIO
         }
         else
         {
-            String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
+            String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug_fork_links";
             String fileArea = FileDialog.showFileDialog(true, "shp", "Shapefile with Areas", startMap);
             // File file = new File(fileName);
             String fileRoads = FileDialog.showFileDialog(true, "shp", "Shapefile with Roads", startMap);
             String filePathData =
-                    "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
+                    "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug_fork_links/";
             String fileNameStarts = "I_";
             boolean fileNameDay = false;
             addGeo(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay, dataTNO);

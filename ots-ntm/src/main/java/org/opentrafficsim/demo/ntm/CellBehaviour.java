@@ -82,8 +82,14 @@ public class CellBehaviour
     }
 
     /**
-     * @return flow.
+     * @param tripByStep
      */
+    public void addDemand(double trips)
+    {
+        this.demand += trips;
+    }
+    
+
     public final double getArrivals()
     {
         return this.arrivals;

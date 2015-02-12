@@ -45,13 +45,15 @@ public class BoundedNode extends Node
     {
         super(nr, centroid, behaviourType);
         this.area = area;
-        
+
         if (behaviourType == TrafficBehaviourType.ROAD)
         {
+            this.getPoint().getCoordinate().z = 2;
             this.setCellBehaviour(new CellBehaviour());
         }
         else if (behaviourType == TrafficBehaviourType.NTM)
         {
+            this.getPoint().getCoordinate().z = 2;
             ParametersNTM parametersNTM = null;
             parametersNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
             if (parametersNTM.getCapacity() == null)
@@ -60,9 +62,10 @@ public class BoundedNode extends Node
             }
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
         }
-        
+
         else if (behaviourType == TrafficBehaviourType.FLOW)
         {
+            this.getPoint().getCoordinate().z = 4;
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
             // TODO parameters should depend on area characteristics
             // DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000,
@@ -71,17 +74,18 @@ public class BoundedNode extends Node
             ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram();
             this.setCellBehaviour(new CellBehaviourFlow(area, parametersCTM));
         }
-        
+
         else if (behaviourType == TrafficBehaviourType.CORDON)
         {
+            this.getPoint().getCoordinate().z = 3;
             this.setCellBehaviour(new CellBehaviourCordon());
         }
-        
+
         else
         {
-            this.setCellBehaviour(new CellBehaviour());            
+            this.setCellBehaviour(new CellBehaviour());
         }
-        
+
     }
 
     /**
