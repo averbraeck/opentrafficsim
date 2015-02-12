@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.following;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -120,23 +119,6 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
             }
         }
         throw new Error("FixedSequentialAcceleration does not have a result for " + when);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
-    {
-        return getAccelerationStep(follower.getSimulator().getSimulatorTime().get());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
-    {
-        return getAccelerationStep(follower.getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */

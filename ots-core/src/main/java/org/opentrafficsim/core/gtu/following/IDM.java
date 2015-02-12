@@ -1,14 +1,12 @@
 package org.opentrafficsim.core.gtu.following;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -103,49 +101,6 @@ public class IDM implements GTUFollowingModel
         return maxBrakingDistance;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-        final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-        throws RemoteException, NetworkException
-    {
-        DoubleScalar.Rel<LengthUnit> shortestHeadway = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
-        LaneBasedGTU<?> closestLeader = null;
-        for (LaneBasedGTU<?> leader : leaders)
-        {
-            if (follower == leader)
-            {
-                continue;
-            }
-            DoubleScalar.Rel<LengthUnit> s = follower.headway(leader, calcMaxBrakingDistance(follower));
-            // System.out.println("s is " + s);
-            if (s.getSI() < 0)
-            {
-                continue; // Ignore gtus that are behind this gtu
-            }
-            if (s.getSI() < shortestHeadway.getSI())
-            {
-                shortestHeadway = s;
-                closestLeader = leader;
-            }
-        }
-        // System.out.println("shortestHeadway is " + shortestHeadway);
-        return computeAcceleration(follower, closestLeader, speedLimit);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
-    {
-        DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
-        DoubleScalar.Abs<SpeedUnit> leaderSpeed =
-            null == leader ? follower.getLongitudinalVelocity(thisEvaluationTime) : leader
-                .getLongitudinalVelocity(thisEvaluationTime);
-        DoubleScalar.Rel<LengthUnit> headway = follower.headway(leader, calcMaxBrakingDistance(follower));
-        return computeAcceleration(follower, leaderSpeed, headway, speedLimit);
-    }
-
     /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
      * @param follower GTU; the GTU whose desired speed must be returned
@@ -161,8 +116,8 @@ public class IDM implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-        final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+            final DoubleScalar.Rel<LengthUnit> headway, DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();

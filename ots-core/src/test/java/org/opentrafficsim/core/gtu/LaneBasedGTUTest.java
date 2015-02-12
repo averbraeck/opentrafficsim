@@ -24,6 +24,8 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.changing.FixedLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
@@ -119,9 +121,10 @@ public class LaneBasedGTUTest
                 buildPositionsMap(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         DoubleScalar.Abs<SpeedUnit> truckSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
+        LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         LaneBasedIndividualCar<String> truck =
-                new LaneBasedIndividualCar<String>("Truck", truckType, null, truckPositions, truckSpeed, truckLength,
-                        truckWidth, null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                new LaneBasedIndividualCar<String>("Truck", truckType, null, laneChangeModel, truckPositions, truckSpeed,
+                        truckLength, truckWidth, null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -178,8 +181,8 @@ public class LaneBasedGTUTest
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
                         buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar<String> car =
-                        new LaneBasedIndividualCar<String>("Car", carType, null, carPositions, carSpeed, carLength,
-                                carWidth, null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        new LaneBasedIndividualCar<String>("Car", carType, null, laneChangeModel, carPositions, carSpeed,
+                                carLength, carWidth, null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 double actualHeadway = truck.headway(forwardMaxDistance).getSI();
                 double expectedHeadway =
                         laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
@@ -405,10 +408,11 @@ public class LaneBasedGTUTest
                     new DoubleScalar.Abs<AccelerationUnit>(a, AccelerationUnit.METER_PER_SECOND_2);
             FixedAccelerationModel fam =
                     new FixedAccelerationModel(acceleration, new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
+            LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             LaneBasedIndividualCar<String> car =
-                    new LaneBasedIndividualCar<String>("Car", carType, fam, carPositions, carSpeed,
-                            new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                                    1.8, LengthUnit.METER), null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                    new LaneBasedIndividualCar<String>("Car", carType, fam, laneChangeModel, carPositions,
+                            carSpeed, new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                                            1.8, LengthUnit.METER), null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
             //System.out.println("acceleration is " + acceleration);

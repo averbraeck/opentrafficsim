@@ -140,8 +140,8 @@ public class CarTest
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        return new LaneBasedIndividualCar<Integer>(nr, carType, gtuFollowingModel, initialLongitudinalPositions,
-                initialSpeed, length, width, maxSpeed, simulator);
+        return new LaneBasedIndividualCar<Integer>(nr, carType, gtuFollowingModel, laneChangeModel,
+                initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, simulator);
     }
 
     /**

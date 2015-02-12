@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.following;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
@@ -25,35 +24,6 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 public interface GTUFollowingModel
 {
     /**
-     * Compute the acceleration that would be used to follow a set of leaders.<br />
-     * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
-     * leader, or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param follower the GTU for which acceleration is computed
-     * @param leaders Set&lt;LaneBasedGTU&gt;; the set of leaders to take into consideration
-     * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @return AccelerationStep; the result of application of the gtu following model
-     * @throws RemoteException in case of simulator reachability problems
-     * @throws NetworkException on network inconsistency
-     */
-    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException;
-
-    /**
-     * Compute the acceleration that would be used to follow a leader.<br />
-     * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
-     * leader, or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param follower the GTU for which acceleration is computed
-     * @param leader LaneBasedGTU&lt;?&gt;; the leader to take into consideration (may be null)
-     * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @return AccelerationStep; the result of application of the GTU following model
-     * @throws RemoteException in case of simulator reachability problems
-     * @throws NetworkException on network inconsistency
-     */
-    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
-
-    /**
      * Compute the acceleration that would be used to follow a leader.<br />
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * leader, or should slow down for a crossing from accelerating to unsafe speeds.
@@ -65,9 +35,9 @@ public interface GTUFollowingModel
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
+    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+            final DoubleScalar.Rel<LengthUnit> headway, DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
+            NetworkException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be

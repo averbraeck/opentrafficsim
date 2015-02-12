@@ -1,9 +1,8 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * The egoistic drive changes lane when this yields is personal advantage (totally ignoring any disadvantage to others).
@@ -19,17 +18,10 @@ public final class Egoistic extends AbstractLaneChangeModel
     /** {@inheritDoc} */
     @Override
     public DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(
-        final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
+        final AccelerationStep[] accelerations)
     {
-        try
-        {
-            // The egoistic driver only looks at the effects on him-/herself.
-            return accelerations.get(0);
-        }
-        catch (ValueException exception)
-        {
-            throw new Error("Cannot happen");
-        }
+        // The egoistic driver only looks at the effects on him-/herself.
+        return accelerations[0].getAcceleration();
     }
 
 }

@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -47,9 +48,9 @@ public interface LaneChangeModel
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<LaneBasedGTU<?>> sameLaneTraffic,
-            final Collection<LaneBasedGTU<?>> rightLaneTraffic,
-            final Collection<LaneBasedGTU<?>> leftLaneTraffic,
+            final Collection<HeadwayGTU> sameLaneTraffic,
+            final Collection<HeadwayGTU> rightLaneTraffic,
+            final Collection<HeadwayGTU> leftLaneTraffic,
             final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
             Rel<AccelerationUnit> laneChangeThreshold,
