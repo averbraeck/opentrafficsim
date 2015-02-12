@@ -20,6 +20,11 @@ import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.linearref.LengthIndexedLine;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -244,8 +249,23 @@ public class WriteOutput
 
                             if (DATATYPE == "cellData")
                             {
-                                dataArray[i][0] = cell.getCellLength().getSI();
-                                dataArray[i][1] = (double) cell.getNumberOfLanes();
+                                ArrayList<Coordinate> cellPoints = new ArrayList<Coordinate>();
+                                cellPoints =
+                                        retrieveCellXY(ctmLink, cell, ctmLink.getCells().indexOf(cell), ctmLink
+                                                .getCells().size());
+                                Coordinate cellPoint = new Coordinate();
+                                cellPoint = cellPoints.get(0);
+                                dataArray[i][0] = cellPoint.x;
+                                dataArray[i][1] = cellPoint.y;
+                                cellPoint = cellPoints.get(1);
+                                dataArray[i][2] = cellPoint.x;
+                                dataArray[i][3] = cellPoint.y;
+                                cellPoint = cellPoints.get(2);
+                                dataArray[i][4] = cellPoint.x;
+                                dataArray[i][5] = cellPoint.y;
+                                
+                                dataArray[i][6] = cell.getCellLength().getSI();
+                                dataArray[i][7] = (double) cell.getNumberOfLanes();
                             }
 
                             if (DATATYPE == "parametersFD")
@@ -374,14 +394,20 @@ public class WriteOutput
                     String textOut;
                     // Link transmission
                     data.write("Indicators:   " + ", ");
-                    data.write("Number of Lanes" + ", ");
+                    data.write("X start       " + ", ");
+                    data.write("Y start       " + ", ");
+                    data.write("X end         " + ", ");
+                    data.write("Y end         " + ", ");
+                    data.write("X middle      " + ", ");
+                    data.write("Y middle      " + ", ");
                     data.write("Cell Length" + ", ");
+                    data.write("Number of Lanes" + ", ");
                     data.write(" \n");
 
                     for (int i = 0; i < numberOfCells; i++)
                     {
                         data.write(description + " " + indexLink.get(i).getId() + ", ");
-                        for (int j = 0; j < 2; j++)
+                        for (int j = 0; j < 8; j++)
                         {
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
@@ -962,6 +988,28 @@ public class WriteOutput
             }
         }
 
+    }
+
+    /**
+     * @param ctmLink
+     * @param cell
+     * @param index
+     * @param totalNumberOfCells
+     * @return
+     */
+    static ArrayList<Coordinate> retrieveCellXY(LinkCellTransmission ctmLink, FlowCell cell, int index,
+            int totalNumberOfCells)
+    {
+        LineString line = ctmLink.getGeometry().getLineString();
+        LengthIndexedLine indexedLine = new LengthIndexedLine(line);
+        Coordinate pointA = indexedLine.extractPoint(line.getLength() * (index) / totalNumberOfCells);
+        Coordinate pointMiddle = indexedLine.extractPoint(line.getLength() * (index + 0.5) / totalNumberOfCells);
+        Coordinate pointB = indexedLine.extractPoint(line.getLength() * (index + 1) / totalNumberOfCells);
+        ArrayList<Coordinate> points = new ArrayList<>();
+        points.add(pointA);
+        points.add(pointB);
+        points.add(pointMiddle);
+        return points;
     }
 
     static BufferedWriter createWriter(File file)
