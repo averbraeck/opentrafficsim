@@ -181,7 +181,7 @@ public class NTMModel implements OTSModelInterface
             double varianceRoutes = 5.0f;
             boolean reRoute = false;
             // determine the files to read
-            int debugFiles = 4; // The Hague
+            int debugFiles = 0; // The Hague
             // int debugFiles = 4; // debug 4: fork
 
             // boundaries for flow links (all links with values above are selected)
@@ -284,16 +284,16 @@ public class NTMModel implements OTSModelInterface
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
-                numberOfRoutes = 1;
-                weightNewRoutes = 0.6;
-                varianceRoutes = 0.0f;
-                reRoute = false;
+                numberOfRoutes = 6;
+                weightNewRoutes = 0.3;
+                varianceRoutes = 5.0f;
+                reRoute = true;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 // Select all links as flow links!!
                 maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
                 maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
 
-                int variant = 1;
+                int variant = 6;
                 this.output = "/output" + variant;
             }
 
@@ -688,10 +688,10 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = false;
-            boolean showFlowLinks = false;
-            boolean showConnectors = false;
-            boolean showNodes = false;
+            boolean showLinks = true;
+            boolean showFlowLinks = true;
+            boolean showConnectors = true;
+            boolean showNodes = true;
             boolean showGraphEdges = true;
             boolean showAreaNode = true;
             boolean showArea = false;
@@ -766,12 +766,12 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
-            boolean showFlowLinks = true;
-            boolean showConnectors = true;
-            boolean showNodes = true;
-            boolean showEdges = true;
-            boolean showAreaNode = true;
+            boolean showLinks = false;
+            boolean showFlowLinks = false;
+            boolean showConnectors = false;
+            boolean showNodes = false;
+            boolean showEdges = false;
+            boolean showAreaNode = false;
             boolean showArea = true;
 
             if (showArea)

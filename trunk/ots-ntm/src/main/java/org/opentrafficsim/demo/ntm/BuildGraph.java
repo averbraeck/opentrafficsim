@@ -359,14 +359,13 @@ public class BuildGraph
             Abs<SpeedUnit> speedB, LinkEdge le, TrafficBehaviourType trafficBehaviourType)
     {
         DijkstraShortestPath<Node, LinkEdge<Link>> sp = null;
-//        if (model.getLinkGraph().containsVertex(cAVertex) && model.getLinkGraph().containsVertex(cBVertex))
+        // if (model.getLinkGraph().containsVertex(cAVertex) && model.getLinkGraph().containsVertex(cBVertex))
         {
             sp = new DijkstraShortestPath<Node, LinkEdge<Link>>(model.getLinkGraph(), cAVertex, cBVertex);
         }
-/*        else
-        {
-            System.out.println("no grapph for this  node " + cAVertex + " or , " + cBVertex);
-        }*/
+        /*
+         * else { System.out.println("no grapph for this  node " + cAVertex + " or , " + cBVertex); }
+         */
 
         Rel<TimeUnit> time = null;
         if (sp != null)
@@ -639,7 +638,10 @@ public class BuildGraph
             {
                 System.out.println("no touching area for number " + isolatedArea.getCentroidNr() + ", Area type: "
                         + isolatedArea.getTrafficBehaviourType());
-
+                if (isolatedArea.getCentroidNr().equals("3794"))
+                {
+                    System.out.println("no ");
+                }
                 // Get point and create search envelope
                 Geometry geom = isolatedArea.getGeometry();
                 Envelope search = geom.getEnvelopeInternal();
@@ -715,6 +717,49 @@ public class BuildGraph
                                                 new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
                                                         SpeedUnit.KM_PER_HOUR);
                                         addGraphConnector(model, nodeIsolated, bN, speedA, speedA, le,
+                                                nodeIsolated.getBehaviourType());
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            sp = new DijkstraShortestPath<>(model.getLinkGraph(), nodeNear, nodeIsolated);
+                            spList = sp.getPathEdgeList();
+                            if (spList != null)
+                            {
+                                double cumulativeTime = 0;
+                                double cumulativeLength = 0;
+                                for (LinkEdge<Link> le : spList)
+                                {
+                                    double speed = le.getLink().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    double length = le.getLink().getLength().getInUnit(LengthUnit.KILOMETER);
+                                    cumulativeTime += length / speed;
+                                    cumulativeLength += length;
+                                    Area enteredArea = findArea(le.getLink().getEndNode().getPoint(), areas);
+                                    if (enteredArea != null && enteredArea != isolatedArea
+                                            && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
+                                    {
+                                        isolatedArea.getTouchingAreas().add(enteredArea);
+                                        Node centroidEntered = areaNodeCentroidMap.get(enteredArea);
+                                        if (centroidEntered == null)
+                                        {
+                                            System.out.println("No node in this area");
+                                        }
+                                        Abs<SpeedUnit> speedA =
+                                                new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
+                                                        SpeedUnit.KM_PER_HOUR);
+                                        addGraphConnector(model, centroidEntered, nodeIsolated, speedA, speedA, le,
+                                                nodeIsolated.getBehaviourType());
+                                        break;
+                                    }
+                                    else if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
+                                    {
+                                        Node bN = nodeGraphMap.get(le.getLink().getStartNode().getId());
+                                        Abs<SpeedUnit> speedA =
+                                                new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
+                                                        SpeedUnit.KM_PER_HOUR);
+                                        addGraphConnector(model, bN, nodeIsolated, speedA, speedA, le,
                                                 nodeIsolated.getBehaviourType());
 
                                         break;

@@ -263,7 +263,7 @@ public class WriteOutput
                                 cellPoint = cellPoints.get(2);
                                 dataArray[i][4] = cellPoint.x;
                                 dataArray[i][5] = cellPoint.y;
-                                
+
                                 dataArray[i][6] = cell.getCellLength().getSI();
                                 dataArray[i][7] = (double) cell.getNumberOfLanes();
                             }
@@ -1000,11 +1000,24 @@ public class WriteOutput
     static ArrayList<Coordinate> retrieveCellXY(LinkCellTransmission ctmLink, FlowCell cell, int index,
             int totalNumberOfCells)
     {
+        Coordinate pointA = null;
+        Coordinate pointMiddle = null;
+        Coordinate pointB = null;
         LineString line = ctmLink.getGeometry().getLineString();
         LengthIndexedLine indexedLine = new LengthIndexedLine(line);
-        Coordinate pointA = indexedLine.extractPoint(line.getLength() * (index) / totalNumberOfCells);
-        Coordinate pointMiddle = indexedLine.extractPoint(line.getLength() * (index + 0.5) / totalNumberOfCells);
-        Coordinate pointB = indexedLine.extractPoint(line.getLength() * (index + 1) / totalNumberOfCells);
+        if (ctmLink.getStartNode().getPoint().getCoordinate().x ==line.getCoordinates()[0].x
+            && ctmLink.getStartNode().getPoint().getCoordinate().y ==line.getCoordinates()[0].y)
+        {
+            pointA = indexedLine.extractPoint(line.getLength() * (index) / totalNumberOfCells);
+            pointB = indexedLine.extractPoint(line.getLength() * (index + 1) / totalNumberOfCells);
+            pointMiddle = indexedLine.extractPoint(line.getLength() * (index + 0.5) / totalNumberOfCells);
+        }
+        else
+        {
+            pointA = indexedLine.extractPoint(line.getLength() * (1.0 - ((index) / totalNumberOfCells)));
+            pointB = indexedLine.extractPoint(line.getLength() * (1.0 - ((index + 1.0) / totalNumberOfCells)));
+            pointMiddle = indexedLine.extractPoint(line.getLength() * (1.0 - ((index + 0.5) / totalNumberOfCells)));
+        }
         ArrayList<Coordinate> points = new ArrayList<>();
         points.add(pointA);
         points.add(pointB);
