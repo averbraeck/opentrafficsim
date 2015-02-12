@@ -169,10 +169,10 @@ public class LaneChangeModelTest
             new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), initialLongitudinalPositions,
-                new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4,
-                    LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), fakeSimulator);
+                new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel,
+                initialLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4,
+                        LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), fakeSimulator);
         Collection<LaneBasedGTU<?>> sameLaneGTUs = new HashSet<LaneBasedGTU<?>>();
         sameLaneGTUs.add(car);
         Collection<LaneBasedGTU<?>> preferredLaneGTUs = new HashSet<LaneBasedGTU<?>>();
@@ -204,10 +204,10 @@ public class LaneChangeModelTest
                 new LaneBasedIndividualCar<String>("LaneChangeBlockingCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), otherLongitudinalPositions,
-                    new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                        SpeedUnit.KM_PER_HOUR), fakeSimulator);
+                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel,
+                    otherLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                    vehicleLength, new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
+                            SpeedUnit.KM_PER_HOUR), fakeSimulator);
             preferredLaneGTUs.clear();
             preferredLaneGTUs.add(collisionCar);
             laneChangeModelResult =
@@ -229,10 +229,10 @@ public class LaneChangeModelTest
                 new LaneBasedIndividualCar<String>("OtherCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), otherLongitudinalPositions,
-                    new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                        SpeedUnit.KM_PER_HOUR), fakeSimulator);
+                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel,
+                    otherLongitudinalPositions, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
+                    vehicleLength, new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
+                            SpeedUnit.KM_PER_HOUR), fakeSimulator);
             preferredLaneGTUs.clear();
             preferredLaneGTUs.add(otherCar);
             laneChangeModelResult =

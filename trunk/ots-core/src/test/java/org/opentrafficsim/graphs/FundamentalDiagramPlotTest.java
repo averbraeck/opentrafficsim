@@ -20,7 +20,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
-import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -99,8 +99,8 @@ public class FundamentalDiagramPlotTest
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneBasedIndividualCar<Integer> car =
-                new LaneBasedIndividualCar<Integer>(1, null, null, initialLongitudinalPositions, speed, length, width,
-                        maxSpeed, simulator);
+                new LaneBasedIndividualCar<Integer>(1, null, null, laneChangeModel, initialLongitudinalPositions, speed, length,
+                        width, maxSpeed, simulator);
         fd.addData(car, time);
         for (int sample = 0; sample < 10; sample++)
         {
@@ -172,8 +172,8 @@ public class FundamentalDiagramPlotTest
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
         car =
-                new LaneBasedIndividualCar<Integer>(1234, null, null, initialLongitudinalPositions, speed, length,
-                        width, maxSpeed, simulator);
+                new LaneBasedIndividualCar<Integer>(1234, null, null, laneChangeModel, initialLongitudinalPositions, speed,
+                        length, width, maxSpeed, simulator);
         fd.addData(car, time);
         fd.actionPerformed(setXToSpeed);
         value = fd.getYValue(0, bucket);

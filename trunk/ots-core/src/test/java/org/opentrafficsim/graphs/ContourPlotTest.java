@@ -24,7 +24,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.car.CarTest;
+import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -327,7 +327,7 @@ public class ContourPlotTest
         cp.reGraph();
         bins = cp.getItemCount(0);
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(20, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
         SimpleSimulator simulator =
@@ -416,8 +416,8 @@ public class ContourPlotTest
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
                         new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
-                if (car.position(lane, car.getFront(), cellStartTime).getSI() <= y + useDistanceGranularity
-                        && car.position(lane, car.getFront(), cellEndTime).getSI() >= y)
+                if (car.position(lane, car.getReference(), cellStartTime).getSI() <= y + useDistanceGranularity
+                        && car.position(lane, car.getReference(), cellEndTime).getSI() >= y)
                 {
                     hit = true;
                 }
@@ -428,6 +428,11 @@ public class ContourPlotTest
             {
                 if (!Double.isNaN(expectedZValueWithTraffic))
                 {
+                    if (z != expectedZValueWithTraffic)
+                    {
+                        System.out.println("Oops");
+                        cp.getZ(0, item);
+                    }
                     assertEquals("Z value should be " + expectedZValueWithTraffic, expectedZValueWithTraffic, z, 0.0001);
                     assertEquals("Z value should be " + expectedZValueWithTraffic, expectedZValueWithTraffic,
                             alternateZ.doubleValue(), 0.0001);
@@ -435,7 +440,7 @@ public class ContourPlotTest
                 else
                 {
                     if (Double.isNaN(expectedZValue))
-                    {
+                    {// FIXME looks wrong / PK
                         assertFalse("Z value should not be NaN", Double.isNaN(z));
                     }
                 }

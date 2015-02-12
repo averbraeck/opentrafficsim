@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.following;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
@@ -10,7 +9,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
@@ -80,30 +78,14 @@ public class FixedAccelerationModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final Collection<? extends LaneBasedGTU<?>> leaders, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+            final DoubleScalar.Rel<LengthUnit> headway, DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException, NetworkException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final LaneBasedGTU<?> leader,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
-    {
-        return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
-    {
-        return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
-    }
-
-    /** {@inheritDoc} */
+     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
     {

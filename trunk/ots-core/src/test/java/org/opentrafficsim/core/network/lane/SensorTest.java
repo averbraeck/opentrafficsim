@@ -122,8 +122,8 @@ public class SensorTest
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0.5,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND));
         // Now we can make a GTU (and we don't even have to hold a pointer to it)
-        new LaneBasedIndividualCar<String>(carID, gtuType, fas, initialLongitudinalPositions, initialSpeed, carLength,
-                carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
+                carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         // Construction of the car scheduled a car move event at t=0
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();

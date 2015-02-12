@@ -1,14 +1,14 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
+import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * The altruistic driver changes lane when that is beneficial for all drivers.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 5 nov. 2014 <br>
@@ -19,18 +19,12 @@ public class Altruistic extends AbstractLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(
-        final DoubleVector.Abs.Dense<AccelerationUnit> accelerations)
+    public final DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final AccelerationStep[] accelerationSteps)
     {
-        try
-        {
-            return new DoubleScalar.Abs<AccelerationUnit>(accelerations.getInUnit(0) + accelerations.getInUnit(1),
-                accelerations.getUnit());
-        }
-        catch (ValueException exception)
-        {
-            throw new Error("Cannot happen");
-        }
+        // The result gets the unit of the acceleration of element 0 of accelerationSteps.
+        AccelerationUnit unit = accelerationSteps[0].getAcceleration().getUnit();
+        return new DoubleScalar.Abs<AccelerationUnit>(accelerationSteps[0].getAcceleration().getInUnit()
+                + accelerationSteps[1].getAcceleration().getInUnit(unit), unit);
     }
 
 }

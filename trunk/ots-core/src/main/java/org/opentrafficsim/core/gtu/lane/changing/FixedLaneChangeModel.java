@@ -3,6 +3,8 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.opentrafficsim.core.gtu.following.FollowAcceleration;
+import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -38,8 +40,8 @@ public class FixedLaneChangeModel implements LaneChangeModel
     /** {@inheritDoc} */
     @Override
     public LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU<?> gtu,
-            Collection<LaneBasedGTU<?>> sameLaneTraffic, Collection<LaneBasedGTU<?>> rightLaneTraffic,
-            Collection<LaneBasedGTU<?>> leftLaneTraffic, Abs<SpeedUnit> speedLimit,
+            Collection<HeadwayGTU> sameLaneTraffic, Collection<HeadwayGTU> rightLaneTraffic,
+            Collection<HeadwayGTU> leftLaneTraffic, Abs<SpeedUnit> speedLimit,
             Rel<AccelerationUnit> preferredLaneRouteIncentive, Rel<AccelerationUnit> laneChangeThreshold,
             Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
@@ -47,18 +49,17 @@ public class FixedLaneChangeModel implements LaneChangeModel
         {
             if (null == this.laneChange)
             {
-                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneTraffic,
-                        speedLimit), null);
+                return new LaneMovementStep(FollowAcceleration.acceleration(gtu, sameLaneTraffic, speedLimit)[0], null);
             }
             else if (LateralDirectionality.LEFT == this.laneChange)
             {
-                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, leftLaneTraffic,
-                        speedLimit), this.laneChange);
+                return new LaneMovementStep(FollowAcceleration.acceleration(gtu, leftLaneTraffic, speedLimit)[0],
+                        this.laneChange);
             }
             else if (LateralDirectionality.RIGHT == this.laneChange)
             {
-                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, rightLaneTraffic,
-                        speedLimit), this.laneChange);
+                return new LaneMovementStep(FollowAcceleration.acceleration(gtu, rightLaneTraffic, speedLimit)[0],
+                        this.laneChange);
             }
             throw new Error("Program Error - unhandled LateralDirectionality");
         }
