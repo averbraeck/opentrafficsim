@@ -1,6 +1,7 @@
 package org.opentrafficsim.importexport.osm.output;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,16 @@ public final class Convert
      */
     public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.Node node)
     {
-        Coordinate coord = new Coordinate(node.getLongitude(), node.getLatitude());
+        Coordinate coord;
+        try
+        {
+            coord = new Coordinate(org.opentrafficsim.importexport.osm.Network.localCoordinate(
+                    node.getLongitude(), node.getLatitude(), Double.parseDouble(node.getTag("ele").getValue())));
+        }
+        catch (IOException e)
+        {
+            coord = new Coordinate(node.getLongitude(), node.getLatitude());
+        }
         NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
         return n2;
     }
@@ -116,6 +126,7 @@ public final class Convert
      * Tags provided by OSM. The standard lane width of 3.05 is an estimation based on the Wuropean width limitation for
      * vehicles (2.55m) + 25cm each side.
      * @param osmlink Link; the OSM link to make lanes for
+     * @param simulator 
      * @return Lanes
      * @throws NetworkException 
      * @throws NamingException 
