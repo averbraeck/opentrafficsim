@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.car;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
@@ -59,10 +60,17 @@ class DefaultCarAnimation extends Renderable2D
         final double length = car.getLength().getSI();
         final double width = car.getWidth().getSI();
         graphics.setColor(this.color);
-        graphics.draw(new Rectangle2D.Double(-length / 2, -width / 2, length, width));
+        BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
+        graphics.setStroke(new BasicStroke(0));
+        Rectangle2D rectangle = new Rectangle2D.Double(-length / 2, -width / 2, length, width);
+        graphics.draw(rectangle);
+        graphics.fill(rectangle);
         // Draw a 1m diameter white disk about 1m before the front to indicate which side faces forward
         graphics.setColor(Color.WHITE);
-        graphics.draw(new Ellipse2D.Double(length / 2 - 1.5d, -0.5d, 1d, 1d));
+        Ellipse2D.Double frontIndicator = new Ellipse2D.Double(length / 2 - 1.5d, -0.5d, 1d, 1d);
+        graphics.draw(frontIndicator);
+        graphics.fill(frontIndicator);
+        graphics.setStroke(saveStroke);
     }
 
     /** {@inheritDoc} */

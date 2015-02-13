@@ -45,7 +45,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // System.out.println(String.format(
             // "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
             // preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
-            if (gtu.getId().toString().equals("14"))
+            if (gtu.getId().toString().equals("29"))
             {
                 System.out.println("LaneMovementStep for " + gtu);
             }
@@ -61,16 +61,33 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             AccelerationStep[] straightAccelerationSteps =
                     FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit);
+            if (straightAccelerationSteps[0].getAcceleration().getSI() < -9999)
+            {
+                System.out.println("Problem");
+                FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit);
+            }
             DoubleScalar.Abs<AccelerationUnit> straightA =
                     DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold)
                             .immutable();
             AccelerationStep[] nonPreferrredAccelerationSteps =
                     null == nonPreferredLane ? null : FollowAcceleration.acceleration(gtu, nonPreferredLaneGTUs,
                             speedLimit);
+            if (null != nonPreferrredAccelerationSteps
+                    && nonPreferrredAccelerationSteps[1].getAcceleration().getSI() < -gtu.getGTUFollowingModel()
+                            .maximumSafeDeceleration().getSI())
+            {
+                nonPreferrredAccelerationSteps = FollowAcceleration.TOODANGEROUS;
+            }
             DoubleScalar.Abs<AccelerationUnit> nonPreferredA =
                     null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
             AccelerationStep[] preferredAccelerationSteps =
                     null == preferredLane ? null : FollowAcceleration.acceleration(gtu, preferredLaneGTUs, speedLimit);
+            if (null != preferredAccelerationSteps
+                    && preferredAccelerationSteps[1].getAcceleration().getSI() < -gtu.getGTUFollowingModel()
+                            .maximumSafeDeceleration().getSI())
+            {
+                preferredAccelerationSteps = FollowAcceleration.TOODANGEROUS;
+            }
             DoubleScalar.Abs<AccelerationUnit> preferredA =
                     null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)

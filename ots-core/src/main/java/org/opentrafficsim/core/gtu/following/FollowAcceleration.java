@@ -30,7 +30,7 @@ public final class FollowAcceleration
             new DoubleScalar.Abs<TimeUnit>(Double.NaN, TimeUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
-    private final static AccelerationStep[] TOODANGEROUS = new AccelerationStep[]{PROHIBITIVEACCELERATIONSTEP,
+    public final static AccelerationStep[] TOODANGEROUS = new AccelerationStep[]{PROHIBITIVEACCELERATIONSTEP,
             PROHIBITIVEACCELERATIONSTEP};
 
     /**
@@ -120,12 +120,13 @@ public final class FollowAcceleration
         }
         AccelerationStep followerAccelerationStep = null;
         AccelerationStep referenceGTUAccelerationStep = null;
+        GTUFollowingModel gfm = referenceGTU.getGTUFollowingModel();
         // Find the leader and the follower that cause/experience the least positive (most negative) acceleration.
         for (HeadwayGTU headwayGTU : otherGTUs)
         {
             if (null == headwayGTU.getOtherGTU())
             {
-                System.out.println("WTF");
+                System.out.println("FollowAcceleration.acceleration: Cannot happen");
             }
             if (headwayGTU.getOtherGTU() == referenceGTU)
             {
@@ -135,13 +136,16 @@ public final class FollowAcceleration
             {
                 // This one is behind
                 AccelerationStep as =
-                        referenceGTU.getGTUFollowingModel().computeAcceleration(headwayGTU.getOtherGTU(),
-                                referenceGTU.getLongitudinalVelocity(when),
+                        gfm.computeAcceleration(headwayGTU.getOtherGTU(), referenceGTU.getLongitudinalVelocity(when),
                                 new DoubleScalar.Rel<LengthUnit>(-headwayGTU.getDistanceSI(), LengthUnit.SI),
                                 speedLimit);
                 if (null == followerAccelerationStep
                         || as.getAcceleration().getSI() < followerAccelerationStep.getAcceleration().getSI())
                 {
+                    //if (as.getAcceleration().getSI() < -gfm.maximumSafeDeceleration().getSI())
+                    //{
+                    //    return TOODANGEROUS;
+                    //}
                     followerAccelerationStep = as;
                 }
             }
@@ -149,9 +153,8 @@ public final class FollowAcceleration
             {
                 // This one is ahead
                 AccelerationStep as =
-                        referenceGTU.getGTUFollowingModel().computeAcceleration(referenceGTU,
-                                headwayGTU.getOtherGTU().getLongitudinalVelocity(when), headwayGTU.getDistance(),
-                                speedLimit);
+                        gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getLongitudinalVelocity(when),
+                                headwayGTU.getDistance(), speedLimit);
                 if (null == referenceGTUAccelerationStep
                         || (as.getAcceleration().getSI() < referenceGTUAccelerationStep.getAcceleration().getSI()))
                 {
@@ -163,20 +166,17 @@ public final class FollowAcceleration
         {
             followerAccelerationStep =
                     new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI), DoubleScalar
-                            .plus(referenceGTU.getSimulator().getSimulatorTime().get(),
-                                    referenceGTU.getGTUFollowingModel().getStepSize()).immutable());
+                            .plus(referenceGTU.getSimulator().getSimulatorTime().get(), gfm.getStepSize()).immutable());
         }
         if (null == referenceGTUAccelerationStep)
         {
             referenceGTUAccelerationStep =
-                    referenceGTU.getGTUFollowingModel().computeAcceleration(
+                    gfm.computeAcceleration(
                             referenceGTU,
                             referenceGTU.getLongitudinalVelocity(when),
                             Calc.speedSquaredDividedByDoubleAcceleration(referenceGTU.getMaximumVelocity(),
-                                    referenceGTU.getGTUFollowingModel().maximumSafeDeceleration()), speedLimit);
+                                    gfm.maximumSafeDeceleration()), speedLimit);
         }
-        System.out.println("FollowAcceleration reference: " + referenceGTU + " otherGTUs: "+otherGTUs);
-        System.out.println("result: [" + referenceGTUAccelerationStep + ", " + followerAccelerationStep + "]");
         return new AccelerationStep[]{referenceGTUAccelerationStep, followerAccelerationStep};
     }
 

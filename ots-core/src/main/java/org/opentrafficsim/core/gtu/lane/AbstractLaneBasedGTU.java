@@ -239,6 +239,18 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private void setState(final AccelerationStep cfmr) throws RemoteException, NetworkException, SimRuntimeException
     {
+        if (getId().toString().equals("79"))
+        {
+            System.out.println("setState: " + this + " cfmr: " + cfmr);
+            if (cfmr.getValidUntil().getSI() > 141.9)
+            {
+                System.out.println("Debug me; the current time is " + getSimulator().getSimulatorTime().get());
+            }
+        }
+        if (cfmr.getAcceleration().getSI() < -9999)
+        {
+            System.out.println("Problem");
+        }
         // GTUs move based on their fractional position to stay aligned when registered in parallel lanes.
         // The "oldest" lane of parallel lanes takes preference when updating the fractional position.
         // So we work from back to front.
@@ -263,6 +275,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             Lane lane = lanesToCheck.remove(0);
             double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
             // TODO speed this up by using SI units, caching, etc.
+            if (getId().toString().equals("29"))
+            {
+                DoubleScalar.Rel<LengthUnit> frontAtNextEval = position(lane, getFront(), this.nextEvaluationTime);
+                double fractionalFrontAtNextEval = lane.fraction(frontAtNextEval);
+                System.out.println("frontPosNow     " + position(lane, getFront(), this.lastEvaluationTime) + " lane "
+                        + lane + " length " + lane.getLength());
+                System.out.println("frontAtNextEval " + frontAtNextEval + ", fractionalFrontAtNextEval: "
+                        + fractionalFrontAtNextEval);
+            }
             if (lane.fractionSI(frontPosSI) <= 1.0
                     && lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0)
             {
@@ -284,21 +305,16 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 }
             }
         }
-
         // Execute all samplers
         for (Lane lane : this.lanes)
         {
             lane.sample(this);
         }
 
-        // Schedule all sensor triggers that are going to happen until the next evaluation time.
-        for (Lane lane : this.lanes)
+        if (getId().toString().equals("79"))
         {
-            double dt = this.nextEvaluationTime.getSI() - this.getLastEvaluationTime().getSI();
-            double moveSI = this.speed.getSI() * dt + 0.5 * getAcceleration().getSI() * dt * dt;
-            lane.scheduleTriggers(this, lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink())), moveSI);
+            System.out.println("setState: " + this + " done.");
         }
-        getSimulator().scheduleEventAbs(cfmr.getValidUntil(), this, this, "move", null);
         // System.out.println("setState: " + cfmr + " " + this + " next evaluation is " + cfmr.getValidUntil());
     }
 
@@ -310,6 +326,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
+        if (getId().toString().equals("79") && getSimulator().getSimulatorTime().get().getSI() > 539.4)
+        {
+            System.out.println("Debug me: " + this);
+        }
         // Sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -354,9 +374,21 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
                                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
                                     AccelerationUnit.METER_PER_SECOND_2));
+            // First move this GTU forward (to its current location)
+            if (lcmr.getGfmr().getAcceleration().getSI() < -9999)
+            {
+                System.out.println("problem...");
+                this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
+                        leftLaneTraffic, speedLimit, new DoubleScalar.Rel<AccelerationUnit>(0.3,
+                                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
+                                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
+                                AccelerationUnit.METER_PER_SECOND_2));
+            }
+            setState(lcmr.getGfmr());
+            // Then change onto laterally adjacent lane(s) if the LaneMovementStep indicates a lane change
             if (lcmr.getLaneChange() != null)
             {
-               // System.out.println("Changing lane");
+                System.out.println("GTU " + this + " changing lane");
                 // TODO: make lane changes gradual (not instantaneous; like now)
                 Collection<Lane> oldLaneSet = new ArrayList<Lane>(this.lanes);
                 Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());
@@ -364,7 +396,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 Map<Lane, Double> oldFractionalPositions = new HashMap<Lane, Double>();
                 for (Lane l : this.lanes)
                 {
-                    /* !!! Must use the fractional positions at the last evaluation time !!! */
                     oldFractionalPositions.put(l, fractionalPosition(l, getReference(), getLastEvaluationTime()));
                     l.removeGTU(this);
                     // TODO: remove the triggers on Lane l
@@ -396,19 +427,28 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 this.lanes.clear();
                 this.lanes.addAll(replacementLanes);
             }
-            // Move this GTU forward
-            setState(lcmr.getGfmr());
-            return;
         }
-        // TODO the rest of this method should disappear; all GTUs should have a LaneChangeModel
-        HeadwayGTU leader = headway(maximumForwardHeadway);
-        AccelerationStep as =
-                null != leader ? getGTUFollowingModel().computeAcceleration(this,
-                        leader.getOtherGTU().getLateralVelocity(), leader.getDistance(), speedLimit)
-                        : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
-                                DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
-                                        getGTUFollowingModel().getStepSize()).immutable());
-        setState(as);
+        else
+        {
+            // TODO the rest of this method should disappear; all GTUs should have a LaneChangeModel
+            HeadwayGTU leader = headway(maximumForwardHeadway);
+            AccelerationStep as =
+                    null != leader ? getGTUFollowingModel().computeAcceleration(this,
+                            leader.getOtherGTU().getLateralVelocity(), leader.getDistance(), speedLimit)
+                            : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
+                                    DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
+                                            getGTUFollowingModel().getStepSize()).immutable());
+            setState(as);
+        }
+        // Schedule all sensor triggers that are going to happen until the next evaluation time.
+        for (Lane lane : this.lanes)
+        {
+            double dt = this.nextEvaluationTime.getSI() - this.getLastEvaluationTime().getSI();
+            double moveSI = this.speed.getSI() * dt + 0.5 * getAcceleration().getSI() * dt * dt;
+            lane.scheduleTriggers(this, lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink())), moveSI);
+        }
+        getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
+
     }
 
     /**
@@ -524,6 +564,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                                         .immutable(),
                                 Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable(),
                         relativePosition.getDx()).immutable();
+        if (Double.isNaN(loc.getSI()))
+        {
+            System.out.println("loc is NaN");
+        }
         return loc;
     }
 
@@ -1049,24 +1093,48 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             if (this.lanes.size() == 0)
             {
-                System.out.println("GTU " + this.getId() + " is not on any lane");
+                if (getSimulator().isRunning())
+                {
+                    getSimulator().stop();
+                    System.out.println("GTU " + this.getId() + " is not on any lane");
+                }
                 // This happens temporarily when a GTU is moved to another Lane
                 return new DirectedPoint(Double.MAX_VALUE, Double.MAX_VALUE, 0);
             }
             Lane lane = this.lanes.get(0);
             // TODO solve problem when point is still on previous lane.
-            double fraction =
-                    (position(lane, getFront()).getSI() - getLength().getSI() / 2.0) / lane.getLength().getSI();
+            DoubleScalar.Rel<LengthUnit> longitudinalPos = position(lane, getReference());
+            double fraction = (longitudinalPos.getSI() + getLength().getSI() / 2.0) / lane.getLength().getSI();
             LineString line = lane.getCenterLine();
             LengthIndexedLine lil = new LengthIndexedLine(line);
-            Coordinate c = lil.extractPoint(fraction * line.getLength());
-            // HACK (FIXME)
+            // if (fraction > 1)
+            // {
+            // System.out.println("fraction is " + fraction);
+            // }
+            double useFraction = fraction;
+            if (fraction < 0)
+            {
+                useFraction = 0;
+            }
+            if (fraction > 0.99)
+            {
+                useFraction = 0.99;
+            }
+            Coordinate c = lil.extractPoint(useFraction * line.getLength());
             c.z = 0d;
-            Coordinate ca =
-                    fraction <= 0.01 ? lil.extractPoint(0.0) : lil.extractPoint((fraction - 0.01) * line.getLength());
-            Coordinate cb =
-                    fraction >= 0.99 ? lil.extractPoint(1.0) : lil.extractPoint((fraction + 0.01) * line.getLength());
-            double angle = Math.atan2(cb.y - ca.y, cb.x - ca.x);
+            Coordinate cb = lil.extractPoint((useFraction + 0.01) * line.getLength());
+            double angle = Math.atan2(cb.y - c.y, cb.x - c.x);
+            if (fraction != useFraction)
+            {
+                // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
+                c =
+                        new Coordinate(c.x + (fraction - useFraction) * 100 * (cb.x - c.x), c.y
+                                + (fraction - useFraction) * 100 * (cb.y - c.y), c.z);
+            }
+            if (Double.isNaN(c.x))
+            {
+                System.out.println("Bad");
+            }
             return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0,
                     angle);
         }
