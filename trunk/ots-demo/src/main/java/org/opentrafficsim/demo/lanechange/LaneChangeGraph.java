@@ -236,10 +236,10 @@ public class LaneChangeGraph extends JFrame
                 1d);
 
         LaneBasedIndividualCar<String> referenceCar =
-            new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, this.carFollowingModel, initialLongitudinalPositions, referenceSpeed,
-                new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                    SpeedUnit.KM_PER_HOUR), fakeSimulator);
+            new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, this.carFollowingModel, laneChangeModel, initialLongitudinalPositions,
+                referenceSpeed,
+                new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
+                        SpeedUnit.KM_PER_HOUR), fakeSimulator);
         Collection<AbstractLaneBasedGTU<?>> sameLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
         sameLaneGTUs.add(referenceCar);
         final DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
@@ -311,11 +311,11 @@ public class LaneChangeGraph extends JFrame
             new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(otherCarLane, otherCarPosition);
         LaneBasedIndividualCar<String> otherCar =
-            new LaneBasedIndividualCar<String>("otherCar", referenceCar.getGTUType(), this.carFollowingModel, initialLongitudinalPositions,
+            new LaneBasedIndividualCar<String>("otherCar", referenceCar.getGTUType(), this.carFollowingModel, laneChangeModel,
+                initialLongitudinalPositions,
                 DoubleScalar.plus(referenceCar.getLongitudinalVelocity(), deltaV).immutable(),
-                new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                    SpeedUnit.KM_PER_HOUR), referenceCar.getSimulator());
+                new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
+                        SpeedUnit.KM_PER_HOUR), referenceCar.getSimulator());
         Collection<AbstractLaneBasedGTU<?>> preferredLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
         Collection<AbstractLaneBasedGTU<?>> nonPreferredLaneGTUs = new HashSet<AbstractLaneBasedGTU<?>>();
         if (mergeRight)
