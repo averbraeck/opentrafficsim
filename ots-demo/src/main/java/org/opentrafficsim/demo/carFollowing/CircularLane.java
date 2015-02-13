@@ -569,9 +569,9 @@ class LaneSimulationModel implements OTSModelInterface
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
-                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, initialPositions, initialSpeed,
-                    vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
-                    new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.simulator);
+                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, laneChangeModel, initialPositions,
+                    initialSpeed, vehicleLength,
+                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.simulator);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {
