@@ -143,4 +143,21 @@ public class Node
     {
         return String.format("Node %d %.6f %.6f", getID(), getLongitude(), getLatitude());
     }
+    
+    /**
+     * @param key 
+     * @return boolean
+     */
+    public final boolean contains(final String key)
+    {
+        boolean found = false;
+        for (Tag t: this.nodetags)
+        {
+            if (t.getKey().equals(key))
+            {
+                found = true;
+            }
+        }
+        return found;
+    }
 }
