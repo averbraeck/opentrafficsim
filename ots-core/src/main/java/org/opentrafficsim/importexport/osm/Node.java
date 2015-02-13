@@ -107,7 +107,7 @@ public class Node
         {
             for (Tag t: this.nodetags)
             {
-                if (t.getKey() == tagKey)
+                if (t.getKey().equals(tagKey))
                 {
                     return t;
                 }

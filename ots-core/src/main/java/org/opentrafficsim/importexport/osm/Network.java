@@ -419,7 +419,7 @@ public class Network
      * @param height double; elevation in meters
      * @return Coordinate
      */
-    public final Coordinate localCoordinate(final double longitude, final double latitude, final double height)
+    public final static Coordinate localCoordinate(final double longitude, final double latitude, final double height)
     {
         /* WGS84 local constants */
         final double a = 6378137; /* semi major axis */
