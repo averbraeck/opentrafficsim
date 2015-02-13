@@ -160,7 +160,7 @@ public final class Convert
             Coordinate coord = new Coordinate(spline.getLongitude(), spline.getLatitude());
             iC.add(coord);
         }
-        Coordinate[] intermediateCoordinates = (Coordinate[]) iC.toArray();
+        //Coordinate[] intermediateCoordinates = (Coordinate[]) iC.toArray();
 
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /* estimation */
         for (org.opentrafficsim.importexport.osm.Tag t : osmlink.getTags())
