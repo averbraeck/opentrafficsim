@@ -108,17 +108,31 @@ public final class Convert
     public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.Node node)
     {
         Coordinate coord;
-        try
+        if (node.contains("ele"))
         {
-            coord = new Coordinate(org.opentrafficsim.importexport.osm.Network.localCoordinate(
-                    node.getLongitude(), node.getLatitude(), Double.parseDouble(node.getTag("ele").getValue())));
+            try
+            {
+                coord = new Coordinate(org.opentrafficsim.importexport.osm.Network.localCoordinate(
+                        node.getLongitude(), node.getLatitude(), Double.parseDouble(node.getTag("ele").getValue())));
+                NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
+                return n2;
+            }
+            catch (NumberFormatException exception)
+            {
+                exception.printStackTrace();
+            }
+            catch (IOException exception)
+            {
+                exception.printStackTrace();
+            }
         }
-        catch (IOException e)
+        else
         {
             coord = new Coordinate(node.getLongitude(), node.getLatitude());
+            NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
+            return n2;
         }
-        NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
-        return n2;
+        return null;
     }
 
     /**

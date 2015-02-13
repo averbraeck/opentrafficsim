@@ -408,7 +408,7 @@ public class Network
         // }
         this.links.removeAll(removedLinks);
         this.links.addAll(checkedLinks);
-        System.out.println("there are now " + this.links.size() + " links");
+        //System.out.println("there are now " + this.links.size() + " links");
         return redundancy;
     }
 
