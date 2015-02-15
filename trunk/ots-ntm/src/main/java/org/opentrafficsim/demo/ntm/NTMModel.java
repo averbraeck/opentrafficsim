@@ -131,6 +131,9 @@ public class NTMModel implements OTSModelInterface
     /** debugging. */
     public boolean WRITEDATA = false;
 
+    /** debugging. */
+    public boolean paint = false;
+
     /** use the bigger areas (true) or the detailed areas (false). */
     public boolean COMPRESS_AREAS = false;
 
@@ -193,7 +196,7 @@ public class NTMModel implements OTSModelInterface
             {
                 /** use the bigger areas (true) or the detailed areas (false). */
                 this.WRITEDATA = true;
-                this.COMPRESS_AREAS = false;
+                this.COMPRESS_AREAS = true;
                 path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
                 // Read the shape files with the function:
                 // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
@@ -208,7 +211,7 @@ public class NTMModel implements OTSModelInterface
                 this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
-                fileDemand = "/cordonmatrix_pa_os-A12.txt";
+                fileDemand = "/cordonmatrix_pa_os.txt";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
                 fileProfiles = "profiles.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
@@ -221,17 +224,17 @@ public class NTMModel implements OTSModelInterface
                 }
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
-                numberOfRoutes = 1;
+                numberOfRoutes = 6;
                 weightNewRoutes = 0.6;
                 varianceRoutes = 5.0f;
-                // reRoute = true;
+                reRoute = true;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 // Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
                 maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(3500, FrequencyUnit.PER_HOUR);
-                int variant = 1;
+                int variant = 2;
                 this.output = "/output" + variant;
-
+                paint = false;
             }
 
             else if (debugFiles == 3)
@@ -542,6 +545,11 @@ public class NTMModel implements OTSModelInterface
                     BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
                     if (!borderCapacityAreasMap.isEmpty())
                     {
+                        if (borderCapacityAreasMap.get(origin.getId()) == null)
+                        {
+                            System.out.println("NT");
+                        }                    
+
                         borderCapacity.put(graphEndNode,
                                 borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()));
                     }
@@ -665,7 +673,10 @@ public class NTMModel implements OTSModelInterface
         // in case we run on an animator and not on a simulator, we create the animation
         if (this.simulator instanceof OTSAnimatorInterface)
         {
-            createDynamicAreaAnimation();
+            if (paint == true)
+            {
+                createDynamicAreaAnimation();
+            }
         }
         try
         {
@@ -688,11 +699,11 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
+            boolean showLinks = false;
             boolean showFlowLinks = true;
             boolean showConnectors = true;
-            boolean showNodes = true;
-            boolean showGraphEdges = true;
+            boolean showNodes = false;
+            boolean showGraphEdges = false;
             boolean showAreaNode = true;
             boolean showArea = false;
 
@@ -776,7 +787,7 @@ public class NTMModel implements OTSModelInterface
 
             if (showArea)
             {
-                for (Area area : this.areas.values())
+                for (Area area : this.bigAreas.values())
                 {
                     new AreaAnimation(area, this.simulator, 4f);
                 }
