@@ -411,29 +411,4 @@ public class Network
         //System.out.println("there are now " + this.links.size() + " links");
         return redundancy;
     }
-
-    /**
-     * This method transforms Longitudinal/Latitudinal coordinates to ECEF coordinates. WGS84 as source is assumed.
-     * @param longitude double; longitude in radians
-     * @param latitude double; latitude in radians
-     * @param height double; elevation in meters
-     * @return Coordinate
-     */
-    public final static Coordinate localCoordinate(final double longitude, final double latitude, final double height)
-    {
-        /* WGS84 local constants */
-        final double a = 6378137; /* semi major axis */
-        final double e = 8.1819190842622 * Math.exp(-2); /* first numerical eccentricity */
-
-        /* Intermediate calculation of the prime vertical radius of curvature */
-        final double n = a / (Math.sqrt(1 - Math.pow(e, 2) * Math.pow(Math.sin(latitude), 2)));
-
-        /* Calculation of ECEF coordinates */
-        final double x = (n + height) * Math.cos(latitude) * Math.cos(longitude);
-        final double y = (n + height) * Math.cos(latitude) * Math.sin(longitude);
-        final double z = (1 - Math.pow(e, 2) * n + height) * Math.sin(latitude);
-
-        Coordinate coord = new Coordinate(x, y, z);
-        return coord;
-    }
 }

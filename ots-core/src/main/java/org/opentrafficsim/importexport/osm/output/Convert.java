@@ -9,6 +9,14 @@ import java.util.Objects;
 
 import javax.naming.NamingException;
 
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeocentricCRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -45,6 +53,38 @@ public final class Convert
     {
         // Cannot be instantiated.
     }
+    
+    /**
+     * @param c WGS84 Coordinate
+     * @return Geocentric Cartesian Coordinate
+     * @throws FactoryException 
+     * @throws TransformException 
+     */
+    public static Coordinate transform(final Coordinate c) throws FactoryException, TransformException
+    {
+        final CoordinateReferenceSystem wgs84 = DefaultGeographicCRS.WGS84;
+        final CoordinateReferenceSystem cartesianCRS = DefaultGeocentricCRS.CARTESIAN;
+        final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        final MathTransform mathTransform; 
+        try
+        {
+            mathTransform = CRS.findMathTransform(wgs84, cartesianCRS, false);
+            double[] srcPt = {c.x, c.y};
+            double[] dstPt = new double[mathTransform.getTargetDimensions()];
+
+            mathTransform.transform(srcPt, 0, dstPt, 0, 1);
+            Coordinate c2 = new Coordinate(dstPt[0], dstPt[1]);
+            return c2;
+        }
+        catch (FactoryException e)
+        {
+            throw new FactoryException(e);
+        }
+        catch (TransformException exception)
+        {
+            throw new TransformException(exception.getMessage());
+        }
+    } 
 
     /**
      * This method converts an OSM link to an OTS link.
@@ -58,9 +98,23 @@ public final class Convert
         CrossSectionLink l2;
         if (link.getSplineList().isEmpty())
         {
+            GeometryFactory factory = new GeometryFactory();
+            Coordinate[] coordinates = new Coordinate[2];
+            coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
+            coordinates[1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
+            LineString lineString = factory.createLineString(coordinates);
             l2 =
-                    new CrossSectionLink(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(link.getLength(),
-                            LengthUnit.METER));
+                    new CrossSectionLink(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(
+                            lineString.getLength(), LengthUnit.METER));
+            try
+            {
+                new LinearGeometry(l2, lineString, null);
+            }
+            catch (NetworkException exception)
+            {
+                throw new Error("Network exception in LinearGeometry");
+            }
+            
         }
         else
         {
@@ -86,8 +140,8 @@ public final class Convert
             GeometryFactory factory = new GeometryFactory();
             LineString lineString = factory.createLineString(coordinates);
             l2 =
-                    new CrossSectionLink(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(lineString.getLength(),
-                            LengthUnit.METER));
+                    new CrossSectionLink(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(
+                    lineString.getLength(), LengthUnit.METER));
             try
             {
                 new LinearGeometry(l2, lineString, null);
@@ -107,15 +161,28 @@ public final class Convert
      */
     public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.Node node)
     {
-        Coordinate coord;
+        Coordinate coordWGS84;
+        Coordinate coordGCC;
         if (node.contains("ele"))
         {
             try
             {
-                coord = new Coordinate(org.opentrafficsim.importexport.osm.Network.localCoordinate(
-                        node.getLongitude(), node.getLatitude(), Double.parseDouble(node.getTag("ele").getValue())));
-                NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
-                return n2;
+                coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 
+                        Double.parseDouble(node.getTag("ele").getValue()));
+                try
+                {
+                    coordGCC = Convert.transform(coordWGS84);
+                    NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coordGCC);
+                    return n2;
+                }
+                catch (FactoryException exception)
+                {
+                    exception.printStackTrace();
+                }
+                catch (TransformException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
             catch (NumberFormatException exception)
             {
@@ -128,9 +195,21 @@ public final class Convert
         }
         else
         {
-            coord = new Coordinate(node.getLongitude(), node.getLatitude());
-            NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coord);
-            return n2;
+            coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0D);
+            try
+            {
+                coordGCC = Convert.transform(coordWGS84);
+                NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coordGCC);
+                return n2;
+            }
+            catch (FactoryException exception)
+            {
+                exception.printStackTrace();
+            }
+            catch (TransformException exception)
+            {
+                exception.printStackTrace();
+            }
         }
         return null;
     }
@@ -242,7 +321,8 @@ public final class Convert
                     new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
             result =
                     new Lane(otslink, latPos, latPos,
-                            new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
+                            new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), 
+                            new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
                             lt, LongitudinalDirectionality.FORWARD, f2000);
             lanes.add(result);
         }
