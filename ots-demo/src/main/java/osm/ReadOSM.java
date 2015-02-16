@@ -5,9 +5,18 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.importexport.osm.Network;
 import org.opentrafficsim.importexport.osm.Tag;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
+import org.opentrafficsim.importexport.osm.output.Convert;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
  * Import an OpenStreetMap file.
@@ -21,7 +30,8 @@ import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 public class ReadOSM
 {
     /** */
-    private static String loc = "duesseldorf_germany.osm.bz2";
+    private static String loc = "file:///home/moe/Documents/TUD/A3.osm.bz2";
+    //private static String loc = "duesseldorf_germany.osm.bz2";
     //private static String loc = "Mettmann.osm";
     //private static String loc = "TUD.osm";// "amsterdam_netherlands.osm.bz2";// "munich.osm.bz2";
 
@@ -96,20 +106,52 @@ public class ReadOSM
         {
             System.out.println("Parsing " + loc);
             String prefix = "file:///D:/";
-            ReadOSMFile osmf = new ReadOSMFile(prefix + loc, wt, ft);
+            ReadOSMFile osmf = new ReadOSMFile(/*prefix +*/ loc, wt, ft);
             while (!osmf.checkisReaderThreadDead())
             {
                 System.out.println("Processing");
             }
             Network net = osmf.getNetwork();
-            System.out.println("Got Network. Start Conversion");
+            System.out.println("Got Network. Preparing Conversion");
             System.out.println("Making links");
             net.makeLinks();
             System.out.println("Made " + net.getLinks().size() + " links");
             System.out.println("Removing redundancies");
             net.removeRedundancy();
             System.out.println(net.getLinks().size() + " links after redudancy removal");
-            System.out.println("Not yet converting to OTS internal format - terminating");
+            System.out.println("Now converting to OTS internal format");
+            org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>> otsNet = 
+                    new org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>>(net.getName());
+            System.out.println("OTS Network named: " + otsNet.getId());
+            for (org.opentrafficsim.importexport.osm.Node osmNode: net.getNodes().values())
+            {
+                try
+                {
+                    otsNet.addNode(Convert.convertNode(osmNode));
+                }
+                catch (NetworkException ne)
+                {
+                    System.out.println(ne.getMessage());
+                }
+            }
+            System.out.println(otsNet.getNodeSet().size() + " OTS Nodes created");
+            for (org.opentrafficsim.importexport.osm.Link osmLink: net.getLinks())
+            {
+                otsNet.add(Convert.convertLink(osmLink));
+            }
+            System.out.println(otsNet.size() + " OTS Links created");
+            try
+            {
+                SimpleSimulator result =
+                        new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
+                                        TimeUnit.SECOND), null);
+            }
+            catch (SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+            System.out.println("Done. Terminating.");
             /*int countn = 0;
             for (Long n: net.getNodes().keySet())
             {
