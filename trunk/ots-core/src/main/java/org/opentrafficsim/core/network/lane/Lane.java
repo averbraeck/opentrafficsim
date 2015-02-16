@@ -318,8 +318,17 @@ public class Lane extends CrossSectionElement
             LaneBasedGTU<?> otherGTU = this.gtuList.get(index);
             if (gtu == otherGTU)
             {
+                System.err.println("GTU " + gtu + " already registered on Lane " + this + " [registered lanes: "
+                        + gtu.positions(gtu.getFront()).keySet() + "] locations: "
+                        + gtu.positions(gtu.getFront()).values() + " time: "
+                        + gtu.getSimulator().getSimulatorTime().get());
+                return index;
+                /*-
                 throw new NetworkException("GTU " + gtu + " already registered on Lane " + this
-                        + " [registered lanes: " + gtu.positions(gtu.getFront()).keySet() + "]");
+                        + " [registered lanes: " + gtu.positions(gtu.getFront()).keySet() + "] locations: "
+                        + gtu.positions(gtu.getFront()).values() + " time: "
+                        + gtu.getSimulator().getSimulatorTime().get());
+                */
             }
             try
             {
@@ -335,6 +344,7 @@ public class Lane extends CrossSectionElement
             }
         }
         this.gtuList.add(index, gtu);
+        //System.out.println("Added gtu " + gtu.getId() + " to lane " + this + " at index " + index);
         return index;
     }
 

@@ -239,14 +239,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private void setState(final AccelerationStep cfmr) throws RemoteException, NetworkException, SimRuntimeException
     {
-        if (getId().toString().equals("79"))
-        {
-            System.out.println("setState: " + this + " cfmr: " + cfmr);
-            if (cfmr.getValidUntil().getSI() > 141.9)
-            {
-                System.out.println("Debug me; the current time is " + getSimulator().getSimulatorTime().get());
-            }
-        }
+        /*
+         * if (getId().toString().equals("79")) { System.out.println("setState: " + this + " cfmr: " + cfmr); if
+         * (cfmr.getValidUntil().getSI() > 141.9) { System.out.println("Debug me; the current time is " +
+         * getSimulator().getSimulatorTime().get()); } }
+         */
         if (cfmr.getAcceleration().getSI() < -9999)
         {
             System.out.println("Problem");
@@ -275,15 +272,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             Lane lane = lanesToCheck.remove(0);
             double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
             // TODO speed this up by using SI units, caching, etc.
-            if (getId().toString().equals("29"))
-            {
-                DoubleScalar.Rel<LengthUnit> frontAtNextEval = position(lane, getFront(), this.nextEvaluationTime);
-                double fractionalFrontAtNextEval = lane.fraction(frontAtNextEval);
-                System.out.println("frontPosNow     " + position(lane, getFront(), this.lastEvaluationTime) + " lane "
-                        + lane + " length " + lane.getLength());
-                System.out.println("frontAtNextEval " + frontAtNextEval + ", fractionalFrontAtNextEval: "
-                        + fractionalFrontAtNextEval);
-            }
+            /*
+             * if (getId().toString().equals("29")) { DoubleScalar.Rel<LengthUnit> frontAtNextEval = position(lane,
+             * getFront(), this.nextEvaluationTime); double fractionalFrontAtNextEval = lane.fraction(frontAtNextEval);
+             * System.out.println("frontPosNow     " + position(lane, getFront(), this.lastEvaluationTime) + " lane " +
+             * lane + " length " + lane.getLength()); System.out.println("frontAtNextEval " + frontAtNextEval +
+             * ", fractionalFrontAtNextEval: " + fractionalFrontAtNextEval); }
+             */
             if (lane.fractionSI(frontPosSI) <= 1.0
                     && lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0)
             {
@@ -310,11 +305,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             lane.sample(this);
         }
-
-        if (getId().toString().equals("79"))
-        {
-            System.out.println("setState: " + this + " done.");
-        }
+        /*
+         * if (getId().toString().equals("79")) { System.out.println("setState: " + this + " done."); }
+         */
         // System.out.println("setState: " + cfmr + " " + this + " next evaluation is " + cfmr.getValidUntil());
     }
 
@@ -326,10 +319,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     protected final void move() throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
-        if (getId().toString().equals("79") && getSimulator().getSimulatorTime().get().getSI() > 539.4)
-        {
-            System.out.println("Debug me: " + this);
-        }
+        /*
+         * if (getId().toString().equals("79") && getSimulator().getSimulatorTime().get().getSI() > 539.4) {
+         * System.out.println("Debug me: " + this); }
+         */
         // Sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -388,7 +381,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // Then change onto laterally adjacent lane(s) if the LaneMovementStep indicates a lane change
             if (lcmr.getLaneChange() != null)
             {
-                System.out.println("GTU " + this + " changing lane");
+                // System.out.println("GTU " + this + " changing lane");
                 // TODO: make lane changes gradual (not instantaneous; like now)
                 Collection<Lane> oldLaneSet = new ArrayList<Lane>(this.lanes);
                 Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());
@@ -424,6 +417,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     replacementLanes.add(newLane);
                     addLane(newLane);
                 }
+                if (replacementLanes.size() == 0)
+                {
+                    System.out.println("Catastrophal lane change");
+                }
                 this.lanes.clear();
                 this.lanes.addAll(replacementLanes);
             }
@@ -440,6 +437,17 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                                             getGTUFollowingModel().getStepSize()).immutable());
             setState(as);
         }
+        /*-
+        if (getId().toString().equals("105"))
+        {
+            System.out.println("time is " + this.getSimulator().getSimulatorTime().get() + ": " + this);
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
+            for (Lane frontLane : frontPositions.keySet())
+            {
+                System.out.println("frontPosition in lane " + frontLane + " is " + frontPositions.get(frontLane));
+            }
+        }
+        */
         // Schedule all sensor triggers that are going to happen until the next evaluation time.
         for (Lane lane : this.lanes)
         {

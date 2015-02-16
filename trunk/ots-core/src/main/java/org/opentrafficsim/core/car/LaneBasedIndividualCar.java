@@ -190,7 +190,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         {
             Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
             Lane frontLane = frontPositions.keySet().iterator().next();
-            return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
+            return String.format("Car %s front: %s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
         catch (RemoteException | NetworkException exception)
         {
