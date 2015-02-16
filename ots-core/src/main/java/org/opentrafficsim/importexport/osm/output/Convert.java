@@ -70,7 +70,6 @@ public final class Convert
         {
             mathTransform = CRS.findMathTransform(wgs84, cartesianCRS, false);
             double[] srcPt = {c.x, c.y};
-            System.out.println(srcPt[0] + " " + srcPt[1]);
             double[] dstPt = new double[mathTransform.getTargetDimensions()];
 
             mathTransform.transform(srcPt, 0, dstPt, 0, 1);
