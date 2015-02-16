@@ -391,7 +391,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     oldFractionalPositions.put(l, fractionalPosition(l, getReference(), getLastEvaluationTime()));
                     l.removeGTU(this);
-                    // TODO: remove the triggers on Lane l
                 }
                 ArrayList<Lane> replacementLanes = new ArrayList<Lane>();
                 // Add this GTU to the lanes in newLaneSet
@@ -419,7 +418,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 }
                 if (replacementLanes.size() == 0)
                 {
-                    System.out.println("Catastrophal lane change");
+                    System.out.println("Catastrophal lane change (replacementLanes.size() == 0)");
                 }
                 this.lanes.clear();
                 this.lanes.addAll(replacementLanes);
@@ -1103,7 +1102,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             {
                 if (getSimulator().isRunning())
                 {
-                    getSimulator().stop();
+                    //getSimulator().stop();
                     System.out.println("GTU " + this.getId() + " is not on any lane");
                 }
                 // This happens temporarily when a GTU is moved to another Lane
