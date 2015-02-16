@@ -45,10 +45,12 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // System.out.println(String.format(
             // "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
             // preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
+            /*
             if (gtu.getId().toString().equals("29"))
             {
                 System.out.println("LaneMovementStep for " + gtu);
             }
+            */
             Map<Lane, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
