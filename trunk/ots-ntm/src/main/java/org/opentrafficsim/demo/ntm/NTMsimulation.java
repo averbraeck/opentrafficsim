@@ -225,8 +225,14 @@ public class NTMsimulation
                                     model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR)
                                             * tripByHourSupply;
                             cellBehaviourNTM.setSupply(tripByTimeStep);
-                            cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
+                            Abs<SpeedUnit> speed = cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
                                     cellBehaviourNTM.getArea().getRoadLength());
+                            if (speed == null)
+                            {
+                                speed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
+                            }
+                            origin.getArea().setCurrentSpeed(cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
+                                    cellBehaviourNTM.getArea().getRoadLength()));
                         }
 
                         // the border, or CORDON areas, act as sink/source for traffic

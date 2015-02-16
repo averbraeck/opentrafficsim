@@ -93,6 +93,9 @@ public class Area extends GeoObject implements LocatableInterface
     private DoubleScalar.Abs<SpeedUnit> averageSpeed;
     
     /** */
+    private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+    
+    /** */
     private DoubleScalar.Rel<LengthUnit> roadLength;
     
     /** polygon for drawing relative to centroid */
@@ -336,6 +339,22 @@ public class Area extends GeoObject implements LocatableInterface
     public void setAverageSpeed(DoubleScalar.Abs<SpeedUnit> averageSpeed)
     {
         this.averageSpeed = averageSpeed;
+    }
+
+    /**
+     * @return currentSpeed.
+     */
+    public DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    {
+        return currentSpeed;
+    }
+
+    /**
+     * @param currentSpeed set currentSpeed.
+     */
+    public void setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    {
+        this.currentSpeed = currentSpeed;
     }
 
 

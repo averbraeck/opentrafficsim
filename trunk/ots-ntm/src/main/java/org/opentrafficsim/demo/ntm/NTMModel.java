@@ -197,6 +197,7 @@ public class NTMModel implements OTSModelInterface
                 /** use the bigger areas (true) or the detailed areas (false). */
                 this.WRITEDATA = true;
                 this.COMPRESS_AREAS = true;
+                paint = true;
                 path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
                 // Read the shape files with the function:
                 // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
@@ -211,7 +212,8 @@ public class NTMModel implements OTSModelInterface
                 this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
-                fileDemand = "/cordonmatrix_pa_os.txt";
+                //fileDemand = "/cordonmatrix_pa_os.txt";
+                fileDemand = "/cordonmatrix_totaal_AS.csv";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
                 fileProfiles = "profiles.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
@@ -234,7 +236,6 @@ public class NTMModel implements OTSModelInterface
                 maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(3500, FrequencyUnit.PER_HOUR);
                 int variant = 2;
                 this.output = "/output" + variant;
-                paint = false;
             }
 
             else if (debugFiles == 3)
