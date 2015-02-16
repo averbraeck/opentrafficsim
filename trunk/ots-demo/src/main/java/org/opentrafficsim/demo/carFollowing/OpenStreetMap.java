@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
@@ -31,6 +32,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 import org.opentrafficsim.importexport.osm.output.Convert;
 import org.opentrafficsim.simulationengine.AbstractProperty;
+import org.opentrafficsim.simulationengine.ControlPanel;
 import org.opentrafficsim.simulationengine.IDMPropertySet;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.PropertyException;
@@ -90,6 +92,10 @@ public class OpenStreetMap implements WrappableSimulation
         wt.add(t11);
         org.opentrafficsim.importexport.osm.Tag t12 = new org.opentrafficsim.importexport.osm.Tag("highway", "bus_stop");
         wt.add(t12);
+        org.opentrafficsim.importexport.osm.Tag t13 = new org.opentrafficsim.importexport.osm.Tag("highway", "motorway_link");
+        wt.add(t13);
+        org.opentrafficsim.importexport.osm.Tag t14 = new org.opentrafficsim.importexport.osm.Tag("highway", "unclassified");
+        wt.add(t14);
         
         ArrayList<String> ft = new ArrayList<String>();
         try
@@ -97,7 +103,7 @@ public class OpenStreetMap implements WrappableSimulation
         ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3.osm.bz2", wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         net.makeLinks();
-        net.removeRedundancy();
+        //net.removeRedundancy();
         this.networkOSM = new org.opentrafficsim.importexport.osm.Network(net);
         this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.networkOSM.getName());
         for (org.opentrafficsim.importexport.osm.Node osmNode: this.networkOSM.getNodes().values())
@@ -200,6 +206,7 @@ public class OpenStreetMap implements WrappableSimulation
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, area);
+        new ControlPanel(result);
         return result;
     }
 
