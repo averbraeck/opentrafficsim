@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.demo.ntm.Area;
 
 /**
@@ -27,14 +28,18 @@ import org.opentrafficsim.demo.ntm.Area;
 public class AreaAnimation extends Renderable2D
 {
     private float width;
+    private int x;
+    private int y;
+
     private Color colorArea;
+
     private Color colorBorder;
 
     /**
      * @param source
      * @param simulator
-     * @param width 
-     * @param traffic 
+     * @param width
+     * @param traffic
      * @throws NamingException
      * @throws RemoteException
      */
@@ -43,28 +48,37 @@ public class AreaAnimation extends Renderable2D
     {
         super(source, simulator);
         this.width = width;
-        if (source.getAccumulatedCars() > 0)
+        this.x = (int) source.getGeometry().getInteriorPoint().getCoordinate().x;
+        this.y = (int) source.getGeometry().getInteriorPoint().getCoordinate().y;
+        // if (source.getAccumulatedCars() > 0)
+        if (source.getCurrentSpeed() != null)
         {
-            //this.colorArea = colorFor(normalize(0, 0.1, source.getAccumulatedCars()));
-            this.colorArea = Color.RED;    
+            if (source.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) > 0)
+            {
+                this.colorArea = colorFor(normalize(0, 100, source.getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)));
+                // this.colorArea = Color.RED;
+            }
         }
         else
         {
-            this.colorArea = Color.GREEN;    
+            this.colorArea = Color.GREEN;
         }
 
         //
-        float[] hsv = new float[3];
-//        Color.RGBtoHSB(r,g,b,hsv);
-        //Color.RGBtoHSB(130,0,0,hsv);
-        if (source.getRegio() == "Missing") {
+        // float[] hsv = new float[3];
+        // Color.RGBtoHSB(r,g,b,hsv);
+        // Color.RGBtoHSB(130,0,0,hsv);
+        if (source.getRegio() == "Missing")
+        {
             this.colorBorder = Color.ORANGE;
         }
-        else if (source.getRegio() == "cordonPoint") {
+        else if (source.getRegio() == "cordonPoint")
+        {
             this.colorBorder = Color.RED;
             this.width = 5;
         }
-        else {
+        else
+        {
             this.colorBorder = Color.BLACK;
         }
     }
@@ -82,19 +96,68 @@ public class AreaAnimation extends Renderable2D
             graphics.fill(polygon);
             graphics.setColor(this.colorBorder);
             graphics.draw(polygon);
+            graphics.drawString("Text", this.x, this.y);
             graphics.setStroke(oldStroke);
         }
     }
-    
-    private static Color colorFor(double value) {
+
+    private static Color colorFor(double value)
+    {
         value = Math.max(0, Math.min(1, value));
-        int red = (int)(value * 255);
-        return new Color(red,0,0);
+        // int red = (int) (value * 255);
+        Float red = (float) value;
+        Float green = (float) (1 - value);
+        Float blue = (float) 0.0;
+        Float[] color = RGBtoHSV(red, green, blue);
+        return Color.getHSBColor(color[0] / 360, color[1], color[2]);
+        // return new Color(red, green, black);
     }
-    
-    private static double normalize(double min, double max, double value) {
+
+    private static double normalize(double min, double max, double value)
+    {
         return (value - min) / (max - min);
     }
-    
 
+    /**
+     * @param red
+     * @param green
+     * @param blue
+     * @param h
+     * @param s
+     * @param v
+     * @return
+     */
+    public static Float[] RGBtoHSV(float red, float green, float blue)
+    {
+        Float[] color = new Float[3];
+        float min, max, delta, h, v, s;
+        min = Math.min(red, green);
+        min = Math.min(min, blue);
+        max = Math.max(red, green);
+        max = Math.max(max, blue);
+        v = max; // v
+        delta = max - min;
+        if (max != 0)
+            s = delta / max; // s
+        else
+        {
+            // r = g = b = 0 // s = 0, v is undefined
+            s = 0;
+            h = -1;
+        }
+        if (red == max)
+            h = (green - blue) / delta; // between yellow & magenta
+        else if (green == max)
+            h = 2 + (blue - red) / delta; // between cyan & yellow
+        else
+            h = 4 + (red - green) / delta; // between magenta & cyan
+        h *= 60; // degrees
+        if (h < 0)
+            h += 360;
+        color[0] = h;
+        color[1] = s;
+        color[2] = v;
+
+        return color;
+    }
 }
