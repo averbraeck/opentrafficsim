@@ -595,7 +595,7 @@ class RoadSimulationModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> vehicleLength =
                 new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
         new LaneBasedIndividualCar<>(++this.carsCreated, gtuType, generateTruck ? this.carFollowingModelTrucks
-                : this.carFollowingModelCars, laneChangeModel, initialPositions, initialSpeed,
+                : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed,
                 vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                                 SpeedUnit.KM_PER_HOUR), this.simulator);
     }
