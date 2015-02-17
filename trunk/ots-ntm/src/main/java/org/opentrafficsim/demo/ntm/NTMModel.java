@@ -184,7 +184,7 @@ public class NTMModel implements OTSModelInterface
             double varianceRoutes = 5.0f;
             boolean reRoute = false;
             // determine the files to read
-            int debugFiles = 0; // The Hague
+            int debugFiles = 4; // The Hague
             // int debugFiles = 4; // debug 4: fork
 
             // boundaries for flow links (all links with values above are selected)
@@ -197,7 +197,7 @@ public class NTMModel implements OTSModelInterface
                 /** use the bigger areas (true) or the detailed areas (false). */
                 this.WRITEDATA = true;
                 this.COMPRESS_AREAS = true;
-                paint = true;
+                paint = false;
                 path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
                 // Read the shape files with the function:
                 // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
@@ -212,7 +212,7 @@ public class NTMModel implements OTSModelInterface
                 this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
-                //fileDemand = "/cordonmatrix_pa_os.txt";
+                // fileDemand = "/cordonmatrix_pa_os.txt";
                 fileDemand = "/cordonmatrix_totaal_AS.csv";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
                 fileProfiles = "profiles.txt";
@@ -234,14 +234,15 @@ public class NTMModel implements OTSModelInterface
                 // Select all links as flow links!!
                 maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
                 maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(3500, FrequencyUnit.PER_HOUR);
-                int variant = 2;
+                int variant = 0;
                 this.output = "/output" + variant;
             }
 
             else if (debugFiles == 3)
             {
                 this.WRITEDATA = true;
-                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3";
+                this.paint = true;
+                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3x3Area";
                 this.centroids = ShapeFileReader.ReadNodes(path + "/qgistest_centroids.shp", "NODENR", true, true);
                 this.areas = ShapeFileReader.readAreas(path + "/qgistest_areas.shp", this.centroids);
                 this.nodes = ShapeFileReader.ReadNodes(path + "/qgistest_nodes.shp", "NODENR", false, false);
@@ -249,7 +250,6 @@ public class NTMModel implements OTSModelInterface
                         this.centroids, "meter");
                 ShapeFileReader.readLinks(path + "/qgistest_feederlinks.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "meter");
-                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
                 fileProfiles = "profiles.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
@@ -257,16 +257,16 @@ public class NTMModel implements OTSModelInterface
                 // read the time profile curves: these will be attached to the demands afterwards
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
-                numberOfRoutes = 6;
-                weightNewRoutes = 0.6;
+                numberOfRoutes = 1;
+                weightNewRoutes = 1.0;
                 varianceRoutes = 5.0f;
-                reRoute = true;
+                reRoute = false;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 // Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
                 maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
 
-                int variant = 6;
+                int variant = 4;
                 this.output = "/output" + variant;
             }
             else if (debugFiles == 4)
@@ -289,7 +289,7 @@ public class NTMModel implements OTSModelInterface
                 this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
                         "\\s+"));
                 numberOfRoutes = 6;
-                weightNewRoutes = 0.3;
+                weightNewRoutes = 0.6;
                 varianceRoutes = 5.0f;
                 reRoute = true;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
@@ -297,7 +297,7 @@ public class NTMModel implements OTSModelInterface
                 maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
                 maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
 
-                int variant = 6;
+                int variant = 5;
                 this.output = "/output" + variant;
             }
 
@@ -436,6 +436,8 @@ public class NTMModel implements OTSModelInterface
         // ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
         for (ShapeObject bigArea : compressedAreas.getGeoObjects())
         {
+            int NTM = 0;
+            int CORDON = 0;
             String nr = bigArea.getValues().get(0);
             Node bigCentroid = new Node(nr, bigArea.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
             bigCentroids.put(nr, bigCentroid);
@@ -444,7 +446,19 @@ public class NTMModel implements OTSModelInterface
                 if (bigArea.getGeometry().covers(centroid.getPoint()))
                 {
                     mapSmallAreaToBigArea.put(centroid, bigCentroid);
+                    if (centroid.getBehaviourType() == TrafficBehaviourType.CORDON)
+                    {
+                        CORDON++;
+                    }
+                    else
+                    {
+                        NTM++;
+                    }
                 }
+            }
+            if (CORDON > NTM)
+            {
+                bigCentroid.setBehaviourType(TrafficBehaviourType.CORDON);
             }
         }
         return mapSmallAreaToBigArea;
@@ -549,7 +563,7 @@ public class NTMModel implements OTSModelInterface
                         if (borderCapacityAreasMap.get(origin.getId()) == null)
                         {
                             System.out.println("NT");
-                        }                    
+                        }
 
                         borderCapacity.put(graphEndNode,
                                 borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()));
@@ -700,11 +714,11 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = false;
+            boolean showLinks = true;
             boolean showFlowLinks = true;
             boolean showConnectors = true;
             boolean showNodes = false;
-            boolean showGraphEdges = false;
+            boolean showGraphEdges = true;
             boolean showAreaNode = true;
             boolean showArea = false;
 
@@ -788,9 +802,20 @@ public class NTMModel implements OTSModelInterface
 
             if (showArea)
             {
-                for (Area area : this.bigAreas.values())
+                if (this.COMPRESS_AREAS)
                 {
-                    new AreaAnimation(area, this.simulator, 4f);
+                    for (Area area : this.bigAreas.values())
+                    {
+                        new AreaAnimation(area, this.simulator, 4f);
+                    }
+                }
+                else
+                {
+                    for (Area area : this.areas.values())
+                    {
+                        new AreaAnimation(area, this.simulator, 4f);
+                    }
+
                 }
             }
             if (showLinks)
