@@ -25,6 +25,8 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -303,6 +305,9 @@ class LaneSimulationModel implements OTSModelInterface
     /** The probability that the next generated GTU is a passenger car. */
     double carProbability;
 
+    /** The lane change model. */
+    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
+
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
@@ -569,9 +574,10 @@ class LaneSimulationModel implements OTSModelInterface
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
-                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, laneChangeModel, initialPositions,
-                    initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.simulator);
+                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
+                    initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
+                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR),
+                    this.simulator);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {
