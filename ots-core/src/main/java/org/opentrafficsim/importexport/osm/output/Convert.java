@@ -9,7 +9,6 @@ import java.util.Objects;
 
 import javax.naming.NamingException;
 
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeocentricCRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -64,7 +63,6 @@ public final class Convert
     {
         final CoordinateReferenceSystem wgs84 = DefaultGeographicCRS.WGS84;
         final CoordinateReferenceSystem cartesianCRS = DefaultGeocentricCRS.CARTESIAN;
-        final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         final MathTransform mathTransform; 
         try
         {
@@ -91,11 +89,11 @@ public final class Convert
      * @param link OSM Link to be converted
      * @return OTS Link
      */
-    public static CrossSectionLink convertLink(final org.opentrafficsim.importexport.osm.Link link)
+    public static CrossSectionLink<?, ?> convertLink(final org.opentrafficsim.importexport.osm.Link link)
     {
         NodeGeotools.STR start = convertNode(link.getStart());
         NodeGeotools.STR end = convertNode(link.getEnd());
-        CrossSectionLink l2;
+        CrossSectionLink<?, ?> l2;
         if (link.getSplineList().isEmpty())
         {
             GeometryFactory factory = new GeometryFactory();
@@ -227,7 +225,7 @@ public final class Convert
      */
     public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink, final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException
     {
-        CrossSectionLink otslink = convertLink(osmlink);
+        CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
         LaneType<String> lt = null;
         Lane result = null;
