@@ -14,6 +14,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -62,10 +63,11 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      *            direction)
      * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @throws NamingException if an error occurs when adding the animation handler.
-     * @throws RemoteException when the simulator cannot be reached.
-     * @throws NetworkException when the GTU cannot be placed on the given lane.
-     * @throws SimRuntimeException when the move method cannot be scheduled.
+     * @throws NamingException if an error occurs when adding the animation handler
+     * @throws RemoteException when the simulator cannot be reached
+     * @throws NetworkException when the GTU cannot be placed on the given lane
+     * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
@@ -74,7 +76,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final OTSDEVSSimulatorInterface simulator) throws NamingException, RemoteException, NetworkException,
-            SimRuntimeException
+            SimRuntimeException, GTUException
     {
         this(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
                 width, maximumVelocity, simulator, DefaultCarAnimation.class);
@@ -99,6 +101,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
@@ -107,7 +110,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass)
-            throws NamingException, RemoteException, NetworkException, SimRuntimeException
+            throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
                 width, maximumVelocity, simulator);

@@ -96,7 +96,7 @@ public class FixedAccelerationModel implements GTUFollowingModel
     @Override
     public final DoubleScalar.Rel<TimeUnit> getStepSize()
     {
-        return null;
+        return this.duration;
     }
 
     /** {@inheritDoc} */

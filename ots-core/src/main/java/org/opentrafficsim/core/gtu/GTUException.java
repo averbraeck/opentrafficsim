@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.gtu;
 
 /**
  * Exception thrown when network topology is inconsistent.
@@ -13,23 +13,23 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class NetworkException extends Exception
+public class GTUException extends Exception
 {
 
     /** */
-    private static final long serialVersionUID = 20140822L;
+    private static final long serialVersionUID = 20150217L;
 
     /**
      * 
      */
-    public NetworkException()
+    public GTUException()
     {
     }
 
     /**
      * @param message String
      */
-    public NetworkException(final String message)
+    public GTUException(final String message)
     {
         super(message);
     }
@@ -37,7 +37,7 @@ public class NetworkException extends Exception
     /**
      * @param cause Throwable
      */
-    public NetworkException(final Throwable cause)
+    public GTUException(final Throwable cause)
     {
         super(cause);
     }
@@ -46,7 +46,7 @@ public class NetworkException extends Exception
      * @param message String
      * @param cause Throwable
      */
-    public NetworkException(final String message, final Throwable cause)
+    public GTUException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -57,7 +57,7 @@ public class NetworkException extends Exception
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
-    public NetworkException(final String message, final Throwable cause, final boolean enableSuppression,
+    public GTUException(final String message, final Throwable cause, final boolean enableSuppression,
         final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);

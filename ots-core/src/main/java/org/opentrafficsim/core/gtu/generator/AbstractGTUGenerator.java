@@ -13,6 +13,7 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar.LaneBasedIndividualCar
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.network.NetworkException;
@@ -122,7 +123,7 @@ public abstract class AbstractGTUGenerator<ID>
         }
         catch (NoSuchMethodException exception)
         {
-            throw new NetworkException("GTU class " + this.gtuClass.getName() + " does not have getId() method.", exception);
+            throw new GTUException("GTU class " + this.gtuClass.getName() + " does not have getId() method.", exception);
         }
 
         // create a unique id
@@ -142,7 +143,7 @@ public abstract class AbstractGTUGenerator<ID>
         }
         else
         {
-            throw new NetworkException("GTU ID class " + getidtype.getName() + ": cannot instantiate.");
+            throw new GTUException("GTU ID class " + getidtype.getName() + ": cannot instantiate.");
         }
 
         // create the GTU
@@ -161,7 +162,7 @@ public abstract class AbstractGTUGenerator<ID>
         }
         else
         {
-            throw new NetworkException("GTU class " + getGtuClass().getName() + ": cannot instantiate, no builder.");
+            throw new GTUException("GTU class " + getGtuClass().getName() + ": cannot instantiate, no builder.");
         }
 
         // reschedule next arrival
