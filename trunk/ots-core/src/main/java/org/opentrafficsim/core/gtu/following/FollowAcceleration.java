@@ -170,12 +170,7 @@ public final class FollowAcceleration
         }
         if (null == referenceGTUAccelerationStep)
         {
-            referenceGTUAccelerationStep =
-                    gfm.computeAcceleration(
-                            referenceGTU,
-                            referenceGTU.getLongitudinalVelocity(when),
-                            Calc.speedSquaredDividedByDoubleAcceleration(referenceGTU.getMaximumVelocity(),
-                                    gfm.maximumSafeDeceleration()), speedLimit);
+            referenceGTUAccelerationStep = gfm.computeAccelerationWithNoLeader(referenceGTU, speedLimit);
         }
         return new AccelerationStep[]{referenceGTUAccelerationStep, followerAccelerationStep};
     }

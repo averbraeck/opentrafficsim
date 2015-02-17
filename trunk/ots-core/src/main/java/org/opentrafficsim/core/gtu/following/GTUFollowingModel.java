@@ -9,7 +9,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * Abstract GTU following model.
@@ -38,6 +37,16 @@ public interface GTUFollowingModel
     AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
             final DoubleScalar.Rel<LengthUnit> headway, DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
             NetworkException;
+
+    /**
+     * Compute the acceleration that would be used if the is not leader in sight.
+     * @param gtu LaneBasedGTU&lt;?&gt;; the GTU for which acceleration is computed
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
+     * @return AccelerationStep; the result of application of the GTU following model
+     * @throws RemoteException in case of simulator reachability problems
+     */
+    AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu, DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be

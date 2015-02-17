@@ -12,6 +12,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -128,6 +129,21 @@ public class SequentialFixedAccelerationModel implements GTUFollowingModel
             final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return getAccelerationStep(follower.getSimulator().getSimulatorTime().get());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AccelerationStep computeAccelerationWithNoLeader(LaneBasedGTU<?> gtu, Abs<SpeedUnit> speedLimit)
+            throws RemoteException
+    {
+        try
+        {
+            return getAccelerationStep(gtu.getSimulator().getSimulatorTime().get());
+        }
+        catch (NetworkException networkException)
+        {
+            throw new Error("Caught an impossible NetworkException: " + networkException);
+        }
     }
 
     /** {@inheritDoc} */

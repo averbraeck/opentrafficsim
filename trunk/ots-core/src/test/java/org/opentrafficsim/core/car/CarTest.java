@@ -18,13 +18,15 @@ import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
-import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
@@ -62,10 +64,11 @@ public class CarTest
      * @throws NetworkException on ???
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
+     * @throws GTUException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
+    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         Lane lane = makeLane();
@@ -75,8 +78,10 @@ public class CarTest
         GTUFollowingModel gtuFollowingModel =
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
+        AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> referenceCar =
-                makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel);
+                makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                        laneChangeModel);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
                 referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
@@ -86,6 +91,7 @@ public class CarTest
                 referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
         assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel,
                 referenceCar.getGTUFollowingModel());
+        // There is (currently) no way to retrieve the lane change model of a GTU.
     }
 
     /**
@@ -123,16 +129,19 @@ public class CarTest
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
      * @param gtuFollowingModel GTUFollowingModel; the GTU following model
+     * @param laneChangeModel TODO
      * @return Car; the new Car
      * @throws NamingException on network error when making the animation
      * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
+     * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final Lane lane,
             final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final OTSDEVSSimulator simulator, GTUFollowingModel gtuFollowingModel) throws RemoteException,
-            NamingException, NetworkException, SimRuntimeException
+            final OTSDEVSSimulator simulator, GTUFollowingModel gtuFollowingModel,
+            AbstractLaneChangeModel laneChangeModel) throws RemoteException, NamingException, NetworkException,
+            SimRuntimeException, GTUException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
