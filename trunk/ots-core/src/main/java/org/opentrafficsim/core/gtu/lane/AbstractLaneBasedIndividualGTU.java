@@ -6,6 +6,7 @@ import java.util.Map;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -58,6 +59,7 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType,
@@ -66,11 +68,15 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
             final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Rel<LengthUnit> width,
             final DoubleScalar.Abs<SpeedUnit> maximumVelocity, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
-            NetworkException, SimRuntimeException
+            NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, simulator);
         this.length = length;
         this.width = width;
+        if (null == maximumVelocity)
+        {
+            throw new GTUException("maximumVelocity may not be null");
+        }
         this.maximumVelocity = maximumVelocity;
         this.simulator = simulator;
     }

@@ -25,6 +25,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -101,6 +103,8 @@ public class AbstractLaneBasedGTUTest
                 new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
         DoubleScalar.Rel<TimeUnit> validFor = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
         GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
+        // A Car needs a lane change model
+        AbstractLaneChangeModel laneChangeModel = new Egoistic();
         // A Car needs a type
         GTUType<String> gtuType = new GTUType<String>("Car");
         // A Car needs an initial speed
@@ -116,7 +120,8 @@ public class AbstractLaneBasedGTUTest
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
-                        initialSpeed, carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        initialSpeed, carLength, carWidth, maximumVelocity,
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
@@ -201,7 +206,7 @@ public class AbstractLaneBasedGTUTest
                 step = 0.1; // Reduce testing time by increasing the step size
             }
             // System.out.println("Simulating until " + stopTime.getSI());
-            simulateUntil((OTSDEVSSimulatorInterface) simulator.getSimulator(), stepTime);
+            simulator.runUpTo(stepTime);
             if (stepTime.getSI() > 0)
             {
                 assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime()
@@ -209,18 +214,10 @@ public class AbstractLaneBasedGTUTest
                 assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(),
                         0.00001);
             }
-            // FIXME this is where the simulator calls the gtuFollowingModel of the car again, resulting in a
-            // lastEvaluation time that is almost 10 seconds in the future.
-            // This might be fixed by giving the car a dummy gtuFollowingModel...
             DoubleScalar.Abs<SpeedUnit> longitudinalVelocity = car.getLongitudinalVelocity();
-            double expectedLongitudinalVelocity =
-                    3.6 * (initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI());
-            //System.out.println("Clock is now " + simulator.getSimulator().getSimulatorTime().get()
-            //        + " car velocity is " + car.getLongitudinalVelocity() + " expected velocity is "
-            //        + String.format("%9.3fkm/h", expectedLongitudinalVelocity));
-            assertEquals("longitudinal velocity is " + initialSpeed + stepTime.getSI() * acceleration.getSI(),
-                    initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI(), longitudinalVelocity.getSI(),
-                    0.00001);
+            double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
+            assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
+                    longitudinalVelocity.getSI(), 0.00001);
             assertEquals("lateral velocity is 0", 0, car.getLateralVelocity().getSI(), 0.00001);
             for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
@@ -389,38 +386,6 @@ public class AbstractLaneBasedGTUTest
     /** Flag to indicate that the autoPauseSimulator event was executed. */
     private volatile boolean stopTimeReached;
 
-    /**
-     * Increase the simulator clock to the indicated value.
-     * @param simulator
-     * @param stopTime
-     * @throws RemoteException
-     * @throws SimRuntimeException
-     */
-    private void simulateUntil(OTSDEVSSimulatorInterface simulator, DoubleScalar.Abs<TimeUnit> stopTime)
-            throws RemoteException, SimRuntimeException
-    {
-        if (simulator.getSimulatorTime().get().getSI() > stopTime.getSI())
-        {
-            System.out.println("stopTime: " + stopTime.getSI());
-            System.out.println("simuTime: " + simulator.getSimulatorTime().get().getSI());
-            throw new Error("Cannot step back in time");
-        }
-        this.stopTimeReached = false;
-        SimEvent<OTSSimTimeDouble> stopAtEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(stopTime), SimEventInterface.MAX_PRIORITY, this,
-                        this, "autoPauseSimulator", null);
-        simulator.scheduleEvent(stopAtEvent);
-        // Insert a dummy event to ensure that the clock will stay at this value
-        SimEvent<OTSSimTimeDouble> dummyEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(stopTime), SimEventInterface.MIN_PRIORITY, this,
-                        this, "dummyEvent", null);
-        simulator.scheduleEvent(dummyEvent);
-        while (!this.stopTimeReached)
-        {
-            simulator.step();
-        }
-    }
-
     /** Called by the simulator. */
     public final void autoPauseSimulator()
     {
@@ -485,4 +450,3 @@ class DummyModel implements OTSModelInterface
     }
 
 }
-
