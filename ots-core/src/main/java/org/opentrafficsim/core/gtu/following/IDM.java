@@ -181,6 +181,16 @@ public class IDM implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
+    public AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    {
+        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(),
+                Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), maximumSafeDeceleration()),
+                speedLimit);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final DoubleScalar.Rel<TimeUnit> getStepSize()
     {
         return new DoubleScalar.Rel<TimeUnit>(this.stepSize);

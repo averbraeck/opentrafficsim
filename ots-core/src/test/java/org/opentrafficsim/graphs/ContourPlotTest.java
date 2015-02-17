@@ -346,7 +346,7 @@ public class ContourPlotTest
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
         LaneBasedIndividualCar<Integer> car =
                 CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed,
-                        (OTSDEVSSimulator) simulator.getSimulator(), gtuFollowingModel);
+                        (OTSDEVSSimulator) simulator.getSimulator(), gtuFollowingModel, laneChangeModel);
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {

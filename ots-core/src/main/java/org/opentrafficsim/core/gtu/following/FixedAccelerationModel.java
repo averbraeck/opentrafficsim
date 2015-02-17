@@ -9,6 +9,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
@@ -83,6 +84,13 @@ public class FixedAccelerationModel implements GTUFollowingModel
             throws RemoteException, NetworkException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    {
+        return computeAcceleration(gtu.getSimulator().getSimulatorTime().get());
     }
 
      /** {@inheritDoc} */

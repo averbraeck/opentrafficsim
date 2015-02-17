@@ -64,10 +64,11 @@ public class AbstractLaneBasedGTUTest
      * @throws RemoteException
      * @throws NamingException
      * @throws NetworkException
+     * @throws GTUException 
      */
     @Test
     public void abstractLaneBasedGTUTest() throws RemoteException, SimRuntimeException, NamingException,
-            NetworkException
+            NetworkException, GTUException
     {
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
