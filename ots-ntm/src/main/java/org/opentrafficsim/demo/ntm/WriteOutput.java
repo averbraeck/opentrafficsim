@@ -294,6 +294,11 @@ public class WriteOutput
                                                 cell.getCellBehaviourFlow().getAccumulatedCars()
                                                         / cell.getCellLength().getInUnit(LengthUnit.KILOMETER))
                                                 .getInUnit(SpeedUnit.KM_PER_HOUR);
+                                if (speedCells[i][steps - 1] < cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
+                                                .getInUnit(SpeedUnit.KM_PER_HOUR))
+                                {
+                                    System.out.println("SpeedLower");
+                                }
                             }
                             else
                             {
@@ -450,6 +455,9 @@ public class WriteOutput
     static BufferedWriter dataFluxToNeighbourNTMOut = null;
 
     /** */
+    static BufferedWriter dataTimeToDestinationNTMOut = null;
+
+    /** */
     static BufferedWriter dataODDeparturesNTMOut = null;
 
     /** */
@@ -478,9 +486,12 @@ public class WriteOutput
 
     /** */
     static Double[][][] fluxToNeighbourNTM = new Double[9][9][999];
-
+    
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();
+    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();    
+    
+    /** */
+    static HashMap<Node, HashMap<Node, Double[]>> timeToDestinationNTMMap = new HashMap<>();
 
     /** */
     static HashMap<Node, HashMap<Node, Double[]>> ODArrivalsNTMMap = new HashMap<>();
@@ -519,6 +530,18 @@ public class WriteOutput
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap, indexNode,
                 DATATYPE);
+        
+
+        fileName = "/NTMtravelTimeToDestination";
+        description = "timeToDestination";
+        DATATYPE = "travelTime";
+        if (steps == 1)
+        {
+        //    File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+        //    dataTimeToDestinationNTMOut = createWriter(file);
+        }
+        //writeHashMap(model, steps, MAXSTEPS, description, dataTimeToDestinationNTMOut, timeToDestinationNTMMap, indexNode,
+        //        DATATYPE);
 
         fileName = "/NTMdeparturesByOD";
         description = "departures by OD";
@@ -749,11 +772,9 @@ public class WriteOutput
                                 {
                                     if (nodeNodeDoublemap.get(node).get(neighbour) == null)
                                     {
-                                        HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
                                         Double[] fluxes = new Double[999];
                                         fluxes[steps - 1] = trips;
-                                        fluxMap.put(neighbour, fluxes);
-                                        nodeNodeDoublemap.put(node, fluxMap);
+                                        nodeNodeDoublemap.get(node).put(neighbour, fluxes);
                                     }
                                     else
                                     {
@@ -844,7 +865,14 @@ public class WriteOutput
                     }
                     if (DATATYPE == "arrivals")
                     {
-                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getArrivals();
+                        if (steps > 1)
+                        {
+                            dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getArrivals() + dataArray[nodeIndex.get(node)][steps - 2] ;
+                        }
+                        else
+                        {
+                            dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getArrivals();
+                        }
                     }
                     else if (DATATYPE == "departures")
                     {
