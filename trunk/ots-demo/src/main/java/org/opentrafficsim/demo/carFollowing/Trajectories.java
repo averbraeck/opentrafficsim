@@ -25,6 +25,7 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -397,8 +398,9 @@ class TrajectoriesModel implements OTSModelInterface
      * Set up the block.
      * @throws RemoteException on communications failure
      * @throws NamingException on error during adding of animation handler
+     * @throws GTUException if creation of the GTU fails
      */
-    protected final void createBlock() throws RemoteException, NamingException, SimRuntimeException, NetworkException
+    protected final void createBlock() throws RemoteException, NamingException, SimRuntimeException, NetworkException, GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -447,7 +449,7 @@ class TrajectoriesModel implements OTSModelInterface
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }

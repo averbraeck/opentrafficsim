@@ -22,6 +22,7 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
@@ -550,7 +551,7 @@ class RoadSimulationModel implements OTSModelInterface
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(9.999, TimeUnit.SECOND), this, this,
                     "drawGraphs", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }
@@ -584,9 +585,10 @@ class RoadSimulationModel implements OTSModelInterface
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
+     * @throws GTUException 
      */
     protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition, Lane lane, GTUType<String> gtuType)
-            throws NamingException, NetworkException, SimRuntimeException, RemoteException
+            throws NamingException, NetworkException, SimRuntimeException, RemoteException, GTUException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
