@@ -232,6 +232,7 @@ public final class Convert
         List<Lane> lanes = new ArrayList<Lane>();
         LaneType<String> lt = null;
         Lane result = null;
+        Color color = Color.LIGHT_GRAY;
         boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */
 
         List<Coordinate> iC = new ArrayList<Coordinate>();
@@ -249,7 +250,7 @@ public final class Convert
                     && (t.getValue().equals("primary") || t.getValue().equals("secondary")
                             || t.getValue().equals("tertiary") || t.getValue().equals("residential")
                             || t.getValue().equals("trunk") || t.getValue().equals("motorway") || t.getValue().equals(
-                            "service")))
+                            "service") || t.getValue().equals("unclassified") || t.getValue().equals("motorway_link")))
             {
                 lt = makeLaneType(new GTUType<String>(GTUTypes.CAR.toString()));
             }
@@ -286,18 +287,22 @@ public final class Convert
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
-                if (osmlink.getTags().contains(new Tag("hasFollowing", "")))
+                if (osmlink.hasTag("hasFollowing"))
                 {
+                    color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
-                else if (osmlink.getTags().contains(new Tag("hasPreceding", "")))
+                else if (osmlink.hasTag("hasPreceding"))
                 {
+                    color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else
                 {
+                    color = Color.LIGHT_GRAY;
                     result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 }
+                animateLane(result, simulator, color);
                 lanes.add(result);
             }
         }
@@ -310,18 +315,22 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit(), LengthUnit.METER);
-                if (osmlink.getTags().contains(new Tag("hasFollowing", "")))
+                if (osmlink.hasTag("hasFollowing"))
                 {
+                    color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
-                else if (osmlink.getTags().contains(new Tag("hasPreceding", "")))
+                else if (osmlink.hasTag("hasPreceding"))
                 {
+                    color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else
                 {
+                    color = Color.LIGHT_GRAY;
                     result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 }
+                animateLane(result, simulator, color);
                 lanes.add(result);
             }
             for (int i = 0; i < (osmlink.getLanes() - osmlink.getForwardLanes()); i++) /** Create backward lanes */
@@ -331,18 +340,22 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit() * (-1), LengthUnit.METER);
-                if (osmlink.getTags().contains(new Tag("hasFollowing", "")))
+                if (osmlink.hasTag("hasFollowing"))
                 {
+                    color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
-                else if (osmlink.getTags().contains(new Tag("hasPreceding", "")))
+                else if (osmlink.hasTag("hasPreceding"))
                 {
+                    color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
                 else
                 {
+                    color = Color.LIGHT_GRAY;
                     result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
                 }
+                animateLane(result, simulator, color);
                 lanes.add(result);
             }
         }
@@ -353,18 +366,33 @@ public final class Convert
             /** temporary */
             DoubleScalar.Rel<LengthUnit> latPos =
                     new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
+            color = Color.ORANGE;
             result =
                     new Lane(otslink, latPos, latPos,
                             new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), 
                             new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
                             lt, LongitudinalDirectionality.FORWARD, f2000);
+            animateLane(result, simulator, color);
             lanes.add(result);
         }
+        return lanes;
+    }
+    
+    /**
+     * Animates Lane.
+     * @param l 
+     * @param simulator 
+     * @param color 
+     * @throws RemoteException 
+     * @throws NamingException 
+     */
+    private static void animateLane(final Lane l, final OTSDEVSSimulatorInterface simulator, final Color color) 
+            throws RemoteException, NamingException
+    {
         if (simulator instanceof OTSAnimatorInterface)
         {
-            new LaneAnimation(result, simulator, Color.LIGHT_GRAY);
+            new LaneAnimation(l, simulator, color);
         }
-        return lanes;
     }
 
     /**
