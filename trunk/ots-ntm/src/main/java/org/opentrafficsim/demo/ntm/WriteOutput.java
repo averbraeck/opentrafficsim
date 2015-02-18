@@ -43,6 +43,10 @@ public class WriteOutput
 
     // INPUTDATA
     /** */
+    static final int MAXSTEPS = 1080;
+
+    /** */
+    static final int MAXZONES = 500;
 
     // /CELLS
     /** */
@@ -61,19 +65,19 @@ public class WriteOutput
     static BufferedWriter dataParametersFDOut = null;
 
     /** */
-    static Double[][] accumulationCells = new Double[999][999];
+    static Double[][] accumulationCells = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] speedCells = new Double[999][999];
+    static Double[][] speedCells = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] parametersFD = new Double[999][3];
+    static Double[][] parametersFD = new Double[MAXZONES][3];
 
     /** */
-    static Double[][] laneData = new Double[999][999];
+    static Double[][] laneData = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static String[] cellID = new String[999];
+    static String[] cellID = new String[MAXZONES];
 
     /** */
     static int numberOfCells = 0;
@@ -294,8 +298,9 @@ public class WriteOutput
                                                 cell.getCellBehaviourFlow().getAccumulatedCars()
                                                         / cell.getCellLength().getInUnit(LengthUnit.KILOMETER))
                                                 .getInUnit(SpeedUnit.KM_PER_HOUR);
-                                if (speedCells[i][steps - 1] < cell.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
-                                                .getInUnit(SpeedUnit.KM_PER_HOUR))
+                                if (speedCells[i][steps - 1] < cell.getCellBehaviourFlow()
+                                        .getParametersFundamentalDiagram().getFreeSpeed()
+                                        .getInUnit(SpeedUnit.KM_PER_HOUR))
                                 {
                                     System.out.println("SpeedLower");
                                 }
@@ -344,6 +349,11 @@ public class WriteOutput
                                 + indexEndNode.get(i).getId() + character + ", ");
                         for (int j = 0; j < steps; j++)
                         {
+                            if (dataArray[i][j] == null)
+                            {
+                                dataArray[i][j] = Double.NaN;
+                            }
+
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
@@ -377,6 +387,11 @@ public class WriteOutput
                         data.write(description + " " + indexLink.get(i).getId() + ", ");
                         for (int j = 0; j < 3; j++)
                         {
+                            if (dataArray[i][j] == null)
+                            {
+                                dataArray[i][j] = Double.NaN;
+                            }
+
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
@@ -414,6 +429,11 @@ public class WriteOutput
                         data.write(description + " " + indexLink.get(i).getId() + ", ");
                         for (int j = 0; j < 8; j++)
                         {
+                            if (dataArray[i][j] == null)
+                            {
+                                dataArray[i][j] = Double.NaN;
+                            }
+
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
@@ -464,32 +484,32 @@ public class WriteOutput
     static BufferedWriter dataODArrivalsNTMOut = null;
 
     /** */
-    static Double[][] accumulationNTM = new Double[999][999];
+    static Double[][] accumulationNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] congestedSpeedNTM = new Double[999][999];
+    static Double[][] congestedSpeedNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] demandNTM = new Double[999][999];
+    static Double[][] demandNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] routesNTM = new Double[999][999];
+    static Double[][] routesNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] supplyNTM = new Double[999][999];
+    static Double[][] supplyNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] departuresNTM = new Double[999][999];
+    static Double[][] departuresNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][] arrivalsNTM = new Double[999][999];
+    static Double[][] arrivalsNTM = new Double[MAXZONES][MAXSTEPS];
 
     /** */
-    static Double[][][] fluxToNeighbourNTM = new Double[9][9][999];
-    
+    static Double[][][] fluxToNeighbourNTM = new Double[9][9][MAXSTEPS];
+
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();    
-    
+    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();
+
     /** */
     static HashMap<Node, HashMap<Node, Double[]>> timeToDestinationNTMMap = new HashMap<>();
 
@@ -500,10 +520,10 @@ public class WriteOutput
     static HashMap<Node, HashMap<Node, Double[]>> ODDeparturesNTMMap = new HashMap<>();
 
     /** */
-    static Double[][] parametersNFD = new Double[999][6];
+    static Double[][] parametersNFD = new Double[MAXZONES][9];
 
     /** */
-    static Double[][] capSpeedRoadLengthNTM = new Double[999][3];
+    static Double[][] capSpeedRoadLengthNTM = new Double[MAXZONES][9];
 
     static boolean startRoute = true;
 
@@ -530,18 +550,18 @@ public class WriteOutput
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap, indexNode,
                 DATATYPE);
-        
 
         fileName = "/NTMtravelTimeToDestination";
         description = "timeToDestination";
         DATATYPE = "travelTime";
         if (steps == 1)
         {
-        //    File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
-        //    dataTimeToDestinationNTMOut = createWriter(file);
+            // File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            // dataTimeToDestinationNTMOut = createWriter(file);
         }
-        //writeHashMap(model, steps, MAXSTEPS, description, dataTimeToDestinationNTMOut, timeToDestinationNTMMap, indexNode,
-        //        DATATYPE);
+        // writeHashMap(model, steps, MAXSTEPS, description, dataTimeToDestinationNTMOut, timeToDestinationNTMMap,
+        // indexNode,
+        // DATATYPE);
 
         fileName = "/NTMdeparturesByOD";
         description = "departures by OD";
@@ -763,7 +783,7 @@ public class WriteOutput
                                 if (nodeNodeDoublemap.get(node) == null)
                                 {
                                     HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
-                                    Double[] fluxes = new Double[999];
+                                    Double[] fluxes = new Double[MAXSTEPS];
                                     fluxes[steps - 1] = trips;
                                     fluxMap.put(neighbour, fluxes);
                                     nodeNodeDoublemap.put(node, fluxMap);
@@ -772,7 +792,7 @@ public class WriteOutput
                                 {
                                     if (nodeNodeDoublemap.get(node).get(neighbour) == null)
                                     {
-                                        Double[] fluxes = new Double[999];
+                                        Double[] fluxes = new Double[MAXSTEPS];
                                         fluxes[steps - 1] = trips;
                                         nodeNodeDoublemap.get(node).put(neighbour, fluxes);
                                     }
@@ -867,7 +887,8 @@ public class WriteOutput
                     {
                         if (steps > 1)
                         {
-                            dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getArrivals() + dataArray[nodeIndex.get(node)][steps - 2] ;
+                            dataArray[nodeIndex.get(node)][steps - 1] =
+                                    cellBehaviour.getArrivals() + dataArray[nodeIndex.get(node)][steps - 2];
                         }
                         else
                         {
@@ -917,7 +938,8 @@ public class WriteOutput
                     {
                         dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getSupply();
                     }
-                    else if (DATATYPE == "parametersNFD")
+
+                    if (DATATYPE == "parametersNFD")
                     {
                         if (node.getBehaviourType() == TrafficBehaviourType.NTM)
                         {
@@ -937,8 +959,13 @@ public class WriteOutput
                                 dataArray[i][3] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(0);
                                 dataArray[i][4] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(1);
                                 dataArray[i][5] = cellBehaviourNTM.getParametersNTM().getAccCritical().get(2);
+                                /*
+                                 * for (int k = 0; k < 6; k++) { if (dataArray[i][k] == null) { dataArray[i][k] =
+                                 * Double.NaN; } }
+                                 */
                             }
                         }
+
                     }
                     i++;
                 }
@@ -967,6 +994,10 @@ public class WriteOutput
                         data.write(description + " " + indexNode.get(i).getId() + ", ");
                         for (int j = 0; j < steps; j++)
                         {
+                            if (dataArray[i][j] == null)
+                            {
+                                dataArray[i][j] = Double.NaN;
+                            }
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
@@ -1002,6 +1033,11 @@ public class WriteOutput
                         data.write(description + " " + indexNode.get(i).getId() + ", ");
                         for (int j = 0; j < 6; j++)
                         {
+                            if (dataArray[i][j] == null)
+                            {
+                                dataArray[i][j] = Double.NaN;
+                            }
+
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
@@ -1033,8 +1069,8 @@ public class WriteOutput
         Coordinate pointB = null;
         LineString line = ctmLink.getGeometry().getLineString();
         LengthIndexedLine indexedLine = new LengthIndexedLine(line);
-        if (ctmLink.getStartNode().getPoint().getCoordinate().x ==line.getCoordinates()[0].x
-            && ctmLink.getStartNode().getPoint().getCoordinate().y ==line.getCoordinates()[0].y)
+        if (ctmLink.getStartNode().getPoint().getCoordinate().x == line.getCoordinates()[0].x
+                && ctmLink.getStartNode().getPoint().getCoordinate().y == line.getCoordinates()[0].y)
         {
             pointA = indexedLine.extractPoint(line.getLength() * (index) / totalNumberOfCells);
             pointB = indexedLine.extractPoint(line.getLength() * (index + 1) / totalNumberOfCells);

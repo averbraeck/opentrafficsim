@@ -45,10 +45,11 @@ public class NTMSettings
     /** generate new routes after a certain time interval */
     private DoubleScalar.Rel<TimeUnit> reRouteTimeInterval;
 
+    /** */
+    private double scalingFactorDemand;
+
     /** number of routes for generation */
     private int numberOfRoutes;
-
-    // shortest paths creation
 
     /** */
     private double weightNewRoutes;
@@ -58,6 +59,7 @@ public class NTMSettings
 
     /** */
     private boolean reRoute = false;
+
     /** */
     private String path;
 
@@ -67,14 +69,15 @@ public class NTMSettings
      * @param descriptionProject
      * @param timeStepDurationNTM
      * @param timeStepDurationCTM
-     * @param reRouteTimeInterval 
-     * @param numberOfRoutes 
-     * @param weight_newRoutes 
-     * @param path 
+     * @param reRouteTimeInterval
+     * @param numberOfRoutes
+     * @param weight_newRoutes
+     * @param path
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
             Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
-            int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path)
+            int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path,
+            double scalingFactorDemand)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -94,12 +97,12 @@ public class NTMSettings
         this.varianceRoutes = varianceRoutes;
         this.reRoute = reRoute;
         this.path = path;
+        this.scalingFactorDemand = scalingFactorDemand;
     }
 
     /**
-     * @param timeStepDurationNTM 
-     * @param timeStepDurationCTM 
-
+     * @param timeStepDurationNTM
+     * @param timeStepDurationCTM
      */
     public NTMSettings(Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM)
     {
@@ -108,8 +111,7 @@ public class NTMSettings
     }
 
     /**
-     * @param timeStepDurationNTM 
-
+     * @param timeStepDurationNTM
      */
     public NTMSettings(Rel<TimeUnit> timeStepDurationNTM)
     {
@@ -307,6 +309,22 @@ public class NTMSettings
     public void setVarianceRoutes(double varianceRoutes)
     {
         this.varianceRoutes = varianceRoutes;
+    }
+
+    /**
+     * @return scalingFactorDemand.
+     */
+    public double getScalingFactorDemand()
+    {
+        return scalingFactorDemand;
+    }
+
+    /**
+     * @param scalingFactorDemand set scalingFactorDemand.
+     */
+    public void setScalingFactorDemand(double scalingFactorDemand)
+    {
+        this.scalingFactorDemand = scalingFactorDemand;
     }
 
 }
