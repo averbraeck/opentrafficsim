@@ -409,4 +409,88 @@ public class Network
         //System.out.println("there are now " + this.links.size() + " links");
         return redundancy;
     }
+    
+    /**
+     * Finds the link which follows the given link. If it exists.
+     * @param l 
+     * @return Link
+     */
+    public final Link findFollowingLink(final Link l)
+    {
+        if (!this.links.contains(l))
+        {
+            throw new Error("This link does not exist in this network: " + l);
+        }
+        for (Link l2: this.links)
+        {
+            if (l.getEnd().equals(l2.getStart()))
+            {
+                return l2;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Finds the link which precedes the given link. If it exists.
+     * @param l 
+     * @return Link
+     */
+    public final Link findPrecedingLink(final Link l)
+    {
+        if (!this.links.contains(l))
+        {
+            throw new Error("This link does not exist in this network: " + l);
+        }
+        for (Link l2: this.links)
+        {
+            if (l.getStart().equals(l2.getEnd()))
+            {
+                return l2;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Returns true if the given link has a preceding link.
+     * @param l 
+     * @return boolean
+     */
+    public final boolean hasPrecedingLink(final Link l)
+    {
+        if (!this.links.contains(l))
+        {
+            throw new Error("This link does not exist in this network: " + l);
+        }
+        for (Link l2: this.links)
+        {
+            if (l.getStart().equals(l2.getEnd()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns true if the given link has a following link.
+     * @param l 
+     * @return boolean
+     */
+    public final boolean hasFollowingLink(final Link l)
+    {
+        if (!this.links.contains(l))
+        {
+            throw new Error("This link does not exist in this network: " + l);
+        }
+        for (Link l2: this.links)
+        {
+            if (l.getEnd().equals(l2.getStart()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

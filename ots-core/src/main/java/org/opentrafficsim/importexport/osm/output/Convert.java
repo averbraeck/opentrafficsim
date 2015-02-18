@@ -24,12 +24,15 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.GeneratorLane;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneAnimation;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.lane.SinkLane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.importexport.osm.Tag;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -238,7 +241,7 @@ public final class Convert
             iC.add(coord);
         }
         //Coordinate[] intermediateCoordinates = (Coordinate[]) iC.toArray();
-
+        
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /* estimation */
         for (org.opentrafficsim.importexport.osm.Tag t : osmlink.getTags())
         {
@@ -283,7 +286,18 @@ public final class Convert
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
-                result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                if (osmlink.getTags().contains(new Tag("hasFollowing", "")))
+                {
+                    result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
+                }
+                else if (osmlink.getTags().contains(new Tag("hasPreceding", "")))
+                {
+                    result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
+                }
+                else
+                {
+                    result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                }
                 lanes.add(result);
             }
         }
@@ -296,7 +310,18 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit(), LengthUnit.METER);
-                result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                if (osmlink.getTags().contains(new Tag("hasFollowing", "")))
+                {
+                    result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
+                }
+                else if (osmlink.getTags().contains(new Tag("hasPreceding", "")))
+                {
+                    result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
+                }
+                else
+                {
+                    result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
+                }
                 lanes.add(result);
             }
             for (int i = 0; i < (osmlink.getLanes() - osmlink.getForwardLanes()); i++) /** Create backward lanes */
@@ -306,7 +331,18 @@ public final class Convert
                 /** temporary */
                 DoubleScalar.Rel<LengthUnit> latPos =
                         new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit() * (-1), LengthUnit.METER);
-                result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
+                if (osmlink.getTags().contains(new Tag("hasFollowing", "")))
+                {
+                    result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
+                }
+                else if (osmlink.getTags().contains(new Tag("hasPreceding", "")))
+                {
+                    result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
+                }
+                else
+                {
+                    result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
+                }
                 lanes.add(result);
             }
         }
