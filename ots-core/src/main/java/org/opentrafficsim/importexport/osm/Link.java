@@ -262,6 +262,23 @@ public class Link
         this.splineList.add(spline);
     }
     
+    /**
+     * Returns true if the link has a Tag with the specified key.
+     * @param key 
+     * @return boolean
+     */
+    public final boolean hasTag(final String key)
+    {
+        for (Tag t: this.linktags)
+        {
+            if (t.getKey().equals(key))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /** {@inheritDoc} */
     public final String toString()
     {
