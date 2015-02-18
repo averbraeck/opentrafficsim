@@ -44,7 +44,7 @@ public class NTMsimulation
     static int steps = 0;
 
     /** for reporting */
-    static int MAXSTEPS = 720;
+    static int MAXSTEPS = 1080;
 
     /** */
     static HashMap<Node, HashMap<Node, Double[]>> fluxAreaToNeighbours = new HashMap<>();

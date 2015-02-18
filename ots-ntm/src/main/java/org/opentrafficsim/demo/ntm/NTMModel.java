@@ -167,9 +167,9 @@ public class NTMModel implements OTSModelInterface
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
                     new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
-            Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(7200, TimeUnit.SECOND);
+            Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(10800, TimeUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-            Calendar startTime = new GregorianCalendar(2014, 1, 28, 7, 0, 0);
+            Calendar startTime = new GregorianCalendar(2014, 1, 28, 15, 0, 0);
             String path = "";
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
@@ -178,13 +178,14 @@ public class NTMModel implements OTSModelInterface
             String fileCompressedDemand = "";
             String fileNameCapacityRestraint = "";
             String fileNameParametersNTM = "";
-
+            double scalingFactorDemand = 1.0;
+            
             int numberOfRoutes = 1;
             double weightNewRoutes = 1.0;
             double varianceRoutes = 5.0f;
             boolean reRoute = false;
             // determine the files to read
-            int debugFiles = 4; // The Hague
+            int debugFiles = 0; // The Hague
             // int debugFiles = 4; // debug 4: fork
 
             // boundaries for flow links (all links with values above are selected)
@@ -213,9 +214,10 @@ public class NTMModel implements OTSModelInterface
                 ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
                         this.nodes, this.centroids, "kilometer");
                 // fileDemand = "/cordonmatrix_pa_os.txt";
+                scalingFactorDemand = 1.5;
                 fileDemand = "/cordonmatrix_totaal_AS.csv";
                 fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
-                fileProfiles = "profiles.txt";
+                fileProfiles = "profile_beach.txt";
                 fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
                 fileNameParametersNTM = path + "/parametersNTM.txt";
                 if (this.COMPRESS_AREAS)
@@ -232,9 +234,9 @@ public class NTMModel implements OTSModelInterface
                 reRoute = true;
                 reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
                 // Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
-                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(3500, FrequencyUnit.PER_HOUR);
-                int variant = 0;
+                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
+                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(900, FrequencyUnit.PER_HOUR);
+                int variant = 1;
                 this.output = "/output" + variant;
             }
 
@@ -318,7 +320,7 @@ public class NTMModel implements OTSModelInterface
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
                             timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes, weightNewRoutes,
-                            varianceRoutes, reRoute, path);
+                            varianceRoutes, reRoute, path, scalingFactorDemand);
 
             // the Map areas contains a reference to the centroids!
             // save the selected and created areas to a shape file
