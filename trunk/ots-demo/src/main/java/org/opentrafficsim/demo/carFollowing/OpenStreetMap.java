@@ -100,7 +100,7 @@ public class OpenStreetMap implements WrappableSimulation
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3simple.osm.bz2", wt, ft);
+        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3.osm.bz2", wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         net.makeLinks();
         //net.removeRedundancy();
