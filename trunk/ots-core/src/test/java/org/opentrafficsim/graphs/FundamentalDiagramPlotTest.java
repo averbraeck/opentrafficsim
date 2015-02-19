@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -98,6 +100,7 @@ public class FundamentalDiagramPlotTest
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
+        LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
                 new LaneBasedIndividualCar<Integer>(1, null, null, laneChangeModel, initialLongitudinalPositions, speed, length,
                         width, maxSpeed, simulator);

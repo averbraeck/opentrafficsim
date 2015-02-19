@@ -29,8 +29,11 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.SequentialFixedAccelerationModel;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -82,11 +85,12 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
+     * @throws GTUException 
      */
     @SuppressWarnings("static-method")
     @Test
     public final void accelerationContourTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException
+            NamingException, GTUException
     {
         List<Lane> path = dummyPath();
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
@@ -101,11 +105,12 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
+     * @throws GTUException 
      */
     @SuppressWarnings("static-method")
     @Test
     public final void densityContourTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException
+            NamingException, GTUException
     {
         List<Lane> path = dummyPath();
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
@@ -120,10 +125,11 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
+     * @throws GTUException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void flowContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
+    public final void flowContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
     {
         List<Lane> path = dummyPath();
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
@@ -138,10 +144,11 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
+     * @throws GTUException 
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void speedContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException
+    public final void speedContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
     {
         List<Lane> path = dummyPath();
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
@@ -163,10 +170,11 @@ public class ContourPlotTest
      * @throws RemoteException
      * @throws NamingException
      * @throws SimRuntimeException
+     * @throws GTUException 
      */
     public static void standardContourTests(final ContourPlot cp, Lane lane, final double expectedZValue,
             final double expectedZValueWithTraffic) throws NetworkException, RemoteException, SimRuntimeException,
-            NamingException
+            NamingException, GTUException
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -344,6 +352,7 @@ public class ContourPlotTest
         // Make the car run at constant speed for five more minutes
         gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
+        LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
                 CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed,
                         (OTSDEVSSimulator) simulator.getSimulator(), gtuFollowingModel, laneChangeModel);
@@ -613,9 +622,10 @@ public class ContourPlotTest
      * @throws NetworkException
      * @throws SimRuntimeException
      * @throws NamingException
+     * @throws GTUException 
      */
     public static void main(final String[] args) throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException
+            NamingException, GTUException
     {
         ContourPlotTest cpt = new ContourPlotTest();
         System.out.println("Click the OK button");
