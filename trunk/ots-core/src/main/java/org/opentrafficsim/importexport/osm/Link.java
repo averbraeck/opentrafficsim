@@ -48,39 +48,56 @@ public class Link
         this.iD = Objects.toString(n1.getID()) + Objects.toString(n2.getID());
         this.start = n1;
         this.end = n2;
-        this.linktags = lt;
         this.length = length;
         this.lanes = 2;
         this.forwardLanes = 1;
         boolean forwardDefined = false;
-        Tag t = new Tag("oneway", "yes");
-        if (lt.contains(t))
-        {
-            this.setOneway(true);
-            lt.remove(t);
-            this.lanes = 1;
-            this.forwardLanes = this.lanes;
-        }
-        List<Tag> lt2 = lt;
+
+        List<Tag> lt2 = new ArrayList<Tag>(lt);
+        List<Tag> lt3 = new ArrayList<Tag>(lt); 
         for (Tag t2: lt2)
         {
-            if (t2.getKey() == "lanes")
+            if (t2.getKey().equals("oneway") && t2.getValue().equals("yes"))
+            {
+                this.setOneway(true);
+                lt3.remove(t2);
+                this.lanes = 1;
+                this.forwardLanes = this.lanes;
+            }
+            if (t2.getKey().equals("highway") && t2.getValue().equals("motorway_link"))
+            {
+                this.setOneway(true);
+                this.lanes = 1;
+                this.forwardLanes = this.lanes;
+            }
+            if (t2.getKey().equals("highway") && t2.getValue().equals("motorway"))
+            {
+                this.setOneway(true);
+                this.forwardLanes = this.lanes;
+            }
+        }
+        
+        lt2 = new ArrayList<Tag>(lt3);
+        for (Tag t2: lt2)
+        {
+            if (t2.getKey().equals("lanes"))
             {
                 this.lanes = Byte.parseByte(t2.getValue());
-                lt.remove(t2);
+                lt3.remove(t2);
                 if (this.oneway)
                 {
                     this.forwardLanes = this.lanes;
                     forwardDefined = true;
                 }
             }
-            if (t2.getKey() == "lanes:forward")
+            if (t2.getKey().equals("lanes:forward"))
             {
                 this.forwardLanes = Byte.parseByte(t2.getValue());
-                lt.remove(t2);
+                lt3.remove(t2);
                 forwardDefined = true;
             }
         }
+        this.linktags = lt3;
         if (!forwardDefined)
         {
             this.forwardLanes = (byte) (this.lanes / 2);
