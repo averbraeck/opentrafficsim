@@ -284,7 +284,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param gtuFollowingModel
+         * @param gtuFollowingModel GTUFollowingModel; the GTU following model used by the built cars
          * @return the class itself for chaining the setters.
          */
         public final LaneBasedIndividualCarBuilder<ID> setGTUFollowingModel(final GTUFollowingModel gtuFollowingModel)

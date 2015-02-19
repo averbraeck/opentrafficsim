@@ -94,16 +94,6 @@ public class IDMPlus extends AbstractGTUFollowingModel
         this.delta = delta;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
-    {
-        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(),
-                Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), maximumSafeDeceleration()),
-                speedLimit);
-    }
-
     /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
      * @param follower GTU; the GTU whose desired speed must be returned
