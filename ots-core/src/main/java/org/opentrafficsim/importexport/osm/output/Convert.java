@@ -232,6 +232,7 @@ public final class Convert
         List<Lane> lanes = new ArrayList<Lane>();
         LaneType<String> lt = null;
         Lane result = null;
+        Color standard = Color.LIGHT_GRAY;
         Color color = Color.LIGHT_GRAY;
         boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */
 
@@ -256,6 +257,7 @@ public final class Convert
             }
             if (t.getKey().equals("highway") && t.getValue().equals("cycleway"))
             {
+                standard = Color.ORANGE;
                 lt = makeLaneType(new GTUType<String>(GTUTypes.BIKE.toString()));
                 if (!widthOverride)
                 {
@@ -288,21 +290,19 @@ public final class Convert
                 /** temporary */
                 Double offSet = i * width.doubleValue();
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
-                if (osmlink.hasTag("hasFollowing"))
+                if (osmlink.hasTag("hasPreceding"))
                 {
-                    System.out.println("Making Sinklane");
                     color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
-                else if (osmlink.hasTag("hasPreceding"))
+                else if (osmlink.hasTag("hasFollowing"))
                 {
-                    System.out.println("Making Generatorlane");
                     color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else
                 {
-                    color = Color.LIGHT_GRAY;
+                    color = standard;
                     result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 }
                 animateLane(result, simulator, color);
@@ -318,21 +318,19 @@ public final class Convert
                 /** temporary */
                 Double offSet = i * width.doubleValue();
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
-                if (osmlink.hasTag("hasFollowing"))
+                if (osmlink.hasTag("hasPreceding"))
                 {
-                    System.out.println("Making Sinklane");
                     color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
-                else if (osmlink.hasTag("hasPreceding"))
+                else if (osmlink.hasTag("hasFollowing"))
                 {
-                    System.out.println("Making Generatorlane");
                     color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else
                 {
-                    color = Color.LIGHT_GRAY;
+                    color = standard;
                     result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.FORWARD, f2000);
                 }
                 animateLane(result, simulator, color);
@@ -347,40 +345,41 @@ public final class Convert
                 DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
                 if (osmlink.hasTag("hasFollowing"))
                 {
-                    System.out.println("Making Generatorlane");
                     color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
                 else if (osmlink.hasTag("hasPreceding"))
                 {
-                    System.out.println("Making Sinklane");
                     color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
                 else
                 {
-                    color = Color.LIGHT_GRAY;
+                    color = standard;
                     result = new Lane(otslink, latPos, latPos, width, width, lt, LongitudinalDirectionality.BACKWARD, f2000);
                 }
                 animateLane(result, simulator, color);
                 lanes.add(result);
             }
         }
-        if (osmlink.getTags().contains(new org.opentrafficsim.importexport.osm.Tag("cycleway", "lane")))
+        for (org.opentrafficsim.importexport.osm.Tag t: osmlink.getTags())
         {
-            lt = makeLaneType(new GTUType<String>(GTUTypes.BIKE.toString()));
-            DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-            /** temporary */
-            DoubleScalar.Rel<LengthUnit> latPos =
-                    new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
-            color = Color.ORANGE;
-            result =
-                    new Lane(otslink, latPos, latPos,
-                            new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), 
-                            new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
-                            lt, LongitudinalDirectionality.FORWARD, f2000);
-            animateLane(result, simulator, color);
-            lanes.add(result);
+            if (t.getKey().equals("cycleway"))
+            {
+                lt = makeLaneType(new GTUType<String>(GTUTypes.BIKE.toString()));
+                DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+                /** temporary */
+                DoubleScalar.Rel<LengthUnit> latPos =
+                        new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
+                color = Color.ORANGE;
+                result =
+                        new Lane(otslink, latPos, latPos,
+                                new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), 
+                                new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
+                                lt, LongitudinalDirectionality.FORWARD, f2000);
+                animateLane(result, simulator, color);
+                lanes.add(result);
+            }
         }
         return lanes;
     }
