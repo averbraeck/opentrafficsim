@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.opentrafficsim.core.gtu.following.FollowAcceleration;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -49,17 +48,18 @@ public class FixedLaneChangeModel implements LaneChangeModel
         {
             if (null == this.laneChange)
             {
-                return new LaneMovementStep(FollowAcceleration.acceleration(gtu, sameLaneTraffic, speedLimit)[0], null);
+                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneTraffic,
+                        speedLimit)[0], null);
             }
             else if (LateralDirectionality.LEFT == this.laneChange)
             {
-                return new LaneMovementStep(FollowAcceleration.acceleration(gtu, leftLaneTraffic, speedLimit)[0],
-                        this.laneChange);
+                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, leftLaneTraffic,
+                        speedLimit)[0], this.laneChange);
             }
             else if (LateralDirectionality.RIGHT == this.laneChange)
             {
-                return new LaneMovementStep(FollowAcceleration.acceleration(gtu, rightLaneTraffic, speedLimit)[0],
-                        this.laneChange);
+                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, rightLaneTraffic,
+                        speedLimit)[0], this.laneChange);
             }
             throw new Error("Program Error - unhandled LateralDirectionality");
         }
