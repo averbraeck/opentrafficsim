@@ -3,8 +3,6 @@ package org.opentrafficsim.core.gtu.generator;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
@@ -16,7 +14,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;

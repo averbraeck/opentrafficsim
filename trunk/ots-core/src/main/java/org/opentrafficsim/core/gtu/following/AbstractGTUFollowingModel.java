@@ -11,7 +11,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * <p>
@@ -29,18 +28,19 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 {
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
-    private final static AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(
+    private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(
             new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
             new DoubleScalar.Abs<TimeUnit>(Double.NaN, TimeUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
-    public final static AccelerationStep[] TOODANGEROUS = new AccelerationStep[]{PROHIBITIVEACCELERATIONSTEP,
+    public static final AccelerationStep[] TOODANGEROUS = new AccelerationStep[]{PROHIBITIVEACCELERATIONSTEP,
             PROHIBITIVEACCELERATIONSTEP};
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep[] computeAcceleration(LaneBasedGTU<?> referenceGTU, Collection<HeadwayGTU> otherGTUs,
-            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+    public final AccelerationStep[] computeAcceleration(final LaneBasedGTU<?> referenceGTU,
+            final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
         // Find out if there is an immediate collision
@@ -75,10 +75,10 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 if (null == followerAccelerationStep
                         || as.getAcceleration().getSI() < followerAccelerationStep.getAcceleration().getSI())
                 {
-                    //if (as.getAcceleration().getSI() < -gfm.maximumSafeDeceleration().getSI())
-                    //{
-                    //    return TOODANGEROUS;
-                    //}
+                    // if (as.getAcceleration().getSI() < -gfm.maximumSafeDeceleration().getSI())
+                    // {
+                    // return TOODANGEROUS;
+                    // }
                     followerAccelerationStep = as;
                 }
             }
@@ -89,7 +89,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                         gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getLongitudinalVelocity(when),
                                 headwayGTU.getDistance(), speedLimit);
                 if (null == referenceGTUAccelerationStep
-                        || (as.getAcceleration().getSI() < referenceGTUAccelerationStep.getAcceleration().getSI()))
+                        || as.getAcceleration().getSI() < referenceGTUAccelerationStep.getAcceleration().getSI())
                 {
                     referenceGTUAccelerationStep = as;
                 }
@@ -110,8 +110,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep computeAccelerationWithNoLeader(LaneBasedGTU<?> gtu, Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+    public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return computeAcceleration(gtu, gtu.getLongitudinalVelocity(),
                 Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), maximumSafeDeceleration()),

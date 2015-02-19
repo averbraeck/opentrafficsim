@@ -9,8 +9,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Dummy lane change model with totally predictable results (used for testing).
@@ -25,7 +24,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 public class FixedLaneChangeModel implements LaneChangeModel
 {
     /** Lane change that will always be returned by this FixedLaneChangeModel. */
-    final LateralDirectionality laneChange;
+    private final LateralDirectionality laneChange;
 
     /**
      * Construct a FixedLaneChangeModel.
@@ -38,11 +37,12 @@ public class FixedLaneChangeModel implements LaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU<?> gtu,
-            Collection<HeadwayGTU> sameLaneTraffic, Collection<HeadwayGTU> rightLaneTraffic,
-            Collection<HeadwayGTU> leftLaneTraffic, Abs<SpeedUnit> speedLimit,
-            Rel<AccelerationUnit> preferredLaneRouteIncentive, Rel<AccelerationUnit> laneChangeThreshold,
-            Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+            final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
+            final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+            final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
+            final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
         {

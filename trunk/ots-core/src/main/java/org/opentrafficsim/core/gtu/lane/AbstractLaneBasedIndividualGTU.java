@@ -63,12 +63,12 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType,
-            final GTUFollowingModel gtuFollowingModel,
-            LaneChangeModel laneChangeModel,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Rel<LengthUnit> width,
-            final DoubleScalar.Abs<SpeedUnit> maximumVelocity, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
-            NetworkException, SimRuntimeException, GTUException
+            final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
+            final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException,
+            GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, simulator);
         this.length = length;

@@ -77,19 +77,11 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
             final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
-    {
-        return computeAcceleration(gtu.getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
