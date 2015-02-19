@@ -100,7 +100,7 @@ public class OpenStreetMap implements WrappableSimulation
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3.osm.bz2", wt, ft);
+        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3simple.osm.bz2", wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         net.makeLinks();
         //net.removeRedundancy();
@@ -281,22 +281,32 @@ class OSMModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = findPossibleSinks();
+        int i = 0;
         for (org.opentrafficsim.importexport.osm.Link l: this.network.getLinks())
         {
             try
             {
-                if (!foundSinkLinks.contains(l))
+                if (foundSinkLinks.contains(l))
                 {
-                    Convert.makeLanes(l, this.simulator);
+                    i++;
+                    System.out.println(i);
+                    if (this.network.hasFollowingLink(l))
+                    {
+                        l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasFollowing", ""));
+                        Convert.makeLanes(l, this.simulator);
+                    }
+                    else if (this.network.hasPrecedingLink(l))
+                    {
+                        l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasPreceding", ""));
+                        Convert.makeLanes(l, this.simulator);
+                    }
+                    else
+                    {
+                        Convert.makeLanes(l, this.simulator);
+                    }
                 }
-                else if (this.network.hasFollowingLink(l))
+                else
                 {
-                    l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasFollowing", ""));
-                    Convert.makeLanes(l, this.simulator);
-                }
-                else if (this.network.hasPrecedingLink(l))
-                {
-                    l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasPreceding", ""));
                     Convert.makeLanes(l, this.simulator);
                 }
             }
@@ -351,6 +361,14 @@ class OSMModel implements OTSModelInterface
                     }
                 }
             }
+        }
+        for (org.opentrafficsim.importexport.osm.Node n: foundSinkNodes)
+        {
+            System.out.println(n.getID());
+        }
+        for (org.opentrafficsim.importexport.osm.Link l: foundSinkLinks)
+        {
+            System.out.println(l.getID());
         }
         return foundSinkLinks;
     }
