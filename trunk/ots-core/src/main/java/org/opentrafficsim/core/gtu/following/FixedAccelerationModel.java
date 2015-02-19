@@ -9,7 +9,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
@@ -27,7 +26,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class FixedAccelerationModel implements GTUFollowingModel
+public class FixedAccelerationModel extends AbstractGTUFollowingModel
 {
     /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
     private DoubleScalar.Abs<AccelerationUnit> acceleration;
@@ -79,21 +78,21 @@ public class FixedAccelerationModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
-            final DoubleScalar.Rel<LengthUnit> headway, DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
     }
 
     /** {@inheritDoc} */
     @Override
-    public AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    public AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         return computeAcceleration(gtu.getSimulator().getSimulatorTime().get());
     }
 
-     /** {@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
     {

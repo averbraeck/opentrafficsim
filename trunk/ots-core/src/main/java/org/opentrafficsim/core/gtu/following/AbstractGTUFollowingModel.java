@@ -9,19 +9,24 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
- * Determine acceleration (deceleration) for a GTU that follows another GTU.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Sep 19, 2014 <br>
+ * @version 19 feb. 2015 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public final class FollowAcceleration
+public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 {
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private final static AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(
@@ -32,31 +37,10 @@ public final class FollowAcceleration
     public final static AccelerationStep[] TOODANGEROUS = new AccelerationStep[]{PROHIBITIVEACCELERATIONSTEP,
             PROHIBITIVEACCELERATIONSTEP};
 
-    /**
-     * This class should never be instantiated.
-     */
-    private FollowAcceleration()
-    {
-        // This class should never be instantiated
-    }
-
-    /**
-     * Compute the acceleration of this GTU and the (new) follower GTU in the current lane, or after a considered lane
-     * change. Both values are returned; the acceleration for the reference car at index 0, the acceleration of the
-     * (new) follower GTU at index 1. If changing lane is not possible because it would result in dangerous deceleration
-     * or collision, the returned value in both fields is Double.NEGATIVE_INFINITY.
-     * @param referenceGTU LaneBasedGTU&lt;?&gt;; the car that considers changing lane and whose
-     *            gtuFollowingModel will be used for all estimations of the resulting accelerations and decelerations
-     * @param otherGTUs Set&lt;HeadwayGTU&gt;; the GTUs in the target lane and their headways from the referenceGTU
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
-     * @return DoubleVector.Abs&lt;AccelerationUnit&gt;; the lowest accelerations (highest decelerations) incurred if
-     *         the GTU is inserted among otherGTUs
-     * @throws RemoteException on communication failure
-     * @throws NetworkException when the network is inconsistent
-     */
-    public static AccelerationStep[] acceleration(final LaneBasedGTU<?> referenceGTU,
-            final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+    /** {@inheritDoc} */
+    @Override
+    public AccelerationStep[] computeAcceleration(LaneBasedGTU<?> referenceGTU, Collection<HeadwayGTU> otherGTUs,
+            Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
         // Find out if there is an immediate collision
@@ -122,6 +106,16 @@ public final class FollowAcceleration
             referenceGTUAccelerationStep = gfm.computeAccelerationWithNoLeader(referenceGTU, speedLimit);
         }
         return new AccelerationStep[]{referenceGTUAccelerationStep, followerAccelerationStep};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AccelerationStep computeAccelerationWithNoLeader(LaneBasedGTU<?> gtu, Abs<SpeedUnit> speedLimit)
+            throws RemoteException, NetworkException
+    {
+        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(),
+                Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), maximumSafeDeceleration()),
+                speedLimit);
     }
 
 }

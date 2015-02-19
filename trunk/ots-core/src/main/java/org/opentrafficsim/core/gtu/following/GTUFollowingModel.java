@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.following;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
@@ -26,7 +27,7 @@ public interface GTUFollowingModel
      * Compute the acceleration that would be used to follow a leader.<br />
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * leader, or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param follower the GTU for which acceleration is computed
+     * @param follower LaneBasedGTU&lt;?&gt;; the GTU for which acceleration is computed
      * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the leader
      * @param headway DoubleScalar.Rel&lt;LengthUnit&gt;; the headway of the leader
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
@@ -35,8 +36,29 @@ public interface GTUFollowingModel
      * @throws NetworkException on network inconsistency
      */
     AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
-            final DoubleScalar.Rel<LengthUnit> headway, DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
-            NetworkException;
+            final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException, NetworkException;
+
+    /**
+     * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
+     * (inserted, or not removed) in a set of other GTUs.<br />
+     * If any GTU in the set of otherGTUs has a null headway (indicating that the other GTU is in fact parallel to the
+     * referenceGTU), prohibitive decelerations shall be returned.<br />
+     * Two AccelerationStep values are returned in a two-element array. Element 0 contains the AccelerationStep for the
+     * referenceGTU, Element 1 contains the AccelerationStep for the most affected follower among the otherGTUs.<br />
+     * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
+     * leader, or should slow down for a crossing from accelerating to unsafe speeds.
+     * @param referenceGTU LaneBasedGTU&lt;?&gt;; the GTU for which the accelerations are computed
+     * @param otherGTUs Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other
+     *            GTU is a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
+     * @return AccelerationStep[]; the result with the lowest accelerations (or most severe decelerations) of
+     *         application of the GTU following model of the referenceGTU for each leader and follower
+     * @throws RemoteException in case of simulator reachability problems
+     * @throws NetworkException on network inconsistency
+     */
+    AccelerationStep[] computeAcceleration(final LaneBasedGTU<?> referenceGTU, final Collection<HeadwayGTU> otherGTUs,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
@@ -44,9 +66,10 @@ public interface GTUFollowingModel
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws RemoteException in case of simulator reachability problems
+     * @throws NetworkException on network inconsistency
      */
-    AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu, DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException;
+    AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be

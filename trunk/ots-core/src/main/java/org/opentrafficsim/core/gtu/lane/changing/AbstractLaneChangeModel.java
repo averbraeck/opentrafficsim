@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.AccelerationStep;
-import org.opentrafficsim.core.gtu.following.FollowAcceleration;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -46,11 +46,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // "Route desire to merge to preferredLane: %s, route desire to merge to overtakingLane: %s",
             // preferredLaneRouteIncentive, nonPreferredLaneRouteIncentive));
             /*
-            if (gtu.getId().toString().equals("29"))
-            {
-                System.out.println("LaneMovementStep for " + gtu);
-            }
-            */
+             * if (gtu.getId().toString().equals("29")) { System.out.println("LaneMovementStep for " + gtu); }
+             */
             Map<Lane, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
@@ -62,33 +59,34 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
             Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             AccelerationStep[] straightAccelerationSteps =
-                    FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit);
+                    gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             if (straightAccelerationSteps[0].getAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
-                FollowAcceleration.acceleration(gtu, sameLaneGTUs, speedLimit);
+                gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
             DoubleScalar.Abs<AccelerationUnit> straightA =
                     DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold)
                             .immutable();
             AccelerationStep[] nonPreferrredAccelerationSteps =
-                    null == nonPreferredLane ? null : FollowAcceleration.acceleration(gtu, nonPreferredLaneGTUs,
-                            speedLimit);
+                    null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu,
+                            nonPreferredLaneGTUs, speedLimit);
             if (null != nonPreferrredAccelerationSteps
                     && nonPreferrredAccelerationSteps[1].getAcceleration().getSI() < -gtu.getGTUFollowingModel()
                             .maximumSafeDeceleration().getSI())
             {
-                nonPreferrredAccelerationSteps = FollowAcceleration.TOODANGEROUS;
+                nonPreferrredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             DoubleScalar.Abs<AccelerationUnit> nonPreferredA =
                     null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
             AccelerationStep[] preferredAccelerationSteps =
-                    null == preferredLane ? null : FollowAcceleration.acceleration(gtu, preferredLaneGTUs, speedLimit);
+                    null == preferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu,
+                            preferredLaneGTUs, speedLimit);
             if (null != preferredAccelerationSteps
                     && preferredAccelerationSteps[1].getAcceleration().getSI() < -gtu.getGTUFollowingModel()
                             .maximumSafeDeceleration().getSI())
             {
-                preferredAccelerationSteps = FollowAcceleration.TOODANGEROUS;
+                preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             DoubleScalar.Abs<AccelerationUnit> preferredA =
                     null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);

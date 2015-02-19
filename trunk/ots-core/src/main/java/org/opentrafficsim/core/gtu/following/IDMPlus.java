@@ -28,7 +28,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  * @version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IDMPlus implements GTUFollowingModel
+public class IDMPlus extends AbstractGTUFollowingModel
 {
     /** Preferred net longitudinal distance when stopped [m]. */
     private final DoubleScalar.Rel<LengthUnit> s0;
