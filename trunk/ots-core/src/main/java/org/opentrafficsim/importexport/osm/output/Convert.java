@@ -286,14 +286,17 @@ public final class Convert
                 DoubleScalar.Abs<FrequencyUnit> f2000 =
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
-                DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
+                Double offSet = i * width.doubleValue();
+                DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
                 if (osmlink.hasTag("hasFollowing"))
                 {
+                    System.out.println("Making Sinklane");
                     color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else if (osmlink.hasTag("hasPreceding"))
                 {
+                    System.out.println("Making Generatorlane");
                     color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
@@ -313,15 +316,17 @@ public final class Convert
                 DoubleScalar.Abs<FrequencyUnit> f2000 =
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
-                DoubleScalar.Rel<LengthUnit> latPos =
-                        new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit(), LengthUnit.METER);
+                Double offSet = i * width.doubleValue();
+                DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
                 if (osmlink.hasTag("hasFollowing"))
                 {
+                    System.out.println("Making Sinklane");
                     color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else if (osmlink.hasTag("hasPreceding"))
                 {
+                    System.out.println("Making Generatorlane");
                     color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
@@ -338,15 +343,17 @@ public final class Convert
                 DoubleScalar.Abs<FrequencyUnit> f2000 =
                         new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
                 /** temporary */
-                DoubleScalar.Rel<LengthUnit> latPos =
-                        new DoubleScalar.Rel<LengthUnit>((i) * width.getInUnit() * (-1), LengthUnit.METER);
+                Double offSet = i * width.doubleValue() * -1;
+                DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
                 if (osmlink.hasTag("hasFollowing"))
                 {
+                    System.out.println("Making Generatorlane");
                     color = Color.BLUE;
                     result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
                 else if (osmlink.hasTag("hasPreceding"))
                 {
+                    System.out.println("Making Sinklane");
                     color = Color.RED;
                     result = new SinkLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
