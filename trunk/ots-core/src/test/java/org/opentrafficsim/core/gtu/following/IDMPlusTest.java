@@ -20,6 +20,7 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
@@ -52,11 +53,12 @@ public class IDMPlusTest
      * @throws NetworkException on network error
      * @throws NamingException on ???
      * @throws SimRuntimeException on ???
+     * @throws GTUException
      */
     @SuppressWarnings({"static-method", "checkstyle:methodlength"})
     @Test
     public final void computeAcceleration() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException
+            NamingException, GTUException
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         SimpleSimulator simulator =
@@ -84,8 +86,7 @@ public class IDMPlusTest
                         initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        Collection<LaneBasedIndividualCar<Integer>> leaders = new ArrayList<LaneBasedIndividualCar<Integer>>();
-        AccelerationStep cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+        AccelerationStep cfmr = carFollowingModel.computeAccelerationWithNoLeader(referenceCar, speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
         assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Create another car at exactly the stationary following distance
@@ -103,10 +104,13 @@ public class IDMPlusTest
         LaneBasedIndividualCar<Integer> leaderCar =
                 new LaneBasedIndividualCar<Integer>(23456, carType, fam, laneChangeModel, leaderPositions,
                         initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
-        leaders.add(leaderCar);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+        HeadwayGTU leader =
+                new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
+                        - initialPosition.getSI());
+        cfmr =
+                carFollowingModel.computeAcceleration(referenceCar, leaderCar.getLongitudinalVelocity(),
+                        leader.getDistance(), speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
-        leaders.clear();
         leaderPosition =
                 new DoubleScalar.Rel<LengthUnit>(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.position(
                         lane, referenceCar.getFront(), initialTime).getSI()), LengthUnit.METER);
@@ -116,14 +120,19 @@ public class IDMPlusTest
         LaneBasedIndividualCar<Integer> leaderCar2 =
                 new LaneBasedIndividualCar<Integer>(34567, carType, fam, laneChangeModel, leaderPositions,
                         initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
-        leaders.add(leaderCar2); // Put the 2nd leader in first place
-        leaders.add(leaderCar);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+        // Verify that the result is independent of the order of adding in the Collection
+        Collection<HeadwayGTU> leaders = new ArrayList<HeadwayGTU>();
+        HeadwayGTU leader2 =
+                new HeadwayGTU(leaderCar2, leaderPosition.getSI() - referenceCar.getLength().getSI()
+                        - initialPosition.getSI());
+        leaders.add(leader2); // Put the 2nd leader in first place
+        leaders.add(leader);
+        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
-        leaders.add(leaderCar); // Put the 1st leader in first place
-        leaders.add(leaderCar2);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+        leaders.add(leader); // Put the 1st leader in first place
+        leaders.add(leader2);
+        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
@@ -136,8 +145,11 @@ public class IDMPlusTest
         leaderCar =
                 new LaneBasedIndividualCar<Integer>(23456, carType, fam, laneChangeModel, leaderPositions,
                         initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
-        leaders.add(leaderCar);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+        leader =
+                new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
+                        - initialPosition.getSI());
+        leaders.add(leader);
+        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
         assertEquals("Acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Check that the returned acceleration increases with the distance to the leader
         double referenceAcceleration = -1;
@@ -153,8 +165,11 @@ public class IDMPlusTest
             leaderCar =
                     new LaneBasedIndividualCar<Integer>(0, carType, fam, laneChangeModel, leaderPositions,
                             initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
-            leaders.add(leaderCar);
-            cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+            leader =
+                    new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
+                            - initialPosition.getSI());
+            leaders.add(leader);
+            cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with stationary leader at " + spareDistance + " is " + acceleration);
             assertTrue("acceleration should not decrease when distance to leader is increased",
@@ -187,10 +202,13 @@ public class IDMPlusTest
             leaderCar =
                     new LaneBasedIndividualCar<Integer>(0, carType, fam, laneChangeModel, leaderPositions, leaderSpeed,
                             length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
-            leaders.add(leaderCar);
+            leader =
+                    new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
+                            - initialPosition.getSI());
+            leaders.add(leader);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar   : " + leaderCar);
-            cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit);
+            cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);
             assertTrue("acceleration should not decrease when leader speed is increased",
