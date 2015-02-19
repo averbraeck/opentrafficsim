@@ -20,11 +20,14 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -57,9 +60,11 @@ public class SensorTest
      * @throws RemoteException
      * @throws NamingException
      * @throws NetworkException
+     * @throws GTUException
      */
     @Test
-    public void sensorLaneStartEndTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException
+    public void sensorLaneStartEndTest() throws RemoteException, SimRuntimeException, NamingException,
+            NetworkException, GTUException
     {
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
@@ -121,9 +126,12 @@ public class SensorTest
         FixedAccelerationModel fas =
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0.5,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND));
+        // Create a lane change model for the car
+        LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a GTU (and we don't even have to hold a pointer to it)
-        new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
-                carLength, carWidth, maximumVelocity, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
+                initialSpeed, carLength, carWidth, maximumVelocity,
+                (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         // Construction of the car scheduled a car move event at t=0
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();
