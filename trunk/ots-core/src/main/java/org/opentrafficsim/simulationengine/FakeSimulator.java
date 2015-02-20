@@ -35,6 +35,9 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
 {
     /** */
     private static final long serialVersionUID = 20141117L;
+    
+    /** stop on error or not. */
+    private boolean pauseOnError = false;
 
     /** {@inheritDoc} */
     @Override
@@ -223,6 +226,20 @@ public class FakeSimulator implements OTSDEVSSimulatorInterface
     public final boolean removeListener(final EventListenerInterface arg0, final EventType arg1) throws RemoteException
     {
         throw new Error("Not supported in the fake simulator");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isPauseOnError()
+    {
+        return this.pauseOnError;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setPauseOnError(final boolean pauseOnError)
+    {
+        this.pauseOnError = pauseOnError;
     }
 
 }
