@@ -606,7 +606,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         public FundamentalDiagramSensor(final Lane lane, final DoubleScalar.Abs<LengthUnit> longitudinalPosition)
                 throws NetworkException
         {
-            super(lane, longitudinalPosition, RelativePosition.REAR);
+            super(lane, longitudinalPosition, RelativePosition.REFERENCE);
             lane.addSensor(this);
         }
 
