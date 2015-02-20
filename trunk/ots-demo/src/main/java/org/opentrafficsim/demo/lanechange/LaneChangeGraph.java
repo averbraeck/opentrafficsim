@@ -17,6 +17,7 @@ import javax.swing.event.EventListenerList;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -33,7 +34,9 @@ import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
@@ -54,6 +57,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.simulationengine.FakeSimulator;
@@ -71,7 +75,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 18 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneChangeGraph extends JFrame
+public class LaneChangeGraph extends JFrame implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20141118L;
@@ -117,9 +121,10 @@ public class LaneChangeGraph extends JFrame
      * @throws RemoteException
      * @throws NetworkException
      * @throws SimRuntimeException
+     * @throws GTUException 
      */
     public static void main(String[] args) throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException
+            SimRuntimeException, GTUException
     {
         JPanel mainPanel = new JPanel(new BorderLayout());
         LaneChangeGraph lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
@@ -155,7 +160,7 @@ public class LaneChangeGraph extends JFrame
                 double startSpeedDifference = -30;// standardSpeeds[index];
                 double endSpeedDifference = startSpeedDifference + 60;// 150;
                 ChartData data = (ChartData) lcs.charts[row][index].getChart().getXYPlot().getDataset();
-                // int beginRightKey = data.addSeries("Begin of no lane change to right");
+                int beginRightKey = data.addSeries("Begin of no lane change to right");
                 int endRightKey = data.addSeries("End of no lane change to right");
                 int beginLeftKey = data.addSeries("Begin of no lane change to left");
                 int endLeftKey = data.addSeries("End of no lane change to left");
@@ -168,7 +173,7 @@ public class LaneChangeGraph extends JFrame
                                     laneChangeModel, true);
                     if (null != criticalHeadway)
                     {
-                        // data.addXYPair(beginRightKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
+                        data.addXYPair(beginRightKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
                     }
                     criticalHeadway =
                             lcs.findDecisionPoint(midPoint, LaneChangeGraph.upperBound, speed,
@@ -219,11 +224,12 @@ public class LaneChangeGraph extends JFrame
      * @throws RemoteException
      * @throws NamingException
      * @throws NetworkException
+     * @throws GTUException 
      */
     private DoubleScalar.Rel<LengthUnit> findDecisionPoint(DoubleScalar.Rel<LengthUnit> low,
             DoubleScalar.Rel<LengthUnit> high, DoubleScalar.Abs<SpeedUnit> referenceSpeed,
             DoubleScalar.Rel<SpeedUnit> speedDifference, LaneChangeModel laneChangeModel, boolean mergeRight)
-            throws RemoteException, NamingException, NetworkException, SimRuntimeException
+            throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
     {
         // Set up the network
         GTUType<String> gtuType = new GTUType<String>("car");
@@ -239,10 +245,10 @@ public class LaneChangeGraph extends JFrame
         initialLongitudinalPositions.put(lanes[mergeRight ? 0 : 1], new DoubleScalar.Rel<LengthUnit>(0,
                 LengthUnit.METER));
         // The reference car only needs a simulator
-        // But that needs a model...
+        // But that needs a model (which this class implements)
         SimpleSimulator simpleSimulator = new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
-                                TimeUnit.SECOND), model);
+                                TimeUnit.SECOND), this);
         this.carFollowingModel =
                 new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
                         new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
@@ -322,12 +328,13 @@ public class LaneChangeGraph extends JFrame
      * @throws NamingException
      * @throws SimRuntimeException
      * @throws NetworkException
+     * @throws GTUException 
      */
     private LaneMovementStep computeLaneChange(LaneBasedIndividualCar<String> referenceCar,
             Collection<HeadwayGTU> sameLaneGTUs, DoubleScalar.Abs<SpeedUnit> speedLimit,
             LaneChangeModel laneChangeModel, DoubleScalar.Rel<LengthUnit> otherCarPosition, Lane otherCarLane,
             Rel<SpeedUnit> deltaV, boolean mergeRight) throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException
+            SimRuntimeException, GTUException
     {
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -364,6 +371,7 @@ public class LaneChangeGraph extends JFrame
                         new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
         // System.out.println(result);
         sameLaneGTUs.remove(otherCar);
+        otherCar.destroy();
         return result;
     }
 
@@ -395,6 +403,21 @@ public class LaneChangeGraph extends JFrame
         renderer.setBaseShapesVisible(false);
         renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
         return chartPanel;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            throws SimRuntimeException, RemoteException
+    {
+        // Do nothing
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    {
+        return null;
     }
 
 }
