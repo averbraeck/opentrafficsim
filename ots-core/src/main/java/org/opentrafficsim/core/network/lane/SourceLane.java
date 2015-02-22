@@ -20,7 +20,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class GeneratorLane extends Lane
+public class SourceLane extends Lane
 {
     /** the generators on this generation lane; one per GTU type. */
     private final Set<GTUGeneratorIndividual> generators = new HashSet<GTUGeneratorIndividual>();
@@ -36,7 +36,7 @@ public class GeneratorLane extends Lane
      * @throws NetworkException when creation of the geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GeneratorLane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
+    public SourceLane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final LaneType<?> laneType,
         final LongitudinalDirectionality directionality) throws NetworkException
     {

@@ -1,5 +1,9 @@
 package org.opentrafficsim.core.network;
 
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
+import org.opentrafficsim.core.unit.AngleSlopeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -28,6 +32,20 @@ public abstract class AbstractExpansionNode<ID, P> extends AbstractNode<ID, P>
     public AbstractExpansionNode(final ID id, final P point, final Network<?, ?> network)
     {
         super(id, point);
+        this.network = network;
+    }
+
+    /**
+     * @param id ID of ExpansionNode.
+     * @param point the point when the expansion node is collapsed.
+     * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+     * @param slope the slope as an angle.
+     * @param network Network of expanded Node.
+     */
+    public AbstractExpansionNode(final ID id, final P point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+        final DoubleScalar.Abs<AngleSlopeUnit> slope, final Network<?, ?> network)
+    {
+        super(id, point, direction, slope);
         this.network = network;
     }
 

@@ -2,7 +2,10 @@ package org.opentrafficsim.core.network.lane;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -168,6 +171,22 @@ public abstract class CrossSectionElement implements LocatableInterface
         return Math.atan2(other.y - reference.y, other.x - reference.x);
     }
 
+    // FIXME put in utility class. Also exists in XmlNetworkLaneParser.
+    /**
+     * normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    private double norm(final double angle)
+    {
+        double normalized = angle % (2 * Math.PI);
+        if (normalized < 0.0)
+        {
+            normalized += 2 * Math.PI;
+        }
+        return normalized;
+    }
+
     /**
      * Generate a Geometry that has a fixed offset from a reference Geometry.
      * @param referenceLine Geometry; the reference line
@@ -175,7 +194,168 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @return Geometry; the Geometry of a line that has the specified offset from the reference line
      * @throws NetworkException on failure
      */
+    @SuppressWarnings("checkstyle:methodlength")
     private Geometry offsetGeometry(final Geometry referenceLine, final double offset) throws NetworkException
+    {
+        Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
+        // printCoordinates("reference", referenceCoordinates);
+        double bufferOffset = Math.abs(offset);
+        if (bufferOffset == 0)
+        {
+            // return a copy of the reference line
+            GeometryFactory factory = new GeometryFactory();
+            Geometry result = factory.createLineString(referenceCoordinates);
+            return result;
+        }
+        Coordinate[] bufferCoordinates =
+            referenceLine.buffer(bufferOffset, this.quadrantSegments, BufferParameters.CAP_FLAT).getCoordinates();
+        // find the coordinate indices closest to the start point and end point, at a distance of approximately the offset
+        Coordinate sC = referenceCoordinates[0];
+        Coordinate sC1 = referenceCoordinates[1];
+        Coordinate eC = referenceCoordinates[referenceCoordinates.length - 1];
+        Coordinate eC1 = referenceCoordinates[referenceCoordinates.length - 2];
+        Set<Integer> startIndexSet = new HashSet<>();
+        Set<Coordinate> startSet = new HashSet<Coordinate>();
+        Set<Integer> endIndexSet = new HashSet<>();
+        Set<Coordinate> endSet = new HashSet<Coordinate>();
+        for (int i = 0; i < bufferCoordinates.length; i++) // Note: the last coordinate = the first coordinate
+        {
+            Coordinate c = bufferCoordinates[i];
+            if (Math.abs(c.distance(sC) - bufferOffset) < bufferOffset / 100.0) // within 99%
+            {
+                if (!startSet.contains(c))
+                {
+                    startIndexSet.add(i);
+                    startSet.add(c);
+                }
+            }
+            if (Math.abs(c.distance(eC) - bufferOffset) < bufferOffset / 100.0) // within 99%
+            {
+                if (!endSet.contains(c))
+                {
+                    endIndexSet.add(i);
+                    endSet.add(c);
+                }
+            }
+        }
+        if (startIndexSet.size() != 2)
+        {
+            throw new NetworkException("offsetGeometry: startIndexSet.size() = " + startIndexSet.size());
+        }
+        if (endIndexSet.size() != 2)
+        {
+            throw new NetworkException("offsetGeometry: endIndexSet.size() = " + endIndexSet.size());
+        }
+
+        // which point(s) are in the right direction of the start / end?
+        int startIndex = -1;
+        int endIndex = -1;
+        double expectedStartAngle = norm(Math.atan2(sC1.y - sC.y, sC1.x - sC.x) - Math.signum(offset) * Math.PI / 2.0);
+        double expectedEndAngle = norm(Math.atan2(eC.y - eC1.y, eC.x - eC1.x) - Math.signum(offset) * Math.PI / 2.0);
+        for (int ic : startIndexSet)
+        {
+            if (Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - sC.y, bufferCoordinates[ic].x - sC.x)
+                - expectedStartAngle)) < Math.PI / 4.0
+                || Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - sC.y, bufferCoordinates[ic].x - sC.x)
+                    - expectedStartAngle)
+                    - 2.0 * Math.PI) < Math.PI / 4.0)
+            {
+                startIndex = ic;
+            }
+        }
+        for (int ic : endIndexSet)
+        {
+            if (Math
+                .abs(norm(Math.atan2(bufferCoordinates[ic].y - eC.y, bufferCoordinates[ic].x - eC.x) - expectedEndAngle)) < Math.PI / 4.0
+                || Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - eC.y, bufferCoordinates[ic].x - eC.x)
+                    - expectedEndAngle)
+                    - 2.0 * Math.PI) < Math.PI / 4.0)
+            {
+                endIndex = ic;
+            }
+        }
+        if (startIndex == -1 || endIndex == -1)
+        {
+            throw new NetworkException("offsetGeometry: could not find startIndex or endIndex");
+        }
+        startIndexSet.remove(startIndex);
+        endIndexSet.remove(endIndex);
+
+        // Make two lists, one in each direction; start at "start" and end at "end".
+        List<Coordinate> coordinateList1 = new ArrayList<>();
+        List<Coordinate> coordinateList2 = new ArrayList<>();
+        boolean use1 = true;
+        boolean use2 = true;
+
+        int i = startIndex;
+        while (i != endIndex)
+        {
+            if (!coordinateList1.contains(bufferCoordinates[i]))
+            {
+                coordinateList1.add(bufferCoordinates[i]);
+            }
+            i = (i + 1) % bufferCoordinates.length;
+            if (startIndexSet.contains(i) || endIndexSet.contains(i))
+            {
+                use1 = false;
+            }
+        }
+        if (!coordinateList1.contains(bufferCoordinates[endIndex]))
+        {
+            coordinateList1.add(bufferCoordinates[endIndex]);
+        }
+
+        i = startIndex;
+        while (i != endIndex)
+        {
+            if (!coordinateList2.contains(bufferCoordinates[i]))
+            {
+                coordinateList2.add(bufferCoordinates[i]);
+            }
+            i = (i == 0) ? bufferCoordinates.length - 1 : i - 1;
+            if (startIndexSet.contains(i) || endIndexSet.contains(i))
+            {
+                use2 = false;
+            }
+        }
+        if (!coordinateList2.contains(bufferCoordinates[endIndex]))
+        {
+            coordinateList2.add(bufferCoordinates[endIndex]);
+        }
+
+        if (!use1 && !use2)
+        {
+            throw new NetworkException("offsetGeometry: could not find path from start to end for offset");
+        }
+        if (use1 && use2)
+        {
+            throw new NetworkException("offsetGeometry: Both paths from start to end for offset were found to be ok");
+        }
+        Coordinate[] coordinates;
+        if (use1)
+        {
+            coordinates = new Coordinate[coordinateList1.size()];
+            coordinateList1.toArray(coordinates);
+        }
+        else
+        {
+            coordinates = new Coordinate[coordinateList2.size()];
+            coordinateList2.toArray(coordinates);
+        }
+        GeometryFactory factory = new GeometryFactory();
+        Geometry result = factory.createLineString(coordinates);
+        return result;
+    }
+
+    /**
+     * Generate a Geometry that has a fixed offset from a reference Geometry.
+     * @param referenceLine Geometry; the reference line
+     * @param offset double; offset distance from the reference line; positive is Left, negative is Right
+     * @return Geometry; the Geometry of a line that has the specified offset from the reference line
+     * @throws NetworkException on failure
+     */
+    @SuppressWarnings("checkstyle:methodlength")
+    private Geometry offsetGeometryXXX(final Geometry referenceLine, final double offset) throws NetworkException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
         // printCoordinates("reference", referenceCoordinates);
@@ -342,6 +522,18 @@ public abstract class CrossSectionElement implements LocatableInterface
         final int initialIndex;
         final int finalIndex;
         final boolean forward;
+        if (startIndex > bufferCoordinates.length - 1)
+        {
+            // FIXME: Solve index going out of bounds... this is happening...
+            throw new NetworkException("startIndex > bufferCoordinates.length - 1; startIndex = " + startIndex
+                + ", bC.length-1 = " + (bufferCoordinates.length - 1));
+        }
+        if (endIndex > bufferCoordinates.length - 1)
+        {
+            // FIXME: Solve index going out of bounds... this is happening...
+            throw new NetworkException("endIndex > bufferCoordinates.length - 1; endIndex = " + endIndex
+                + ", bC.length-1 = " + (bufferCoordinates.length - 1));
+        }
         if (anglesApproximatelyEqual(expectedAngle, angle(bufferCoordinates[startIndex], bufferCoordinates[(startIndex + 1)
             % bufferCoordinates.length]), tolerance))
         {

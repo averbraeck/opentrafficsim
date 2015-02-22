@@ -21,18 +21,17 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
-import org.opentrafficsim.core.network.lane.GeneratorLane;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.lane.LaneAnimation;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.lane.SourceLane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.importexport.osm.Tag;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -298,7 +297,7 @@ public final class Convert
                 else if (osmlink.hasTag("hasFollowing"))
                 {
                     color = Color.BLUE;
-                    result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
+                    result = new SourceLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else
                 {
@@ -326,7 +325,7 @@ public final class Convert
                 else if (osmlink.hasTag("hasFollowing"))
                 {
                     color = Color.BLUE;
-                    result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
+                    result = new SourceLane(otslink, latPos, width, lt, LongitudinalDirectionality.FORWARD);
                 }
                 else
                 {
@@ -346,7 +345,7 @@ public final class Convert
                 if (osmlink.hasTag("hasFollowing"))
                 {
                     color = Color.BLUE;
-                    result = new GeneratorLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
+                    result = new SourceLane(otslink, latPos, width, lt, LongitudinalDirectionality.BACKWARD);
                 }
                 else if (osmlink.hasTag("hasPreceding"))
                 {

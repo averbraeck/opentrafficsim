@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://www.example.org/ots-infra" xmlns="http://www.example.org/ots-infra"
+	targetNamespace="http://www.opentrafficsim.org/ots-infra" xmlns="http://www.opentrafficsim.org/ots-infra"
 	elementFormDefault="qualified">
 
 	<xsd:simpleType name="SPEEDTYPE">
@@ -23,10 +23,23 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
+	<xsd:simpleType name="LEFTRIGHTTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="L|LEFT|R|RIGHT|CLOCKWISE|COUNTERCLOCKWISE"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
 	<xsd:simpleType name="ANGLETYPE">
 		<xsd:restriction base="xsd:double">
 			<xsd:minInclusive value="-180.0"></xsd:minInclusive>
 			<xsd:maxInclusive value="180.0"></xsd:maxInclusive>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ELEMENTSTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern
+				value="((((S|X|V|A)\d+){0,10}(\||\:|\#|&lt;|&gt;){0,1}){0,10}D(((S|X|V|A)\d+){0,10}(\||\:|\#|&lt;|&gt;){0,1}){0,10})|((((S|X|V|A)\d+){0,10}(\||\:|\#|&lt;|&gt;){0,1}){0,10}((SD|XD|VD|AD)\d+)(((S|X|V|A)\d+){0,10}(\||\:|\#|&lt;|&gt;){0,1}){0,10})"></xsd:pattern>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -35,7 +48,9 @@
 			<xsd:element name="NODE" minOccurs="1" maxOccurs="unbounded">
 				<xsd:complexType>
 					<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
-					<xsd:attribute name="COORDINATE" type="COORDINATETYPE"></xsd:attribute>
+					<xsd:attribute name="COORDINATE" type="COORDINATETYPE"
+						use="optional"></xsd:attribute>
+					<xsd:attribute name="ANGLE" type="ANGLETYPE" use="optional"></xsd:attribute>
 				</xsd:complexType>
 			</xsd:element>
 
@@ -54,6 +69,8 @@
 									<xsd:attribute name="RADIUS" type="LENGTHTYPE"
 										use="required"></xsd:attribute>
 									<xsd:attribute name="ANGLE" type="ANGLETYPE" use="required"></xsd:attribute>
+									<xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE"
+										use="required"></xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:choice>
@@ -70,7 +87,8 @@
 					<xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
 					<xsd:attribute name="FROM" type="xsd:string" use="required"></xsd:attribute>
 					<xsd:attribute name="TO" type="xsd:string" use="required"></xsd:attribute>
-					<xsd:attribute name="ELEMENTS" type="xsd:string" use="required"></xsd:attribute>
+					<xsd:attribute name="ELEMENTS" type="ELEMENTSTYPE"
+						use="required"></xsd:attribute>
 					<xsd:attribute name="SPEED" type="SPEEDTYPE"></xsd:attribute>
 					<xsd:attribute name="WIDTH" type="LENGTHTYPE"></xsd:attribute>
 				</xsd:complexType>

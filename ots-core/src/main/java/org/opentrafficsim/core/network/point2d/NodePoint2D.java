@@ -3,6 +3,9 @@ package org.opentrafficsim.core.network.point2d;
 import java.awt.geom.Point2D;
 
 import org.opentrafficsim.core.network.AbstractNode;
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
+import org.opentrafficsim.core.unit.AngleSlopeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -27,6 +30,19 @@ public class NodePoint2D<ID> extends AbstractNode<ID, Point2D>
     public NodePoint2D(final ID id, final Point2D point)
     {
         super(id, point);
+    }
+
+    /**
+     * Construct a new Node.
+     * @param id the Id of the new Node
+     * @param point the location of the Node
+     * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+     * @param slope the slope as an angle.
+     */
+    public NodePoint2D(final ID id, final Point2D point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+        final DoubleScalar.Abs<AngleSlopeUnit> slope)
+    {
+        super(id, point, direction, slope);
     }
 
     /** {@inheritDoc} */
@@ -74,6 +90,19 @@ public class NodePoint2D<ID> extends AbstractNode<ID, Point2D>
         {
             super(id, point);
         }
+
+        /**
+         * @param id the String Id of the new Node
+         * @param point the location of the Node
+         * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+         * @param slope the slope as an angle.
+         */
+        public STR(final String id, final Point2D point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+            final DoubleScalar.Abs<AngleSlopeUnit> slope)
+        {
+            super(id, point, direction, slope);
+        }
+
     }
 
     /**
@@ -100,6 +129,19 @@ public class NodePoint2D<ID> extends AbstractNode<ID, Point2D>
         {
             super(id, point);
         }
+
+        /**
+         * @param id the Integer Id of the new Node
+         * @param point the location of the Node
+         * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+         * @param slope the slope as an angle.
+         */
+        public INT(final int id, final Point2D point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+            final DoubleScalar.Abs<AngleSlopeUnit> slope)
+        {
+            super(id, point, direction, slope);
+        }
+
     }
 
 }
