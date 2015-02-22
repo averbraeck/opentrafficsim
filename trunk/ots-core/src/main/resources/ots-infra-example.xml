@@ -1,51 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<NETWORK xmlns="http://www.example.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.example.org/ots-infra ots-infra.xsd ">
+<NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra ots-infra.xsd">
 
 	<GLOBAL WIDTH="3.6m" SPEED="80km/h" />
 
-	<NODE NAME="N1" COORDINATE="(0.0, -10.0)" />
+	<NODE NAME="N1" COORDINATE="(0.0, -10.0, 0.0)" ANGLE="45" />
 	<NODE NAME="N2" />
 
-	<LINK NAME="A4_12" FROM="N1" TO="N2" ELEMENTS="X1|V2:V1|D|A1:A2|X2">
+	<LINK NAME="A4_12" FROM="N1" TO="N2" ELEMENTS="S1#X1|V2:V1#D#A1:A2|X2#S2">
 		<STRAIGHT LENGTH="50m" />
-		<LANE NAME="X1" WIDTH="1m" />
-		<LANE NAME="X2" WIDTH="1m" />
+		<LANE NAME="S1" WIDTH="1m" />
+		<LANE NAME="S2" WIDTH="1m" />
+	</LINK>
+
+	<NODE NAME="N3b1" />
+
+	<LINK NAME="A4_13a" FROM="N2" TO="N3b1" ELEMENTS="S1#V2:V1|D|A1:A2#S2">
+		<ARC RADIUS="100m" ANGLE="90" DIRECTION="R"/>
+		<LANE NAME="S1" WIDTH="1m" />
+		<LANE NAME="S2" WIDTH="1m" />
 	</LINK>
 
 	<NODE NAME="N3b2" />
 
-	<LINK NAME="A4_13" FROM="N2" TO="N3b2" ELEMENTS="X1|V2:V1|D|A1:A2|X2">
-		<ARC RADIUS="100m" ANGLE="90" />
-		<LANE NAME="X1" WIDTH="1m" />
-		<LANE NAME="X2" WIDTH="1m" />
+	<LINK NAME="A4_13b" FROM="N3b1" TO="N3b2" ELEMENTS="S1#V2:V1|D|A1:A2#S2">
+		<STRAIGHT LENGTH="50m" />
+		<LANE NAME="S1" WIDTH="1m" />
+		<LANE NAME="S2" WIDTH="1m" />
+	</LINK>
+
+	<NODE NAME="N3b3" />
+
+	<LINK NAME="A4_14" FROM="N3b2" TO="N3b3" ELEMENTS="S1#V2:V1|D|A1:A2#S2">
+		<ARC RADIUS="100m" ANGLE="90" DIRECTION="L"/>
+		<LANE NAME="S1" WIDTH="1m" />
+		<LANE NAME="S2" WIDTH="1m" />
 	</LINK>
 
 	<NODE NAME="N4" />
 
-	<LINK NAME="A4_14" FROM="N3b2" TO="N4" ELEMENTS="X1|V2:V1|D|A1:A2|:A3|X2">
-		<STRAIGHT LENGTH="50m" />
-		<LANE NAME="X1" WIDTH="1m" />
-		<LANE NAME="X2" WIDTH="1m" />
+	<LINK NAME="A4_14b" FROM="N3b2" TO="N4" ELEMENTS="S1#V2:V1|D|A1:A2>A3#S2">
+		<STRAIGHT LENGTH="100m" />
+		<LANE NAME="S1" WIDTH="1m" />
+		<LANE NAME="S2" WIDTH="1m" />
 		<LANE NAME="A3" SPEED="60km/h" />
 	</LINK>
 
 	<NODE NAME="N5" />
-	<NODE NAME="ENTRY5" />
 
-	<LINK NAME="A4_15" FROM="N4" TO="N5" ELEMENTS="X1|V2:V1|D|A1:A2|X2">
-		<STRAIGHT LENGTH="100m" />
-		<LANE NAME="X1" WIDTH="1m" />
-		<LANE NAME="X2" WIDTH="1m" />
+	<LINK NAME="A4_15" FROM="N2" TO="N5" ELEMENTS="S1#V2:V1|D|A1:A2#S2">
+		<STRAIGHT LENGTH="200m" />
+		<LANE NAME="S1" WIDTH="1m" />
+		<LANE NAME="S2" WIDTH="1m" />
 	</LINK>
 
-	<LINK NAME="LE1" FROM="ENTRY5" TO="N3b2" ELEMENTS="|A|" SPEED="60km/h">
-		<ARC RADIUS="100m" ANGLE="-45" />
+	<NODE NAME="ENTRY5" />
+	<LINK NAME="LE1" FROM="ENTRY5" TO="N3b2" ELEMENTS="|V1|D|A1|" SPEED="60km/h">
+		<ARC RADIUS="100m" ANGLE="45" DIRECTION="R"/>
 	</LINK>
 
 	<NODE NAME="ENTRY6" />
-	<LINK NAME="LE2" FROM="ENTRY6" TO="ENTRY5" ELEMENTS="|A|" SPEED="60km/h">
-		<ARC RADIUS="100m" ANGLE="45" />
+	<LINK NAME="LE2" FROM="ENTRY5" TO="ENTRY6" ELEMENTS="|V1|D|A1|" SPEED="60km/h">
+		<ARC RADIUS="100m" ANGLE="-45" DIRECTION="L"/>
 	</LINK>
 
 </NETWORK>

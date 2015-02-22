@@ -56,8 +56,9 @@ public abstract class AbstractLink<IDL, IDN, P, N extends AbstractNode<IDN, P>> 
     {
         this.id = id;
         this.startNode = startNode;
-        this.startNode.addLinkOut(this);
         this.endNode = endNode;
+        // TODO Add directionality to a link?
+        this.startNode.addLinkOut(this);
         this.endNode.addLinkIn(this);
         this.length = length;
         setCapacity(capacity);

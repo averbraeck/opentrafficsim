@@ -1,9 +1,7 @@
-package org.opentrafficsim.core.network.geotools;
+package org.opentrafficsim.core.network.animation;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
@@ -14,47 +12,50 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.lane.Lane;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Sep 13, 2014 <br>
+ * @version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class GeometryLinkAnimation extends Renderable2D
+public class LaneAnimation extends Renderable2D
 {
-    /** */
-    private float width;
+    /** color of the lane. */
+    private final Color color;
 
     /**
-     * @param source Link
-     * @param simulator simulator
-     * @param width width
-     * @throws NamingException for problems with registering in context
-     * @throws RemoteException on communications failure
+     * @param source s
+     * @param simulator s
+     * @param color color of the lane.
+     * @throws NamingException ne
+     * @throws RemoteException re
      */
-    public GeometryLinkAnimation(final LinkGeotools source, final OTSSimulatorInterface simulator, final float width)
+    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator, final Color color)
         throws NamingException, RemoteException
     {
         super(source, simulator);
-        this.width = width;
+        this.color = color;
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.RED);
-        Stroke oldStroke = graphics.getStroke();
-        graphics.setStroke(new BasicStroke(this.width));
-        DirectedPoint p = ((LinkGeotools) getSource()).getLocation();
-        boolean start = false;
+        graphics.setColor(this.color);
+        Lane lane = (Lane) getSource();
+        DirectedPoint p = lane.getLocation();
+        Geometry g = lane.getContour();
+        Coordinate[] coordinates = g.getCoordinates();
         Path2D.Double path = new Path2D.Double();
-        for (Coordinate c : ((LinkGeotools) getSource()).getGeometry().getLineString().getCoordinates())
+        boolean start = false;
+        for (Coordinate c : coordinates)
         {
             if (!start)
             {
@@ -66,8 +67,7 @@ public class GeometryLinkAnimation extends Renderable2D
                 path.lineTo(c.x - p.x, -c.y + p.y);
             }
         }
-        graphics.draw(path);
-        graphics.setStroke(oldStroke);
+        path.closePath();
+        graphics.fill(path);
     }
-
 }

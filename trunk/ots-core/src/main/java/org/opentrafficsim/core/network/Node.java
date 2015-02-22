@@ -4,6 +4,10 @@ import java.util.Set;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
+import org.opentrafficsim.core.unit.AngleSlopeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
  * <p>
@@ -24,6 +28,12 @@ public interface Node<ID, P> extends LocatableInterface
 
     /** @return point. */
     P getPoint();
+    
+    /** @return the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
+    DoubleScalar.Abs<AnglePlaneUnit> getDirection();
+
+    /** @return the slope as an angle. */
+    DoubleScalar.Abs<AngleSlopeUnit> getSlope();
 
     /**
      * Add an incoming link to this Node.

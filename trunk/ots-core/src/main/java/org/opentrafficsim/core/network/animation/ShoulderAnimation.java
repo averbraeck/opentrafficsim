@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network.lane;
+package org.opentrafficsim.core.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,6 +12,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.lane.Shoulder;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -24,33 +25,28 @@ import com.vividsolutions.jts.geom.Geometry;
  * @version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D
+public class ShoulderAnimation extends Renderable2D
 {
-    /** color of the lane. */
-    private final Color color;
-
     /**
      * @param source s
      * @param simulator s
-     * @param color color of the lane.
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator, final Color color)
-        throws NamingException, RemoteException
+    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator) throws NamingException,
+        RemoteException
     {
         super(source, simulator);
-        this.color = color;
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(this.color);
-        Lane lane = (Lane) getSource();
-        DirectedPoint p = lane.getLocation();
-        Geometry g = lane.getContour();
+        graphics.setColor(Color.GREEN);
+        Shoulder shoulder = (Shoulder) getSource();
+        DirectedPoint p = shoulder.getLocation();
+        Geometry g = shoulder.getContour();
         Coordinate[] coordinates = g.getCoordinates();
         Path2D.Double path = new Path2D.Double();
         boolean start = false;

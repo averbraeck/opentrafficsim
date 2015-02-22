@@ -1,6 +1,9 @@
 package org.opentrafficsim.core.network.geotools;
 
 import org.opentrafficsim.core.network.AbstractNode;
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
+import org.opentrafficsim.core.unit.AngleSlopeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -27,6 +30,19 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
     public NodeGeotools(final ID id, final Coordinate coordinate)
     {
         super(id, coordinate);
+    }
+
+    /**
+     * Construct a new Node.
+     * @param id ID; the Id of the new Node
+     * @param coordinate P; the location of the new Node
+     * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+     * @param slope the slope as an angle.
+     */
+    public NodeGeotools(final ID id, final Coordinate coordinate, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+        final DoubleScalar.Abs<AngleSlopeUnit> slope)
+    {
+        super(id, coordinate, direction, slope);
     }
 
     /** {@inheritDoc} */
@@ -74,6 +90,19 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
         {
             super(id, coordinate);
         }
+        
+        /**
+         * Construct a new Node.
+         * @param id ID; the String Id of the new Node
+         * @param coordinate P; the location of the new Node
+         * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+         * @param slope the slope as an angle.
+         */
+        public STR(final String id, final Coordinate coordinate, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+            final DoubleScalar.Abs<AngleSlopeUnit> slope)
+        {
+            super(id, coordinate, direction, slope);
+        }
     }
 
     /**
@@ -99,6 +128,19 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
         public INT(final int id, final Coordinate coordinate)
         {
             super(id, coordinate);
+        }
+
+        /**
+         * Construct a new Node.
+         * @param id ID; the Integer Id of the new Node
+         * @param coordinate P; the location of the new Node
+         * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+         * @param slope the slope as an angle.
+         */
+        public INT(final int id, final Coordinate coordinate, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+            final DoubleScalar.Abs<AngleSlopeUnit> slope)
+        {
+            super(id, coordinate, direction, slope);
         }
     }
 

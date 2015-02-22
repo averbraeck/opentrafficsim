@@ -1,16 +1,21 @@
 package org.opentrafficsim.core.network.factory;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.NamingException;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,11 +24,17 @@ import javax.xml.parsers.SAXParserFactory;
 
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.animation.GeometryLinkAnimation;
+import org.opentrafficsim.core.network.animation.LaneAnimation;
+import org.opentrafficsim.core.network.animation.NodeAnimation;
+import org.opentrafficsim.core.network.animation.ShoulderAnimation;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
@@ -32,6 +43,8 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.Shoulder;
 import org.opentrafficsim.core.network.point2d.NodePoint2D;
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
+import org.opentrafficsim.core.unit.AngleSlopeUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -41,6 +54,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 
 /**
  * Parse an XML string with a simple representation of a lane-based network. An example of such a network is:
@@ -87,12 +102,12 @@ import com.vividsolutions.jts.geom.Coordinate;
  *         &lt;LANE NAME="X2" WIDTH="1m" /&gt;
  *     &lt;/LINK&gt;
  * 
- *     &lt;LINK NAME="LE1" FROM="ENTRY5" TO="N3b2(A3)" ELEMENTS="|A|"&gt;
+ *     &lt;LINK NAME="LE1" FROM="ENTRY5" TO="N3b2(A3)" ELEMENTS="|AD|"&gt;
  *         &lt;ARC RADIUS="100m" ANGLE="-45" SPEED="60km/h" /&gt;
  *     &lt;/LINK&gt;
  * 
  *     &lt;NODE NAME="ENTRY6" /&gt;
- *     &lt;LINK NAME="LE2" FROM="ENTRY6" TO="ENTRY5" ELEMENTS="|A|"&gt;
+ *     &lt;LINK NAME="LE2" FROM="ENTRY6" TO="ENTRY5" ELEMENTS="|AD|"&gt;
  *         &lt;ARC RADIUS="100m" ANGLE="45" SPEED="60km/h" /&gt;
  *     &lt;/LINK&gt;
  * 
@@ -157,6 +172,9 @@ public class XmlNetworkLaneParser
     /** TODO incorporate into grammar. */
     private final LaneType<String> laneType = new LaneType<String>("CarLane");
 
+    /** the simulator for creating the animation. Null if no animation needed. */
+    private OTSSimulatorInterface simulator;
+
     static
     {
         SPEED_UNITS.put("km/h", SpeedUnit.KM_PER_HOUR);
@@ -183,9 +201,11 @@ public class XmlNetworkLaneParser
      * @param nodePointClass the Point class of the Node.
      * @param linkClass the class of the Link.
      * @param linkIdClass the ID class of the Link.
+     * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
     public XmlNetworkLaneParser(final Class<?> networkIdClass, final Class<?> nodeClass, final Class<?> nodeIdClass,
-        final Class<?> nodePointClass, final Class<?> linkClass, final Class<?> linkIdClass)
+        final Class<?> nodePointClass, final Class<?> linkClass, final Class<?> linkIdClass,
+        final OTSSimulatorInterface simulator)
     {
         this.networkIdClass = networkIdClass;
         this.nodeClass = nodeClass;
@@ -193,6 +213,7 @@ public class XmlNetworkLaneParser
         this.nodePointClass = nodePointClass;
         this.linkClass = linkClass;
         this.linkIdClass = linkIdClass;
+        this.simulator = simulator;
     }
 
     /**
@@ -239,9 +260,11 @@ public class XmlNetworkLaneParser
         private NodeTag nodeTag;
 
         @Override
+        @SuppressWarnings("checkstyle:methodlength")
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
             throws SAXException
         {
+            System.out.println("start: " + qName);
             try
             {
                 if (!qName.equals("NETWORK"))
@@ -284,6 +307,12 @@ public class XmlNetworkLaneParser
                                         double z = cc.length > 2 ? Double.parseDouble(cc[1]) : 0.0;
                                         this.nodeTag.coordinate = new Point3d(x, y, z);
                                     }
+                                    if (attributes.getValue("ANGLE") != null)
+                                    {
+                                        this.nodeTag.angle =
+                                            new DoubleScalar.Abs<AnglePlaneUnit>(Double.parseDouble(attributes
+                                                .getValue("ANGLE")), AnglePlaneUnit.DEGREE);
+                                    }
                                     break;
 
                                 case "LINK":
@@ -307,6 +336,7 @@ public class XmlNetworkLaneParser
                                     if (attributes.getValue("FROM") != null)
                                     {
                                         String fromNodeStr = attributes.getValue("FROM");
+                                        this.linkTag.nodeFromName = fromNodeStr;
                                         @SuppressWarnings("rawtypes")
                                         Node fromNode = XmlNetworkLaneParser.this.nodes.get(fromNodeStr);
                                         this.linkTag.nodeFrom = fromNode;
@@ -318,6 +348,7 @@ public class XmlNetworkLaneParser
                                     if (attributes.getValue("TO") != null)
                                     {
                                         String toNodeStr = attributes.getValue("TO");
+                                        this.linkTag.nodeToName = toNodeStr;
                                         @SuppressWarnings("rawtypes")
                                         Node toNode = XmlNetworkLaneParser.this.nodes.get(toNodeStr);
                                         this.linkTag.nodeTo = toNode;
@@ -369,7 +400,20 @@ public class XmlNetworkLaneParser
                                     }
                                     if (attributes.getValue("ANGLE") != null)
                                     {
-                                        this.linkTag.arcTag.angle = Double.parseDouble(attributes.getValue("ANGLE"));
+                                        this.linkTag.arcTag.angle =
+                                            new DoubleScalar.Abs<AnglePlaneUnit>(Double.parseDouble(attributes
+                                                .getValue("ANGLE")), AnglePlaneUnit.DEGREE);
+                                    }
+                                    else
+                                    {
+                                        throw new SAXException("ARC: missing attribute ANGLE");
+                                    }
+                                    if (attributes.getValue("DIRECTION") != null)
+                                    {
+                                        String dir = attributes.getValue("DIRECTION");
+                                        this.linkTag.arcTag.direction =
+                                            (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE"))
+                                                ? ArcDirection.LEFT : ArcDirection.RIGHT;
                                     }
                                     else
                                     {
@@ -419,6 +463,7 @@ public class XmlNetworkLaneParser
         @Override
         public void endElement(final String uri, final String localName, final String qName) throws SAXException
         {
+            System.out.println("end  : " + qName);
             if (!this.stack.getLast().equals(qName))
             {
                 throw new SAXException("endElement: Received /" + qName + ", but stack contains: " + this.stack);
@@ -438,19 +483,13 @@ public class XmlNetworkLaneParser
                                     break;
 
                                 case "NODE":
+                                    XmlNetworkLaneParser.this.nodeTags.put(this.nodeTag.name, this.nodeTag);
                                     if (this.nodeTag.coordinate != null)
                                     {
+                                        // only make a node if we know the coordinate. Otherwise, wait till we can calculate it.
                                         @SuppressWarnings("rawtypes")
-                                        Node node =
-                                            makeNode(XmlNetworkLaneParser.this.nodeClass, makeId(
-                                                XmlNetworkLaneParser.this.nodeIdClass, this.nodeTag.name), makePoint(
-                                                XmlNetworkLaneParser.this.nodePointClass, this.nodeTag.coordinate));
+                                        Node node = makeNode(XmlNetworkLaneParser.this.nodeClass, this.nodeTag);
                                         XmlNetworkLaneParser.this.nodes.put(node.getId().toString(), node);
-                                    }
-                                    else
-                                    {
-                                        // store in temporary map until we know the coordinate.
-                                        XmlNetworkLaneParser.this.nodeTags.put(this.nodeTag.name, this.nodeTag);
                                     }
                                     break;
 
@@ -461,6 +500,7 @@ public class XmlNetworkLaneParser
                                     parseElements(this.linkTag.elements, link, this.linkTag, this.globalTag);
                                     XmlNetworkLaneParser.this.links.put(link.getId().toString(), link);
                                     break;
+
                                 default:
                                     throw new SAXException("NETWORK: Received end tag " + qName + ", but stack contains: "
                                         + this.stack);
@@ -566,19 +606,33 @@ public class XmlNetworkLaneParser
 
     /**
      * @param clazz the node class
-     * @param id the id as an object
-     * @param point the point as an object
+     * @param nodeTag the tag with the infor for the node.
      * @return a constructed node
      * @throws NetworkException when point cannot be instantiated
+     * @throws NamingException when animation context cannot be found.
+     * @throws RemoteException when communication error occurs when trying to find animation context.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected final Node makeNode(final Class<?> clazz, final Object id, final Object point) throws NetworkException
+    protected final Node makeNode(final Class<?> clazz, final NodeTag nodeTag) throws NetworkException, RemoteException,
+        NamingException
     {
+        Object id = makeId(this.nodeIdClass, nodeTag.name);
+        Object point = makePoint(this.nodePointClass, nodeTag.coordinate);
+        DoubleScalar.Abs<AnglePlaneUnit> angle =
+            nodeTag.angle == null ? new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
+        DoubleScalar.Abs<AngleSlopeUnit> slope =
+            nodeTag.slope == null ? new DoubleScalar.Abs<AngleSlopeUnit>(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
         if (NodeGeotools.class.isAssignableFrom(clazz))
         {
             if (point instanceof Coordinate)
             {
-                return new NodeGeotools(id, (Coordinate) point);
+                Node node = new NodeGeotools(id, (Coordinate) point, angle, slope);
+                this.nodes.put(id.toString(), node);
+                if (this.simulator != null)
+                {
+                    new NodeAnimation(node, this.simulator);
+                }
+                return node;
             }
             throw new NetworkException("Parsing network. Node class " + clazz.getName()
                 + ": cannot instantiate. Wrong Coordinate type: " + point.getClass() + ", coordinate: " + point);
@@ -587,7 +641,13 @@ public class XmlNetworkLaneParser
         {
             if (point instanceof Point2D)
             {
-                return new NodePoint2D(id, (Point2D) point);
+                Node node = new NodePoint2D(id, (Point2D) point, angle, slope);
+                this.nodes.put(id.toString(), node);
+                if (this.simulator != null)
+                {
+                    new NodeAnimation(node, this.simulator);
+                }
+                return node;
             }
             throw new NetworkException("Parsing network. Node class " + clazz.getName()
                 + ": cannot instantiate. Wrong Point2D type: " + point.getClass() + ", coordinate: " + point);
@@ -599,13 +659,163 @@ public class XmlNetworkLaneParser
     }
 
     /**
-     * One of the nodes probably has a coordinate and the other not. Calculate the other coordinate and force it onto the Node.
+     * One of the nodes probably has a coordinate and the other not. Calculate the other coordinate and save the Node.
      * @param linkTag the parsed information from the XML file.
+     * @throws NetworkException when both nodes are null.
+     * @throws RemoteException when coordinate cannot be reached.
+     * @throws NamingException when node animation cannot link to the animation context.
      */
-    protected final void calculateNodeCoordinates(final LinkTag linkTag)
+    protected final void calculateNodeCoordinates(final LinkTag linkTag) throws RemoteException, NetworkException,
+        NamingException
     {
         // calculate dx, dy and dz for the straight or the arc.
-        
+        if (linkTag.nodeFrom != null && linkTag.nodeTo != null)
+        {
+            return;
+        }
+        if (linkTag.nodeFrom == null && linkTag.nodeTo == null)
+        {
+            throw new NetworkException("Parsing network. Link: " + linkTag.name + ", both From-node and To-node are null");
+        }
+        if (linkTag.straightTag != null)
+        {
+            double lengthSI = linkTag.straightTag.length.getSI();
+            if (linkTag.nodeTo == null)
+            {
+                Point3d coordinate =
+                    new Point3d(linkTag.nodeFrom.getLocation().getX(), linkTag.nodeFrom.getLocation().getY(),
+                        linkTag.nodeFrom.getLocation().getZ());
+                double angle = linkTag.nodeFrom.getDirection().getSI();
+                double slope = linkTag.nodeFrom.getSlope().getSI();
+                coordinate.x += lengthSI * Math.cos(angle);
+                coordinate.y += lengthSI * Math.sin(angle);
+                coordinate.z += lengthSI * Math.sin(slope);
+                NodeTag nodeTag = this.nodeTags.get(linkTag.nodeToName);
+                nodeTag.angle = new DoubleScalar.Abs<AnglePlaneUnit>(angle, AnglePlaneUnit.SI);
+                nodeTag.coordinate = coordinate;
+                nodeTag.slope = new DoubleScalar.Abs<AngleSlopeUnit>(slope, AngleSlopeUnit.SI);
+                @SuppressWarnings("rawtypes")
+                Node node = makeNode(this.nodeClass, nodeTag);
+                linkTag.nodeTo = node;
+            }
+            else if (linkTag.nodeFrom == null)
+            {
+                Point3d coordinate =
+                    new Point3d(linkTag.nodeTo.getLocation().getX(), linkTag.nodeTo.getLocation().getY(), linkTag.nodeTo
+                        .getLocation().getZ());
+                double angle = linkTag.nodeTo.getDirection().getSI();
+                double slope = linkTag.nodeTo.getSlope().getSI();
+                coordinate.x -= lengthSI * Math.cos(angle);
+                coordinate.y -= lengthSI * Math.sin(angle);
+                coordinate.z -= lengthSI * Math.sin(slope);
+                NodeTag nodeTag = this.nodeTags.get(linkTag.nodeFromName);
+                nodeTag.angle = new DoubleScalar.Abs<AnglePlaneUnit>(angle, AnglePlaneUnit.SI);
+                nodeTag.coordinate = coordinate;
+                nodeTag.slope = new DoubleScalar.Abs<AngleSlopeUnit>(slope, AngleSlopeUnit.SI);
+                @SuppressWarnings("rawtypes")
+                Node node = makeNode(this.nodeClass, nodeTag);
+                linkTag.nodeFrom = node;
+            }
+        }
+        else if (linkTag.arcTag != null)
+        {
+            double radiusSI = linkTag.arcTag.radius.getSI();
+            double angle = linkTag.arcTag.angle.getSI();
+            ArcDirection direction = linkTag.arcTag.direction;
+            if (linkTag.nodeTo == null)
+            {
+                Point3d coordinate =
+                    new Point3d(linkTag.nodeFrom.getLocation().getX(), linkTag.nodeFrom.getLocation().getY(),
+                        linkTag.nodeFrom.getLocation().getZ());
+                double startAngle = linkTag.nodeFrom.getDirection().getSI();
+                double slope = linkTag.nodeFrom.getSlope().getSI();
+                double lengthSI = radiusSI * angle;
+                if (direction.equals(ArcDirection.LEFT))
+                {
+                    linkTag.arcTag.center =
+                        new Point3d(coordinate.x + radiusSI * Math.cos(startAngle + Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                    linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
+                    coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angle);
+                    coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angle);
+                }
+                else
+                {
+                    linkTag.arcTag.center =
+                        new Point3d(coordinate.x + radiusSI * Math.cos(startAngle - Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(startAngle - Math.PI / 2.0), 0.0);
+                    linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
+                    coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angle);
+                    coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angle);
+                }
+                coordinate.z += lengthSI * Math.sin(slope);
+                NodeTag nodeTag = this.nodeTags.get(linkTag.nodeToName);
+                nodeTag.angle = new DoubleScalar.Abs<AnglePlaneUnit>(norm(startAngle - angle), AnglePlaneUnit.SI);
+                nodeTag.coordinate = coordinate;
+                nodeTag.slope = new DoubleScalar.Abs<AngleSlopeUnit>(slope, AngleSlopeUnit.SI);
+                @SuppressWarnings("rawtypes")
+                Node node = makeNode(this.nodeClass, nodeTag);
+                linkTag.nodeTo = node;
+            }
+
+            else if (linkTag.nodeFrom == null)
+            {
+                Point3d coordinate =
+                    new Point3d(linkTag.nodeTo.getLocation().getX(), linkTag.nodeTo.getLocation().getY(), linkTag.nodeTo
+                        .getLocation().getZ());
+                double endAngle = linkTag.nodeTo.getDirection().getSI();
+                double slope = linkTag.nodeTo.getSlope().getSI();
+                double lengthSI = radiusSI * angle;
+                NodeTag nodeTag = this.nodeTags.get(linkTag.nodeFromName);
+                if (direction.equals(ArcDirection.LEFT))
+                {
+                    linkTag.arcTag.center =
+                        new Point3d(coordinate.x + radiusSI + Math.cos(endAngle + Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(endAngle + Math.PI / 2.0), 0.0);
+                    linkTag.arcTag.startAngle = endAngle - Math.PI / 2.0 - angle;
+                    coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
+                    coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
+                    nodeTag.angle =
+                        new DoubleScalar.Abs<AnglePlaneUnit>(norm(linkTag.arcTag.startAngle + Math.PI / 2.0),
+                            AnglePlaneUnit.SI);
+                }
+                else
+                {
+                    linkTag.arcTag.center =
+                        new Point3d(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(endAngle - Math.PI / 2.0), 0.0);
+                    linkTag.arcTag.startAngle = endAngle + Math.PI / 2.0 + angle;
+                    coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
+                    coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
+                    nodeTag.angle =
+                        new DoubleScalar.Abs<AnglePlaneUnit>(norm(linkTag.arcTag.startAngle - Math.PI / 2.0),
+                            AnglePlaneUnit.SI);
+                }
+                coordinate.z -= lengthSI * Math.sin(slope);
+                nodeTag.coordinate = coordinate;
+                nodeTag.slope = new DoubleScalar.Abs<AngleSlopeUnit>(slope, AngleSlopeUnit.SI);
+                @SuppressWarnings("rawtypes")
+                Node node = makeNode(this.nodeClass, nodeTag);
+                linkTag.nodeFrom = node;
+            }
+        }
+
+    }
+
+    // FIXME put in utility class. Also exists in CrossSectionElement.
+    /**
+     * normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    private double norm(final double angle)
+    {
+        double normalized = angle % (2 * Math.PI);
+        if (normalized < 0.0)
+        {
+            normalized += 2 * Math.PI;
+        }
+        return normalized;
     }
 
     /**
@@ -613,9 +823,11 @@ public class XmlNetworkLaneParser
      * @param linkTag the link information from XML.
      * @return a constructed link
      * @throws SAXException when point cannot be instantiated
+     * @throws NamingException when animation context cannot be found.
+     * @throws RemoteException when communication error occurs when reaching animation context.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected final CrossSectionLink makeLink(final LinkTag linkTag) throws SAXException
+    protected final CrossSectionLink makeLink(final LinkTag linkTag) throws SAXException, RemoteException, NamingException
     {
         try
         {
@@ -623,6 +835,17 @@ public class XmlNetworkLaneParser
             {
                 Object id = makeId(this.linkIdClass, linkTag.name);
                 DoubleScalar.Rel<LengthUnit> length = null;
+                LinearGeometry geometry = null;
+                int points = 2;
+                if (linkTag.arcTag != null)
+                {
+                    points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 32 : 64;
+                }
+                NodeTag from = this.nodeTags.get(linkTag.nodeFromName);
+                NodeTag to = this.nodeTags.get(linkTag.nodeToName);
+                Coordinate[] coordinates = new Coordinate[points];
+                coordinates[0] = new Coordinate(from.coordinate.x, from.coordinate.y, from.coordinate.z);
+                coordinates[coordinates.length - 1] = new Coordinate(to.coordinate.x, to.coordinate.y, to.coordinate.z);
                 if (linkTag.straightTag != null)
                 {
                     length = linkTag.straightTag.length;
@@ -630,11 +853,44 @@ public class XmlNetworkLaneParser
                 else if (linkTag.arcTag != null)
                 {
                     length =
-                        new DoubleScalar.Rel<LengthUnit>(linkTag.arcTag.radius.mutable().multiply(
-                            Math.toRadians(Math.abs(linkTag.arcTag.angle))).getInUnit(), linkTag.arcTag.radius.getUnit());
+                        new DoubleScalar.Rel<LengthUnit>(linkTag.arcTag.radius.getInUnit() * linkTag.arcTag.angle.getSI(),
+                            linkTag.arcTag.radius.getUnit());
+                    double angleStep = linkTag.arcTag.angle.getSI() / points;
+                    double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
+                    double radiusSI = linkTag.arcTag.radius.getSI();
+                    if (linkTag.arcTag.direction.equals(ArcDirection.RIGHT))
+                    {
+                        for (int p = 1; p < points - 1; p++)
+                        {
+                            coordinates[p] =
+                                new Coordinate(linkTag.arcTag.center.x + radiusSI
+                                    * Math.cos(linkTag.arcTag.startAngle - angleStep * p), linkTag.arcTag.center.y
+                                    + radiusSI * Math.sin(linkTag.arcTag.startAngle - angleStep * p), from.coordinate.z
+                                    + slopeStep * p);
+                        }
+                    }
+                    else
+                    {
+                        for (int p = 1; p < points - 1; p++)
+                        {
+                            coordinates[p] =
+                                new Coordinate(linkTag.arcTag.center.x + radiusSI
+                                    * Math.cos(linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y
+                                    + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p), from.coordinate.z
+                                    + slopeStep * p);
+                        }
+                    }
                 }
                 CrossSectionLink link =
                     new CrossSectionLink(id, (NodeGeotools) linkTag.nodeFrom, (NodeGeotools) linkTag.nodeTo, length);
+                GeometryFactory factory = new GeometryFactory();
+                LineString lineString = factory.createLineString(coordinates);
+                geometry = new LinearGeometry(link, lineString, null);
+                link.setGeometry(geometry);
+                if (this.simulator != null)
+                {
+                    new GeometryLinkAnimation(link, this.simulator, 1);
+                }
                 return link;
             }
             else
@@ -655,20 +911,30 @@ public class XmlNetworkLaneParser
      * @param globalTag the global tag with possible information about speed and width.
      * @return a list of cross-section elements
      * @throws SAXException for unknown lane type or other inconsistencies.
+     * @throws NamingException when animation context cannot be found.
+     * @throws RemoteException when animation context cannot be reached.
      */
     @SuppressWarnings({"visibilitymodifier", "rawtypes"})
     protected final List<CrossSectionElement> parseElements(final String elements, final CrossSectionLink csl,
-        final LinkTag linkTag, final GlobalTag globalTag) throws SAXException
+        final LinkTag linkTag, final GlobalTag globalTag) throws SAXException, RemoteException, NamingException
     {
         List<CrossSectionElement> cseList = new ArrayList<>();
-        String[] names = elements.split("(\\|)|(\\:)|(\\|\\:)|(\\:\\|)|(\\|\\|)");
+        String[] nameStrings = elements.split("(\\|)|(\\:)|(\\<)|(\\>)|(\\#)");
+        List<String> names = new ArrayList<>();
+        for (String s : nameStrings)
+        {
+            if (s.length() > 0) // to take out potential empty strings at the start and end.
+            {
+                names.add(s);
+            }
+        }
         List<Double> widthsSI = new ArrayList<>();
         int designIndex = -1;
         int i = -1;
         for (String name : names)
         {
             i++;
-            if (name.equals("D")) // TODO design line in the middle of a lane
+            if (name.equals("D")) // TODO design line in the middle of a lane (AD, XD, VD, SD)
             {
                 widthsSI.add(0.0);
                 designIndex = i;
@@ -712,57 +978,89 @@ public class XmlNetworkLaneParser
         i = -1;
         for (String name : names)
         {
-            i++;
-            LongitudinalDirectionality ld = null;
-            if (name.startsWith("A")) // lane going in the design direction
+            if (name.length() > 0)
             {
-                ld = LongitudinalDirectionality.FORWARD;
-            }
-            else if (name.startsWith("V")) // lane going in the opposite direction
-            {
-                ld = LongitudinalDirectionality.BACKWARD;
-            }
-            else if (name.startsWith("B")) // lane going in both directions
-            {
-                ld = LongitudinalDirectionality.BOTH;
-            }
-            else if (name.startsWith("X")) // forbidden lane (e.g., grass)
-            {
-                ld = LongitudinalDirectionality.NONE;
-            }
-            else if (name.equals("D")) // design line
-            {
-                ld = LongitudinalDirectionality.NONE;
-            }
-            else
-            {
-                throw new SAXException("unknown lane type in " + elements + ": " + name.charAt(0));
-            }
-
-            try
-            {
-                if (ld.equals(LongitudinalDirectionality.NONE))
+                i++;
+                LongitudinalDirectionality ld = null;
+                if (name.startsWith("A")) // lane going in the design direction
                 {
-                    Shoulder shoulder =
-                        new Shoulder(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
-                            new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
-                            new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI));
-                    cseList.add(shoulder);
+                    ld = LongitudinalDirectionality.FORWARD;
+                }
+                else if (name.startsWith("V")) // lane going in the opposite direction
+                {
+                    ld = LongitudinalDirectionality.BACKWARD;
+                }
+                else if (name.startsWith("B")) // lane going in both directions
+                {
+                    ld = LongitudinalDirectionality.BOTH;
+                }
+                else if (name.startsWith("X")) // forbidden lane (e.g., emergency lane)
+                {
+                    ld = LongitudinalDirectionality.NONE;
+                }
+                else if (name.startsWith("S")) // forbidden lane (e.g., grass)
+                {
+                    ld = LongitudinalDirectionality.NONE;
+                }
+                else if (name.equals("D")) // design line
+                {
+                    ld = LongitudinalDirectionality.NONE;
                 }
                 else
                 {
-                    Lane lane =
-                        new Lane(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
-                            new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(
-                                widthsSI.get(i), LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i),
-                                LengthUnit.SI), this.laneType, ld, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
-                                FrequencyUnit.PER_HOUR));
-                    cseList.add(lane);
+                    throw new SAXException("unknown lane type in " + elements + ": " + name.charAt(0));
                 }
-            }
-            catch (NetworkException ne)
-            {
-                throw new SAXException(ne);
+
+                try
+                {
+                    if (ld.equals(LongitudinalDirectionality.NONE))
+                    {
+                        if (name.startsWith("S"))
+                        {
+                            Shoulder shoulder =
+                                new Shoulder(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                    new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
+                                    new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI));
+                            cseList.add(shoulder);
+                            if (this.simulator != null)
+                            {
+                                new ShoulderAnimation(shoulder, this.simulator);
+                            }
+                        }
+                        else if (name.startsWith("X"))
+                        {
+                            Lane lane =
+                                new Lane(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                    new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                    new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
+                                    new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI), this.laneType, ld,
+                                    new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR));
+                            cseList.add(lane);
+                            if (this.simulator != null)
+                            {
+                                new LaneAnimation(lane, this.simulator, Color.LIGHT_GRAY);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Lane lane =
+                            new Lane(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI), this.laneType, ld,
+                                new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE, FrequencyUnit.PER_HOUR));
+                        cseList.add(lane);
+                        if (this.simulator != null)
+                        {
+                            new LaneAnimation(lane, this.simulator, Color.GRAY);
+                        }
+                    }
+                }
+                catch (NetworkException ne)
+                {
+                    throw new SAXException(ne);
+                }
             }
         }
         return cseList;
@@ -932,6 +1230,12 @@ public class XmlNetworkLaneParser
         @SuppressWarnings("rawtypes")
         protected Node nodeTo = null;
 
+        /** from node name. */
+        protected String nodeFromName = null;
+
+        /** to node name. */
+        protected String nodeToName = null;
+
         /** elements. */
         protected String elements = null;
 
@@ -963,11 +1267,20 @@ public class XmlNetworkLaneParser
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected class ArcTag
     {
-        /** lane speed. */
-        protected double angle = Double.NaN;
+        /** angle. */
+        protected DoubleScalar.Abs<AnglePlaneUnit> angle = null;
 
         /** radius. */
         protected DoubleScalar.Rel<LengthUnit> radius = null;
+
+        /** direction. */
+        protected ArcDirection direction = null;
+
+        /** the center coordinate of the arc. Will be filled after parsing. */
+        protected Point3d center;
+
+        /** the startAngle in radians compared to the center coordinate. Will be filled after parsing. */
+        protected double startAngle;
     }
 
     /** STRAIGHT element. */
@@ -987,6 +1300,21 @@ public class XmlNetworkLaneParser
 
         /** coordinate (null at first, can be calculated later when connected to a link. */
         Point3d coordinate = null;
+
+        /** absolute angle of the node. 0 is "East", pi/2 = "North". */
+        DoubleScalar.Abs<AnglePlaneUnit> angle = null;
+
+        /** slope as an angle. */
+        DoubleScalar.Abs<AngleSlopeUnit> slope = null;
+    }
+
+    /** direction of the arc; LEFT or RIGHT. */
+    protected enum ArcDirection
+    {
+        /** Left = counter-clockwise. */
+        LEFT,
+        /** Right = clockwise. */
+        RIGHT;
     }
 
     /**
@@ -1003,7 +1331,7 @@ public class XmlNetworkLaneParser
         URL url = URLResource.getResource("/ots-infra-example.xml");
         XmlNetworkLaneParser nlp =
             new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class, LinkGeotools.class,
-                String.class);
+                String.class, null);
         Network n = nlp.build(url.openStream());
     }
 }

@@ -12,6 +12,10 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
+import org.opentrafficsim.core.unit.AngleSlopeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
  * <p>
@@ -36,6 +40,12 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     /** the point. */
     private final P point;
 
+    /** the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
+    private final DoubleScalar.Abs<AnglePlaneUnit> direction;
+
+    /** the slope as an angle. */
+    private final DoubleScalar.Abs<AngleSlopeUnit> slope;
+
     /** the incoming links. */
     private final Set<Link<?, ? extends Node<ID, P>>> linksIn = new HashSet<Link<?, ? extends Node<ID, P>>>();
 
@@ -46,12 +56,27 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
      * Construction of a Node.
      * @param id the id of the Node.
      * @param point the point with usually an x and y setting.
+     * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+     * @param slope the slope as an angle.
      */
-
-    public AbstractNode(final ID id, final P point)
+    public AbstractNode(final ID id, final P point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+        final DoubleScalar.Abs<AngleSlopeUnit> slope)
     {
         this.id = id;
         this.point = point;
+        this.direction = direction;
+        this.slope = slope;
+    }
+
+    /**
+     * Construction of a Node.
+     * @param id the id of the Node.
+     * @param point the point with usually an x and y setting.
+     */
+    public AbstractNode(final ID id, final P point)
+    {
+        this(id, point, new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI), new DoubleScalar.Abs<AngleSlopeUnit>(
+            0.0, AngleSlopeUnit.SI));
     }
 
     /**
@@ -103,7 +128,7 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     @Override
     public final Set<Link<?, ? extends Node<ID, P>>> getLinksIn()
     {
-        // XXXXX: should return a copy?
+        // XXX: should return a copy?
         return this.linksIn;
     }
 
@@ -111,8 +136,24 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     @Override
     public final Set<Link<?, ? extends Node<ID, P>>> getLinksOut()
     {
-        // XXXXX: should return a copy?
+        // XXX: should return a copy?
         return this.linksOut;
+    }
+
+    /**
+     * @return direction.
+     */
+    public final DoubleScalar.Abs<AnglePlaneUnit> getDirection()
+    {
+        return this.direction;
+    }
+
+    /**
+     * @return slope.
+     */
+    public final DoubleScalar.Abs<AngleSlopeUnit> getSlope()
+    {
+        return this.slope;
     }
 
     /** {@inheritDoc} */
@@ -128,7 +169,7 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {
@@ -168,4 +209,5 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
             return false;
         return true;
     }
+
 }

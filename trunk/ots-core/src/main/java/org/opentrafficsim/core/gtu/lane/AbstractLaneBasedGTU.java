@@ -325,7 +325,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         DoubleScalar.Rel<LengthUnit> maximumReverseHeadway = new DoubleScalar.Rel<LengthUnit>(-200.0, LengthUnit.METER);
         // TODO 200?
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR);
-        // TODO should be the local speed limit
+        // TODO should be the local speed limit and based on the maximum lane speed and the maximum GTU speed
         if (null != this.laneChangeModel)
         {
             Collection<HeadwayGTU> sameLaneTraffic = new ArrayList<HeadwayGTU>();
@@ -357,7 +357,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // Then change onto laterally adjacent lane(s) if the LaneMovementStep indicates a lane change
             if (lcmr.getLaneChange() != null)
             {
-                // System.out.println("GTU " + this + " changing lane");
+                System.out.println("GTU " + this + " changing lane");
                 // TODO: make lane changes gradual (not instantaneous; like now)
                 Collection<Lane> oldLaneSet = new ArrayList<Lane>(this.lanes);
                 Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());

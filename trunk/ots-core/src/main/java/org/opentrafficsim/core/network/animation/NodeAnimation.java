@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.Node;
 
 /**
  * <p>
@@ -25,8 +26,8 @@ public class NodeAnimation extends Renderable2D
     /**
      * @param node n
      * @param simulator s
-     * @throws NamingException on ???
-     * @throws RemoteException on communications failure
+     * @throws NamingException when animation context cannot be found.
+     * @throws RemoteException on communications failure for animation context.
      */
     public NodeAnimation(final Node<?, ?> node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
