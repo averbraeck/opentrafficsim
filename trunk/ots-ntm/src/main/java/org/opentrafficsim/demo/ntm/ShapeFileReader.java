@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.ntm;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -141,10 +142,19 @@ public class ShapeFileReader
                         newNr++;
                         centroidNr = newNr.toString();
                     }
+                    double increaseDemandByFactor = 1.0;
+                    double accCritMaxCapStart = 25;
+                    double accCritMaxCapEnd = 50;
+                    double accCritJam = 100;
+                    ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>(); 
+                    accCritical.add(accCritMaxCapStart);
+                    accCritical.add(accCritMaxCapEnd);
+                    accCritical.add(accCritJam);
+                    ParametersNTM parametersNTM = new ParametersNTM(accCritical) ;
                     Area area =
                             new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint(),
                                     TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
-                                    new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                    new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -371,7 +381,7 @@ public class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Rel<LengthUnit> length = null ;
+                DoubleScalar.Rel<LengthUnit> length = null;
                 if (lengthUnit.equals("kilometer"))
                 {
                     length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);

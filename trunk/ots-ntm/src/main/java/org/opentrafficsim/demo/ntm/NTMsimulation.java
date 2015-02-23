@@ -201,6 +201,10 @@ public class NTMsimulation
                                             cellBehaviourNTM.getArea().getRoadLength(),
                                             cellBehaviourNTM.getParametersNTM()).getInUnit(FrequencyUnit.PER_HOUR);
 
+                            if (model.getSettingsNTM().isIncreaseDemandByArea())
+                            {
+                                tripByHour *= cellBehaviourNTM.getArea().getIncreaseDemandByFactor();
+                            }
                             tripByHour =
                                     tripByHour
                                             * cellBehaviourNTM.getArea().getRoadLength()
@@ -254,7 +258,14 @@ public class NTMsimulation
                             // **** RELEVANT
                             origin.getCellBehaviour().setSupply(java.lang.Double.POSITIVE_INFINITY);
                         }
-                        origin.getArea().setAccumulatedCars(origin.getCellBehaviour().getAccumulatedCars());
+                        if (origin.getArea()!= null)
+                        {
+                            origin.getArea().setAccumulatedCars(origin.getCellBehaviour().getAccumulatedCars());
+                        }
+                        else
+                        {
+                            System.out.println("test");
+                        }
                     }
                     else
                     // if NO ACCUMULATION in a node, supply needs to be set, else it may become too low!!!!
@@ -573,7 +584,7 @@ public class NTMsimulation
                                                 if (lastCell.getCellBehaviourFlow().getTripInfoByNodeMap()
                                                         .get(tripInfoByDestination.getDestination()) == null)
                                                 {
-                                                    if (model.DEBUG)
+                                                    if (model.getInputNTM().isDEBUG())
                                                     {
                                                         System.out.println("Stop");
                                                     }
@@ -621,7 +632,7 @@ public class NTMsimulation
                                 else if (neighbour.getBehaviourType() != TrafficBehaviourType.NTM
                                         && neighbour.getBehaviourType() != TrafficBehaviourType.CORDON)
                                 {
-                                    if (model.DEBUG)
+                                    if (model.getInputNTM().isDEBUG())
                                     {
                                         System.out
                                                 .println("CTMsimulation line 560: FLOW node has neighbour of type NTM or Cordon");
@@ -718,7 +729,7 @@ public class NTMsimulation
                                                 if (neighbour.getCellBehaviour().getTripInfoByNodeMap()
                                                         .get(destination) == null)
                                                 {
-                                                    if (model.DEBUG)
+                                                    if (model.getInputNTM().isDEBUG())
                                                     {
                                                         System.out.println(found + " Step " + steps + ": Neighbour: "
                                                                 + neighbour.getId() + " has no destination "
@@ -752,7 +763,7 @@ public class NTMsimulation
                                         }
                                         else
                                         {
-                                            if (model.DEBUG)
+                                            if (model.getInputNTM().isDEBUG())
                                             {
                                                 System.out.println("NTMSimulation line 475: no neighbour");
                                             }
@@ -817,7 +828,7 @@ public class NTMsimulation
                                                         if (cell.getCellBehaviourFlow().getTripInfoByNodeMap()
                                                                 .get(destination) == null)
                                                         {
-                                                            if (model.DEBUG)
+                                                            if (model.getInputNTM().isDEBUG())
                                                             {
                                                                 System.out.println("NTM-Flow-NTM");
                                                             }
@@ -842,7 +853,7 @@ public class NTMsimulation
 
                                                 else
                                                 {
-                                                    if (model.DEBUG)
+                                                    if (model.getInputNTM().isDEBUG())
                                                     {
                                                         System.out.println("NTM-Flow-NTM");
                                                     }
@@ -936,7 +947,7 @@ public class NTMsimulation
                         }
                         else
                         {
-                            if (model.DEBUG)
+                            if (model.getInputNTM().isDEBUG())
                             {
                                 System.out.println("no area connected to: " + origin.getId());
                             }
@@ -1008,7 +1019,7 @@ public class NTMsimulation
 
         }
 
-        if (model.WRITEDATA)
+        if (model.getInputNTM().isWRITEDATA())
         {
             WriteOutput.writeOutputDataFlowLinks(model, steps, MAXSTEPS);
             WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);

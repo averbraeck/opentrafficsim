@@ -107,6 +107,9 @@ public class NTMModel implements OTSModelInterface
     /** the demand of trips by Origin and Destination for simulation. */
     TripDemand<TripInfoTimeDynamic> tripDemandToUse;
 
+    /** */
+    private InputNTM inputNTM;
+
     /** The simulation settings. */
     private NTMSettings settingsNTM;
 
@@ -124,21 +127,6 @@ public class NTMModel implements OTSModelInterface
 
     /** subset of links from shape file used as flow links. */
     private LinkedHashMap<String, Link> debugLinkList;
-
-    /** debugging. */
-    public boolean DEBUG = false;
-
-    /** debugging. */
-    public boolean WRITEDATA = false;
-
-    /** debugging. */
-    public boolean paint = false;
-
-    /** use the bigger areas (true) or the detailed areas (false). */
-    public boolean COMPRESS_AREAS = false;
-
-    /** */
-    private String output = "";
 
     /**
      * Constructor to make the graphs with the right type.
@@ -163,164 +151,40 @@ public class NTMModel implements OTSModelInterface
         {
             // boolean DEBUG = true;
             // set the time step value at ten seconds;
-            DoubleScalar.Rel<TimeUnit> reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel =
                     new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
             Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(10800, TimeUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 15, 0, 0);
-            String path = "";
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
-            String fileProfiles = "";
-            String fileDemand = "";
-            String fileCompressedDemand = "";
-            String fileNameCapacityRestraint = "";
-            String fileNameParametersNTM = "";
-            double scalingFactorDemand = 1.0;
-            
-            int numberOfRoutes = 1;
-            double weightNewRoutes = 1.0;
-            double varianceRoutes = 5.0f;
-            boolean reRoute = false;
-            // determine the files to read
-            int debugFiles = 0; // The Hague
-            // int debugFiles = 4; // debug 4: fork
 
-            // boundaries for flow links (all links with values above are selected)
-            // settings below are unrealistic
-            DoubleScalar<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
-            DoubleScalar<FrequencyUnit> maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(99, FrequencyUnit.PER_HOUR);
+            this.centroids =
+                    ShapeFileReader.ReadNodes(this.getInputNTM().getInputMap() + this.getInputNTM().getFileCentroids(),
+                            "NODENR", this.getInputNTM().isReturnCentroidsCentroid(), this.getInputNTM()
+                                    .isOnlyCentroidsFileCentroid());
+            this.nodes =
+                    ShapeFileReader.ReadNodes(this.getInputNTM().getInputMap() + this.getInputNTM().getFileNodes(),
+                            "NODENR", this.getInputNTM().isReturnCentroidsNode(), this.getInputNTM()
+                                    .isOnlyCentroidsFileNode());
+            this.areas =
+                    ShapeFileReader.readAreas(this.getInputNTM().getInputMap() + this.getInputNTM().getFileAreas(),
+                            this.centroids);
+            ShapeFileReader.readLinks(this.getInputNTM().getInputMap() + this.getInputNTM().getFileLinks(),
+                    this.shpLinks, this.shpConnectors, this.nodes, this.centroids, "kilometer");
 
-            if (debugFiles == 0)
-            {
-                /** use the bigger areas (true) or the detailed areas (false). */
-                this.WRITEDATA = true;
-                this.COMPRESS_AREAS = true;
-                paint = false;
-                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague";
-                // Read the shape files with the function:
-                // public static Map<Long, ShpNode> ReadNodes(final String shapeFileName, final String numberType,
-                // boolean
-                // returnCentroid, boolean allCentroids)
-                // if returnCentroid: true: return centroids;
-                // false: return nodes
-                // if allCentroids: true: we are reading a file with only centroids
-                // false: mixed file with centroids (number starts with "C") and normal nodes
-                this.centroids = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", true, false);
-                this.nodes = ShapeFileReader.ReadNodes(path + "/TESTcordonnodes.shp", "NODENR", false, false);
-                this.areas = ShapeFileReader.readAreas(path + "/selectedAreasGT1.shp", this.centroids);
-                ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
-                        this.nodes, this.centroids, "kilometer");
-                // fileDemand = "/cordonmatrix_pa_os.txt";
-                scalingFactorDemand = 1.5;
-                fileDemand = "/cordonmatrix_totaal_AS.csv";
-                fileCompressedDemand = "/selectedAreas_newest_merged2.shp";
-                fileProfiles = "profile_beach.txt";
-                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
-                fileNameParametersNTM = path + "/parametersNTM.txt";
-                if (this.COMPRESS_AREAS)
-                {
-                    fileNameCapacityRestraint = path + "/capRestraintsBigAreas.txt";
-                    fileNameParametersNTM = path + "/parametersNTMBigAreas.txt";
+            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(this.getInputNTM().getInputMap()
+                    + this.getInputNTM().getFileProfiles(), ";", "\\s+"));
 
-                }
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
-                        "\\s+"));
-                numberOfRoutes = 6;
-                weightNewRoutes = 0.6;
-                varianceRoutes = 5.0f;
-                reRoute = true;
-                reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
-                // Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(900, FrequencyUnit.PER_HOUR);
-                int variant = 1;
-                this.output = "/output" + variant;
-            }
-
-            else if (debugFiles == 3)
-            {
-                this.WRITEDATA = true;
-                this.paint = true;
-                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug3x3Area";
-                this.centroids = ShapeFileReader.ReadNodes(path + "/qgistest_centroids.shp", "NODENR", true, true);
-                this.areas = ShapeFileReader.readAreas(path + "/qgistest_areas.shp", this.centroids);
-                this.nodes = ShapeFileReader.ReadNodes(path + "/qgistest_nodes.shp", "NODENR", false, false);
-                ShapeFileReader.readLinks(path + "/qgistest_links.shp", this.shpLinks, this.shpConnectors, this.nodes,
-                        this.centroids, "meter");
-                ShapeFileReader.readLinks(path + "/qgistest_feederlinks.shp", this.shpLinks, this.shpConnectors,
-                        this.nodes, this.centroids, "meter");
-                fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
-                fileProfiles = "profiles.txt";
-                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
-                fileNameParametersNTM = path + "/parametersNTM.txt";
-                // read the time profile curves: these will be attached to the demands afterwards
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
-                        "\\s+"));
-                numberOfRoutes = 1;
-                weightNewRoutes = 1.0;
-                varianceRoutes = 5.0f;
-                reRoute = false;
-                reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
-                // Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(9999, SpeedUnit.KM_PER_HOUR);
-                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
-
-                int variant = 4;
-                this.output = "/output" + variant;
-            }
-            else if (debugFiles == 4)
-            {
-                this.WRITEDATA = true;
-                path = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/debug_fork_links";
-                this.centroids = ShapeFileReader.ReadNodes(path + "/qgistest_centroids.shp", "NODENR", true, true);
-                this.areas = ShapeFileReader.readAreas(path + "/qgistest_areas.shp", this.centroids);
-                this.nodes = ShapeFileReader.ReadNodes(path + "/qgistest_nodes.shp", "NODENR", false, false);
-                ShapeFileReader.readLinks(path + "/qgistest_links.shp", this.shpLinks, this.shpConnectors, this.nodes,
-                        this.centroids, "meter");
-                ShapeFileReader.readLinks(path + "/qgistest_feederlinks.shp", this.shpLinks, this.shpConnectors,
-                        this.nodes, this.centroids, "meter");
-                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
-                fileDemand = "/cordonmatrix_pa_os_kruislings.txt";
-                fileProfiles = "profiles.txt";
-                fileNameCapacityRestraint = path + "/capRestraintsAreas.txt";
-                fileNameParametersNTM = path + "/parametersNTM.txt";
-                // read the time profile curves: these will be attached to the demands afterwards
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + "/" + fileProfiles, ";",
-                        "\\s+"));
-                numberOfRoutes = 6;
-                weightNewRoutes = 0.6;
-                varianceRoutes = 5.0f;
-                reRoute = true;
-                reRouteTimeInterval = new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND);
-                // Select all links as flow links!!
-                maxSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-                maxCapacity = new DoubleScalar.Abs<FrequencyUnit>(10, FrequencyUnit.PER_HOUR);
-
-                int variant = 5;
-                this.output = "/output" + variant;
-            }
-
-            else if (debugFiles == 1)
-            {
-                this.centroids = ShapeFileReader.ReadNodes("/centroids.shp", "CENTROIDNR", true, false);
-                this.areas = ShapeFileReader.readAreas("/areas.shp", this.centroids);
-                this.nodes = ShapeFileReader.ReadNodes("/nodes.shp", "NODENR", false, false);
-                ShapeFileReader.readLinks(path + "/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.shpConnectors,
-                        this.nodes, this.centroids, "kilometer");
-                fileNameCapacityRestraint = this.getSettingsNTM().getPath() + "/capRestraintsAreas.txt";
-                fileProfiles = "profiles_only_firstHour.txt";
-                this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(path + fileProfiles, ";", "\\s+"));
-                numberOfRoutes = 1;
-
-            }
+            this.getInputNTM().setOutputMap("/output" + this.getInputNTM().getVariantNumber());
 
             this.settingsNTM =
                     new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
-                            timeStepCellTransmissionModel, reRouteTimeInterval, numberOfRoutes, weightNewRoutes,
-                            varianceRoutes, reRoute, path, scalingFactorDemand);
+                            timeStepCellTransmissionModel, this.getInputNTM().getReRouteTimeInterval(), this
+                                    .getInputNTM().getNumberOfRoutes(), this.getInputNTM().getWeightNewRoutes(), this
+                                    .getInputNTM().getVarianceRoutes(), this.getInputNTM().isReRoute(), this
+                                    .getInputNTM().getInputMap(), this.getInputNTM().getScalingFactorDemand());
 
             // the Map areas contains a reference to the centroids!
             // save the selected and created areas to a shape file
@@ -333,27 +197,37 @@ public class NTMModel implements OTSModelInterface
             // - move links from normal to connectors
             // - add time settings from the demand matrix
             // - create demand between centoids and areas
-            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(path + fileDemand, ";", "\\s+|-",
-                    this.centroids, this.shpLinks, this.shpConnectors, this.settingsNTM,
-                    this.getDepartureTimeProfiles(), this.areas));
+            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(this.getInputNTM().getInputMap()
+                    + this.getInputNTM().getFileDemand(), ";", "\\s+|-", this.centroids, this.shpLinks,
+                    this.shpConnectors, this.settingsNTM, this.getDepartureTimeProfiles(), this.areas));
 
             Map<String, Area> areasToUse;
             Map<String, Node> centroidsToUse;
             Map<String, Link> shpConnectorsToUse;
 
-            if (this.COMPRESS_AREAS)
+            if (this.getInputNTM().COMPRESS_AREAS)
             {
-                // to compress the areas into bigger units
-                File file = new File(this.getSettingsNTM().getPath() + fileCompressedDemand);
+                // to compress the areas into bigger units TODO //of compressedDemand????????????????
+                File file = new File(this.getInputNTM().getInputMap() + this.getInputNTM().getFileAreasBig());
                 this.compressedAreas = ShapeStore.openGISFile(file);
                 this.bigAreas = new HashMap<String, Area>();
                 for (ShapeObject shape : this.compressedAreas.getGeoObjects())
                 {
+                    String areaName = shape.getValues().get(0);
+                    double increaseDemandByFactor = java.lang.Double.parseDouble(shape.getValues().get(2));
+                    double accCritMaxCapStart = java.lang.Double.parseDouble(shape.getValues().get(4));
+                    double accCritMaxCapEnd = java.lang.Double.parseDouble(shape.getValues().get(5));
+                    double accCritJam = java.lang.Double.parseDouble(shape.getValues().get(6));
+                    ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>();
+                    accCritical.add(accCritMaxCapStart);
+                    accCritical.add(accCritMaxCapEnd);
+                    accCritical.add(accCritJam);
+                    ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                     Area bigArea =
-                            new Area(shape.getGeometry(), shape.getValues().get(0), "name", "gemeente", "gebied",
-                                    "regio", 0, shape.getGeometry().getCentroid(), TrafficBehaviourType.NTM,
-                                    new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0,
-                                            SpeedUnit.KM_PER_HOUR));
+                            new Area(shape.getGeometry(), areaName, "name", "gemeente", "gebied", "regio", 0, shape
+                                    .getGeometry().getCentroid(), TrafficBehaviourType.NTM, new Rel<LengthUnit>(0,
+                                    LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+                                    increaseDemandByFactor, parametersNTM);
                     this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
                 }
                 // create new centroids
@@ -380,10 +254,12 @@ public class NTMModel implements OTSModelInterface
             }
 
             // set the lower values for flow links:
-            this.flowLinks = createFlowLinks(this.shpLinks, maxSpeed, maxCapacity);
+            this.flowLinks =
+                    createFlowLinks(this.shpLinks, this.getInputNTM().getMaxSpeed(), this.getInputNTM()
+                            .getMaxCapacity());
 
             // merge link segments between junctions on flow links:
-            // Link.findSequentialLinks(this.flowLinks, this.nodes);
+            Link.findSequentialLinks(this.flowLinks, this.nodes);
             // Link.findSequentialLinks(this.shpLinks, this.nodes);
 
             // save the selected and newly created areas to a shape file: at this position the connector areas are saved
@@ -396,14 +272,17 @@ public class NTMModel implements OTSModelInterface
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, areasToUse, centroidsToUse, shpConnectorsToUse);
 
-            readOrSetParametersNTM(this, areasToUse, centroidsToUse, fileNameParametersNTM);
+            readOrSetParametersNTM(this, areasToUse, centroidsToUse, this.getInputNTM().getInputMap()
+                    + this.getInputNTM().getFileNameParametersNTM());
 
-            readOrSetCapacityRestraints(this, areasToUse, fileNameCapacityRestraint);
+            readOrSetCapacityRestraints(this, areasToUse, this.getInputNTM().getInputMap()
+                    + this.getInputNTM().getFileNameCapacityRestraint(), this.getInputNTM().getInputMap()
+                    + this.getInputNTM().getFileNameCapacityRestraintFactor());
 
             WriteOutput.writeInputData(this);
 
-            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), weightNewRoutes, varianceRoutes, true,
-                    1, 999999);
+            Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), this.getInputNTM()
+                    .getWeightNewRoutes(), this.getInputNTM().getVarianceRoutes(), true, 1, 999999);
 
             // in case we run on an animator and not on a simulator, we create the animation
             if (_simulator instanceof OTSAnimatorInterface)
@@ -411,7 +290,7 @@ public class NTMModel implements OTSModelInterface
                 createAnimation();
             }
 
-            copyInputFiles(path, fileDemand, fileProfiles);
+            copyInputFiles(this.getInputNTM().getInputMap(), this.getInputNTM().getFileDemand(), this.getInputNTM().getFileProfiles());
 
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
                     "ntmFlowTimestep", null);
@@ -535,15 +414,23 @@ public class NTMModel implements OTSModelInterface
      * @throws IOException
      * @throws ParseException
      */
-    public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file)
+    public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file, String fileFactor)
             throws IOException, ParseException
     {
         HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap =
                 CsvFileReader.readCapResNTM(file, ";", ",");
+        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityFactorAreasMap =
+                CsvFileReader.readCapResNTM(fileFactor, ";", ",");
         if (borderCapacityAreasMap.isEmpty())
         {
             CsvFileWriter.writeCapresNTM(this, file);
             borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
+        }
+
+        if (borderCapacityFactorAreasMap.isEmpty())
+        {
+            CsvFileWriter.writeCapresNTM(this, fileFactor);
+            borderCapacityAreasMap = CsvFileReader.readCapResNTM(fileFactor, ";", ",");
         }
 
         // set the border capacity
@@ -681,6 +568,38 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
+     * @param areas set areas.
+     */
+    public void setAreas(Map<String, Area> areas)
+    {
+        this.areas = areas;
+    }
+
+    /**
+     * @param nodes set nodes.
+     */
+    public void setNodes(Map<String, Node> nodes)
+    {
+        this.nodes = nodes;
+    }
+
+    /**
+     * @param shpLinks set shpLinks.
+     */
+    public void setShpLinks(Map<String, Link> shpLinks)
+    {
+        this.shpLinks = shpLinks;
+    }
+
+    /**
+     * @param centroids set centroids.
+     */
+    public void setCentroids(Map<String, Node> centroids)
+    {
+        this.centroids = centroids;
+    }
+
+    /**
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
@@ -690,7 +609,7 @@ public class NTMModel implements OTSModelInterface
         // in case we run on an animator and not on a simulator, we create the animation
         if (this.simulator instanceof OTSAnimatorInterface)
         {
-            if (paint == true)
+            if (this.getInputNTM().isPaint())
             {
                 createDynamicAreaAnimation();
             }
@@ -716,9 +635,9 @@ public class NTMModel implements OTSModelInterface
         try
         {
             // let's make several layers with the different types of information
-            boolean showLinks = true;
+            boolean showLinks = false;
             boolean showFlowLinks = true;
-            boolean showConnectors = true;
+            boolean showConnectors = false;
             boolean showNodes = false;
             boolean showGraphEdges = true;
             boolean showAreaNode = true;
@@ -804,7 +723,7 @@ public class NTMModel implements OTSModelInterface
 
             if (showArea)
             {
-                if (this.COMPRESS_AREAS)
+                if (this.getInputNTM().COMPRESS_AREAS)
                 {
                     for (Area area : this.bigAreas.values())
                     {
@@ -1085,7 +1004,7 @@ public class NTMModel implements OTSModelInterface
     public void copyInputFiles(String path, String fileDemand, String fileProfiles) throws IOException
     {
         // copy input files to the output map
-        File dir = new File(path + this.getOutput());
+        File dir = new File(this.getInputNTM().getOutputMap());
         if (!dir.exists())
         {
             boolean result = false;
@@ -1104,11 +1023,11 @@ public class NTMModel implements OTSModelInterface
                 System.out.println("DIR created");
             }
         }
-        Path from = Paths.get(path + "/" + fileProfiles);
-        Path to = Paths.get(path + this.getOutput() + "/" + fileProfiles);
+        Path from = Paths.get(this.getInputNTM().getInputMap() + "/" + fileProfiles);
+        Path to = Paths.get(this.getInputNTM().getInputMap() + this.getInputNTM().getOutputMap() + "/" + fileProfiles);
         Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
-        from = Paths.get(path + fileDemand);
-        to = Paths.get(path + this.getOutput() + fileDemand);
+        from = Paths.get(this.getInputNTM().getInputMap() + fileDemand);
+        to = Paths.get(this.getInputNTM().getInputMap() + this.getInputNTM().getOutputMap() + fileDemand);
         Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -1193,19 +1112,19 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @return output.
+     * @return inputNTM.
      */
-    public String getOutput()
+    public InputNTM getInputNTM()
     {
-        return output;
+        return this.inputNTM;
     }
 
     /**
-     * @param output set output.
+     * @param inputNTM set inputNTM.
      */
-    public void setOutput(String output)
+    public void setInputNTM(InputNTM inputNTM)
     {
-        this.output = output;
+        this.inputNTM = inputNTM;
     }
 
     /*
