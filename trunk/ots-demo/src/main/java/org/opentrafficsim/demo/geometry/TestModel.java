@@ -21,6 +21,8 @@ import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.animation.LaneAnimation;
+import org.opentrafficsim.core.network.animation.ShoulderAnimation;
 import org.opentrafficsim.core.network.lane.Shoulder;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
