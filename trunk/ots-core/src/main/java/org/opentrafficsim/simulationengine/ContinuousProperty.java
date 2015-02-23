@@ -44,6 +44,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
      * @param readOnly boolean; if true this ContinuousProperty can not be altered
      * @param displayPriority int; the displayPriority of the new ContinuousProperty
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public ContinuousProperty(final String shortName, final String description, final Double initialValue,
             final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
             final int displayPriority)

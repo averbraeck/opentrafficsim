@@ -32,6 +32,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 public abstract class AbstractLaneChangeModel implements LaneChangeModel
 {
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
             final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
