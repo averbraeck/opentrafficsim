@@ -47,6 +47,7 @@ public interface LaneChangeModel
      * @return LaneMovementStep; the result of the lane change and GTU following model
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
             final Collection<HeadwayGTU> sameLaneTraffic,
             final Collection<HeadwayGTU> rightLaneTraffic,

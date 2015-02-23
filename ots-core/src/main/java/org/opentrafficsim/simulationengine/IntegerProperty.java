@@ -44,6 +44,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
      * @param readOnly boolean; if true this IntegerProperty can not be altered
      * @param displayPriority int; the display priority of the new IntegerProperty
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public IntegerProperty(final String shortName, final String description, final Integer initialValue,
             final Integer minimumValue, final Integer maximumValue, final String formatString, final boolean readOnly,
             final int displayPriority)
