@@ -225,7 +225,9 @@ public final class Convert
      * @throws NamingException 
      * @throws RemoteException 
      */
-    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink, final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException
+    public static List<Lane> makeLanes(
+            final org.opentrafficsim.importexport.osm.Link osmlink, final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException, RemoteException, NamingException
     {
         CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
@@ -234,48 +236,46 @@ public final class Convert
         Color standard = Color.LIGHT_GRAY;
         Color color = Color.LIGHT_GRAY;
         boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */
-
-        List<Coordinate> iC = new ArrayList<Coordinate>();
-        for (org.opentrafficsim.importexport.osm.Node spline : osmlink.getSplineList())
-        {
-            Coordinate coord = new Coordinate(spline.getLongitude(), spline.getLatitude());
-            iC.add(coord);
-        }
-        //Coordinate[] intermediateCoordinates = (Coordinate[]) iC.toArray();
         
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /* estimation */
+        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /** estimation */
         for (org.opentrafficsim.importexport.osm.Tag t : osmlink.getTags())
         {
             if (t.getKey().equals("highway")
                     && (t.getValue().equals("primary") || t.getValue().equals("secondary")
-                            || t.getValue().equals("tertiary") || t.getValue().equals("residential")
-                            || t.getValue().equals("trunk") || t.getValue().equals("motorway") || t.getValue().equals(
-                            "service") || t.getValue().equals("unclassified") || t.getValue().equals("motorway_link")))
+                    || t.getValue().equals("tertiary") || t.getValue().equals("residential")
+                    || t.getValue().equals("trunk") || t.getValue().equals("motorway") 
+                    || t.getValue().equals("service") || t.getValue().equals("unclassified")
+                    || t.getValue().equals("motorway_link") || t.getValue().equals("primary_link")
+                    || t.getValue().equals("secondary_link") || t.getValue().equals("tertiary_link")
+                    || t.getValue().equals("trunk_link") || t.getValue().equals("road")))
             {
                 lt = makeLaneType(new GTUType<String>(GTUTypes.CAR.toString()));
             }
-            if (t.getKey().equals("highway") && t.getValue().equals("cycleway"))
+            /*if (t.getKey().equals("highway") && t.getValue().equals("cycleway"))
             {
                 standard = Color.ORANGE;
                 lt = makeLaneType(new GTUType<String>(GTUTypes.BIKE.toString()));
                 if (!widthOverride)
                 {
-                    width = new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER); /* estimation */
+                    width = new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER);
                 }
             }
-            if (t.getKey().equals("highway") && t.getValue().equals("footway"))
+            if (t.getKey().equals("highway") && (t.getValue().equals("footway")
+                    || t.getValue().equals("path") || t.getValue().equals("steps")
+                    || t.getValue().equals("pedestrian")))
             {
+                standard = Color.GREEN;
                 lt = makeLaneType(new GTUType<String>(GTUTypes.PEDESTRIAN.toString()));
                 if (!widthOverride)
                 {
-                    width = new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER); /* estimation */
+                    width = new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER);
                 }
-            }
+            }*/
             if (t.getKey().equals("width"))
             {
-                width =
-                        new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(t.getValue()) / osmlink.getLanes(),
-                                LengthUnit.METER);
+                String w = t.getValue().replace(",", ".");
+                width = new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(w) 
+                        / osmlink.getLanes(), LengthUnit.METER);
                 widthOverride = true;
             }
         }
@@ -375,6 +375,23 @@ public final class Convert
                         new Lane(otslink, latPos, latPos,
                                 new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER), 
                                 new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER),
+                                lt, LongitudinalDirectionality.FORWARD, f2000);
+                animateLane(result, simulator, color);
+                lanes.add(result);
+            }
+            if (t.getKey().equals("highway") && (t.getValue().equals("footway")
+                    || t.getValue().equals("path") || t.getValue().equals("steps")
+                    || t.getValue().equals("pedestrian")))
+            {
+                lt = makeLaneType(new GTUType<String>(GTUTypes.PEDESTRIAN.toString()));
+                DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+                DoubleScalar.Rel<LengthUnit> latPos =
+                        new DoubleScalar.Rel<LengthUnit>(osmlink.getLanes() * width.getInUnit(), LengthUnit.METER);
+                color = Color.GREEN;
+                result =
+                        new Lane(otslink, latPos, latPos,
+                                new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER), 
+                                new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER),
                                 lt, LongitudinalDirectionality.FORWARD, f2000);
                 animateLane(result, simulator, color);
                 lanes.add(result);
