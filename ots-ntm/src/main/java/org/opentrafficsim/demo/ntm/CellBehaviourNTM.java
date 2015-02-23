@@ -44,12 +44,6 @@ public class CellBehaviourNTM extends CellBehaviour
     /** */
     private Abs<FrequencyUnit> maxCapacityNTMArea;
 
-    /** */
-    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity;
-
-    /** */
-    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand;
-
     /**
      * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
      * uncongested speed - roadLength length of all roads.
@@ -226,55 +220,6 @@ public class CellBehaviourNTM extends CellBehaviour
         return this.currentSpeed = currentSpeed;
     }
 
-    /**
-     * @return borderCapacity.
-     */
-    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderCapacity()
-    {
-        return this.borderCapacity;
-    }
-
-    /**
-     * @param borderCapacity set borderCapacity.
-     */
-    public void setBorderCapacity(HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity)
-    {
-        this.borderCapacity = borderCapacity;
-    }
-
-    /**
-     * @return borderDemand.
-     */
-    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderDemand()
-    {
-        return this.borderDemand;
-    }
-
-    /**
-     * @param borderDemand set borderDemand.
-     */
-    public void setBorderDemand(HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand)
-    {
-        this.borderDemand = borderDemand;
-    }
-
-    /**
-     * @param demand
-     * @param linkData set linkData.
-     */
-    public void addBorderDemand(BoundedNode node, Abs<FrequencyUnit> demand)
-    {
-        double cap = demand.getInUnit(FrequencyUnit.PER_HOUR);
-        Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
-
-        if (this.getBorderDemand().get(node) == null)
-        {
-            Abs<FrequencyUnit> zeroCap = new Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
-            this.getBorderDemand().put(node, zeroCap);
-        }
-        Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap).immutable();
-        this.getBorderDemand().put(node, total);
-    }
 
     /**
      * @return currentTravelTime.

@@ -2,9 +2,13 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.text.ParseException;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
@@ -23,6 +27,8 @@ import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.demo.ntm.IO.ProjectConfigurations;
+
 
 /**
  * <p>
@@ -54,16 +60,19 @@ public class NTMTestApplication extends DSOLApplication
      * @throws RemoteException
      * @throws NamingException
      * @throws IOException
+     * @throws ParseException 
      */
-    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException, ParseException
     {
         NTMModel model = new NTMModel();
+        InputNTM inputNTM = new InputNTM(); 
+        model.setInputNTM(inputNTM);
+        String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
+        ProjectConfigurations.readConfigurations(startMap, model);
+        
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(TimeUnit.SECOND)
         OTSSimTimeDouble startTime = new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND));
-        // OTSReplication replication =
-        // new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), model
-        // .getSettingsNTM().getDurationOfSimulation(), model);
         OTSReplication replication =
                 new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(10800.0, TimeUnit.SECOND), model);

@@ -108,7 +108,8 @@ public class WriteOutput
         {
             String fileName = "/ALLTripsBigArea";
             String description = "TripsBigArea";
-            File fileTripsBigArea = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File fileTripsBigArea =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             data = createWriter(fileTripsBigArea);
 
             data.write("Matrix Big Areas " + ", ");
@@ -140,7 +141,8 @@ public class WriteOutput
 
         String fileName = "/ALLTrips";
         String description = "Trips";
-        File fileTrips = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+        File fileTrips =
+                new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
         data = createWriter(fileTrips);
         data.write("Matrix " + ", ");
         for (Node from : model.getCentroids().values())
@@ -186,7 +188,8 @@ public class WriteOutput
         String DATATYPE = "cellData";
         if (steps == 1)
         {
-            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File fileLaneLength =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataLaneLengthOut = createWriter(fileLaneLength);
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataLaneLengthOut, laneData, DATATYPE);
@@ -196,7 +199,8 @@ public class WriteOutput
         DATATYPE = "parametersFD";
         if (steps == 1)
         {
-            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File fileLaneLength =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataParametersFDOut = createWriter(fileLaneLength);
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataParametersFDOut, parametersFD, DATATYPE);
@@ -206,7 +210,8 @@ public class WriteOutput
         DATATYPE = "accumulationCells";
         if (steps == 1)
         {
-            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File fileLaneLength =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataAccumulationCellsOut = createWriter(fileLaneLength);
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataAccumulationCellsOut, accumulationCells, DATATYPE);
@@ -216,7 +221,8 @@ public class WriteOutput
         DATATYPE = "speedCells";
         if (steps == 1)
         {
-            File fileLaneLength = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File fileLaneLength =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataSpeedCellsOut = createWriter(fileLaneLength);
         }
         writeCellInfo(model, steps, MAXSTEPS, description, dataSpeedCellsOut, speedCells, DATATYPE);
@@ -475,6 +481,9 @@ public class WriteOutput
     static BufferedWriter dataFluxToNeighbourNTMOut = null;
 
     /** */
+    static BufferedWriter dataDemandVersusCapacityToNeighbourNTMOut = null;
+
+    /** */
     static BufferedWriter dataTimeToDestinationNTMOut = null;
 
     /** */
@@ -511,6 +520,9 @@ public class WriteOutput
     static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();
 
     /** */
+    static HashMap<Node, HashMap<Node, Double[]>> demandVersusCapacityToNeighbourNTMMap = new HashMap<>();
+
+    /** */
     static HashMap<Node, HashMap<Node, Double[]>> timeToDestinationNTMMap = new HashMap<>();
 
     /** */
@@ -545,11 +557,24 @@ public class WriteOutput
         String DATATYPE = "fluxes";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataFluxToNeighbourNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap, indexNode,
                 DATATYPE);
+
+        fileName = "/NTMdemandVersusCapacityToNeighbour";
+        description = "demandVersusCapacity";
+        DATATYPE = "demandVersusCapacity";
+        if (steps == 1)
+        {
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
+            dataDemandVersusCapacityToNeighbourNTMOut = createWriter(file);
+        }
+        writeHashMap(model, steps, MAXSTEPS, description, dataDemandVersusCapacityToNeighbourNTMOut,
+                demandVersusCapacityToNeighbourNTMMap, indexNode, DATATYPE);
 
         fileName = "/NTMtravelTimeToDestination";
         description = "timeToDestination";
@@ -568,7 +593,8 @@ public class WriteOutput
         DATATYPE = "departuresOD";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataODDeparturesNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataODDeparturesNTMOut, ODDeparturesNTMMap, indexNode,
@@ -579,7 +605,8 @@ public class WriteOutput
         DATATYPE = "arrivalsOD";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataODArrivalsNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataODArrivalsNTMOut, ODArrivalsNTMMap, indexNode, DATATYPE);
@@ -589,7 +616,8 @@ public class WriteOutput
         DATATYPE = "arrivals";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataArrivalsNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataArrivalsNTMOut, arrivalsNTM, DATATYPE);
@@ -599,7 +627,8 @@ public class WriteOutput
         DATATYPE = "departures";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataDeparturesNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataDeparturesNTMOut, departuresNTM, DATATYPE);
@@ -609,7 +638,8 @@ public class WriteOutput
         DATATYPE = "accumulation";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataAccumulationNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataAccumulationNTMOut, accumulationNTM, DATATYPE);
@@ -619,7 +649,8 @@ public class WriteOutput
         DATATYPE = "congestedSpeed";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataCongestedSpeedNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataCongestedSpeedNTMOut, congestedSpeedNTM, DATATYPE);
@@ -629,7 +660,8 @@ public class WriteOutput
         DATATYPE = "demand";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataDemandNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataDemandNTMOut, demandNTM, DATATYPE);
@@ -639,7 +671,8 @@ public class WriteOutput
         DATATYPE = "supply";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataSupplyNTMOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataSupplyNTMOut, supplyNTM, DATATYPE);
@@ -649,7 +682,8 @@ public class WriteOutput
         DATATYPE = "parametersNFD";
         if (steps == 1)
         {
-            File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + ".txt");
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataParametersNFDOut = createWriter(file);
         }
         writeArray(model, steps, MAXSTEPS, description, dataParametersNFDOut, parametersNFD, DATATYPE);
@@ -755,13 +789,33 @@ public class WriteOutput
                         || node.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
                     CellBehaviour cellBehaviour = node.getCellBehaviour();
-
                     for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
                     {
                         Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
                         for (BoundedNode neighbour : neighbours)
                         {
                             double trips = 0;
+                            if (DATATYPE == "demandVersusCapacity")
+                            {
+                                if (cellBehaviour.getBorderDemand() != null)
+                                {
+                                    if (cellBehaviour.getBorderDemand().get(neighbour) != null
+                                            && cellBehaviour.getBorderCapacity().get(neighbour) != null)
+                                    {
+                                        if (cellBehaviour.getBorderDemand().get(neighbour)
+                                                .getInUnit(FrequencyUnit.PER_HOUR) > 0)
+                                        {
+                                            trips =
+                                                    Math.min(
+                                                            1.0,
+                                                            cellBehaviour.getBorderCapacity().get(neighbour)
+                                                                    .getInUnit(FrequencyUnit.PER_HOUR)
+                                                                    / cellBehaviour.getBorderDemand().get(neighbour)
+                                                                            .getInUnit(FrequencyUnit.PER_HOUR));
+                                        }
+                                    }
+                                }
+                            }
                             if (DATATYPE == "fluxes")
                             {
                                 trips =

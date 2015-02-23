@@ -300,10 +300,19 @@ public class CsvFileReader
                             String gebied = cordonConnector.getLinkData().getName();
                             String regio = "cordonPoint " + nr;
                             double dhb = 0.0;
+                            Double increaseDemandByFactor = 1.0;
+                            double accCritMaxCapStart = 25;
+                            double accCritMaxCapEnd = 50;
+                            double accCritJam = 100;
+                            ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>(); 
+                            accCritical.add(accCritMaxCapStart);
+                            accCritical.add(accCritMaxCapEnd);
+                            accCritical.add(accCritJam);
+                            ParametersNTM parametersNTM = new ParametersNTM(accCritical) ;
                             Area area =
                                     new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid,
                                             TrafficBehaviourType.CORDON, new Rel<LengthUnit>(0, LengthUnit.METER),
-                                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
                             areas.put(nr, area);
                         }
 

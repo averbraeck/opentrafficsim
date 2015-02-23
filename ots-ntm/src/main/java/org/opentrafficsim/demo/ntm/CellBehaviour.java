@@ -3,6 +3,11 @@ package org.opentrafficsim.demo.ntm;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.opentrafficsim.core.unit.FrequencyUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -30,11 +35,10 @@ public class CellBehaviour
     /** the first Area/Node encountered on the path to Destination. */
     private HashMap<Node, TripInfoByDestination> tripInfoByNodeMap;
 
-    
-    /** maximum in-flow*/
+    /** maximum in-flow */
     private double supply;
 
-    /** demand generated to leave*/
+    /** demand generated to leave */
     private double demand;
 
     /** */
@@ -48,6 +52,12 @@ public class CellBehaviour
 
     /** */
     private double departures;
+
+    /** */
+    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity;
+
+    /** */
+    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand;
 
     /**
      * @return supply.
@@ -88,7 +98,6 @@ public class CellBehaviour
     {
         this.demand += trips;
     }
-    
 
     public final double getArrivals()
     {
@@ -111,7 +120,6 @@ public class CellBehaviour
         this.arrivals += arrivals;
     }
 
-
     /**
      * @return accumulatedCars.
      */
@@ -119,6 +127,7 @@ public class CellBehaviour
     {
         return this.accumulatedCars;
     }
+
     /**
      * @param accumulatedCars set accumulatedCars.
      */
@@ -197,6 +206,56 @@ public class CellBehaviour
     public void addDepartures(double departures)
     {
         this.departures += departures;
+    }
+
+    /**
+     * @return borderCapacity.
+     */
+    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderCapacity()
+    {
+        return borderCapacity;
+    }
+
+    /**
+     * @param borderCapacity set borderCapacity.
+     */
+    public void setBorderCapacity(HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity)
+    {
+        this.borderCapacity = borderCapacity;
+    }
+
+    /**
+     * @param demand
+     * @param linkData set linkData.
+     */
+    public void addBorderDemand(BoundedNode node, Abs<FrequencyUnit> demand)
+    {
+        double cap = demand.getInUnit(FrequencyUnit.PER_HOUR);
+        Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+
+        if (this.getBorderDemand().get(node) == null)
+        {
+            Abs<FrequencyUnit> zeroCap = new Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
+            this.getBorderDemand().put(node, zeroCap);
+        }
+        Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap).immutable();
+        this.getBorderDemand().put(node, total);
+    }
+
+    /**
+     * @return borderDemand.
+     */
+    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderDemand()
+    {
+        return borderDemand;
+    }
+
+    /**
+     * @param borderDemand set borderDemand.
+     */
+    public void setBorderDemand(HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand)
+    {
+        this.borderDemand = borderDemand;
     }
 
 }

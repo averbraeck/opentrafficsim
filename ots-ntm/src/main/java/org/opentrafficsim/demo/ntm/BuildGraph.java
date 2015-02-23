@@ -956,9 +956,12 @@ public class BuildGraph
         String gebied = "Area is missing for: " + centroid.getId();
         String regio = "Missing";
         double dhb = 0.0;
+        Double increaseDemandByFactor = 1.0;
+        ParametersNTM parametersNTM = new ParametersNTM();
         Area area =
                 new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1, TrafficBehaviourType.NTM,
-                        new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR));
+                        new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+                        increaseDemandByFactor, parametersNTM);
         return area;
     }
 

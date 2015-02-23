@@ -98,12 +98,16 @@ public class Area extends GeoObject implements LocatableInterface
     /** */
     private DoubleScalar.Rel<LengthUnit> roadLength;
     
+    /** */
+    private ParametersNTM parametersNTM;
+    
     /** polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
     
     /** */
     private TrafficBehaviourType trafficBehaviourType;
-  
+
+    private double increaseDemandByFactor;
     /** The parameters for the NFD. */
 
     
@@ -136,11 +140,12 @@ public class Area extends GeoObject implements LocatableInterface
      * @param trafficBehaviourType 
      * @param roadLength 
      * @param averageSpeed 
+     * @param increaseDemandByFactor 
 
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
             final String regio, final double dhb, final Point centroid, final TrafficBehaviourType trafficBehaviourType,
-            Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed)
+            Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed, double increaseDemandByFactor, ParametersNTM parametersNTM)
     {
         super(geometry);
         this.centroidNr = centroidNr;
@@ -153,6 +158,8 @@ public class Area extends GeoObject implements LocatableInterface
         this.trafficBehaviourType = trafficBehaviourType;
         this.roadLength = roadLength;
         this.averageSpeed = averageSpeed;
+        this.setIncreaseDemandByFactor(increaseDemandByFactor);
+        this.setParametersNTM(parametersNTM);
     }
 
     /** {@inheritDoc} */
@@ -355,6 +362,38 @@ public class Area extends GeoObject implements LocatableInterface
     public void setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
     {
         this.currentSpeed = currentSpeed;
+    }
+
+    /**
+     * @return increaseDemandByFactor.
+     */
+    public double getIncreaseDemandByFactor()
+    {
+        return increaseDemandByFactor;
+    }
+
+    /**
+     * @param increaseDemandByFactor set increaseDemandByFactor.
+     */
+    public void setIncreaseDemandByFactor(double increaseDemandByFactor)
+    {
+        this.increaseDemandByFactor = increaseDemandByFactor;
+    }
+
+    /**
+     * @return parametersNTM.
+     */
+    public ParametersNTM getParametersNTM()
+    {
+        return parametersNTM;
+    }
+
+    /**
+     * @param parametersNTM set parametersNTM.
+     */
+    public void setParametersNTM(ParametersNTM parametersNTM)
+    {
+        this.parametersNTM = parametersNTM;
     }
 
 

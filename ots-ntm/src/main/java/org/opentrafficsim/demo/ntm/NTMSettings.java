@@ -48,6 +48,9 @@ public class NTMSettings
     /** */
     private double scalingFactorDemand;
 
+    /** */
+    private boolean increaseDemandByArea;
+
     /** number of routes for generation */
     private int numberOfRoutes;
 
@@ -71,8 +74,11 @@ public class NTMSettings
      * @param timeStepDurationCTM
      * @param reRouteTimeInterval
      * @param numberOfRoutes
-     * @param weight_newRoutes
+     * @param weightNewRoutes 
+     * @param varianceRoutes 
+     * @param reRoute 
      * @param path
+     * @param scalingFactorDemand 
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
             Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
@@ -325,6 +331,22 @@ public class NTMSettings
     public void setScalingFactorDemand(double scalingFactorDemand)
     {
         this.scalingFactorDemand = scalingFactorDemand;
+    }
+
+    /**
+     * @return increaseDemandByArea.
+     */
+    public boolean isIncreaseDemandByArea()
+    {
+        return increaseDemandByArea;
+    }
+
+    /**
+     * @param increaseDemandByArea set increaseDemandByArea.
+     */
+    public void setIncreaseDemandByArea(boolean increaseDemandByArea)
+    {
+        this.increaseDemandByArea = increaseDemandByArea;
     }
 
 }

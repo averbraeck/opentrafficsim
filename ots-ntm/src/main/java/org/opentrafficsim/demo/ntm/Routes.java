@@ -52,7 +52,7 @@ public class Routes
         /** */
         BufferedWriter dataRoutesNTMOut = null;
         String fileName = "/ALLroutes";
-        File file = new File(model.getSettingsNTM().getPath() + model.getOutput() + fileName + steps + ".txt");
+        File file = new File(model.getSettingsNTM().getPath() + model.getInputNTM().getOutputMap() + fileName + steps + ".txt");
         dataRoutesNTMOut = WriteOutput.createWriter(file);
         for (int i = 0; i < numberOfRoutes; i++)
         {
