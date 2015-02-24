@@ -139,7 +139,10 @@ public class Routes
                     }
 
                     double weightNew = 0.0;
-
+                    if (origin.getId().equals("1"))
+                    {
+                        System.out.println("dest " + destination.getId() + " neighbour: " + endNode.getId());
+                    }
                     // only at first step of the simulation: initiate variables
                     if (initiateSimulation)
                     {
@@ -196,10 +199,7 @@ public class Routes
 
                     WriteOutput.writeOutputRoutesNTM(model, steps, i, origin, neighbour, destination, MAXSTEPS,
                             dataRoutesNTMOut, share, weightNew * addShare);
-                    if (i == numberOfRoutes - 1)
-                    {
 
-                    }
 
                     // only for initialisation of routes over the flow Links;
                     if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)

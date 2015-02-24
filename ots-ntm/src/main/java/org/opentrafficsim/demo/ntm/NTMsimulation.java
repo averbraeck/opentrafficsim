@@ -258,7 +258,7 @@ public class NTMsimulation
                             // **** RELEVANT
                             origin.getCellBehaviour().setSupply(java.lang.Double.POSITIVE_INFINITY);
                         }
-                        if (origin.getArea()!= null)
+                        if (origin.getArea() != null)
                         {
                             origin.getArea().setAccumulatedCars(origin.getCellBehaviour().getAccumulatedCars());
                         }
@@ -612,6 +612,14 @@ public class NTMsimulation
                                                     nextNeighbour.getCellBehaviour().addDemandToEnter(
                                                             shareOfNeighbour * addDemandToDestination);
                                                 }
+                                                if (origin.getId().equals("1"))
+                                                {
+                                                    System.out.println("Step " + steps + "AddDemandToEnter from "
+                                                            + neighbour.getId() + " to " + nextNeighbour.getId()
+                                                            + ": share " + shareOfNeighbour + " * demand: "
+                                                            + addDemandToDestination + " total demand from 1: "
+                                                            + lastCell.getCellBehaviourFlow().getDemand());
+                                                }
                                             }
                                         }
 
@@ -625,8 +633,7 @@ public class NTMsimulation
                                 else if (neighbour.getBehaviourType() == TrafficBehaviourType.NTM
                                         || neighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
                                 {
-                                    System.out
-                                            .println("CTMsimulation line 595: FLOW node has neighbour of type NTM or Cordon. Already dealt with");
+                                    System.out.println("CTMsimulation line 595: FLOW node has neighbour of type NTM");
                                 }
 
                                 else if (neighbour.getBehaviourType() != TrafficBehaviourType.NTM
@@ -1204,8 +1211,9 @@ public class NTMsimulation
                                             double flowToDestination = 0;
                                             if (demandCell > 0)
                                             {
-                                                flowToDestination = share *
-                                                        Math.min(supplyCell / demandCell, 1.0) * demandToNextCell;
+                                                flowToDestination =
+                                                        share * Math.min(supplyCell / demandCell, 1.0)
+                                                                * demandToNextCell;
                                             }
                                             // **** RELEVANT
                                             firstCell.getCellBehaviourFlow().addAccumulatedCars(flowToDestination);

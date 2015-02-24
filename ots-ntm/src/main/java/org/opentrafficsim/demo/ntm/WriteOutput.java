@@ -102,6 +102,7 @@ public class WriteOutput
 
     public static void writeInputData(NTMModel model) throws IOException
     {
+        createDir(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap());
         BufferedWriter data = null;
         boolean big = false;
         if (big == true)
@@ -186,6 +187,8 @@ public class WriteOutput
         String fileName = "/CTMCelldata";
         String description = "CellData";
         String DATATYPE = "cellData";
+        createDir(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap());
+       
         if (steps == 1)
         {
             File fileLaneLength =
@@ -555,6 +558,8 @@ public class WriteOutput
         String fileName = "/NTMfluxToNeighbour";
         String description = "fluxes";
         String DATATYPE = "fluxes";
+        createDir(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap());
+
         if (steps == 1)
         {
             File file =
@@ -1168,6 +1173,24 @@ public class WriteOutput
             exception1.printStackTrace();
         }
         return bWriter;
+    }
+    
+    static File createDir(String directory)
+    {
+        File theDir = new File( directory);
+    
+        // if the directory does not exist, create it
+        if (!theDir.exists()) {
+          boolean result = false;
+    
+          try{
+              theDir.mkdir();
+              result = true;
+           } catch(SecurityException se){
+              //handle it
+           }        
+        }
+        return theDir;
     }
 
 }
