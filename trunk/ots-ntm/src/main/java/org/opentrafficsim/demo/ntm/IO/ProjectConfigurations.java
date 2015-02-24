@@ -166,6 +166,16 @@ public class ProjectConfigurations
                 String file = config[1].trim();
                 model.getInputNTM().setFileLinks(file);
             }
+            else if (name.equals("lengthUnitLink"))
+            {
+                String value = config[1].trim();
+                model.getInputNTM().setLengthUnitLink(value);
+            }
+            else if (name.equals("feederLinks"))
+            {
+                String file = config[1].trim();
+                model.getInputNTM().setFileFeederLinks(file);
+            }
             else if (name.equals("scalingFactorDemand"))
             {
                 String value = config[1].trim();

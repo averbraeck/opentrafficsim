@@ -33,9 +33,12 @@ public class FileDialog {
 	 * operation was cancelled by the user)
 	 */
 	public static String showFileDialog(boolean reading, String fileType, String fileTypeDescription, String defaultName) {
-    	FileFilter filter = new ExtensionFileFilter(fileTypeDescription, fileType);
+	    FileFilter filter = new ExtensionFileFilter(fileTypeDescription, fileType);
         javax.swing.JFileChooser fileChooser = new JFileChooser();
-    	fileChooser.setFileFilter(filter);
+	    if (!fileType.isEmpty())
+    	{
+        	fileChooser.setFileFilter(filter);
+    	}
     	File defaultFile = new File(defaultName);
     	fileChooser.setCurrentDirectory(defaultFile);
     	if (defaultFile.isFile()) {

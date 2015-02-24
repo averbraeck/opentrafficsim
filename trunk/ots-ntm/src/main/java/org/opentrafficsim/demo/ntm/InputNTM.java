@@ -123,15 +123,21 @@ public class InputNTM
     
     private String fileNodes;
 
+    /** */
     private boolean isOnlyCentroidsFileNode;
     /** */
     
     private boolean returnCentroidsNode;
     /** */
     
+        /** */
+    private String fileLinks;
 
     /** */
-    private String fileLinks;
+    private String lengthUnitLink;
+
+    /** */
+    private String fileFeederLinks;
 
     /** */
     private String fileAreas;
@@ -369,6 +375,22 @@ public class InputNTM
     public void setFileLinks(String fileLinks)
     {
         this.fileLinks = fileLinks;
+    }
+
+    /**
+     * @return fileFeederLinks.
+     */
+    public String getFileFeederLinks()
+    {
+        return fileFeederLinks;
+    }
+
+    /**
+     * @param fileFeederLinks set fileFeederLinks.
+     */
+    public void setFileFeederLinks(String fileFeederLinks)
+    {
+        this.fileFeederLinks = fileFeederLinks;
     }
 
     /**
@@ -673,6 +695,22 @@ public class InputNTM
     public void setFileDemand(String fileDemand)
     {
         this.fileDemand = fileDemand;
+    }
+
+    /**
+     * @return lengthUnitLink.
+     */
+    public String getLengthUnitLink()
+    {
+        return this.lengthUnitLink;
+    }
+
+    /**
+     * @param lengthUnitLink set lengthUnitLink.
+     */
+    public void setLengthUnitLink(String lengthUnitLink)
+    {
+        this.lengthUnitLink = lengthUnitLink;
     }
 
     
