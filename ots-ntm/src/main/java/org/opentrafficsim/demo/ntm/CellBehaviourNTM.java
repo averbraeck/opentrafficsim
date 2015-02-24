@@ -150,7 +150,7 @@ public class CellBehaviourNTM extends CellBehaviour
         if (densityPerUnitDouble > parametersNTM.getAccCritical().get(1))
         {
             Double MINCAP = 0.1;
-            carProduction = Math.min(MINCAP * parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR), carProduction);
+            carProduction = Math.max(MINCAP * parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR), carProduction);
         }
         return new DoubleScalar.Abs<FrequencyUnit>(carProduction, FrequencyUnit.PER_HOUR);
     }

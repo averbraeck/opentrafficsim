@@ -888,6 +888,10 @@ public class NTMsimulation
                 if (link.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
                     LinkCellTransmission ctmLink = (LinkCellTransmission) link.getLink();
+                    if (ctmLink.getStartNode().getId().equals("1") && steps > 10)
+                    {
+                        System.out.println("break ");
+                    }
                     simulateFlowLink(model.getAreaGraph(), model.getNodeAreaGraphMap(), ctmLink);
                 }
             }
@@ -1223,6 +1227,17 @@ public class NTMsimulation
                                             cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
                                             cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
                                                     .addAccumulatedCarsToDestination(-flowToDestination);
+                                            if (ctmLink.getStartNode().getId().equals("1"))
+                                            {
+                                                System.out.println("Step " + steps + "flowToDestination from "
+                                                        + neighbour.getId() + " to " + nextNeighbour.getId() + "Share "
+                                                        + share + " * demand this Cell': " + demandCell
+                                                        + " versus supply next Cell" + supplyCell
+                                                        + " demand to next Cell" + demandToNextCell
+                                                        + " total demand from cell: "
+                                                        + cell.getCellBehaviourFlow().getDemand());
+                                                System.out.println("break ");
+                                            }
                                         }
 
                                     }
