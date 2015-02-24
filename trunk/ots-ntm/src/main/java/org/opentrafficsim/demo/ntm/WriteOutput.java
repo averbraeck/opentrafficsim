@@ -972,7 +972,11 @@ public class WriteOutput
                         if (node.getBehaviourType() == TrafficBehaviourType.NTM)
                         {
                             CellBehaviourNTM cellBehaviourNTM = (CellBehaviourNTM) node.getCellBehaviour();
-
+                            if (node.getId().equals("C138") && steps>785 )
+                            {
+                                double speed = cellBehaviourNTM.getParametersNTM().getFreeSpeed()
+                                .getInUnit(SpeedUnit.KM_PER_HOUR);
+                            }
                             if (steps == 1)
                             {
                                 dataArray[nodeIndex.get(node)][steps - 1] =
