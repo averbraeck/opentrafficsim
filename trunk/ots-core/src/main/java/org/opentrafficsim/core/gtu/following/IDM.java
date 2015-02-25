@@ -1,18 +1,12 @@
 package org.opentrafficsim.core.gtu.following;
 
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -51,9 +45,6 @@ public class IDM extends AbstractGTUFollowingModel
      */
     private final double delta;
 
-    /** Cache of the braking distances, based on the maximum speed of the GTU. */
-    private final Map<GTUType<?>, DoubleScalar.Rel<LengthUnit>> maxBrakingDistances = new HashMap<>();
-
     /**
      * Construct a new IDM car following model with reasonable values (reasonable for passenger cars).
      */
@@ -88,47 +79,30 @@ public class IDM extends AbstractGTUFollowingModel
     }
 
     /**
-     * @param gtu the gtu for which to calculate the maximum braking distance.
-     * @return the maximum braking distance of the GTU, based on parameter b and the maximum velocity of the GTU.
-     */
-    private DoubleScalar.Rel<LengthUnit> calcMaxBrakingDistance(final GTU<?> gtu)
-    {
-        DoubleScalar.Rel<LengthUnit> maxBrakingDistance = this.maxBrakingDistances.get(gtu.getGTUType());
-        if (maxBrakingDistance == null)
-        {
-            maxBrakingDistance = Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), this.b);
-            this.maxBrakingDistances.put(gtu.getGTUType(), maxBrakingDistance);
-        }
-        return maxBrakingDistance;
-    }
-
-    /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
-     * @param follower GTU; the GTU whose desired speed must be returned
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit
+     * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
      */
-    private DoubleScalar.Rel<SpeedUnit> vDes(final GTU<?> follower, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    private DoubleScalar.Rel<SpeedUnit> vDes(final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
     {
-        return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getSI(), follower.getMaximumVelocity()
-                .getSI()), SpeedUnit.METER_PER_SECOND);
+        return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()),
+                SpeedUnit.METER_PER_SECOND);
     }
 
     /** {@inheritDoc} */
-    @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
+    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(
+            final DoubleScalar.Abs<SpeedUnit> followerSpeed, Abs<SpeedUnit> followerMaximumSpeed,
             final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+            final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
-        DoubleScalar.Abs<TimeUnit> thisEvaluationTime = follower.getNextEvaluationTime();
-        DoubleScalar.Abs<SpeedUnit> followerCurrentSpeed = follower.getLongitudinalVelocity(thisEvaluationTime);
         // dV is the approach speed
-        DoubleScalar.Rel<SpeedUnit> dV =
-                DoubleScalar.minus(follower.getLongitudinalVelocity(thisEvaluationTime), leaderSpeed).immutable();
+        DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed).immutable();
         DoubleScalar.Abs<AccelerationUnit> aFree =
                 new DoubleScalar.Abs<AccelerationUnit>(this.a.getSI()
-                        * (1 - Math.pow(followerCurrentSpeed.getSI() / vDes(follower, speedLimit).getSI(), 4)),
+                        * (1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4)),
                         AccelerationUnit.METER_PER_SECOND_2);
         if (Double.isNaN(aFree.getSI()))
         {
@@ -147,10 +121,10 @@ public class IDM extends AbstractGTUFollowingModel
          */
         DoubleScalar.Rel<LengthUnit> right =
                 DoubleScalar.plus(
-                        Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe),
+                        Calc.speedTimesTime(followerSpeed, this.tSafe),
                         Calc.speedTimesTime(
                                 dV,
-                                Calc.speedDividedByAcceleration(followerCurrentSpeed,
+                                Calc.speedDividedByAcceleration(followerSpeed,
                                         logWeightedAccelerationTimes2.immutable()))).immutable();
         if (right.getSI() < 0)
         {
@@ -168,18 +142,15 @@ public class IDM extends AbstractGTUFollowingModel
                 new DoubleScalar.Rel<AccelerationUnit>(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2),
                         AccelerationUnit.METER_PER_SECOND_2);
         DoubleScalar.Abs<AccelerationUnit> newAcceleration = DoubleScalar.plus(aFree, aInteraction).immutable();
-        if (newAcceleration.getSI() * this.stepSize.getSI() + follower.getLongitudinalVelocity().getSI() < 0)
+        if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             // System.out.println("Limiting deceleration to prevent moving backwards");
             newAcceleration =
-                    new DoubleScalar.Abs<AccelerationUnit>(-follower.getLongitudinalVelocity().getSI()
+                    new DoubleScalar.Abs<AccelerationUnit>(-followerSpeed.getSI()
                             / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
         }
         // System.out.println("newAcceleration is " + newAcceleration);
-        MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = thisEvaluationTime.mutable();
-        nextEvaluationTime.incrementBy(this.stepSize);
-        return new AccelerationStep(newAcceleration, nextEvaluationTime.immutable());
-
+        return newAcceleration;
     }
 
     /** {@inheritDoc} */

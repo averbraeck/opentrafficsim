@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.network.NetworkException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -31,19 +34,29 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
     /** The list of result values of this SequentialFixedAccelerationModel. */
     private final List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
 
+    /** The simulator engine. */
+    private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
+     * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      */
-    public SequentialFixedAccelerationModel()
+    public SequentialFixedAccelerationModel(
+            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
     {
+        this.simulator = simulator;
     }
 
     /**
      * Construct a SequentialFixedAccelerationModel and load it with a list of FixedAccelerationModel steps.
+     * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
-    public SequentialFixedAccelerationModel(final Set<FixedAccelerationModel> steps)
+    public SequentialFixedAccelerationModel(
+            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
+            final Set<FixedAccelerationModel> steps)
     {
+        this(simulator);
         this.steps.addAll(steps);
     }
 
@@ -96,15 +109,14 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
     private static final double MAXIMUMTIMEERROR = 0.001; // 1 millisecond
 
     /**
-     * Find the AccelerationStep that starts at the current simulator time.
+     * Find the FixedAccelerationModel that starts at the current simulator time.
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current simulator time
-     * @return AccelerationStep; the AccelerationStep that starts at the current simulator time
+     * @return FixedAccelerationModel; the FixedAccelerationModel that starts at the current simulator time
      * @throws RemoteException on communications failure
-     * @throws NetworkException on network inconsistency
      */
-    private AccelerationStep getAccelerationStep(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
-            NetworkException
+    private FixedAccelerationModel getAccelerationModel() throws RemoteException
     {
+        DoubleScalar.Abs<TimeUnit> when = this.simulator.getSimulatorTime().get();
         double remainingTime = when.getSI();
         for (FixedAccelerationModel step : this.steps)
         {
@@ -114,20 +126,19 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
             }
             if (remainingTime < MAXIMUMTIMEERROR)
             {
-                return new AccelerationStep(step.getAcceleration(), DoubleScalar.plus(when, step.getDuration())
-                        .immutable());
+                return step;
             }
+            remainingTime -= step.getDuration().getSI();
         }
         throw new Error("FixedSequentialAcceleration does not have a result for " + when);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+    public Abs<AccelerationUnit> computeAcceleration(Abs<SpeedUnit> followerSpeed, Abs<SpeedUnit> followerMaximumSpeed,
+            Abs<SpeedUnit> leaderSpeed, Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
     {
-        return getAccelerationStep(follower.getSimulator().getSimulatorTime().get());
+        return getAccelerationModel().getAcceleration();
     }
 
     /** {@inheritDoc} */
@@ -139,10 +150,9 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<TimeUnit> getStepSize()
+    public final DoubleScalar.Rel<TimeUnit> getStepSize() throws RemoteException
     {
-        // We'll have to fake this one (the step size may not be constant); return the step size of the first entry
-        return this.steps.get(0).getStepSize();
+        return getAccelerationModel().getStepSize();
     }
 
     /** {@inheritDoc} */
