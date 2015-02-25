@@ -232,7 +232,7 @@ public class NTMsimulation
                             {
                                 speed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
                             }
-                            if (origin.getId().equals("C5") && steps >5)
+                            if (origin.getId().equals("C5") && steps > 5)
                             {
                                 System.out.println("speed C5 " + speed);
                             }
@@ -508,6 +508,10 @@ public class NTMsimulation
                                             {
                                                 // **** RELEVANT
                                                 // SUPPLY
+                                                if (ctmLink.getStartNode().getId().equals("1090604004") && steps > 12)
+                                                {
+                                                    System.out.println("Stop");
+                                                }
                                                 DoubleScalar.Abs<FrequencyUnit> tripByHour =
                                                         cell.getCellBehaviourFlow().retrieveSupply(
                                                                 accumulationCell,
@@ -597,10 +601,11 @@ public class NTMsimulation
                                                 // .get(neighbour);
                                                 if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
                                                 {
-                                                    ctmLink =
+                                                    LinkCellTransmission ctmLinkNext =
                                                             (LinkCellTransmission) model.getAreaGraph()
                                                                     .getEdge(neighbour, nextNeighbour).getLink();
-                                                    ctmLink.getCells()
+                                                    ctmLinkNext
+                                                            .getCells()
                                                             .get(0)
                                                             .getCellBehaviourFlow()
                                                             .addDemandToEnter(shareOfNeighbour * addDemandToDestination);
@@ -612,14 +617,7 @@ public class NTMsimulation
                                                     nextNeighbour.getCellBehaviour().addDemandToEnter(
                                                             shareOfNeighbour * addDemandToDestination);
                                                 }
-                                                if (origin.getId().equals("1"))
-                                                {
-                                                    System.out.println("Step " + steps + "AddDemandToEnter from "
-                                                            + neighbour.getId() + " to " + nextNeighbour.getId()
-                                                            + ": share " + shareOfNeighbour + " * demand: "
-                                                            + addDemandToDestination + " total demand from 1: "
-                                                            + lastCell.getCellBehaviourFlow().getDemand());
-                                                }
+
                                             }
                                         }
 
@@ -1101,7 +1099,6 @@ public class NTMsimulation
             {
                 prevCell = cell;
             }
-
             else
             {
                 double demandCell;
@@ -1134,127 +1131,126 @@ public class NTMsimulation
                                     .addAccumulatedCarsToDestination(-flowToDestination);
                             prevCell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
                         }
+                    }
+                }
+            }
+            double demandCell;
+            double supplyCell;    
+            // the last cell of the cell transmission link transfers trips to the next Link/AreaNode
+            if (ctmLink.getCells().indexOf(cell) == ctmLink.getCells().size() - 1)
+            // at the last cell, the trips are forwarded to the next Node: could
+            // be NTM, Flow or Cordon
+            {
+                for (TripInfoByDestination tripInfoByDestination : cell.getCellBehaviourFlow()
+                        .getTripInfoByNodeMap().values())
+                {
+                    BoundedNode destination = (BoundedNode) tripInfoByDestination.getDestination();
+                    double demandToNextCell =
+                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
+                                    .getDemandToDestination();
+                    if (demandToNextCell > 0)
+                    {
+                        TripInfoByDestination neighbourTripInfoByDestination;
+                        neighbourTripInfoByDestination =
+                                neighbour.getCellBehaviour().getTripInfoByNodeMap().get(destination);
 
-                        // the last cell of the cell transmission link transfers trips to the next Link/AreaNode
-                        if (ctmLink.getCells().indexOf(cell) == ctmLink.getCells().size() - 1)
-                        // at the last cell, the trips are forwarded to the next Node: could
-                        // be NTM, Flow or Cordon
+                        Set<BoundedNode> nextNeighbours =
+                                neighbourTripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                        for (BoundedNode nextNeighbour : nextNeighbours)
                         {
-                            demandToNextCell =
-                                    cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
-                                            .getDemandToDestination();
-                            if (demandToNextCell > 0)
+                            double share =
+                                    neighbourTripInfoByDestination.getNeighbourAndRouteShare().get(
+                                            nextNeighbour);
+
+                            if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
+                                    || nextNeighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
                             {
-                                Set<BoundedNode> neighbours =
-                                        tripInfoByDestination.getNeighbourAndRouteShare().keySet();
-                                TripInfoByDestination neighbourTripInfoByDestination;
-                                neighbourTripInfoByDestination =
-                                        neighbour.getCellBehaviour().getTripInfoByNodeMap().get(destination);
-
-                                Set<BoundedNode> nextNeighbours =
-                                        neighbourTripInfoByDestination.getNeighbourAndRouteShare().keySet();
-                                for (BoundedNode nextNeighbour : nextNeighbours)
+                                supplyCell = nextNeighbour.getCellBehaviour().getSupply();
+                                demandCell = nextNeighbour.getCellBehaviour().getDemandToEnter();
+                                // tripInfoByDestination.getDemandToNeighbour();
+                                double flowToDestination = 0;
+                                if (demandCell > 0)
                                 {
-                                    if (nextNeighbours.size() > 1)
+                                    flowToDestination =
+                                            share * Math.min(supplyCell / demandCell, 1.0) * demandToNextCell;
+                                }
+                                // **** RELEVANT
+                                if (nextNeighbour != destination)
+                                {
+                                    nextNeighbour.getCellBehaviour().addAccumulatedCars(flowToDestination);
+                                    nextNeighbour.getCellBehaviour().getTripInfoByNodeMap().get(destination)
+                                            .addAccumulatedCarsToDestination(flowToDestination);
+                                    cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
+                                            .addAccumulatedCarsToDestination(-flowToDestination);
+                                    cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
+                                }
+                                else
+                                {
+                                    // trips have arrived at destination!
+                                    if (demandToNextCell > 0)
                                     {
-                                        System.out.println("ss");
-                                    }
-                                    double share =
-                                            neighbourTripInfoByDestination.getNeighbourAndRouteShare().get(
-                                                    nextNeighbour);
-
-                                    if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
-                                            || nextNeighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
-                                    {
-                                        supplyCell = nextNeighbour.getCellBehaviour().getSupply();
-                                        demandCell = nextNeighbour.getCellBehaviour().getDemandToEnter();
-                                        // tripInfoByDestination.getDemandToNeighbour();
-                                        double flowToDestination = 0;
-                                        if (demandCell > 0)
-                                        {
-                                            flowToDestination =
-                                                    share * Math.min(supplyCell / demandCell, 1.0) * demandToNextCell;
-                                        }
-                                        // **** RELEVANT
-                                        if (nextNeighbour != destination)
-                                        {
-                                            nextNeighbour.getCellBehaviour().addAccumulatedCars(flowToDestination);
-                                            nextNeighbour.getCellBehaviour().getTripInfoByNodeMap().get(destination)
-                                                    .addAccumulatedCarsToDestination(flowToDestination);
-                                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
-                                                    .addAccumulatedCarsToDestination(-flowToDestination);
-                                            cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
-                                        }
-                                        else
-                                        {
-                                            // trips have arrived at destination!
-                                            if (demandToNextCell > 0)
-                                            {
-                                                destination.getCellBehaviour().addArrivals(flowToDestination);
-                                                cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
-                                                        .addAccumulatedCarsToDestination(-flowToDestination);
-                                                cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
-                                            }
-                                        }
-                                    }
-
-                                    else if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
-                                    {
-                                        // set the variables for the next loop (while...)
-                                        ctmLink =
-                                                (LinkCellTransmission) areaGraph.getEdge(neighbour, nextNeighbour)
-                                                        .getLink();
-
-                                        // at the first cell after the NTM/Cordon Node, demand comes from
-                                        // the FlowNode!!
-                                        FlowCell firstCell = ctmLink.getCells().get(0);
-                                        // * tripInfoByDestination.getNeighbourAndRouteShare().get(
-                                        // nextNeighbour);
-
-                                        if (demandToNextCell >= 0)
-                                        {
-                                            // maximum to enter this cell
-                                            supplyCell = firstCell.getCellBehaviourFlow().getSupply();
-                                            demandCell = firstCell.getCellBehaviourFlow().getDemandToEnter();
-                                            // tripInfoByDestination.getDemandToNeighbour();
-                                            double flowToDestination = 0;
-                                            if (demandCell > 0)
-                                            {
-                                                flowToDestination =
-                                                        share * Math.min(supplyCell / demandCell, 1.0)
-                                                                * demandToNextCell;
-                                            }
-                                            // **** RELEVANT
-                                            firstCell.getCellBehaviourFlow().addAccumulatedCars(flowToDestination);
-                                            firstCell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
-                                                    .addAccumulatedCarsToDestination(flowToDestination);
-
-                                            cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
-                                            cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
-                                                    .addAccumulatedCarsToDestination(-flowToDestination);
-                                            if (ctmLink.getStartNode().getId().equals("1"))
-                                            {
-                                                System.out.println("Step " + steps + "flowToDestination from "
-                                                        + neighbour.getId() + " to " + nextNeighbour.getId() + "Share "
-                                                        + share + " * demand this Cell': " + demandCell
-                                                        + " versus supply next Cell" + supplyCell
-                                                        + " demand to next Cell" + demandToNextCell
-                                                        + " total demand from cell: "
-                                                        + cell.getCellBehaviourFlow().getDemand());
-                                                System.out.println("break ");
-                                            }
-                                        }
-
+                                        destination.getCellBehaviour().addArrivals(flowToDestination);
+                                        cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
+                                                .addAccumulatedCarsToDestination(-flowToDestination);
+                                        cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
                                     }
                                 }
                             }
+
+                            else if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
+                            {
+                                // set the variables for the next loop (while...)
+                                LinkCellTransmission ctmLinkNext =
+                                        (LinkCellTransmission) areaGraph.getEdge(neighbour, nextNeighbour)
+                                                .getLink();
+
+                                // at the first cell after the NTM/Cordon Node, demand comes from
+                                // the FlowNode!!
+                                FlowCell firstCell = ctmLinkNext.getCells().get(0);
+                                // * tripInfoByDestination.getNeighbourAndRouteShare().get(
+                                // nextNeighbour);
+
+                                if (demandToNextCell >= 0)
+                                {
+                                    // maximum to enter this cell
+                                    supplyCell = firstCell.getCellBehaviourFlow().getSupply();
+                                    demandCell = firstCell.getCellBehaviourFlow().getDemandToEnter();
+                                    // tripInfoByDestination.getDemandToNeighbour();
+                                    double flowToDestination = 0;
+                                    if (demandCell > 0)
+                                    {
+                                        flowToDestination =
+                                                share * Math.min(supplyCell / demandCell, 1.0)
+                                                        * demandToNextCell;
+                                    }
+                                    // **** RELEVANT
+                                    firstCell.getCellBehaviourFlow().addAccumulatedCars(flowToDestination);
+                                    firstCell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
+                                            .addAccumulatedCarsToDestination(flowToDestination);
+
+                                    cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
+                                    cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
+                                            .addAccumulatedCarsToDestination(-flowToDestination);
+                                    if (ctmLinkNext.getStartNode().getId().equals("4") & steps > 20)
+                                    {
+                                        System.out.println("Step " + steps + "flowToDestination from "
+                                                + neighbour.getId() + " to " + nextNeighbour.getId() + "Share "
+                                                + share + " * demand this Cell': " + demandCell
+                                                + " versus supply next Cell" + supplyCell
+                                                + " demand to next Cell" + demandToNextCell
+                                                + " total demand from cell: "
+                                                + cell.getCellBehaviourFlow().getDemand());
+                                        System.out.println("break ");
+                                    }
+                                }
+
+                            }
                         }
-
                     }
-
                 }
-                prevCell = cell;
             }
+        prevCell = cell;
+
         }
     }
 
